@@ -52,6 +52,20 @@ def change_task_information(request, change_task_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
+def change_task_delete(request, change_task_id):
+    """A simple function to delete the change task"""
+    change_task_delete = change_task.objects.get(change_task_id=change_task_id)
+
+    # Update the change task is deleted to true
+    change_task_delete.is_deleted = True
+    change_task_delete.save()
+
+    # Send back success
+    return HttpResponse("")
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
 def change_task_save(request, change_task_id):
     """
     """

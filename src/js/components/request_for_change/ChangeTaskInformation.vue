@@ -128,8 +128,15 @@
             <hr>
             <!-- CANCEL -->
             <a v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
-               class="btn btn-secondary"
+               class="btn btn-secondary cancel-changes"
             >Cancel</a>
+
+            <!-- DELETE -->
+            <a href="javascript:void(0)"
+               class="btn btn-warning"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 1"
+               v-on:click="deleteChangeTask"
+            >Delete</a>
 
             <!-- SAVE -->
             <a href="javascript:void(0)"
@@ -218,6 +225,15 @@
                     return `Downtime Scheduled`;
                 }
                 return `No Downtime`;
+            },
+            deleteChangeTask: function() {
+                //Send the trigger
+                axios.post(
+                    `${this.rootUrl}change_task_information/${this.changeTaskResults[0]['pk']}/delete/`,
+                ).then(response => {
+                    //If successful, go back
+                    window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
+                })
             },
             saveChangeTask: function(event) {
                 //Stop the usual stuff
