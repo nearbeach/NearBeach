@@ -134,38 +134,37 @@
             <!-- DELETE -->
             <a href="javascript:void(0)"
                class="btn btn-warning"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 1"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 1 && userLevel == 4"
                v-on:click="deleteChangeTask"
             >Delete</a>
 
             <!-- SAVE -->
             <a href="javascript:void(0)"
                class="btn btn-primary save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 1"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 1 && userLevel >= 2"
                v-on:click="saveChangeTask"
             >Save</a>
 
             <!-- START CHANGE TASK -->
             <a href="javascript:void(0)"
                class="btn btn-danger save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 3"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 3 && userLevel >= 2"
                v-on:click="updateStatus(4)"
             >Start Task</a>
 
             <!-- FINISH CHANGE TASK -->
             <a href="javascript:void(0)"
                class="btn btn-success save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4 && userLevel >= 2"
                v-on:click="updateStatus(5)"
             >Finish Task</a>
 
             <!-- REJECT CHANGE TASK -->
             <a href="javascript:void(0)"
                class="btn btn-danger save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4 && userLevel >= 2"
                v-on:click="updateStatus(6)"
             >REJECT Task</a>
-
         </div>
     </div>
 </template>
@@ -193,6 +192,10 @@
             rootUrl: {
                 type: String,
                 default: '/',
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
             },
             userList: {
                 type: Array,

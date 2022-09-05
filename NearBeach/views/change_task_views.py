@@ -8,10 +8,13 @@ from django.core.serializers.json import DjangoJSONEncoder
 from NearBeach.forms import ChangeTaskStatusForm, ChangeTaskForm
 from NearBeach.models import change_task, User
 
+from NearBeach.decorators.check_user_permissions import check_change_task_permissions
+
 import json
 
 
 @login_required(login_url='login', redirect_field_name="")
+@check_change_task_permissions(min_permission_level=1)
 def change_task_information(request, change_task_id, *args, **kwargs):
     """
     """
@@ -44,6 +47,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     # Context
     c = {
         'change_task_results': serializers.serialize('json', change_task_results),
+        'user_level': kwargs['user_level'],
         'user_list': user_list,
     }
 
@@ -52,6 +56,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
+@check_change_task_permissions(min_permission_level=4)
 def change_task_delete(request, change_task_id):
     """A simple function to delete the change task"""
     change_task_delete = change_task.objects.get(change_task_id=change_task_id)
@@ -66,6 +71,7 @@ def change_task_delete(request, change_task_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
+@check_change_task_permissions(min_permission_level=2)
 def change_task_save(request, change_task_id):
     """
     """
@@ -96,6 +102,7 @@ def change_task_save(request, change_task_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
+@check_change_task_permissions(min_permission_level=2)
 def update_status(request, change_task_id):
     """
     :param request:
