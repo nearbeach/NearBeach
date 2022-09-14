@@ -130,7 +130,7 @@
     import RfcNewRunItem from "./RfcNewRunItem.vue";
 
     // Mixins
-    import datetimeMixins from "../../../mixins/datetimeMixins";
+    import datetimeMixin from "../../../mixins/datetimeMixin";
     import errorModalMixin from "../../../mixins/errorModalMixin";
 
     //VueX
@@ -166,8 +166,8 @@
             },
         },
         mixins: [
+            datetimeMixin,
             errorModalMixin,
-            datetimeMixins,
         ],
         data: () => ({
             changeTaskList: [],

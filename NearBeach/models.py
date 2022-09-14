@@ -1493,6 +1493,31 @@ class list_of_requirement_type(models.Model):
         db_table = "list_of_requirement_type"
 
 
+class list_of_rfc_status(models.Model):
+    rfc_status_id = models.AutoField(primary_key=True)
+    rfc_status = models.CharField(
+        max_length=100,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='%(class)s_change_user',
+        blank=True,
+        null=True,
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
+
+    def __str__(self):
+        return str(self.rfc_status)
+
+    class Meta:
+        db_table = "list_of_rfc_status"
+
+
 class list_of_tax(models.Model):
     tax_id = models.AutoField(primary_key=True)
     tax_amount = models.DecimalField(
@@ -2449,8 +2474,9 @@ class request_for_change(models.Model):
         blank=True,
         null=True,
     )
-    rfc_status = models.IntegerField(
-        choices=RFC_STATUS,
+    rfc_status = models.ForeignKey(
+        'list_of_rfc_status',
+        on_delete=models.CASCADE,
     )
     rfc_lead = models.ForeignKey(
         User,

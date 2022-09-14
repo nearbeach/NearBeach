@@ -103,7 +103,7 @@ def change_task_save(request, change_task_id):
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 @check_change_task_permissions(min_permission_level=2)
-def update_status(request, change_task_id):
+def update_status(request, change_task_id, *args, **kwargs):
     """
     :param request:
     :param change_task_id:

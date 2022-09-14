@@ -2,6 +2,8 @@
     <div class="card">
         <div class="card-body">
             <h1>Change Task - {{changeTaskResults[0]['pk']}}</h1>
+            <br/>
+            <a v-bind:href="`${this.rootUrl}rfc_information/${changeTaskResults[0].fields.request_for_change}`">Go back</a>
             <hr>
 
             <!-- CHANGE TASK TITLE -->
@@ -274,7 +276,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `${rootUrl}change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
+                    `${this.rootUrl}change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
                     data_to_send,
                 ).then(response => {
                     //Reload the page

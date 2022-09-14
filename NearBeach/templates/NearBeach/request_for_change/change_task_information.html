@@ -3,7 +3,7 @@
 {% block content %}
     <change-task-information v-bind:change-task-results="{{change_task_results}}"
                              v-bind:root-url="`{% url 'dashboard' %}`"
-                             v-bind:user_level="{{user_level}}"
+                             v-bind:user-level="{{user_level}}"
                              v-bind:user-list="{{user_list}}"
     ></change-task-information>
 {% endblock %}

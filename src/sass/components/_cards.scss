@@ -107,9 +107,11 @@
 
         img {
           width: 100px;
+          height: 100px;
           position: absolute;
           border-radius: 50%;
-          transform: translateX(-110px);
+          transform: translateX(-110px) translateY(-13px);
+          object-fit: contain;
         }
       }
     }

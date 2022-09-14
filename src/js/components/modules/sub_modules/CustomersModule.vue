@@ -96,6 +96,7 @@
                 axios.post(
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list/`,
                 ).then((response) => {
+                    console.log("Customer Results: ", response['data']);
                     this.customerResults = response['data'];
                 }).catch((error) => {
                     this.showErrorModal(error, this.destination);
@@ -110,7 +111,7 @@
             var escape_array = [
                 'requirement_item',
             ]
-            if (escape_array.indexOf(this.locationId) < 0) return;
+            if (escape_array.indexOf(this.destination) >= 0) return;
 
             //Wait 200ms before getting data
             setTimeout(() => {

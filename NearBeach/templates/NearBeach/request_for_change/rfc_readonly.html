@@ -5,6 +5,10 @@
         <rfc-information v-bind:rfc-results="{{rfc_results}}"
                          v-bind:rfc-change-lead="{{rfc_change_lead}}"
                          v-bind:is-read-only="true"
+                         v-bind:group-leader-count="{{group_leader_count}}"
+                         v-bind:user-level="{{ user_level }}"
+                         v-bind:root-url="`{% url 'dashboard' %}`"
+                         v-bind:static-url="`{% static '/' %}`"
         ></rfc-information>
     </fieldset>
     <br/>
