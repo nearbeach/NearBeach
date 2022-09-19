@@ -6,7 +6,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import ChangeTaskStatusForm, ChangeTaskForm
-from NearBeach.models import change_task, User
+from NearBeach.models import change_task, request_for_change, User
 
 from NearBeach.decorators.check_user_permissions import check_change_task_permissions
 
@@ -28,6 +28,8 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     if len(change_task_results) == 0:
         raise Http404()
 
+    rfc_results = request_for_change.objects.get(rfc_id=change_task_results[0].request_for_change_id)
+
     # Load the template
     t = loader.get_template('NearBeach/request_for_change/change_task_information.html')
 
@@ -47,6 +49,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     # Context
     c = {
         'change_task_results': serializers.serialize('json', change_task_results),
+        'rfc_status': rfc_results.rfc_status,
         'user_level': kwargs['user_level'],
         'user_list': user_list,
     }

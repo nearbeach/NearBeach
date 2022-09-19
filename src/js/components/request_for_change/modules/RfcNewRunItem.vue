@@ -36,6 +36,7 @@
                 <hr>
                 <between-dates destination="Change Task"
                                v-on:update_dates="updateDates($event)"
+                               v-bind:no-back-dating="false"
                 ></between-dates>
 
                 <!-- IMPLEMENTATION USER & QA USER -->

@@ -3,6 +3,8 @@
         <div class="card-body">
             <h1>Change Task - {{changeTaskResults[0]['pk']}}</h1>
             <br/>
+            RFC Status: {{rfcStatus}}
+            <br/>
             <a v-bind:href="`${this.rootUrl}rfc_information/${changeTaskResults[0].fields.request_for_change}`">Go back</a>
             <hr>
 
@@ -29,6 +31,7 @@
             <between-dates destination="Change Task"
                            v-bind:start-date-model="changeStartDateModel"
                            v-bind:end-date-model="changeEndDateModel"
+                           v-bind:no-back-dating="false"
                            v-on:update_dates="updateDates($event)"
             ></between-dates>
 
@@ -150,7 +153,7 @@
             <!-- START CHANGE TASK -->
             <a href="javascript:void(0)"
                class="btn btn-danger save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 3 && userLevel >= 2"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 3 && userLevel >= 2 && rfcStatus === 'Started'"
                v-on:click="updateStatus(4)"
             >Start Task</a>
 
@@ -190,6 +193,10 @@
                 default: () => {
                     return [];
                 },
+            },
+            rfcStatus: {
+                type: String,
+                default: 'Empty Status',
             },
             rootUrl: {
                 type: String,
