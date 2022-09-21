@@ -176,7 +176,7 @@
                     //There is a profile image
                     this.profilePicture = `/media/${this.rootUrl}${profile_picture}`;
                 } else {
-                    this.profilePicture = `${staticUrl}/NearBeach/images/placeholder/product_tour.svg`
+                    this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`
                 }
             },
             updateOrganisation: function() {

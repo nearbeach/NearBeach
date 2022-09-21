@@ -25,12 +25,20 @@
                 <div class="col-md-8">
                     <div class="form-group col-sm-8">
                         <label>Organisation:</label>
-                        <v-select :options="organisationFixList"
+                        <!-- <v-select :options="organisationFixList"
                           @search="fetchOptions"
                           v-model="organisationModel"
                           label="organisation_name"
                           class="get-stakeholders"
-                        ></v-select>
+                        ></v-select> -->
+                        <n-select :options="organisationFixList"
+                                  filterable
+                                  placeholder="Search Organisations"
+                                  @search="fetchOptions"
+                                  v-model:value="organisationModel"
+                                  label="organisation_name"
+                                  class="get-stakeholders"
+                        />
                     </div>
                 </div>
             </div>
@@ -62,10 +70,18 @@
     //Mixins
     import searchMixin from "../../mixins/searchMixin";
 
+    //Components
+    import NewCustomerForm from "./NewCustomerForm.vue";
+    import { NSelect } from 'naive-ui';
+
     export default {
         name: "NewCustomer",
         setup() {
             return { v$: useVuelidate(), }
+        },
+        components: {
+            NewCustomerForm,
+            NSelect,
         },
         props: {
             organisationName: {
@@ -93,7 +109,7 @@
                 customerLastNameModel: '',
                 flagValidationCheck: false,
                 organisationFixList: [],
-                organisationModel: {},
+                organisationModel: "",
                 titleModel: [],
             }
         },
@@ -131,36 +147,17 @@
                     `${this.rootUrl}search/organisation/data/`,
                     data_to_send
                 ).then(response => {
-                    //Clear the stakeholderFixList
-                    this.organisationFixList = [];
-
                     //Extract the required JSON data
                     var extracted_data = response['data'];
 
                     //Look through the extracted data - and map the required fields into stakeholder fix list
-                    extracted_data.forEach((row) => {
+                    this.organisationFixList = extracted_data.map((row) => {
                         //Create the creation object
-                        var creation_object = {
-                            'value': row['pk'],
-                            'organisation_name': row['fields']['organisation_name'],
-                            'organisation_website': row['fields']['organisation_website'],
-                            'organisation_email': row['fields']['organisation_email'],
-                            'organisation_profile_picture': row['fields']['organisation_profile_picture'],
-                        };
-
-                        //Push that object into the stakeholders
-                        this.organisationFixList.push(creation_object)
+                        return {
+                            value: row['pk'],
+                            label: row['fields']['organisation_name'],
+                        }
                     });
-
-                    //If there is an organisation Name - we want to filter it out of the results and place it into
-                    //the modal
-                    var filtered_results = this.organisationFixList.filter(row => {
-                        return row['organisation_name'] == this.organisationName;
-                    });
-                    if (filtered_results.length > 0) {
-                        //Get the first value - which should be the proper organisation
-                        this.organisationModel = filtered_results[0];
-                    }
                 }).catch(function (error) {
                     // Get the error modal
                     var elem_cont = document.getElementById("errorModalContent");
@@ -192,32 +189,32 @@
                 this.v$.$touch();
 
                 //NEED TO USE MIXIN FOR THIS SECTION
-                if (this.v$.$invalid) {
-                    //Show the error dialog and notify to the user that there were field missing.
-                    var elem_cont = document.getElementById("errorModalContent");
+                // if (this.v$.$invalid) {
+                //     //Show the error dialog and notify to the user that there were field missing.
+                //     var elem_cont = document.getElementById("errorModalContent");
 
-                    // Update the content
-                    elem_cont.innerHTML =
-                        `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
+                //     // Update the content
+                //     elem_cont.innerHTML =
+                //         `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
 
-                    // Show the modal
-                    var errorModal = new Modal(document.getElementById('errorModal'));
-                    errorModal.show();
+                //     // Show the modal
+                //     var errorModal = new Modal(document.getElementById('errorModal'));
+                //     errorModal.show();
 
-                    //Just return - as we do not need to do the rest of this function
-                    return;
-                }
+                //     //Just return - as we do not need to do the rest of this function
+                //     return;
+                // }
 
                 //Create the data_to_send
                 const data_to_send = new FormData();
-                data_to_send.set('customer_title',this.titleModel['value']);
+                data_to_send.set('customer_title',this.titleModel);
                 data_to_send.set('customer_first_name',this.customerFirstNameModel);
                 data_to_send.set('customer_last_name',this.customerLastNameModel);
                 data_to_send.set('customer_email',this.customerEmailModel);
 
                 //If there is an organisation in the model - send it
-                if (Object.keys(this.organisationModel).length != 0) {
-                    data_to_send.set('organisation',this.organisationModel['value']);
+                if (this.organisationModel !== "" && this.organisationModel !== null) {
+                    data_to_send.set('organisation',this.organisationModel);
                 }
 
                 //Send the data using axios
