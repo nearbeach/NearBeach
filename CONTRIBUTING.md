@@ -75,7 +75,7 @@ We are being transparent with all our costs and will try and provide a yearly co
 
 ## Bug Reporting
 
-Bug reporting is a very important role for NearBeach. During Hacktoberfest, you are more than welcome to submit issues. Alternatively you could use your [bugzilla](https://bugzilla.nearbeach.org).
+Bug reporting is a very important role for NearBeach. During Hacktoberfest, you are more than welcome to submit issues.
 
 
 ## Deepsource Issues
