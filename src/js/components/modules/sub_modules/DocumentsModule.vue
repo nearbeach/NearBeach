@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon :icon="icons.bxBriefcase" /> Documents</h2>
+        <h2><Icon :icon="icons.bxBriefcase" /> Documents</h2>
         <p class="text-instructions">
             The following is a folder structure of all documents uploaded to this {{destination}}
         </p>
@@ -17,7 +17,7 @@
                  v-on:click="goToParentDirectory()"
                  class="document-child"
             >
-                <IconifyIcon v-bind:icon="icons.arrowUp"
+                <Icon v-bind:icon="icons.arrowUp"
                              width="80px"
                              height="80px"
                 />
@@ -28,10 +28,11 @@
 
             <!-- RENDER THE FOLDERS -->
             <div v-for="folder in folderFilteredList"
+                 :key="folder.pk"
                  v-on:click="updateCurrentFolder(folder['pk'])"
                  class="document-child"
             >
-                <IconifyIcon v-bind:icon="icons.folderIcon"
+                <Icon v-bind:icon="icons.folderIcon"
                              width="80px"
                              height="80px"
                 />
@@ -41,9 +42,15 @@
             </div>
 
             <!-- RENDER THE FILES -->
-            <div v-for="document in documentFilteredList" class="document-child">
-                <a v-bind:href="`/private/${document['document_key_id']}/`" target="_blank">
-                    <IconifyIcon v-bind:icon="getIcon(document)"
+            <div v-for="document in documentFilteredList" 
+                 :key="document.document_key_id"
+                 class="document-child"
+            >
+                <a v-bind:href="`/private/${document['document_key_id']}/`" 
+                   rel="noopener noreferrer"
+                   target="_blank"
+                >
+                    <Icon v-bind:icon="getIcon(document)"
                                  width="80px"
                                  height="80px"
                     />
@@ -61,6 +68,7 @@
                     type="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
+                    v-if="userLevel > 1"
             >
                 New Document/File
             </button>
@@ -120,18 +128,37 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
     import {Modal} from "bootstrap";
+    import { Icon } from '@iconify/vue';
+    import AddFolderWizard from "../wizards/AddFolderWizard.vue";
+    import AddLinkWizard from "../wizards/AddLinkWizard.vue";
+    import UploadDocumentWizard from "../wizards/UploadDocumentWizard.vue";
 
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "DocumentsModule",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        components: {
+            AddFolderWizard,
+            AddLinkWizard,
+            Icon,
+            UploadDocumentWizard,
+        },
+        props: {
+            destination: {
+                type: String,
+                default: "",
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+        },
         data() {
             return {
                 currentFolder: null,
@@ -144,11 +171,16 @@
         mixins: [
             iconMixin,
         ],
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
+            }),
+        },
         methods: {
             addFolder: function() {
                 var addFolderModal = new Modal(document.getElementById('addFolderModal'));
                 addFolderModal.show();
-
             },
             addLink: function() {
                 var addLinkModal = new Modal(document.getElementById("addLinkModal"));
@@ -156,7 +188,7 @@
             },
             getDocumentList: function() {
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/list/files/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/files/`,
                 ).then(response => {
                     this.documentList = response['data'];
 
@@ -165,7 +197,7 @@
             },
             getFolderList: function() {
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/list/folders/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/folders/`,
                 ).then(response => {
                     this.folderList = response['data'];
 
@@ -175,7 +207,7 @@
             getIcon: function(document) {
                 //If the document is a weblink - just return the link image
                 if (document['document_key__document_url_location'] != "" &&
-                    document['document_key__document_url_location'] != null) {
+                    document['document_key__document_url_location'] !== null) {
                     return this.icons.linkOut;
                 }
 
@@ -269,8 +301,11 @@
             },
         },
         mounted() {
-            this.getDocumentList();
-            this.getFolderList();
+            //Wait 200ms
+            setTimeout(() => {
+                this.getDocumentList();
+                this.getFolderList();
+            }, 200);
         },
     }
 </script>

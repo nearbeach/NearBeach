@@ -10,15 +10,17 @@
                          v-bind:organisation-results="{{organisation_results}}"
                          v-bind:user-level="{{ user_level }}"
     ></project-information>
+
     {% if project_status == 'Closed' or user_level == 1 %}
         </fieldset>
     {% endif %}
-
+    
     <br/>
 
     <parent-modules v-bind:destination="'project'"
                     v-bind:location-id="{{project_id}}"
                     v-bind:root-url="`{% url 'dashboard' %}`"
                     v-bind:static-url="`{% static '/' %}`"
+                    v-bind:user-level="{{ user_level }}"
     ></parent-modules>
 {% endblock %}

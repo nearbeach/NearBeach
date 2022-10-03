@@ -18,7 +18,8 @@
                     <!-- TASK NAME -->
                     <div class="form-group">
                         <label>Task Short Description:
-                            <span class="error" v-if="!$v.taskShortDescriptionModel.required && $v.taskShortDescriptionModel.$dirty"
+                            <span class="error"
+                                  v-if="!v$.taskShortDescriptionModel.$error.length > 0"
                             > Please supply a title.</span>
                         </label>
                         <input type="text"
@@ -30,10 +31,10 @@
 
                     <!-- TASK DESCRIPTION -->
                     <label>Task Long Description:
-                        <span class="error" v-if="!$v.taskDescriptionModel.required && $v.taskDescriptionModel.$dirty"> Please supply a description.</span>
-                        <span class="error" v-if="!$v.taskDescriptionModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.taskDescriptionModel.$error.length > 0"
+                        > Please supply a description.</span>
                     </label><br>
-                    <img v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/body_text.svg`"
+                    <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -41,10 +42,12 @@
                        :init="{
                          height: 500,
                          menubar: false,
-                         toolbar: 'undo redo | formatselect | ' +
-                          'bold italic backcolor | alignleft aligncenter ' +
-                          'alignright alignjustify | bullist numlist outdent indent | ',
-                       }"
+                         plugins: ['lists','table'],
+                        toolbar: [
+                           'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                           'bold italic strikethrough underline backcolor | table | ' +
+                           'bullist numlist outdent indent | removeformat'
+                        ]}"
                        v-bind:content_css="false"
                        v-bind:skin="false"
                        v-model="taskDescriptionModel"
@@ -57,14 +60,13 @@
             <!-- STAKEHOLDER ORGANISATION -->
             <hr>
             <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"
-                              v-bind:is-dirty="$v.stakeholderModel.$dirty"
+                              v-bind:is-dirty="v$.stakeholderModel.$error.length > 0"
             ></get-stakeholders>
 
             <!-- START DATE & END DATE -->
             <hr>
             <between-dates destination="task"
                            v-on:update_dates="updateDates($event)"
-                           v-bind:is-dirty-end="$v.taskEndDateModel.$dirty || $v.taskStartDateModel.$dirty"
             ></between-dates>
 
             <!-- Group Permissions -->
@@ -73,7 +75,7 @@
                                v-bind:destination="'task'"
                                v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
-                               v-bind:is-dirty="$v.groupModel.$dirty"
+                               v-bind:is-dirty="v$.groupModel.$error.length > 0"
             ></group-permissions>
 
             <!-- Submit Button -->
@@ -92,30 +94,53 @@
 
 <script>
     const axios = require('axios');
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
+    import Editor from '@tinymce/tinymce-vue'
+    import BetweenDates from "../dates/BetweenDates.vue";
+    import GroupPermissions from "../permissions/GroupPermissions.vue";
+    import GetStakeholders from "../organisations/GetStakeholders.vue";
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
     export default {
         name: "NewTask",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            BetweenDates,
+            GetStakeholders,
+            GroupPermissions,
+            'editor': Editor,
+        },
         props: {
-            groupResults: Array,
+            groupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
             userGroupResults: {
                 type: Array,
                 default: () => {
                     return [];
                 },
-            }
+            },
         },
         data() {
             return {
                 groupModel: {},
                 stakeholderModel: '',
-                staticUrl: {
-                    type: String,
-                    default: "/",
-                },
                 taskDescriptionModel: '',
                 taskEndDateModel: '',
                 taskShortDescriptionModel: '',
@@ -147,12 +172,19 @@
             },
         },
         methods: {
-            submitNewTask: function() {
+            submitNewTask: async function() {
                 //Check validation
-                this.$v.$touch();
+                const isFormCorrect = await this.v$.$validate();
 
                 //If the form is not validated
-                if (this.$v.$invalid) {
+                if (!isFormCorrect && (
+                    this.v$.groupModel.$error.length > 0 ||
+                    this.v$.stakeholderModel.length > 0 ||
+                    this.v$.taskDescriptionModel.length > 0 ||
+                    this.v$.taskEndDateModel.length > 0 ||
+                    this.v$.taskShortDescriptionModel.length > 0 ||
+                    this.v$.taskStartDateModel.length > 0
+                )) {
                     this.showValidationErrorModal();
 
                     //User does not need to do anything else
@@ -161,15 +193,15 @@
 
                 //Create the data_to_send array
                 const data_to_send = new FormData();
-                data_to_send.set('organisation',this.stakeholderModel['value']);
+                data_to_send.set('organisation',this.stakeholderModel);
                 data_to_send.set('task_long_description',this.taskDescriptionModel);
-                data_to_send.set('task_end_date',this.taskEndDateModel);
+                data_to_send.set('task_end_date',this.taskEndDateModel.toISOString());
                 data_to_send.set('task_short_description',this.taskShortDescriptionModel);
-                data_to_send.set('task_start_date',this.taskStartDateModel);
+                data_to_send.set('task_start_date',this.taskStartDateModel.toISOString());
 
                 // Insert a new row for each group list item
                 this.groupModel.forEach((row,index) => {
-                    data_to_send.append(`group_list`,row['value']);
+                    data_to_send.append(`group_list`,row);
                 });
 
                 //Send data to backend
@@ -184,8 +216,8 @@
                 });
             },
             updateDates: function(data) {
-                this.taskEndDateModel = data['end_date'];
-                this.taskStartDateModel = data['start_date'];
+                this.taskEndDateModel = new Date(data['end_date']);
+                this.taskStartDateModel = new Date(data['start_date']);
             },
             updateGroupModel: function(data) {
                 this.groupModel = data;
@@ -193,7 +225,14 @@
             updateStakeholderModel: function(data) {
                 this.stakeholderModel = data;
             }
-        }
+        },
+        mounted() {
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            })
+        },
     }
 </script>
 

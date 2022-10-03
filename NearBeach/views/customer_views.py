@@ -1,16 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Sum, Q, Min
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_customer_permissions
 from NearBeach.models import customer, list_of_title, organisation
-from NearBeach.forms import CustomerForm, NewCustomerForm
-
-import json
+from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
 
 
 @login_required(login_url='login', redirect_field_name='')
@@ -31,7 +27,6 @@ def customer_information(request, customer_id, *args, **kwargs):
     )
 
     title_list = list_of_title.objects.filter(
-        #is_deleted=False, # NEED TO RECONSTRUCT DATABASE TO GET THIS TO WORK!
     )
 
     # Get tempalte
@@ -40,7 +35,7 @@ def customer_information(request, customer_id, *args, **kwargs):
     # Context
     c = {
         'customer_results': serializers.serialize('json', [customer_results]),
-        'nearbeach_title': 'Customer Information %s' % customer_id,
+        'nearbeach_title': f"Customer Information {customer_id}",
         'organisation_results': serializers.serialize('json', organisation_results),
         'title_list': serializers.serialize('json', title_list),
     }
@@ -72,13 +67,43 @@ def customer_information_save(request, customer_id, *args, **kwargs):
     customer_results.customer_first_name = form.cleaned_data['customer_first_name']
     customer_results.customer_last_name = form.cleaned_data['customer_last_name']
     customer_results.customer_email = form.cleaned_data['customer_email']
-    # customer_results.organisation = form.cleaned_data['organisation'] # Does not need updating!
 
     # Save
     customer_results.save()
 
     # Return back a sucessful statement
     return HttpResponse("Success")
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name='')
+@check_user_customer_permissions(min_permission_level=2)
+def customer_update_profile(request, customer_id, *args, **kwargs):
+    """
+    """
+    form = ProfilePictureForm(request.POST, request.FILES)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    update_customer = customer.objects.get(customer_id=customer_id)
+    update_customer.customer_profile_picture = form.cleaned_data['file']
+    update_customer.save()
+
+    return HttpResponse("")
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name='')
+def get_profile_picture(request, customer_id):
+    """
+    :param request:
+    :param customer_id:
+    :return:
+    """
+    customer_results = customer.objects.get(customer_id=customer_id)
+
+    # Just return the customer profile picture
+    return HttpResponse(customer_results.customer_profile_picture.url)
 
 
 @login_required(login_url='login', redirect_field_name="")

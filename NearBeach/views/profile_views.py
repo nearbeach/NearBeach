@@ -1,13 +1,10 @@
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import reverse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import User, UpdateUserForm
-# from NearBeach.models import *
 
 import json
 
@@ -51,7 +48,6 @@ def update_data(request):
 
     # Extract out the user results
     user_update = request.user
-    user_update.email = form.cleaned_data['email']
     user_update.first_name = form.cleaned_data['first_name']
     user_update.last_name = form.cleaned_data['last_name']
     user_update.save()

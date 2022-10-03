@@ -5,7 +5,11 @@
                        v-bind:column-results="{{column_results}}"
                        v-bind:group-results="{{group_results}}"
                        v-bind:level-results="{{level_results}}"
+                       v-bind:user-level="{{user_level}}"
+                       v-bind:root-url="`{% url 'dashboard' %}`"
+                       v-bind:static-url="`{% static '/' %}`"
     ></kanban-edit-board>
 
-    <kanban-group-permissions v-bind:location-id="{{kanban_board_id}}"></kanban-group-permissions>
+    <kanban-group-permissions v-bind:location-id="{{kanban_board_id}}"
+    ></kanban-group-permissions>
 {% endblock %}

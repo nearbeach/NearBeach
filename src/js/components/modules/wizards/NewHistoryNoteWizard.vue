@@ -12,7 +12,7 @@
         >
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.noteAdd"></IconifyIcon> New Note</h2>
+                    <h2><Icon v-bind:icon="icons.noteAdd"></Icon> New Note</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -30,10 +30,12 @@
                        :init="{
                          height: 300,
                          menubar: false,
-                         toolbar: 'undo redo | ' +
-                          'bold italic backcolor | alignleft aligncenter ' +
-                          'alignright alignjustify | bullist numlist outdent indent | ',
-                       }"
+                         plugins: ['lists','table'],
+                          toolbar: [
+                             'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                             'bold italic strikethrough underline backcolor | table | ' +
+                             'bullist numlist outdent indent | removeformat'
+                          ]}"
                        v-bind:content_css="false"
                        v-bind:skin="false"
                        v-model="newNoteModel"
@@ -63,11 +65,19 @@
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import Editor from '@tinymce/tinymce-vue'
 
-    const axios = require('axios');
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "NewHistoryNoteWizard",
+        components: {
+            'editor': Editor,
+            Icon,
+        },
         props: [
             'locationId',
             'destination',
@@ -81,6 +91,11 @@
                 newNoteModel: '',
             }
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             submitNote: function() {
                 //Construct the form data to send
@@ -91,7 +106,7 @@
 
                 //Add the data to data_to_send
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_notes/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_notes/`,
                     data_to_send,
                 ).then((response) => {
                     //Submit the note up

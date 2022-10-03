@@ -1,5 +1,7 @@
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
-    <search-groups v-bind:group-results="{{group_results}}"></search-groups>
+    <search-groups v-bind:group-results="{{group_results}}"
+                   v-bind:root-url="`{% url 'dashboard' %}`"
+    ></search-groups>
 {% endblock %}

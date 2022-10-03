@@ -16,9 +16,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="noteHistory in noteHistoryResults">
+                    <tr v-for="noteHistory in noteHistoryResults"
+                        v-bind:key="noteHistory['pk']"
+                    >
                         <td>
-                            <div v-html="noteHistory['fields']['object_note'].substr(0, 400)" />
+                            <div v-html="noteHistory['fields']['object_note']" />
                             <div class="spacer"></div>
                             <p class="small-text">
                                 {{noteHistory['fields']['date_created']}}
@@ -35,14 +37,17 @@
     export default {
         name: "ListNotes",
         props: {
-            destination: String,
+            destination: {
+                type: String,
+                default: '',
+            },
             noteHistoryResults: {
                 type: Array,
                 default: function() {
                     return [];
                 },
             },
-        }
+        },
     }
 </script>
 

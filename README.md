@@ -5,14 +5,15 @@
 [![PyPI version](https://badge.fury.io/py/NearBeach.svg)](https://badge.fury.io/py/NearBeach)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/NearBeach.svg?style=flat-square)
 ![GitHub stars](https://img.shields.io/github/stars/robotichead/NearBeach.svg?style=social)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/robotichead/NearBeach.svg)
-![Liberapay receiving](https://img.shields.io/liberapay/receives/robotichead.svg)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/robotichead/nearbeach.svg)
+![GitHub Sponsors](https://img.shields.io/github/sponsors/robotichead?style=plastic)
 ![Website](https://img.shields.io/website/https/nearbeach.org.svg)
 ![Twitter Follow](https://img.shields.io/twitter/follow/robotichead.svg?style=social)
+[![DeepSource](https://deepsource.io/gh/robotichead/NearBeach.svg/?label=active+issues&show_trend=true&token=cWkQ-pVgAD4EX2rsqV2kEZRq)](https://deepsource.io/gh/robotichead/NearBeach/?ref=repository-badge)
 
 
-NearBeach is currently in beta development. If you find any issues, or require any help, please do not hesitate to 
-contact on our forums. https://help.nearbeach.org
+NearBeach is currently in alpha development. If you find any issues, or require any help, please do not hesitate to 
+contact on our [discord server](https://discord.gg/64uhRztS6n).
 
 ## What is NearBeach?
 
@@ -23,7 +24,6 @@ NearBeach is an open source project management system, built using Django and Vu
 
 - [Discord](https://discord.gg/64uhRztS6n)
 - [Documentation](https://nearbeach.readthedocs.io)
-- [Bugzilla](https://bugzilla.nearbeach.org)
 - [NearBeach Homepage](https://nearbeach.org)
 - [NearBeach Demo](https://demo.nearbeach.org)
 

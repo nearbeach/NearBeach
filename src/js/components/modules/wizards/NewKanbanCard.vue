@@ -10,7 +10,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.cardChecklist"></IconifyIcon> Add Kanban Card Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.cardChecklist"></Icon> Add Kanban Card Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -48,10 +48,12 @@
                                :init="{
                                  height: 300,
                                  menubar: false,
-                                 toolbar: 'undo redo | formatselect | ' +
-                                  'bold italic backcolor | alignleft aligncenter ' +
-                                  'alignright alignjustify | bullist numlist outdent indent | ',
-                               }"
+                                 plugins: ['lists','table'],
+                                  toolbar: [
+                                     'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                                     'bold italic strikethrough underline backcolor | table | ' +
+                                     'bullist numlist outdent indent | removeformat'
+                                  ]}"
                                v-bind:content_css="false"
                                v-bind:skin="false"
                                v-model="kanbanCardDescriptionModel"
@@ -66,7 +68,7 @@
                             v-on:click="addKanbanCard"
                             v-bind:disabled="disableAddButton"
                     >
-                        Add Link
+                        Add Card
                     </button>
                 </div>
             </div>
@@ -75,18 +77,47 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import Editor from '@tinymce/tinymce-vue'
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
     export default {
         name: "NewKanbanCard",
+        components: {
+            'editor': Editor,
+            Icon,
+        },
         props: {
-            columnResults: Array,
-            kanbanCardResults: Array,
-            levelResults: Array,
-            kanbanBoardResults: Array,
+            columnResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            kanbanCardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            levelResults:  {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            kanbanBoardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         mixins: [
             iconMixin,
@@ -98,6 +129,11 @@
                 kanbanCardTextModel: '',
             }
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             addKanbanCard: function() {
                 //Get the modal to extract data from
@@ -107,14 +143,12 @@
                 const data_to_send = new FormData();
                 data_to_send.set('kanban_card_text',this.kanbanCardTextModel);
                 data_to_send.set('kanban_card_description',this.kanbanCardDescriptionModel);
-                //data_to_send.set('kanban_level',this.levelResults[0]['pk']);
-                //data_to_send.set('kanban_column',this.columnResults[0]['p
                 data_to_send.set('kanban_level',self_modal['dataset']['kanbanLevel']);
                 data_to_send.set('kanban_column',self_modal['dataset']['kanbanColumn']);
 
                 //Send the data
                 axios.post(
-                    `/kanban_information/${this.kanbanBoardResults[0]['pk']}/new_card/`,
+                    `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0]['pk']}/new_card/`,
                     data_to_send,
                 ).then(response => {
                     //Emit the data upstream

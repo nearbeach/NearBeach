@@ -1,8 +1,5 @@
-from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.urls import reverse
-
-from NearBeach.views.search_views import search
 
 # Declaration of Username and Password
 username = 'team_leader'
@@ -12,6 +9,7 @@ long_string = """
     she was adoriable. Currently she is licking my arm, I think because she enjoyed the treats she got on stream. Socks
     does like to every now and then meow into the microphone.
 """
+
 
 def login_user(c: object, self: object) -> object:
     response = c.post(
@@ -168,4 +166,3 @@ class TeamLeaderSearchTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # TODO: Add in the UNIT TESTS for testing data in produces certain data out
-

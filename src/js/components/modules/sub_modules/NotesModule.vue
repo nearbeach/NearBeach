@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.noteAdd"></IconifyIcon> Note History</h2>
+        <h2><Icon v-bind:icon="icons.noteAdd"></Icon> Note History</h2>
         <p class="text-instructions">
             The following are saved notes against this {{destination}}. Add notes by clicking on the button below.
         </p>
@@ -17,6 +17,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
                    v-on:click="createNewNote"
+                   v-if="userLevel > 1"
                 >Add Note to {{destination}}</a>
             </div>
         </div>
@@ -34,11 +35,21 @@
     import {Modal} from "bootstrap";
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import ListNotes from "./ListNotes.vue";
+    import NewHistoryNoteWizard from "../wizards/NewHistoryNoteWizard.vue";
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "NotesModule",
-        components: {},
+        components: {
+            Icon,
+            ListNotes,
+            NewHistoryNoteWizard,
+        },
         props: [
             'destination',
             'locationId',
@@ -52,6 +63,12 @@
                 noteHistoryResults: [],
             };
         },
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
+            }),
+        },
         methods: {
             createNewNote: function() {
                 var newNoteModal = new Modal(document.getElementById('newNoteModal'));
@@ -59,7 +76,7 @@
             },
             getNoteHistoryResults: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/note_list/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
                 ).then(response => {
                     this.noteHistoryResults = response['data'];
                 }).catch(error => {
@@ -72,9 +89,10 @@
             }
         },
         mounted() {
-            this.getNoteHistoryResults();
+            setTimeout(() => {
+                this.getNoteHistoryResults();
+            }, 200);
         }
-
     }
 </script>
 

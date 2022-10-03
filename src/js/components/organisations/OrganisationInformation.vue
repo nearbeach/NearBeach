@@ -15,12 +15,22 @@
                     </p>
                 </div>
                 <div class="col-md-3">
-                    <img src="/static/NearBeach/images/placeholder/product_tour.svg"
-                         alt="No Profile Picture"
+                    <img v-bind:src="profilePicture"
+                         alt="Profile Picture"
                          class="organisation-profile-image"
                     />
                     <br/>
-                    <button class="btn btn-primary">Update Profile...</button>
+                    <!--<button class="btn btn-primary">Update Profile...</button>-->
+                    <n-upload
+                        :action="`${rootUrl}organisation_information/${organisationResults[0]['pk']}/update_profile/`"
+                        :headers="{
+                            'X-CSRFTOKEN': getToken('csrftoken'),
+                        }"
+                        :data="{}"
+                        @finish="updateProfilePicture"
+                    >
+                        <n-button>Update Profile Picture</n-button>
+                    </n-upload>
                 </div>
                 <div class="col-md-5">
                     <!-- ORGANISATION NAME -->
@@ -28,7 +38,7 @@
                         <label for="id_organisation_name">
                             Organisation Name
                             <span class="error"
-                                  v-if="!$v.organisationNameModel.required && $v.organisationNameModel.$dirty"
+                                  v-if="v$.organisationNameModel.$error.length > 0"
                                 > Please suppy a title.
                             </span>
                         </label>
@@ -45,12 +55,8 @@
                         <label for="id_organisation_website">
                             Organisation Website
                             <span class="error"
-                                  v-if="!$v.organisationWebsiteModel.required && $v.organisationWebsiteModel.$dirty"
-                                  > Please supply
-                            </span>
-                            <span class="error"
-                                  v-if="!$v.organisationWebsiteModel.url && $v.organisationWebsiteModel.$dirty"
-                                  > Please format at URL
+                                  v-if="v$.organisationWebsiteModel.$error.length > 0"
+                                  > Please supply a properly formatted URL
                             </span>
                         </label>
                         <input id="id_organisation_website"
@@ -66,12 +72,8 @@
                         <label for="id_organisation_email">
                             Organisation Email
                             <span class="error"
-                                  v-if="!$v.organisationEmailModel.required && $v.organisationEmailModel.$dirty"
-                                  > Please supply
-                            </span>
-                            <span class="error"
-                                  v-if="!$v.organisationEmailModel.email && $v.organisationEmailModel.$dirty"
-                                  > Please format as Email
+                                  v-if="v$.organisationEmailModel.$error.length > 0"
+                                  > Please supply a valid Email
                             </span>
                         </label>
                         <input id="id_organisation_email"
@@ -100,29 +102,56 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    //import { NButton, NUpload } from 'naive-ui';
+    import { NButton, NUpload } from 'naive-ui';
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Validation
-    import { email, maxLength, required , url } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { email, maxLength, required , url } from '@vuelidate/validators';
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
+    import getToken from "../../mixins/getTokenMixin";
 
     export default {
         name: "OrganisationInformation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            NButton,
+            NUpload,
+        },
         props: {
-            organisationResults: Array,
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         mixins: [
             errorModalMixin,
+            getToken,
             loadingModalMixin,
         ],
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         data() {
             return {
                 organisationNameModel: this.organisationResults[0]['fields']['organisation_name'],
                 organisationEmailModel: this.organisationResults[0]['fields']['organisation_email'],
                 organisationWebsiteModel: this.organisationResults[0]['fields']['organisation_website'],
+                profilePicture: "",    
             }
         },
         validations: {
@@ -140,11 +169,21 @@
             },
         },
         methods: {
+            setProfilePicture: function() {
+                let profile_picture = this.organisationResults[0].fields.organisation_profile_picture;
+
+                if (profile_picture !== undefined && profile_picture !== null && profile_picture !== "") {
+                    //There is a profile image
+                    this.profilePicture = `/media/${this.rootUrl}${profile_picture}`;
+                } else {
+                    this.profilePicture = `${staticUrl}/NearBeach/images/placeholder/product_tour.svg`
+                }
+            },
             updateOrganisation: function() {
                 //Check validation
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
@@ -162,7 +201,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/organisation_information/${this.organisationResults[0]['pk']}/save/`,
+                    `${this.rootUrl}organisation_information/${this.organisationResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     this.closeLoadingModal();
@@ -170,6 +209,21 @@
                     this.showErrorModal(error,'organisation',this.organisationResults[0]['pk']);
                 })
             },
+            updateProfilePicture: function() {
+                //Contact the API to get the location of the new image
+                axios.post(
+                    `${this.rootUrl}organisation_information/${this.organisationResults[0]['pk']}/get_profile_picture/`,
+                    {},
+                ).then(response => {
+                    this.profilePicture = response.data;
+                }).catch(() => {
+                    this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg` 
+                })
+            },
+        },
+        mounted() {
+            //Set profile picture
+            this.setProfilePicture();
         }
     }
 </script>

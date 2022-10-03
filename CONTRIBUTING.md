@@ -1,5 +1,6 @@
 # Contributing to NearBeach 
 
+<!---
 ##  Hacktoberfest 2021
 
 Welcome to NearBeach, we are super glad you are here. In the following month of Hacktoberfest we are hoping to achieve the following goals/milestones.
@@ -9,18 +10,35 @@ Welcome to NearBeach, we are super glad you are here. In the following month of 
 - Increase our code coverage for both Django and VueJS
 - Increase our E2E testing with Cypress.io
 - Bug test whole application
-- Fix bugs listed in both the Issues and our [bugzilla repository](https://bugzilla.nearbeach.org)
+- Fix bugs listed in the [Github Issues](https://github.com/robotichead/NearBeach/issues).
 - Improve user documentation
 - Start working on Docker installation process
 
 This seems a lot to cover within such a short time frame, but we are hoping you are willing to help us. We greatly appreciate all the help we can get no matter how small the contribution.
-
+--->
 If you would like to join our community, please join our [fun and exciting discord](https://discord.gg/64uhRztS6n).
+
+
+## Contributing to NearBeach
+
+We are always looking for new contributors. There are many different ways to contribute to NearBeach, for example;
+
+- Donating via [github sponsorships](https://github.com/sponsors/robotichead) or [our patreon](https://www.patreon.com/NearBeach)
+- Bug testing
+- Bug fixing
+- Writing Documentation
+- Writing new components or functionality for NearBeach
+- Refactoring Code, i.e. making it more efficient
+- Updating Code, i.e. updating libraries
+- Marketing NearBeach
+- Supplying feedback on NearBeach, i.e. improvements and feature requests
+
+and many many more. Join our [community on discord to see what you can do](https://discord.gg/64uhRztS6n)
 
 
 ## Code of Conduct
 
-Please read our [code of conduct here].
+Please read our [code of conduct here](https://github.com/robotichead/NearBeach/blob/main/CODE_OF_CONDUCT.md).
 
 
 ## NearBeach Overview
@@ -43,25 +61,21 @@ Each different module/componet in NearBeach are called Objects. The following ob
 Each object shall have it's own folder structure within the respected location, i.e. `/views/projects`.
 
 
-## Contributing to NearBeach
+## Donating
 
-We are always looking for new contributors. There are many different ways to contribute to NearBeach, for example;
+Like most projects, there are some overhead costs. Every single dollar that we get will go towards;
 
-- Bug testing
-- Bug fixing
-- Writing Documentation
-- Writing new components or functionality for NearBeach
-- Refactoring Code, i.e. making it more efficient
-- Updating Code, i.e. updating libraries
-- Marketing NearBeach
-- Supplying feedback on NearBeach, i.e. improvements and feature requests
+- Cloud hosting costs
+- Software costs
+- Administration costs
+- Freelance costs (i.e. hiring help like designers)
 
-and many many more. Join our [community on discord to see what you can do](https://discord.gg/64uhRztS6n)
+We are being transparent with all our costs and will try and provide a yearly cost breakdown every 6 months.
 
 
 ## Bug Reporting
 
-Bug reporting is a very important role for NearBeach. During Hacktoberfest, you are more than welcome to submit issues. Alternatively you could use your [bugzilla](https://bugzilla.nearbeach.org).
+Bug reporting is a very important role for NearBeach. During Hacktoberfest, you are more than welcome to submit issues.
 
 
 ## Deepsource Issues

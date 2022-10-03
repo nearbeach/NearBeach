@@ -3,6 +3,7 @@
 {% block content %}
     <group-information v-bind:group-results="{{group_results}}"
                        v-bind:parent-group-results="{{parent_group_results}}"
+                       v-bind:root-url="`{% url 'dashboard' %}`"
     ></group-information>
 
     <br/>

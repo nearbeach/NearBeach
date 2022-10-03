@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.groupPresentation"></IconifyIcon> Add Group Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.groupPresentation"></Icon> Add Group Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -28,10 +28,10 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="groupFixList"
-                                      v-model="groupModel"
+                            <n-select :options="groupFixList"
+                                      v-model:value="groupModel"
                                       multiple
-                            ></v-select>
+                            ></n-select>
                         </div>
                     </div>
                     <div v-else
@@ -47,7 +47,9 @@
                             </p>
                         </div>
                         <div class="col-md-6 no-search">
-                            <img src="/static/NearBeach/images/placeholder/questions.svg" alt="Sorry - there are no results" />
+                            <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/questions.svg`"
+                                 alt="Sorry - there are no results"
+                            />
                         </div>
                     </div>
                 </div>
@@ -68,18 +70,40 @@
 </template>
 
 <script>
+    import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
+
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "AddGroupWizard",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        components: {
+            Icon,
+            NSelect,
+        },
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -98,12 +122,12 @@
 
                 //Loop through the model and append the results
                 this.groupModel.forEach(row => {
-                    data_to_send.append('group_list',row['value']);
+                    data_to_send.append('group_list',row);
                 });
 
                 //user axios
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_group/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_group/`,
                     data_to_send,
                 ).then(response => {
                     //Send the data upstream
@@ -120,21 +144,14 @@
             },
             getGroupList: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/group_list_all/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_list_all/`,
                 ).then(response => {
                     //Clear the groupFixList
-                    this.groupFixList = [];
-
-                    //Loop through the response's data and add the fixed rows to groupFixList
-                    response['data'].forEach(row => {
-                        //Create object array
-                        var construction_object = {
+                    this.groupFixList = response['data'].map(row => {
+                        return {
                             'value': row['pk'],
                             'label': row['fields']['group_name'],
                         };
-
-                        //Add construction_object to groupFixList
-                        this.groupFixList.push(construction_object);
                     });
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
@@ -142,7 +159,10 @@
             }
         },
         mounted() {
-            this.getGroupList();
+            //Wait 200ms
+            setTimeout(() => {
+                this.getGroupList();
+            }, 200);
         },
     }
 </script>

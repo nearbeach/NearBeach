@@ -1,9 +1,6 @@
-from django.contrib.auth.models import User
-from django.test import TestCase, Client, TransactionTestCase
+from django.test import TestCase, Client
 from django.urls import reverse
 
-import unittest
-import json
 
 def login_user(c: object, self: object) -> object:
     response = c.post(
@@ -38,3 +35,4 @@ class TestPermissionDenied(TestCase):
         self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
+        

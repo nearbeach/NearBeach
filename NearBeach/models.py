@@ -1,8 +1,7 @@
 from __future__ import unicode_literals
-from django.db import models, connection
-from .private_media import File_Storage
+from django.db import models
+from .private_media import FileStorage
 from django.contrib.auth.models import User
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import gettext_lazy as _
 import uuid
 
@@ -153,7 +152,7 @@ class about_user(models.Model):
 Contact History is a simple form that user will fill out every time they
 have some form of contact with the customer. This table will store both
 contact history for customer and Organisations. The customer field in
-this instance is not required, and implies that the contact history is 
+this instance is not required, and implies that the contact history is
 applied to the organisation. The organisation field will fill out automatically
 when a user applies it to a customer. :)
 """
@@ -233,7 +232,7 @@ class bug(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey \
+    change_user = models.ForeignKey\
         (User,
          on_delete=models.CASCADE,
          related_name='%(class)s_change_user',
@@ -259,7 +258,7 @@ class bug_client(models.Model):
     bug_client_url = models.URLField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey \
+    change_user = models.ForeignKey\
         (User,
          on_delete=models.CASCADE,
          related_name='%(class)s_change_user',
@@ -572,7 +571,7 @@ class document(models.Model):
     document = models.FileField(
         blank=True,
         null=True,
-        storage=File_Storage(),
+        storage=FileStorage(),
     )
     whiteboard = models.ForeignKey(
         'whiteboard',
@@ -1044,43 +1043,6 @@ class kanban_column(models.Model):
         return str(self.kanban_column_name)
 
 
-# class kanban_comment(models.Model):
-#     kanban_comment_id = models.AutoField(primary_key=True)
-#     kanban_comment = models.TextField()
-#     kanban_board = models.ForeignKey(
-#         'kanban_board',
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#     )
-#     kanban_card = models.ForeignKey(
-#         'kanban_card',
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#     )
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         null=True
-#     )
-#     user_infomation = models.CharField(max_length=255)
-#     date_created = models.DateTimeField(auto_now_add=True)
-#     date_modified = models.DateTimeField(auto_now=True)
-#     change_user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         related_name='%(class)s_change_user'
-#     )
-#     is_deleted = models.BooleanField(
-#         default=False,
-#     )
-#
-#     class Meta:
-#         db_table = "kanban_comment"
-#
-#     def __str__(self):
-#         return str(self.kanban_comment)
 
 
 class kanban_level(models.Model):
@@ -1582,9 +1544,11 @@ class list_of_title(models.Model):
 
 class nearbeach_option(models.Model):
     """
-    This table will store the options for NearBeach. These options will have a new row each time a new option is created
+    This table will store the options for NearBeach.
+    These options will have a new row each time a new option is created
     There does not need to be a is_deleted function
     """
+
     nearbeach_option_id = models.AutoField(primary_key=True)
     story_point_hour_min = models.IntegerField(
         default=4,
@@ -1612,17 +1576,17 @@ class nearbeach_option(models.Model):
 class object_assignment(models.Model):
     """
     Object permissions is the centralised permissions for all objects
-    - Opportunity
-    - Quote
     - Requirement
     - Project
     - Task
     - Kanban board
     - Request for change
 
-    These permission are only "ACCESS" permissions. The user/group's over riding permissions determine if the user
-    can add, edit etc.
+    These permission are only "ACCESS" permissions.
+    The user/group's over riding permissions determine if
+    the user can add, edit etc.
     """
+
     object_assignment_id = models.AutoField(primary_key=True)
     assigned_user = models.ForeignKey(
         User,
@@ -1700,6 +1664,20 @@ class object_assignment(models.Model):
     organisation = models.ForeignKey(
         'organisation',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    meta_object = models.BigIntegerField(
+        blank=True,
+        null=True,
+    )
+    meta_object_title = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    meta_object_status = models.CharField(
+        max_length=255,
         blank=True,
         null=True,
     )
@@ -1965,7 +1943,6 @@ class permission_set(models.Model):
     permission_set_id = models.AutoField(primary_key=True)
     permission_set_name = models.CharField(
         max_length=255,
-        # unique=True, #issue when we delete previous permission sets
     )
     # ADMINISTRATION PERMISSIONS
     administration_assign_user_to_group = models.IntegerField(
@@ -2024,7 +2001,7 @@ class permission_set(models.Model):
     ADDITIVE permission
     ~~~~~~~~~~~~~~~~~~~~
     Designed to add on extra abilities to those user who have "READ ONLY" for certain modules.
-    If a user has the ability to "EDIT" for any of these modules, then this section does not 
+    If a user has the ability to "EDIT" for any of these modules, then this section does not
     need to be populated with data.
     """
     document = models.IntegerField(
@@ -2405,8 +2382,10 @@ class quote(models.Model):
 
 class request_for_change(models.Model):
     """
-    Due to the long and complicated name, request for change will be shortened to rfc for ALL fields.
+    Due to the long and complicated name,
+    request for change will be shortened to rfc for ALL fields.
     """
+
     rfc_id = models.AutoField(primary_key=True)
     rfc_title = models.CharField(
         max_length=255,

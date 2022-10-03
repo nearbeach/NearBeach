@@ -1,11 +1,14 @@
-
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
-    <profile-information v-bind:user-results="{{user_results}}"></profile-information>
+    <profile-information v-bind:user-results="{{user_results}}"
+                         v-bind:root-url="`{% url 'dashboard' %}`"
+    ></profile-information>
     <br/>
 
-    <reset-user-password v-bind:location="'user_information'"
+    <!-- The location has a / in it, because that information is required for
+    the URL to reset the password -->
+    <reset-user-password v-bind:location="'user_information/'"
                          v-bind:username="{{username}}"
     ></reset-user-password>
 {% endblock %}

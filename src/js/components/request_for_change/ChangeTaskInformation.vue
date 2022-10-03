@@ -25,8 +25,41 @@
             <!-- START DATE & END DATE -->
             <hr>
             <between-dates destination="Change Task"
+                           v-bind:start-date-model="changeStartDateModel"
+                           v-bind:end-date-model="changeEndDateModel"
                            v-on:update_dates="updateDates($event)"
             ></between-dates>
+
+            <!-- IMPLEMENTATION USER & QA USER -->
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>Implementation & QA User</strong>
+                    <p class="text-instructions">
+                        Please indicate which user will be implementing the work, and the user who will QA.
+                    </p>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <lable>Implementation User</lable>
+                                <n-select v-bind:options="userListFixed"
+                                            v-model:value="assignedUserModel"
+                                ></n-select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <lable>QA User</lable>
+                                <n-select v-model:value="qaUserModel" 
+                                            v-bind:options="userListFixed" 
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- DESCRIPTION OPTIONAL -->
             <hr>
@@ -43,10 +76,12 @@
                        :init="{
                          height: 300,
                          menubar: false,
-                         toolbar: 'undo redo | formatselect | ' +
-                          'bold italic backcolor | alignleft aligncenter ' +
-                          'alignright alignjustify | bullist numlist outdent indent | ',
-                       }"
+                         plugins: ['lists','table'],
+                        toolbar: [
+                           'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                           'bold italic strikethrough underline backcolor | table | ' +
+                           'bullist numlist outdent indent | removeformat'
+                        ]}"
                        v-bind:content_css="false"
                        v-bind:skin="false"
                        v-model="changeDescriptionModel"
@@ -92,7 +127,7 @@
             <!-- GO BACK -->
             <hr>
             <!-- CANCEL -->
-            <a v-bind:href="`/rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
+            <a v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
                class="btn btn-secondary"
             >Cancel</a>
 
@@ -130,18 +165,51 @@
 
 <script>
     const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue';
+    import BetweenDates from "../dates/BetweenDates.vue";
+    import { NSelect } from 'naive-ui';
 
     export default {
         name: "ChangeTaskInformation",
+        components: {
+            BetweenDates,
+            'editor': Editor,
+            NSelect,
+        },
         props: {
-            changeTaskResults: Array,
+            changeTaskResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            userList: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
         },
         data() {
             return {
+                assignedUserModel: this.changeTaskResults[0]['fields']['change_task_assigned_user'],
                 changeTitleModel: this.changeTaskResults[0]['fields']['change_task_title'],
                 changeDescriptionModel: this.changeTaskResults[0]['fields']['change_task_description'],
                 changeStakeholderModel: this.changeTaskResults[0]['fields']['change_task_required_by'],
                 changeIsDowntimeModel: this.changeTaskResults[0]['fields']['is_downtime'],
+                changeStartDateModel: new Date(this.changeTaskResults[0]['fields']['change_task_start_date']).getTime(),
+                changeEndDateModel: new Date(this.changeTaskResults[0]['fields']['change_task_end_date']).getTime(),
+                qaUserModel: this.changeTaskResults[0]['fields']['change_task_qa_user'],
+                userListFixed: this.userList.map((row) => {
+                    return {
+                        label: `${row.username}: ${row.first_name} ${row.last_name}`,
+                        value: row.id,
+                    };
+                })
             }
         },
         methods: {
@@ -155,26 +223,26 @@
                 //Stop the usual stuff
                 event.preventDefault();
 
-                var change_task_seconds = parseInt(this.changeEndDateModel) - parseInt(this.changeStartDateModel)
+                var change_task_seconds = this.changeEndDateModel - this.changeStartDateModel
 
                 // Create data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('change_task_title', this.changeTitleModel);
                 data_to_send.set('change_task_description', this.changeDescriptionModel);
-                data_to_send.set('change_task_start_date', this.changeStartDateModel);
-                data_to_send.set('change_task_end_date', this.changeEndDateModel);
+                data_to_send.set('change_task_start_date', new Date(this.changeStartDateModel).toISOString());
+                data_to_send.set('change_task_end_date', new Date(this.changeEndDateModel).toISOString());
                 data_to_send.set('change_task_seconds', change_task_seconds.toString());
-                // data_to_send.set('change_task_assigned_user', );
-                // data_to_send.set('change_task_qa_user', );
+                data_to_send.set('change_task_assigned_user', this.assignedUserModel);
+                data_to_send.set('change_task_qa_user', this.qaUserModel);
                 data_to_send.set('change_task_required_by', this.changeStakeholderModel);
                 data_to_send.set('is_downtime', this.changeIsDowntimeModel);
 
                 axios.post(
-                    `/change_task_information/${this.changeTaskResults[0]['pk']}/save/`,
+                    `${this.rootUrl}change_task_information/${this.changeTaskResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     //If successful, go back
-                    window.location.href = `/rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
+                    window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
                 }).catch(error => {
                     //this.showErrorModal(error, 'Change Task');
                     
@@ -187,7 +255,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
+                    `${rootUrl}change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
                     data_to_send,
                 ).then(response => {
                     //Reload the page

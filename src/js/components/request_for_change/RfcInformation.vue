@@ -23,13 +23,13 @@
                     <div class="form-group">
                         <label>
                             Request for Change Type:
-                            <span class="error" v-if="!$v.rfcTypeModel.required && $v.rfcTypeModel.$dirty"
+                            <span class="error" v-if="!v$.rfcTypeModel.required && v$.rfcTypeModel.$dirty"
                             > Please suppy a title.</span>
                         </label>
-                        <v-select v-bind:options="rfcType"
+                        <n-select v-bind:options="rfcType"
                                   v-bind:disabled="isReadOnly"
-                                  v-model="rfcTypeModel"
-                        ></v-select>
+                                  v-model:value="rfcTypeModel"
+                        ></n-select>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -65,31 +65,28 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label>Implementation Start: </label>
-                            <datetime type="datetime"
-                                      v-model="rfcImplementationStartModel"
+                            <n-date-picker type="datetime"
+                                      v-model:value="rfcImplementationStartModel"
                                       input-class="form-control"
-                                      v-bind:minute-step="5"
-                            ></datetime>
+                            ></n-date-picker>
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label>Implementation End: </label>
-                            <datetime type="datetime"
-                                      v-model="rfcImplementationEndModel"
+                            <n-date-picker type="datetime"
+                                      v-model:value="rfcImplementationEndModel"
                                       input-class="form-control"
-                                      v-bind:minute-step="5"
-                            ></datetime>
+                            ></n-date-picker>
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label>Release Date: </label>
-                            <datetime type="datetime"
-                                      v-model="rfcReleaseModel"
+                            <n-date-picker type="datetime"
+                                      v-model:value="rfcReleaseModel"
                                       input-class="form-control"
-                                      v-bind:minute-step="5"
-                            ></datetime>
+                            ></n-date-picker>
                         </div>
                     </div>
                 </div>
@@ -109,13 +106,16 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <img src="/static/NearBeach/images/placeholder/people_tax.svg" alt="default profile" class="default-user-profile" />
+                                    <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/people_tax.svg`"
+                                         alt="default profile"
+                                         class="default-user-profile"
+                                    />
                                 </td>
                                 <td>
-                                    <strong>{{rfcChangeLead[0]['fields']['username']}}: </strong>{{rfcChangeLead[0]['fields']['first_name']}} {{rfcChangeLead[0]['fields']['last_name']}}
+                                    <strong>{{rfcChangeLead[0]['username']}}: </strong>{{rfcChangeLead[0]['first_name']}} {{rfcChangeLead[0]['last_name']}}
                                     <div class="spacer"></div>
                                     <p class="user-card-email">
-                                        {{rfcChangeLead[0]['fields']['email']}}
+                                        {{rfcChangeLead[0]['email']}}
                                     </p>
                                 </td>
                             </tr>
@@ -133,11 +133,13 @@
                     <a href="javascript:void(0)"
                        class="btn btn-dark"
                        v-on:click="updateRFCStatus"
+                       v-if="userLevel > 1 && changeTaskCount > 0"
                     >Submit RFC for Approval</a>
 
                     <a href="javascript:void(0)"
                        class="btn btn-primary save-changes"
                        v-on:click="updateRFC"
+                       v-if="userLevel > 1"
                     >Update Request for Change</a>
                 </div>
             </div>
@@ -147,16 +149,29 @@
 
 <script>
     const axios = require('axios');
-    
+    import RfcDescription from "./tabs/RfcDescription.vue";
+    import { NSelect, NDatePicker } from 'naive-ui';
+    import { mapGetters } from 'vuex';
+
     //Import mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
 
     //Validation
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators';
+
 
     export default {
         name: "RfcInformation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            NDatePicker,
+            NSelect,
+            RfcDescription,
+        },
         props: {
             groupLeaderCount: {
                 type: Number,
@@ -166,8 +181,47 @@
                 type: Boolean,
                 default: false,
             },
-            rfcChangeLead: Array,
-            rfcResults: Array,
+            rfcChangeLead: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rfcResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
+            },
+        },
+        computed: {
+            ...mapGetters({
+                changeTaskCount: 'getChangeTaskCount',
+                rfcImplementationEndModel: 'getEndDate',
+                rfcImplementationStartModel: 'getStartDate',
+                rfcReleaseModel: 'getReleaseDateModel'
+            }),
+            checkDateValidation: function() {
+                //Check the validation for each date
+                const start_date = !this.v$.rfcImplementationStartModel.required && this.v$.rfcImplementationStartModel.$dirty,
+                    end_date = !this.v$.rfcImplementationEndModel.required && this.v$.rfcImplementationEndModel.$dirty,
+                    release_date = !this.v$.rfcReleaseModel.required && this.v$.rfcReleaseModel.$dirty;
+
+                //If there is ONE invalidation, we send back true => invalid
+                return start_date || end_date || release_date;
+            }
         },
         mixins: [
             errorModalMixin,
@@ -179,9 +233,9 @@
                 rfcChangeLeadModel: '',
                 rfcTitleModel: this.rfcResults[0]['fields']['rfc_title'],
                 rfcSummaryModel: this.rfcResults[0]['fields']['rfc_summary'],
-                rfcImplementationStartModel: this.rfcResults[0]['fields']['rfc_implementation_start_date'],
-                rfcImplementationEndModel: this.rfcResults[0]['fields']['rfc_implementation_end_date'],
-                rfcReleaseModel: this.rfcResults[0]['fields']['rfc_implementation_release_date'],
+                // rfcImplementationStartModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_start_date']).getTime(),
+                // rfcImplementationEndModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_end_date']).getTime(),
+                // rfcReleaseModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_release_date']).getTime(),
                 rfcStatus: [
                     { label: 'Draft', value: 1 },
                     { label: 'Waiting for approval', value: 2 },
@@ -224,23 +278,12 @@
                 maxLength: maxLength(25),
             },
         },
-        computed: {
-            checkDateValidation: function() {
-                //Check the validation for each date
-                const start_date = !this.$v.rfcImplementationStartModel.required && this.$v.rfcImplementationStartModel.$dirty,
-                    end_date = !this.$v.rfcImplementationEndModel.required && this.$v.rfcImplementationEndModel.$dirty,
-                    release_date = !this.$v.rfcReleaseModel.required && this.$v.rfcReleaseModel.$dirty;
-
-                //If there is ONE invalidation, we send back true => invalid
-                return start_date || end_date || release_date;
-            }
-        },
         methods: {
-            updateRFC: function() {
+            updateRFC: async function() {
                 //Check form validation
-                this.$v.$touch();
+                const validation_results = await this.v$.$validate()
 
-                if (this.$v.$invalid) {
+                if (!validation_results) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
@@ -250,18 +293,18 @@
                 const data_to_send = new FormData();
                 data_to_send.set('rfc_title',this.rfcTitleModel);
                 data_to_send.set('rfc_summary', this.rfcSummaryModel);
-                data_to_send.set('rfc_type', this.rfcTypeModel['value']);
+                data_to_send.set('rfc_type', this.rfcTypeModel);
                 data_to_send.set('rfc_version_number', this.rfcVersionModel);
-                data_to_send.set('rfc_implementation_start_date', this.rfcImplementationStartModel);
-                data_to_send.set('rfc_implementation_end_date', this.rfcImplementationEndModel);
-                data_to_send.set('rfc_implementation_release_date', this.rfcReleaseModel); 
+                data_to_send.set('rfc_implementation_start_date', new Date(this.rfcImplementationStartModel).toISOString());
+                data_to_send.set('rfc_implementation_end_date', new Date(this.rfcImplementationEndModel).toISOString());
+                data_to_send.set('rfc_implementation_release_date', new Date(this.rfcReleaseModel).toISOString());
 
                 //Open up the loading modal
                 this.showLoadingModal('Project');
 
                 //Use Axios to send the data
                 axios.post(
-                    `/rfc_information/${this.rfcResults[0]['pk']}/save/`,
+                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     //Notify user of success update
@@ -275,7 +318,7 @@
                 data_to_send.set('rfc_status','2'); //Value 2: Waiting for Approval
 
                 axios.post(
-                    `/rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
+                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
                     data_to_send,
                 ).then(response => {
                     //Reload the page to get redirected to the correct place
@@ -287,15 +330,37 @@
             },
             updateValues: function(data) {
                 //Update the value
-                this['_data'][data['modelName']] = data['modelValue'];
+                this[data['modelName']] = data['modelValue'];
             },
         },
         mounted() {
             //Set the type model
-            this.rfcTypeModel = this.rfcType.filter(row => {
-                //Filter for just the one value result
-                return row['value'] == this.rfcResults[0]['fields']['rfc_type'];
-            })[0];
+            this.rfcTypeModel = this.rfcResults[0]['fields']['rfc_type'];
+
+            //Send root and static url to VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            });
+
+            //Send user level to VueX
+            this.$store.commit({
+                type: 'updateUserLevel',
+                userLevel: this.userLevel,
+            });
+
+            //Send release dates up
+            const end_date = new Date(this.rfcResults[0].fields.rfc_implementation_end_date);
+            const release_date = new Date(this.rfcResults[0].fields.rfc_implementation_release_date);
+            const start_date = new Date(this.rfcResults[0].fields.rfc_implementation_start_date);
+
+            this.$store.commit({
+                type: 'updateRfcDates',
+                endDateModel: end_date.getTime(),
+                releaseDateModel: release_date.getTime(),
+                startDateModel: start_date.getTime(),
+            });
         }
     }
 </script>

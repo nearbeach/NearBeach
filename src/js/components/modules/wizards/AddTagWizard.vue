@@ -3,7 +3,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Add Tags Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Add Tags Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -23,11 +23,11 @@
                         </div>
                         <div class="col-md-8">
                             <label>All Tag List</label>
-                            <v-select label="tag" 
+                            <n-select label="tag"
                                       multiple
                                       :options="tagList"
-                                      v-model="tagModel"
-                            ></v-select>
+                                      v-model:value="tagModel"
+                            ></n-select>
                         </div>
                     </div>
                 </div>
@@ -50,11 +50,19 @@
     //JavaScript extras
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import { NSelect } from 'naive-ui'
 
-    const axios = require('axios');
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "AddTagWizard",
+        components: {
+            Icon,
+            NSelect,
+        },
         props: {
             assignedTags: {
                 type: Array,
@@ -62,8 +70,14 @@
                     return [];
                 },
             },
-            destination: String,
-            locationId: Number,
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             errorModalMixin,
@@ -76,6 +90,9 @@
             }
         },
         computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            }),
             tagList: function() {
                 return this.allTagList.filter(row => {
                     return this.assignedTags.findIndex(tag => {
@@ -91,12 +108,12 @@
 
                 //Loop through all the models results
                 this.tagModel.forEach(row => {
-                    data_to_send.append('tag_id', row['value']);
+                    data_to_send.append('tag_id', row);
                 });
 
                 //Use Axios to send data to backend
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_tags/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_tags/`,
                     data_to_send
                 ).then(response => {
                     //Emit data up
@@ -111,13 +128,13 @@
             },
             getTagList: function() {
                 axios.post(
-                    `/object_data/tag_list_all/`
+                    `${this.rootUrl}object_data/tag_list_all/`
                 ).then(response => {
                     //Map data to the preferred data format for vue-select
                     this.allTagList = response['data'].map(row => {
                         return {
                             value: row['pk'],
-                            tag: row['fields']['tag_name'],
+                            label: row['fields']['tag_name'],
                         }
                     });
                 }).catch(error => {
@@ -126,8 +143,17 @@
             },
         },
         mounted() {
-            //Get the tag list
-            this.getTagList();
+            //If the location is inside the array - don't bother getting the data
+            var escape_array = [
+                'requirement_item',
+            ]
+            if (escape_array.indexOf(this.destination) >= 0) return;
+            
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                //Get the tag list
+                this.getTagList();
+            }, 200);
         }
     }
 </script>

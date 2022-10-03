@@ -1,11 +1,8 @@
-from django.contrib.auth.models import User
-from django.test import TestCase, Client, TransactionTestCase
+from django.test import TestCase, Client
 from django.urls import reverse
-from django.db.models import Q, Max
-
-import unittest
-import json
+from django.db.models import Q
 from NearBeach.models import user_group, group, object_assignment
+
 
 def login_user(c: object, self: object) -> object:
     response = c.post(
@@ -34,7 +31,6 @@ class AdminUserPermissionTest(TestCase):
 
         # User will be logged in
         login_user(c, self)
-
         # Make sure the admin user can open up the project
         response = c.get(reverse('project_information', args=['1']))
         self.assertEqual(response.status_code, 200)
@@ -98,9 +94,11 @@ class AdminUserPermissionTest(TestCase):
 
 class TeamLeaderPermissionTest(TestCase):
     """
-    The team leader will only have access to objects that have at least one cross over group with that
+    The team leader will only have access to objects
+    that have at least one cross over group with that
     particular team leader.
     """
+
     fixtures = ['NearBeach_basic_setup.json']
 
     def setUp(self):
@@ -120,8 +118,6 @@ class TeamLeaderPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
-        # response = c.get(reverse('project_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
 
@@ -136,8 +132,6 @@ class TeamLeaderPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
-        # response = c.get(reverse('task_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
 
@@ -171,7 +165,7 @@ class TeamLeaderPermissionTest(TestCase):
             )
         )
 
-        print("Group Results Length: %s" % len(group_results))
+        print(f"Group Results Length: {len(group_results)}")
 
         # Make sure the admin user can open the kanban
         response_2 = c.get(reverse('kanban_information', args=[2]))
@@ -200,9 +194,11 @@ class TeamLeaderPermissionTest(TestCase):
 
 class TeamMemberPermissionTest(TestCase):
     """
-    The team MEMBER will only have access to objects that have at least one cross over group with that
+    The team MEMBER will only have access to objects
+    that have at least one cross over group with that
     particular team leader.
     """
+
     fixtures = ['NearBeach_basic_setup.json']
 
     def setUp(self):
@@ -222,8 +218,6 @@ class TeamMemberPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
-        # response = c.get(reverse('project_information', args=['2']))
-        # self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
 
@@ -238,16 +232,17 @@ class TeamMemberPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the task
-        #response = c.get(reverse('task_information', args=['2']))
-        #self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
 
+
 class TeamInternPermissionTest(TestCase):
     """
-    The team leader will only have access to objects that have at least one cross over group with that
+    The team leader will only have access to objects
+    that have at least one cross over group with that
     particular team leader.
     """
+
     fixtures = ['NearBeach_basic_setup.json']
 
     def setUp(self):
@@ -267,8 +262,6 @@ class TeamInternPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
-        #response = c.get(reverse('project_information', args=['2']))
-        #self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
 
@@ -283,8 +276,5 @@ class TeamInternPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the task
-        #response = c.get(reverse('task_information', args=['2']))
-        #self.assertEqual(response.status_code, 403)
 
         c.get(reverse('logout'))
-

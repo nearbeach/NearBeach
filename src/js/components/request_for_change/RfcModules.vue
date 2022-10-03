@@ -2,6 +2,21 @@
     <div class="card">
         <div class="card-body">
             <ul class="nav nav-tabs" id="misc_module_tabs" role="tablist">
+                <!-- GROUPS AND USERS -->
+                <li class="nav-item"
+                    role="presentation"
+                >
+                    <button class="nav-link"
+                            id="group-and-users-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#group-and-users"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true"
+                    >Group and Users</button>
+                </li>
+                
                 <!-- RISK -->
                 <li class="nav-item"
                     role="presentation"
@@ -66,7 +81,7 @@
                 <li class="nav-item"
                     role="presentation"
                 >
-                    <button class="nav-link"
+                    <button class="nav-link active"
                             id="rfc-run-sheet-tab"
                             data-bs-toggle="tab"
                             data-bs-target="#rfc-run-sheet"
@@ -80,6 +95,15 @@
             <hr>
 
             <div class="tab-content" id="misc_module_content">
+                <div class="tab-pane fade" 
+                     id="group-and-users" 
+                     role="tabpanel" 
+                     aria-labelledby="contact-tab"
+                >
+                    <groups-and-users-module v-bind:location-id="locationId"
+                                             v-bind:destination="destination"
+                    ></groups-and-users-module>
+                </div>
                 <div class="tab-pane fade"
                      id="rfc-risk"
                      role="tabpanel"
@@ -100,6 +124,7 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateRisk"
+                               v-if="userLevel > 1"
                             >Update Risks</a>
                         </div>
                     </div>
@@ -125,6 +150,7 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateImplementation"
+                               v-if="userLevel > 1"
                             >Update Implementation Plan</a>
                         </div>
                     </div>
@@ -150,6 +176,7 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateBackoutPlan"
+                               v-if="userLevel > 1"
                             >Update Backout Plan</a>
                         </div>
                     </div>
@@ -175,12 +202,13 @@
                             <a href="javascript:void(0)"
                                class="btn btn-primary save-changes"
                                v-on:click="updateTestPlan"
+                               v-if="userLevel > 1"
                             >Update Test Plan</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="tab-pane fade"
+                <div class="tab-pane fade active show"
                      id="rfc-run-sheet"
                      role="tabpanel"
                      aria-labelledby="home-tab"
@@ -200,6 +228,15 @@
 
 <script>
     const axios = require('axios');
+    import RfcBackoutPlan from "./tabs/RfcBackoutPlan.vue";
+    import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
+    import RfcRisk from "./tabs/RfcRisk.vue";
+    import RfcRunSheetList from "./modules/RfcRunSheetList.vue";
+    import RfcTestPlan from "./tabs/RfcTestPlan.vue";
+    import GroupsAndUsersModule from "../modules/sub_modules/GroupsAndUsersModule.vue";
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -207,9 +244,23 @@
 
     export default {
         name: "RfcModules",
+        components: {
+            GroupsAndUsersModule,
+            RfcBackoutPlan,
+            RfcImplementationPlan,
+            RfcRisk,
+            RfcRunSheetList,
+            RfcTestPlan,
+        },
         props: {
-            locationId: Number,
-            destination: String,
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            destination: {
+                type: String,
+                default: 'request_for_change',
+            },
             isReadOnly: {
                 type: Boolean,
                 default: false,
@@ -218,7 +269,12 @@
                 type: Array,
                 default: [],
             },
-            userList: Array,
+            userList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         mixins: [
             errorModalMixin,
@@ -242,6 +298,12 @@
                 'tab_5': true,
             }
         }),
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                userLevel: "getUserLevel",
+            }),
+        },
         methods: {
             sendData: function(data_to_send,url) {
                 //Open up the loading modal
@@ -271,7 +333,7 @@
                 data_to_send.set('text_input', this.rfcData['rfcBackoutPlan']);
 
                 //Send data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/backout/`)
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/backout/`)
             },
             updateImplementation: function() {
                 if (this.validationData['tab_3'] === false) {
@@ -286,7 +348,7 @@
                 data_to_send.set('text_input', this.rfcData['rfcImplementationPlanModel']);
                 
                 //Send data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/implementation/`);
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/implementation/`);
             },
             updateRisk: function() {
                 if (this.validationData['tab_2'] === false) {
@@ -299,13 +361,13 @@
 
                 //Create the data to send
                 const data_to_send = new FormData();
-                data_to_send.set('priority_of_change', this.rfcData['rfcPriorityModel']['value']);
-                data_to_send.set('risk_of_change', this.rfcData['rfcRiskModel']['value']);
-                data_to_send.set('impact_of_change', this.rfcData['rfcImpactModel']['value']);
+                data_to_send.set('priority_of_change', this.rfcData['rfcPriorityModel']);
+                data_to_send.set('risk_of_change', this.rfcData['rfcRiskModel']);
+                data_to_send.set('impact_of_change', this.rfcData['rfcImpactModel']);
                 data_to_send.set('text_input', this.rfcData['rfcRiskSummaryModel']);
 
                 //Send the data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/risk/`)
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/risk/`)
             },
             updateValidation: function(data) {
                 //Update the value
@@ -324,12 +386,20 @@
                 data_to_send.set('text_input', this.rfcData['rfcTestPlanModel']);
 
                 //Send data
-                this.sendData(data_to_send, `/rfc_information/${this.rfcResults[0]['pk']}/save/test/`);
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/test/`);
             },
             updateValues: function(data) {
                 //Update the value
                 this.rfcData[data['modelName']] = data['modelValue'];
             }
+        },
+        mounted() {
+            //Send data to required VueX states
+            this.$store.commit({
+                type: 'updateDestination',
+                destination: this.destination,
+                locationId: this.locationId,
+            });
         }
     }
 </script>

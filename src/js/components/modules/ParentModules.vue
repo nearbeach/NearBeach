@@ -6,7 +6,7 @@
                 <!-- Don't need to show to requirement items - as permissions are gained from parent requirement -->
                 <li class="nav-item"
                     role="presentation"
-                    v-if="destination!='requirement_item'"
+                    v-if="destination!=='requirement_item'"
                 >
                     <button class="nav-link active"
                             id="group-and-user-tab"
@@ -22,7 +22,7 @@
                 <!-- REQUIREMENT ITEMS -->
                 <li class="nav-item"
                     role="presentation"
-                    v-if="destination=='requirement'"
+                    v-if="destination==='requirement'"
                 >
                     <button class="nav-link"
                             id="requirement-item-tab"
@@ -38,7 +38,7 @@
                 <!-- REQUIREMENT LINKS -->
                 <li class="nav-item"
                     role="presentation"
-                    v-if="destination=='requirement'"
+                    v-if="destination==='requirement'"
                 >
                     <button class="nav-link"
                             id="requirement-link-tab"
@@ -54,7 +54,7 @@
                 <!-- REQUIREMENT ITEM LINKS -->
                 <li class="nav-item"
                     role="presentation"
-                    v-if="destination=='requirement_item'"
+                    v-if="destination==='requirement_item'"
                 >
                     <button class="nav-link"
                             id="requirement-item-link-tab"
@@ -166,7 +166,12 @@
             <hr>
 
             <div class="tab-content" id="misc_module_content">
-                <div class="tab-pane fade show active" id="group-and-users" role="tabpanel" aria-labelledby="contact-tab">
+                <div v-if="destination !== 'requirement_item'"
+                     class="tab-pane fade show active" 
+                     id="group-and-users" 
+                     role="tabpanel" 
+                     aria-labelledby="contact-tab"
+                >
                     <groups-and-users-module v-bind:location-id="locationId"
                                              v-bind:destination="destination"
                     ></groups-and-users-module>
@@ -238,11 +243,40 @@
 </template>
 
 <script>
+    import GroupsAndUsersModule from "./sub_modules/GroupsAndUsersModule.vue";
+    import RequirementItemsModule from "./sub_modules/RequirementItemsModule.vue";
+    import RequirementItemLinksModule from "./sub_modules/RequirementItemLinksModule.vue";
+    import RequirementLinksModule from "./sub_modules/RequirementLinksModule.vue";
+    import DocumentsModule from "./sub_modules/DocumentsModule.vue";
+    import ObjectLinks from "./sub_modules/ObjectLinks.vue";
+    import CustomersModule from "./sub_modules/CustomersModule.vue";
+    import BugsModule from "./sub_modules/BugsModule.vue";
+    import MiscModule from "./sub_modules/MiscModule.vue";
+    import NotesModule from "./sub_modules/NotesModule.vue";
+
     export default {
         name: "ParentModules",
+        components: {
+            BugsModule,
+            CustomersModule,
+            DocumentsModule,
+            GroupsAndUsersModule,
+            MiscModule,
+            NotesModule,
+            ObjectLinks,
+            RequirementItemLinksModule,
+            RequirementItemsModule,
+            RequirementLinksModule,
+        },
         props: {
-            destination: String, //Which object we are looking at, i.e. requirement
-            locationId: Number, //The ID of the object we are looking at.
+            destination: {
+                type: String,
+                default: '',
+            }, //Which object we are looking at, i.e. requirement
+            locationId: {
+                type: Number,
+                default: 0,
+            }, //The ID of the object we are looking at.
             rootUrl: {
                 type: String,
                 default: '/',
@@ -250,6 +284,10 @@
             staticUrl: {
                 type: String,
                 default: '/',
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
             },
         },
         data() {
@@ -267,7 +305,11 @@
                 type: 'updateUrl',
                 rootUrl: this.rootUrl,
                 staticUrl: this.staticUrl,
-            })
+            });
+            this.$store.commit({
+                type: 'updateUserLevel',
+                userLevel: this.userLevel,
+            });
         }
     }
 </script>

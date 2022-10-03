@@ -14,6 +14,7 @@
     <link rel="preload" href="{% static 'NearBeach/tinymce/skins/content/default/content.min.css' %}" as="style">
     <link rel="preload" href="{% static 'NearBeach/tinymce/skins/ui/oxide/content.min.css' %}" as="style">
     <script defer type="text/javascript" src="{% static 'NearBeach/tinymce/tinymce.min.js' %}"></script>
+    <script defer type="text/javascript" src="{% static 'NearBeach/tinymce/plugins/lists/plugin.min.js' %}"></script>
 
     <!-- fav icon -->
     <link async rel="shortcut icon" type="image/png" href="{% static 'NearBeach/NearBeach_Small.png' %}"/>
@@ -121,6 +122,7 @@
                                    type="search"
                                    placeholder="Search"
                                    aria-label="Search"
+                                   maxlength="250"
                             >
                             <button class="btn btn-outline-success"
                                     type="submit"

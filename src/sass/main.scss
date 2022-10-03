@@ -17,6 +17,7 @@
 @import 'components/tinymce';
 @import 'components/vselect';
 @import 'components/drag_and_drop';
+@import 'components/users_and_groups';
 @import 'components/kanban';
 
 
@@ -24,9 +25,6 @@
 @import 'layouts/footer';
 @import 'layouts/header';
 
-
-//Import any vue components
-@import "~vue-select/src/scss/vue-select.scss";
 
 //Import vue-form-wizard components
 //@import "~vue-form-wizard/dist/vue-form-wizard.min.css";

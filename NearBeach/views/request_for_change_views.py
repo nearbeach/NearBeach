@@ -1,16 +1,28 @@
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, Http404
+import json
+from NearBeach.forms import NewRequestForChangeForm, \
+    RfcModuleForm, \
+    RfcInformationSaveForm, \
+    NewChangeTaskForm,\
+    UpdateRFCStatus
+from NearBeach.decorators.check_user_permissions import check_rfc_permissions
+from NearBeach.models import request_for_change, \
+    User, \
+    user_group, \
+    object_assignment, \
+    group, \
+    change_task, \
+    request_for_change_group_approval, \
+    RFC_STATUS
+from django.http import HttpResponse, \
+    HttpResponseBadRequest, \
+    HttpResponseRedirect
 from django.urls import reverse
 from django.template import loader
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
-from NearBeach.decorators.check_user_permissions import check_user_permissions, check_rfc_permissions
-from NearBeach.models import request_for_change, User, user_group, object_assignment, group, change_task, request_for_change_group_approval, RFC_STATUS
-from NearBeach.forms import NewRequestForChangeForm, RfcModuleForm, RfcInformationSaveForm, NewChangeTaskForm, \
-    UpdateRFCStatus
 
-import json
 
 # Internal function
 def get_rfc_context(rfc_id):
@@ -21,7 +33,15 @@ def get_rfc_context(rfc_id):
     """
     # Get data
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
-    rfc_change_lead = User.objects.get(id=rfc_results.rfc_lead.id)
+    rfc_change_lead = User.objects.filter(
+        id=rfc_results.rfc_lead.id
+    ).values(
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
+    )
     user_list = User.objects.filter(
         is_active=True,
         id__in=user_group.objects.filter(
@@ -31,15 +51,25 @@ def get_rfc_context(rfc_id):
                 request_for_change_id=rfc_id,
             ).values('group_id')
         ).values('username_id')
+    ).values(
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
     )
+
+    # Convert from ORM to JSON
+    rfc_change_lead = json.dumps(list(rfc_change_lead), cls=DjangoJSONEncoder)
+    user_list = json.dumps(list(user_list), cls=DjangoJSONEncoder)
 
     # Context
     c = {
-        'nearbeach_title': 'RFC %s' % rfc_id,
+        'nearbeach_title': f"RFC {rfc_id}",
         'rfc_id': rfc_id,
         'rfc_results': serializers.serialize('json', [rfc_results]),
-        'rfc_change_lead': serializers.serialize('json', [rfc_change_lead]),
-        'user_list': serializers.serialize('json', user_list),
+        'rfc_change_lead': rfc_change_lead,
+        'user_list': user_list,
     }
 
     return c
@@ -52,10 +82,9 @@ def new_request_for_change(request, *args, **kwargs):
     :param request:
     :return:
     """
-    # CHECK USER PERMISSIONS
-
     # Get template
-    t = loader.get_template('NearBeach/request_for_change/new_request_for_change.html')
+    t = loader.get_template(
+        'NearBeach/request_for_change/new_request_for_change.html')
 
     # Get data
     group_results = group.objects.filter(
@@ -71,16 +100,15 @@ def new_request_for_change(request, *args, **kwargs):
         'group__group_name',
     ).distinct()
 
-    user_results = User.objects.filter(  # This should only be group leaders
-        is_active=True,
-    )
+    # Convert ORM to JSON
+    user_group_results = json.dumps(
+        list(user_group_results), cls=DjangoJSONEncoder)
 
     # Context
     c = {
         'group_results': serializers.serialize('json', group_results),
         'nearbeach_title': 'New RFC',
-        'user_group_results': json.dumps(list(user_group_results), cls=DjangoJSONEncoder),
-        'user_results': serializers.serialize('json', user_results),
+        'user_group_results': user_group_results,
     }
 
     return HttpResponse(t.render(c, request))
@@ -207,10 +235,8 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
         change_task_start_date=form.cleaned_data['change_task_start_date'],
         change_task_end_date=form.cleaned_data['change_task_end_date'],
         change_task_seconds=form.cleaned_data['change_task_seconds'],
-        # change_task_assigned_user = form.cleaned_data['change_task_assigned_user'],
-        # change_task_qa_user = form.cleaned_data['change_task_qa_user'],
-        change_task_assigned_user=request.user,
-        change_task_qa_user=request.user,
+        change_task_assigned_user=form.cleaned_data['change_task_assigned_user'],
+        change_task_qa_user=form.cleaned_data['change_task_qa_user'],
         change_task_required_by=form.cleaned_data['change_task_required_by'],
         is_downtime=form.cleaned_data['is_downtime'],
         change_task_status=1,
@@ -245,14 +271,16 @@ def rfc_information(request, rfc_id, *args, **kwargs):
     """
     # If rfc is not in draft mode - send user away
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
-    if not rfc_results.rfc_status == 1:  # Draft
+    if not rfc_results.rfc_status == 1 or kwargs['user_level'] == 1:  # Draft
         return HttpResponseRedirect(reverse('rfc_readonly', args={rfc_id}))
 
     # Get template
-    t = loader.get_template('NearBeach/request_for_change/rfc_information.html')
+    t = loader.get_template(
+        'NearBeach/request_for_change/rfc_information.html')
 
     # Get context
     c = get_rfc_context(rfc_id)
+    c['user_level'] = kwargs['user_level']
 
     return HttpResponse(t.render(c, request))
 
@@ -283,7 +311,8 @@ def rfc_information_save(request, rfc_id, *args, **kwargs):
     update_rfc.rfc_version_number = form.cleaned_data['rfc_version_number']
     update_rfc.rfc_implementation_start_date = form.cleaned_data['rfc_implementation_start_date']
     update_rfc.rfc_implementation_end_date = form.cleaned_data['rfc_implementation_end_date']
-    update_rfc.rfc_implementation_release_date = form.cleaned_data['rfc_implementation_release_date']
+    update_rfc.rfc_implementation_release_date = form.cleaned_data[
+        'rfc_implementation_release_date']
 
     # Save the data
     update_rfc.save()

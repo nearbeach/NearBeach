@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Add Folder Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.userIcon"></Icon> Add Folder Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -51,21 +51,41 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
     export default {
-
         name: "AddFolderWizard",
-        props: [
-            'currentFolder',
-            'destination',
-            'existingFolders',
-            'locationId',
-        ],
+        components: {
+            Icon,
+        },
+        props: {
+            currentFolder: {
+                type: String,
+                default: '/',
+            },
+            destination: {
+                type: String,
+                default: '/',
+            },
+            existingFolders: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -76,19 +96,24 @@
                 folderDescriptionModel: '',
             };
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             addFolder: function() {
                 //Construct the data to send
                 const data_to_send = new FormData();
                 data_to_send.set('folder_description',this.folderDescriptionModel);
 
-                if (this.currentFolder != null && this.currentFolder != '') {
+                if (this.currentFolder !== null && this.currentFolder != '') {
                     data_to_send.set('parent_folder',this.currentFolder);
                 }
 
                 //Send the data in POST
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/add_folder/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/add_folder/`,
                     data_to_send,
                 ).then(response => {
                     //Send the data up stream to get appended

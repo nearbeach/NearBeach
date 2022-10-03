@@ -13,7 +13,9 @@
                     </p>
                 </div>
                 <div class="col-md-8">
-                    <label>Username: </label>
+                    <label>Username: 
+                        <span class="error" v-if="!v$.usernameModel.required && v$.usernameModel.$dirty"> Please supply a username.</span>
+                    </label>
                     <input type="text"
                            v-model="usernameModel"
                            class="form-control"
@@ -33,21 +35,28 @@
                 <div class="col-md-8">
                     <div class="row">
                         <div class="col-md-6">
-                            <label>First Name:</label>
+                            <label>First Name:
+                                <span class="error" v-if="!v$.firstNameModel.required && v$.firstNameModel.$dirty"> Please supply a first name.</span>
+                            </label>
                             <input type="text"
                                    v-model="firstNameModel"
                                    class="form-control"
                             >
                         </div>
                         <div class="col-md-6">
-                            <label>Last Name:</label>
+                            <label>Last Name:
+                                <span class="error" v-if="!v$.lastNameModel.required && v$.lastNameModel.$dirty"> Please supply a last name.</span>
+                            </label>
                             <input type="text"
                                    v-model="lastNameModel"
                                    class="form-control"
                             >
                         </div>
                         <div class="col-md-6">
-                            <label>Email:</label>
+                            <label>Email:
+                                <span class="error" v-if="!v$.emailModel.required && v$.emailModel.$dirty"> Please supply an email.</span>
+                                <span class="error" v-if="!v$.emailModel.email"> Please supply a valid email.</span>
+                            </label>
                             <input type="email"
                                    v-model="emailModel"
                                    class="form-control"
@@ -103,13 +112,23 @@
 
 <script>
     const axios = require('axios');
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength, email } from '@vuelidate/validators';
 
     //Import mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
     export default {
         name: "NewUser",
-        props: {},
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        props: {
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+        },
         data() {
             return {
                 emailModel: '',
@@ -120,11 +139,41 @@
                 usernameModel: '',
             }
         },
+        validations: {
+            emailModel: {
+                required,
+                email,
+            },
+            firstNameModel: { 
+                required, 
+            },
+            lastNameModel: { 
+                required 
+            },
+            password1Model: { 
+                required 
+            },
+            password2Model: { 
+                required
+            },
+            usernameModel: { 
+                required 
+            },
+        },
         mixins: [
             errorModalMixin,
         ],
         methods: {
-            addUser: function() {
+            addUser: async function() {
+                //Check validation
+                const isFormCorrect = await this.v$.$validate();
+                if (!isFormCorrect) {
+                    this.showValidationErrorModal();
+                    
+                    //Just return
+                    return;
+                }
+
                 //Setup data to send
                 const data_to_send = new FormData();
                 data_to_send.set('username', this.usernameModel);
@@ -135,7 +184,7 @@
                 data_to_send.set('password2', this.password2Model);
 
                 axios.post(
-                    `/new_user/save/`,
+                    `${this.rootUrl}new_user/save/`,
                     data_to_send,
                 ).then(response => {
                     //Send user to the user information page

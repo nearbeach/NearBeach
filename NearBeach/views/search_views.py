@@ -1,20 +1,33 @@
-from NearBeach.models import request_for_change, requirement, project, task, kanban_board, list_of_requirement_status, customer, group, organisation, permission_set, User, tag
-from NearBeach.forms import SearchObjectsForm, SearchForm
-from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.decorators import login_required
-from django.template import loader
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, HttpResponseNotFound
-from django.views.decorators.http import require_http_methods
-from django.db.models import Q
-
 import json
+from django.db.models import Q
+from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.template import loader
+from django.contrib.auth.decorators import login_required
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core import serializers
+from NearBeach.forms import SearchObjectsForm, SearchForm
+from NearBeach.models import object_assignment, \
+    request_for_change, \
+    requirement, \
+    project, \
+    task, \
+    kanban_board, \
+    list_of_requirement_status,\
+    customer, \
+    group, \
+    organisation, \
+    permission_set, \
+    User, \
+    tag, \
+    user_group
 
 
 # Internal Function
-def get_object_search_data(search_form):
+def get_object_search_data(search_form, request):
     """
     The following internal function will search the following objects using the form's data;
+    - Kanban boards
     - Request for Change
     - Requirements
     - Projects
@@ -23,33 +36,82 @@ def get_object_search_data(search_form):
     :param form: Contains all the data we require.
     :return:
     """
-
     # Get instance data for all objects
-    rfc_results = request_for_change.objects.filter(is_deleted=False).values(
+    rfc_results = request_for_change.objects.filter(
+        is_deleted=False,
+    ).values(
         'rfc_id',
         'rfc_title',
         'rfc_status',
     )
-    requirement_results = requirement.objects.filter(is_deleted=False).values(
+    requirement_results = requirement.objects.filter(
+        is_deleted=False,
+    ).values(
         'requirement_id',
         'requirement_title',
         'requirement_status__requirement_status',
     )
-    project_results = project.objects.filter(is_deleted=False).values(
+    project_results = project.objects.filter(
+        is_deleted=False,
+    ).values(
         'project_id',
         'project_name',
         'project_status',
     )
-    task_results = task.objects.filter(is_deleted=False).values(
+    task_results = task.objects.filter(
+        is_deleted=False,
+    ).values(
         'task_id',
         'task_short_description',
         'task_status',
     )
-    kanban_results = kanban_board.objects.filter(is_deleted=False).values(
+    kanban_results = kanban_board.objects.filter(
+        is_deleted=False,
+    ).values(
         'kanban_board_id',
         'kanban_board_name',
         'kanban_board_status',
     )
+
+    # Check to see if not superuser - if not we limit to user's own groups
+    if not request.user.is_superuser:
+        object_assignment_results = object_assignment.objects.filter(
+            is_deleted=False,
+            group_id__in=user_group.objects.filter(
+                is_deleted=False,
+                username=request.user,
+            ).values('group_id')
+        )
+
+        rfc_results = rfc_results.filter(
+            rfc_id__in=object_assignment_results.filter(
+                request_for_change_id__isnull=False,
+            ).values('request_for_change_id'),
+        )
+
+        requirement_results = requirement_results.filter(
+            requirement_id__in=object_assignment_results.filter(
+                requirement_id__isnull=False,
+            ).values('requirement_id'),
+        )
+
+        project_results = project_results.filter(
+            project_id__in=object_assignment_results.filter(
+                project_id__isnull=False,
+            ).values('project_id'),
+        )
+
+        task_results = task_results.filter(
+            task_id__in=object_assignment_results.filter(
+                task_id__isnull=False,
+            ).values('task_id'),
+        )
+
+        kanban_results = kanban_results.filter(
+            kanban_board_id__in=object_assignment_results.filter(
+                kanban_board_id__isnull=False,
+            ).values('kanban_board_id'),
+        )
 
     # Check to see if we are searching for closed objects
     include_closed = search_form.cleaned_data['include_closed']
@@ -57,7 +119,7 @@ def get_object_search_data(search_form):
     # If we are NOT including closed - then we will limit to those with status is_deleted=False
     if not include_closed:
         rfc_results = rfc_results.exclude(
-           rfc_status__in=(5, 6),
+            rfc_status__in=(5, 6),
         )
 
         requirement_results = requirement_results.exclude(
@@ -115,13 +177,14 @@ def get_object_search_data(search_form):
             kanban_results = kanban_results.filter(
                 Q(kanban_board_id=split_row)
             )
-
     # Only have 25 results and order by alphabetical order
-    rfc_results.order_by('rfc_title')[:25]
-    requirement_results.order_by('requirement_title')[:25]
-    project_results.order_by('project_name')[:25]
-    task_results.order_by('task_short_description').values()[:25]
-    kanban_results.order_by('kanban_board_name').values()[:25]
+    rfc_results = rfc_results.order_by('rfc_title')[:25]
+    requirement_results = requirement_results.order_by('requirement_title')[
+        :25]
+    project_results = project_results.order_by('project_name')[:25]
+    task_results = task_results.order_by(
+        'task_short_description').values()[:25]
+    kanban_results = kanban_results.order_by('kanban_board_name').values()[:25]
 
     """
     The pain point
@@ -134,7 +197,8 @@ def get_object_search_data(search_form):
     Note to Django developers - there has to be a better way
     """
     rfc_results = json.dumps(list(rfc_results), cls=DjangoJSONEncoder)
-    requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
+    requirement_results = json.dumps(
+        list(requirement_results), cls=DjangoJSONEncoder)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
     kanban_results = json.dumps(list(kanban_results), cls=DjangoJSONEncoder)
@@ -163,7 +227,7 @@ def search(request):
     t = loader.get_template('NearBeach/search/search.html')
 
     # Translate the include closed, from Python Boolean to JavaScript boolean
-    if form.cleaned_data['include_closed']: # If exists and true
+    if form.cleaned_data['include_closed']:  # If exists and true
         include_closed = 'true'
     else:
         include_closed = 'false'
@@ -173,7 +237,7 @@ def search(request):
         'include_closed': include_closed,
         'nearbeach_title': 'Search',
         'search_input': form.cleaned_data['search'],
-        'search_results': get_object_search_data(form),
+        'search_results': get_object_search_data(form, request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -192,7 +256,7 @@ def search_data(request):
         return HttpResponseBadRequest(form.errors)
 
     # Return the JSON data
-    return JsonResponse(get_object_search_data(form))
+    return JsonResponse(get_object_search_data(form, request))
 
 
 @login_required(login_url='login', redirect_field_name="")
@@ -235,11 +299,13 @@ def search_customer_data(request):
         customer_results = customer_results.filter(
             Q(customer_first_name__icontains=split_row) |
             Q(customer_last_name__icontains=split_row) |
-            Q(organisation__organisation_name__icontains=split_row) # Might not work for freelancers
+            # Might not work for freelancers
+            Q(organisation__organisation_name__icontains=split_row)
         )
 
     # Only have 50 results and order by alphabetical order
-    customer_results.order_by('customer_last_name', 'customer_first_name')[:50]
+    customer_results = customer_results.order_by(
+        'customer_last_name', 'customer_first_name')[:50]
 
     # Send back json data
     json_results = serializers.serialize('json', customer_results)
@@ -253,9 +319,7 @@ def search_group(request):
     :param request:
     :return:
     """
-
     # ADD IN PERMISSIONS
-
     # Get template
     t = loader.get_template('NearBeach/search/search_groups.html')
 
@@ -296,7 +360,7 @@ def search_group_data(request):
             group_name__icontains=split_row,
         )
 
-    group_results.order_by('group_name')[:25]
+    group_results = group_results.order_by('group_name')[:25]
 
     # Send back json data
     json_results = serializers.serialize('json', group_results)
@@ -346,7 +410,8 @@ def search_organisation_data(request):
         )
 
     # Only have 25 results and order by alphabetical order
-    organisation_results = organisation_results.order_by('organisation_name')[:25]
+    organisation_results = organisation_results.order_by('organisation_name')[
+        :25]
 
     # Send back json data
     json_results = serializers.serialize('json', organisation_results)
@@ -404,7 +469,8 @@ def search_permission_set_data(request):
             permission_set_name__icontains=split_row,
         )
 
-    permission_set_results.order_by('permission_set_name')[:25]
+    permission_set_results = permission_set_results.order_by('permission_set_name')[
+        :25]
 
     # Send back json data
     json_results = serializers.serialize('json', permission_set_results)
@@ -422,12 +488,12 @@ def search_tag(request):
         is_deleted=False,
     ).order_by('tag_name')
 
-    #Context
+    # Context
     c = {
         'tag_results': serializers.serialize('json', tag_results),
     }
 
-    #Send back json data
+    # Send back json data
     return HttpResponse(t.render(c, request))
 
 
@@ -444,12 +510,18 @@ def search_user(request):
 
     # Get Data
     user_results = User.objects.filter(
+    ).values(
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
     ).order_by('last_name', 'first_name')[:50]
 
     # Context
     c = {
         'nearbeach_title': 'Search User',
-        'user_results': serializers.serialize('json', user_results),
+        'user_results': json.dumps(list(user_results), cls=DjangoJSONEncoder),
     }
 
     return HttpResponse(t.render(c, request))
@@ -479,9 +551,18 @@ def search_user_data(request):
         )
 
     # Only have 50 results and order by alphabetical order
-    user_results.order_by('last_name', 'first_name')[:50]
+    user_results = user_results.values(
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
+    ).order_by(
+        'last_name',
+        'first_name'
+    )[:50]
 
     # Send back json data
-    json_results = serializers.serialize('json', user_results)
+    json_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type='application/json')

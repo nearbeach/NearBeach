@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.urls import reverse
 
@@ -233,11 +232,11 @@ class AdministrationTest(TestCase):
         login_user(c, self)
 
         # Make sure the admin user can go to the user/1
-        response = c.get(reverse('user_information', args=[2]))
+        _ = c.get(reverse('user_information', args=[2]))
 
         # The following tests will make sure the user can't submit bad forms
         # Blank First name
-        #response = c.post(
+        # response = c.post(
         #    reverse('user_information_save', args=[2]),
         #    {
         #        'first_name': '',
@@ -246,52 +245,52 @@ class AdministrationTest(TestCase):
         #        'is_active': True,
         #        'is_superuser': False,
         #    }
-        #)
-        #self.assertEqual(response.status_code, 400)
+        # )
+        # self.assertEqual(response.status_code, 400)
 
         # Blank Lastname
-        #response = c.post(
+        # response = c.post(
         #    reverse('user_information_save', args=[2]),
         #    {
         #        'first_name': 'First',
         #        'last_name': '',
         #        'email': 'support@nearbeach.org',
         #    }
-        #)
-        #self.assertEqual(response.status_code, 400)
+        # )
+        # self.assertEqual(response.status_code, 400)
 
         # Blank Email
-        #response = c.post(
+        # response = c.post(
         #    reverse('user_information_save', args=[2]),
         #    {
         #        'first_name': 'First',
         #        'last_name': 'Name',
         #        'email': '',
         #    }
-        #)
-        #self.assertEqual(response.status_code, 400)
+        # )
+        # self.assertEqual(response.status_code, 400)
 
         # Blank Passwords
-        #response = c.post(
+        # response = c.post(
         #    reverse('user_information_save', args=[2]),
         #    {
         #        'first_name': 'First',
         #        'last_name': 'Name',
         #        'email': 'support@nearbeach.org',
         #    }
-        #)
-        #self.assertEqual(response.status_code, 400)
+        # )
+        # self.assertEqual(response.status_code, 400)
 
         # Blank Firstname
-        #response = c.post(
+        # response = c.post(
         #    reverse('user_information_save', args=[2]),
         #    {
         #        'first_name': 'First',
         #        'last_name': 'Name',
         #        'email': 'support@nearbeach.org',
         #    }
-        #)
-        #self.assertEqual(response.status_code, 400)
+        # )
+        # self.assertEqual(response.status_code, 400)
 
     def test_admin_new_user(self):
         c = Client()
@@ -341,7 +340,7 @@ class AdministrationTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
         # Blank Email
-        #response = c.post(
+        # response = c.post(
         #    reverse('new_user_save'),
         #    {
         #        'username': 'form_fail',
@@ -351,8 +350,8 @@ class AdministrationTest(TestCase):
         #        'password1': 'Test1234$',
         #        'password2': 'Test1234$'
         #    }
-        #)
-        #self.assertEqual(response.status_code, 400)
+        # )
+        # self.assertEqual(response.status_code, 400)
 
         # Blank Passwords
         # response = c.post(
@@ -369,18 +368,3 @@ class AdministrationTest(TestCase):
         # self.assertEqual(response.status_code, 400)
 
         # # Blank Firstname
-        # response = c.post(
-        #     reverse('new_user_save'),
-        #     {
-        #         'username': 'form_fail',
-        #         'first_name': 'First',
-        #         'last_name': 'Name',
-        #         'email': 'support@nearbeach.org',
-        #         'password1': 'Test1234$',
-        #         'password2': ''
-        #     }
-        # )
-        # self.assertEqual(response.status_code, 400)
-
-
-

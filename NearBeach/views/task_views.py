@@ -1,9 +1,7 @@
-import urllib
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Sum, Q, Min
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
@@ -13,7 +11,6 @@ from NearBeach.models import group, user_group, object_assignment
 from NearBeach.views.tools.internal_functions import task, organisation
 
 import json
-import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")
@@ -124,7 +121,7 @@ def task_information(request, task_id, *args, **kwargs):
 
     # Context
     c = {
-        'nearbeach_title': 'Task Information %s' % task_id,
+        'nearbeach_title': f"Task Information {task_id}",
         'organisation_results': serializers.serialize('json', organisation_results),
         'user_level': user_level,
         'task_id': task_id,

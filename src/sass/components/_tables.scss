@@ -5,7 +5,7 @@ thead {
 .requirement-link-type, .small-text {
   padding: 0;
   margin: 0;
-  font-weight: lighter;
+  font-weight: 300;
 }
 
 td {
@@ -19,4 +19,10 @@ td {
     color: black;
     text-shadow: 1px 1px #cecece;
   }
+}
+
+.remove-link {
+    color: red;
+    float: right;
+    font-size: 20px;
 }

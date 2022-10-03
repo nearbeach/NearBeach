@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Card Information</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Card Information</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -12,6 +12,7 @@
                     >
                         <span aria-hidden="true"></span>
                     </button>
+                    <br/>
                 </div>
                 <div class="modal-body">
                     <!-- TAB MENU -->
@@ -90,13 +91,26 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import CardDetails from "./CardDetails.vue";
+    import CardNotes from "./CardNotes.vue";
+    import CardDescription from "./CardDescription.vue";
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
     export default {
         name: 'CardInformation',
+        components: {
+            CardDescription,
+            CardDetails,
+            CardNotes,
+            Icon,
+        },
         mixins: [
             iconMixin,
         ],
@@ -109,6 +123,11 @@
                 noteHistoryResults: [],
             }
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
+        },
         methods: {
             updateCard: function() {
                 //Get all data from VueX
@@ -118,19 +137,20 @@
                 const data_to_send = new FormData()
                 data_to_send.set('kanban_card_text', all_data.cardTitle);
                 data_to_send.set('kanban_card_description', all_data.cardDescription);
-                data_to_send.set('kanban_level', all_data.cardLevel.value);
-                data_to_send.set('kanban_column', all_data.cardColumn.value);
+                data_to_send.set('kanban_level', all_data.cardLevel);
+                data_to_send.set('kanban_column', all_data.cardColumn);
                 data_to_send.set('kanban_card_id', all_data.cardId);
 
                 //Use Axios to send data to backend
                 axios.post(
-                    `/kanban_information/update_card/`,
+                    `${this.rootUrl}kanban_information/update_card/`,
                     data_to_send,
                 ).then(response => {
                     //Send the new data upstream
                     this.$emit('update_card',{
                         'kanban_card_id': all_data.cardId,
                         'kanban_card_text': all_data.cardTitle,
+                        'kanban_card_description': all_data.cardDescriptionModel,
                         'kanban_column': all_data.cardColumn,
                         'kanban_level': all_data.cardLevel,
                     });

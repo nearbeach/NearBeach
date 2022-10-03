@@ -16,7 +16,7 @@
                 <div class="col-md-8" style="min-height: 610px;">
                     <div class="form-group">
                         <label for="id_requirement_title">Requirement Title:
-                            <span class="error" v-if="!$v.requirementTitleModel.required && $v.requirementTitleModel.$dirty"> Please suppy a title.</span>
+                            <span class="error" v-if="!v$.requirementTitleModel.required && v$.requirementTitleModel.$dirty"> Please suppy a title.</span>
                         </label>
                         <input id="id_requirement_title"
                                class="form-control"
@@ -30,10 +30,10 @@
 
                     <br/>
                     <label>Requirement Scope:
-                        <span class="error" v-if="!$v.requirementScopeModel.required && $v.requirementScopeModel.$dirty"> Please supply a scope.</span>
-                        <span class="error" v-if="!$v.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.requirementScopeModel.required && v$.requirementScopeModel.$dirty"> Please supply a scope.</span>
+                        <span class="error" v-if="!v$.requirementScopeModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/body_text.svg`"
+                    <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -41,10 +41,12 @@
                        :init="{
                          height: 500,
                          menubar: false,
-                         toolbar: 'undo redo | formatselect | ' +
-                          'bold italic backcolor | alignleft aligncenter ' +
-                          'alignright alignjustify | bullist numlist outdent indent | ',
-                       }"
+                         plugins: ['lists','table'],
+                        toolbar: [
+                           'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                           'bold italic strikethrough underline backcolor | table | ' +
+                           'bullist numlist outdent indent | removeformat'
+                        ]}"
                        v-bind:content_css="false"
                        v-bind:skin="false"
                        v-model="requirementScopeModel"
@@ -55,7 +57,7 @@
             <!-- Stakeholder Organisation -->
             <hr>
             <get-stakeholders v-on:update_stakeholder_model="updateStakeholderModel($event)"
-                              v-bind:is-dirty="$v.stakeholderModel.$dirty"
+                              v-bind:is-dirty="v$.stakeholderModel.$dirty"
             ></get-stakeholders>
 
             <!-- Status -->
@@ -68,24 +70,24 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Requirement Status
-                            <span class="error" v-if="!$v.statusModel.required && $v.statusModel.$dirty"> Please select a status.</span>
+                            <span class="error" v-if="!v$.statusModel.required && v$.statusModel.$dirty"> Please select a status.</span>
                         </label>
-                        <v-select :options="statusFixList"
+                        <n-select :options="statusFixList"
                                   label="status"
-                                  v-model="statusModel"
-                        ></v-select>
+                                  v-model:value="statusModel"
+                        ></n-select>
                     </div>
 
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Requirement Type
-                            <span class="error" v-if="!$v.typeModel.required && $v.typeModel.$dirty"> Please select a type.</span>
+                            <span class="error" v-if="!v$.typeModel.required && v$.typeModel.$dirty"> Please select a type.</span>
                         </label>
-                        <v-select :options="typeFixList"
+                        <n-select :options="typeFixList"
                                   label="type"
-                                  v-model="typeModel"
-                        ></v-select>
+                                  v-model:value="typeModel"
+                        ></n-select>
                     </div>
                 </div>
             </div>
@@ -96,7 +98,7 @@
                                v-bind:destination="'requirement'"
                                v-bind:user-group-results="userGroupResults"
                                v-on:update_group_model="updateGroupModel($event)"
-                               v-bind:is-dirty="$v.groupModel.$dirty"
+                               v-bind:is-dirty="v$.groupModel.$dirty"
             ></group-permissions>
 
             <!-- Submit Button -->
@@ -117,23 +119,53 @@
     //JavaScript Libraries
     const axios = require('axios');
     import { Modal } from 'bootstrap';
+    import Editor from '@tinymce/tinymce-vue';
+    import GetStakeholders from "../organisations/GetStakeholders.vue";
+    import GroupPermissions from "../permissions/GroupPermissions.vue";
+    import { NSelect } from 'naive-ui';
 
     //Validation
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     export default {
         name: "NewRequirement",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         components: {
-            axios,
+            'editor': Editor,
+            GetStakeholders,
+            GroupPermissions,
+            NSelect,
         },
         props: {
-            groupResults: Array,
+            groupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
             staticUrl: {
                 type: String,
                 default: "/",
             },
-            statusList: Array,
-            typeList: Array,
+            statusList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            typeList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             userGroupResults: {
                 type: Array,
                 default: () => {
@@ -175,11 +207,18 @@
             },
         },
         methods: {
-            submitNewRequirement: function() {
+            submitNewRequirement: async function() {
                 // Check the validation first
-                this.$v.$touch();
+                const isFormCorrect = await this.v$.$validate();
 
-                if (this.$v.$invalid) {
+                if (!isFormCorrect && (
+                    this.v$.groupModel.$error.length > 0 ||
+                    this.v$.stakeholderModel.length > 0 ||
+                    this.v$.requirementTitleModel.length > 0 ||
+                    this.v$.requirementScopeModel.length > 0 ||
+                    this.v$.statusModel.length > 0 ||
+                    this.v$.typeModel.length > 0
+                )) {
                     //Show the error dialog and notify to the user that there were field missing.
                     var elem_cont = document.getElementById("errorModalContent");
 
@@ -199,13 +238,13 @@
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_title', this.requirementTitleModel);
                 data_to_send.set('requirement_scope',this.requirementScopeModel);
-                data_to_send.set('organisation',this.stakeholderModel['value']);
-                data_to_send.set('requirement_status',this.statusModel['value']);
-                data_to_send.set('requirement_type',this.typeModel['value']);
+                data_to_send.set('organisation',this.stakeholderModel);
+                data_to_send.set('requirement_status',this.statusModel);
+                data_to_send.set('requirement_type',this.typeModel);
 
                 // Insert a new row for each group list item
                 this.groupModel.forEach((row,index) => {
-                    data_to_send.append(`group_list`,row['value']);
+                    data_to_send.append(`group_list`,row);
                 });
 
                 // Use Axion to send the data
@@ -226,9 +265,6 @@
                     //var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
                     var errorModal = new Modal(document.getElementById('errorModal'));
                     errorModal.show();
-
-                    // Hide the loader
-                    loader_elem.style.transform = "translateY(-100vh)";
                 });
             },
             updateGroupModel: function(newGroupModel) {
@@ -240,26 +276,26 @@
             }
         },
         mounted() {
-            //We need to extract "fields" array from the statusList/typeList json data
-            this.statusList.forEach((row) => {
-                //Construct the object
-                var construction_object = {
-                    'value': row['pk'],
-                    'status': row['fields']['requirement_status'],
+            //VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            })
+
+            //We need to map "fields" array from the statusList/typeList json data
+            this.statusFixList = this.statusList.map((row) => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['requirement_status'],
                 };
-
-                //Push the object to status fix list
-                this.statusFixList.push(construction_object);
             });
-            this.typeList.forEach((row) => {
-                //Construct the object
-                var construction_object = {
-                    'value': row['pk'],
-                    'type': row['fields']['requirement_type'],
-                }
 
-                //Push the object to type fix list
-                this.typeFixList.push(construction_object);
+            this.typeFixList = this.typeList.map((row) => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['requirement_type'],
+                }
             });
         },
     }

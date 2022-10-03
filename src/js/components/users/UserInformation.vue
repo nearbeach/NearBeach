@@ -34,21 +34,39 @@
                 <div class="col-md-8">
                     <div class="row">
                         <div class="col-md-6">
-                            <label>First Name:</label>
+                            <label>
+                              First Name:
+                              <span class="error"
+                                    v-if="v$.firstNameModel.$errors.length > 0"
+                              > Please suppy a first name.</span>
+                              <br/>
+                            </label>
                             <input type="text"
                                    v-model="firstNameModel"
                                    class="form-control"
                             >
                         </div>
                         <div class="col-md-6">
-                            <label>Last Name:</label>
+                            <label>
+                              Last Name:
+                              <span class="error"
+                                    v-if="v$.lastNameModel.$errors.length > 0"
+                              > Please suppy a last name.</span>
+                              <br/>
+                            </label>
                             <input type="text"
                                    v-model="lastNameModel"
                                    class="form-control"
                             >
                         </div>
                         <div class="col-md-6">
-                            <label>Email:</label>
+                            <label>
+                              Email:
+                              <span class="error"
+                                    v-if="v$.emailModel.$errors.length > 0"
+                              > Please suppy an email.</span>
+                              <br/>
+                            </label>
                             <input type="email"
                                    v-model="emailModel"
                                    class="form-control"
@@ -110,16 +128,33 @@
 </template>
 
 <script>
+    //Vue is like "I wanna write JS in my HTML" and React is like "I wanna write my HTML as JS"
     const axios = require('axios');
 
     //Import mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
 
+    //Validation
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength, email } from '@vuelidate/validators'
+
     export default {
         name: "UserInformation",
+        setup() {
+            return { v$: useVuelidate() }
+        },
         props: {
-            userResults: Array,
+            userResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
         },
         data() {
             return {
@@ -134,8 +169,33 @@
             errorModalMixin,
             loadingModalMixin,
         ],
+        validations: {
+            lastNameModel: {
+                required,
+                maxLength: maxLength(255),
+            },
+            firstNameModel: {
+                required,
+                maxLength: maxLength(255),
+            },
+            emailModel: {
+                required,
+                email,
+                maxLength: maxLength(255),
+            },
+        },
         methods: {
             updateUser: function() {
+                //Check form validation
+                this.v$.$touch();
+
+                if (this.v$.$invalid) {
+                    this.showValidationErrorModal();
+
+                    //Just return - as we do not need to do the rest of this function
+                    return;
+                }
+
                 //Start the loading modal
                 this.showLoadingModal("User Information")
 
@@ -148,7 +208,7 @@
                 data_to_send.set('last_name', this.lastNameModel);
 
                 axios.post(
-                    `/user_information/${this.userResults[0]['pk']}/save/`,
+                    `${this.rootUrl}user_information/${this.userResults[0]['pk']}/save/`,
                     data_to_send,
                 ).then(response => {
                     //Hide the loading modal
@@ -157,6 +217,12 @@
                     this.showErrorModal(error, "Update User", this.userResults[0]['pk']);
                 });
             },
+        },
+        mounted() {
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            })
         }
     }
 </script>

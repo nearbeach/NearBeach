@@ -1,30 +1,31 @@
+import json
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Sum, Q, Min
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404
+from django.db.models import Q
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import AddRequirementLinkForm, NewRequirementForm, organisation, UpdateRequirementForm
-from NearBeach.models import requirement, object_assignment, project, task, opportunity, requirement_item, list_of_requirement_item_status, list_of_requirement_item_type, list_of_requirement_status, list_of_requirement_type, group, user_group
-
-import json
+from NearBeach.models import requirement, object_assignment, project, task, opportunity, requirement_item,\
+    list_of_requirement_item_status, list_of_requirement_item_type, list_of_requirement_status,\
+    list_of_requirement_type, group, user_group
 
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=2, object_lookup='requirement_id')
 def add_requirement_link(request, requirement_id, *args, **kwargs):
-    # Check user form is valid
+    """Check user form is valid"""
     form = AddRequirementLinkForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
     # Get the requirement instnace
-    requirement_instance = requirement.objects.get(requirement_id=requirement_id)
+    requirement_instance = requirement.objects.get(
+        requirement_id=requirement_id)
 
     # Get the project list from the form
     for row in request.POST.getlist("project"):
@@ -58,10 +59,7 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_item_links(request, requirement_id, *args, **kwargs):
-    # Get the requirement information
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
-
-    # Use object_assignment to get the requirme
+    """Get the requirement informatio"""
     link_results = object_assignment.objects.filter(
         Q(
             is_deleted=False,
@@ -93,8 +91,9 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
     )
 
     """
-    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard 
+    As explained on stack overflow here -
+    https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
+    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard
     json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
     """
 
@@ -108,7 +107,7 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_item_status_list(request, requirement_id, *args, **kwargs):
-    # Get all status - even deleted ones.
+    """Get all status - even deleted ones."""
     status_list = list_of_requirement_item_status.objects.all()
 
     # Send back json data
@@ -121,7 +120,7 @@ def get_requirement_item_status_list(request, requirement_id, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_item_type_list(request, requirement_id, *args, **kwargs):
-    # Get all status - even deleted ones.
+    """Get all status - even deleted ones."""
     type_list = list_of_requirement_item_type.objects.all()
 
     # Send back json data
@@ -134,7 +133,7 @@ def get_requirement_item_type_list(request, requirement_id, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_items(request, requirement_id, *args, **kwargs):
-    # Get all the requirement items assigned to the requirement
+    """Get all the requirement items assigned to the requirement"""
     requirement_item_results = requirement_item.objects.filter(
         is_deleted=False,
         requirement_id=requirement_id,
@@ -150,10 +149,7 @@ def get_requirement_items(request, requirement_id, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='requirement_id')
 def get_requirement_links_list(request, requirement_id, *args, **kwargs):
-    # Get the requirement information
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
-
-    # Use object_assignment to get the requirme
+    """Get the requirement information"""
     link_results = object_assignment.objects.filter(
         Q(
             is_deleted=False,
@@ -164,6 +160,7 @@ def get_requirement_links_list(request, requirement_id, *args, **kwargs):
             Q(task_id__isnull=False)
         )
     ).values(
+        'object_assignment_id',
         'project_id',
         'project_id__project_name',
         'project_id__project_status',
@@ -172,11 +169,13 @@ def get_requirement_links_list(request, requirement_id, *args, **kwargs):
         'task_id__task_status',
         'requirement_item_id',
         'requirement_item_id__requirement_item_title',
+        'requirement_id',
     )
 
     """
-    As explained on stack overflow here - https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard 
+    As explained on stack overflow here -
+    https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
+    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard
     json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
     """
 
@@ -196,7 +195,6 @@ def new_requirement(request, *args, **kwargs):
     :param destination:
     :return:
     """
-    # Extract Data
     status_list = list_of_requirement_status.objects.filter(
         is_deleted=False,
         requirement_status_is_closed=False,
@@ -238,7 +236,7 @@ def new_requirement(request, *args, **kwargs):
 @login_required(login_url='login', redirect_field_name='')
 @check_user_permissions(min_permission_level=3, object_lookup='requirement_id')
 def new_requirement_save(request, *args, **kwargs):
-    # Get the data and place into the form
+    """Get the data and place into the form"""
     form = NewRequirementForm(request.POST)
     if not form.is_valid():
         # Something went wrong with the form.
@@ -286,15 +284,21 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     :param requirement_id:
     :return:
     """
+    user_level = kwargs['user_level']
+
     # TODO: Check if I need to have a separate read only tempalte now.
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_results = requirement.objects.get(
+        requirement_id=requirement_id)
+
+    requirement_is_closed = requirement_results.requirement_status.requirement_status_is_closed
 
     # If the requirement has been closed - send user to the read only section
     if requirement_results.requirement_status.requirement_status == "Completed":
         return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_id}))
 
     # Load template
-    t = loader.get_template('NearBeach/requirements/requirement_information.html')
+    t = loader.get_template(
+        'NearBeach/requirements/requirement_information.html')
 
     # Get any extra data required
     organisation_results = organisation.objects.get(
@@ -303,7 +307,6 @@ def requirement_information(request, requirement_id, *args, **kwargs):
 
     status_list = list_of_requirement_status.objects.filter(
         is_deleted=False,
-        requirement_status_is_closed=False,
     )
 
     type_list = list_of_requirement_type.objects.filter(
@@ -322,13 +325,15 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     # context
     c = {
         'group_results': serializers.serialize("json", group_results),
-        'nearbeach_title': 'Requirement Information %s' % requirement_id,
+        'nearbeach_title': f"Requirement Information {requirement_id}",
         'organisation_results': serializers.serialize("json", [organisation_results]),
         'requirement_results': serializers.serialize("json", [requirement_results]),
         'requirement_id': requirement_id,
+        'requirement_is_closed': requirement_is_closed,
         'requirement_item_results': serializers.serialize("json", requirement_item_results),
         'status_list': serializers.serialize("json", status_list),
         'type_list': serializers.serialize("json", type_list),
+        'user_level': user_level,
     }
 
     return HttpResponse(t.render(c, request))
@@ -343,12 +348,11 @@ def requirement_information_save(request, requirement_id, *args, **kwargs):
     :param requirement_id:
     :return:
     """
-    # Insert POST into form
     form = UpdateRequirementForm(request.POST)
 
     # If there is an error - notify the user
     if not form.is_valid():
-        return HttpResponseBadRequest("Sorry, there is an error with the form: %s" % form.errors)
+        return HttpResponseBadRequest(f"Sorry, there is an error with the form: {form.errors}")
 
     # Get the requirement
     requirement_result = requirement.objects.get(requirement_id=requirement_id)

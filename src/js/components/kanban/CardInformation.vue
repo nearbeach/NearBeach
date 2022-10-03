@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Card Information</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Card Information</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -50,10 +50,12 @@
                                :init="{
                                  height: 300,
                                  menubar: false,
-                                 toolbar: 'undo redo | formatselect | ' +
-                                  'bold italic backcolor | alignleft aligncenter ' +
-                                  'alignright alignjustify | bullist numlist outdent indent | ',
-                               }"
+                                 plugins: ['lists','table'],
+                                  toolbar: [
+                                     'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                                     'bold italic strikethrough underline backcolor | table | ' +
+                                     'bullist numlist outdent indent | removeformat'
+                                  ]}"
                                v-bind:content_css="false"
                                v-bind:skin="false"
                                v-model="cardDescriptionModel"
@@ -76,10 +78,12 @@
                                :init="{
                                  height: 250,
                                  menubar: false,
-                                 toolbar: 'undo redo | formatselect | ' +
-                                  'bold italic backcolor | alignleft aligncenter ' +
-                                  'alignright alignjustify | bullist numlist outdent indent | ',
-                               }"
+                                 plugins: ['lists','table'],
+                                toolbar: [
+                                   'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                                   'bold italic strikethrough underline backcolor | table | ' +
+                                   'bullist numlist outdent indent | removeformat'
+                                ]}"
                                v-bind:content_css="false"
                                v-bind:skin="false"
                                v-model="cardNoteModel"
@@ -114,15 +118,35 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import Editor from '@tinymce/tinymce-vue'
+    import CardDetails from "../card_information/CardDetails.vue";
+    import ListNotes from "../modules/sub_modules/ListNotes.vue";
+    import CardNotes from "../card_information/CardNotes.vue";
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
     export default {
         name: "CardInformation",
+        components: {
+            CardDetails,
+            CardNotes,
+            'editor': Editor,
+            Icon,
+            ListNotes,
+        },
         props: {
-            cardInformation: Object,
+            cardInformation: {
+                type: Object,
+                default: () => {
+                    return {}
+                }
+            },
         },
         mixins: [
             iconMixin,
@@ -135,6 +159,11 @@
                 cardTitleModel: '',
                 noteHistoryResults: [],
             }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            })
         },
         watch: {
             cardInformation: function() {
@@ -164,7 +193,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/object_data/kanban_card/${this.cardId}/add_notes/`,
+                    `${this.rootUrl}object_data/kanban_card/${this.cardId}/add_notes/`,
                     data_to_send,
                 ).then(response => {
                     //Add the response to the end of the noteHistoryResults
@@ -182,7 +211,7 @@
 
                 //Use axios to get the card list
                 axios.post(
-                    `/object_data/kanban_card/${this.cardId}/note_list/`
+                    `${this.rootUrl}object_data/kanban_card/${this.cardId}/note_list/`
                 ).then(response => {
                     //Save the data into noteHistoryResults
                     this.noteHistoryResults = response['data'];
@@ -199,7 +228,7 @@
 
                 //Use Axios to send data
                 axios.post(
-                    `/kanban_information/update_card/`,
+                    `${this.rootUrl}kanban_information/update_card/`,
                     data_to_send,
                 ).then(response => {
                     //Send the new data upstream

@@ -13,13 +13,16 @@
                     :init="{
                         height: 300,
                         menubar: false,
-                        toolbar: 'undo redo | formatselect | ' +
-                        'bold italic backcolor | alignleft aligncenter ' +
-                        'alignright alignjustify | bullist numlist outdent indent | ',
-                    }"
+                        plugins: ['lists','table'],
+                        toolbar: [
+                           'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                           'bold italic strikethrough underline backcolor | table | ' +
+                           'bullist numlist outdent indent | removeformat'
+                        ]}"
                     v-bind:content_css="false"
                     v-bind:skin="false"
                     v-model="cardDescription"
+                    v-bind:disabled="kanbanStatus === 'Closed'"
                 />
             </div>
         </div>
@@ -30,10 +33,11 @@
                 <button class="btn btn-secondary"
                         v-on:click="closeModal"
                 >
-                    Close Modal
+                    Close
                 </button>
                 <button class="btn btn-primary save-changes"
                         v-on:click="updateCard"
+                        v-if="kanbanStatus !== 'Closed'"
                 >
                     Update Card
                 </button>
@@ -43,19 +47,34 @@
 </template>
 
 <script>
-    import {mapFields} from 'vuex-map-fields';
     const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue'
+    import { mapGetters } from 'vuex';
 
     export default {
         name: 'CardDescription',
+        components: {
+            'editor': Editor,
+        },
         props: {},
         data() {
             return {}
         },
         computed: {
-            ...mapFields([
-                'cardDescription',
-            ])
+            ...mapGetters({
+                kanbanStatus: 'getKanbanStatus',
+            }),
+            cardDescription: {
+                get () {
+                    return this.$store.state.card.cardDescription;
+                },
+                set (value) {
+                    this.$store.commit('updateValue', {
+                        field: 'cardDescription',
+                        value: value,
+                    });
+                },
+            },
         },
         methods: {
             closeModal: function() {

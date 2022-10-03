@@ -1,31 +1,44 @@
 <template>
     <div class="row">
         <label>{{propertyLabel}}</label>
-        <v-select :options="fixListOfChoices"
-                  v-model="propertyModel"
+        <n-select :options="fixListOfChoices"
+                  v-model:value="propertyModel"
                   class="form-group"
-        ></v-select>
+        ></n-select>
     </div>
 </template>
 
 <script>
+import { NSelect } from 'naive-ui';
+
 export default {
     name: "SinglePermissionProperties",
+    components: {
+        NSelect,
+    },
     props: {
-        property: String,
-        propertyLabel: String,
+        property: {
+            type: String,
+            default: '',
+        },
+        propertyLabel: {
+            type: String,
+            default: '',
+        },
         propertyValue: {
             Type: Number,
             default: 0
         },
-        listOfChoices: Array,
+        listOfChoices: {
+            type: Array,
+            default: () => {
+                return [];
+            },
+        },
     },
     data() {
         return {
-            propertyModel: {
-                'label': this.getLabel(this.propertyValue),
-                'value': this.propertyValue,
-            },
+            propertyModel: this.propertyValue,
             fixListOfChoices: [],
         }
     },
@@ -34,16 +47,13 @@ export default {
             //If there are no values - use the default value
             if (this.propertyModel === null) {
                 //Define the default of 0
-                this.propertyModel = {
-                    'label': this.getLabel(0),
-                    'value': 0,
-                }
+                this.propertyModel = 0
             }
 
             // Send the new property value up stream
             this.$emit('update_property_value',{
                 'property': this.property,
-                'value': this.propertyModel['value'],
+                'value': this.propertyModel,
             });
         },
     },

@@ -43,15 +43,44 @@
 <script>
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
+    import KanbanRow from "./KanbanRow.vue"
 
     export default {
         name: "KanbanBoard",
+        components: {
+            KanbanRow,
+        },
         props: {
-            columnResults: Array,
-            kanbanBoardResults: Array,
-            kanbanCardResults: Array,
-            levelResults: Array,
-            newCardInfo: Array,
+            columnResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            kanbanBoardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            kanbanCardResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            levelResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            newCardInfo: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         mixins: [
             iconMixin,
@@ -126,6 +155,11 @@
                 kanbanCardResults: this.kanbanCardResults,
                 levelResults: this.levelResults,
                 columnResults: this.columnResults,
+            })
+
+            this.$store.commit({
+                type: 'updateKanbanStatus',
+                kanbanStatus: this.kanbanBoardResults[0].fields.kanban_board_status,
             })
         },
     }

@@ -12,28 +12,46 @@
         </div>
         <div class="col-md-8">
             <label>Group List
-                <span class="error" v-if="!$v.groupModel.required && isDirty"> Please select at least one group.</span>
+                <span class="error" v-if="!v$.groupModel.required && isDirty"> Please select at least one group.</span>
             </label>
-            <v-select :options="groupFixResults"
+            <n-select :options="groupFixResults"
                       label="group"
-                      v-model="groupModel"
+                      v-model:value="groupModel"
                       multiple
-            ></v-select>
+            ></n-select>
         </div>
     </div>
 </template>
 
 <script>
     //Validation
-    import { required } from 'vuelidate/lib/validators'
+    import useVuelidate from '@vuelidate/core'
+    import { required } from '@vuelidate/validators'
+    import { NSelect } from 'naive-ui';
 
     export default {
         name: "GroupPermissions",
-        components: {},
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            NSelect,
+        },
         props: {
-            destination: String,
-            groupResults: Array,
-            isDirty: Boolean, //Passes the value from the template above where the checking is done
+            destination: {
+                type: String,
+                default: '',
+            },
+            groupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            isDirty: {
+                type: Boolean,
+                default: true,
+            }, //Passes the value from the template above where the checking is done
             userGroupResults: {
                 type: Array,
                 default: () => {
@@ -42,7 +60,7 @@
             },
         },
         watch: {
-            'groupModel': function() {
+            groupModel: function() {
                 //Send the data upstream
                 this.$emit('update_group_model',this.groupModel);
             }
@@ -60,23 +78,16 @@
         },
         mounted() {
             //Fix up the list to remove any django nested loops
-            this.groupResults.forEach((row) => {
-                //Construct the object
-                var construction_object = {
-                    'value': row['pk'],
-                    'group': row['fields']['group_name'],
+            this.groupFixResults = this.groupResults.map((row) => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['group_name'],
                 }
-
-                //Push the object to type fix list
-                this.groupFixResults.push(construction_object);
             });
 
             //Any User groups are added to the group Model
             this.groupModel = this.userGroupResults.map(row => {
-                return {
-                    group: row['group__group_name'],
-                    value: row['group_id'],
-                }
+                return row['group_id'];
             });
         }
     }

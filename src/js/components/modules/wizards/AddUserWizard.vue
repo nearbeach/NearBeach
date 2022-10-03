@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Add User Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.userIcon"></Icon> Add User Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -28,10 +28,10 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="userFixList"
-                                      v-model="userModel"
+                            <n-select :options="userFixList"
+                                      v-model:value="userModel"
                                       multiple
-                            ></v-select>
+                            ></n-select>
                         </div>
                     </div>
                     <div v-else
@@ -50,7 +50,7 @@
                             </p>
                         </div>
                         <div class="col-md-6 no-search">
-                            <img src="/static/NearBeach/images/placeholder/questions.svg" alt="Sorry - there are no results" />
+                            <img v-bind:src="`${staticURL}NearBeach/images/placeholder/questions.svg`" alt="Sorry - there are no results" />
                         </div>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                     >Close</button>
                     <button type="button"
                             class="btn btn-primary"
-                            v-bind:disabled="userModel.length==0"
+                            v-bind:disabled="userModel.length===0"
                             v-on:click="addUser"
                     >Add User(s)</button>
                 </div>
@@ -71,7 +71,12 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
+
+    //VueX
+    import { mapGetters } from 'vuex'
 
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
@@ -79,15 +84,34 @@
 
     export default {
         name: "AddUserWizard",
-        props: [
-            'destination',
-            'locationId',
-            'refreshUserList'
-        ],
+        components: {
+            Icon,
+            NSelect,
+        },
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            refreshUserList: {
+                type: Boolean,
+                default: false,
+            },
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
         ],
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticURL: "getStaticUrl",
+            }),
+        },
         data() {
             return {
                 userFixList: [],
@@ -101,12 +125,12 @@
 
                 //Look through all of the results in user model and append
                 this.userModel.forEach(row => {
-                    data_to_send.append('user_list',row['value']);
+                    data_to_send.append('user_list',row);
                 });
 
                 //User axios to send the data to the backend
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_user/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_user/`,
                     data_to_send
                 ).then(response => {
                     //Emit the data up
@@ -127,21 +151,14 @@
             },
             getUserList: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/user_list_all/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/user_list_all/`,
                 ).then(response => {
                     //Clear the user fix list
-                    this.userFixList = [];
-
-                    //Loop through the response data and add each result to the userFixList
-                    response['data'].forEach(row => {
-                        //Construct object array
-                        var construction_object = {
-                            'value': row['pk'],
-                            'label': `${row['fields']['username']}: ${row['fields']['first_name']} ${row['fields']['last_name']}`
-                        };
-
-                        //Push the changes
-                        this.userFixList.push(construction_object);
+                    this.userFixList = response['data'].map(row => {
+                        return {
+                            'value': row['id'],
+                            'label': `${row['username']}: ${row['first_name']} ${row['last_name']}`
+                        }
                     });
                 });
             }
@@ -158,7 +175,10 @@
             },
         },
         mounted() {
-            this.getUserList();
+            //Wait 200ms
+            setTimeout(() => {
+                this.getUserList();
+            }, 200);
         },
     }
 </script>

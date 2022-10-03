@@ -36,7 +36,14 @@ The following instructions will inform you how to setup NearBeach and get it run
 
     'NearBeach.apps.NearBeachConfig',
 
-  Now save the document
+  Now save the document and add the following two lines to the "context_processors" under "TEMPLATES".
+
+  .. code-block:: bash
+
+    'NearBeach.context_processors.django_version',
+    'NearBeach.context_processors.nearbeach_version',
+
+  These two lines will render the version of both Django and NearBeach inside the templates.
 
 6. Enabling reCAPTCHA (optional). Register an account at [Google reCAPTCHA](https://www.google.com/recaptcha/intro/invisible.html).
 

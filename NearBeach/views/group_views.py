@@ -58,6 +58,7 @@ def group_information(request, group_id):
         'username__first_name',
         'username__last_name',
         'username__email',
+        'group_leader',
         'group',
         'group__group_name',
         'permission_set',
@@ -75,7 +76,7 @@ def group_information(request, group_id):
     c = {
         'group_id': group_id,
         'group_results': serializers.serialize('json', [group_results]),
-        'nearbeach_title': 'Group Information %s' % group_id,
+        'nearbeach_title': f"Group Information {group_id}",
         'parent_group_results': serializers.serialize('json', parent_group_results),
         'user_list_results': user_list_results,
     }
@@ -96,7 +97,6 @@ def group_information_save(request, group_id):
     # Get Form Data
     form = NewGroupForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Update the group's data

@@ -11,7 +11,7 @@
             <div class="form-group">
                 <label>
                     Request for Change Title:
-                    <span class="error" v-if="!$v.rfcTitleModel.required && $v.rfcTitleModel.$dirty"
+                    <span class="error" v-if="!v$.rfcTitleModel.required && v$.rfcTitleModel.$dirty"
                     > Please suppy a title.</span>
                 </label>
                 <input type="text"
@@ -24,10 +24,10 @@
 
             <!-- RFC SUMMARY -->
             <label>Request for Change Summary:
-                <span class="error" v-if="!$v.rfcSummaryModel.required && $v.rfcSummaryModel.$dirty"> Please supply a description.</span>
-                <span class="error" v-if="!$v.rfcSummaryModel.maxLength"> Sorry - too many characters.</span>
+                <span class="error" v-if="!v$.rfcSummaryModel.required && v$.rfcSummaryModel.$dirty"> Please supply a description.</span>
+                <span class="error" v-if="!v$.rfcSummaryModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
-            <img v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/body_text.svg`"
+            <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                  class="loader-image"
                  alt="loading image for Tinymce"
             />
@@ -35,10 +35,12 @@
                :init="{
                  height: 500,
                  menubar: false,
-                 toolbar: 'undo redo | formatselect | ' +
-                  'bold italic backcolor | alignleft aligncenter ' +
-                  'alignright alignjustify | bullist numlist outdent indent | ',
-               }"
+                 plugins: ['lists','table'],
+                  toolbar: [
+                     'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                     'bold italic strikethrough underline backcolor | table | ' +
+                     'bullist numlist outdent indent | removeformat'
+                  ]}"
                v-bind:content_css="false"
                v-bind:skin="false"
                v-bind:disabled="isReadOnly"
@@ -49,10 +51,22 @@
 </template>
 
 <script>
-    import { required, maxLength } from 'vuelidate/lib/validators'
+    //Validations
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators';
+    import Editor from '@tinymce/tinymce-vue';
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "RfcDescription",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            'editor': Editor,
+        },
         props: {
             isReadOnly: {
                 type: Boolean,
@@ -64,15 +78,16 @@
                     return [];
                 }
             },
-            staticUrl: {
-                type: String,
-                default: "/",
-            },
         },
         data: () => ({
             rfcSummaryModel: '',
             rfcTitleModel: '',
         }),
+        computed: {
+            ...mapGetters({
+               staticUrl: 'getStaticUrl',
+            }),
+        },
         validations: {
             rfcSummaryModel: {
                 required,
@@ -100,11 +115,11 @@
             },
         },
         updated() {
-            this.$v.$touch();
+            this.v$.$touch();
 
             this.$emit('update_validation', {
                 'tab': 'tab_0',
-                'value': !this.$v.$invalid,
+                'value': !this.v$.$invalid,
             });
         },
         mounted() {
@@ -115,7 +130,7 @@
             }
 
             //Just run the validations to show the error messages
-            this.$v.$touch();
+            this.v$.$touch();
         }
     }
 </script>

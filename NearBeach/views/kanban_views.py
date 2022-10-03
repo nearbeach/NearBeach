@@ -1,18 +1,31 @@
+import json
+from NearBeach.models import kanban_column, \
+    kanban_level, \
+    object_assignment, \
+    group, user_group
+from NearBeach.views.tools.internal_functions import kanban_card, \
+    kanban_board, \
+    project, \
+    requirement, \
+    task
+from NearBeach.decorators.check_user_permissions import check_user_permissions, \
+    check_user_kanban_permissions
+from NearBeach.forms import AddKanbanLinkForm, \
+    KanbanCardArchiveForm, \
+    CheckKanbanBoardName, \
+    MoveKanbanCardForm, \
+    NewKanbanCardForm, \
+    NewKanbanForm, \
+    KanbanCardForm
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Max, Min, Q, Sum
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.db.models import Max, Q
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
-from NearBeach.forms import AddKanbanLinkForm, KanbanCardArchiveForm, CheckKanbanBoardName, MoveKanbanCardForm, NewKanbanCardForm, NewKanbanForm, KanbanCardForm
-from NearBeach.views.tools.internal_functions import kanban_card, kanban_board, project, requirement, task
-from NearBeach.models import kanban_column, kanban_level, object_assignment, group, user_group
-
-import json
-import urllib3
+from django.views.decorators.cache import never_cache
 
 
 @login_required(login_url='login', redirect_field_name="")
@@ -58,7 +71,8 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     kanban_card_submit.save()
 
     # Send back the data we just created
-    kanban_card_results = kanban_card.objects.get(kanban_card_id=kanban_card_submit.kanban_card_id)
+    kanban_card_results = kanban_card.objects.get(
+        kanban_card_id=kanban_card_submit.kanban_card_id)
 
     return HttpResponse(serializers.serialize('json', [kanban_card_results]), content_type='application/json')
 
@@ -67,16 +81,14 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
 @require_http_methods(['POST'])
 @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def archive_kanban_cards(request, *args, **kwargs):
-    """
-    """
-    # Get the form data
+    """Archive the kanban cards."""
     form = KanbanCardArchiveForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
     # Get all cards from POST
     card_list = request.POST.getlist('kanban_card_id')
-    
+
     # Update all cards
     kanban_card.objects.filter(
         kanban_card_id__in=card_list,
@@ -86,7 +98,7 @@ def archive_kanban_cards(request, *args, **kwargs):
 
     # Return success
     return HttpResponse("")
-    
+
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
@@ -115,7 +127,8 @@ def check_kanban_board_name(request, *args, **kwargs):
 # Internal function
 def get_context(kanban_board_id):
     # Get the kanban data
-    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    kanban_board_results = kanban_board.objects.get(
+        kanban_board_id=kanban_board_id)
 
     column_results = kanban_column.objects.filter(
         is_deleted=False,
@@ -137,7 +150,7 @@ def get_context(kanban_board_id):
         'column_results': serializers.serialize('json', column_results),
         'kanban_board_id': kanban_board_id,
         'level_results': serializers.serialize('json', level_results),
-        'nearbeach_title': 'Kanban Information %s' % kanban_board_id,
+        'nearbeach_title': f"Kanban Information {kanban_board_id}",
     }
 
     return c
@@ -145,7 +158,7 @@ def get_context(kanban_board_id):
 
 # Internal function
 def get_max_sort_id(kanban_board_id, form):
-    # Get the newest card number id
+    """Get the newest card number id"""
     kanban_card_sort_number = kanban_card.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
@@ -154,7 +167,7 @@ def get_max_sort_id(kanban_board_id, form):
     ).aggregate(Max('kanban_card_sort_number'))
 
     # If the card is new in that particular column & row - then we need to implement a sort number of 0
-    if kanban_card_sort_number['kanban_card_sort_number__max'] == None:
+    if kanban_card_sort_number['kanban_card_sort_number__max'] is None:
         kanban_card_sort_number['kanban_card_sort_number__max'] = 0
 
     return kanban_card_sort_number['kanban_card_sort_number__max']
@@ -164,8 +177,7 @@ def get_max_sort_id(kanban_board_id, form):
 @require_http_methods(['POST'])
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def kanban_close_board(request, kanban_board_id, *args, **kwargs):
-    """
-    """
+    """Close the kanban board"""
     # Close the kanban board
     kanban_update = kanban_board.objects.get(kanban_board_id=kanban_board_id)
     kanban_update.kanban_board_status = 'Closed'
@@ -175,11 +187,11 @@ def kanban_close_board(request, kanban_board_id, *args, **kwargs):
     return HttpResponse("")
 
 
+@never_cache
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=3, object_lookup='kanban_board_id')
 def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
-    """
-    """
+    """Edit the permissions of the kanban board"""
     user_level = kwargs['user_level']
 
     # Get group results
@@ -201,6 +213,7 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
     return HttpResponse(t.render(c, request))
 
 
+@never_cache
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup='kanban_board_id')
 def kanban_information(request, kanban_board_id, *args, **kwargs):
@@ -220,8 +233,9 @@ def kanban_information(request, kanban_board_id, *args, **kwargs):
 
     # Get context
     c = get_context(kanban_board_id)
-    c['user_level'] = user_level 
-    c['kanban_card_results'] = serializers.serialize('json', kanban_card_results)
+    c['user_level'] = user_level
+    c['kanban_card_results'] = serializers.serialize(
+        'json', kanban_card_results)
 
     # Get the template
     t = loader.get_template('NearBeach/kanban/kanban_information.html')
@@ -280,9 +294,6 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     :param kanban_board_id:
     :return:
     """
-    # CHECK USER PERMISSIONS
-
-    # Get the kanban card instance
     kanban_card_update = kanban_card.objects.get(kanban_card_id=kanban_card_id)
 
     # Get the form data
@@ -299,7 +310,7 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     """
     Update the sort order
     ~~~~~~~~~~~~~~~~~~~~~
-    
+
     If both the old and new level/column destination are the same, we take the difference between the two values
     Otherwise we apply two sort orders to both the old and the new
     """
@@ -330,7 +341,8 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
 
         # Determine if we are using a positive or negative delta - using math
         delta = (-1) * (form.cleaned_data['new_card_sort_number'] > form.cleaned_data['old_card_sort_number']) + \
-                (form.cleaned_data['new_card_sort_number'] < form.cleaned_data['old_card_sort_number'])
+                (form.cleaned_data['new_card_sort_number'] <
+                 form.cleaned_data['old_card_sort_number'])
 
         # Send the data away to get manipulated
         update_sort_number(resort_array, delta)
@@ -338,9 +350,9 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
         """
         The cards have been moved outside the origianl column/level. We need to update both the old and new location's
         sort orders.
-        
+
         The old location will have a delta -1, to move the higher cards into the place left by the card
-        
+
         The new location will have a delta +1, to move the higher cards away, to create a space for the card
         """
         old_resort_array = kanban_card.objects.filter(
@@ -408,11 +420,7 @@ def new_kanban(request, *args, **kwargs):
 @require_http_methods(['POST'])
 @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def new_kanban_card(request, kanban_board_id, *args, **kwargs):
-    """
-    """
-    # CHECK USER PERMISSIONS
-
-    # Get the kanban instance
+    """Add a new kanban card"""
     kanban_instance = kanban_board.objects.get(kanban_board_id=kanban_board_id)
 
     # Get the form data
@@ -436,7 +444,8 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     submit_kanban_card.save()
 
     # Send back the kanban card data
-    kanban_card_results = kanban_card.objects.get(kanban_card_id=submit_kanban_card.kanban_card_id)
+    kanban_card_results = kanban_card.objects.get(
+        kanban_card_id=submit_kanban_card.kanban_card_id)
     return HttpResponse(serializers.serialize('json', [kanban_card_results]), content_type='application/json')
 
 
@@ -512,11 +521,9 @@ def new_kanban_save(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def update_card(request, *args, **kwargs):
     """
-    The following function will update the card information sent through the form in POST
+    The following function will update the card information
+    from which is sent through the form in POST
     """
-    # ADD IN CHECKING USER PERMISSIONS
-
-    # Get data and validate in the form
     form = KanbanCardForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)

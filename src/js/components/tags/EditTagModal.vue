@@ -78,13 +78,30 @@
 <script>
     const axios = require('axios');
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: 'EditTagModal',
         props: {
-            existingTags: Array,
-            tagColour: String,
-            tagId: Number,
-            tagName: String,
+            existingTags: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            tagColour: {
+                type: String,
+                default: '/',
+            },
+            tagId: {
+                type: Number,
+                default: 0,
+            },
+            tagName: {
+                type: String,
+                default: '',
+            },
         },
         data() {
             return {
@@ -115,6 +132,9 @@
             },
         },
         computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            }),
             canSave: function() {
                 //Return false if user has written a duplicate tag name
                 const count = this.existingTags.filter(row => {
@@ -133,7 +153,7 @@
             deleteTag: function() {
                 //Use axios to send the request
                 axios.post(
-                    `/tag/delete/${this.tagId}/`,
+                    `${this.rootUrl}tag/delete/${this.tagId}/`,
                 ).then(response => {
                     //Tell the component up stream that we removed this tag
                     this.$emit('delete_tag', {
@@ -158,7 +178,7 @@
             newTag: function(data_to_send) {
                 //Use axios to send data
                 axios.post(
-                    `/tag/new/`,
+                    `${this.rootUrl}tag/new/`,
                     data_to_send,
                 ).then(response => {
                     // Send data upstream
@@ -191,7 +211,7 @@
             updateTag: function(data_to_send) {
                 //Use axios to send data
                 axios.post(
-                    `/tag/save/`,
+                    `${this.rootUrl}tag/save/`,
                     data_to_send,
                 ).then(response => {
                     // Send data upstream

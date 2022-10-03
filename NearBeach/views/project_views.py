@@ -12,6 +12,7 @@ from NearBeach.decorators.check_user_permissions import check_user_permissions
 
 import json
 
+
 @login_required(login_url='login', redirect_field_name="")
 @check_user_permissions(min_permission_level=3, object_lookup='project_id')
 def new_project(request, *args, **kwargs):
@@ -102,23 +103,26 @@ def project_information(request, project_id, *args, **kwargs):
     :param project_id:
     :return:
     """
-    user_level = kwargs['user_level']
-
     # Template
     t = loader.get_template('NearBeach/projects/project_information.html')
 
     # Get data
     project_results = project.objects.get(project_id=project_id)
     project_status = project_results.project_status
+    user_level = kwargs['user_level']
 
     organisation_results = organisation.objects.filter(
         is_deleted=False,
         organisation_id=project_results.organisation_id,
     )
 
+    # Update user level if currently read only
+    if project_status == "Closed":
+        user_level = 1
+
     # Context
     c = {
-        'nearbeach_title': 'Project Information %s' % project_id,
+        'nearbeach_title': f"Project Information {project_id}",
         'organisation_results': serializers.serialize('json', organisation_results),
         'project_id': project_id,
         'project_results': serializers.serialize('json', [project_results]),

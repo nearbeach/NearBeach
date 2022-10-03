@@ -1,12 +1,12 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.linkIcon2"></IconifyIcon> Requirement Item Links</h2>
+        <h2><Icon v-bind:icon="icons.linkIcon2"></Icon> Requirement Item Links</h2>
         <p class="text-instructions">
             The following are links for the Items to other projects/tasks.
         </p>
 
         <!-- ITEM LINKS -->
-        <div v-if="itemLinkResults.length == 0"
+        <div v-if="itemLinkResults.length === 0"
         >
             <div class="alert alert-dark">
                 Sorry - there are no Item Links. Please navigate to the Item you wish to add a link too.
@@ -21,7 +21,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="link in itemLinkResults">
+                    <tr v-for="link in itemLinkResults"
+                        :key="link['pk']"
+                    >
                         <td v-html="extractObjectDescription(link)"></td>
                         <td>{{extractObjectStatus(link)}}</td>
                     </tr>
@@ -46,23 +48,38 @@
         <!-- need to build something that resets the requirement links when adding links -->
         <new-requirement-link-wizard v-bind:location-id="locationId"
                                      v-bind:destination="destination"
-                                     v-on:update_module="updateModel"
+                                     v-on:update_module="updateModel($event)"
         ></new-requirement-link-wizard>
     </div>
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
     import {Modal} from "bootstrap";
+    import { Icon } from '@iconify/vue';
+    import NewRequirementLinkWizard from "../wizards/NewRequirementLinkWizard.vue";
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
     export default {
         name: "RequirementItemLinksModule",
+        components: {
+            Icon,
+            NewRequirementLinkWizard,
+        },
         props: {
-            destination: String,
-            locationId: Number,
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             iconMixin,
@@ -71,6 +88,11 @@
             return {
                 itemLinkResults: [],
             }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            })
         },
         methods: {
             extractObjectDescription: function(link) {
@@ -83,26 +105,26 @@
                     object_link = '/',
                     requirement_item_description = '';
 
-                if (link['opportunity_id'] != null) {
+                if (link['opportunity_id'] !== null) {
                     object_description = link['opportunity_id__opportunity_name'];
                     object_id = `Opportunity ${link['opportunity_id']}`;
-                    object_link = `/opportunity_information/${link['opportunity_id']}`;
-                } else if (link['project_id'] != null) {
+                    object_link = `${this.rootUrl}opportunity_information/${link['opportunity_id']}`;
+                } else if (link['project_id'] !== null) {
                     object_description = link['project_id__project_name'];
                     object_id = `Project ${link['project_id']}`;
-                    object_link = `/project_information/${link['project_id']}`;
-                } else if (link['quote_id'] != null) {
+                    object_link = `${this.rootUrl}project_information/${link['project_id']}`;
+                } else if (link['quote_id'] !== null) {
                     object_description = link['quote_id__quote_title'];
                     object_id = `Quote ${link['quote_id']}`;
-                    object_link = `/quote_information/${link['quote_id']}`;
-                } else if (link['task_id'] != null) {
+                    object_link = `${this.rootUrl}quote_information/${link['quote_id']}`;
+                } else if (link['task_id'] !== null) {
                     object_description = link['task_id__task_short_description'];
                     object_id = `Task ${link['task_id']}`;
-                    object_link = `/task_information/${link['task_id']}`;
+                    object_link = `${this.rootUrl}task_information/${link['task_id']}`;
                 }
 
                 //Check to see if we need to inser the requirement item description.
-                if (link['requirement_id'] != null) {
+                if (link['requirement_id'] !== null) {
                     requirement_item_description = `<p class="requirement-item-link-type">${link['requirement_item_id__requirement_item_title']}</p>`;
                     object_id = `${object_id} / Item ${link['requirement_id']}`;
                 }
@@ -128,13 +150,13 @@
                  */
                 var object_status = 'ERROR';
 
-                if (link['opportunity_id'] != null) {
+                if (link['opportunity_id'] !== null) {
                     object_status = link['opportunity_id__opportunity_stage_id__opportunity_stage_description'];
-                } else if (link['project_id'] != null) {
+                } else if (link['project_id'] !== null) {
                     object_status = link['project_id__project_status'];
-                } else if (link['quote_id'] != null) {
+                } else if (link['quote_id'] !== null) {
                     object_status = link['quote_id__quote_title'];
-                } else if (link['task_id'] != null) {
+                } else if (link['task_id'] !== null) {
                     object_status = link['task_id__task_status'];
                 }
 
@@ -151,10 +173,12 @@
             },
             newRequirementItemLink: function() {
                 //Open up the modal
-                var elem_modal = new Modal(document.getElementById('newLinkModal'));
+                var elem_modal = new Modal(document.getElementById('newRequirementLinkModal'));
                 elem_modal.show();
             },
-            updateModel: function() {},
+            updateModel: function(data) {
+                this.itemLinkResults = data;
+            },
         },
         mounted() {
             //Get the required data we need

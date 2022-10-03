@@ -1,12 +1,12 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.clipboardIcon"></IconifyIcon> Requirement Items</h2>
+        <h2><Icon v-bind:icon="icons.clipboardIcon"></Icon> Requirement Items</h2>
         <p class="text-instructions">
-            Requirements should be broken down into smaller compoenents called Requirement Items.
+            Requirements should be broken down into smaller components called Requirement Items.
         </p>
 
         <!-- TABLE OF REQUIREMENT ITEMS -->
-        <div v-if="itemResults.length == 0"
+        <div v-if="itemResults.length === 0"
              class="requirement-item-spacer"
         >
             <div class="alert alert-dark">Sorry - there are no Items for this requirement.</div>
@@ -23,7 +23,7 @@
                 <tbody>
                     <tr v-for="item in itemResults">
                         <td>
-                            <a v-bind:href="`/requirement_item_information/${item['pk']}/`">
+                            <a v-bind:href="`${rootUrl}requirement_item_information/${item['pk']}/`">
                                 <p>
                                     {{item['fields']['requirement_item_title']}}
                                 </p>
@@ -61,29 +61,43 @@
 
 <script>
     //JavaScript Libraries
-    import {Modal} from "bootstrap";
-    const axios = require('axios');
+    import { Modal } from "bootstrap";
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import NewRequirementItemWizard from "../wizards/NewRequirementItemWizard.vue";
+
+    //VueX
+    import { mapGetters} from 'vuex';
 
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
 
     export default {
         name: "RequirementItemsModule",
-        props: [
-            'locationId',
-        ],
+        components: {
+            Icon,
+            NewRequirementItemWizard,
+        },
+        props: {
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
         mixins: [
             iconMixin,
         ],
-        components: {
-            axios,
-        },
         data() {
             return {
                 itemResults: [],
                 itemStatusList: [],
                 itemTypeList: [],
             }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            })
         },
         methods: {
             createNewItem: function() {

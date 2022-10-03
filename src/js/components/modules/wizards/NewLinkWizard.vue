@@ -8,7 +8,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> New {{destination}} Link Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.linkOut"></Icon> New {{destination}} Link Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -28,11 +28,11 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="objectSelection"
-                                      v-model="objectModel"
+                            <n-select :options="objectSelection"
+                                      v-model:value="objectModel"
                                       class="object-selection"
                                       v-if="!isSearching"
-                            ></v-select>
+                            ></n-select>
                             <div v-else
                                  class="alert alert-success"
                             >
@@ -55,10 +55,12 @@
                             <div id="link_wizard_results"
                                  v-if="isSearching || objectModel == null"
                             >
-                                <img src="/static/NearBeach/images/placeholder/search.svg" alt="Searching..." />
+                                <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/search.svg`"
+                                     alt="Searching..."
+                                />
                             </div>
 
-                            <div v-if="objectResults.length == 0 && objectModel != null"
+                            <div v-if="objectResults.length === 0 && objectModel != null"
                                  class="alert alert-warning"
                             >
                                 Sorry - there are no results.
@@ -76,8 +78,10 @@
                                 </thead>
 
                                 <!-- PROJECTS -->
-                                <tbody v-if="objectModel == 'Project'">
-                                    <tr v-for="result in objectResults">
+                                <tbody v-if="objectModel === 'Project'">
+                                    <tr v-for="result in objectResults"
+                                        :key="result.pk"
+                                    >
                                         <td>
                                             <div class="form-check">
                                                 <input class="form-check-input"
@@ -100,8 +104,10 @@
                                 </tbody>
 
                                 <!-- TASKS -->
-                                <tbody v-if="objectModel == 'Task'">
-                                    <tr v-for="result in objectResults">
+                                <tbody v-if="objectModel === 'Task'">
+                                    <tr v-for="result in objectResults"
+                                        :key="result.pk"
+                                    >
                                         <td>
                                             <div class="form-check">
                                                 <input class="form-check-input"
@@ -124,8 +130,10 @@
                                 </tbody>
 
                                 <!-- REQUIREMENTS -->
-                                <tbody v-if="objectModel== 'Requirement'">
-                                    <tr v-for="result in objectResults">
+                                <tbody v-if="objectModel === 'Requirement'">
+                                    <tr v-for="result in objectResults"
+                                        :key="result.pk"
+                                    >
                                         <td>
                                             <div class="form-check">
                                                 <input class="form-check-input"
@@ -148,8 +156,10 @@
                                 </tbody>
 
                                 <!-- REQUIREMENT ITEMS -->
-                                <tbody v-if="objectModel== 'Requirement_Item'">
-                                    <tr v-for="result in objectResults">
+                                <tbody v-if="objectModel === 'Requirement_Item'">
+                                    <tr v-for="result in objectResults"
+                                        :key="result.pk"
+                                    >
                                         <td>
                                             <div class="form-check">
                                                 <input class="form-check-input"
@@ -197,14 +207,34 @@
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import { NSelect } from 'naive-ui';
 
-    const axios = require('axios');
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "NewLinkWizard",
+        components: {
+            Icon,
+            NSelect,
+        },
         props: {
-            destination: String,
-            locationId: Number,
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
         },
         mixins: [
             errorModalMixin,
@@ -216,10 +246,10 @@
                 objectModel: null,
                 objectResults: [],
                 objectSelection: [
-                    'Project',
-                    'Requirement',
-                    'Requirement_Item',
-                    'Task',
+                    { value: 'Project', label: 'Project'},
+                    { value: 'Requirement', label: 'Requirement'},
+                    { value: 'Requirement_Item', label: 'Requirement_Item'},
+                    { value: 'Task', label: 'Task'},
                 ],
                 linkModel: [],
             }
@@ -236,11 +266,14 @@
 
                 // Use axios to send data
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_link/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_link/`,
                     data_to_send,
                 ).then(response => {
                     //Data has been successfully saved. Time to update the requirement links
                     this.$emit('update_link_results',{});
+
+                    //Clear the data
+                    this.objectModel = null;
 
                     //Click on the close button - a hack, but it should close the modal
                     document.getElementById("linkCloseButton").click();
@@ -253,7 +286,7 @@
                 this.linkModel = [];
 
                 //User has chosen an object.
-                if (this.objectModel == null) {
+                if (this.objectModel === null) {
                     //Ok - then removed the objects. We don't need to do anything
                     this.isSearching = false;
                     return;
@@ -264,7 +297,7 @@
 
                 //Now to use axios to get the data we require
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];

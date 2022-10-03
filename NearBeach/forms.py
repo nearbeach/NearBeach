@@ -1,9 +1,10 @@
 from __future__ import unicode_literals
 from django import forms
-from django.forms import ModelForm
 
 # Import from Models
-from .models import folder, group, tag, User, change_task, customer, kanban_column, kanban_level, tag_assignment, kanban_card, kanban_board, permission_set, project, request_for_change, requirement_item, requirement, task, organisation, bug_client, document
+from .models import bug, folder, group, tag, User, change_task, customer, kanban_column, kanban_level, tag_assignment,\
+    kanban_card, kanban_board, permission_set, project, request_for_change, requirement_item, requirement, task,\
+    organisation, bug_client, document, object_assignment
 
 
 class AddBugForm(forms.Form):
@@ -161,12 +162,14 @@ class ChangeTaskForm(forms.ModelForm):
     class Meta:
         model = change_task
         fields = [
+            'change_task_assigned_user',
             'change_task_title',
             'change_task_description',
             'change_task_start_date',
             'change_task_end_date',
             'change_task_seconds',
             'change_task_required_by',
+            'change_task_qa_user',
             'is_downtime',
         ]
 
@@ -214,6 +217,20 @@ class DeleteLevelForm(forms.Form):
     )
     destination_item_id = forms.ModelChoiceField(
         queryset=kanban_level.objects.all(),
+        required=True,
+    )
+
+
+class DeleteBugForm(forms.Form):
+    bug_id = forms.ModelChoiceField(
+        queryset=bug.objects.all(),
+        required=True,
+    )
+
+
+class DeleteLinkForm(forms.Form):
+    object_assignment_id = forms.ModelChoiceField(
+        queryset=object_assignment.objects.all(),
         required=True,
     )
 
@@ -344,8 +361,8 @@ class NewChangeTaskForm(forms.ModelForm):
             'change_task_start_date',
             'change_task_end_date',
             'change_task_seconds',
-            # 'change_task_assigned_user',
-            # 'change_task_qa_user',
+            'change_task_assigned_user',
+            'change_task_qa_user',
             'change_task_required_by',
             'is_downtime',
         ]
@@ -439,6 +456,7 @@ class NewPermissionSetForm(forms.ModelForm):
         fields = [
             'permission_set_name',
         ]
+
 
 class NewProjectForm(forms.ModelForm):
     project_start_date = forms.DateTimeField(
@@ -624,6 +642,10 @@ class PermissionSetForm(forms.ModelForm):
         ]
 
 
+class ProfilePictureForm(forms.Form):
+    file = forms.ImageField()
+
+
 class ProjectForm(forms.ModelForm):
     project_start_date = forms.DateTimeField(
         input_formats=['c'],
@@ -667,6 +689,28 @@ class QueryBugClientForm(forms.Form):
     )
     search = forms.CharField(
         max_length=50,
+    )
+
+
+class RemoveGroupForm(forms.Form):
+    group_id = forms.ModelChoiceField(
+        required=True,
+        queryset=group.objects.all()
+    )
+
+
+class RemoveLinkForm(forms.Form):
+    link_id = forms.IntegerField(
+        required=True,
+    )
+    link_connection = forms.CharField(
+        max_length=255,
+    )
+
+
+class RemoveUserForm(forms.Form):
+    username = forms.CharField(
+        required=True,
     )
 
 
@@ -744,6 +788,24 @@ class TaskInformationForm(forms.ModelForm):
         ]
 
 
+class UpdateGroupLeaderStatusForm(forms.Form):
+    username = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        required=False,
+    )
+    group = forms.ModelMultipleChoiceField(
+        queryset=group.objects.all(),
+        required=False,
+    )
+    permission_set = forms.ModelMultipleChoiceField(
+        queryset=permission_set.objects.all(),
+        required=False,
+    )
+    group_leader = forms.BooleanField(
+        required=False,
+    )
+
+
 class UpdateRequirementForm(forms.ModelForm):
     # Basic Meta data
     class Meta:
@@ -788,15 +850,16 @@ class UpdateUserForm(forms.ModelForm):
     )
     email = forms.EmailField(
         max_length=255,
-        required=True,
+        required=False,
     )
     # Basic Meta Data
+
     class Meta:
         model = User
         fields = [
+            'email',
             'first_name',
             'last_name',
-            'email',
             'is_active',
             'is_superuser',
         ]

@@ -19,8 +19,8 @@
                         <div class="col-md-6">
                             <label>
                                 First Name:
-                                <span class="error" 
-                                      v-if="!$v.firstNameModel.required && $v.firstNameModel.$dirty"
+                                <span class="error"
+                                      v-if="v$.firstNameModel.$errors.length > 0"
                                 > Please suppy a first name.</span>
                                 <br/>
                             </label>
@@ -32,8 +32,8 @@
                         <div class="col-md-6">
                             <label>
                                 Last Name:
-                                <span class="error" 
-                                      v-if="!$v.lastNameModel.required && $v.lastNameModel.$dirty"
+                                <span class="error"
+                                      v-if="v$.lastNameModel.$errors.length > 0"
                                 > Please suppy a last name.</span>
                                 <br/>
                             </label>
@@ -50,17 +50,11 @@
                         <div class="col-md-6">
                             <label>
                                 Email:
-                                <span class="error" 
-                                      v-if="!$v.emailModel.required && $v.emailModel.$dirty"
-                                > Please suppy an email.</span>
-                                <span class="error"
-                                      v-if="!$v.emailModel.email"
-                                >Please supply an proper email address.</span>
-                                <br/>
                             </label>
                             <input type="email"
                                    v-model="emailModel"
                                    class="form-control"
+                                   disabled="true"
                             >
                         </div>
                     </div>
@@ -88,7 +82,8 @@
     import { Modal } from "bootstrap";
 
     //Validations
-    import { required, maxLength, email } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -96,8 +91,23 @@
     
     export default {
         name: "ProfileInformation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
         props: {
-            userResults: Array,
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            userResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+        },
+        setup () {
+            return { v$: useVuelidate() }
         },
         data() {
             return {
@@ -110,27 +120,23 @@
             errorModalMixin,
             loadingModalMixin,
         ],
-        validations: {
-            emailModel: {
-                required,
-                maxLength: maxLength(255),
-                email,
-            },
-            lastNameModel: {
-                required,
-                maxLength: maxLength(255),
-            },
-            firstNameModel: {
-                required,
-                maxLength: maxLength(255),
-            },
+        validations() {
+            return {
+               lastNameModel: {
+                   required,
+                   maxLength: maxLength(255),
+               }, firstNameModel: {
+                   required,
+                    maxLength: maxLength(255),
+                },
+            }
         },
         methods: {
             updateUser: function() {
                 //Check form validation
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //Just return - as we do not need to do the rest of this function
@@ -140,7 +146,6 @@
                 //Create data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('username', this.userResults[0]['id']);
-                data_to_send.set('email', this.emailModel);
                 data_to_send.set('first_name', this.firstNameModel);
                 data_to_send.set('last_name', this.lastNameModel);
 
@@ -149,7 +154,7 @@
 
                 //Send data via axios
                 axios.post(
-                    `/profile_information/update_data/`,
+                    `${this.rootUrl}profile_information/update_data/`,
                     data_to_send,
                 ).then(response => {
                     //Notify user of success update
@@ -160,6 +165,13 @@
                 })
             },
         },
+        mounted() {
+            //Send Root URL to VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+            });
+        }
     }
 </script>
 

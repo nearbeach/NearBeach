@@ -68,6 +68,21 @@
                             aria-selected="true">Misc
                     </button>
                 </li>
+
+                <!-- Notes Modules -->
+                <li class="nav-item"
+                    role="presentation"
+                >
+                    <button class="nav-link"
+                            id="notes-modules-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#notes-modules"
+                            type="button"
+                            role="tab"
+                            aria-controls="home"
+                            aria-selected="true">Notes
+                    </button>
+                </li>
             </ul>
             <hr>
 
@@ -78,7 +93,7 @@
                      role="tabpanel"
                      aria-labelledby="profile-tab"
                 >
-                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Contacts</h2>
+                    <h2><Icon v-bind:icon="icons.userIcon"></Icon> Contacts</h2>
                     <p class="text-instructions">
                         Below are a list of contacts who are connected to this organisation.
                     </p>
@@ -125,6 +140,15 @@
                                  v-bind:location-id="locationId"
                     ></misc-module>
                 </div>
+                <div class="tab-pane fade"
+                     id="notes-modules"
+                     role="tabpanel"
+                     aria-labelledby="profile-tab"
+                >
+                    <notes-module v-bind:location-id="locationId"
+                                 v-bind:destination="destination"
+                    ></notes-module>
+                </div>
             </div>
         </div>
 
@@ -137,17 +161,61 @@
 
 <script>
     import { Modal } from "bootstrap";
+    import { Icon } from '@iconify/vue';
+    import CustomersListModule from "../modules/sub_modules/CustomersListModule.vue";
+    import NewCustomerModal from "../customers/NewCustomerModal.vue";
+    import NotesModule from "../modules/sub_modules/NotesModule.vue";
+    import MiscModule from "../modules/sub_modules/MiscModule.vue";
+    import AssociatedObjects from "../modules/sub_modules/AssociatedObjects.vue";
+    import DocumentsModule from "../modules/sub_modules/DocumentsModule.vue";
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
     export default {
         name: "OrganisationModules",
+        components: {
+            AssociatedObjects,
+            CustomersListModule,
+            DocumentsModule,
+            Icon,
+            MiscModule,
+            NewCustomerModal,
+            NotesModule,
+        },
         props: {
-            customerResults: Array,
-            destination: String,
-            locationId: Number,
-            titleList: Array,
+            customerResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            },
+            titleList: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             iconMixin,
@@ -157,7 +225,21 @@
                 var new_customer_modal = new Modal(document.getElementById('addCustomerModal'));
                 new_customer_modal.show();
             }
-        }
+        },
+        mounted() {
+            //Send the ROOT URL and STATIC URL upstream
+            this.$store.commit({
+                type: 'updateUrl',
+                staticUrl: this.staticUrl,
+                rootUrl: this.rootUrl,
+            });
+
+            //Send the user permissions to VUEX
+            this.$store.commit({
+                type: 'updateUserLevel',
+                userLevel: this.userLevel,
+            });
+        },
     }
 </script>
 

@@ -8,50 +8,30 @@
 
 <script>
     // JavaScript Libraries
-    import {Modal} from "bootstrap";
-    import errorModalMixin from "../../../mixins/errorModalMixin";
-    import iconMixin from "../../../mixins/iconMixin";
-    const axios = require('axios');
+    import ListTagsModule from "./ListTagsModule.vue";
 
     export default {
         name: "MiscModule",
-        components: {},
+        components: {
+            ListTagsModule,
+        },
         props: [
             'destination',
             'locationId',
         ],
         mixins: [
-            errorModalMixin,
-            iconMixin,
         ],
+        computed: {
+        },
         data() {
             return {
                 noteHistoryResults: [],
             };
         },
         methods: {
-            createNewNote: function() {
-                var newNoteModal = new Modal(document.getElementById('newNoteModal'));
-                    newNoteModal.show();
-            },
-            getNoteHistoryResults: function() {
-                axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/note_list/`,
-                ).then(response => {
-                    this.noteHistoryResults = response['data'];
-                }).catch(error => {
-                    this.showErrorModal(error, this.destination);
-                })
-            },
-            updateNoteHistoryResults: function(data) {
-                //Add the extra data
-                this.noteHistoryResults.push(data[0]);
-            }
         },
         mounted() {
-            this.getNoteHistoryResults();
         }
-
     }
 </script>
 

@@ -15,6 +15,7 @@
               </div>
               <div class="col-md-8 user-card-layouts">
                 <div v-for="user in userList" 
+                     :key="user.id"
                      class="user-card"
                      v-on:click="goToUser(user['id'])"
                 >

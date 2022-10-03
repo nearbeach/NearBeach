@@ -3,7 +3,7 @@
         <div class="card-body">
             <h1>Requirement Item Information</h1>
             <br/>
-            <a v-bind:href="`/requirement_information/${requirementItemResults[0]['fields']['requirement']}/`">
+            <a v-bind:href="`${rootUrl}requirement_information/${requirementItemResults[0]['fields']['requirement']}/`">
                 Go Back to requirement
             </a>
             <hr>
@@ -23,7 +23,7 @@
                     <div class="form-group">
                         <label for="requirement_item_title">
                             Requirement Item Title:
-                            <span class="error" v-if="!$v.requirementItemTitleModel.required">
+                            <span class="error" v-if="!v$.requirementItemTitleModel.required">
                                 Please suppy a title.
                             </span>
                         </label>
@@ -37,10 +37,10 @@
                     </div>
                     <div class="form-group">
                         <label>Requirement Item Scope:
-                            <span class="error" v-if="!$v.requirementItemScopeModel.required"> Please supply a scope.</span>
-                            <span class="error" v-if="!$v.requirementItemScopeModel.maxLength"> Sorry - too many characters.</span>
+                            <span class="error" v-if="!v$.requirementItemScopeModel.required"> Please supply a scope.</span>
+                            <span class="error" v-if="!v$.requirementItemScopeModel.maxLength"> Sorry - too many characters.</span>
                         </label><br/>
-                        <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                        <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                              class="loader-image"
                              alt="loading image for Tinymce"
                         />
@@ -48,10 +48,12 @@
                            :init="{
                              height: 500,
                              menubar: false,
-                             toolbar: 'undo redo | formatselect | ' +
-                              'bold italic backcolor | alignleft aligncenter ' +
-                              'alignright alignjustify | bullist numlist outdent indent | ',
-                           }"
+                             plugins: ['lists','table'],
+                            toolbar: [
+                               'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                               'bold italic strikethrough underline backcolor | table | ' +
+                               'bullist numlist outdent indent | removeformat'
+                            ]}"
                            v-bind:content_css="false"
                            v-bind:skin="false"
                            v-model="requirementItemScopeModel"
@@ -74,13 +76,16 @@
                         {{stakeholderModel['organisation_name']}}
                     </div>
                     <div class="organisation-link">
-                        <IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> Website:
-                        <a v-bind:href="stakeholderModel['organisation_website']" target="_blank">
+                        <Icon v-bind:icon="icons.linkOut"></Icon> Website:
+                        <a v-bind:href="stakeholderModel['organisation_website']" 
+                           target="_blank"
+                           rel="noopener noreferrer"
+                        >
                             {{ stakeholderModel['organisation_website'] }}
                         </a>
                     </div>
                     <div class="organisation-email">
-                        <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
+                        <Icon v-bind:icon="icons.mailIcon"></Icon> Email:
                         <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
                             {{stakeholderModel['organisation_email']}}
                         </a>
@@ -98,24 +103,24 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Requirement Status
-                            <span class="error" v-if="!$v.statusModel.required && $v.statusModel.$dirty"> Please select a status.</span>
+                            <span class="error" v-if="!v$.statusModel.required && v$.statusModel.$dirty"> Please select a status.</span>
                         </label>
-                        <v-select :options="statusFixList"
+                        <n-select :options="statusFixList"
                                   label="status"
-                                  v-model="statusModel"
-                        ></v-select>
+                                  v-model:value="statusModel"
+                        ></n-select>
                     </div>
 
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Requirement Type
-                            <span class="error" v-if="!$v.typeModel.required && $v.typeModel.$dirty"> Please select a type.</span>
+                            <span class="error" v-if="!v$.typeModel.required && v$.typeModel.$dirty"> Please select a type.</span>
                         </label>
-                        <v-select :options="typeFixList"
+                        <n-select :options="typeFixList"
                                   label="type"
-                                  v-model="typeModel"
-                        ></v-select>
+                                  v-model:value="typeModel"
+                        ></n-select>
                     </div>
                 </div>
             </div>
@@ -137,24 +142,74 @@
 <script>
     //JavaScript Libraries
     import {Modal} from "bootstrap";
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import Editor from '@tinymce/tinymce-vue'
+    import { NSelect } from 'naive-ui';
 
-    const axios = require('axios');
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
     //Validation
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
 
     export default {
         name: "RequirementItemInformation.vue",
-        props: [
-            'requirementItemResults',
-            'organisationResults',
-            'defaultStakeholderImage',
-            'statusList',
-            'typeList',
-        ],
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            'editor': Editor,
+            Icon,
+            NSelect,
+        },
+        props: {
+            requirementItemResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            defaultStakeholderImage: {
+                type: String,
+                default: "/",
+            },
+            statusList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            typeList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+            getStakeholderImage: function() {
+                if (this.stakeholderModel['organisation_profile_picture'] == '') {
+                    //There is no image - return the default image
+                    return this.defaultStakeholderImage;
+                }
+                return this.stakeholderModel['organisation_profile_picture']
+            },
+        },
         mixins: [
             iconMixin,
         ],
@@ -185,21 +240,12 @@
                 required
             },
         },
-        computed: {
-            getStakeholderImage: function() {
-                if (this.stakeholderModel['organisation_profile_picture'] == '') {
-                    //There is no image - return the default image
-                    return this.defaultStakeholderImage;
-                }
-                return this.stakeholderModel['organisation_profile_picture']
-            }
-        },
         methods: {
             updateRequirementItem: function() {
                 // Check the validation first
-                this.$v.$touch();
+                this.v$.$touch();
 
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     //Show the error dialog and notify to the user that there were field missing.
                     var elem_cont = document.getElementById("errorModalContent");
 
@@ -226,8 +272,8 @@
                 const data_to_send = new FormData();
                 data_to_send.set('requirement_item_title', this.requirementItemTitleModel);
                 data_to_send.set('requirement_item_scope',this.requirementItemScopeModel);
-                data_to_send.set('requirement_item_status',this.statusModel['value']);
-                data_to_send.set('requirement_item_type',this.typeModel['value']);
+                data_to_send.set('requirement_item_status',this.statusModel);
+                data_to_send.set('requirement_item_type',this.typeModel);
 
                 // Use Axion to send the data
                 axios.post(
@@ -267,37 +313,24 @@
             //Extract the organisation results directly
             this.stakeholderModel = this.organisationResults[0]['fields'];
 
-            //We need to extract "fields" array from the statusList/typeList json data
-            this.statusList.forEach((row) => {
-                //Construct the object
-                var construction_object = {
-                    'value': row['pk'],
-                    'status': row['fields']['requirement_item_status'],
+            //Map the original lists to something NSelect can read
+            this.statusFixList = this.statusList.map((row) => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['requirement_item_status'],
                 };
-
-                //Push the object to status fix list
-                this.statusFixList.push(construction_object);
             });
-            this.typeList.forEach((row) => {
-                //Construct the object
-                var construction_object = {
-                    'value': row['pk'],
-                    'type': row['fields']['requirement_item_type'],
+
+            this.typeFixList = this.typeList.map((row) => {
+                return {
+                    value: row['pk'],
+                    label: row['fields']['requirement_item_type'],
                 }
-
-                //Push the object to type fix list
-                this.typeFixList.push(construction_object);
             });
 
-
-            //Filter the status fix list to get the current model version
-            this.statusModel = this.statusFixList.filter((row) => {
-                return row['value'] == requirement_item_results['requirement_item_status'];
-            })[0];
-
-            this.typeModel = this.typeFixList.filter((row) => {
-                return row['value'] == requirement_item_results['requirement_item_type'];
-            })[0];
+            //Set the status and type models
+            this.statusModel = requirement_item_results['requirement_item_status'];
+            this.typeModel = requirement_item_results['requirement_item_type'];
         },
     }
 </script>

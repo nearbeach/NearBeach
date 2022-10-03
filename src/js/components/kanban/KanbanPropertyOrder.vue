@@ -1,37 +1,40 @@
 <template>
     <div>
         <strong>{{propertyName}}</strong>
-        <span class="error" v-if="!$v.localPropertyList.required && isDirty"> Please create at least one {{propertyName}}.</span>
+        <span class="error" v-if="!v$.localPropertyList.required && isDirty"> Please create at least one {{propertyName}}.</span>
         <br/>
 
         <!-- The column of data where you can sort the properties -->
         <draggable v-model="localPropertyList"
+                   item-key="pk"
                    ghost-class="ghost"
                    @change="sendPropertyListUp"
         >
-            <transition-group type="transition" name="flip-list" >
-                <div v-for="item in localPropertyList"
-                     class="sortable"
-                     v-bind:key="item['id']"
-                     v-bind:id="item['id']"
-                     v-bind:data-id="item['id']"
-                     v-bind:data-title="item['title']"
+            <template #item="{element}"
+                      type="transition"
+                      name="flip-list"
+            >
+                <div class="sortable"
+                     v-bind:key="element['id']"
+                     v-bind:id="element['id']"
+                     v-bind:data-id="element['id']"
+                     v-bind:data-title="element['title']"
                      v-on:dblclick="editItem($event)"
                 >
-                    <strong v-bind:key="item['id']"
-                            v-bind:id="item['id']"
-                            v-bind:data-id="item['id']"
-                            v-bind:data-title="item['title']"
+                    <strong v-bind:key="element['id']"
+                            v-bind:id="element['id']"
+                            v-bind:data-id="element['id']"
+                            v-bind:data-title="element['title']"
                     >
-                        {{item['title']}}
+                        {{element['title']}}
                     </strong>
-                    <span v-on:click="removeItem(item['id'])"
+                    <span v-on:click="removeItem(element['id'])"
                           v-if="localPropertyList.length > 1"
                     >
-                        <IconifyIcon v-bind:icon="icons.xCircle"></IconifyIcon>
+                        <Icon v-bind:icon="icons.xCircle"></Icon>
                     </span>
                 </div>
-            </transition-group>
+            </template>
         </draggable>
 
         <!-- ADD BUTTON -->
@@ -97,13 +100,11 @@
                         <!-- CARD DESTINATIONS -->
                         <div class="row">
                             <label><strong>Destination for Cards</strong></label> 
-                            <v-select label="title"
-                                      values="id"
-                                      v-bind:options="newCardDestinationList"
-                                      v-model="destinationItemId"
+                            <n-select v-bind:options="newCardDestinationList"
+                                      v-model:value="destinationItemId"
                                       style="z-index:9999"
                                       class="new-card-destination"
-                            ></v-select>
+                            ></n-select>
                         </div>
                         <br/>
 
@@ -140,13 +141,16 @@
 </template>
 
 <script>
+    import axios from 'axios';
     import { Modal } from "bootstrap";
-
-    //axios
-    const axios = require('axios');
+    import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
+    import draggable from 'vuedraggable';
+    import { mapGetters } from 'vuex';
 
     //Validation
-    import { required } from 'vuelidate/lib/validators'
+    import useVuelidate from '@vuelidate/core'
+    import { required } from '@vuelidate/validators'
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
@@ -154,8 +158,19 @@
 
     export default {
         name: "KanbanPropertyOrder",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            draggable,
+            Icon,
+            NSelect,
+        },
         props: {
-            isDirty: Boolean, //Passes the value from the template above where the checking is done
+            isDirty: {
+                type: Boolean,
+                default: true,
+            }, //Passes the value from the template above where the checking is done
             isNewMode: {
                 type: Boolean,
                 default: true,
@@ -164,9 +179,20 @@
                 type: Number,
                 default: 0,
             },
-            propertyList: Array,
-            propertyName: String,
-            source: String,
+            propertyList: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            propertyName: {
+                type: String,
+                default: '',
+            },
+            source: {
+                type: String,
+                default: '',
+            },
         },
         data() {
             return {
@@ -191,6 +217,11 @@
             propertyList: function() {
                 this.localPropertyList = this.propertyList;
             },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            })
         },
         methods: {
             addItem: function() {
@@ -220,10 +251,10 @@
                 //Construct the data_to_send
                 const data_to_send = new FormData();
                 data_to_send.set('delete_item_id',this.deleteItemId);
-                data_to_send.set('destination_item_id',this.destinationItemId['id']);
+                data_to_send.set('destination_item_id',this.destinationItemId);
 
                 // URL
-                const url = `/kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/delete/`
+                const url = `${this.rootUrl}kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/delete/`
 
                 //Use axios to send data to backend
                 axios.post(
@@ -363,10 +394,15 @@
                     //Create an array of potential destinations for the cards
                     this.newCardDestinationList = this.localPropertyList.filter(row => {
                         return row['id'] != this.deleteItemId;
+                    }).map(row => {
+                        return {
+                            value: row.id,
+                            label: row.title
+                        }
                     });
                     
                     //Pick the first option by default
-                    this.destinationItemId = this.newCardDestinationList[0];
+                    this.destinationItemId = this.newCardDestinationList[0]['value'];
 
                     //Show the delete modal
                     var deleteItemModal = new Modal(

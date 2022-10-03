@@ -1,5 +1,18 @@
 <template>
     <div>
+        <div v-if="cardLink.id !== undefined && cardLink.id !== null"
+             class="row link-to-object"
+        >
+            <strong>Object Link: </strong>
+            <a :href="cardLink.hyperlink" 
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {{cardLink.type}} - {{cardLink.id}}
+            </a>
+        </div>
+        <hr v-if="cardLink.id !== undefined && cardLink.id !== null" />
+
         <!-- Card Text -->
         <div class="row">
             <div class="col-md-4">
@@ -30,20 +43,20 @@
                 <div class="row">
                     <div class="col-md-12 mt-4">
                         <label>Card Column</label>
-                        <v-select v-bind:options="listColumns"
-                                  v-bind:label="'column'"
-                                  v-bind:clearable="false"
-                                  v-model="cardColumn"
-                        ></v-select>
+                        <n-select v-bind:options="listColumns"
+                                  label="column"
+                                  v-model:value="cardColumn"
+                                  :disabled="kanbanStatus === 'Closed'"
+                        ></n-select>
                     </div>
 
                     <div class="col-md-12 mt-4">
                         <label>Card Level</label>
-                        <v-select v-bind:options="listLevels"
-                                  v-bind:label="'level'"
-                                  v-bind:clearable="false"
-                                  v-model="cardLevel"
-                        ></v-select>
+                        <n-select v-bind:options="listLevels"
+                                  label="level"
+                                  v-model:value="cardLevel"
+                                  :disabled="kanbanStatus === 'Closed'"
+                        ></n-select>
                     </div>
                 </div>
             </div>
@@ -55,10 +68,11 @@
                 <button class="btn btn-secondary"
                         v-on:click="closeModal"
                 >
-                    Close Modal
+                    Close
                 </button>
                 <button class="btn btn-primary save-changes"
                         v-on:click="updateCard"
+                        v-if="kanbanStatus !== 'Closed'"
                 >
                     Update Card
                 </button>
@@ -68,26 +82,44 @@
 </template>
 
 <script>
-    import { mapFields } from 'vuex-map-fields';
     const axios = require('axios');
+    import { NSelect } from 'naive-ui';
+    import { mapGetters } from 'vuex';
 
     export default {
         name: 'CardDetails',
-        props: {},
+        components: {
+            mapGetters,
+            NSelect,
+        },
         data() {
             return {
                 tempModel: '',
             }
         },
         computed: {
-            ...mapFields([
-                'cardId',
-                'cardTitle',
-                'cardColumn',
-                'cardLevel',
-                'listColumns',
-                'listLevels',
-            ]),
+            ...mapGetters({
+                cardId: 'getCardId',
+                // cardColumn: 'getCardColumn',
+                cardLevel: 'getCardLevel',
+                cardLink: 'getCardLink',
+                cardTitle: 'getCardTitle',
+                kanbanStatus: 'getKanbanStatus',
+                listColumns: 'getListColumns',
+                listLevels: 'getListLevels',
+            }),
+            cardColumn: {
+                get() {
+                    return this.$store.state.card.cardColumn;
+                },
+                set(value) {
+                    this.$store.commit({
+                        type: 'updateValue',
+                        field: 'cardColumn',
+                        value: value,
+                    });
+                },
+            },
         },
         methods: {
             closeModal: function() {

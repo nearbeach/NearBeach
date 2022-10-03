@@ -20,11 +20,10 @@ import microsoftWord from '@iconify-icons/mdi/microsoft-word';
 import noteAdd from '@iconify/icons-cil/note-add';
 import objectStorage from '@iconify/icons-carbon/object-storage';
 import passwordIcon from '@iconify-icons/carbon/password';
+import trashCan from '@iconify/icons-akar-icons/trash-can';
 import userIcon from '@iconify/icons-feather/user';
 import usersIcon from '@iconify/icons-feather/users';
 import xCircle from '@iconify-icons/feather/x-circle';
-
-
 
 export default {
     data() {
@@ -51,6 +50,7 @@ export default {
                 noteAdd: noteAdd,
                 objectStorage: objectStorage,
                 passwordIcon: passwordIcon,
+                trashCan: trashCan,
                 userIcon: userIcon,
                 usersIcon: usersIcon,
                 xCircle: xCircle,

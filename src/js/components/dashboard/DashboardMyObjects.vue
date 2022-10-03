@@ -50,8 +50,14 @@
     // Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
 
+    //Components
+    import RenderObjectTable from "../render/RenderObjectTable.vue";
+
     export default {
         name: "DashboardMyObjects",
+        components: {
+            RenderObjectTable,
+        },
         props: {
             rootUrl: {
                 type: String,
@@ -72,7 +78,7 @@
                     id: 'project_id',
                     title: 'project_name',
                     status: 'project_status',
-
+                    end_date: 'project_end_date',
                 },
                 requirementVariables: {
                     header: 'Your Requirements',
@@ -80,6 +86,7 @@
                     id: 'requirement_id',
                     title: 'requirement_title',
                     status: 'requirement_status__requirement_status',
+                    end_date: '',
                 },
                 taskVariables: {
                     header: 'Tasks',
@@ -87,6 +94,7 @@
                     id: 'task_id',
                     title: 'task_short_description',
                     status: 'task_status',
+                    end_date: 'task_end_date',
                 },
             }
         },

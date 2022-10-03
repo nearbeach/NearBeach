@@ -1,9 +1,11 @@
 <template>
     <div>
-        <div v-for="customer in customerResults" class="row">
+        <div v-for="customer in customerResults" class="row"
+             :key="customer.pk"
+        >
             <div class="organisation-details">
                 <img v-if="customer['fields']['customer_profile_picture'] == ''"
-                     v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/product_tour.svg`"
+                     v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"
                      alt="Stakeholder Logo"
                      class="organisation-image"
                 >
@@ -18,7 +20,7 @@
                     </a>
                 </div>
                 <div class="organisation-email">
-                    <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
+                    <Icon v-bind:icon="icons.mailIcon"></Icon> Email:
                     <a v-bind:href="`mailto:${customer['fields']['customer_email']}`">
                         {{customer['fields']['customer_email']}}
                     </a>
@@ -31,26 +33,33 @@
 <script>
     //Mixin
     import iconMixin from "../../mixins/iconMixin";
+    import { Icon } from '@iconify/vue';
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "ListCustomers",
+        components: {
+            Icon,
+        },
         props: {
-            customerResults: Array,
-            staticUrl: {
-                type: String,
-                default: "/",
+            customerResults: {
+                type: Array,
+                default: function() {
+                    return [];
+                },
             },
-            rootUrl: {
-                type: String,
-                default: "/",
-            },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
         },
         mixins: [
             iconMixin
         ],
-        methods: {
-
-        }
     }
 </script>
 

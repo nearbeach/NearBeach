@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.urls import reverse
 
@@ -30,10 +29,9 @@ class CustomerPermissionTest(TestCase):
 
         # User will be logged in
         login_user(c, self)
-        
+
         # Go to an existing customer -> user should have access
-        response = c.get(reverse('customer_information', args=['1']))
-        #self.assertEqual(response.status_code, 200)
+        _ = c.get(reverse('customer_information', args=['1']))
 
     def test_customer_save_permissions(self):
         c = Client()
@@ -42,7 +40,7 @@ class CustomerPermissionTest(TestCase):
         login_user(c, self)
 
         # Send a POST request to new_customer -> user should NOT be able to save
-        response = c.post(
+        _ = c.post(
             reverse('customer_information_save', args=['1']),
             data={
                 'customer_title': 1,
@@ -52,7 +50,6 @@ class CustomerPermissionTest(TestCase):
                 'organisation': 1,
             },
         )
-        #self.assertEqual(response.status_code, 403)
 
     def test_new_customer_permission(self):
         c = Client()
@@ -61,8 +58,8 @@ class CustomerPermissionTest(TestCase):
         login_user(c, self)
 
         # Go to create a new customer -> user should NOT have access
-        response = c.get(reverse('new_customer'))
-        #self.assertEqual(response.status_code, 403)
+        _ = c.get(reverse('new_customer'))
+
 
 class KanbanPermissionTest(TestCase):
     fixtures = ['NearBeach_basic_setup.json']
@@ -85,7 +82,6 @@ class KanbanPermissionTest(TestCase):
 
         # Go to an existing kanban board where user is not in group -> permission denied
         response = c.get(reverse('kanban_information', args=['2']))
-        #self.assertEqual(response.status_code, 403)
 
 
 class OrganisationPermissionTest(TestCase):
@@ -106,7 +102,7 @@ class ProjectPermissionTest(TestCase):
             'username': username,
             'password': password
         }
-    
+
     def test_project_permissions(self):
         c = Client()
 
@@ -160,7 +156,7 @@ class TaskPermissionTest(TestCase):
             'username': username,
             'password': password
         }
-    
+
     def test_task_permissions(self):
         c = Client()
 
@@ -168,10 +164,8 @@ class TaskPermissionTest(TestCase):
         login_user(c, self)
 
         # Make sure the admin user can open up the task
-        response = c.get(reverse('task_information', args=['1']))
-        #self.assertEqual(response.status_code, 200)
+        _ = c.get(reverse('task_information', args=['1']))
 
         # Make sure the admin user can open up the project
         # response = c.get(reverse('task_information', args=['2']))
         # self.assertEqual(response.status_code, 403)
-

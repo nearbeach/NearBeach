@@ -9,17 +9,19 @@
         </div>
         <div class="col-md-8" style="min-height: 610px;">
             <label>Backout Plan:
-                <span class="error" v-if="!$v.rfcBackoutPlanModel.required && $v.rfcBackoutPlanModel.$dirty"> Please supply a description.</span>
-                <span class="error" v-if="!$v.rfcBackoutPlanModel.maxLength"> Sorry - too many characters.</span>
+                <span class="error" v-if="!v$.rfcBackoutPlanModel.required && v$.rfcBackoutPlanModel.$dirty"> Please supply a description.</span>
+                <span class="error" v-if="!v$.rfcBackoutPlanModel.maxLength"> Sorry - too many characters.</span>
             </label><br>
             <editor
                :init="{
                  height: 500,
                  menubar: false,
-                 toolbar: 'undo redo | formatselect | ' +
-                  'bold italic backcolor | alignleft aligncenter ' +
-                  'alignright alignjustify | bullist numlist outdent indent | ',
-               }"
+                 plugins: ['lists','table'],
+                  toolbar: [
+                     'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                     'bold italic strikethrough underline backcolor | table | ' +
+                     'bullist numlist outdent indent | removeformat'
+                  ]}"
                v-bind:content_css="false"
                v-bind:skin="false"
                v-bind:disabled="isReadOnly"
@@ -30,10 +32,18 @@
 </template>
 
 <script>
-    import { required, maxLength } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
+    import Editor from '@tinymce/tinymce-vue';
 
     export default {
         name: "RfcBackoutPlan",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            'editor': Editor,
+        },
         props: {
             isReadOnly: {
                 type: Boolean,
@@ -57,11 +67,11 @@
         },
         methods: {
             updateValidation: function() {
-                this.$v.$touch();
+                this.v$.$touch();
 
                 this.$emit('update_validation', {
                     'tab': 'tab_4',
-                    'value': !this.$v.$invalid,
+                    'value': !this.v$.$invalid,
                 });
             },
             updateValues: function(modelName,modelValue) {

@@ -1,5 +1,4 @@
-from django.contrib.auth.models import User
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.urls import reverse
 
 # Declaration of Username and Password
@@ -25,13 +24,3 @@ class CustomerPermissionTest(TestCase):
             'password': password
         }
 
-    #def test_customer_permissions(self):
-    #    c = Client()
-#
-#        # User will be logged in
-#        login_user(c, self)
-#
-#        # Go to an existing customer -> user should have access
-#        response = c.get(reverse('customer_information', args=['1']))
-#        self.assertEqual(response.status_code, 200)
-#

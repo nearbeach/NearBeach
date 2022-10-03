@@ -1,21 +1,26 @@
 # Import Forms
 from ..forms import *
-
-# Import Django Libraries
-from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count, Q
+from django.contrib.auth.models import User
 
 # Import Python Libraries
 import json
-import urllib.parse
-import random
+
+# Import NearBeach Models
+from NearBeach.models import object_assignment, \
+    user_group, \
+    task, \
+    request_for_change, \
+    project, \
+    bug, \
+    requirement
+
 
 @login_required(login_url='login', redirect_field_name="")
 def dashboard(request):
@@ -75,6 +80,7 @@ def get_my_objects(request):
         'project_id',
         'project_name',
         'project_status',
+        'project_end_date',
     )
 
     requirement_results = requirement.objects.filter(
@@ -105,6 +111,7 @@ def get_my_objects(request):
         'task_id',
         'task_short_description',
         'task_status',
+        'task_end_date',
     )
 
     # Only have 25 results and order by alphabetical order
@@ -119,10 +126,11 @@ def get_my_objects(request):
     1. Apply serialisation
     2. Apply a json.loads function
     3. Compile data and send back.
-    
+
     Note to Django developers - there has to be a better way
     """
-    requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
+    requirement_results = json.dumps(
+        list(requirement_results), cls=DjangoJSONEncoder)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
 
@@ -138,30 +146,36 @@ def get_my_objects(request):
 @require_http_methods(['POST'])
 def get_unassigned_objects(request):
     """
+    Function returns an json array with data from;
+    - Projects
+    - Requirements
+    - Tasks
+
+    Please note - a user who does not have project/task/requirement access for a
+    certain group, will not have said object return. Hence the partial checks like;
+    `permission_set__project__gt=0,`
+    Where we make sure the user has at least read only access.
     :param request:
     :return:
     """
-    # We only want to look at groups User is connected to
-    object_assignment_results=object_assignment.objects.filter(
-        is_deleted=False,
-        group_id__in=user_group.objects.filter(
-            is_deleted=False,
-            username=request.user,
-        ).values('group_id'),
-    )
-    
-    # Get the user data
     project_results = project.objects.filter(
         is_deleted=False,
-        project_id__in=object_assignment_results.filter(
-            project_id__isnull=False,
+        project_id__in=object_assignment.objects.filter(
+            is_deleted=False,
+            group_id__in=user_group.objects.filter(
+                is_deleted=False,
+                username=request.user,
+                # We want to make sure the user's permissions for this particular
+                # Project, is greater than zero.
+                permission_set__project__gt=0,
+            ).values('group_id'),
         ).values('project_id')
     ).exclude(
         Q(
             project_status='Closed',
-        ) | 
+        ) |
         Q(
-            #Project has no users assigned to it
+            # Project has no users assigned to it
             project_id__in=object_assignment.objects.filter(
                 is_deleted=False,
                 project_id__isnull=False,
@@ -172,24 +186,31 @@ def get_unassigned_objects(request):
         'project_id',
         'project_name',
         'project_status',
+        'project_end_date',
     )
-
     requirement_results = requirement.objects.filter(
         is_deleted=False,
-        requirement_id__in=object_assignment_results.filter(
-            requirement_id__isnull=False,
+        requirement_id__in=object_assignment.objects.filter(
+            is_deleted=False,
+            group_id__in=user_group.objects.filter(
+                is_deleted=False,
+                username=request.user,
+                # We want to make sure the user's permissions for this particular
+                # Requirements, is greater than zero.
+                permission_set__requirement__gt=0,
+            ).values('group_id'),
         ).values('requirement_id'),
     ).exclude(
         Q(
             requirement_status__requirement_status_is_closed=True,
         ) |
         Q(
-            #Requirement has no users assigned to it
+            # Requirement has no users assigned to it
             requirement_id__in=object_assignment.objects.filter(
                 is_deleted=False,
                 requirement_id__isnull=False,
                 assigned_user__isnull=False,
-            )
+            ).values('requirement_id')
         )
     ).values(
         'requirement_id',
@@ -199,15 +220,22 @@ def get_unassigned_objects(request):
 
     task_results = task.objects.filter(
         is_deleted=False,
-        task_id__in=object_assignment_results.filter(
-            task_id__isnull=False,
+        task_id__in=object_assignment.objects.filter(
+            is_deleted=False,
+            group_id__in=user_group.objects.filter(
+                is_deleted=False,
+                username=request.user,
+                # We want to make sure the user's permissions for this particular
+                # Tasks, is greater than zero.
+                permission_set__task__gt=0,
+            ).values('group_id'),
         ).values('task_id'),
     ).exclude(
         Q(
             task_status='Closed',
         ) |
         Q(
-            #Task has no users assigned to it
+            # Task has no users assigned to it
             task_id__in=object_assignment.objects.filter(
                 is_deleted=False,
                 task_id__isnull=False,
@@ -218,8 +246,8 @@ def get_unassigned_objects(request):
         'task_id',
         'task_short_description',
         'task_status',
+        'task_end_date',
     )
-
     # Only have 25 results and order by alphabetical order
     # requirement_results.order_by('requirement_title')[:25]
     # project_results.order_by('project_name')[:25]
@@ -232,14 +260,12 @@ def get_unassigned_objects(request):
     1. Apply serialisation
     2. Apply a json.loads function
     3. Compile data and send back.
-    
+
     Note to Django developers - there has to be a better way
     """
-    #requirement_results = serializers.serialize('json', requirement_results)
-    requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
-    #project_results = serializers.serialize('json', project_results)
+    requirement_results = json.dumps(
+        list(requirement_results), cls=DjangoJSONEncoder)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
-    #task_results = serializers.serialize('json', task_results)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
 
     # Send back a JSON array with JSON arrays inside
@@ -248,6 +274,7 @@ def get_unassigned_objects(request):
         'project': json.loads(project_results),
         'task': json.loads(task_results),
     })
+
 
 @login_required(login_url='login', redirect_field_name='')
 @require_http_methods(['POST'])

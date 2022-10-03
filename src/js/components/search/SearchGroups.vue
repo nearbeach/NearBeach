@@ -18,6 +18,7 @@
             >
                 <a class="list-group-item list-group-item-action"
                    v-for="group in groupList"
+                   :key="group.pk"
                    v-bind:href="`/group_information/${group['pk']}/`"
                 >
                     <strong>{{group['fields']['group_name']}}</strong>
@@ -35,7 +36,7 @@
             <hr>
             <div class="row submit-row">
                 <div class="col-md-12">
-                    <a href="/new_group/"
+                    <a v-bind:href="`${rootUrl}new_group/`"
                        class="btn btn-primary save-changes">
                         Add new Group
                     </a>
@@ -55,7 +56,16 @@
     export default {
         name: "SearchGroups",
         props: {
-            groupResults: Array,
+            groupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            }
         },
         mixins: [
             errorModalMixin,
@@ -76,7 +86,7 @@
 
                 //Use Axios to send data
                 axios.post(
-                    `/search/group/data/`,
+                    `${this.rootUrl}search/group/data/`,
                     data_to_send,
                 ).then(response => {
                     this.groupList = response['data'];

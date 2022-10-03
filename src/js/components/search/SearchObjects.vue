@@ -13,6 +13,7 @@
                         <input type="text"
                                class="form-control search-organisation"
                                v-model="searchModel"
+                               maxlength="250"
                         >
                     </div>
                     <div class="form-group">
@@ -77,23 +78,34 @@
     //Import mixins
     import searchMixin from "../../mixins/searchMixin";
 
+    //Vue Components
+    import ListSearchResults from './ListSearchResults.vue';
+
     export default {
         name: "SearchObjects",
+        components: {
+            ListSearchResults
+        },
         props: {
             includeClosed: {
-                Boolean,
+                type: Boolean,
+                default: false,
             },
             rootUrl: {
                 type: String,
                 default: "/",
             },
             searchInput: {
-                String,
+                type: String,
                 required: false,
+                default: '',
             },
             searchResults: {
-                Array,
+                type: Object,
                 required: true,
+                default: () => {
+                    return {};
+                },
             },
         },
         mixins: [
@@ -181,6 +193,13 @@
             },
         },
         mounted() {
+            //Send RootURL upstream
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            });
+
             //If the include closed is undefined - then we want to define it
             if (this.includeClosed == undefined) {
                 this.includeClosedObjectsModel = false;

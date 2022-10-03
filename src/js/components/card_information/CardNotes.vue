@@ -14,13 +14,16 @@
                     :init="{
                         height: 250,
                         menubar: false,
-                        toolbar: 'undo redo | formatselect | ' +
-                        'bold italic backcolor | alignleft aligncenter ' +
-                        'alignright alignjustify | bullist numlist outdent indent | ',
-                    }"
+                        plugins: ['lists','table'],
+                        toolbar: [
+                           'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                           'bold italic strikethrough underline backcolor | table | ' +
+                           'bullist numlist outdent indent | removeformat'
+                        ]}"
                     v-bind:content_css="false"
                     v-bind:skin="false"
                     v-model="cardNoteModel"
+                    v-bind:disabled="kanbanStatus === 'Closed'"
                 />
             </div>
         </div>
@@ -30,7 +33,7 @@
                 <button class="btn btn-secondary"
                         v-on:click="closeModal"
                 >
-                    Close Modal
+                    Close
                 </button>
                 <button class="btn btn-primary save-changes"
                         v-on:click="addNote"
@@ -43,24 +46,39 @@
         <hr>
 
         <!-- NOTE HISTORY -->
-        <list-notes v-bind:note-history-results="getCardNotes()"
+        <list-notes v-bind:note-history-results="cardNotes"
                     v-bind:destination="'card'"
         ></list-notes>
     </div>
 </template>
 
 <script>
-    import { mapGetters } from 'vuex'
     const axios = require('axios');
+    import Editor from '@tinymce/tinymce-vue'
+    import ListNotes from "../modules/sub_modules/ListNotes.vue";
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: 'CardNotes',
+        components: {
+            'editor': Editor,
+            ListNotes,
+        },
         props: {},
         data() {
             return {
-                ...mapGetters(['getCardNotes']),
+                // ...mapGetters(['getCardNotes']),
                 cardNoteModel: '',
             }
+        },
+        computed: {
+            ...mapGetters({
+                cardNotes: "getCardNotes",
+                kanbanStatus: "getKanbanStatus",
+                rootUrl: "getRootUrl",
+            })
         },
         methods: {
             addNote: function() {
@@ -70,7 +88,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `/object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
+                    `${this.rootUrl}object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
                     data_to_send,
                 ).then(response => {
                     //Add the response to the end of the noteHistoryResults

@@ -18,7 +18,7 @@
                     <!-- TASK NAME -->
                     <div class="form-group">
                         <label>Task Short Description:
-                            <span class="error" v-if="!$v.taskShortDescriptionModel.required && $v.taskShortDescriptionModel.$dirty"
+                            <span class="error" v-if="!v$.taskShortDescriptionModel.required && v$.taskShortDescriptionModel.$dirty"
                             > Please supply a title.</span>
                         </label>
                         <input type="text"
@@ -30,10 +30,10 @@
 
                     <!-- TASK DESCRIPTION -->
                     <label>Task Long Description:
-                        <span class="error" v-if="!$v.taskDescriptionModel.required && $v.taskDescriptionModel.$dirty"> Please supply a description.</span>
-                        <span class="error" v-if="!$v.taskDescriptionModel.maxLength"> Sorry - too many characters.</span>
+                        <span class="error" v-if="!v$.taskDescriptionModel.required && v$.taskDescriptionModel.$dirty"> Please supply a description.</span>
+                        <span class="error" v-if="!v$.taskDescriptionModel.maxLength"> Sorry - too many characters.</span>
                     </label><br>
-                    <img src="/static/NearBeach/images/placeholder/body_text.svg"
+                    <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
                          class="loader-image"
                          alt="loading image for Tinymce"
                     />
@@ -41,10 +41,12 @@
                        :init="{
                          height: 500,
                          menubar: false,
-                         toolbar: 'undo redo | formatselect | ' +
-                          'bold italic backcolor | alignleft aligncenter ' +
-                          'alignright alignjustify | bullist numlist outdent indent | ',
-                       }"
+                         plugins: ['lists','table'],
+                        toolbar: [
+                           'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                           'bold italic strikethrough underline backcolor | table | ' +
+                           'bullist numlist outdent indent | removeformat'
+                        ]}"
                        v-bind:content_css="false"
                        v-bind:skin="false"
                        v-model="taskDescriptionModel"
@@ -67,9 +69,9 @@
                 <div class="col-md-4"
                      v-if="!isReadOnly"
                 >
-                    <v-select v-bind:options="statusOptions"
-                              v-model="taskStatusModel"
-                    ></v-select>
+                    <n-select v-bind:options="statusOptions"
+                              v-model:value="taskStatusModel"
+                    ></n-select>
                 </div>
                 <div class="col-md-4"
                      v-if="!isReadOnly"
@@ -100,9 +102,8 @@
             <hr>
             <between-dates destination="task"
                            v-on:update_dates="updateDates($event)"
-                           v-bind:is-dirty-end="$v.taskEndDateModel.$dirty || $v.taskStartDateModel.$dirty"
-                           v-bind:start-date-model="taskStartDateModel"
-                           v-bind:end-date-model="taskEndDateModel"
+                           v-bind:start-date-model="taskStartDateModel.getTime()"
+                           v-bind:end-date-model="taskEndDateModel.getTime()"
             ></between-dates>
 
             <!-- Submit Button -->
@@ -132,8 +133,15 @@
 
 <script>
     const axios = require('axios');
-    import { required, maxLength } from 'vuelidate/lib/validators';
-    import { DateTime } from "luxon";
+    import useVuelidate from '@vuelidate/core'
+    import { required, maxLength } from '@vuelidate/validators'
+    import Editor from '@tinymce/tinymce-vue'
+    import { NSelect } from 'naive-ui';
+    import StakeholderInformation from "../organisations/StakeholderInformation.vue";
+    import BetweenDates from "../dates/BetweenDates.vue";
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
@@ -141,30 +149,68 @@
 
     export default {
         name: "TaskInformation",
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            BetweenDates,
+            'editor': Editor,
+            NSelect,
+            StakeholderInformation,
+        },
         props: {
-            defaultStakeholderImage: String,
-            groupResults: Array,
-            stakeholderModel: Array,
-            taskResults: Array,
-            organisationResults: Array,
+            defaultStakeholderImage: {
+                type: String,
+                default: '/',
+            },
+            groupResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            stakeholderModel: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            taskResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             userLevel: {
               type: Number,
               default: 1,
             },
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         data() {
             return {
                 isReadOnly: false,
                 statusOptions: [
-                    'Backlog',
-                    'Blocked',
-                    'In Progress',
-                    'Test/Review',
+                    { value: 'Backlog', label: 'Backlog'},
+                    { value: 'Blocked', label: 'Blocked'},
+                    { value: 'In Progress', label: 'In Progress'},
+                    { value: 'Test/Review', label: 'Test/Review'},
                 ],
                 taskDescriptionModel: this.taskResults[0]['fields']['task_long_description'],
-                taskEndDateModel: DateTime.fromISO(this.taskResults[0]['fields']['task_end_date']),
+                taskEndDateModel: new Date(this.taskResults[0]['fields']['task_end_date']),
                 taskShortDescriptionModel: this.taskResults[0]['fields']['task_short_description'],
-                taskStartDateModel: DateTime.fromISO(this.taskResults[0]['fields']['task_start_date']),
+                taskStartDateModel: new Date(this.taskResults[0]['fields']['task_start_date']),
                 taskStatusModel: this.taskResults[0]['fields']['task_status'],
             }
         },
@@ -197,10 +243,10 @@
             },
             updateTask: function() {
                 //Check validation
-                this.$v.$touch();
+                this.v$.$touch();
 
                 //If the form is not validated
-                if (this.$v.$invalid) {
+                if (this.v$.$invalid) {
                     this.showValidationErrorModal();
 
                     //User does not need to do anything else
@@ -213,14 +259,14 @@
                 //Create the data_to_send array
                 const data_to_send = new FormData();
                 data_to_send.set('task_long_description',this.taskDescriptionModel);
-                data_to_send.set('task_end_date',this.taskEndDateModel);
+                data_to_send.set('task_end_date',this.taskEndDateModel.toISOString());
                 data_to_send.set('task_short_description',this.taskShortDescriptionModel);
-                data_to_send.set('task_start_date',this.taskStartDateModel);
+                data_to_send.set('task_start_date',this.taskStartDateModel.toISOString());
                 data_to_send.set('task_status', this.taskStatusModel);
 
                 //Send data to backend
                 axios.post(
-                    `/task_information/${this.taskResults[0]['pk']}/save/`,
+                    `${this.rootUrl}task_information/${this.taskResults[0]['pk']}/save/`,
                     data_to_send
                 ).then(response => {
                     //Hide the loading modal
@@ -235,15 +281,12 @@
                 });
             },
             updateDates: function(data) {
-                this.taskEndDateModel = data['end_date'];
-                this.taskStartDateModel = data['start_date'];
+                this.taskEndDateModel = new Date(data['end_date']);
+                this.taskStartDateModel = new Date(data['start_date']);
             },
             updateGroupModel: function(data) {
                 this.groupModel = data;
             },
-            updateStakeholderModel: function(data) {
-                this.stakeholderModel = data;
-            }
         },
         mounted() {
             //If users have enough permissions add in the "Closed" functionaly

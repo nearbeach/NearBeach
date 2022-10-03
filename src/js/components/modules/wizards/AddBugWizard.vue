@@ -1,9 +1,9 @@
 <template>
     <div class="modal fade" id="addBugModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Add Bugs Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Add Bugs Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -27,11 +27,11 @@
                             <!-- Bug Client List -->
                             <div class="form-group">
                                 <label>Bug Client</label>
-                                <v-select :options="bugClientList"
+                                <n-select :options="bugClientList"
                                           label="bug_client_name"
                                           :option="'bug_client_id'"
-                                          v-model="bugClientModel"
-                                ></v-select>
+                                          v-model:value="bugClientModel"
+                                ></n-select>
                             </div>
                             <br>
 
@@ -53,7 +53,7 @@
                                  class="no-search"
                             >
                                 <strong>Currently Searching for Bugs</strong><br/>
-                                <img src="/static/NearBeach/images/placeholder/online_connection.svg"
+                                <img :src="`${staticUrl}/NearBeach/images/placeholder/online_connection.svg`"
                                      alt="Placeholder Search Image"
                                 />
                             </div>
@@ -61,7 +61,7 @@
                                  class="no-search"
                             >
                                 <strong>No Search Results Sorry</strong><br/>
-                                <img src="/static/NearBeach/images/placeholder/road_to_knowledge.svg"
+                                <img :src="`${staticUrl}/NearBeach/images/placeholder/road_to_knowledge.svg`"
                                      alt="Placeholder Search Image"
                                 />
                             </div>
@@ -77,7 +77,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="bug in bugResults">
+                                        <tr v-for="bug in bugResults"
+                                            :key="bug.id"
+                                        >
                                             <td v-bind:id="`bug_no_${bug['id']}`">
                                                 <a href="javascript:void(0)" v-on:click="submitBug(bug['id'])">
                                                     Add Bug
@@ -112,15 +114,35 @@
     //JavaScript extras
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
+    import { Icon } from '@iconify/vue';
+    import axios from 'axios';
+    import { NSelect } from 'naive-ui'
 
-    const axios = require('axios');
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "AddBugWizard",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        components: {
+            Icon,
+            NSelect,
+        },
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -138,18 +160,14 @@
         methods: {
             loadBugClientList: function() {
                 axios.post(
-                    '/object_data/bug_client_list/'
+                    `${this.rootUrl}object_data/bug_client_list/`,
                 ).then(response => {
                     //Clear out the bug list
-                    this.bugClientList = [];
-
-                    //Go through the data response and add the response to bug client list
-                    response['data'].forEach(row => {
-                        //Add the data to the array
-                        this.bugClientList.push({
-                            'bug_client_id': row['pk'],
-                            'bug_client_name': row['fields']['bug_client_name'],
-                        });
+                    this.bugClientList = response['data'].map(row => {
+                        return {
+                            value: row['pk'],
+                            label: row['fields']['bug_client_name'],
+                        }
                     });
                 });
             },
@@ -175,12 +193,12 @@
 
                 //Prepare for the data we are sending
                 const data_to_send = new FormData();
-                data_to_send.set('bug_client_id', this.bugClientModel['bug_client_id']);
+                data_to_send.set('bug_client_id', this.bugClientModel);
                 data_to_send.set('search',this.searchModel);
 
                 //Send the data - then wait for a response
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/query_bug_client/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/query_bug_client/`,
                     data_to_send,
                 ).then(response => {
                     //Update the bug results
@@ -204,14 +222,14 @@
 
                 //Setup data
                 const data_to_send = new FormData();
-                data_to_send.set('bug_client',this.bugClientModel['bug_client_id'])
+                data_to_send.set('bug_client',this.bugClientModel)
                 data_to_send.set('bug_id',bug_id);
                 data_to_send.set('bug_description', filted_bug_results[0]['summary']);
                 data_to_send.set('bug_status', filted_bug_results[0]['status']);
 
                 //Send data to the backend
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_bug/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_bug/`,
                     data_to_send,
                 ).then(response => {
                     //Send the updated bug list up
@@ -225,9 +243,17 @@
             }
         },
         mounted() {
-            this.loadBugClientList();
-        }
+            //If the location is inside the array - don't bother getting the data
+            var escape_array = [
+                'requirement_item',
+            ]
+            if (escape_array.indexOf(this.destination) >= 0) return;
 
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.loadBugClientList();
+            }, 200);
+        }
     }
 </script>
 

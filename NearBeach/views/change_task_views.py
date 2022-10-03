@@ -3,9 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.template import loader
 from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import ChangeTaskStatusForm, ChangeTaskForm
-from NearBeach.models import change_task
+from NearBeach.models import change_task, User
+
+import json
 
 
 @login_required(login_url='login', redirect_field_name="")
@@ -25,11 +28,25 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     # Load the template
     t = loader.get_template('NearBeach/request_for_change/change_task_information.html')
 
+    user_list = User.objects.filter(
+        is_active=True,
+    ).values(
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
+    )
+
+    #Change from ORM to json
+    user_list = json.dumps(list(user_list), cls=DjangoJSONEncoder)
+
     # Context
     c = {
         'change_task_results': serializers.serialize('json', change_task_results),
+        'user_list': user_list,
     }
-    
+
     return HttpResponse(t.render(c, request))
 
 
@@ -42,7 +59,7 @@ def change_task_save(request, change_task_id):
     form  = ChangeTaskForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     # Get the instance
     change_task_update = change_task.objects.get(change_task_id=change_task_id)
 
@@ -54,6 +71,8 @@ def change_task_save(request, change_task_id):
     change_task_update.change_task_seconds = form.cleaned_data['change_task_seconds']
     change_task_update.change_task_required_by = form.cleaned_data['change_task_required_by']
     change_task_update.is_downtime = form.cleaned_data['is_downtime']
+    change_task_update.change_task_qa_user = form.cleaned_data['change_task_qa_user']
+    change_task_update.change_task_assigned_user = form.cleaned_data['change_task_assigned_user']
 
     change_task_update.save()
 

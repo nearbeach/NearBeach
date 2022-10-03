@@ -21,7 +21,11 @@
                 </td>
                 <td>
                     <!-- STATUS -->
-                    {{result[importVariables['status']]}}
+                    <p>{{result[importVariables['status']]}}</p>
+                    <div class="spacer"></div>
+                    <p class="small-text">
+                      {{getNiceDate(result[importVariables['end_date']])}}
+                    </p>
                 </td>
             </tr>
         </tbody>
@@ -29,20 +33,44 @@
 </template>
 
 <script>
+    //Mixins
+    import datetimeMixins from "../../mixins/datetimeMixins";
+
     export default {
         name: "RenderObjectTable",
         props: {
-            destination: String,
-            importVariables: Object,  // {header, prefix,id, title, status}
+            destination: {
+                type: String,
+                default: '',
+            },
+            importVariables: {
+                type: Object,
+                default: () => {
+                    return {
+                        header: '',
+                        prefix: '',
+                        id: 0,
+                        title: '',
+                        status: '',
+                    };
+                },
+            },  // {header, prefix,id, title, status}
             rootUrl: {
                 type: String,
                 default: "/",
             },
-            searchResults: Array,
+            searchResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         data() {
             return {}
         },
-        methods: {}
+        mixins: [
+            datetimeMixins,
+        ],
     }
 </script>

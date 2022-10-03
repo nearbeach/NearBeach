@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.userIcon"></IconifyIcon> Add Link Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.userIcon"></Icon> Add Link Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -26,10 +26,10 @@
                                 <label for="document_url_location">
                                     Document URL
                                     <span class="error"
-                                          v-if="!$v.documentUrlLocationModel.required && $v.documentUrlLocationModel.$dirty"
+                                          v-if="!v$.documentUrlLocationModel.required && v$.documentUrlLocationModel.$dirty"
                                     > Please suppy a URL.</span>
                                     <span class="error"
-                                          v-if="!$v.documentUrlLocationModel.url && $v.documentUrlLocationModel.$dirty"
+                                          v-if="!v$.documentUrlLocationModel.url && v$.documentUrlLocationModel.$dirty"
                                     > Please suppy a proper URL.</span>
 
                                 </label>
@@ -42,7 +42,7 @@
                                 <label for="document_description">
                                     Document Description
                                     <span class="error"
-                                          v-if="!$v.documentDescriptionModel.required && $v.documentDescriptionModel.$dirty"
+                                          v-if="!v$.documentDescriptionModel.required && v$.documentDescriptionModel.$dirty"
                                     > Please suppy a description of the link.</span>
                                     <span class="error"
                                           v-if="duplicateDescription"
@@ -74,23 +74,54 @@
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
     //Validation
-    import { required, url } from 'vuelidate/lib/validators';
+    import useVuelidate from '@vuelidate/core'
+    import { required, url } from '@vuelidate/validators'
 
     export default {
         name: "AddLinkWizard",
-        props: [
-            'currentFolder',
-            'destination',
-            'excludeDocuments',
-            'locationId',
-        ],
+        setup() {
+            return { v$: useVuelidate(), }
+        },
+        components: {
+            Icon,
+        },
+        props: {
+            currentFolder: {
+                type: String,
+                default: '/',
+            },
+            destination: {
+                type: String,
+                default: '/',
+            },
+            excludeDocuments: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            existingFolders: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -114,6 +145,11 @@
                 url,
             },
         },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+            }),
+        },
         methods: {
             addLink: function() {
                 const data_to_send = new FormData();
@@ -121,12 +157,12 @@
                 data_to_send.set('document_url_location',this.documentUrlLocationModel);
 
                 //Only set the parent folder variable if there exists a variable in current folder
-                if (this.currentFolder != null && this.currentFolder != '') {
+                if (this.currentFolder !== null && this.currentFolder != '') {
                     data_to_send.set('parent_folder',this.currentFolder);
                 }
 
                 axios.post(
-                    `/documentation/${this.destination}/${this.locationId}/add_link/`,
+                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/add_link/`,
                     data_to_send,
                 ).then(response => {
                     //Emit the results up stream
@@ -146,17 +182,17 @@
         updated() {
             //We need to make sure both fields are not blank & to make sure the description is not duplicated
             var match = this.excludeDocuments.filter(row => {
-                return row['document_key__document_description'] == this.documentDescriptionModel;
+                return row['document_key__document_description'] === this.documentDescriptionModel;
             });
 
             //Notify the user of duplicate descriptions (if there is any)
             this.duplicateDescription = match.length > 0;
 
             // Check the validation
-            this.$v.$touch();
+            this.v$.$touch();
 
             //Disable the button (if it does not meet our standards)
-            this.disableAddButton = this.$v.$invalid || match.length > 0;
+            this.disableAddButton = this.v$.$invalid || match.length > 0;
         },
     }
 </script>

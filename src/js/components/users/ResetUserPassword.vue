@@ -31,7 +31,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2><IconifyIcon v-bind:icon="icons.passwordIcon"></IconifyIcon> Reset User Password</h2>
+                        <h2><Icon v-bind:icon="icons.passwordIcon"></Icon> Reset User Password</h2>
                         <button type="button"
                                 class="btn-close"
                                 data-bs-dismiss="modal"
@@ -78,8 +78,12 @@
 
 <script>
     //JavaScript components
-    const axios = require('axios');
+    import axios from 'axios';
     import {Modal} from "bootstrap";
+    import { Icon } from '@iconify/vue';
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     //Mixins
     import errorModalMixin from '../../mixins/errorModalMixin';
@@ -87,9 +91,18 @@
 
     export default {
         name: "ResetUserPassword",
+        components: {
+            Icon,
+        },
         props: {
-            location: String,
-            username: Number,
+            location: {
+                type: String,
+                default: '/',
+            },
+            username: {
+                type: Number,
+                default: 0,
+            },
         },
         mixins: [
             errorModalMixin,
@@ -102,6 +115,9 @@
             }
         },
         computed: {
+            ...mapGetters({
+                rootUrl: 'getRootUrl',
+            }),
             disableButton: function() {
                 //Both passwords have to be the same
                 let condition_1 = this.password1Model == this.password2Model;
@@ -137,7 +153,7 @@
                 
                 //Setup Axios to send data
                 axios.post(
-                    `/${this.location}_update_user_password/`,
+                    `${this.rootUrl}${this.location}update_user_password/`,
                     data_to_send,
                 ).then(response => {
                     this.closeModal();

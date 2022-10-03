@@ -1,22 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Max, Min, Q, Sum
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
-from django.template import loader
-from django.urls import reverse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions, check_user_kanban_permissions
+from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import NewColumnForm, kanban_column, DeleteColumnForm, ResortColumnForm
 from NearBeach.views.tools.internal_functions import kanban_card
-
-import json
-import urllib3
 
 
 @login_required(login_url='login', redirect_field_name="")
 @require_http_methods(['POST'])
-#@check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
+# @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def edit_column(request, kanban_column_id, *args, **kwargs):
     """
     """
@@ -26,15 +19,17 @@ def edit_column(request, kanban_column_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the kanban_column
-    kanban_column_update = kanban_column.objects.get(kanban_column_id=kanban_column_id)
+    kanban_column_update = kanban_column.objects.get(
+        kanban_column_id=kanban_column_id)
 
     # Update data
     kanban_column_update.kanban_column_name = form.cleaned_data['kanban_column_name']
-    kanban_column_update.kanban_column_sort_number = form.cleaned_data['kanban_column_sort_number']
+    kanban_column_update.kanban_column_sort_number = form.cleaned_data[
+        'kanban_column_sort_number']
 
     # Save
     kanban_column_update.save()
-    
+
     # Return data
     return HttpResponse(serializers.serialize('json', [kanban_column_update]), content_type='application/json')
 
@@ -62,7 +57,7 @@ def delete_column(request, kanban_board_id, *args, **kwargs):
     deleted_column = kanban_column.objects.get(
         kanban_column_id=form.cleaned_data['delete_item_id'].kanban_column_id,
     )
-    deleted_column.is_deleted=True
+    deleted_column.is_deleted = True
     deleted_column.save()
 
     return HttpResponse("")
@@ -89,10 +84,10 @@ def new_column(request, kanban_board_id, *args, **kwargs):
     kanban_column_submit.save()
 
     # Get the information and return as json results
-    kanban_column_results = kanban_column.objects.filter(
-        kanban_column_id = kanban_column_submit.kanban_column_id,
+    _ = kanban_column.objects.filter(
+        kanban_column_id=kanban_column_submit.kanban_column_id,
     )
-     
+
     return HttpResponse(serializers.serialize('json', [kanban_column_submit]), content_type='application/json')
 
 
@@ -106,7 +101,7 @@ def resort_column(request, kanban_board_id, *args, **kwargs):
     form = ResortColumnForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     # Extract the data
     items = request.POST.getlist('item')
 
@@ -117,4 +112,3 @@ def resort_column(request, kanban_board_id, *args, **kwargs):
         kanban_column_update.save()
 
     return HttpResponse("")
-

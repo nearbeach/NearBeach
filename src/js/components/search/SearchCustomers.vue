@@ -17,8 +17,6 @@
             <!-- LIST OUT RESULTS -->
             <hr>
             <list-customers v-bind:customer-results="localCustomerResults"
-                            v-bind:root-url="rootUrl"
-                            v-bind:static-url="staticUrl"
             ></list-customers>
 
             <!-- SHOW IF NO RESULTS -->
@@ -35,17 +33,28 @@
     //Import mixins
     import searchMixin from "../../mixins/searchMixin";
 
+    //Vue Components
+    import ListCustomers from "../customers/ListCustomers.vue"
+
     export default {
         name: "SearchCustomers",
+        components: {
+            ListCustomers,
+        },
         props: {
-            customerResults: Array,
+            customerResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
             staticUrl: {
                 type: String,
                 default: "/",
             },
             rootUrl: {
                 type: String,
-                root: "/",
+                default: '/',
             },
         },
         mixins: [
@@ -82,6 +91,14 @@
                    'searchTimeout': this.searchTimeout,
                 });
             },
+        },
+        mounted() {
+            //Send data to VueX
+            this.$store.commit({
+                type: 'updateUrl',
+                rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
+            });
         }
     }
 </script>

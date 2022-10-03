@@ -18,6 +18,7 @@
             >
                 <a class="list-group-item list-group-item-action"
                    v-for="permissionSet in permissionSetList"
+                   v-bind:key="permissionSet['pk']"
                    v-bind:href="`/permission_set_information/${permissionSet['pk']}/`"
                 >
                     <strong>{{permissionSet['fields']['permission_set_name']}}</strong>
@@ -32,7 +33,7 @@
             <hr>
             <div class="row submit-row">
                 <div class="col-md-12">
-                    <a href="/new_permission_set/"
+                    <a v-bind:href="`${rootUrl}new_permission_set/`"
                        class="btn btn-primary save-changes">
                         Add new Permission Set
                     </a>
@@ -52,7 +53,16 @@
     export default {
         name: "SearchPermissionSets",
         props: {
-            permissionSetResults: Array,
+            permissionSetResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
+            rootUrl: {
+                type: String,
+                default: '/',
+            }
         },
         mixins: [
             errorModalMixin,
@@ -73,7 +83,7 @@
 
                 //Use Axios to send data
                 axios.post(
-                    `/search/permission_set/data/`,
+                    `${this.rootUrl}search/permission_set/data/`,
                     data_to_send,
                 ).then(response => {
                     this.permissionSetList = response['data'];

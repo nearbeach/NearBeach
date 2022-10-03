@@ -13,8 +13,9 @@
             >
                 {{tag['fields']['tag_name']}}
                 <span v-on:click="removeTag(tag['pk'])"
+                      v-if="userLevel > 1"
                 >
-                    <IconifyIcon v-bind:icon="icons.xCircle"></IconifyIcon>
+                    <Icon v-bind:icon="icons.xCircle"></Icon>
                 </span>
             </div>
         </div>
@@ -26,6 +27,7 @@
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
                    v-on:click="createNewTag"
+                   v-if="userLevel > 1"
                 >Add Tag to {{destination}}</a>
             </div>
         </div>
@@ -43,17 +45,30 @@
 <script>
     const axios = require('axios');
     import {Modal} from "bootstrap";
+    import { Icon } from '@iconify/vue';
     
     //Mixin
     import iconMixin from "../../../mixins/iconMixin";
     import AddTagWizard from '../wizards/AddTagWizard.vue';
 
+    //VueX
+    import { mapGetters } from 'vuex'
+
     export default {
-        components: { AddTagWizard },
         name: "ListTagsModule",
+        components: {
+            AddTagWizard,
+            Icon,
+        },
         props: {
-            destination: String,
-            locationId: Number,
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
         },
         data() {
             return {
@@ -63,6 +78,12 @@
         mixins: [
             iconMixin,
         ],
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                userLevel: "getUserLevel",
+            }),
+        },
         methods: {
             addTags: function(data) {
                 this.tagList = data;
@@ -74,7 +95,7 @@
             },
             getAssignedTags: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/tag_list/`
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/tag_list/`
                 ).then(response => {
                     this.tagList = response['data'];
                 }).catch(error => {
@@ -90,7 +111,7 @@
 
                 //Send data using axios
                 axios.post(
-                    `/object_data/delete_tag/`,
+                    `${this.rootUrl}object_data/delete_tag/`,
                     data_to_send,
                 ).then(response => {
                     //Remove data from tagList
@@ -103,7 +124,16 @@
             },
         },
         mounted() {
-            this.getAssignedTags();
+            //If the location is inside the array - don't bother getting the data
+            var escape_array = [
+                'requirement_item',
+            ]
+            if (escape_array.indexOf(this.destination) >= 0) return;
+
+            //Wait 200ms before getting the data
+            setTimeout(() => {
+                this.getAssignedTags();
+            }, 200);
         }
     }
 </script>

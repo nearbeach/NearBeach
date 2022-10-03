@@ -8,7 +8,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> New Requirement Link Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.linkOut"></Icon> New Requirement Link Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -28,11 +28,11 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="objectSelection"
-                                      v-model="objectModel"
+                            <n-select :options="objectSelection"
+                                      v-model:value="objectModel"
                                       class="object-selection"
                                       v-if="!isSearching"
-                            ></v-select>
+                            ></n-select>
                             <div v-else
                                  class="alert alert-success"
                             >
@@ -55,7 +55,9 @@
                             <div id="link_wizard_results"
                                  v-if="isSearching || objectModel == null"
                             >
-                                <img src="/static/NearBeach/images/placeholder/search.svg" alt="Searching..." />
+                                <img v-bind:src="`${staticUrl}/NearBeach/images/placeholder/search.svg`"
+                                     alt="Searching..."
+                                />
                             </div>
 
                             <div v-if="objectResults.length == 0 && objectModel != null"
@@ -77,7 +79,9 @@
 
                                 <!-- PROJECTS -->
                                 <tbody v-if="objectModel == 'Project'">
-                                    <tr v-for="result in objectResults">
+                                    <tr v-for="result in objectResults"
+                                        :key="result.pk"
+                                    >
                                         <td>
                                             <div class="form-check">
                                                 <input class="form-check-input"
@@ -125,7 +129,9 @@
 
                                 <!-- OPPORTUNITY -->
                                 <tbody v-if="objectModel == 'Opportunity'">
-                                    <tr v-for="result in objectResults">
+                                    <tr v-for="result in objectResults"
+                                        :key="result.pk"
+                                    >
                                         <td>
                                             <div class="form-check">
                                                 <input class="form-check-input"
@@ -173,15 +179,35 @@
     //JavaScript components
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
 
-    const axios = require('axios');
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "NewRequirementLinkWizard",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        components: {
+            Icon,
+            NSelect,
+        },
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -192,8 +218,8 @@
                 objectModel: null,
                 objectResults: [],
                 objectSelection: [
-                    'Project',
-                    'Task',
+                    { value: 'Project', label: 'Project'},
+                    { value: 'Task', label: 'Task'},
                 ],
                 linkModel: [],
             }
@@ -210,14 +236,17 @@
 
                 // Use axios to send data
                 axios.post(
-                    `/${this.destination}_information/${this.locationId}/add_link/`,
+                    `${this.rootUrl}${this.destination}_information/${this.locationId}/add_link/`,
                     data_to_send,
                 ).then(response => {
                     //Data has been successfully saved. Time to update the requirement links
-                    this.$emit('update_module',{});
+                    this.$emit('update_module', response.data);
 
                     //Click on the close button - a hack, but it should close the modal
                     document.getElementById("requirementLinkCloseButton").click();
+
+                    //Clear results
+                    this.objectModel = null;
                 });
             }
         },
@@ -227,7 +256,7 @@
                 this.linkModel = [];
 
                 //User has chosen an object.
-                if (this.objectModel == null) {
+                if (this.objectModel === null) {
                     //Ok - then removed the objects. We don't need to do anything
                     this.isSearching = false;
                     return;
@@ -238,7 +267,7 @@
 
                 //Now to use axios to get the data we require
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];

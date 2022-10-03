@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><IconifyIcon v-bind:icon="icons.usersIcon"></IconifyIcon> Add Customers Wizard</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Add Customers Wizard</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -24,10 +24,10 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <v-select :options="customerFixList"
+                            <n-select :options="customerFixList"
                                 label="customerName"
-                                v-model="customerModel"
-                            ></v-select>
+                                v-model:value="customerModel"
+                            ></n-select>
                         </div>
                     </div>
                     <div class="row" v-else>
@@ -42,7 +42,9 @@
                             </p>
                         </div>
                         <div class="col-md-6 no-search">
-                            <img src="/static/NearBeach/images/placeholder/questions.svg" alt="Sorry - there are no results" />
+                            <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/questions.svg`"
+                                 alt="Sorry - there are no results"
+                            />
                         </div>
                     </div>
                 </div>
@@ -63,18 +65,44 @@
 
 <script>
     const axios = require('axios');
+    import { Icon } from '@iconify/vue';
+    import { NSelect } from 'naive-ui';
 
     //Mixins
     import errorModalMixin from "../../../mixins/errorModalMixin";
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "AddCustomerWizard",
-        props: [
-            'destination',
-            'locationId',
-            'excludeCustomers',
-        ],
+        components: {
+            Icon,
+            NSelect,
+        },
+        props: {
+            destination: {
+                type: String,
+                default: '',
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            },
+            excludeCustomers: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            }
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            })
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -90,10 +118,10 @@
             addCustomer: function() {
                 // Set up the data object to send
                 const data_to_send = new FormData();
-                data_to_send.set('customer', this.customerModel['value']);
+                data_to_send.set('customer', this.customerModel);
 
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/add_customer/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_customer/`,
                     data_to_send,
                 ).then((response) => {
                     //Send the new data up stream
@@ -110,17 +138,20 @@
             },
             getCustomerList: function() {
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/customer_list_all/`,
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list_all/`,
                 ).then(response => {
                     //Place all the data into the "CustomerList" array.
                     this.customerList = response['data'];
+
+                    //Update the fixed list
+                    this.updateCustomerFixList();
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 })
             },
             updateCustomerFixList: function() {
                 //If no customer list result - just exit
-                if (this.customerList.length == 0) return;
+                if (this.customerList.length === 0) return;
 
                 //Create an array of ids we should be excluding
                 var exclude_array = [];
@@ -128,26 +159,28 @@
                     exclude_array.push(row['pk']);
                 });
 
-                //Clear out the customerFixList
-                this.customerFixList = [];
-
-                //Loop through all the data and extract the fields we want
-                this.customerList.forEach(row => {
-                    //Check to make sure the customer id is not in the exclusion array
-                    if (!exclude_array.includes(row['pk'])) {
-                        //Add the customer to the FixList
-                        this.customerFixList.push({
-                            'value': row['pk'],
-                            'customerName': `${row['fields']['customer_first_name']} ${row['fields']['customer_last_name']}`,
-                        });
+                //Set the customerFixList
+                this.customerFixList = this.customerList.filter(row => {
+                    return !exclude_array.includes(row['pk']);
+                }).map(row => {
+                    return {
+                        value: row['pk'],
+                        label: `${row['fields']['customer_first_name']} ${row['fields']['customer_last_name']}`,
                     }
                 });
-
-                //Done
             },
         },
         mounted() {
-            this.getCustomerList();
+            //If the location is inside the array - don't bother getting the data
+            var escape_array = [
+                'requirement_item',
+            ]
+            if (!escape_array.indexOf(this.locationId) < 0) return;
+
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.getCustomerList();
+            }, 200);
         },
         watch: {
             excludeCustomers: function(){

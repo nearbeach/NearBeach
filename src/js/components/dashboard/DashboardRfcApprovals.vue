@@ -20,6 +20,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="rfc in rfcApprovalsList"
+                        :key="rfc.pk"
                         class="bg-white"
                     >
                         <td>

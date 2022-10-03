@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><IconifyIcon v-bind:icon="icons.bugIcon"></IconifyIcon> Bugs List</h2>
+        <h2><Icon v-bind:icon="icons.bugIcon"></Icon> Bugs List</h2>
         <p class="text-instructions">
             The following is a list of bugs associated with this {{destination}}
         </p>
@@ -20,9 +20,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="bug in bugList">
+                    <tr v-for="bug in bugList"
+                        :key="bug.pk"
+                    >
                         <td>
-                            <a v-bind:href="getBugHyperLink(bug)" target="_blank">
+                            <a v-bind:href="getBugHyperLink(bug)" 
+                               rel="noopener noreferrer"
+                               target="_blank"
+                            >
                                 <p>
                                     {{bug['bug_description']}}
                                 </p>
@@ -34,6 +39,13 @@
                         </td>
                         <td>
                             {{bug['bug_status']}}
+                            <span class="remove-link"
+                                  v-if="userLevel >= 2"
+                            >
+                                <Icon v-bind:icon="icons.trashCan"
+                                      v-on:click="removeBug(bug['bug_id'])"
+                                />
+                            </span>
                         </td>
                     </tr>
                 </tbody>
@@ -47,6 +59,7 @@
             <div class="col-md-12">
                 <button class="btn btn-primary save-changes"
                         v-on:click="addNewBug"
+                        v-if="userLevel > 1"
                 >
                     Add Bug
                 </button>
@@ -63,19 +76,34 @@
 
 <script>
     //JavaScript components
-    const axios = require('axios');
+    import axios from 'axios';
     import {Modal} from "bootstrap";
+    import { Icon } from '@iconify/vue';
+    import AddBugWizard from "../wizards/AddBugWizard.vue";
 
     //Mixins
     import errorModalMixin from '../../../mixins/errorModalMixin';
     import iconMixin from "../../../mixins/iconMixin";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "BugsModule",
-        props: [
-            'destination',
-            'locationId',
-        ],
+        components: {
+            AddBugWizard,
+            Icon,
+        },
+        props: {
+            destination: {
+                type: String,
+                default: "",
+            },
+            locationId: {
+                type: Number,
+                default: 0,
+            }
+        },
         mixins: [
             errorModalMixin,
             iconMixin,
@@ -85,17 +113,28 @@
                 bugList: [],
             }
         },
+        computed: {
+            ...mapGetters({
+                userLevel: "getUserLevel",
+                rootUrl: "getRootUrl",
+            }),
+        },
         methods: {
             addNewBug: function() {
                 var addBugModal = new Modal(document.getElementById('addBugModal'));
                     addBugModal.show();
             },
             appendBugList: function(data) {
+                //Create object for the data
+                let data_object = data[0]['fields'];
+
+                //Add the bug id
+                data_object.bug_id = data[0]['pk'];
+
                 //Append the data
-                this.bugList.push(data[0]['fields']);
+                this.bugList.push(data_object);
             },
             getBugHyperLink: function(bug) {
-                
                 if (bug['bug_client__list_of_bug_client__bug_client_name'] == 'Bugzilla') {
                     return `${bug['bug_client__bug_client_url']}/show_bug.cgi?id=${bug['bug_code']}`;
                 }
@@ -109,7 +148,7 @@
                 }
 
                 axios.post(
-                    `/object_data/${this.destination}/${this.locationId}/bug_list/`
+                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/bug_list/`
                 ).then((response) => {
                     //Clear the current list
                     this.bugList = [];
@@ -122,9 +161,34 @@
                     this.showErrorModal(error, this.destination);
                 })
             },
+            removeBug: function(bug_id) {
+                //Create data_to_send
+                const data_to_send = new FormData();
+                data_to_send.set('bug_id', bug_id);
+
+                //Use Axios to send data to backend
+                axios.post(
+                    `${this.rootUrl}object_data/delete_bug/`,
+                    data_to_send,
+                ).then(() => {
+                    //Remove the bug from the model
+                    this.bugList = this.bugList.filter(row => {
+                        return row.bug_id !== bug_id;
+                    });
+                })
+            },
         },
         mounted() {
-            this.getBugList();
+            //If the location is inside the array - don't bother getting the data
+            var escape_array = [
+                'requirement_item',
+            ]
+            if (escape_array.indexOf(this.destination) >= 0) return;
+
+            //Wait 200ms before getting data
+            setTimeout(() => {
+                this.getBugList();
+            }, 200);
         }
     }
 </script>

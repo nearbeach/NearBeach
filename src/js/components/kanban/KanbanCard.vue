@@ -1,56 +1,63 @@
 <template>
     <draggable class="list-group kanban-cell"
-               group="tasks"
-               :list="masterList"
-               @end="onEnd($event)"
                v-bind:id="`kanban_cell_${levelId}_${columnId}`"
                v-bind:data-level="levelId"
                v-bind:data-column="columnId"
+               :disabled="kanbanStatus==='Closed'"
+               group="tasks"
+               @end="onEnd($event)"
+               v-model="masterList"
+               item-key="pk"
     >
-        <!-- SINGLE CARDS -->
-        <div class="list-group-item"
-             v-for="card in masterList"
-             :key="card['pk']"
-             :id="card['pk']"
-             v-bind:data-sort-number="card['fields']['kanban_card_sort_number']"
-             v-bind:data-card-id="card['pk']"
-             v-on:dblclick="doubleClickCard($event)"
-        >
-            <b>#{{card['pk']}}</b><br/>
-            {{card['fields']['kanban_card_text']}}
-            <IconifyIcon class="kanban-card-info-icon"
-                         v-bind:icon="icons.infoCircle"
-                         v-on:click="singleClickCard(card['pk'])"
-                         v-on:dblclick="singleClickCard(card['pk'])"
-            ></IconifyIcon>
-        </div>
+        <template #item="{element}">
+            <div class="list-group-item"
+                 :key="element['pk']"
+                 :id="element['pk']"
+                 v-bind:data-sort-number="element['fields']['kanban_card_sort_number']"
+                 v-bind:data-card-id="element['pk']"
+                 v-on:dblclick="doubleClickCard($event)"
+            >
+                <b>#{{element['pk']}}</b><br/>
+                {{element['fields']['kanban_card_text']}}
+                <Icon class="kanban-card-info-icon"
+                             v-bind:icon="icons.infoCircle"
+                             v-on:click="singleClickCard(element['pk'])"
+                             v-on:dblclick="singleClickCard(element['pk'])"
+                ></Icon>
+            </div>
+        </template>
 
-        <!-- ADD NEW CARDS + LINK OBJECTS -->
-        <div class="kanban-add-new-cards">
-            <a class="kanban-link btn btn-primary"
-               href="javascript:void(0)"
-               v-on:click="addNewKanbanCard"
-            >
-                New Card
-            </a>
-            <a class="kanban-link btn btn-warning"
-               href="javascript:void(0)"
-               v-on:click="addNewLink"
-            >
-                Link Object
-            </a>
-            <a class="kanban-link btn btn-danger"
-               href="javascript:void(0)"
-               v-on:click="archiveCards"
-            >
-                Archive Cards
-            </a>
-        </div>
+<!--         ADD NEW CARDS + LINK OBJECTS -->
+        <template #footer>
+            <div class="kanban-add-new-cards">
+                <a class="kanban-link btn btn-primary"
+                   href="javascript:void(0)"
+                   v-on:click="addNewKanbanCard"
+                >
+                    New Card
+                </a>
+                <a class="kanban-link btn btn-warning"
+                   href="javascript:void(0)"
+                   v-on:click="addNewLink"
+                >
+                    Link Object
+                </a>
+                <a class="kanban-link btn btn-danger"
+                   href="javascript:void(0)"
+                   v-on:click="archiveCards"
+                   v-if="masterList.length > 0"
+                >
+                    Archive Cards
+                </a>
+            </div>
+        </template>
     </draggable>
 </template>
 
 <script>
-    const axios = require('axios');
+    import axios from 'axios';
+    import { Icon } from '@iconify/vue';
+    import draggable from 'vuedraggable'
 
     import { Modal } from "bootstrap";
 
@@ -62,26 +69,43 @@
 
     export default {
         name: "KanbanCard",
+        components: {
+            Icon,
+            draggable,
+        },
         props: {
-            columnId: Number,
-            levelId: Number,
-            //masterList: Array,
-            newCardInfo: Array,
+            columnId: {
+                type: Number,
+                default: 0,
+            },
+            levelId: {
+                type: Number,
+                default: 0,
+            },
+            newCardInfo: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
+            },
         },
         data() {
             return {
                 //masterList: [],
+                drag: false,
             }
         },
         computed: {
             ...mapGetters({
                 allCards: 'getCards',
+                kanbanStatus: 'getKanbanStatus',
+                rootUrl: 'getRootUrl',
             }),
             masterList: function() {
                 //Filter the data
                 let return_array = this.allCards.filter(card => {
-                    return card['fields']['kanban_column'] == this.columnId &&
-                           card['fields']['kanban_level'] == this.levelId;
+                    return parseInt(card['fields']['kanban_column']) === this.columnId &&
+                           parseInt(card['fields']['kanban_level']) === this.levelId;
                 })
 
                 //Make sure it is sorted
@@ -117,23 +141,12 @@
                 newLinkModal.show();
             },
             archiveCards: function() {
-                // Create data_to_send
-                const data_to_send = new FormData();
-
-                // Loop through the master list and get all card ids
-                this.masterList.forEach(row => {
-                    data_to_send.append('kanban_card_id', row['pk']);
+                //Send the archive destination to state - it will trigger the modal
+                this.$store.commit({
+                    type: 'updateArchiveDestination',
+                    'column': this.columnId,
+                    'level': this.levelId,
                 });
-
-                // Use axios to contact backend
-                axios.post(
-                    `/kanban_information/archive_kanban_cards/`,
-                    data_to_send,
-                ).then(response => {
-                    document.location.reload(true)
-                }).catch(error => {
-                     
-                })
             },
             checkCardOrder: function() {
                 /* Due to an issue - sometimes some of the cards will contain a -1 for the sort order. This sadly
@@ -184,19 +197,20 @@
                     data_to_send.set('old_card_sort_number', row['fields']['kanban_card_sort_number']);
                     data_to_send.set('card_id', row['pk']);
 
+                    //Update kanban card
+                    this.$store.commit({
+                        type: 'updateKanbanCard',
+                        card_id: row['pk'],
+                        kanban_column: this.columnId,
+                        kanban_level: this.levelId,
+                        kanban_card_sort_number: index,
+                    })
+
                     //Use axios to send the data to the database
                     axios.post(
-                        `/kanban_information/${row['pk']}/move_card/`,
+                        `${this.rootUrl}kanban_information/${row['pk']}/move_card/`,
                         data_to_send,
-                    ).then(response => {
-                        this.$store.commit({
-                            type: 'updateKanbanCard',
-                            card_id: row['pk'],
-                            kanban_column: this.columnId,
-                            kanban_level: this.levelId,
-                            kanban_card_sort_number: index,
-                        })
-                    });
+                    );
                 });
 
                 //Done - hide the error screen
@@ -207,9 +221,6 @@
                 const filtered_data = this.masterList.filter(row => {
                     return row['pk'] == data['target']['dataset']['cardId'];
                 })[0];
-
-                
-                
 
                 //Setup data to send upstream
                 this.sendDataUpstream(filtered_data);
@@ -298,15 +309,15 @@
                     smallest = (new_sort >= old_sort)*old_sort + (new_sort < old_sort)*new_sort;
 
                 //If they are the same (i.e. drag and dropped in same place) - return
-                if (largest == smallest) {
+                if (largest === smallest) {
                     return [];
                 }
 
                 //Filter for the data we need
                 let filtered_data = this.allCards.filter(row => {
                     //Return when same column and level, whilst also in range of smallest and largest
-                    return row['fields']['kanban_column'] === column &&
-                           row['fields']['kanban_level'] === level &&
+                    return parseInt(row['fields']['kanban_column']) === column &&
+                           parseInt(row['fields']['kanban_level']) === level &&
                            row['fields']['kanban_card_sort_number'] >= smallest &&
                            row['fields']['kanban_card_sort_number'] <= largest;
                 })
@@ -368,41 +379,61 @@
                 data_to_send.set('old_card_sort_number', old_card_sort_number);
                 data_to_send.set('card_id', card_id);
 
+                //Define cards_to_change
+                let cards_to_change = [];
+
+                //Depending if the card moves columns depends what we do
+                if ((new_card_column === old_card_column) &&
+                    (new_card_level === old_card_level)) {
+                    //The card stayed in the same place.
+
+                    cards_to_change = this.dragSameColumn(data_to_send);
+                } else {
+                    //The card move to a different place
+
+                    cards_to_change = this.dragDifferentColumn(data_to_send);
+                }
+
+                //ADD CODE - loop through the cards to change
+                cards_to_change.forEach(row => {
+                    this.$store.commit({
+                        type: 'updateKanbanCard',
+                        card_id: row['card_id'],
+                        kanban_column: row['kanban_column'],
+                        kanban_level: row['kanban_level'],
+                        kanban_card_sort_number: row['kanban_card_sort_number'],
+                    })
+                })
+
                 //Use axios to send the data to the database
                 axios.post(
-                    `/kanban_information/${card_id}/move_card/`,
+                    `${this.rootUrl}kanban_information/${card_id}/move_card/`,
                     data_to_send,
-                ).then(response => {
-                    //Define cards_to_change
-                    let cards_to_change = [];
-
-                    //Depending if the card moves columns depends what we do
-                    if ((new_card_column == old_card_column) && 
-                        (new_card_level == old_card_level)) {
-                        //The card stayed in the same place.
-                        
-                        cards_to_change = this.dragSameColumn(data_to_send);
-                    } else {
-                        //The card move to a different place
-                        
-                        cards_to_change = this.dragDifferentColumn(data_to_send);
-                    }
-
-                    //ADD CODE - loop through the cards to change
-                    cards_to_change.forEach(row => {
-                        this.$store.commit({
-                            type: 'updateKanbanCard',
-                            card_id: row['card_id'],
-                            kanban_column: row['kanban_column'], 
-                            kanban_level: row['kanban_level'],
-                            kanban_card_sort_number: row['kanban_card_sort_number'],
-                        })
-                    })
-                }).catch(error => {
-                    
-                })
+                );
             },
             sendDataUpstream: function(filtered_data) {
+                // Determine if the card has a link
+                let card_link = {};
+                if (filtered_data.fields.project !== undefined) {
+                    card_link = {
+                        id: filtered_data.fields.project,
+                        hyperlink: `${this.rootUrl}project_information/${filtered_data.fields.project}/`,
+                        type: "Project"
+                    };
+                } else if (filtered_data.fields.task !== undefined) {
+                    card_link = {
+                        id: filtered_data.fields.task,
+                        hyperlink: `${this.rootUrl}task_information/${filtered_data.fields.task}/`,
+                        type: "Task"
+                    };
+                } else if (filtered_data.fields.requirement) {
+                    card_link = {
+                        id: filtered_data.fields.requirement,
+                        hyperlink: `${this.rootUrl}requirement_information/${filtered_data.fields.requirement}/`,
+                        type: "Requirement"
+                    };
+                }
+
                 // Update VueX
                 this.$store.commit({
                     type: 'updateCard',
@@ -411,6 +442,7 @@
                     'cardDescription': filtered_data['fields']['kanban_card_description'],
                     'cardColumn': filtered_data['fields']['kanban_column'],
                     'cardLevel': filtered_data['fields']['kanban_level'],
+                    'cardLink': card_link,
                 })
 
                 //Emit the current card information

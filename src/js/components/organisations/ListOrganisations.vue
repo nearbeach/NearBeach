@@ -1,9 +1,12 @@
 <template>
     <div>
-        <div v-for="organisation in organisationResults" class="row">
+        <div v-for="organisation in organisationResults" 
+             :key="organisation.id"
+             class="row"
+        >
             <div class="organisation-details">
                 <img v-if="organisation['fields']['organisation_profile_picture'] == ''"
-                     v-bind:src="`${staticUrl}static/NearBeach/images/placeholder/product_tour.svg`"
+                     v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"
                      alt="Stakeholder Logo"
                      class="organisation-image"
                 >
@@ -18,13 +21,16 @@
                     </a>
                 </div>
                 <div class="organisation-link">
-                    <IconifyIcon v-bind:icon="icons.linkOut"></IconifyIcon> Website:
-                    <a v-bind:href="organisation['fields']['organisation_website']" target="_blank">
+                    <Icon v-bind:icon="icons.linkOut"></Icon> Website:
+                    <a v-bind:href="organisation['fields']['organisation_website']" 
+                       target="_blank"
+                       rel="noopener noreferrer"
+                    >
                         {{ organisation['fields']['organisation_website'] }}
                     </a>
                 </div>
                 <div class="organisation-email">
-                    <IconifyIcon v-bind:icon="icons.mailIcon"></IconifyIcon> Email:
+                    <Icon v-bind:icon="icons.mailIcon"></Icon> Email:
                     <a v-bind:href="`mailto:${organisation['fields']['organisation_email']}`">
                         {{organisation['fields']['organisation_email']}}
                     </a>
@@ -35,21 +41,31 @@
 </template>
 
 <script>
+    //VueX
+    import { mapGetters } from 'vuex';
+    import { Icon } from '@iconify/vue';
+
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
     export default {
         name: "ListOrganisations",
+        components: {
+            Icon,
+        },
         props: {
-            organisationResults: Array,
-            rootUrl: {
-                type: String,
-                default: "/",
+            organisationResults: {
+                type: Array,
+                default: () => {
+                    return [];
+                },
             },
-            staticUrl: {
-                type: String,
-                default: "/",
-            },
+        },
+        computed: {
+            ...mapGetters({
+                rootUrl: "getRootUrl",
+                staticUrl: "getStaticUrl",
+            }),
         },
         mixins: [
             iconMixin,
