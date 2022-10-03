@@ -61,6 +61,11 @@ Each different module/componet in NearBeach are called Objects. The following ob
 Each object shall have it's own folder structure within the respected location, i.e. `/views/projects`.
 
 
+## Setting up local dev environment
+
+Please follow the instructions in our documentation: [Setting up local dev environment](https://nearbeach.readthedocs.io/en/documentation/setup-dev-environment/easy_development_environment.html)
+
+
 ## Donating
 
 Like most projects, there are some overhead costs. Every single dollar that we get will go towards;
