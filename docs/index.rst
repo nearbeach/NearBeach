@@ -38,7 +38,21 @@ Software
 * Gunicorn
 * MySQL
 
+~~~~~~~~~~~~~~~
+Dev Environment
+~~~~~~~~~~~~~~~
 
+.. toctree::
+  :maxdepth: 1
+  :caption: Local Development Environment setup
+  :name: sec-setup-dev-environment
+
+  setup-dev-environment/easy_development_environment
+  setup-dev-environment/complicated_development_environment
+
+~~~~~~~~~~~~~~~~~~~~~~
+Production Environment
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. toctree::
   :maxdepth: 1
