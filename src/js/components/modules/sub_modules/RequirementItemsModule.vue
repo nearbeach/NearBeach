@@ -21,7 +21,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in itemResults">
+                    <tr v-for="item in itemResults"
+                        :key="item.pk"
+                    >
                         <td>
                             <a v-bind:href="`${rootUrl}requirement_item_information/${item['pk']}/`">
                                 <p>
