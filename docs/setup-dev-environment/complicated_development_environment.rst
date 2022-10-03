@@ -17,7 +17,7 @@ Security fixes/patches are applied for a longer period of time, helping keep you
 
 NearBeach currently supports the following Django versions;
 
-- Django Version 3.1+
+- Django Version 3.2+
 
 More information about upgrading Django can be found `found in the Django Documentation <https://docs.djangoproject.com/en/3.0/howto/upgrade-version/>`_
 

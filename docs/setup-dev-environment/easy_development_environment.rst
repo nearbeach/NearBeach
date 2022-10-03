@@ -12,13 +12,13 @@ Simple Development Environment
 
 NearBeach currently supports the following Django versions;
 
-- Django Version 3.1+
+- Django Version 3.2+
 
 More information about upgrading Django can be found `found in the Django Documentation <https://docs.djangoproject.com/en/3.0/howto/upgrade-version/>`_
 
   .. attention:: We are assuming you have pip3 installed on your local system. If not, please follow these instructions: https://github.com/pypa/get-pip
 
-  .. attention:: We are assuming you have installed Python 3.6+ on your local development system. If not, please follow these instructions: https://www.python.org/downloads/
+  .. attention:: We are assuming you have installed Python 3.7+ on your local development system. If not, please follow these instructions: https://www.python.org/downloads/
 
 
 -----------------------
@@ -88,4 +88,26 @@ Download Git Repository
   
     python3 manage.py runserver
 
-  .. note:: To compile the JavaScript code, simply run `npm run prod` or  `npm run watch`
+#. To access NearBeach, open up your browser and go to `http://localhost:8000` or alternatively `http://127.0.0.1:8000`.
+
+--------------
+NPM/JavaScript
+--------------
+
+#. To install all NPM packages, please run the following code
+
+  .. code-block:: bash
+
+    npm install
+
+#. Once npm has finished installing, you can compile the code using the following;
+
+  .. code-block:: bash
+
+    npm run prod
+
+#. Alternatively, you can run a watch
+
+  .. code-block:: bash
+
+    npm run watch
