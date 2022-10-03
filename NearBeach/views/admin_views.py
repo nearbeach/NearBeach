@@ -77,6 +77,8 @@ def update_group_leader_status(request, destination):
         user_group_update.filter(
             permission_set=form.cleaned_data['permission_set'].first(),
         ).update(group_leader=form.cleaned_data['group_leader'])
+    else:
+        user_group_update.update(group_leader=form.cleaned_data['group_leader'])
 
     return HttpResponse("")
 
