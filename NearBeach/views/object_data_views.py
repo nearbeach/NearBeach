@@ -406,7 +406,6 @@ def associated_objects(request, destination, location_id):
     object_assignment_results = get_object_from_destination(
         object_assignment_results, destination, location_id)
 
-
     project_results = project.objects.filter(
         is_deleted=False,
         project_id__in=object_assignment_results.filter(
@@ -942,7 +941,6 @@ def object_link_list(request, destination, location_id):
     object_assignment_results = object_assignment.objects.filter(
         is_deleted=False,
     )
-
 
     # Check objects that match the destination and location id
     # Also make sure we get any meta data where the destination is not null
