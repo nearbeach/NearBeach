@@ -4,7 +4,7 @@ export default {
     methods: {
         closeLoadingModal: function() {
             //Get loader modal
-            let loadingModal = new Modal(document.getElementById('loadingModal'));
+            const loadingModal = new Modal(document.getElementById('loadingModal'));
 
             //Update the message in the loading modal
             document.getElementById("loadingModalContent").innerHTML = `UPDATED SUCCESSFULLY`;

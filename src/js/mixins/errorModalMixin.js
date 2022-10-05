@@ -28,7 +28,7 @@ export default {
                 `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
 
             // Show the modal
-            let errorModal = new Modal(document.getElementById('errorModal'));
+            const errorModal = new Modal(document.getElementById('errorModal'));
             errorModal.show();
 
         }
