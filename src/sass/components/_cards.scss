@@ -69,7 +69,10 @@
       position: absolute;
       transform: translateX(-130px);
       width: 120px;
-      border-radius: 50%;
+      height: 120px;
+      border-radius: 12px;
+      background-color: #ddd;
+      object-fit: contain;
     }
   }
 

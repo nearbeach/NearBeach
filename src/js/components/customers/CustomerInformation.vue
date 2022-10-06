@@ -21,7 +21,6 @@
                              alt="User Profile Picture"
                              class="customer-profile-image"
                         />
-                        <br/>
                         <n-upload
                             :action="`${rootUrl}customer_information/${customerResults[0]['pk']}/update_profile/`"
                             :headers="{
@@ -33,7 +32,7 @@
                             <n-button>Update Profile Picture</n-button>
                         </n-upload>
                     </div>
-                    <br/>
+                    <div class="spacer-extra"></div>
 
                     <!-- CUSTOMER INFORMATION -->
                     <div class="row">

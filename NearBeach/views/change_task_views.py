@@ -60,7 +60,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
 @check_change_task_permissions(min_permission_level=4)
-def change_task_delete(request, change_task_id):
+def change_task_delete(request, change_task_id, *args, **kwargs):
     """A simple function to delete the change task"""
     change_task_delete = change_task.objects.get(change_task_id=change_task_id)
 

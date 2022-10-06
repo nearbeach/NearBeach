@@ -9,7 +9,11 @@
 
 .organisation-profile-image, .customer-profile-image {
   //Location - organisation_informaiton
-  width: 100%;
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  background-color: #ddd;
+  border-radius: 12px;
 }
 
 .rfc-submit-row {

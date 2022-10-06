@@ -1,6 +1,6 @@
 {
   "name": "nearbeach",
-  "version": "0.29.5",
+  "version": "0.29.6",
   "description": "NearBeach - an Open Source project management system built with Django web framework",
   "main": "/src/js/app.js",
   "directories": {
