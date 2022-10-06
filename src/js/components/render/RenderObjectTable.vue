@@ -34,7 +34,7 @@
 
 <script>
     //Mixins
-    import datetimeMixins from "../../mixins/datetimeMixins";
+    import datetimeMixin from "../../mixins/datetimeMixin";
 
     export default {
         name: "RenderObjectTable",
@@ -70,7 +70,7 @@
             return {}
         },
         mixins: [
-            datetimeMixins,
+            datetimeMixin,
         ],
     }
 </script>

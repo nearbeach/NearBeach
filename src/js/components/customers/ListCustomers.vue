@@ -10,7 +10,7 @@
                      class="organisation-image"
                 >
                 <img v-else
-                     v-bind:src="customer['fields']['customer_profile_picture']"
+                     v-bind:src="`${rootUrl}media/${customer['fields']['customer_profile_picture']}`"
                      alt="Stakeholder Logo"
                      class="organisation-image"
                 >

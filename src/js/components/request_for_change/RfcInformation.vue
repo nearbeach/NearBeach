@@ -2,6 +2,8 @@
     <div class="card">
         <div class="card-body">
             <h1>Request for Change</h1>
+            <br />
+            <h2>{{getStatus()}}</h2>
             <hr>
 
             <rfc-description v-bind:rfc-results="rfcResults"
@@ -66,8 +68,9 @@
                         <div class="form-group">
                             <label>Implementation Start: </label>
                             <n-date-picker type="datetime"
-                                      v-model:value="rfcImplementationStartModel"
+                                      v-model:value="localStartDate"
                                       input-class="form-control"
+                                      :is-date-disabled="disableDate"
                             ></n-date-picker>
                         </div>
                     </div>
@@ -75,8 +78,9 @@
                         <div class="form-group">
                             <label>Implementation End: </label>
                             <n-date-picker type="datetime"
-                                      v-model:value="rfcImplementationEndModel"
+                                      v-model:value="localEndDate"
                                       input-class="form-control"
+                                      :is-date-disabled="disableDate"
                             ></n-date-picker>
                         </div>
                     </div>
@@ -84,8 +88,9 @@
                         <div class="form-group">
                             <label>Release Date: </label>
                             <n-date-picker type="datetime"
-                                      v-model:value="rfcReleaseModel"
+                                      v-model:value="localReleaseDate"
                                       input-class="form-control"
+                                      :is-date-disabled="disableDate"
                             ></n-date-picker>
                         </div>
                     </div>
@@ -141,6 +146,31 @@
                        v-on:click="updateRFC"
                        v-if="userLevel > 1"
                     >Update Request for Change</a>
+
+                </div>
+            </div>
+            <div class="row submit-row"
+                 v-else
+            >
+                <div class="col-md-12">
+                    <a href="javascript:void(0)"
+                       class="reject-rfc-button"
+                       aria-disabled=""
+                       v-on:click="rejectRFCStatus"
+                       v-if="groupLeaderCount > 0 && rfcResults[0].fields.rfc_status == 2"
+                    >Reject RFC</a>
+                    
+                    <a href="javascript:void(0)"
+                       class="accept-rfc-button save-changes"
+                       v-on:click="startRFCStatus"
+                       v-if="userLevel > 1 && rfcResults[0].fields.rfc_status == 3"
+                    >Start RFC</a>
+
+                    <a href="javascript:void(0)"
+                       class="accept-rfc-button save-changes"
+                       v-on:click="approveRFCStatus"
+                       v-if="groupLeaderCount > 0 && rfcResults[0].fields.rfc_status == 2"
+                    >Approve RFC</a>
                 </div>
             </div>
         </div>
@@ -154,6 +184,7 @@
     import { mapGetters } from 'vuex';
 
     //Import mixins
+    import datetimeMixin from "../../mixins/datetimeMixin";
     import errorModalMixin from "../../mixins/errorModalMixin";
     import loadingModalMixin from "../../mixins/loadingModalMixin";
 
@@ -206,6 +237,40 @@
                 default: 0,
             },
         },
+        watch: {
+            localEndDate() {
+                //If startDate > endDate - update endDate to the start date
+                if (this.localStartDate > this.localEndDate) {
+                    this.localEndDate = this.localStartDate;
+                }
+
+                //If endDate > releaseDate - update the releaseDate to the end date
+                if (this.localEndDate > this.localReleaseDate) {
+                    this.localReleaseDate = this.localEndDate;
+                }
+                
+                //Update State Management
+                this.updateStateManagement();
+            },
+            localReleaseDate() {
+                //If endDate > releaseDate - update the releaseDate to the end date
+                if (this.localEndDate > this.localReleaseDate) {
+                    this.localReleaseDate = this.localEndDate;
+                }
+
+                //Update State Management
+                this.updateStateManagement();
+            },
+            localStartDate() {
+                //If startDate > endDate - update endDate to the start date
+                if (this.localStartDate > this.localEndDate) {
+                    this.localEndDate = this.localStartDate;
+                }
+
+                //Update State Management
+                this.updateStateManagement();
+            },
+        },
         computed: {
             ...mapGetters({
                 changeTaskCount: 'getChangeTaskCount',
@@ -221,14 +286,18 @@
 
                 //If there is ONE invalidation, we send back true => invalid
                 return start_date || end_date || release_date;
-            }
+            },
         },
         mixins: [
+            datetimeMixin,
             errorModalMixin,
             loadingModalMixin,
         ],
         data() {
             return {
+                localEndDate: 0,
+                localReleaseDate: 0,
+                localStartDate: 0,
                 rfcChangeLeadFixList: [],
                 rfcChangeLeadModel: '',
                 rfcTitleModel: this.rfcResults[0]['fields']['rfc_title'],
@@ -244,6 +313,14 @@
                     { label: 'Finished', value: 5 },
                     { label: 'Rejected', value: 6 },
                 ],
+                rfcStatusDict: {
+                    1: 'Draft',
+                    2: 'Waiting for approval',
+                    3: 'Approved',
+                    4: 'Started',
+                    5: 'Finished',
+                    6: 'Rejected',
+                },
                 rfcType: [
                     { label: 'Emergency', value: 4 },
                     { label: 'High', value: 3 },
@@ -279,6 +356,43 @@
             },
         },
         methods: {
+            approveRFCStatus: function() {
+                const data_to_send = new FormData();
+                data_to_send.set('rfc_status','3'); //Value 3: Approved
+
+                //Send data
+                this.sendUpdate(data_to_send);
+            },
+            getStatus: function() {
+                return this.rfcStatusDict[this.rfcResults[0].fields.rfc_status];
+            },
+            rejectRFCStatus: function() {
+                const data_to_send = new FormData();
+                data_to_send.set('rfc_status','6'); //Value 6: Rejected
+
+                //Send data
+                this.sendUpdate(data_to_send);
+            },
+            sendUpdate: function(data_to_send) {
+                axios.post(
+                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
+                    data_to_send,
+                ).then(response => {
+                    //Reload the page to get redirected to the correct place
+                    window.location.reload(true);
+                }).catch(error => {
+                    //Show error if there is one
+                    this.showErrorModal(error, 'Request for Change', this.rfcResults[0]['pk']);
+                })
+                
+            },
+            startRFCStatus: function() {
+                const data_to_send = new FormData();
+                data_to_send.set('rfc_status', 4);
+
+                //Send data
+                this.sendUpdate(data_to_send);
+            },
             updateRFC: async function() {
                 //Check form validation
                 const validation_results = await this.v$.$validate()
@@ -317,16 +431,17 @@
                 const data_to_send = new FormData();
                 data_to_send.set('rfc_status','2'); //Value 2: Waiting for Approval
 
-                axios.post(
-                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
-                    data_to_send,
-                ).then(response => {
-                    //Reload the page to get redirected to the correct place
-                    window.location.reload(true);
-                }).catch(error => {
-                    //Show error if there is one
-                    this.showErrorModal(error, 'Request for Change', this.rfcResults[0]['pk']);
-                })
+                this.sendUpdate(data_to_send);
+            },
+            updateStateManagement: function() {
+                //Update the vuex
+                this.$store.commit({
+                    type: 'updateRfcDates',
+                    endDateModel: this.localEndDate,
+                    releaseDateModel: this.localReleaseDate,
+                    startDateModel: this.localStartDate,
+                });
+                
             },
             updateValues: function(data) {
                 //Update the value
@@ -355,12 +470,12 @@
             const release_date = new Date(this.rfcResults[0].fields.rfc_implementation_release_date);
             const start_date = new Date(this.rfcResults[0].fields.rfc_implementation_start_date);
 
-            this.$store.commit({
-                type: 'updateRfcDates',
-                endDateModel: end_date.getTime(),
-                releaseDateModel: release_date.getTime(),
-                startDateModel: start_date.getTime(),
-            });
+            this.localEndDate = end_date.getTime();
+            this.localReleaseDate = release_date.getTime();
+            this.localStartDate = start_date.getTime();
+
+            //Update State Management
+            this.updateStateManagement();
         }
     }
 </script>

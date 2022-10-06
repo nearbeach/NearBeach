@@ -6,12 +6,15 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import ChangeTaskStatusForm, ChangeTaskForm
-from NearBeach.models import change_task, User
+from NearBeach.models import change_task, request_for_change, User
+
+from NearBeach.decorators.check_user_permissions import check_change_task_permissions
 
 import json
 
 
 @login_required(login_url='login', redirect_field_name="")
+@check_change_task_permissions(min_permission_level=1)
 def change_task_information(request, change_task_id, *args, **kwargs):
     """
     """
@@ -24,6 +27,8 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     # If the change task has been deleted or does not exist, go to 404
     if len(change_task_results) == 0:
         raise Http404()
+
+    rfc_results = request_for_change.objects.get(rfc_id=change_task_results[0].request_for_change_id)
 
     # Load the template
     t = loader.get_template('NearBeach/request_for_change/change_task_information.html')
@@ -44,6 +49,8 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     # Context
     c = {
         'change_task_results': serializers.serialize('json', change_task_results),
+        'rfc_status': rfc_results.rfc_status,
+        'user_level': kwargs['user_level'],
         'user_list': user_list,
     }
 
@@ -52,6 +59,22 @@ def change_task_information(request, change_task_id, *args, **kwargs):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
+@check_change_task_permissions(min_permission_level=4)
+def change_task_delete(request, change_task_id, *args, **kwargs):
+    """A simple function to delete the change task"""
+    change_task_delete = change_task.objects.get(change_task_id=change_task_id)
+
+    # Update the change task is deleted to true
+    change_task_delete.is_deleted = True
+    change_task_delete.save()
+
+    # Send back success
+    return HttpResponse("")
+
+
+@require_http_methods(['POST'])
+@login_required(login_url='login', redirect_field_name="")
+@check_change_task_permissions(min_permission_level=2)
 def change_task_save(request, change_task_id):
     """
     """
@@ -82,7 +105,8 @@ def change_task_save(request, change_task_id):
 
 @require_http_methods(['POST'])
 @login_required(login_url='login', redirect_field_name="")
-def update_status(request, change_task_id):
+@check_change_task_permissions(min_permission_level=2)
+def update_status(request, change_task_id, *args, **kwargs):
     """
     :param request:
     :param change_task_id:

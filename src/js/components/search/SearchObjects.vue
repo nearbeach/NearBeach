@@ -135,7 +135,7 @@
                     prefix: 'Rfc',
                     id: 'rfc_id',
                     title: 'rfc_title',
-                    status: 'rfc_status',
+                    status: 'rfc_status__rfc_status',
                 },
                 requirementVariables: {
                     header: 'Requirements',

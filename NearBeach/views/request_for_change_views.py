@@ -12,7 +12,8 @@ from NearBeach.models import request_for_change, \
     group, \
     change_task, \
     request_for_change_group_approval, \
-    RFC_STATUS
+    RFC_STATUS, \
+    list_of_rfc_status
 from django.http import HttpResponse, \
     HttpResponseBadRequest, \
     HttpResponseRedirect
@@ -133,7 +134,7 @@ def new_request_for_change_save(request, *args, **kwargs):
     rfc_submit = request_for_change(
         change_user=request.user,
         creation_user=request.user,
-        rfc_status=1,
+        rfc_status=list_of_rfc_status.objects.get(rfc_status_id=1),
         rfc_title=form.cleaned_data['rfc_title'],
         rfc_summary=form.cleaned_data['rfc_summary'],
         rfc_type=form.cleaned_data['rfc_type'],
@@ -271,7 +272,7 @@ def rfc_information(request, rfc_id, *args, **kwargs):
     """
     # If rfc is not in draft mode - send user away
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
-    if not rfc_results.rfc_status == 1 or kwargs['user_level'] == 1:  # Draft
+    if not rfc_results.rfc_status_id == 1 or kwargs['user_level'] == 1:  # Draft
         return HttpResponseRedirect(reverse('rfc_readonly', args={rfc_id}))
 
     # Get template
@@ -348,6 +349,7 @@ def rfc_readonly(request, rfc_id, *args, **kwargs):
 
     # Add the group_leader_count to c dict
     c.update({'group_leader_count': group_leader_count})
+    c['user_level'] = kwargs['user_level']
 
     return HttpResponse(t.render(c, request))
 
@@ -503,15 +505,18 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
     ).count()
 
     # If there are no waiting for approval results - we default up to approved
+    print(F"NON APPROVED: {non_approved_group_approvals}")
     if non_approved_group_approvals == 0:
-        rfc_results.rfc_status = 3  # Approved value
+        rfc_results.rfc_status = list_of_rfc_status.objects.get(rfc_status_id=3)  # Approved value
         rfc_results.save()
+
+        print("GOT IN HERE!")
 
         # Update all change tasks to approved
         change_task.objects.filter(
             is_deleted=False,
             request_for_change_id=rfc_id,
-            change_task_status=2,
+            #change_task_status=2,
         ).update(change_task_status=3)
 
 
@@ -564,10 +569,11 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
     )
 
     # Place all change tasks into waiting
+    print(F'\n\nRFC ID: {rfc_id}\nARGH\n\n')
     change_task.objects.filter(
         is_deleted=False,
         request_for_change_id=rfc_id,
-        change_task_status=1,
+        #change_task_status=1,
     ).update(change_task_status=2)
 
     # Loop through the groups, create the group approval,
@@ -620,16 +626,17 @@ def rfc_update_status(request, rfc_id, *args, **kwargs):
     rfc_update = request_for_change.objects.get(rfc_id=rfc_id)
 
     # Update the status
-    rfc_update.rfc_status = int(form.cleaned_data['rfc_status'])
+    rfc_update.rfc_status = form.cleaned_data['rfc_status']
     rfc_update.save()
 
     # Depending on what the status is depends what to do
-    status_dict = dict(RFC_STATUS)
-    if status_dict[form.cleaned_data['rfc_status']] == 'Waiting for approval':
+    # status_dict = dict(RFC_STATUS)
+    rfc_status = str(form.cleaned_data['rfc_status'])
+    if rfc_status == 'Waiting for approval':
         rfc_status_waiting_for_approval(rfc_id, rfc_update, request)
-    if status_dict[form.cleaned_data['rfc_status']] == 'Approved':
+    if rfc_status == 'Approved':
         rfc_status_approved(rfc_id, rfc_update, request)
-    if status_dict[form.cleaned_data['rfc_status']] == 'Rejected':
+    if rfc_status == 'Rejected':
         rfc_status_rejected(rfc_id, rfc_update)
 
     return HttpResponse("")

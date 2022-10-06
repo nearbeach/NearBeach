@@ -66,7 +66,7 @@
                     //There is no image - return the default image
                     return this.defaultCustomerImage;
                 }
-                return customer['fields']['customer_profile_picture'];
+                return `/media/${customer['fields']['customer_profile_picture']}`;
             },
         },
     }

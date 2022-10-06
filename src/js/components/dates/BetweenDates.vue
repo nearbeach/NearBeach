@@ -47,6 +47,9 @@
     import useVuelidate from '@vuelidate/core'
     import { required } from '@vuelidate/validators'
 
+    //Mixin
+    import disableDate from '../../mixins/datetimeMixin';
+
     export default {
         name: "BetweenDates",
         setup() {
@@ -55,6 +58,9 @@
         components: {
             NDatePicker,
         },
+        mixins: [
+            disableDate,
+        ],
         props: {
             destination: {
                 type: String,
@@ -74,6 +80,10 @@
 
                     return temp_date.getTime();
                 },
+            },
+            noBackDating: {
+                type: Boolean,
+                default: true,
             },
             startDateModel: {
                 type: Number,
@@ -111,10 +121,24 @@
                 })
             },
             endDateDisabled: function(endDate) {
-                return endDate < this.startDateModel;
+                //If user has flagged they want to remove any dates prior to today - we will
+                let disable_date = false;
+                if (!this.noBackDating) {
+                    disable_date = this.disableDate(endDate); 
+                }
+
+                //Return the results
+                return endDate <= this.startDateModel - 1000*60*60*24 || disable_date;
             },
             startDateDisabled: function(startDate) {
-                return startDate > this.endDateModel;
+                //If user has flagged they want to remove any dates prior to today - we will
+                let disable_date = false;
+                if (!this.noBackDating) {
+                    disable_date = this.disableDate(startDate);
+                }
+
+                //Return the results
+                return startDate > this.endDateModel || disable_date;
             },
         },
         watch: {

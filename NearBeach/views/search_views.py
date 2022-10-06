@@ -43,6 +43,7 @@ def get_object_search_data(search_form, request):
         'rfc_id',
         'rfc_title',
         'rfc_status',
+        'rfc_status__rfc_status',
     )
     requirement_results = requirement.objects.filter(
         is_deleted=False,

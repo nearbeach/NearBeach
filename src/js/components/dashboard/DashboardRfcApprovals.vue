@@ -42,7 +42,7 @@
     const axios = require('axios')
 
     //Import mixins
-    import datetimeMixins from "../../mixins/datetimeMixins";
+    import datetimeMixin from "../../mixins/datetimeMixin";
     import errorModalMixin from "../../mixins/errorModalMixin";
 
     export default {
@@ -59,7 +59,7 @@
             }
         },
         mixins: [
-            datetimeMixins,
+            datetimeMixin,
             errorModalMixin,
         ],
         methods: {

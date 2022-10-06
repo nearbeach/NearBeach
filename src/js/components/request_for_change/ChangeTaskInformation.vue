@@ -2,6 +2,10 @@
     <div class="card">
         <div class="card-body">
             <h1>Change Task - {{changeTaskResults[0]['pk']}}</h1>
+            <br/>
+            RFC Status: {{rfcStatus}}
+            <br/>
+            <a v-bind:href="`${this.rootUrl}rfc_information/${changeTaskResults[0].fields.request_for_change}`">Go back</a>
             <hr>
 
             <!-- CHANGE TASK TITLE -->
@@ -27,6 +31,7 @@
             <between-dates destination="Change Task"
                            v-bind:start-date-model="changeStartDateModel"
                            v-bind:end-date-model="changeEndDateModel"
+                           v-bind:no-back-dating="false"
                            v-on:update_dates="updateDates($event)"
             ></between-dates>
 
@@ -128,37 +133,43 @@
             <hr>
             <!-- CANCEL -->
             <a v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
-               class="btn btn-secondary"
+               class="btn btn-secondary cancel-changes"
             >Cancel</a>
+
+            <!-- DELETE -->
+            <a href="javascript:void(0)"
+               class="btn btn-warning"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 1 && userLevel == 4"
+               v-on:click="deleteChangeTask"
+            >Delete</a>
 
             <!-- SAVE -->
             <a href="javascript:void(0)"
                class="btn btn-primary save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 1"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 1 && userLevel >= 2"
                v-on:click="saveChangeTask"
             >Save</a>
 
             <!-- START CHANGE TASK -->
             <a href="javascript:void(0)"
                class="btn btn-danger save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 3"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 3 && userLevel >= 2 && rfcStatus === 'Started'"
                v-on:click="updateStatus(4)"
             >Start Task</a>
 
             <!-- FINISH CHANGE TASK -->
             <a href="javascript:void(0)"
                class="btn btn-success save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4 && userLevel >= 2"
                v-on:click="updateStatus(5)"
             >Finish Task</a>
 
             <!-- REJECT CHANGE TASK -->
             <a href="javascript:void(0)"
                class="btn btn-danger save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4"
+               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4 && userLevel >= 2"
                v-on:click="updateStatus(6)"
             >REJECT Task</a>
-
         </div>
     </div>
 </template>
@@ -183,9 +194,17 @@
                     return [];
                 },
             },
+            rfcStatus: {
+                type: String,
+                default: 'Empty Status',
+            },
             rootUrl: {
                 type: String,
                 default: '/',
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
             },
             userList: {
                 type: Array,
@@ -218,6 +237,15 @@
                     return `Downtime Scheduled`;
                 }
                 return `No Downtime`;
+            },
+            deleteChangeTask: function() {
+                //Send the trigger
+                axios.post(
+                    `${this.rootUrl}change_task_information/${this.changeTaskResults[0]['pk']}/delete/`,
+                ).then(response => {
+                    //If successful, go back
+                    window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
+                })
             },
             saveChangeTask: function(event) {
                 //Stop the usual stuff
@@ -255,7 +283,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `${rootUrl}change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
+                    `${this.rootUrl}change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
                     data_to_send,
                 ).then(response => {
                     //Reload the page

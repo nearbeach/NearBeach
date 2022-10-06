@@ -289,6 +289,8 @@ def rfc_approvals(request):
         rfc_status=2,  # Waiting for approval
     )
 
+    print(F"\n\nRFC_RESULTS: {rfc_results}")
+
     """
     Filter the rfc_results, with any object assignment that the user is currently;
     - A group leader of
