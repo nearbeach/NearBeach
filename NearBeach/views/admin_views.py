@@ -47,7 +47,6 @@ def add_user(request):
         )
         submit_user.save()
 
-
     return HttpResponse("")
 
 

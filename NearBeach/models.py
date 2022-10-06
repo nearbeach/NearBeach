@@ -1043,8 +1043,6 @@ class kanban_column(models.Model):
         return str(self.kanban_column_name)
 
 
-
-
 class kanban_level(models.Model):
     kanban_level_id = models.AutoField(primary_key=True)
     kanban_level_name = models.CharField(max_length=255)
