@@ -20,7 +20,7 @@ def check_destination():
         @wraps(func)
         def inner(request, destination, *args, **kwargs):
             # See if the destination is correct (permission denied if not).
-            if not destination in OBJECT_ARRAY:
+            if destination not in OBJECT_ARRAY:
                 raise PermissionDenied
 
             # It passed - return the function
