@@ -56,7 +56,7 @@ def change_task_save(request, change_task_id):
     """
     """
     # Get form data
-    form  = ChangeTaskForm(request.POST)
+    form = ChangeTaskForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
