@@ -14,7 +14,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='request_for_change',
             name='rfc_status_update',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_rfc_status'),
+            field=models.ForeignKey(default=1,
+                                    on_delete=django.db.models.deletion.CASCADE,
+                                    to='NearBeach.list_of_rfc_status'),
             preserve_default=False,
         ),
     ]

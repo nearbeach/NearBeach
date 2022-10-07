@@ -36,7 +36,8 @@ class Migration(migrations.Migration):
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                                  related_name='%(class)s_change_user', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'list_of_rfc_status',

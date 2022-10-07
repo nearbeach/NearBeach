@@ -18,7 +18,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='request_for_change',
             name='rfc_status_old',
-            field=models.IntegerField(choices=[(1, 'Draft'), (2, 'Waiting for approval'), (3, 'Approved'), (4, 'Started'), (5, 'Finished'), (6, 'Rejected')], default=1),
+            field=models.IntegerField(
+                choices=[(1, 'Draft'), (2, 'Waiting for approval'),
+                         (3, 'Approved'), (4, 'Started'), (5, 'Finished'), (6, 'Rejected')], default=1
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(

@@ -21,10 +21,16 @@ class Migration(migrations.Migration):
                 ('notification_message', models.TextField(blank=True, null=True)),
                 ('notification_start_date', models.DateTimeField()),
                 ('notification_end_date', models.DateTimeField()),
-                ('notification_location', models.CharField(choices=[('All', 'All'), ('Login', 'Login'), ('Dashboard', 'Dashboard')], default='All', max_length=20)),
+                ('notification_location', models.CharField(
+                    default='All', max_length=20,
+                    choices=[('All', 'All'), ('Login', 'Login'), ('Dashboard', 'Dashboard')]
+                )),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_change_user', to=settings.AUTH_USER_MODEL)),
+                ('change_user', models.ForeignKey(
+                    blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                    related_name='%(class)s_change_user', to=settings.AUTH_USER_MODEL
+                )),
             ],
             options={
                 'db_table': 'notification',
