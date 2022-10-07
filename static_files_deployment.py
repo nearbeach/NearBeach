@@ -2,7 +2,7 @@
 
 import NearBeach
 import argparse
-import boto3 # Need to install through PIP
+import boto3  # Need to install through PIP
 
 # Argument Parser
 parser = argparse.ArgumentParser()
