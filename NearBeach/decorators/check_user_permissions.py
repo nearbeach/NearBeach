@@ -14,7 +14,7 @@ def check_change_task_permissions(min_permission_level):
             if request.user.is_superuser:
                 # Return the function with a user_level of 4
                 return func(request, *args, **kwargs, user_level=4)
-            
+
             # Default user level is 0
             user_group_results = user_group.objects.filter(
                 is_deleted=False,
