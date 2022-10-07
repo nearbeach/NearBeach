@@ -203,7 +203,7 @@ def add_link(request, destination, location_id):
 
             submit_object_assignment = object_assignment(
                 change_user=request.user,
-                **{ object_type: single_object }
+                **{object_type: single_object}
             )
 
             # Set the object destination
@@ -947,7 +947,7 @@ def object_link_list(request, destination, location_id):
     object_assignment_results = object_assignment_results.filter(
         Q(
             # Where destination and location id match
-            **{ destination: location_id },
+            **{destination: location_id},
         ) |
         Q(
             **{ destination + '__isnull': False},

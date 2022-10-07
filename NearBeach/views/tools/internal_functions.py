@@ -25,7 +25,7 @@ def get_object_from_destination(input_object, destination, location_id):
     :return:
     """
     input_object = input_object.filter(
-        **{ destination: location_id }
+        **{destination: location_id}
     )
 
     # Just send back the array
@@ -41,6 +41,6 @@ def set_object_from_destination(input_object, destination, location_id):
     :param location_id: The location we are interested in
     :return:
     """
-    setattr(input_object, destination, OBJECT_DICT[destination].get(pk=location_id) )
+    setattr(input_object, destination, OBJECT_DICT[destination].get(pk=location_id))
 
     return input_object
