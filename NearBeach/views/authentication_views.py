@@ -197,8 +197,8 @@ def login(request):
             # is_deleted=False,
             # ADD IN DATES LOGIC HERE
         ) & Q(
-            Q(notification_location = 'All') |
-            Q(notification_location = 'Login Page')
+            Q(notification_location='All') |
+            Q(notification_location='Login Page')
         )
     )
 
