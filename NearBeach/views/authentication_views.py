@@ -210,7 +210,7 @@ def login(request):
         'error_message': error_message,
         'LoginForm': form,
         'nearbeach_title': 'NearBeach Login',
-        'notification_results': notification_results, 
+        'notification_results': notification_results,
         'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
         'image_number': f"{1 + cryptogen.randrange(1, 19):03.0f}"
     }
