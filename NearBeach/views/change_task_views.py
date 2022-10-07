@@ -43,7 +43,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
         'username',
     )
 
-    #Change from ORM to json
+    # Change from ORM to json
     user_list = json.dumps(list(user_list), cls=DjangoJSONEncoder)
 
     # Context

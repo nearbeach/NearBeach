@@ -54,7 +54,7 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
     return HttpResponse(json_results, content_type='application/json')
 
 
-#Internal Code
+# Internal Code
 def get_requirement_item_links(requirement_item_id):
     """Use object_assignment to get the requirments"""
     return object_assignment.objects.filter(

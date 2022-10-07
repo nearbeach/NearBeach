@@ -26,7 +26,7 @@ def check_change_task_permissions(min_permission_level):
                 # Get the rfc id
                 rfc_id = change_task.objects.get(change_task_id=kwargs['change_task_id']).request_for_change_id
 
-                #Determine if there are any cross over change tasks
+                # Determine if there are any cross over change tasks
                 group_results = group.objects.filter(
                     Q(
                         is_deleted=False,

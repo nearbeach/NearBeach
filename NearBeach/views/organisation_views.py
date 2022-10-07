@@ -178,5 +178,5 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
     update_organisation.organisation_profile_picture = form.cleaned_data['file']
     update_organisation.save()
 
-    #Return success
+    # Return success
     return HttpResponse('')
