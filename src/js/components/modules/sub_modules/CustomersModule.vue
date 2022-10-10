@@ -96,7 +96,7 @@
                 axios.post(
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list/`,
                 ).then((response) => {
-                    console.log("Customer Results: ", response['data']);
+                    
                     this.customerResults = response['data'];
                 }).catch((error) => {
                     this.showErrorModal(error, this.destination);
