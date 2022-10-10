@@ -134,7 +134,10 @@ WEBSITE_SOURCE = (
 # List of tables - in alphabetical order
 class about_user(models.Model):
     about_user_id = models.AutoField(primary_key=True)
-    about_user_text = models.TextField()
+    about_user_text = models.TextField(
+        blank=True,
+        default='',
+    )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -371,6 +374,7 @@ class change_task(models.Model):
     change_task_description = models.TextField(
         blank=True,
         null=True,
+        default='',
     )
     change_task_start_date = models.DateTimeField()
     change_task_end_date = models.DateTimeField()
@@ -573,6 +577,7 @@ class document(models.Model):
         # Contains URLS
         null=True,
         blank=True,
+        default='',
     )
     document = models.FileField(
         blank=True,
@@ -969,7 +974,7 @@ class kanban_card(models.Model):
     kanban_card_text = models.CharField(max_length=255)
     kanban_card_description = models.TextField(
         blank=True,
-        null=True,
+        default='',
     )
     kanban_card_sort_number = models.IntegerField()
     kanban_level = models.ForeignKey(
@@ -1087,11 +1092,11 @@ class kudos(models.Model):
     )
     improvement_note = models.TextField(
         blank=True,
-        null=True,
+        default='',
     )
     liked_note = models.TextField(
         blank=True,
-        null=True,
+        default='',
     )
     extra_kudos = models.ForeignKey(
         User,
@@ -1617,7 +1622,7 @@ class notification(models.Model):
     )
     notification_message = models.TextField(
         blank=True,
-        null=True,
+        default='',
     )
     notification_start_date = models.DateTimeField()
     notification_end_date = models.DateTimeField()
@@ -1769,7 +1774,7 @@ class object_note(models.Model):
     object_note_id = models.AutoField(primary_key=True)
     object_note = models.TextField(
         blank=False,
-        null=False,
+        default='',
     )
     kanban_card = models.ForeignKey(
         'kanban_card',
@@ -2208,149 +2213,6 @@ class project_customer(models.Model):
         db_table = "project_customer"
 
 
-"""
-class project_group(models.Model):
-    project_id = models.ForeignKey(
-        'project',
-        on_delete=models.CASCADE,
-    )
-    group_id = models.ForeignKey(
-        'group',
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "project_group"
-"""
-
-"""
-class project_history(models.Model):
-    project_history_id = models.AutoField(primary_key=True)
-    project_id = models.ForeignKey(
-        'project',
-        on_delete=models.CASCADE,
-    )
-    user_id = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=True
-    )
-    user_infomation = models.CharField(max_length=255)
-    project_history = models.TextField('project_history')
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        return str(self.project_id)
-
-    class Meta:
-        db_table = "project_history"
-"""
-
-"""
-class project_opportunity(models.Model):
-    project_opprtunity_id = models.AutoField(primary_key=True)
-    project_id = models.ForeignKey(
-        'project',
-        on_delete=models.CASCADE,
-    )
-    opportunity_id = models.ForeignKey(
-        'opportunity',
-        on_delete=models.CASCADE,
-    )
-    opportunity_description = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "project_opportunity"
-"""
-
-"""
-class project_stage(models.Model):
-    project_stage_id = models.AutoField(primary_key=True)
-    project_id = models.ForeignKey(
-        'project',
-        on_delete=models.CASCADE,
-    )
-    stage_id = models.ForeignKey(
-        'stage',
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "project_stage"
-"""
-
-"""
-class project_task(models.Model):
-    project_task_id = models.AutoField(primary_key=True)
-    project_id = models.ForeignKey(
-        'project',
-        on_delete=models.CASCADE,
-        db_column='project_id'
-    )
-    task_id = models.ForeignKey(
-        'task',
-        on_delete=models.CASCADE,
-        db_column='task_id'
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "project_task"
-"""
-
-
 class quote(models.Model):
     quote_id = models.AutoField(primary_key=True)
     quote_uuid = models.UUIDField(
@@ -2382,12 +2244,12 @@ class quote(models.Model):
     )
     """
     quote_terms = models.TextField(
-        null=True,
         blank=True,
+        default='',
     )
     customer_notes = models.TextField(
-        null=True,
         blank=True,
+        default='',
     )
     project = models.ForeignKey(
         'project',
@@ -2564,7 +2426,7 @@ class request_for_change_note(models.Model):
     rfc_note_id = models.AutoField(primary_key=True)
     rfc_note = models.TextField(
         blank=True,
-        null=True,
+        default='',
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -2629,8 +2491,8 @@ class requirement(models.Model):
         max_length=255,
     )
     requirement_scope = models.TextField(
-        null=True,
         blank=True,
+        default='',
     )
     requirement_type = models.ForeignKey(
         'list_of_requirement_type',
@@ -2707,8 +2569,8 @@ class requirement_item(models.Model):
     )
     requirement_item_title = models.CharField(max_length=255)
     requirement_item_scope = models.TextField(
-        null=True,
         blank=True,
+        default='',
     )
     requirement_item_status = models.ForeignKey(
         'list_of_requirement_item_status',
@@ -2909,87 +2771,6 @@ class task_customer(models.Model):
         db_table = "task_customer"
 
 
-"""
-class task_group(models.Model):
-    task_group_id = models.AutoField(primary_key=True)
-    task_id = models.ForeignKey(
-        'task',
-        on_delete=models.CASCADE,
-    )
-    group_id = models.ForeignKey(
-        'group',
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "task_group"
-"""
-
-"""
-class task_history(models.Model):
-    task_history_id = models.AutoField(primary_key=True)
-    task_id = models.ForeignKey(
-        'task',
-        on_delete=models.CASCADE,
-    )
-    user_id = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-    )
-    user_infomation = models.CharField(max_length=255)
-    task_history = models.TextField()
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "task_history"
-"""
-
-"""
-class task_opportunity(models.Model):
-    task_opportunity_id = models.AutoField(primary_key=True)
-    task_id = models.ForeignKey(
-        'task',
-        on_delete=models.CASCADE,
-    )
-    opportunity_id = models.ForeignKey(
-        'opportunity',
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "task_opportunity"
-"""
-
-
 class timesheet(models.Model):
     timesheet_id = models.AutoField(primary_key=True)
     timesheet_description = models.CharField(
@@ -3174,8 +2955,8 @@ class whiteboard(models.Model):
     whiteboard_id = models.AutoField(primary_key=True)
     whiteboard_title = models.CharField(max_length=255)
     whiteboard_xml = models.TextField(
-        null=True,
         blank=True,
+        default='',
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
