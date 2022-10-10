@@ -1,3 +1,4 @@
 # requirements-dev.txt
 black
+bandit
 -r ./requirements.txt
