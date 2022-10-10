@@ -120,9 +120,9 @@ def add_group(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # We loop through the responses and add them to the destination's object association
-    group_list = request.POST.getlist('group_list')
+    group_list_results = request.POST.getlist('group_list')
 
-    for single_group in group_list:
+    for single_group in group_list_results:
         # Get group instance
         group_instance = group.objects.get(group_id=single_group)
 
@@ -277,9 +277,9 @@ def add_tags(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Loop throgh each tag
-    tag_list = request.POST.getlist("tag_id")
+    tag_list_results = request.POST.getlist("tag_id")
 
-    for single_tag in tag_list:
+    for single_tag in tag_list_results:
         # Grab the tag instance
         tag_instance = tag.objects.get(tag_id=single_tag)
 
@@ -319,10 +319,10 @@ def add_user(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Extract the list of users from the POST data
-    user_list = request.POST.getlist('user_list')
+    user_list_results = request.POST.getlist('user_list')
 
     # Loop through them and add them to the object assignment
-    for single_user in user_list:
+    for single_user in user_list_results:
         # Get user instance
         user_instance = User.objects.get(id=single_user)
 

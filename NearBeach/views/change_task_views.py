@@ -62,11 +62,11 @@ def change_task_information(request, change_task_id, *args, **kwargs):
 @check_change_task_permissions(min_permission_level=4)
 def change_task_delete(request, change_task_id, *args, **kwargs):
     """A simple function to delete the change task"""
-    change_task_delete = change_task.objects.get(change_task_id=change_task_id)
+    change_task_update = change_task.objects.get(change_task_id=change_task_id)
 
     # Update the change task is deleted to true
-    change_task_delete.is_deleted = True
-    change_task_delete.save()
+    change_task_update.is_deleted = True
+    change_task_update.save()
 
     # Send back success
     return HttpResponse("")
