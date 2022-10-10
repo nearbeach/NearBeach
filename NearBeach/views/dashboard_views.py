@@ -13,105 +13,123 @@ from django.contrib.auth.models import User
 import json
 
 # Import NearBeach Models
-from NearBeach.models import object_assignment, \
-    user_group, \
-    task, \
-    request_for_change, \
-    project, \
-    bug, \
-    requirement
+from NearBeach.models import (
+    object_assignment,
+    user_group,
+    task,
+    request_for_change,
+    project,
+    bug,
+    requirement,
+)
 
 
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 def dashboard(request):
     """
     Due to a bug - if the user goes to /admin/ and logs in there, they will by pass this one session request. It is
     placed here to make sure. :)
     """
-    request.session['is_superuser'] = request.user.is_superuser
+    request.session["is_superuser"] = request.user.is_superuser
 
     # Load the template
-    t = loader.get_template('NearBeach/dashboard/dashboard.html')
+    t = loader.get_template("NearBeach/dashboard/dashboard.html")
 
     # context
     c = {
-        'nearbeach_title': 'NearBeach Dashboard',
+        "nearbeach_title": "NearBeach Dashboard",
     }
 
     return HttpResponse(t.render(c, request))
 
 
-@login_required(login_url='login', redirect_field_name="")
-@require_http_methods(['POST'])
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 def get_bug_list(request):
     """
     :param request:
     :return:
     """
-    bug_results = bug.objects.filter(
-        is_deleted=False,
-        # Add in ability to tell if bugs are opened or closed
-    ).values('bug_status').annotate(Count("bug_status"))
+    bug_results = (
+        bug.objects.filter(
+            is_deleted=False,
+            # Add in ability to tell if bugs are opened or closed
+        )
+        .values("bug_status")
+        .annotate(Count("bug_status"))
+    )
 
     # Send back json data
     json_results = json.dumps(list(bug_results), cls=DjangoJSONEncoder)
 
-    return HttpResponse(json_results, content_type='application/json')
+    return HttpResponse(json_results, content_type="application/json")
 
 
-@login_required(login_url='login', redirect_field_name='')
-@require_http_methods(['POST'])
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 def get_my_objects(request):
     """
     :param request:
     :return:
     """
     # Get the user data
-    project_results = project.objects.filter(
-        is_deleted=False,
-        project_id__in=object_assignment.objects.filter(
+    project_results = (
+        project.objects.filter(
             is_deleted=False,
-            project_id__isnull=False,
-            assigned_user=request.user,
-        ).values('project_id')
-    ).exclude(
-        project_status='Closed',
-    ).values(
-        'project_id',
-        'project_name',
-        'project_status',
-        'project_end_date',
+            project_id__in=object_assignment.objects.filter(
+                is_deleted=False,
+                project_id__isnull=False,
+                assigned_user=request.user,
+            ).values("project_id"),
+        )
+        .exclude(
+            project_status="Closed",
+        )
+        .values(
+            "project_id",
+            "project_name",
+            "project_status",
+            "project_end_date",
+        )
     )
 
-    requirement_results = requirement.objects.filter(
-        is_deleted=False,
-        requirement_id__in=object_assignment.objects.filter(
+    requirement_results = (
+        requirement.objects.filter(
             is_deleted=False,
-            requirement_id__isnull=False,
-            assigned_user=request.user,
-        ).values('requirement_id')
-    ).exclude(
-        requirement_status__requirement_status_is_closed=True,
-    ).values(
-        'requirement_id',
-        'requirement_title',
-        'requirement_status__requirement_status',
+            requirement_id__in=object_assignment.objects.filter(
+                is_deleted=False,
+                requirement_id__isnull=False,
+                assigned_user=request.user,
+            ).values("requirement_id"),
+        )
+        .exclude(
+            requirement_status__requirement_status_is_closed=True,
+        )
+        .values(
+            "requirement_id",
+            "requirement_title",
+            "requirement_status__requirement_status",
+        )
     )
 
-    task_results = task.objects.filter(
-        is_deleted=False,
-        task_id__in=object_assignment.objects.filter(
+    task_results = (
+        task.objects.filter(
             is_deleted=False,
-            task_id__isnull=False,
-            assigned_user=request.user,
-        ).values('task_id')
-    ).exclude(
-        task_status='Closed',
-    ).values(
-        'task_id',
-        'task_short_description',
-        'task_status',
-        'task_end_date',
+            task_id__in=object_assignment.objects.filter(
+                is_deleted=False,
+                task_id__isnull=False,
+                assigned_user=request.user,
+            ).values("task_id"),
+        )
+        .exclude(
+            task_status="Closed",
+        )
+        .values(
+            "task_id",
+            "task_short_description",
+            "task_status",
+            "task_end_date",
+        )
     )
 
     # Only have 25 results and order by alphabetical order
@@ -129,21 +147,22 @@ def get_my_objects(request):
 
     Note to Django developers - there has to be a better way
     """
-    requirement_results = json.dumps(
-        list(requirement_results), cls=DjangoJSONEncoder)
+    requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
 
     # Send back a JSON array with JSON arrays inside
-    return JsonResponse({
-        'requirement': json.loads(requirement_results),
-        'project': json.loads(project_results),
-        'task': json.loads(task_results),
-    })
+    return JsonResponse(
+        {
+            "requirement": json.loads(requirement_results),
+            "project": json.loads(project_results),
+            "task": json.loads(task_results),
+        }
+    )
 
 
-@login_required(login_url='login', redirect_field_name='')
-@require_http_methods(['POST'])
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 def get_unassigned_objects(request):
     """
     Function returns an json array with data from;
@@ -158,95 +177,107 @@ def get_unassigned_objects(request):
     :param request:
     :return:
     """
-    project_results = project.objects.filter(
-        is_deleted=False,
-        project_id__in=object_assignment.objects.filter(
+    project_results = (
+        project.objects.filter(
             is_deleted=False,
-            group_id__in=user_group.objects.filter(
-                is_deleted=False,
-                username=request.user,
-                # We want to make sure the user's permissions for this particular
-                # Project, is greater than zero.
-                permission_set__project__gt=0,
-            ).values('group_id'),
-        ).values('project_id')
-    ).exclude(
-        Q(
-            project_status='Closed',
-        ) |
-        Q(
-            # Project has no users assigned to it
             project_id__in=object_assignment.objects.filter(
                 is_deleted=False,
-                project_id__isnull=False,
-                assigned_user__isnull=False,
-            ).values('project_id')
+                group_id__in=user_group.objects.filter(
+                    is_deleted=False,
+                    username=request.user,
+                    # We want to make sure the user's permissions for this particular
+                    # Project, is greater than zero.
+                    permission_set__project__gt=0,
+                ).values("group_id"),
+            ).values("project_id"),
         )
-    ).values(
-        'project_id',
-        'project_name',
-        'project_status',
-        'project_end_date',
-    )
-    requirement_results = requirement.objects.filter(
-        is_deleted=False,
-        requirement_id__in=object_assignment.objects.filter(
-            is_deleted=False,
-            group_id__in=user_group.objects.filter(
-                is_deleted=False,
-                username=request.user,
-                # We want to make sure the user's permissions for this particular
-                # Requirements, is greater than zero.
-                permission_set__requirement__gt=0,
-            ).values('group_id'),
-        ).values('requirement_id'),
-    ).exclude(
-        Q(
-            requirement_status__requirement_status_is_closed=True,
-        ) |
-        Q(
-            # Requirement has no users assigned to it
-            requirement_id__in=object_assignment.objects.filter(
-                is_deleted=False,
-                requirement_id__isnull=False,
-                assigned_user__isnull=False,
-            ).values('requirement_id')
-        )
-    ).values(
-        'requirement_id',
-        'requirement_title',
-        'requirement_status__requirement_status',
-    )
-
-    task_results = task.objects.filter(
-        is_deleted=False,
-        task_id__in=object_assignment.objects.filter(
-            is_deleted=False,
-            group_id__in=user_group.objects.filter(
-                is_deleted=False,
-                username=request.user,
-                # We want to make sure the user's permissions for this particular
-                # Tasks, is greater than zero.
-                permission_set__task__gt=0,
-            ).values('group_id'),
-        ).values('task_id'),
-    ).exclude(
-        Q(
-            task_status='Closed',
-        ) |
-        Q(
-            # Task has no users assigned to it
-            task_id__in=object_assignment.objects.filter(
-                is_deleted=False,
-                task_id__isnull=False,
-                assigned_user__isnull=False,
+        .exclude(
+            Q(
+                project_status="Closed",
+            )
+            | Q(
+                # Project has no users assigned to it
+                project_id__in=object_assignment.objects.filter(
+                    is_deleted=False,
+                    project_id__isnull=False,
+                    assigned_user__isnull=False,
+                ).values("project_id")
             )
         )
-    ).values(
-        'task_id',
-        'task_short_description',
-        'task_status',
-        'task_end_date',
+        .values(
+            "project_id",
+            "project_name",
+            "project_status",
+            "project_end_date",
+        )
+    )
+    requirement_results = (
+        requirement.objects.filter(
+            is_deleted=False,
+            requirement_id__in=object_assignment.objects.filter(
+                is_deleted=False,
+                group_id__in=user_group.objects.filter(
+                    is_deleted=False,
+                    username=request.user,
+                    # We want to make sure the user's permissions for this particular
+                    # Requirements, is greater than zero.
+                    permission_set__requirement__gt=0,
+                ).values("group_id"),
+            ).values("requirement_id"),
+        )
+        .exclude(
+            Q(
+                requirement_status__requirement_status_is_closed=True,
+            )
+            | Q(
+                # Requirement has no users assigned to it
+                requirement_id__in=object_assignment.objects.filter(
+                    is_deleted=False,
+                    requirement_id__isnull=False,
+                    assigned_user__isnull=False,
+                ).values("requirement_id")
+            )
+        )
+        .values(
+            "requirement_id",
+            "requirement_title",
+            "requirement_status__requirement_status",
+        )
+    )
+
+    task_results = (
+        task.objects.filter(
+            is_deleted=False,
+            task_id__in=object_assignment.objects.filter(
+                is_deleted=False,
+                group_id__in=user_group.objects.filter(
+                    is_deleted=False,
+                    username=request.user,
+                    # We want to make sure the user's permissions for this particular
+                    # Tasks, is greater than zero.
+                    permission_set__task__gt=0,
+                ).values("group_id"),
+            ).values("task_id"),
+        )
+        .exclude(
+            Q(
+                task_status="Closed",
+            )
+            | Q(
+                # Task has no users assigned to it
+                task_id__in=object_assignment.objects.filter(
+                    is_deleted=False,
+                    task_id__isnull=False,
+                    assigned_user__isnull=False,
+                )
+            )
+        )
+        .values(
+            "task_id",
+            "task_short_description",
+            "task_status",
+            "task_end_date",
+        )
     )
     # Only have 25 results and order by alphabetical order
     # requirement_results.order_by('requirement_title')[:25]
@@ -263,21 +294,22 @@ def get_unassigned_objects(request):
 
     Note to Django developers - there has to be a better way
     """
-    requirement_results = json.dumps(
-        list(requirement_results), cls=DjangoJSONEncoder)
+    requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
 
     # Send back a JSON array with JSON arrays inside
-    return JsonResponse({
-        'requirement': json.loads(requirement_results),
-        'project': json.loads(project_results),
-        'task': json.loads(task_results),
-    })
+    return JsonResponse(
+        {
+            "requirement": json.loads(requirement_results),
+            "project": json.loads(project_results),
+            "task": json.loads(task_results),
+        }
+    )
 
 
-@login_required(login_url='login', redirect_field_name='')
-@require_http_methods(['POST'])
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 def rfc_approvals(request):
     """
     :param request:
@@ -289,7 +321,7 @@ def rfc_approvals(request):
         rfc_status=2,  # Waiting for approval
     )
 
-    print(F"\n\nRFC_RESULTS: {rfc_results}")
+    print(f"\n\nRFC_RESULTS: {rfc_results}")
 
     """
     Filter the rfc_results, with any object assignment that the user is currently;
@@ -300,44 +332,49 @@ def rfc_approvals(request):
         # Filter for any object assignment that is connected by group that user is group leader of.
         rfc_id__in=object_assignment.objects.filter(
             is_deleted=False,
-            request_for_change_id__in=rfc_results.values('rfc_id'),
+            request_for_change_id__in=rfc_results.values("rfc_id"),
             group_id__in=user_group.objects.filter(
                 is_deleted=False,
                 username_id=request.user,
                 group_leader=True,
-            ).values('group_id'),
-        ).values('request_for_change_id')
+            ).values("group_id"),
+        ).values("request_for_change_id")
     )
 
-    return HttpResponse(serializers.serialize('json', rfc_results), content_type='application/json')
+    return HttpResponse(
+        serializers.serialize("json", rfc_results), content_type="application/json"
+    )
 
 
-@login_required(login_url='login', redirect_field_name='')
-@require_http_methods(['POST'])
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 def users_with_no_groups(request):
-    """
-    """
+    """ """
     # User has to be admin
     if not request.user.is_superuser:
         return HttpResponse()
 
     # Get all users who do not have a group assigned to them
-    user_results = User.objects.filter(
-        is_active=True,
-    ).exclude(
-        # Exclude all users with groups
-        id__in=user_group.objects.filter(
-            is_deleted=False,
-        ).values('username_id')
-    ).values(
-        'id',
-        'username',
-        'first_name',
-        'last_name',
-        'email',
+    user_results = (
+        User.objects.filter(
+            is_active=True,
+        )
+        .exclude(
+            # Exclude all users with groups
+            id__in=user_group.objects.filter(
+                is_deleted=False,
+            ).values("username_id")
+        )
+        .values(
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+        )
     )
 
     # Turn results into json
     json_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
 
-    return HttpResponse(json_results, content_type='application/json')
+    return HttpResponse(json_results, content_type="application/json")

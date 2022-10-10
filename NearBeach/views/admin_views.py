@@ -2,14 +2,18 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 
-from NearBeach.forms import AdminAddUserForm, PasswordResetForm, UpdateGroupLeaderStatusForm
+from NearBeach.forms import (
+    AdminAddUserForm,
+    PasswordResetForm,
+    UpdateGroupLeaderStatusForm,
+)
 from NearBeach.models import user_group
 
 import itertools
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 def add_user(request):
     """
     :param request:
@@ -31,9 +35,9 @@ def add_user(request):
     We need to loop through these permutations, and add them into the database
     """
 
-    group_results = form.cleaned_data['group']
-    permission_set_results = form.cleaned_data['permission_set']
-    user_results = form.cleaned_data['username']
+    group_results = form.cleaned_data["group"]
+    permission_set_results = form.cleaned_data["permission_set"]
+    user_results = form.cleaned_data["username"]
 
     # Simple double for loops
     # ((x,y) for x in A for y in B)
@@ -50,7 +54,7 @@ def add_user(request):
     return HttpResponse("")
 
 
-@require_http_methods(['POST'])
+@require_http_methods(["POST"])
 def update_group_leader_status(request, destination):
     """
     This function will update the user's group leader status against a particular group.
@@ -64,37 +68,36 @@ def update_group_leader_status(request, destination):
     # Start filtering the user_group
     user_group_update = user_group.objects.filter(
         is_deleted=False,
-        username=form.cleaned_data['username'],
+        username=form.cleaned_data["username"],
     )
 
     # Depending on the destination - depends what else we filter on
-    if destination == 'group':
+    if destination == "group":
         user_group_update.filter(
-            group=form.cleaned_data['group'].first(),
-        ).update(group_leader=form.cleaned_data['group_leader'])
-    elif destination == 'permission_set':
+            group=form.cleaned_data["group"].first(),
+        ).update(group_leader=form.cleaned_data["group_leader"])
+    elif destination == "permission_set":
         user_group_update.filter(
-            permission_set=form.cleaned_data['permission_set'].first(),
-        ).update(group_leader=form.cleaned_data['group_leader'])
+            permission_set=form.cleaned_data["permission_set"].first(),
+        ).update(group_leader=form.cleaned_data["group_leader"])
     else:
-        user_group_update.update(group_leader=form.cleaned_data['group_leader'])
+        user_group_update.update(group_leader=form.cleaned_data["group_leader"])
 
     return HttpResponse("")
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 def update_user_password(request):
-    """
-    """
+    """ """
     # Get form data
     form = PasswordResetForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
     # Get the User object
-    user_update = form.cleaned_data['username']
-    user_update.set_password(form.cleaned_data['password'])
+    user_update = form.cleaned_data["username"]
+    user_update.set_password(form.cleaned_data["password"])
     user_update.save()
 
     return HttpResponse("")

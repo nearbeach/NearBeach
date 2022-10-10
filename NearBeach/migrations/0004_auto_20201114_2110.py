@@ -7,17 +7,21 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('NearBeach', '0003_auto_20201024_1219'),
+        ("NearBeach", "0003_auto_20201024_1219"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='object_note',
-            name='kanban_card',
-            field=models.ForeignKey(blank=True, null=True,
-                                    on_delete=django.db.models.deletion.CASCADE, to='NearBeach.kanban_card'),
+            model_name="object_note",
+            name="kanban_card",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="NearBeach.kanban_card",
+            ),
         ),
         migrations.DeleteModel(
-            name='kanban_comment',
+            name="kanban_comment",
         ),
     ]

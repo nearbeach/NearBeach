@@ -7,13 +7,13 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('NearBeach', '0018_rfc_status_update'),
+        ("NearBeach", "0018_rfc_status_update"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='request_for_change',
-            name='rfc_status_update',
+            model_name="request_for_change",
+            name="rfc_status_update",
         ),
         migrations.AddField(
             model_name='request_for_change',
@@ -25,8 +25,11 @@ class Migration(migrations.Migration):
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='request_for_change',
-            name='rfc_status',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_rfc_status'),
+            model_name="request_for_change",
+            name="rfc_status",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="NearBeach.list_of_rfc_status",
+            ),
         ),
     ]

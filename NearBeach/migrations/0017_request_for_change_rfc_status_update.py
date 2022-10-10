@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('NearBeach', '0016_list_of_rfc_status'),
+        ("NearBeach", "0016_list_of_rfc_status"),
     ]
 
     operations = [

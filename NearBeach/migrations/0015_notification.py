@@ -9,12 +9,12 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('NearBeach', '0014_object_assignment_meta_object_and_more'),
+        ("NearBeach", "0014_object_assignment_meta_object_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='notification',
+            name="notification",
             fields=[
                 ('notification_id', models.AutoField(primary_key=True, serialize=False)),
                 ('notification_header', models.CharField(max_length=255)),
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 )),
             ],
             options={
-                'db_table': 'notification',
+                "db_table": "notification",
             },
         ),
     ]

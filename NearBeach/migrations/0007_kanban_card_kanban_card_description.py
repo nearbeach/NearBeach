@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('NearBeach', '0006_auto_20210227_1722'),
+        ("NearBeach", "0006_auto_20210227_1722"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='kanban_card',
-            name='kanban_card_description',
+            model_name="kanban_card",
+            name="kanban_card_description",
             field=models.TextField(blank=True, null=True),
         ),
     ]

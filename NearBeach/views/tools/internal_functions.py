@@ -1,16 +1,25 @@
-from NearBeach.models import kanban_board, kanban_card, organisation, project,\
-    request_for_change, requirement, requirement_item, task, whiteboard
+from NearBeach.models import (
+    kanban_board,
+    kanban_card,
+    organisation,
+    project,
+    request_for_change,
+    requirement,
+    requirement_item,
+    task,
+    whiteboard,
+)
 
 OBJECT_DICT = {
-    'project': project.objects,
-    'task': task.objects,
-    'requirement': requirement.objects,
-    'requirement_item': requirement_item.objects,
-    'kanban_board': kanban_board.objects,
-    'kanban_card': kanban_card.objects,
-    'organisation': organisation.objects,
-    'request_for_change': request_for_change.objects,
-    'whiteboard': whiteboard.objects,
+    "project": project.objects,
+    "task": task.objects,
+    "requirement": requirement.objects,
+    "requirement_item": requirement_item.objects,
+    "kanban_board": kanban_board.objects,
+    "kanban_card": kanban_card.objects,
+    "organisation": organisation.objects,
+    "request_for_change": request_for_change.objects,
+    "whiteboard": whiteboard.objects,
 }
 
 

@@ -6,23 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('NearBeach', '0013_alter_about_user_change_user_alter_bug_change_user_and_more'),
+        (
+            "NearBeach",
+            "0013_alter_about_user_change_user_alter_bug_change_user_and_more",
+        ),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='object_assignment',
-            name='meta_object',
+            model_name="object_assignment",
+            name="meta_object",
             field=models.BigIntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='object_assignment',
-            name='meta_object_status',
+            model_name="object_assignment",
+            name="meta_object_status",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='object_assignment',
-            name='meta_object_title',
+            model_name="object_assignment",
+            name="meta_object_title",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
     ]

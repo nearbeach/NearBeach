@@ -9,7 +9,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
     module: {
         rules: [{
-                test: /\.(scss)$/,
+                test: /\.s[ac]ss$/i,
                 use: [{
                     loader: 'style-loader', // inject CSS to page
                 }, {
@@ -33,7 +33,7 @@ module.exports = {
                 test: /\.vue$/,
                 loader: 'vue-loader'
             }, {
-                test: /\.(png|jpe?g|gif)$/i,
+                test: /\.(?:png|jpe?g|gif)$/i,
                 use: [
                     {
                         loader: 'file-loader',
