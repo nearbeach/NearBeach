@@ -7,15 +7,31 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_requirement_item_permissions, check_user_permissions
-from NearBeach.forms import AddRequirementLinkForm, NewRequirementItemForm, UpdateRequirementItemForm
+from NearBeach.decorators.check_user_permissions import (
+    check_user_requirement_item_permissions,
+    check_user_permissions,
+)
+from NearBeach.forms import (
+    AddRequirementLinkForm,
+    NewRequirementItemForm,
+    UpdateRequirementItemForm,
+)
 from NearBeach.views.requirement_views import get_requirement_items
-from NearBeach.models import requirement_item, object_assignment, project, task, requirement,\
-    organisation, list_of_requirement_item_status, list_of_requirement_item_type, group
+from NearBeach.models import (
+    requirement_item,
+    object_assignment,
+    project,
+    task,
+    requirement,
+    organisation,
+    list_of_requirement_item_status,
+    list_of_requirement_item_type,
+    group,
+)
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=2)
 def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
     """Obtain form data and validate"""
@@ -26,7 +42,8 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
 
     # Get the requirement instnace
     requirement_item_instance = requirement_item.objects.get(
-        requirement_item_id=requirement_item_id)
+        requirement_item_id=requirement_item_id
+    )
 
     # Get the project list from the form
     for row in request.POST.getlist("project"):
@@ -51,42 +68,40 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
     # Send back json data
     json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
 
-    return HttpResponse(json_results, content_type='application/json')
+    return HttpResponse(json_results, content_type="application/json")
 
 
-#Internal Code
+# Internal Code
 def get_requirement_item_links(requirement_item_id):
     """Use object_assignment to get the requirments"""
     return object_assignment.objects.filter(
-        Q(
-            is_deleted=False,
-            requirement_item_id=requirement_item_id
-        ) & Q(
-            Q(opportunity_id__isnull=False) |
-            Q(quote_id__isnull=False) |
-            Q(project_id__isnull=False) |
-            Q(task_id__isnull=False)
+        Q(is_deleted=False, requirement_item_id=requirement_item_id)
+        & Q(
+            Q(opportunity_id__isnull=False)
+            | Q(quote_id__isnull=False)
+            | Q(project_id__isnull=False)
+            | Q(task_id__isnull=False)
         )
     ).values(
-        'opportunity_id',
-        'opportunity_id__opportunity_name',
-        'opportunity_id__opportunity_stage_id__opportunity_stage_description',
-        'quote_id',
-        'quote_id__quote_title',
-        'quote_id__quote_stage_id__quote_stage',
-        'project_id',
-        'project_id__project_name',
-        'project_id__project_status',
-        'task_id',
-        'task_id__task_short_description',
-        'task_id__task_status',
-        'requirement_item_id',
-        'requirement_item_id__requirement_item_title',
+        "opportunity_id",
+        "opportunity_id__opportunity_name",
+        "opportunity_id__opportunity_stage_id__opportunity_stage_description",
+        "quote_id",
+        "quote_id__quote_title",
+        "quote_id__quote_stage_id__quote_stage",
+        "project_id",
+        "project_id__project_name",
+        "project_id__project_status",
+        "task_id",
+        "task_id__task_short_description",
+        "task_id__task_status",
+        "requirement_item_id",
+        "requirement_item_id__requirement_item_title",
     )
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=1)
 def get_requirement_item_links_list(request, requirement_item_id, *args, **kwargs):
     """
@@ -100,12 +115,12 @@ def get_requirement_item_links_list(request, requirement_item_id, *args, **kwarg
     # Send back json data
     json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
 
-    return HttpResponse(json_results, content_type='application/json')
+    return HttpResponse(json_results, content_type="application/json")
 
 
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 # @check_user_requirement_item_permissions(min_permission_level=3) # Function won't work without requirmeent_item_id
-@check_user_permissions(min_permission_level=3, object_lookup='requirement_id')
+@check_user_permissions(min_permission_level=3, object_lookup="requirement_id")
 def new_requirement_item(request, requirement_id, *args, **kwargs):
     """Check to see if POST"""
     if not request.method == "POST":
@@ -121,10 +136,10 @@ def new_requirement_item(request, requirement_id, *args, **kwargs):
     # Save the data
     submit_requirement_item = requirement_item(
         requirement=requirement.objects.get(requirement_id=requirement_id),
-        requirement_item_title=form.cleaned_data['requirement_item_title'],
-        requirement_item_scope=form.cleaned_data['requirement_item_scope'],
-        requirement_item_status=form.cleaned_data['requirement_item_status'],
-        requirement_item_type=form.cleaned_data['requirement_item_type'],
+        requirement_item_title=form.cleaned_data["requirement_item_title"],
+        requirement_item_scope=form.cleaned_data["requirement_item_scope"],
+        requirement_item_status=form.cleaned_data["requirement_item_status"],
+        requirement_item_type=form.cleaned_data["requirement_item_type"],
         change_user=request.user,
     )
     submit_requirement_item.save()
@@ -133,7 +148,7 @@ def new_requirement_item(request, requirement_id, *args, **kwargs):
     return get_requirement_items(request, requirement_id)
 
 
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=1)
 def requirement_item_information(request, requirement_item_id, *args, **kwargs):
     """
@@ -142,19 +157,23 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
     :param requirement_item_id:
     :return:
     """
-    user_level = kwargs['user_level']
+    user_level = kwargs["user_level"]
 
     # Get the requirement information
     requirement_item_results = requirement_item.objects.get(
-        requirement_item_id=requirement_item_id)
+        requirement_item_id=requirement_item_id
+    )
 
     # If the requirement has been closed - send user to the read only section
     if requirement_item_results.requirement_item_status.status_is_closed:
-        return HttpResponseRedirect(reverse('requirement_readonly', args={requirement_item_id}))
+        return HttpResponseRedirect(
+            reverse("requirement_readonly", args={requirement_item_id})
+        )
 
     # Load template
     t = loader.get_template(
-        'NearBeach/requirement_items/requirement_item_information.html')
+        "NearBeach/requirement_items/requirement_item_information.html"
+    )
 
     # Get any extra data required
     organisation_results = organisation.objects.get(
@@ -176,21 +195,23 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
 
     # context
     c = {
-        'group_results': serializers.serialize("json", group_results),
-        'nearbeach_title': f"Requirement Item {requirement_item_id}",
-        'organisation_results': serializers.serialize("json", [organisation_results]),
-        'requirement_item_id': requirement_item_id,
-        'requirement_item_results': serializers.serialize("json", [requirement_item_results]),
-        'status_list': serializers.serialize("json", status_list),
-        'type_list': serializers.serialize("json", type_list),
-        'user_level': user_level,
+        "group_results": serializers.serialize("json", group_results),
+        "nearbeach_title": f"Requirement Item {requirement_item_id}",
+        "organisation_results": serializers.serialize("json", [organisation_results]),
+        "requirement_item_id": requirement_item_id,
+        "requirement_item_results": serializers.serialize(
+            "json", [requirement_item_results]
+        ),
+        "status_list": serializers.serialize("json", status_list),
+        "type_list": serializers.serialize("json", type_list),
+        "user_level": user_level,
     }
 
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_user_requirement_item_permissions(min_permission_level=2)
 def requirement_information_save(request, requirement_item_id, *args, **kwargs):
     """
@@ -206,13 +227,21 @@ def requirement_information_save(request, requirement_item_id, *args, **kwargs):
 
     # Save the data
     requirement_item_submit = requirement_item.objects.get(
-        requirement_item_id=requirement_item_id)
+        requirement_item_id=requirement_item_id
+    )
     requirement_item_submit.change_user = request.user
-    requirement_item_submit.requirement_item_title = form.cleaned_data['requirement_item_title']
-    requirement_item_submit.requirement_item_scope = form.cleaned_data['requirement_item_scope']
+    requirement_item_submit.requirement_item_title = form.cleaned_data[
+        "requirement_item_title"
+    ]
+    requirement_item_submit.requirement_item_scope = form.cleaned_data[
+        "requirement_item_scope"
+    ]
     requirement_item_submit.requirement_item_status = form.cleaned_data[
-        'requirement_item_status']
-    requirement_item_submit.requirement_item_type = form.cleaned_data['requirement_item_type']
+        "requirement_item_status"
+    ]
+    requirement_item_submit.requirement_item_type = form.cleaned_data[
+        "requirement_item_type"
+    ]
     requirement_item_submit.save()
 
     # Send back an empty response

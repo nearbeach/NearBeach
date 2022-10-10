@@ -2,9 +2,30 @@ from __future__ import unicode_literals
 from django import forms
 
 # Import from Models
-from .models import bug, folder, group, tag, User, change_task, customer, kanban_column, kanban_level, tag_assignment,\
-    kanban_card, kanban_board, permission_set, project, request_for_change, requirement_item, requirement, task,\
-    organisation, bug_client, document, object_assignment
+from .models import (
+    bug,
+    folder,
+    group,
+    tag,
+    User,
+    change_task,
+    customer,
+    kanban_column,
+    kanban_level,
+    tag_assignment,
+    kanban_card,
+    kanban_board,
+    permission_set,
+    project,
+    request_for_change,
+    requirement_item,
+    requirement,
+    task,
+    organisation,
+    bug_client,
+    document,
+    object_assignment,
+)
 
 
 class AddBugForm(forms.Form):
@@ -12,7 +33,7 @@ class AddBugForm(forms.Form):
         required=True,
         queryset=bug_client.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
     bug_id = forms.IntegerField(
         required=True,
@@ -56,31 +77,31 @@ class AddKanbanLinkForm(forms.Form):
         required=False,
         queryset=project.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
     requirement = forms.ModelChoiceField(
         required=False,
         queryset=requirement.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
     task = forms.ModelChoiceField(
         required=False,
         queryset=task.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
     kanban_column = forms.ModelChoiceField(
         required=True,
         queryset=kanban_column.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
     kanban_level = forms.ModelChoiceField(
         required=True,
         queryset=kanban_level.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
 
 
@@ -129,13 +150,13 @@ class AddRequirementLinkForm(forms.Form):
         required=False,
         queryset=project.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
     task = forms.ModelMultipleChoiceField(
         required=False,
         queryset=task.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
 
 
@@ -162,15 +183,15 @@ class ChangeTaskForm(forms.ModelForm):
     class Meta:
         model = change_task
         fields = [
-            'change_task_assigned_user',
-            'change_task_title',
-            'change_task_description',
-            'change_task_start_date',
-            'change_task_end_date',
-            'change_task_seconds',
-            'change_task_required_by',
-            'change_task_qa_user',
-            'is_downtime',
+            "change_task_assigned_user",
+            "change_task_title",
+            "change_task_description",
+            "change_task_start_date",
+            "change_task_end_date",
+            "change_task_seconds",
+            "change_task_required_by",
+            "change_task_qa_user",
+            "is_downtime",
         ]
 
 
@@ -178,7 +199,7 @@ class ChangeTaskStatusForm(forms.ModelForm):
     class Meta:
         model = change_task
         fields = [
-            'change_task_status',
+            "change_task_status",
         ]
 
 
@@ -191,11 +212,11 @@ class CustomerForm(forms.ModelForm):
     class Meta:
         model = customer
         fields = [
-            'customer_title',
-            'customer_first_name',
-            'customer_last_name',
-            'customer_email',
-            'organisation',
+            "customer_title",
+            "customer_first_name",
+            "customer_last_name",
+            "customer_email",
+            "organisation",
         ]
 
 
@@ -239,9 +260,9 @@ class DeleteTagForm(forms.ModelForm):
     class Meta:
         model = tag_assignment
         fields = {
-            'tag',
-            'object_enum',
-            'object_id',
+            "tag",
+            "object_enum",
+            "object_id",
         }
 
 
@@ -257,8 +278,8 @@ class DocumentUploadForm(forms.ModelForm):
     class Meta:
         model = document
         fields = {
-            'document',
-            'document_description',
+            "document",
+            "document_description",
         }
 
 
@@ -271,8 +292,7 @@ class KanbanCardForm(forms.ModelForm):
         required=False,
     )
     kanban_column = forms.ModelChoiceField(
-        required=True,
-        queryset=kanban_column.objects.all()
+        required=True, queryset=kanban_column.objects.all()
     )
     kanban_level = forms.ModelChoiceField(
         required=True,
@@ -282,11 +302,11 @@ class KanbanCardForm(forms.ModelForm):
     class Meta:
         model = kanban_card
         fields = {
-            'kanban_card_id',
-            'kanban_card_text',
-            'kanban_card_description',
-            'kanban_column',
-            'kanban_level',
+            "kanban_card_id",
+            "kanban_card_text",
+            "kanban_card_description",
+            "kanban_column",
+            "kanban_level",
         }
 
 
@@ -306,19 +326,23 @@ class AddUserForm(forms.Form):
 
 class LoginForm(forms.Form):
     username = forms.CharField(
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Username',
-            'class': 'form-control',
-            'required': True,
-            'autofocus': True,
-        })
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Username",
+                "class": "form-control",
+                "required": True,
+                "autofocus": True,
+            }
+        )
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={
-            'placeholder': 'Password',
-            'class': 'form-control',
-            'required': True,
-        })
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Password",
+                "class": "form-control",
+                "required": True,
+            }
+        )
     )
 
 
@@ -355,16 +379,16 @@ class NewChangeTaskForm(forms.ModelForm):
     class Meta:
         model = change_task
         fields = [
-            'request_for_change',
-            'change_task_title',
-            'change_task_description',
-            'change_task_start_date',
-            'change_task_end_date',
-            'change_task_seconds',
-            'change_task_assigned_user',
-            'change_task_qa_user',
-            'change_task_required_by',
-            'is_downtime',
+            "request_for_change",
+            "change_task_title",
+            "change_task_description",
+            "change_task_start_date",
+            "change_task_end_date",
+            "change_task_seconds",
+            "change_task_assigned_user",
+            "change_task_qa_user",
+            "change_task_required_by",
+            "is_downtime",
         ]
 
 
@@ -373,8 +397,8 @@ class NewColumnForm(forms.ModelForm):
     class Meta:
         model = kanban_column
         fields = [
-            'kanban_column_name',
-            'kanban_column_sort_number',
+            "kanban_column_name",
+            "kanban_column_sort_number",
         ]
 
 
@@ -388,11 +412,11 @@ class NewCustomerForm(forms.ModelForm):
     class Meta:
         model = customer
         fields = [
-            'customer_title',
-            'customer_first_name',
-            'customer_last_name',
-            'customer_email',
-            'organisation',
+            "customer_title",
+            "customer_first_name",
+            "customer_last_name",
+            "customer_email",
+            "organisation",
         ]
 
 
@@ -406,8 +430,8 @@ class NewGroupForm(forms.ModelForm):
     class Meta:
         model = group
         fields = [
-            'group_name',
-            'parent_group',
+            "group_name",
+            "parent_group",
         ]
 
 
@@ -420,10 +444,10 @@ class NewKanbanCardForm(forms.ModelForm):
     class Meta:
         model = kanban_card
         fields = [
-            'kanban_card_text',
-            'kanban_card_description',
-            'kanban_level',
-            'kanban_column',
+            "kanban_card_text",
+            "kanban_card_description",
+            "kanban_level",
+            "kanban_column",
         ]
 
 
@@ -435,7 +459,7 @@ class NewKanbanForm(forms.ModelForm):
     class Meta:
         model = kanban_board
         fields = [
-            'kanban_board_name',
+            "kanban_board_name",
         ]
 
 
@@ -444,8 +468,8 @@ class NewLevelForm(forms.ModelForm):
     class Meta:
         model = kanban_level
         fields = [
-            'kanban_level_name',
-            'kanban_level_sort_number',
+            "kanban_level_name",
+            "kanban_level_sort_number",
         ]
 
 
@@ -454,33 +478,33 @@ class NewPermissionSetForm(forms.ModelForm):
     class Meta:
         model = permission_set
         fields = [
-            'permission_set_name',
+            "permission_set_name",
         ]
 
 
 class NewProjectForm(forms.ModelForm):
     project_start_date = forms.DateTimeField(
-        input_formats=['c'],
+        input_formats=["c"],
     )
     project_end_date = forms.DateTimeField(
-        input_formats=['c'],
+        input_formats=["c"],
     )
     group_list = forms.ModelMultipleChoiceField(
         required=True,
         queryset=group.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
 
     # Basic Meta Data
     class Meta:
         model = project
         fields = [
-            'project_name',
-            'project_description',
-            'project_start_date',
-            'project_end_date',
-            'organisation',
+            "project_name",
+            "project_description",
+            "project_start_date",
+            "project_end_date",
+            "organisation",
         ]
 
 
@@ -489,28 +513,28 @@ class NewRequestForChangeForm(forms.ModelForm):
         required=True,
         queryset=group.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
 
     # Basic Meta Data
     class Meta:
         model = request_for_change
         fields = [
-            'rfc_title',
-            'rfc_summary',
-            'rfc_type',
-            'rfc_implementation_start_date',
-            'rfc_implementation_end_date',
-            'rfc_implementation_release_date',
-            'rfc_version_number',
-            'rfc_lead',
-            'rfc_priority',
-            'rfc_risk',
-            'rfc_impact',
-            'rfc_risk_and_impact_analysis',
-            'rfc_implementation_plan',
-            'rfc_backout_plan',
-            'rfc_test_plan',
+            "rfc_title",
+            "rfc_summary",
+            "rfc_type",
+            "rfc_implementation_start_date",
+            "rfc_implementation_end_date",
+            "rfc_implementation_release_date",
+            "rfc_version_number",
+            "rfc_lead",
+            "rfc_priority",
+            "rfc_risk",
+            "rfc_impact",
+            "rfc_risk_and_impact_analysis",
+            "rfc_implementation_plan",
+            "rfc_backout_plan",
+            "rfc_test_plan",
         ]
 
 
@@ -519,10 +543,10 @@ class NewRequirementItemForm(forms.ModelForm):
     class Meta:
         model = requirement_item
         fields = [
-            'requirement_item_title',
-            'requirement_item_scope',
-            'requirement_item_status',
-            'requirement_item_type',
+            "requirement_item_title",
+            "requirement_item_scope",
+            "requirement_item_status",
+            "requirement_item_type",
         ]
 
 
@@ -532,18 +556,18 @@ class NewRequirementForm(forms.ModelForm):
         required=True,
         queryset=group.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
 
     # Basic Meta data
     class Meta:
         model = requirement
         fields = [
-            'requirement_title',
-            'requirement_scope',
-            'requirement_status',
-            'requirement_type',
-            'organisation',
+            "requirement_title",
+            "requirement_scope",
+            "requirement_status",
+            "requirement_type",
+            "organisation",
         ]
 
 
@@ -551,34 +575,34 @@ class NewTagForm(forms.ModelForm):
     class Meta:
         model = tag
         fields = [
-            'tag_name',
-            'tag_colour',
+            "tag_name",
+            "tag_colour",
         ]
 
 
 class NewTaskForm(forms.ModelForm):
     task_start_date = forms.DateTimeField(
-        input_formats=['c'],
+        input_formats=["c"],
     )
     task_end_date = forms.DateTimeField(
-        input_formats=['c'],
+        input_formats=["c"],
     )
     group_list = forms.ModelMultipleChoiceField(
         required=True,
         queryset=group.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
 
     # Basic Meta Data
     class Meta:
         model = task
         fields = [
-            'task_short_description',
-            'task_long_description',
-            'task_start_date',
-            'task_end_date',
-            'organisation',
+            "task_short_description",
+            "task_long_description",
+            "task_start_date",
+            "task_end_date",
+            "organisation",
         ]
 
 
@@ -596,10 +620,10 @@ class NewUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = [
-            'username',
-            'first_name',
-            'last_name',
-            'email',
+            "username",
+            "first_name",
+            "last_name",
+            "email",
         ]
 
 
@@ -608,18 +632,16 @@ class OrganisationForm(forms.ModelForm):
     class Meta:
         model = organisation
         fields = [
-            'organisation_name',
-            'organisation_website',
-            'organisation_email',
+            "organisation_name",
+            "organisation_website",
+            "organisation_email",
         ]
 
 
 class OrganisationProfilePictureForm(forms.ModelForm):
     # Basic Meta Data
     class Meta:
-        fields = [
-            'organisation_picture'
-        ]
+        fields = ["organisation_picture"]
 
 
 class PasswordResetForm(forms.Form):
@@ -637,8 +659,8 @@ class PermissionSetForm(forms.ModelForm):
     class Meta:
         model = permission_set
         exclude = [
-            'change_user',
-            'is_deleted',
+            "change_user",
+            "is_deleted",
         ]
 
 
@@ -648,21 +670,21 @@ class ProfilePictureForm(forms.Form):
 
 class ProjectForm(forms.ModelForm):
     project_start_date = forms.DateTimeField(
-        input_formats=['c'],
+        input_formats=["c"],
     )
     project_end_date = forms.DateTimeField(
-        input_formats=['c'],
+        input_formats=["c"],
     )
 
     # Basic Meta Data
     class Meta:
         model = project
         fields = [
-            'project_name',
-            'project_description',
-            'project_start_date',
-            'project_end_date',
-            'project_status',
+            "project_name",
+            "project_description",
+            "project_start_date",
+            "project_end_date",
+            "project_status",
         ]
 
 
@@ -685,7 +707,7 @@ class QueryBugClientForm(forms.Form):
         required=True,
         queryset=bug_client.objects.filter(
             is_deleted=False,
-        )
+        ),
     )
     search = forms.CharField(
         max_length=50,
@@ -693,10 +715,7 @@ class QueryBugClientForm(forms.Form):
 
 
 class RemoveGroupForm(forms.Form):
-    group_id = forms.ModelChoiceField(
-        required=True,
-        queryset=group.objects.all()
-    )
+    group_id = forms.ModelChoiceField(required=True, queryset=group.objects.all())
 
 
 class RemoveLinkForm(forms.Form):
@@ -734,13 +753,13 @@ class RfcInformationSaveForm(forms.ModelForm):
     class Meta:
         model = request_for_change
         fields = [
-            'rfc_title',
-            'rfc_summary',
-            'rfc_type',
-            'rfc_version_number',
-            'rfc_implementation_start_date',
-            'rfc_implementation_end_date',
-            'rfc_implementation_release_date',
+            "rfc_title",
+            "rfc_summary",
+            "rfc_type",
+            "rfc_version_number",
+            "rfc_implementation_start_date",
+            "rfc_implementation_end_date",
+            "rfc_implementation_release_date",
         ]
 
 
@@ -780,11 +799,11 @@ class TaskInformationForm(forms.ModelForm):
     class Meta:
         model = task
         fields = [
-            'task_short_description',
-            'task_long_description',
-            'task_start_date',
-            'task_end_date',
-            'task_status',
+            "task_short_description",
+            "task_long_description",
+            "task_start_date",
+            "task_end_date",
+            "task_status",
         ]
 
 
@@ -811,10 +830,10 @@ class UpdateRequirementForm(forms.ModelForm):
     class Meta:
         model = requirement
         fields = [
-            'requirement_title',
-            'requirement_scope',
-            'requirement_status',
-            'requirement_type',
+            "requirement_title",
+            "requirement_scope",
+            "requirement_status",
+            "requirement_type",
         ]
 
 
@@ -823,10 +842,10 @@ class UpdateRequirementItemForm(forms.ModelForm):
     class Meta:
         model = requirement_item
         fields = [
-            'requirement_item_title',
-            'requirement_item_scope',
-            'requirement_item_status',
-            'requirement_item_type',
+            "requirement_item_title",
+            "requirement_item_scope",
+            "requirement_item_status",
+            "requirement_item_type",
         ]
 
 
@@ -835,7 +854,7 @@ class UpdateRFCStatus(forms.ModelForm):
     class Meta:
         model = request_for_change
         fields = [
-            'rfc_status',
+            "rfc_status",
         ]
 
 
@@ -857,9 +876,9 @@ class UpdateUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = [
-            'email',
-            'first_name',
-            'last_name',
-            'is_active',
-            'is_superuser',
+            "email",
+            "first_name",
+            "last_name",
+            "is_active",
+            "is_superuser",
         ]

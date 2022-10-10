@@ -7,127 +7,127 @@ import uuid
 
 # ENUM choices
 DISCOUNT_CHOICE = (
-    ('Percentage', 'Percentage'),
-    ('Amount', 'Amount'),
+    ("Percentage", "Percentage"),
+    ("Amount", "Amount"),
 )
 
 KANBAN_BOARD_STATUS_CHOICE = (
-    ('Open', 'Open'),
-    ('Closed', 'Closed'),
+    ("Open", "Open"),
+    ("Closed", "Closed"),
 )
 
 NOTIFICATION_LOCATION = (
-    ('All', 'All'),
-    ('Login', 'Login'),
-    ('Dashboard', 'Dashboard'),
+    ("All", "All"),
+    ("Login", "Login"),
+    ("Dashboard", "Dashboard"),
 )
 
 PAGE_LAYOUT = (
-    ('Landscape', 'Landscape'),
-    ('Portrait', 'Portrait'),
+    ("Landscape", "Landscape"),
+    ("Portrait", "Portrait"),
 )
 
 PERMISSION_LEVEL = (
-    (0, 'No Permission'),
-    (1, 'Read Only'),
-    (2, 'Edit Only'),
-    (3, 'Add and Edit'),
-    (4, 'Full Permission'),
+    (0, "No Permission"),
+    (1, "Read Only"),
+    (2, "Edit Only"),
+    (3, "Add and Edit"),
+    (4, "Full Permission"),
 )
 
 PERMISSION_BOOLEAN = (
-    (0, 'No Permission'),
-    (1, 'Has Permission'),
+    (0, "No Permission"),
+    (1, "Has Permission"),
 )
 
 PROJECT_STATUS_CHOICE = (
-    ('New', 'New'),
-    ('Backlog', 'Backlog'),
-    ('Blocked', 'Blocked'),
-    ('In Progress', 'In Progress'),
-    ('Test/Review', 'Test/Review'),
-    ('Closed', 'Closed'),
+    ("New", "New"),
+    ("Backlog", "Backlog"),
+    ("Blocked", "Blocked"),
+    ("In Progress", "In Progress"),
+    ("Test/Review", "Test/Review"),
+    ("Closed", "Closed"),
 )
 
 QUOTE_APPROVAL_STATUS = (
-    ('REJECTED', 'REJECTED'),
-    ('DRAFT', 'DRAFT'),
-    ('APPROVED', 'APPROVED'),
+    ("REJECTED", "REJECTED"),
+    ("DRAFT", "DRAFT"),
+    ("APPROVED", "APPROVED"),
 )
 
 RATING_SCORE = (
-    (1, '1 Star'),
-    (2, '2 Star'),
-    (3, '3 Star'),
-    (4, '4 Star'),
-    (5, '5 Star'),
+    (1, "1 Star"),
+    (2, "2 Star"),
+    (3, "3 Star"),
+    (4, "4 Star"),
+    (5, "5 Star"),
 )
 
 RFC_APPROVAL = (
-    (1, 'Waiting'),
-    (2, 'Approved'),
-    (3, 'Rejected'),
-    (4, 'Cancel'),
+    (1, "Waiting"),
+    (2, "Approved"),
+    (3, "Rejected"),
+    (4, "Cancel"),
 )
 
 RFC_IMPACT = (
-    (3, 'High'),
-    (2, 'Medium'),
-    (1, 'Low'),
+    (3, "High"),
+    (2, "Medium"),
+    (1, "Low"),
 )
 
 RFC_PRIORITY = (
-    (4, 'Critical'),
-    (3, 'High'),
-    (2, 'Medium'),
-    (1, 'Low'),
+    (4, "Critical"),
+    (3, "High"),
+    (2, "Medium"),
+    (1, "Low"),
 )
 
 RFC_RISK = (
-    (5, 'Very High'),
-    (4, 'High'),
-    (3, 'Moderate'),
-    (2, 'Low'),
-    (1, 'None'),
+    (5, "Very High"),
+    (4, "High"),
+    (3, "Moderate"),
+    (2, "Low"),
+    (1, "None"),
 )
 
 RFC_STATUS = (
-    (1, 'Draft'),
-    (2, 'Waiting for approval'),
-    (3, 'Approved'),
-    (4, 'Started'),
-    (5, 'Finished'),
-    (6, 'Rejected'),
+    (1, "Draft"),
+    (2, "Waiting for approval"),
+    (3, "Approved"),
+    (4, "Started"),
+    (5, "Finished"),
+    (6, "Rejected"),
 )
 
 RFC_TYPE = (
-    (4, 'Emergency'),
-    (3, 'High'),
-    (2, 'Medium'),
-    (1, 'Low'),
+    (4, "Emergency"),
+    (3, "High"),
+    (2, "Medium"),
+    (1, "Low"),
 )
 
 WANT_CHOICE = (
-    ('0', 'Do not want to do'),
-    ('1', 'Want to do'),
+    ("0", "Do not want to do"),
+    ("1", "Want to do"),
 )
 SKILL_CHOICE = (
-    ('0', 'Can not do'),
-    ('1', 'Willing to learn'),
-    ('2', 'Knows a little'),
-    ('3', 'Knows a lot'),
-    ('4', 'Proficient'),
+    ("0", "Can not do"),
+    ("1", "Willing to learn"),
+    ("2", "Knows a little"),
+    ("3", "Knows a lot"),
+    ("4", "Proficient"),
 )
 
 WEBSITE_SOURCE = (
-    ('Twitter', 'Twitter'),
-    ('Facebook', 'Facebook'),
-    ('Github', 'Github'),
-    ('Gitlab', 'Gitlab'),
-    ('Website', 'Website'),
-    ('LinkedIn', 'LinkedIn'),
-    ('Staff Page', 'Staff page'),
-    ('Other', 'Other'),
+    ("Twitter", "Twitter"),
+    ("Facebook", "Facebook"),
+    ("Github", "Github"),
+    ("Gitlab", "Gitlab"),
+    ("Website", "Website"),
+    ("LinkedIn", "LinkedIn"),
+    ("Staff Page", "Staff page"),
+    ("Other", "Other"),
 )
 
 
@@ -136,7 +136,7 @@ class about_user(models.Model):
     about_user_id = models.AutoField(primary_key=True)
     about_user_text = models.TextField(
         blank=True,
-        default='',
+        default="",
     )
     user = models.ForeignKey(
         User,
@@ -147,7 +147,7 @@ class about_user(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -170,39 +170,31 @@ when a user applies it to a customer. :)
 class contact_history(models.Model):
     contact_history_id = models.AutoField(primary_key=True)
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     customer = models.ForeignKey(
-        'customer',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True
+        "customer", on_delete=models.CASCADE, blank=True, null=True
     )
     contact_type = models.ForeignKey(
-        'list_of_contact_type',
+        "list_of_contact_type",
         on_delete=models.CASCADE,
     )
     contact_date = models.DateTimeField()
-    contact_history = models.TextField('contact_history')
+    contact_history = models.TextField("contact_history")
     document_key = models.ForeignKey(
-        'document',
+        "document",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -215,37 +207,37 @@ class contact_history(models.Model):
 class bug(models.Model):
     bug_id = models.AutoField(primary_key=True)
     bug_client = models.ForeignKey(
-        'bug_client',
+        "bug_client",
         on_delete=models.CASCADE,
     )
     bug_code = models.CharField(max_length=255)  # Just stores the code of the bug
     bug_description = models.TextField()
     bug_status = models.CharField(max_length=50)  # Updated manually?
     project = models.ForeignKey(
-        'project',
+        "project",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     task = models.ForeignKey(
-        'task',
+        "task",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     requirement = models.ForeignKey(
-        'requirement',
+        "requirement",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey\
-        (User,
-         on_delete=models.CASCADE,
-         related_name='%(class)s_change_user',
-         )
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+    )
     is_deleted = models.BooleanField(
         default=False,
     )
@@ -261,17 +253,17 @@ class bug_client(models.Model):
     bug_client_id = models.AutoField(primary_key=True)
     bug_client_name = models.CharField(max_length=50)
     list_of_bug_client = models.ForeignKey(
-        'list_of_bug_client',
+        "list_of_bug_client",
         on_delete=models.CASCADE,
     )
     bug_client_url = models.URLField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey\
-        (User,
-         on_delete=models.CASCADE,
-         related_name='%(class)s_change_user',
-         )
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+    )
     is_deleted = models.BooleanField(
         default=False,
     )
@@ -286,41 +278,26 @@ class bug_client(models.Model):
 class campus(models.Model):
     campus_id = models.AutoField(primary_key=True)
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     customer = models.ForeignKey(
-        'customer',
+        "customer",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     campus_nickname = models.CharField(max_length=100)
-    campus_phone = models.CharField(
-        max_length=20,
-        null=True
-    )
-    campus_fax = models.CharField(
-        max_length=20,
-        null=True
-    )
-    campus_address1 = models.CharField(
-        max_length=255,
-        null=True
-    )
-    campus_address2 = models.CharField(
-        max_length=255,
-        null=True
-    )
-    campus_address3 = models.CharField(
-        max_length=255,
-        null=True
-    )
+    campus_phone = models.CharField(max_length=20, null=True)
+    campus_fax = models.CharField(max_length=20, null=True)
+    campus_address1 = models.CharField(max_length=255, null=True)
+    campus_address2 = models.CharField(max_length=255, null=True)
+    campus_address3 = models.CharField(max_length=255, null=True)
     campus_suburb = models.CharField(max_length=50)
     campus_region = models.ForeignKey(
-        'list_of_country_region',
+        "list_of_country_region",
         on_delete=models.CASCADE,
     )
     campus_postcode = models.CharField(
@@ -329,7 +306,7 @@ class campus(models.Model):
         blank=True,
     )
     campus_country = models.ForeignKey(
-        'list_of_country',
+        "list_of_country",
         on_delete=models.CASCADE,
     )
     campus_longitude = models.DecimalField(
@@ -347,9 +324,7 @@ class campus(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -365,7 +340,7 @@ class campus(models.Model):
 class change_task(models.Model):
     change_task_id = models.AutoField(primary_key=True)
     request_for_change = models.ForeignKey(
-        'request_for_change',
+        "request_for_change",
         on_delete=models.CASCADE,
     )
     change_task_title = models.CharField(
@@ -374,7 +349,7 @@ class change_task(models.Model):
     change_task_description = models.TextField(
         blank=True,
         null=True,
-        default='',
+        default="",
     )
     change_task_start_date = models.DateTimeField()
     change_task_end_date = models.DateTimeField()
@@ -384,16 +359,16 @@ class change_task(models.Model):
     change_task_assigned_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='change_assigned_user',
+        related_name="change_assigned_user",
     )
     change_task_qa_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='change_qa_user',
+        related_name="change_qa_user",
     )
     change_task_required_by = models.CharField(
         max_length=255,
-        default='Stakeholder(s)',
+        default="Stakeholder(s)",
     )
     change_task_status = models.IntegerField(
         choices=RFC_STATUS,  # Similar FLOW to RFC
@@ -406,19 +381,17 @@ class change_task(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
     )
     creation_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_creation_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
     )
 
     def __str__(self):
-        return str('$' + str(self.change_task_title))
+        return str("$" + str(self.change_task_title))
 
     class Meta:
         db_table = "change_task"
@@ -428,31 +401,29 @@ class change_task_block(models.Model):
     change_task_blocks = models.ForeignKey(
         change_task,
         on_delete=models.CASCADE,
-        related_name='change_task_blocks',
+        related_name="change_task_blocks",
     )
     blocked_change_task = models.ForeignKey(
         change_task,
         on_delete=models.CASCADE,
-        related_name='blocked_change_task',
+        related_name="blocked_change_task",
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
     )
     creation_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_creation_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
     )
 
     def __str__(self):
-        return str('$' + str(self.change_task_title))
+        return str("$" + str(self.change_task_title))
 
     class Meta:
         db_table = "change_task_block"
@@ -461,35 +432,26 @@ class change_task_block(models.Model):
 class cost(models.Model):
     cost_id = models.AutoField(primary_key=True)
     project = models.ForeignKey(
-        'project',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True
+        "project", on_delete=models.CASCADE, blank=True, null=True
     )
-    task = models.ForeignKey(
-        'task',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True
+    task = models.ForeignKey("task", on_delete=models.CASCADE, blank=True, null=True)
+    cost_description = models.CharField(
+        max_length=255,
     )
-    cost_description = models.CharField(max_length=255, )
-    cost_amount = models.DecimalField(
-        max_digits=19,
-        decimal_places=2
-    )
+    cost_amount = models.DecimalField(max_digits=19, decimal_places=2)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
     )
     is_deleted = models.BooleanField(
         default=False,
     )
 
     def __str__(self):
-        return str('$' + str(self.cost_amount))
+        return str("$" + str(self.cost_amount))
 
     class Meta:
         db_table = "cost"
@@ -498,19 +460,17 @@ class cost(models.Model):
 class customer(models.Model):
     customer_id = models.AutoField(primary_key=True)
     customer_title = models.ForeignKey(
-        'list_of_title',
+        "list_of_title",
         on_delete=models.CASCADE,
     )
     customer_first_name = models.CharField(max_length=50)
     customer_last_name = models.CharField(max_length=50)
     customer_email = models.CharField(max_length=200)
     customer_profile_picture = models.ImageField(
-        blank=True,
-        null=True,
-        upload_to='profile_pictures'
+        blank=True, null=True, upload_to="profile_pictures"
     )
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -518,9 +478,7 @@ class customer(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -529,9 +487,9 @@ class customer(models.Model):
     def __str__(self):
         return str(
             str(self.customer_id)
-            + ' - '
+            + " - "
             + self.customer_first_name
-            + ' '
+            + " "
             + self.customer_last_name
         )
 
@@ -542,11 +500,11 @@ class customer(models.Model):
 class customer_campus(models.Model):
     customer_campus_id = models.AutoField(primary_key=True)
     customer = models.ForeignKey(
-        'customer',
+        "customer",
         on_delete=models.CASCADE,
     )
     campus = models.ForeignKey(
-        'campus',
+        "campus",
         on_delete=models.CASCADE,
     )
     customer_phone = models.CharField(max_length=20)
@@ -554,9 +512,7 @@ class customer_campus(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -577,7 +533,7 @@ class document(models.Model):
         # Contains URLS
         null=True,
         blank=True,
-        default='',
+        default="",
     )
     document = models.FileField(
         blank=True,
@@ -585,7 +541,7 @@ class document(models.Model):
         storage=FileStorage(),
     )
     whiteboard = models.ForeignKey(
-        'whiteboard',
+        "whiteboard",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -593,9 +549,7 @@ class document(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -611,71 +565,66 @@ class document(models.Model):
 class document_permission(models.Model):
     document_permisssion_id = models.AutoField(primary_key=True)
     document_key = models.ForeignKey(
-        'document',
+        "document",
         on_delete=models.CASCADE,
     )
     project = models.ForeignKey(
-        'project',
+        "project",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     task = models.ForeignKey(
-        'task',
+        "task",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     customer = models.ForeignKey(
-        'customer',
+        "customer",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     opportunity = models.ForeignKey(
-        'opportunity',
+        "opportunity",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     whiteboard = models.ForeignKey(
-        'whiteboard',
+        "whiteboard",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     requirement = models.ForeignKey(
-        'requirement',
+        "requirement",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     requirement_item = models.ForeignKey(
-        'requirement_item',
+        "requirement_item",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     request_for_change = models.ForeignKey(
-        'request_for_change',
+        "request_for_change",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     folder = models.ForeignKey(
-        'folder',
+        "folder",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -683,9 +632,7 @@ class document_permission(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -698,56 +645,56 @@ class document_permission(models.Model):
 class email_contact(models.Model):
     email_contact_id = models.AutoField(primary_key=True)
     email_content = models.ForeignKey(
-        'email_content',
+        "email_content",
         on_delete=models.CASCADE,
     )
     to_customer = models.ForeignKey(
-        'customer',
-        related_name='%(class)s_to_customer',
+        "customer",
+        related_name="%(class)s_to_customer",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     cc_customer = models.ForeignKey(
-        'customer',
-        related_name='%(class)s_cc_customer',
+        "customer",
+        related_name="%(class)s_cc_customer",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     bcc_customer = models.ForeignKey(
-        'customer',
-        related_name='%(class)s_bcc_customer',
+        "customer",
+        related_name="%(class)s_bcc_customer",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     project = models.ForeignKey(
-        'project',
+        "project",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     task = models.ForeignKey(
-        'task',
+        "task",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     opportunity = models.ForeignKey(
-        'opportunity',
+        "opportunity",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     quotes = models.ForeignKey(
-        'quote',
+        "quote",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -756,9 +703,7 @@ class email_contact(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -771,14 +716,12 @@ class email_contact(models.Model):
 class email_content(models.Model):
     email_content_id = models.AutoField(primary_key=True)
     email_subject = models.CharField(max_length=255)
-    email_content = models.TextField('email_content')
+    email_content = models.TextField("email_content")
     is_private = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -791,60 +734,47 @@ class email_content(models.Model):
 class folder(models.Model):
     folder_id = models.AutoField(primary_key=True)
     project = models.ForeignKey(
-        'project',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True
+        "project", on_delete=models.CASCADE, blank=True, null=True
     )
-    task = models.ForeignKey(
-        'task',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True
-    )
+    task = models.ForeignKey("task", on_delete=models.CASCADE, blank=True, null=True)
     customer = models.ForeignKey(
-        'customer',
+        "customer",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     requirement = models.ForeignKey(
-        'requirement',
+        "requirement",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     requirement_item = models.ForeignKey(
-        'requirement_item',
+        "requirement_item",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     request_for_change = models.ForeignKey(
-        'request_for_change',
+        "request_for_change",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     folder_description = models.CharField(max_length=255)
     parent_folder = models.ForeignKey(
-        'self',
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE
+        "self", blank=True, null=True, on_delete=models.CASCADE
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -871,19 +801,14 @@ class group(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
     )
 
     def natural_key(self):
-        return (
-            self.group_id,
-            self.group_name
-        )
+        return (self.group_id, self.group_name)
 
     def __str__(self):
         return str(self.group_name)
@@ -893,33 +818,21 @@ class group(models.Model):
 
 
 class group_manager(models.Manager):
-    def get_by_natural_key(
-            self,
-            group_id,
-            group_name
-    ):
-        return self.get(
-            group_id=group_id,
-            group_name=group_name
-        )
+    def get_by_natural_key(self, group_id, group_name):
+        return self.get(group_id=group_id, group_name=group_name)
 
 
 class group_permission(models.Model):
     group_permission_id = models.AutoField(primary_key=True)
     permission_set = models.ForeignKey(
-        'permission_set',
+        "permission_set",
         on_delete=models.CASCADE,
     )
-    group = models.ForeignKey(
-        'group',
-        on_delete=models.CASCADE
-    )
+    group = models.ForeignKey("group", on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -936,7 +849,7 @@ class kanban_board(models.Model):
     kanban_board_id = models.AutoField(primary_key=True)
     kanban_board_name = models.CharField(max_length=255)
     requirement = models.ForeignKey(
-        'requirement',
+        "requirement",
         null=True,
         blank=True,
         on_delete=models.CASCADE,
@@ -949,14 +862,10 @@ class kanban_board(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_creation_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -974,35 +883,35 @@ class kanban_card(models.Model):
     kanban_card_text = models.CharField(max_length=255)
     kanban_card_description = models.TextField(
         blank=True,
-        default='',
+        default="",
     )
     kanban_card_sort_number = models.IntegerField()
     kanban_level = models.ForeignKey(
-        'kanban_level',
+        "kanban_level",
         on_delete=models.CASCADE,
     )
     kanban_column = models.ForeignKey(
-        'kanban_column',
+        "kanban_column",
         on_delete=models.CASCADE,
     )
     kanban_board = models.ForeignKey(
-        'kanban_board',
+        "kanban_board",
         on_delete=models.CASCADE,
     )
     project = models.ForeignKey(
-        'project',
+        "project",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     task = models.ForeignKey(
-        'task',
+        "task",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     requirement = models.ForeignKey(
-        'requirement',
+        "requirement",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -1013,9 +922,7 @@ class kanban_card(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1033,15 +940,13 @@ class kanban_column(models.Model):
     kanban_column_name = models.CharField(max_length=255)
     kanban_column_sort_number = models.IntegerField()
     kanban_board = models.ForeignKey(
-        'kanban_board',
+        "kanban_board",
         on_delete=models.CASCADE,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1059,15 +964,13 @@ class kanban_level(models.Model):
     kanban_level_name = models.CharField(max_length=255)
     kanban_level_sort_number = models.IntegerField()
     kanban_board = models.ForeignKey(
-        'kanban_board',
+        "kanban_board",
         on_delete=models.CASCADE,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1092,11 +995,11 @@ class kudos(models.Model):
     )
     improvement_note = models.TextField(
         blank=True,
-        default='',
+        default="",
     )
     liked_note = models.TextField(
         blank=True,
-        default='',
+        default="",
     )
     extra_kudos = models.ForeignKey(
         User,
@@ -1108,12 +1011,11 @@ class kudos(models.Model):
         default=False,
     )
     project = models.ForeignKey(
-        'project',
+        "project",
         on_delete=models.CASCADE,
-
     )
     customer = models.ForeignKey(
-        'customer',
+        "customer",
         on_delete=models.CASCADE,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -1121,9 +1023,9 @@ class kudos(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1142,9 +1044,9 @@ class list_of_amount_type(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1155,7 +1057,7 @@ class list_of_amount_type(models.Model):
 
     class Meta:
         db_table = "list_of_amount_type"
-        ordering = ['list_order']
+        ordering = ["list_order"]
 
 
 class list_of_bug_client(models.Model):
@@ -1166,7 +1068,9 @@ class list_of_bug_client(models.Model):
     # The different API commands
     api_open_bugs = models.CharField(max_length=255)  # Find all open bugs
     api_search_bugs = models.CharField(max_length=255)  # Search command
-    api_bug = models.CharField(max_length=255)  # Get that particular bug information - direct link to bug
+    api_bug = models.CharField(
+        max_length=255
+    )  # Get that particular bug information - direct link to bug
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1175,9 +1079,9 @@ class list_of_bug_client(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1202,9 +1106,9 @@ class list_of_currency(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1225,9 +1129,9 @@ class list_of_contact_type(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1248,9 +1152,9 @@ class list_of_country(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1266,18 +1170,20 @@ class list_of_country(models.Model):
 class list_of_country_region(models.Model):
     region_id = models.AutoField(primary_key=True)
     country = models.ForeignKey(
-        'list_of_country',
+        "list_of_country",
         on_delete=models.CASCADE,
     )
     region_name = models.CharField(max_length=150)
-    region_type = models.CharField(
-        max_length=80,
-        null=True
-    )
+    region_type = models.CharField(max_length=80, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_change_user', blank=True,
-                                    null=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+        blank=True,
+        null=True,
+    )
     is_deleted = models.BooleanField(
         default=False,
     )
@@ -1300,9 +1206,9 @@ class list_of_lead_source(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1328,20 +1234,15 @@ class list_of_opportunity_stage(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1352,7 +1253,7 @@ class list_of_opportunity_stage(models.Model):
 
     class Meta:
         db_table = "list_of_opportunity_stage"
-        ordering = ['list_order']
+        ordering = ["list_order"]
 
 
 class list_of_quote_stage(models.Model):
@@ -1374,9 +1275,9 @@ class list_of_quote_stage(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1402,7 +1303,7 @@ class list_of_requirement_item_status(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
         null=True,
     )
@@ -1427,7 +1328,7 @@ class list_of_requirement_item_type(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
         null=True,
     )
@@ -1455,7 +1356,7 @@ class list_of_requirement_status(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
         null=True,
     )
@@ -1480,7 +1381,7 @@ class list_of_requirement_type(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
         null=True,
     )
@@ -1505,7 +1406,7 @@ class list_of_rfc_status(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
         null=True,
     )
@@ -1538,7 +1439,7 @@ class list_of_tax(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
         null=True,
     )
@@ -1561,9 +1462,9 @@ class list_of_title(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1595,9 +1496,9 @@ class nearbeach_option(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
 
     def __str__(self):
@@ -1614,6 +1515,7 @@ class notification(models.Model):
     - Login screen
     - Dashboard
     """
+
     notification_id = models.AutoField(primary_key=True)
     notification_header = models.CharField(
         blank=False,
@@ -1622,7 +1524,7 @@ class notification(models.Model):
     )
     notification_message = models.TextField(
         blank=True,
-        default='',
+        default="",
     )
     notification_start_date = models.DateTimeField()
     notification_end_date = models.DateTimeField()
@@ -1636,9 +1538,9 @@ class notification(models.Model):
     change_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_change_user',
+        related_name="%(class)s_change_user",
         blank=True,
-        null=True
+        null=True,
     )
 
     class Meta:
@@ -1663,78 +1565,78 @@ class object_assignment(models.Model):
     assigned_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='%(class)s_assigned_user',
+        related_name="%(class)s_assigned_user",
         null=True,
         blank=True,
     )
     group_id = models.ForeignKey(
-        'group',
+        "group",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     opportunity = models.ForeignKey(
-        'opportunity',
+        "opportunity",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     quote = models.ForeignKey(
-        'quote',
+        "quote",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     requirement = models.ForeignKey(
-        'requirement',
+        "requirement",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     requirement_item = models.ForeignKey(
-        'requirement_item',
+        "requirement_item",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     project = models.ForeignKey(
-        'project',
+        "project",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     task = models.ForeignKey(
-        'task',
+        "task",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     kanban_board = models.ForeignKey(
-        'kanban_board',
+        "kanban_board",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     request_for_change = models.ForeignKey(
-        'request_for_change',
+        "request_for_change",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     whiteboard = models.ForeignKey(
-        'whiteboard',
+        "whiteboard",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     customer = models.ForeignKey(
-        'customer',
+        "customer",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1758,9 +1660,7 @@ class object_assignment(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1774,58 +1674,58 @@ class object_note(models.Model):
     object_note_id = models.AutoField(primary_key=True)
     object_note = models.TextField(
         blank=False,
-        default='',
+        default="",
     )
     kanban_card = models.ForeignKey(
-        'kanban_card',
+        "kanban_card",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     opportunity = models.ForeignKey(
-        'opportunity',
+        "opportunity",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     quote = models.ForeignKey(
-        'quote',
+        "quote",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     requirement = models.ForeignKey(
-        'requirement',
+        "requirement",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     requirement_item = models.ForeignKey(
-        'requirement_item',
+        "requirement_item",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     project = models.ForeignKey(
-        'project',
+        "project",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     task = models.ForeignKey(
-        'task',
+        "task",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     request_for_change = models.ForeignKey(
-        'request_for_change',
+        "request_for_change",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1835,9 +1735,7 @@ class object_note(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1850,43 +1748,31 @@ class object_note(models.Model):
 class opportunity(models.Model):
     opportunity_id = models.AutoField(primary_key=True)
     opportunity_name = models.CharField(max_length=255)
-    opportunity_description = models.TextField('oppertunity_description')
+    opportunity_description = models.TextField("oppertunity_description")
     currency = models.ForeignKey(
-        'list_of_currency',
+        "list_of_currency",
         on_delete=models.CASCADE,
     )
     opportunity_amount = models.DecimalField(
-        max_digits=12,
-        decimal_places=2
+        max_digits=12, decimal_places=2
     )  # Turn into a number widget
-    amount_type = models.ForeignKey(
-        'list_of_amount_type',
-        on_delete=models.CASCADE
-    )
+    amount_type = models.ForeignKey("list_of_amount_type", on_delete=models.CASCADE)
     opportunity_expected_close_date = models.DateTimeField()
     opportunity_stage = models.ForeignKey(
-        'list_of_opportunity_stage',
-        on_delete=models.CASCADE
+        "list_of_opportunity_stage", on_delete=models.CASCADE
     )
     opportunity_success_probability = models.IntegerField()  # Between 0% and 100%
-    lead_source = models.ForeignKey(
-        'list_of_lead_source',
-        on_delete=models.CASCADE
-    )
+    lead_source = models.ForeignKey("list_of_lead_source", on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_creation_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1936,16 +1822,11 @@ class organisation(models.Model):
     organisation_name = models.CharField(max_length=255)
     organisation_website = models.CharField(max_length=50)
     organisation_email = models.CharField(max_length=100)
-    organisation_profile_picture = models.ImageField(
-        blank=True,
-        null=True
-    )
+    organisation_profile_picture = models.ImageField(blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1960,27 +1841,27 @@ class organisation(models.Model):
 
 class permission_set_manager(models.Manager):
     def get_by_natural_key(
-            self,
-            permission_set_id,
-            permission_set_name,
-            administration_assign_user_to_group,
-            administration_create_group,
-            administration_create_permission_set,
-            administration_create_user,
-            bug_client,
-            customer,
-            email,
-            kanban,
-            kanban_card,
-            organisation,
-            project,
-            request_for_change,
-            requirement,
-            task,
-            document,
-            kanban_comment,
-            project_history,
-            task_history,
+        self,
+        permission_set_id,
+        permission_set_name,
+        administration_assign_user_to_group,
+        administration_create_group,
+        administration_create_permission_set,
+        administration_create_user,
+        bug_client,
+        customer,
+        email,
+        kanban,
+        kanban_card,
+        organisation,
+        project,
+        request_for_change,
+        requirement,
+        task,
+        document,
+        kanban_comment,
+        project_history,
+        task_history,
     ):
         return self.get(
             permission_set_id=permission_set_id,
@@ -2061,10 +1942,7 @@ class permission_set(models.Model):
         choices=PERMISSION_LEVEL,
         default=0,
     )
-    requirement = models.IntegerField(
-        choices=PERMISSION_LEVEL,
-        default=0
-    )
+    requirement = models.IntegerField(choices=PERMISSION_LEVEL, default=0)
     task = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,
@@ -2095,9 +1973,7 @@ class permission_set(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2137,16 +2013,16 @@ class permission_set(models.Model):
 class project(models.Model):
     project_id = models.AutoField(primary_key=True)
     project_name = models.CharField(max_length=255)
-    project_description = models.TextField('project_description')
+    project_description = models.TextField("project_description")
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     # Only fill this field out if there are no organisation
     customer = models.ForeignKey(
-        'customer',
+        "customer",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -2154,23 +2030,17 @@ class project(models.Model):
     project_start_date = models.DateTimeField()
     project_end_date = models.DateTimeField()
     project_status = models.CharField(
-        max_length=15,
-        choices=PROJECT_STATUS_CHOICE,
-        default='New'
+        max_length=15, choices=PROJECT_STATUS_CHOICE, default="New"
     )
     project_story_point_min = models.IntegerField(default=1)
     project_story_point_max = models.IntegerField(default=4)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_creation_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2186,24 +2056,18 @@ class project(models.Model):
 class project_customer(models.Model):
     project_customer_id = models.AutoField(primary_key=True)
     project = models.ForeignKey(
-        'project',
+        "project",
         on_delete=models.CASCADE,
     )
     customer = models.ForeignKey(
-        'customer',
+        "customer",
         on_delete=models.CASCADE,
     )
-    customer_description = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True
-    )
+    customer_description = models.CharField(max_length=255, null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2224,11 +2088,11 @@ class quote(models.Model):
     quote_title = models.CharField(max_length=255)
     quote_valid_till = models.DateTimeField()
     quote_stage = models.ForeignKey(
-        'list_of_quote_stage',
+        "list_of_quote_stage",
         on_delete=models.CASCADE,
     )
     quote_billing_address = models.ForeignKey(
-        'campus',
+        "campus",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -2245,58 +2109,54 @@ class quote(models.Model):
     """
     quote_terms = models.TextField(
         blank=True,
-        default='',
+        default="",
     )
     customer_notes = models.TextField(
         blank=True,
-        default='',
+        default="",
     )
     project = models.ForeignKey(
-        'project',
+        "project",
         on_delete=models.CASCADE,
-        db_column='project_id',
+        db_column="project_id",
         null=True,
         blank=True,
     )
     task = models.ForeignKey(
-        'task',
+        "task",
         on_delete=models.CASCADE,
-        db_column='task_id',
+        db_column="task_id",
         null=True,
         blank=True,
     )
     opportunity = models.ForeignKey(
-        'opportunity',
+        "opportunity",
         on_delete=models.CASCADE,
-        db_column='opportunity_id',
+        db_column="opportunity_id",
         null=True,
         blank=True,
     )
     customer = models.ForeignKey(
-        'customer',
+        "customer",
         on_delete=models.CASCADE,
-        db_column='customer_id',
+        db_column="customer_id",
         null=True,
         blank=True,
     )
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         on_delete=models.CASCADE,
-        db_column='organisation_id',
+        db_column="organisation_id",
         null=True,
         blank=True,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_creation_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2319,9 +2179,7 @@ class request_for_change(models.Model):
     rfc_title = models.CharField(
         max_length=255,
     )
-    rfc_summary = models.TextField(
-        'rfc_summary'
-    )
+    rfc_summary = models.TextField("rfc_summary")
     rfc_type = models.IntegerField(
         choices=RFC_TYPE,
     )
@@ -2334,14 +2192,13 @@ class request_for_change(models.Model):
         null=True,
     )
     rfc_status = models.ForeignKey(
-        'list_of_rfc_status',
+        "list_of_rfc_status",
         on_delete=models.CASCADE,
     )
     rfc_lead = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='rfc_lead',
-
+        related_name="rfc_lead",
     )
     rfc_priority = models.IntegerField(
         choices=RFC_PRIORITY,
@@ -2356,28 +2213,24 @@ class request_for_change(models.Model):
         default=1,
     )
     rfc_risk_and_impact_analysis = models.TextField(
-        'rfc_risk_and_impact_analysis',
+        "rfc_risk_and_impact_analysis",
     )
     rfc_implementation_plan = models.TextField(
-        'rfc_implementation_plan',
+        "rfc_implementation_plan",
     )
     rfc_backout_plan = models.TextField(
-        'rfc_backout_plan',
+        "rfc_backout_plan",
     )
     rfc_test_plan = models.TextField(
-        'rfc_test_plan',
+        "rfc_test_plan",
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_creation_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2393,11 +2246,11 @@ class request_for_change(models.Model):
 class request_for_change_group_approval(models.Model):
     rfc_group_approval_id = models.AutoField(primary_key=True)
     rfc = models.ForeignKey(
-        'request_for_change',
+        "request_for_change",
         on_delete=models.CASCADE,
     )
     group = models.ForeignKey(
-        'group',
+        "group",
         on_delete=models.CASCADE,
     )
     approval = models.IntegerField(
@@ -2407,9 +2260,7 @@ class request_for_change_group_approval(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2426,14 +2277,12 @@ class request_for_change_note(models.Model):
     rfc_note_id = models.AutoField(primary_key=True)
     rfc_note = models.TextField(
         blank=True,
-        default='',
+        default="",
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2453,19 +2302,20 @@ class request_for_change_stakeholder(models.Model):
 
     rfc = request for change. It is shortened to make it easier for the programmer.
     """
+
     rfc_stakeholder_id = models.AutoField(primary_key=True)
     request_for_change = models.ForeignKey(
-        'request_for_change',
+        "request_for_change",
         on_delete=models.CASCADE,
     )
     customer = models.ForeignKey(
-        'customer',
+        "customer",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -2473,9 +2323,7 @@ class request_for_change_stakeholder(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2492,14 +2340,14 @@ class requirement(models.Model):
     )
     requirement_scope = models.TextField(
         blank=True,
-        default='',
+        default="",
     )
     requirement_type = models.ForeignKey(
-        'list_of_requirement_type',
+        "list_of_requirement_type",
         on_delete=models.CASCADE,
     )
     requirement_status = models.ForeignKey(
-        'list_of_requirement_status',
+        "list_of_requirement_status",
         on_delete=models.CASCADE,
     )
     requirement_story_point_min = models.IntegerField(default=1)
@@ -2513,14 +2361,10 @@ class requirement(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_creation_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2546,9 +2390,7 @@ class requirement_customer(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2564,20 +2406,20 @@ class requirement_customer(models.Model):
 class requirement_item(models.Model):
     requirement_item_id = models.AutoField(primary_key=True)
     requirement = models.ForeignKey(
-        'requirement',
+        "requirement",
         on_delete=models.CASCADE,
     )
     requirement_item_title = models.CharField(max_length=255)
     requirement_item_scope = models.TextField(
         blank=True,
-        default='',
+        default="",
     )
     requirement_item_status = models.ForeignKey(
-        'list_of_requirement_item_status',
+        "list_of_requirement_item_status",
         on_delete=models.CASCADE,
     )
     requirement_item_type = models.ForeignKey(
-        'list_of_requirement_item_type',
+        "list_of_requirement_item_type",
         on_delete=models.CASCADE,
     )
     ri_story_point_min = models.IntegerField(default=4)
@@ -2585,9 +2427,7 @@ class requirement_item(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2612,9 +2452,7 @@ class tag(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2629,15 +2467,15 @@ class tag(models.Model):
 
 class tag_assignment(models.Model):
     class ObjectEnum(models.TextChoices):
-        REQUIREMENT = 'requirement', _('Requirement')
-        REQUIREMENT_ITEM = 'requirement_item', _('Requirement Item')
-        PROJECT = 'project', _('Project')
-        TASK = 'task', _('Task')
-        KANBAN = 'kanban_board', _('Kanban Board')
-        CARD = 'kanban_card', _('Kanban Card')
-        REQUEST_FOR_CHANGE = 'request_for_change', _('Reuqest for Change')
-        CUSTOMER = 'customer', _('Customer')
-        ORGANISATION = 'organisation', _('Organisation')
+        REQUIREMENT = "requirement", _("Requirement")
+        REQUIREMENT_ITEM = "requirement_item", _("Requirement Item")
+        PROJECT = "project", _("Project")
+        TASK = "task", _("Task")
+        KANBAN = "kanban_board", _("Kanban Board")
+        CARD = "kanban_card", _("Kanban Card")
+        REQUEST_FOR_CHANGE = "request_for_change", _("Reuqest for Change")
+        CUSTOMER = "customer", _("Customer")
+        ORGANISATION = "organisation", _("Organisation")
 
     tag_assignment_id = models.AutoField(primary_key=True)
     tag = models.ForeignKey(
@@ -2655,9 +2493,7 @@ class tag_assignment(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2672,7 +2508,7 @@ class task(models.Model):
     task_short_description = models.CharField(max_length=255)
     task_long_description = models.TextField()
     organisation = models.ForeignKey(
-        'organisation',
+        "organisation",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -2686,23 +2522,17 @@ class task(models.Model):
         on_delete=models.CASCADE,
     )
     task_status = models.CharField(
-        max_length=15,
-        choices=PROJECT_STATUS_CHOICE,
-        default='New'
+        max_length=15, choices=PROJECT_STATUS_CHOICE, default="New"
     )
     task_story_point_min = models.IntegerField(default=4)
     task_story_point_max = models.IntegerField(default=10)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_creation_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2718,7 +2548,7 @@ class task(models.Model):
 class task_action(models.Model):
     task_action_id = models.AutoField(primary_key=True)
     task = models.ForeignKey(
-        'task',
+        "task",
         on_delete=models.CASCADE,
     )
     task_action = models.TextField()
@@ -2729,9 +2559,7 @@ class task_action(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2744,24 +2572,18 @@ class task_action(models.Model):
 class task_customer(models.Model):
     task_customer_id = models.AutoField(primary_key=True)
     task = models.ForeignKey(
-        'task',
+        "task",
         on_delete=models.CASCADE,
     )
     customer = models.ForeignKey(
-        'customer',
+        "customer",
         on_delete=models.CASCADE,
     )
-    customer_description = models.CharField(
-        max_length=155,
-        null=True,
-        blank=True
-    )
+    customer_description = models.CharField(max_length=155, null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2782,19 +2604,19 @@ class timesheet(models.Model):
     timesheet_start_time = models.TimeField()
     timesheet_end_time = models.TimeField()
     project = models.ForeignKey(
-        'project',
+        "project",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     task = models.ForeignKey(
-        'task',
+        "task",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     requirement_item = models.ForeignKey(
-        'requirement_item',
+        "requirement_item",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -2803,9 +2625,7 @@ class timesheet(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
     # Doubles up as the user inputting the time
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2822,19 +2642,19 @@ class to_do(models.Model):
     )
     to_do_completed = models.BooleanField(default=False)
     project = models.ForeignKey(
-        'project',
+        "project",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     task = models.ForeignKey(
-        'task',
+        "task",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     opportunity = models.ForeignKey(
-        'opportunity',
+        "opportunity",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -2842,9 +2662,7 @@ class to_do(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2861,16 +2679,16 @@ class user_group(models.Model):
         on_delete=models.CASCADE,
     )
     group = models.ForeignKey(
-        'group',
+        "group",
         on_delete=models.CASCADE,
     )
     permission_set = models.ForeignKey(
-        'permission_set',
+        "permission_set",
         on_delete=models.CASCADE,
     )
     report_to = models.ForeignKey(
         User,
-        related_name='report_to',
+        related_name="report_to",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -2881,9 +2699,7 @@ class user_group(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2911,9 +2727,7 @@ class user_want(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2936,9 +2750,7 @@ class user_weblink(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -2956,14 +2768,12 @@ class whiteboard(models.Model):
     whiteboard_title = models.CharField(max_length=255)
     whiteboard_xml = models.TextField(
         blank=True,
-        default='',
+        default="",
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,

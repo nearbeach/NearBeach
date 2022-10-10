@@ -1,13 +1,29 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, FileResponse, JsonResponse
+from django.http import (
+    HttpResponse,
+    HttpResponseRedirect,
+    HttpResponseBadRequest,
+    FileResponse,
+    JsonResponse,
+)
 from django.db.models import Q
 from django.views.decorators.http import require_http_methods
 from django.core.serializers.json import DjangoJSONEncoder
 
-from NearBeach.views.tools.internal_functions import set_object_from_destination, get_object_from_destination
-from ..forms import AddFolderForm, folder, AddLinkForm, document, DocumentUploadForm, requirement_item
+from NearBeach.views.tools.internal_functions import (
+    set_object_from_destination,
+    get_object_from_destination,
+)
+from ..forms import (
+    AddFolderForm,
+    folder,
+    AddLinkForm,
+    document,
+    DocumentUploadForm,
+    requirement_item,
+)
 from ..models import document_permission, user_group, object_assignment
 
 import boto3
@@ -15,8 +31,8 @@ import json
 import os
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 def document_add_folder(request, destination, location_id):
     """
     This will add a folder to the user's destination and location_id
@@ -35,21 +51,22 @@ def document_add_folder(request, destination, location_id):
     # Save the form information
     folder_submit = folder(
         change_user=request.user,
-        folder_description=form.cleaned_data['folder_description'],
-        parent_folder=form.cleaned_data['parent_folder'],
+        folder_description=form.cleaned_data["folder_description"],
+        parent_folder=form.cleaned_data["parent_folder"],
     )
-    folder_submit = set_object_from_destination(
-        folder_submit, destination, location_id)
+    folder_submit = set_object_from_destination(folder_submit, destination, location_id)
     folder_submit.save()
 
     # Return the data back
     folder_results = folder.objects.filter(folder_id=folder_submit.folder_id)
 
-    return HttpResponse(serializers.serialize('json', folder_results), content_type='application/json')
+    return HttpResponse(
+        serializers.serialize("json", folder_results), content_type="application/json"
+    )
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 def document_add_link(request, destination, location_id):
     """
     :param request:
@@ -68,8 +85,8 @@ def document_add_link(request, destination, location_id):
     # Save the document link
     document_submit = document(
         change_user=request.user,
-        document_description=form.cleaned_data['document_description'],
-        document_url_location=form.cleaned_data['document_url_location'],
+        document_description=form.cleaned_data["document_description"],
+        document_url_location=form.cleaned_data["document_url_location"],
     )
     document_submit.save()
 
@@ -77,12 +94,10 @@ def document_add_link(request, destination, location_id):
     document_permission_submit = document_permission(
         change_user=request.user,
         document_key=document_submit,
-        folder=form.cleaned_data['parent_folder'],
+        folder=form.cleaned_data["parent_folder"],
     )
     document_permission_submit = set_object_from_destination(
-        document_permission_submit,
-        destination,
-        location_id
+        document_permission_submit, destination, location_id
     )
     document_permission_submit.save()
 
@@ -91,21 +106,21 @@ def document_add_link(request, destination, location_id):
         is_deleted=False,
         document_key=document_submit,
     ).values(
-        'document_key__document_description',
-        'document_key__document_url_location',
-        'document_key__document',
-        'document_key__whiteboard',
-        'folder',
+        "document_key__document_description",
+        "document_key__document_url_location",
+        "document_key__document",
+        "document_key__whiteboard",
+        "folder",
     )
 
     # Send back json data
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
 
-    return HttpResponse(json_results, content_type='application/json')
+    return HttpResponse(json_results, content_type="application/json")
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 def document_list_files(request, destination, location_id):
     """
     Get the documents that are associated with the destination and location id
@@ -122,26 +137,23 @@ def document_list_files(request, destination, location_id):
     document_permission_results = document_permission.objects.filter(
         is_deleted=False,
     ).values(
-        'document_key_id',
-        'document_key__document_description',
-        'document_key__document_url_location',
-        'document_key__document',
-        'document_key__whiteboard',
-        'folder',
+        "document_key_id",
+        "document_key__document_description",
+        "document_key__document_url_location",
+        "document_key__document",
+        "document_key__whiteboard",
+        "folder",
     )
 
     # Limit to the required destination and location id
     document_permission_results = get_object_from_destination(
-        document_permission_results,
-        destination,
-        location_id
+        document_permission_results, destination, location_id
     )
 
     # Send back json data
-    json_results = json.dumps(
-        list(document_permission_results), cls=DjangoJSONEncoder)
+    json_results = json.dumps(list(document_permission_results), cls=DjangoJSONEncoder)
 
-    return HttpResponse(json_results, content_type='application/json')
+    return HttpResponse(json_results, content_type="application/json")
 
     # # Get the document information
     # document_results = document.objects.filter(
@@ -152,8 +164,8 @@ def document_list_files(request, destination, location_id):
     # return HttpResponse(serializers.serialize('json',document_results),content_type='application/json')
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 def document_list_folders(request, destination, location_id):
     """
     Get the folders that are associated with the destination and location id
@@ -173,13 +185,16 @@ def document_list_folders(request, destination, location_id):
         is_deleted=False,
     )
     folder_results = get_object_from_destination(
-        folder_results, destination, location_id)
+        folder_results, destination, location_id
+    )
 
-    return HttpResponse(serializers.serialize('json', folder_results), content_type='application/json')
+    return HttpResponse(
+        serializers.serialize("json", folder_results), content_type="application/json"
+    )
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 def document_upload(request, destination, location_id):
     """
     The following function will deal with the uploaded document. It will first;
@@ -201,8 +216,8 @@ def document_upload(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Get the document description - if blank we use the file name
-    document_description = form.cleaned_data['document_description']
-    file = form.cleaned_data['document']
+    document_description = form.cleaned_data["document_description"]
+    file = form.cleaned_data["document"]
     if document_description == "":
         # Replace the document description with the file name
         document_description = str(file)
@@ -222,12 +237,10 @@ def document_upload(request, destination, location_id):
     document_permission_submit = document_permission(
         change_user=request.user,
         document_key=document_submit,
-        folder=form.cleaned_data['parent_folder'],
+        folder=form.cleaned_data["parent_folder"],
     )
     document_permission_submit = set_object_from_destination(
-        document_permission_submit,
-        destination,
-        location_id
+        document_permission_submit, destination, location_id
     )
     document_permission_submit.save()
 
@@ -236,40 +249,40 @@ def document_upload(request, destination, location_id):
         is_deleted=False,
         document_key=document_submit,
     ).values(
-        'document_key_id',
-        'document_key__document_description',
-        'document_key__document_url_location',
-        'document_key__document',
-        'document_key__whiteboard',
-        'folder',
+        "document_key_id",
+        "document_key__document_description",
+        "document_key__document_url_location",
+        "document_key__document",
+        "document_key__whiteboard",
+        "folder",
     )
 
     # Handle the document upload
-    if hasattr(settings, 'AWS_ACCESS_KEY_ID'):
+    if hasattr(settings, "AWS_ACCESS_KEY_ID"):
         # Use boto to upload the file
         s3 = boto3.client(
-            's3',
+            "s3",
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
 
         # Upload a new file
         s3.upload_fileobj(
             file,
             settings.AWS_STORAGE_BUCKET_NAME,
-            f"private/{document_submit.document_key}/{file}"
+            f"private/{document_submit.document_key}/{file}",
         )
     else:
-        handle_file_upload(request.FILES['document'], document_results, file)
+        handle_file_upload(request.FILES["document"], document_results, file)
 
     # Send back json data
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
 
-    return HttpResponse(json_results, content_type='application/json')
+    return HttpResponse(json_results, content_type="application/json")
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 def get_max_upload(request):
     """
     This function will query the settings file for the variable "max_upload_size".
@@ -278,15 +291,15 @@ def get_max_upload(request):
     :param request:
     :return:
     """
-    if hasattr(settings, 'MAX_UPLOAD_SIZE'):
-        max_upload_size = {'max_upload_size': settings.MAX_UPLOAD_SIZE}
+    if hasattr(settings, "MAX_UPLOAD_SIZE"):
+        max_upload_size = {"max_upload_size": settings.MAX_UPLOAD_SIZE}
     else:
-        max_upload_size = {'max_upload_size': 0}
+        max_upload_size = {"max_upload_size": 0}
 
     return JsonResponse(max_upload_size)
 
 
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 def private_download_file(request, document_key):
     """
     The following function will check;
@@ -315,49 +328,50 @@ def private_download_file(request, document_key):
         Q(
             is_deleted=False,
             # JOIN IN USER GROUPS
-            group_id__in=user_group_results.values('group_id')
-        ) &
-        Q(
+            group_id__in=user_group_results.values("group_id"),
+        )
+        & Q(
             # One of these conditions have to be met
             Q(
                 # If the document is uploaded against a customer
                 customer__isnull=False,
-            ) |
-            Q(
+            )
+            | Q(
                 # If the document is uploaded against an organisation
                 organisation__isnull=False,
-            ) |
-            Q(
+            )
+            | Q(
                 # Project Links
                 project__isnull=False,
-                project_id__in=document_permission_results.values('project_id')
-            ) |
-            Q(
+                project_id__in=document_permission_results.values("project_id"),
+            )
+            | Q(
                 # Task links
                 task__isnull=False,
-                task_id__in=document_permission_results.values('task_id')
-            ) |
-            Q(
+                task_id__in=document_permission_results.values("task_id"),
+            )
+            | Q(
                 # Requirement
                 requirement__isnull=False,
-                requirement_id__in=document_permission_results.values(
-                    'requirement_id')
-            ) |
-            Q(
+                requirement_id__in=document_permission_results.values("requirement_id"),
+            )
+            | Q(
                 # Requirement Item
                 # Have to use the requirement item's requirement as permissions are not on the item
                 requirement_id__in=requirement_item.objects.filter(
                     is_deleted=False,
                     requirement_item_id__in=document_permission_results.values(
-                        'requirement_item_id'),
+                        "requirement_item_id"
+                    ),
                     requirement_item_id__isnull=False,
-                ).values('requirement_id')
-            ) |
-            Q(
+                ).values("requirement_id")
+            )
+            | Q(
                 # Request for change
                 request_for_change__isnull=False,
                 request_for_change_id__in=document_permission_results.values(
-                    'request_for_change_id')
+                    "request_for_change_id"
+                ),
             )
         )
     )
@@ -368,19 +382,20 @@ def private_download_file(request, document_key):
 
     # Get Document information
     document_results = document.objects.get(
-        document_key=document_key)  # Need to change this to a 404
+        document_key=document_key
+    )  # Need to change this to a 404
 
     # If not a document but a URL
     if document_results.document_url_location:
         return HttpResponseRedirect(document_results.document_url_location)
 
     # If S3 has been setup - download file from S3 bucket
-    if hasattr(settings, 'AWS_ACCESS_KEY_ID'):
+    if hasattr(settings, "AWS_ACCESS_KEY_ID"):
         # Use boto3 to download
         s3 = boto3.client(
-            's3',
+            "s3",
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
 
         response = s3.get_object(
@@ -388,10 +403,10 @@ def private_download_file(request, document_key):
             Key=f"{document_results.document}",
         )
 
-        print(response['Body'])
+        print(response["Body"])
 
         return FileResponse(
-            response['Body'],
+            response["Body"],
             as_attachment=True,
             filename=document_results.document_description,
         )
@@ -401,7 +416,7 @@ def private_download_file(request, document_key):
     path = f"{settings.PRIVATE_MEDIA_ROOT}/{document_results.document}"
 
     # Send file to user
-    return FileResponse(open(path, 'rb'))
+    return FileResponse(open(path, "rb"))
 
 
 # Internal Function
@@ -424,6 +439,6 @@ def handle_file_upload(upload_document, document_results, file):
     storage_location = f"{settings.PRIVATE_MEDIA_ROOT}/private/{document_results[0]['document_key_id']}/{file}"
 
     # Save the upload document in the location
-    with open(storage_location, 'wb+') as destination:
+    with open(storage_location, "wb+") as destination:
         for chunk in upload_document.chunks():
             destination.write(chunk)

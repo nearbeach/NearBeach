@@ -7,23 +7,36 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('NearBeach', '0018_rfc_status_update'),
+        ("NearBeach", "0018_rfc_status_update"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='request_for_change',
-            name='rfc_status_update',
+            model_name="request_for_change",
+            name="rfc_status_update",
         ),
         migrations.AddField(
-            model_name='request_for_change',
-            name='rfc_status_old',
-            field=models.IntegerField(choices=[(1, 'Draft'), (2, 'Waiting for approval'), (3, 'Approved'), (4, 'Started'), (5, 'Finished'), (6, 'Rejected')], default=1),
+            model_name="request_for_change",
+            name="rfc_status_old",
+            field=models.IntegerField(
+                choices=[
+                    (1, "Draft"),
+                    (2, "Waiting for approval"),
+                    (3, "Approved"),
+                    (4, "Started"),
+                    (5, "Finished"),
+                    (6, "Rejected"),
+                ],
+                default=1,
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='request_for_change',
-            name='rfc_status',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='NearBeach.list_of_rfc_status'),
+            model_name="request_for_change",
+            name="rfc_status",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="NearBeach.list_of_rfc_status",
+            ),
         ),
     ]

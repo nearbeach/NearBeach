@@ -6,13 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('NearBeach', '0007_kanban_card_kanban_card_description'),
+        ("NearBeach", "0007_kanban_card_kanban_card_description"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='permission_set',
-            old_name='kanban',
-            new_name='kanban_board',
+            model_name="permission_set",
+            old_name="kanban",
+            new_name="kanban_board",
         ),
     ]

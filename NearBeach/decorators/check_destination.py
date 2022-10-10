@@ -2,16 +2,16 @@ from django.core.exceptions import PermissionDenied
 from functools import wraps
 
 OBJECT_ARRAY = [
-    'customer',
-    'kanban',
-    'kanban_board',
-    'kanban_card',
-    'requirement',
-    'requirement_item',
-    'request_for_change',
-    'organisation',
-    'project',
-    'task',
+    "customer",
+    "kanban",
+    "kanban_board",
+    "kanban_card",
+    "requirement",
+    "requirement_item",
+    "request_for_change",
+    "organisation",
+    "project",
+    "task",
 ]
 
 
@@ -25,5 +25,7 @@ def check_destination():
 
             # It passed - return the function
             return func(request, destination, *args, **kwargs)
+
         return inner
+
     return decorator

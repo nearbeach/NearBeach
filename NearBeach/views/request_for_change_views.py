@@ -1,21 +1,23 @@
 import json
-from NearBeach.forms import NewRequestForChangeForm, \
-    RfcModuleForm, \
-    RfcInformationSaveForm, \
-    NewChangeTaskForm,\
-    UpdateRFCStatus
+from NearBeach.forms import (
+    NewRequestForChangeForm,
+    RfcModuleForm,
+    RfcInformationSaveForm,
+    NewChangeTaskForm,
+    UpdateRFCStatus,
+)
 from NearBeach.decorators.check_user_permissions import check_rfc_permissions
-from NearBeach.models import request_for_change, \
-    User, \
-    user_group, \
-    object_assignment, \
-    group, \
-    change_task, \
-    request_for_change_group_approval, \
-    list_of_rfc_status
-from django.http import HttpResponse, \
-    HttpResponseBadRequest, \
-    HttpResponseRedirect
+from NearBeach.models import (
+    request_for_change,
+    User,
+    user_group,
+    object_assignment,
+    group,
+    change_task,
+    request_for_change_group_approval,
+    list_of_rfc_status,
+)
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.urls import reverse
 from django.template import loader
 from django.core.serializers.json import DjangoJSONEncoder
@@ -33,14 +35,12 @@ def get_rfc_context(rfc_id):
     """
     # Get data
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
-    rfc_change_lead = User.objects.filter(
-        id=rfc_results.rfc_lead.id
-    ).values(
-        'id',
-        'email',
-        'first_name',
-        'last_name',
-        'username',
+    rfc_change_lead = User.objects.filter(id=rfc_results.rfc_lead.id).values(
+        "id",
+        "email",
+        "first_name",
+        "last_name",
+        "username",
     )
     user_list = User.objects.filter(
         is_active=True,
@@ -49,14 +49,14 @@ def get_rfc_context(rfc_id):
             group_id__in=object_assignment.objects.filter(
                 is_deleted=False,
                 request_for_change_id=rfc_id,
-            ).values('group_id')
-        ).values('username_id')
+            ).values("group_id"),
+        ).values("username_id"),
     ).values(
-        'id',
-        'email',
-        'first_name',
-        'last_name',
-        'username',
+        "id",
+        "email",
+        "first_name",
+        "last_name",
+        "username",
     )
 
     # Convert from ORM to JSON
@@ -65,17 +65,17 @@ def get_rfc_context(rfc_id):
 
     # Context
     c = {
-        'nearbeach_title': f"RFC {rfc_id}",
-        'rfc_id': rfc_id,
-        'rfc_results': serializers.serialize('json', [rfc_results]),
-        'rfc_change_lead': rfc_change_lead,
-        'user_list': user_list,
+        "nearbeach_title": f"RFC {rfc_id}",
+        "rfc_id": rfc_id,
+        "rfc_results": serializers.serialize("json", [rfc_results]),
+        "rfc_change_lead": rfc_change_lead,
+        "user_list": user_list,
     }
 
     return c
 
 
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=3)
 def new_request_for_change(request, *args, **kwargs):
     """
@@ -83,8 +83,7 @@ def new_request_for_change(request, *args, **kwargs):
     :return:
     """
     # Get template
-    t = loader.get_template(
-        'NearBeach/request_for_change/new_request_for_change.html')
+    t = loader.get_template("NearBeach/request_for_change/new_request_for_change.html")
 
     # Get data
     group_results = group.objects.filter(
@@ -92,30 +91,33 @@ def new_request_for_change(request, *args, **kwargs):
     )
 
     # Get list of user groups
-    user_group_results = user_group.objects.filter(
-        is_deleted=False,
-        username=request.user,
-    ).values(
-        'group_id',
-        'group__group_name',
-    ).distinct()
+    user_group_results = (
+        user_group.objects.filter(
+            is_deleted=False,
+            username=request.user,
+        )
+        .values(
+            "group_id",
+            "group__group_name",
+        )
+        .distinct()
+    )
 
     # Convert ORM to JSON
-    user_group_results = json.dumps(
-        list(user_group_results), cls=DjangoJSONEncoder)
+    user_group_results = json.dumps(list(user_group_results), cls=DjangoJSONEncoder)
 
     # Context
     c = {
-        'group_results': serializers.serialize('json', group_results),
-        'nearbeach_title': 'New RFC',
-        'user_group_results': user_group_results,
+        "group_results": serializers.serialize("json", group_results),
+        "nearbeach_title": "New RFC",
+        "user_group_results": user_group_results,
     }
 
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=3)
 def new_request_for_change_save(request, *args, **kwargs):
     """
@@ -134,21 +136,25 @@ def new_request_for_change_save(request, *args, **kwargs):
         change_user=request.user,
         creation_user=request.user,
         rfc_status=list_of_rfc_status.objects.get(rfc_status_id=1),
-        rfc_title=form.cleaned_data['rfc_title'],
-        rfc_summary=form.cleaned_data['rfc_summary'],
-        rfc_type=form.cleaned_data['rfc_type'],
-        rfc_implementation_start_date=form.cleaned_data['rfc_implementation_start_date'],
-        rfc_implementation_end_date=form.cleaned_data['rfc_implementation_end_date'],
-        rfc_implementation_release_date=form.cleaned_data['rfc_implementation_release_date'],
-        rfc_version_number=form.cleaned_data['rfc_version_number'],
-        rfc_lead=form.cleaned_data['rfc_lead'],
-        rfc_priority=form.cleaned_data['rfc_priority'],
-        rfc_risk=form.cleaned_data['rfc_risk'],
-        rfc_impact=form.cleaned_data['rfc_impact'],
-        rfc_risk_and_impact_analysis=form.cleaned_data['rfc_risk_and_impact_analysis'],
-        rfc_implementation_plan=form.cleaned_data['rfc_implementation_plan'],
-        rfc_backout_plan=form.cleaned_data['rfc_backout_plan'],
-        rfc_test_plan=form.cleaned_data['rfc_test_plan'],
+        rfc_title=form.cleaned_data["rfc_title"],
+        rfc_summary=form.cleaned_data["rfc_summary"],
+        rfc_type=form.cleaned_data["rfc_type"],
+        rfc_implementation_start_date=form.cleaned_data[
+            "rfc_implementation_start_date"
+        ],
+        rfc_implementation_end_date=form.cleaned_data["rfc_implementation_end_date"],
+        rfc_implementation_release_date=form.cleaned_data[
+            "rfc_implementation_release_date"
+        ],
+        rfc_version_number=form.cleaned_data["rfc_version_number"],
+        rfc_lead=form.cleaned_data["rfc_lead"],
+        rfc_priority=form.cleaned_data["rfc_priority"],
+        rfc_risk=form.cleaned_data["rfc_risk"],
+        rfc_impact=form.cleaned_data["rfc_impact"],
+        rfc_risk_and_impact_analysis=form.cleaned_data["rfc_risk_and_impact_analysis"],
+        rfc_implementation_plan=form.cleaned_data["rfc_implementation_plan"],
+        rfc_backout_plan=form.cleaned_data["rfc_backout_plan"],
+        rfc_test_plan=form.cleaned_data["rfc_test_plan"],
     )
     rfc_submit.save()
 
@@ -170,25 +176,27 @@ def new_request_for_change_save(request, *args, **kwargs):
         submit_object_assignment.save()
 
     # Send back requirement_information URL
-    return HttpResponse(reverse('rfc_information', args={rfc_submit.rfc_id}))
+    return HttpResponse(reverse("rfc_information", args={rfc_submit.rfc_id}))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=1)
 def rfc_change_task_list(request, rfc_id, *args, **kwargs):
-    """
-    """
+    """ """
     change_task_results = change_task.objects.filter(
         is_deleted=False,
         request_for_change=rfc_id,
-    ).order_by('change_task_start_date', 'change_task_end_date')
+    ).order_by("change_task_start_date", "change_task_end_date")
 
     # Send back JSON response
-    return HttpResponse(serializers.serialize('json', change_task_results), content_type='application/json')
+    return HttpResponse(
+        serializers.serialize("json", change_task_results),
+        content_type="application/json",
+    )
 
 
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=2)
 def rfc_deployment(request, rfc_id, *args, **kwargs):
     """
@@ -199,10 +207,10 @@ def rfc_deployment(request, rfc_id, *args, **kwargs):
     # If rfc is not in draft mode - send user away
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
     if not rfc_results.rfc_status == 3:  # Approved
-        return HttpResponseRedirect(reverse('rfc_readonly', args={rfc_id}))
+        return HttpResponseRedirect(reverse("rfc_readonly", args={rfc_id}))
 
     # Get template
-    t = loader.get_template('NearBeach/request_for_change/rfc_deployment.html')
+    t = loader.get_template("NearBeach/request_for_change/rfc_deployment.html")
 
     # Get context
     c = get_rfc_context(rfc_id)
@@ -211,7 +219,7 @@ def rfc_deployment(request, rfc_id, *args, **kwargs):
 
 
 @require_http_methods(["POST"])
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=2)
 def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     """
@@ -229,16 +237,16 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
 
     # Save the data
     submit_change_task = change_task(
-        request_for_change=form.cleaned_data['request_for_change'],
-        change_task_title=form.cleaned_data['change_task_title'],
-        change_task_description=form.cleaned_data['change_task_description'],
-        change_task_start_date=form.cleaned_data['change_task_start_date'],
-        change_task_end_date=form.cleaned_data['change_task_end_date'],
-        change_task_seconds=form.cleaned_data['change_task_seconds'],
-        change_task_assigned_user=form.cleaned_data['change_task_assigned_user'],
-        change_task_qa_user=form.cleaned_data['change_task_qa_user'],
-        change_task_required_by=form.cleaned_data['change_task_required_by'],
-        is_downtime=form.cleaned_data['is_downtime'],
+        request_for_change=form.cleaned_data["request_for_change"],
+        change_task_title=form.cleaned_data["change_task_title"],
+        change_task_description=form.cleaned_data["change_task_description"],
+        change_task_start_date=form.cleaned_data["change_task_start_date"],
+        change_task_end_date=form.cleaned_data["change_task_end_date"],
+        change_task_seconds=form.cleaned_data["change_task_seconds"],
+        change_task_assigned_user=form.cleaned_data["change_task_assigned_user"],
+        change_task_qa_user=form.cleaned_data["change_task_qa_user"],
+        change_task_required_by=form.cleaned_data["change_task_required_by"],
+        is_downtime=form.cleaned_data["is_downtime"],
         change_task_status=1,
         change_user=request.user,
         creation_user=request.user,
@@ -255,13 +263,16 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     change_task_results = change_task.objects.filter(
         is_deleted=False,
         request_for_change=rfc_id,
-    ).order_by('change_task_start_date', 'change_task_end_date')
+    ).order_by("change_task_start_date", "change_task_end_date")
 
     # Send back JSON response
-    return HttpResponse(serializers.serialize('json', change_task_results), content_type='application/json')
+    return HttpResponse(
+        serializers.serialize("json", change_task_results),
+        content_type="application/json",
+    )
 
 
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=1)
 def rfc_information(request, rfc_id, *args, **kwargs):
     """
@@ -271,22 +282,21 @@ def rfc_information(request, rfc_id, *args, **kwargs):
     """
     # If rfc is not in draft mode - send user away
     rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
-    if not rfc_results.rfc_status_id == 1 or kwargs['user_level'] == 1:  # Draft
-        return HttpResponseRedirect(reverse('rfc_readonly', args={rfc_id}))
+    if not rfc_results.rfc_status_id == 1 or kwargs["user_level"] == 1:  # Draft
+        return HttpResponseRedirect(reverse("rfc_readonly", args={rfc_id}))
 
     # Get template
-    t = loader.get_template(
-        'NearBeach/request_for_change/rfc_information.html')
+    t = loader.get_template("NearBeach/request_for_change/rfc_information.html")
 
     # Get context
     c = get_rfc_context(rfc_id)
-    c['user_level'] = kwargs['user_level']
+    c["user_level"] = kwargs["user_level"]
 
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=2)
 def rfc_information_save(request, rfc_id, *args, **kwargs):
     """
@@ -305,14 +315,19 @@ def rfc_information_save(request, rfc_id, *args, **kwargs):
     update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
 
     # Update the data
-    update_rfc.rfc_title = form.cleaned_data['rfc_title']
-    update_rfc.rfc_summary = form.cleaned_data['rfc_summary']
-    update_rfc.rfc_type = form.cleaned_data['rfc_type']
-    update_rfc.rfc_version_number = form.cleaned_data['rfc_version_number']
-    update_rfc.rfc_implementation_start_date = form.cleaned_data['rfc_implementation_start_date']
-    update_rfc.rfc_implementation_end_date = form.cleaned_data['rfc_implementation_end_date']
+    update_rfc.rfc_title = form.cleaned_data["rfc_title"]
+    update_rfc.rfc_summary = form.cleaned_data["rfc_summary"]
+    update_rfc.rfc_type = form.cleaned_data["rfc_type"]
+    update_rfc.rfc_version_number = form.cleaned_data["rfc_version_number"]
+    update_rfc.rfc_implementation_start_date = form.cleaned_data[
+        "rfc_implementation_start_date"
+    ]
+    update_rfc.rfc_implementation_end_date = form.cleaned_data[
+        "rfc_implementation_end_date"
+    ]
     update_rfc.rfc_implementation_release_date = form.cleaned_data[
-        'rfc_implementation_release_date']
+        "rfc_implementation_release_date"
+    ]
 
     # Save the data
     update_rfc.save()
@@ -321,7 +336,7 @@ def rfc_information_save(request, rfc_id, *args, **kwargs):
     return HttpResponse("")
 
 
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=1)
 def rfc_readonly(request, rfc_id, *args, **kwargs):
     """
@@ -330,7 +345,7 @@ def rfc_readonly(request, rfc_id, *args, **kwargs):
     :return:
     """
     # Get template
-    t = loader.get_template('NearBeach/request_for_change/rfc_readonly.html')
+    t = loader.get_template("NearBeach/request_for_change/rfc_readonly.html")
 
     # Get context
     c = get_rfc_context(rfc_id)
@@ -343,18 +358,18 @@ def rfc_readonly(request, rfc_id, *args, **kwargs):
             is_deleted=False,
             username_id=request.user,
             group_leader=True,
-        ).values('group_id')
+        ).values("group_id"),
     ).count()
 
     # Add the group_leader_count to c dict
-    c.update({'group_leader_count': group_leader_count})
-    c['user_level'] = kwargs['user_level']
+    c.update({"group_leader_count": group_leader_count})
+    c["user_level"] = kwargs["user_level"]
 
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=2)
 def rfc_save_backout(request, rfc_id, *args, **kwargs):
     """
@@ -370,7 +385,7 @@ def rfc_save_backout(request, rfc_id, *args, **kwargs):
     update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
 
     # Update the rfc
-    update_rfc.rfc_backout_plan = form.cleaned_data['text_input']
+    update_rfc.rfc_backout_plan = form.cleaned_data["text_input"]
 
     # Save
     update_rfc.save()
@@ -378,12 +393,11 @@ def rfc_save_backout(request, rfc_id, *args, **kwargs):
     return HttpResponse("")
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=2)
 def rfc_save_implementation(request, rfc_id, *args, **kwargs):
-    """
-    """
+    """ """
     # Check user permissions
 
     # Get the form data
@@ -395,7 +409,7 @@ def rfc_save_implementation(request, rfc_id, *args, **kwargs):
     update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
 
     # Update the data
-    update_rfc.rfc_implementation_plan = form.cleaned_data['text_input']
+    update_rfc.rfc_implementation_plan = form.cleaned_data["text_input"]
 
     # Save
     update_rfc.save()
@@ -403,12 +417,11 @@ def rfc_save_implementation(request, rfc_id, *args, **kwargs):
     return HttpResponse("")
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name='')
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=2)
 def rfc_save_risk(request, rfc_id, *args, **kwargs):
-    """
-    """
+    """ """
     # CHECK USER PERMISSIONS
 
     # Get the form data
@@ -420,10 +433,10 @@ def rfc_save_risk(request, rfc_id, *args, **kwargs):
     update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
 
     # Fill in the data
-    update_rfc.rfc_priority = form.cleaned_data['priority_of_change']
-    update_rfc.rfc_risk = form.cleaned_data['risk_of_change']
-    update_rfc.rfc_impact = form.cleaned_data['impact_of_change']
-    update_rfc.rfc_risk_and_impact_analysis = form.cleaned_data['text_input']
+    update_rfc.rfc_priority = form.cleaned_data["priority_of_change"]
+    update_rfc.rfc_risk = form.cleaned_data["risk_of_change"]
+    update_rfc.rfc_impact = form.cleaned_data["impact_of_change"]
+    update_rfc.rfc_risk_and_impact_analysis = form.cleaned_data["text_input"]
 
     # Save the data
     update_rfc.save()
@@ -432,12 +445,11 @@ def rfc_save_risk(request, rfc_id, *args, **kwargs):
     return HttpResponse("")
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=2)
 def rfc_save_test(request, rfc_id, *args, **kwargs):
-    """
-    """
+    """ """
     # Check user permissions
     # Get the form data
     form = RfcModuleForm(request.POST)
@@ -448,7 +460,7 @@ def rfc_save_test(request, rfc_id, *args, **kwargs):
     update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
 
     # Update the rfc's data
-    update_rfc.rfc_test_plan = form.cleaned_data['text_input']
+    update_rfc.rfc_test_plan = form.cleaned_data["text_input"]
 
     # Save data
     update_rfc.save()
@@ -477,9 +489,7 @@ def rfc_status_approved(rfc_id, rfc_results, request):
 
     # Update all user's rfc_group_approvals to approved
     request_for_change_group_approval.objects.filter(
-        is_deleted=False,
-        rfc_id=rfc_id,
-        group_id__in=group_results.values('group_id')
+        is_deleted=False, rfc_id=rfc_id, group_id__in=group_results.values("group_id")
     ).update(approval=2)
 
     # Send off to check to make sure that the rfc status needs updating
@@ -498,15 +508,17 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
     # if they are, update the status.
     non_approved_group_approvals = request_for_change_group_approval.objects.filter(
         is_deleted=False,
-        group_id__in=group_results.values('group_id'),
+        group_id__in=group_results.values("group_id"),
         rfc_id=rfc_id,
         approval=1,
     ).count()
 
     # If there are no waiting for approval results - we default up to approved
-    print(F"NON APPROVED: {non_approved_group_approvals}")
+    print(f"NON APPROVED: {non_approved_group_approvals}")
     if non_approved_group_approvals == 0:
-        rfc_results.rfc_status = list_of_rfc_status.objects.get(rfc_status_id=3)  # Approved value
+        rfc_results.rfc_status = list_of_rfc_status.objects.get(
+            rfc_status_id=3
+        )  # Approved value
         rfc_results.save()
 
         print("GOT IN HERE!")
@@ -563,11 +575,11 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
             is_deleted=False,
             group_id__isnull=False,
             request_for_change_id=rfc_id,
-        ).values('group_id')
+        ).values("group_id"),
     )
 
     # Place all change tasks into waiting
-    print(F'\n\nRFC ID: {rfc_id}\nARGH\n\n')
+    print(f"\n\nRFC ID: {rfc_id}\nARGH\n\n")
     change_task.objects.filter(
         is_deleted=False,
         request_for_change_id=rfc_id,
@@ -601,8 +613,8 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
     rfc_status_check_approval_status(rfc_id, rfc_results, group_results)
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=2)
 def rfc_update_status(request, rfc_id, *args, **kwargs):
     """
@@ -623,17 +635,17 @@ def rfc_update_status(request, rfc_id, *args, **kwargs):
     rfc_update = request_for_change.objects.get(rfc_id=rfc_id)
 
     # Update the status
-    rfc_update.rfc_status = form.cleaned_data['rfc_status']
+    rfc_update.rfc_status = form.cleaned_data["rfc_status"]
     rfc_update.save()
 
     # Depending on what the status is depends what to do
     # status_dict = dict(RFC_STATUS)
-    rfc_status = str(form.cleaned_data['rfc_status'])
-    if rfc_status == 'Waiting for approval':
+    rfc_status = str(form.cleaned_data["rfc_status"])
+    if rfc_status == "Waiting for approval":
         rfc_status_waiting_for_approval(rfc_id, rfc_update, request)
-    if rfc_status == 'Approved':
+    if rfc_status == "Approved":
         rfc_status_approved(rfc_id, rfc_update, request)
-    if rfc_status == 'Rejected':
+    if rfc_status == "Rejected":
         rfc_status_rejected(rfc_id, rfc_update)
 
     return HttpResponse("")

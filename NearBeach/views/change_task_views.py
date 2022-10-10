@@ -13,11 +13,10 @@ from NearBeach.decorators.check_user_permissions import check_change_task_permis
 import json
 
 
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 @check_change_task_permissions(min_permission_level=1)
 def change_task_information(request, change_task_id, *args, **kwargs):
-    """
-    """
+    """ """
     # Get Change Task Information
     change_task_results = change_task.objects.filter(
         is_deleted=False,
@@ -28,37 +27,37 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     if len(change_task_results) == 0:
         raise Http404()
 
-    rfc_results = request_for_change.objects.get(rfc_id=change_task_results[0].request_for_change_id)
-
-    # Load the template
-    t = loader.get_template('NearBeach/request_for_change/change_task_information.html')
-
-    user_list = User.objects.filter(
-        is_active=True,
-    ).values(
-        'id',
-        'email',
-        'first_name',
-        'last_name',
-        'username',
+    rfc_results = request_for_change.objects.get(
+        rfc_id=change_task_results[0].request_for_change_id
     )
 
-    #Change from ORM to json
+    # Load the template
+    t = loader.get_template("NearBeach/request_for_change/change_task_information.html")
+
+    user_list = User.objects.filter(is_active=True,).values(
+        "id",
+        "email",
+        "first_name",
+        "last_name",
+        "username",
+    )
+
+    # Change from ORM to json
     user_list = json.dumps(list(user_list), cls=DjangoJSONEncoder)
 
     # Context
     c = {
-        'change_task_results': serializers.serialize('json', change_task_results),
-        'rfc_status': rfc_results.rfc_status,
-        'user_level': kwargs['user_level'],
-        'user_list': user_list,
+        "change_task_results": serializers.serialize("json", change_task_results),
+        "rfc_status": rfc_results.rfc_status,
+        "user_level": kwargs["user_level"],
+        "user_list": user_list,
     }
 
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_change_task_permissions(min_permission_level=4)
 def change_task_delete(request, change_task_id, *args, **kwargs):
     """A simple function to delete the change task"""
@@ -72,12 +71,11 @@ def change_task_delete(request, change_task_id, *args, **kwargs):
     return HttpResponse("")
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_change_task_permissions(min_permission_level=2)
 def change_task_save(request, change_task_id):
-    """
-    """
+    """ """
     # Get form data
     form = ChangeTaskForm(request.POST)
     if not form.is_valid():
@@ -87,15 +85,23 @@ def change_task_save(request, change_task_id):
     change_task_update = change_task.objects.get(change_task_id=change_task_id)
 
     # Update the values
-    change_task_update.change_task_title = form.cleaned_data['change_task_title']
-    change_task_update.change_task_description = form.cleaned_data['change_task_description']
-    change_task_update.change_task_start_date = form.cleaned_data['change_task_start_date']
-    change_task_update.change_task_end_date = form.cleaned_data['change_task_end_date']
-    change_task_update.change_task_seconds = form.cleaned_data['change_task_seconds']
-    change_task_update.change_task_required_by = form.cleaned_data['change_task_required_by']
-    change_task_update.is_downtime = form.cleaned_data['is_downtime']
-    change_task_update.change_task_qa_user = form.cleaned_data['change_task_qa_user']
-    change_task_update.change_task_assigned_user = form.cleaned_data['change_task_assigned_user']
+    change_task_update.change_task_title = form.cleaned_data["change_task_title"]
+    change_task_update.change_task_description = form.cleaned_data[
+        "change_task_description"
+    ]
+    change_task_update.change_task_start_date = form.cleaned_data[
+        "change_task_start_date"
+    ]
+    change_task_update.change_task_end_date = form.cleaned_data["change_task_end_date"]
+    change_task_update.change_task_seconds = form.cleaned_data["change_task_seconds"]
+    change_task_update.change_task_required_by = form.cleaned_data[
+        "change_task_required_by"
+    ]
+    change_task_update.is_downtime = form.cleaned_data["is_downtime"]
+    change_task_update.change_task_qa_user = form.cleaned_data["change_task_qa_user"]
+    change_task_update.change_task_assigned_user = form.cleaned_data[
+        "change_task_assigned_user"
+    ]
 
     change_task_update.save()
 
@@ -103,8 +109,8 @@ def change_task_save(request, change_task_id):
     return HttpResponse("")
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_change_task_permissions(min_permission_level=2)
 def update_status(request, change_task_id, *args, **kwargs):
     """
@@ -121,7 +127,7 @@ def update_status(request, change_task_id, *args, **kwargs):
     change_task_results = change_task.objects.get(change_task_id=change_task_id)
 
     # Update the change task results
-    change_task_results.change_task_status = form.cleaned_data['change_task_status']
+    change_task_results.change_task_status = form.cleaned_data["change_task_status"]
     change_task_results.save()
 
     return HttpResponse("")

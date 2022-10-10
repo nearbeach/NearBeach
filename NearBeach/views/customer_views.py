@@ -9,7 +9,7 @@ from NearBeach.models import customer, list_of_title, organisation
 from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
 
 
-@login_required(login_url='login', redirect_field_name='')
+@login_required(login_url="login", redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=1)
 def customer_information(request, customer_id, *args, **kwargs):
     """
@@ -26,25 +26,24 @@ def customer_information(request, customer_id, *args, **kwargs):
         organisation_id=customer_results.organisation_id,
     )
 
-    title_list = list_of_title.objects.filter(
-    )
+    title_list = list_of_title.objects.filter()
 
     # Get tempalte
-    t = loader.get_template('NearBeach/customers/customer_information.html')
+    t = loader.get_template("NearBeach/customers/customer_information.html")
 
     # Context
     c = {
-        'customer_results': serializers.serialize('json', [customer_results]),
-        'nearbeach_title': f"Customer Information {customer_id}",
-        'organisation_results': serializers.serialize('json', organisation_results),
-        'title_list': serializers.serialize('json', title_list),
+        "customer_results": serializers.serialize("json", [customer_results]),
+        "nearbeach_title": f"Customer Information {customer_id}",
+        "organisation_results": serializers.serialize("json", organisation_results),
+        "title_list": serializers.serialize("json", title_list),
     }
 
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name='')
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=2)
 def customer_information_save(request, customer_id, *args, **kwargs):
     """
@@ -63,10 +62,10 @@ def customer_information_save(request, customer_id, *args, **kwargs):
     customer_results = customer.objects.get(customer_id=customer_id)
 
     # Update the fields
-    customer_results.customer_title = form.cleaned_data['customer_title']
-    customer_results.customer_first_name = form.cleaned_data['customer_first_name']
-    customer_results.customer_last_name = form.cleaned_data['customer_last_name']
-    customer_results.customer_email = form.cleaned_data['customer_email']
+    customer_results.customer_title = form.cleaned_data["customer_title"]
+    customer_results.customer_first_name = form.cleaned_data["customer_first_name"]
+    customer_results.customer_last_name = form.cleaned_data["customer_last_name"]
+    customer_results.customer_email = form.cleaned_data["customer_email"]
 
     # Save
     customer_results.save()
@@ -75,25 +74,24 @@ def customer_information_save(request, customer_id, *args, **kwargs):
     return HttpResponse("Success")
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name='')
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=2)
 def customer_update_profile(request, customer_id, *args, **kwargs):
-    """
-    """
+    """ """
     form = ProfilePictureForm(request.POST, request.FILES)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
     update_customer = customer.objects.get(customer_id=customer_id)
-    update_customer.customer_profile_picture = form.cleaned_data['file']
+    update_customer.customer_profile_picture = form.cleaned_data["file"]
     update_customer.save()
 
     return HttpResponse("")
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name='')
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 def get_profile_picture(request, customer_id):
     """
     :param request:
@@ -106,7 +104,7 @@ def get_profile_picture(request, customer_id):
     return HttpResponse(customer_results.customer_profile_picture.url)
 
 
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=3)
 def new_customer(request, *args, **kwargs):
     """
@@ -121,19 +119,19 @@ def new_customer(request, *args, **kwargs):
     )
 
     # Get templates
-    t = loader.get_template('NearBeach/customers/new_customers.html')
+    t = loader.get_template("NearBeach/customers/new_customers.html")
 
     # Get Context
     c = {
-        'nearbeach_title': 'New Customer',
-        'title_list': serializers.serialize('json', title_list),
+        "nearbeach_title": "New Customer",
+        "title_list": serializers.serialize("json", title_list),
     }
 
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=2)
 def new_customer_save(request, *args, **kwargs):
     """
@@ -150,18 +148,20 @@ def new_customer_save(request, *args, **kwargs):
     # Save the data
     customer_submit = customer(
         change_user=request.user,
-        customer_title=form.cleaned_data['customer_title'],
-        customer_first_name=form.cleaned_data['customer_first_name'],
-        customer_last_name=form.cleaned_data['customer_last_name'],
-        customer_email=form.cleaned_data['customer_email'],
+        customer_title=form.cleaned_data["customer_title"],
+        customer_first_name=form.cleaned_data["customer_first_name"],
+        customer_last_name=form.cleaned_data["customer_last_name"],
+        customer_email=form.cleaned_data["customer_email"],
     )
 
     # If the organisation is not null in the form - set the data
-    if form.cleaned_data['organisation']:
-        customer_submit.organisation = form.cleaned_data['organisation']
+    if form.cleaned_data["organisation"]:
+        customer_submit.organisation = form.cleaned_data["organisation"]
 
     # Save the data
     customer_submit.save()
 
     # Send back the URL to the new customer
-    return HttpResponse(reverse('customer_information', args={customer_submit.customer_id}))
+    return HttpResponse(
+        reverse("customer_information", args={customer_submit.customer_id})
+    )

@@ -10,36 +10,47 @@ def initialise_data(apps, schema_editor):
 
     # List of RFC Status
     list_of_rfc_status = apps.get_model("NearBeach", "list_of_rfc_status")
-    list_of_rfc_status.objects.using(db_alias).bulk_create([
-        list_of_rfc_status(rfc_status_id=1, rfc_status='Draft'),
-        list_of_rfc_status(rfc_status_id=2, rfc_status='Waiting for approval'),
-        list_of_rfc_status(rfc_status_id=3, rfc_status='Approved'),
-        list_of_rfc_status(rfc_status_id=4, rfc_status='Started'),
-        list_of_rfc_status(rfc_status_id=5, rfc_status='Finished'),
-        list_of_rfc_status(rfc_status_id=6, rfc_status='Rejected'),
-    ])
+    list_of_rfc_status.objects.using(db_alias).bulk_create(
+        [
+            list_of_rfc_status(rfc_status_id=1, rfc_status="Draft"),
+            list_of_rfc_status(rfc_status_id=2, rfc_status="Waiting for approval"),
+            list_of_rfc_status(rfc_status_id=3, rfc_status="Approved"),
+            list_of_rfc_status(rfc_status_id=4, rfc_status="Started"),
+            list_of_rfc_status(rfc_status_id=5, rfc_status="Finished"),
+            list_of_rfc_status(rfc_status_id=6, rfc_status="Rejected"),
+        ]
+    )
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('NearBeach', '0015_notification'),
+        ("NearBeach", "0015_notification"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='list_of_rfc_status',
+            name="list_of_rfc_status",
             fields=[
-                ('rfc_status_id', models.AutoField(primary_key=True, serialize=False)),
-                ('rfc_status', models.CharField(max_length=100)),
-                ('date_created', models.DateTimeField(auto_now_add=True)),
-                ('date_modified', models.DateTimeField(auto_now=True)),
-                ('is_deleted', models.BooleanField(default=False)),
-                ('change_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_change_user', to=settings.AUTH_USER_MODEL)),
+                ("rfc_status_id", models.AutoField(primary_key=True, serialize=False)),
+                ("rfc_status", models.CharField(max_length=100)),
+                ("date_created", models.DateTimeField(auto_now_add=True)),
+                ("date_modified", models.DateTimeField(auto_now=True)),
+                ("is_deleted", models.BooleanField(default=False)),
+                (
+                    "change_user",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="%(class)s_change_user",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'db_table': 'list_of_rfc_status',
+                "db_table": "list_of_rfc_status",
             },
         ),
         migrations.RunPython(initialise_data),
