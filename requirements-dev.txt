@@ -1,1 +1,3 @@
+# requirements-dev.txt
 black
+-r ./requirements.txt
