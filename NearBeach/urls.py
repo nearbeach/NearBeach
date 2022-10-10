@@ -30,17 +30,20 @@ from .views import admin_views, \
 # 404 and 500 pages
 
 urlpatterns = [
-    path('', dashboard_views.dashboard, name='dashboard'),
+     path('', dashboard_views.dashboard, name='dashboard'),
 
-    # Administration
-    path('admin_add_user/', admin_views.add_user, name='admin_add_user'),
-    path('admin_update_user_password/',
+     # Administration
+     path('admin_add_user/', admin_views.add_user, name='admin_add_user'),
+     path('admin_update_user_password/',
          admin_views.update_user_password, name='update_user_password'),
 
-    # Change Task
-    path('change_task_information/<int:change_task_id>/', change_task_views.change_task_information,
+     # Change Task
+     path('change_task_information/<int:change_task_id>/', change_task_views.change_task_information,
          name='change_task_information'),
-    path('change_task_information/<int:change_task_id>/delete/', change_task_views.change_task_delete, name='change_task_delete'),
+     path('change_task_information/<int:change_task_id>/delete/', 
+          change_task_views.change_task_delete, 
+          name='change_task_delete'
+     ),
     path('change_task_information/<int:change_task_id>/save/', change_task_views.change_task_save,
          name='change_task_save'),
     path('change_task_update_status/<int:change_task_id>/', change_task_views.update_status,
@@ -248,13 +251,20 @@ urlpatterns = [
     # Organisation
     path('organisation_duplicates/', organisation_views.organisation_duplicates,
          name='organisation_duplicates'),
-    path('organisation_information/<int:organisation_id>/', organisation_views.organisation_information,
+    path('organisation_information/<int:organisation_id>/', 
+          organisation_views.organisation_information,
          name='organisation_information'),
-     path('organisation_information/<int:organisation_id>/get_profile_picture/', organisation_views.get_profile_picture, name='organisation_get_profile_picture'),
-    path('organisation_information/<int:organisation_id>/save/', organisation_views.organisation_information_save,
+     path('organisation_information/<int:organisation_id>/get_profile_picture/', 
+          organisation_views.get_profile_picture, 
+          name='organisation_get_profile_picture'
+          ),
+    path('organisation_information/<int:organisation_id>/save/', 
+          organisation_views.organisation_information_save,
          name='organisation_information_save'),
     path('organisation_information/<int:organisation_id>/update_profile/',
-         organisation_views.organisation_update_profile, name='organisation_update_profile'),
+         organisation_views.organisation_update_profile, 
+         name='organisation_update_profile'
+     ),
 
     # Projects
     path('project_information/<int:project_id>/',
