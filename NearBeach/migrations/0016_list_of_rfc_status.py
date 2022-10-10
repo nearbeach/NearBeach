@@ -53,5 +53,5 @@ class Migration(migrations.Migration):
                 "db_table": "list_of_rfc_status",
             },
         ),
-        migrations.RunPython(initialise_data),
+        migrations.RunPython(initialise_data, reverse_code=migrations.RunPython.noop),
     ]
