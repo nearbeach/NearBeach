@@ -3,7 +3,7 @@ import '../sass/login.scss';
 
 // Import all of Bootstrap's JS
 // import * as bootstrap from 'bootstrap'
-import { Carousel } from 'bootstrap';
+// import { Carousel } from 'bootstrap'; //working
 
 //Get an image number
 const image_number = Math.floor(Math.random() * 19 + 1);

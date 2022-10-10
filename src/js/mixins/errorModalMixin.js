@@ -13,7 +13,7 @@ export default {
             const elem_cont = document.getElementById("errorModalContent");
 
             // Update the content
-            elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new requirement<hr>${error}`;
+            elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new ${destination}-${location_id}<hr>${error}`;
 
             // Show the modal
             const errorModal = new Modal(document.getElementById('errorModal'));
