@@ -8,6 +8,7 @@ class TestInternalFunctions(TestCase):
 
     fixtures = ["NearBeach_basic_setup.json"]
 
+    @staticmethod
     def test_kanban_board(self):
         # Get basic input object
         input_object = object_assignment.objects.filter(
