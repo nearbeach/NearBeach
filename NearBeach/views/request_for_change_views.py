@@ -12,7 +12,6 @@ from NearBeach.models import request_for_change, \
     group, \
     change_task, \
     request_for_change_group_approval, \
-    RFC_STATUS, \
     list_of_rfc_status
 from django.http import HttpResponse, \
     HttpResponseBadRequest, \
