@@ -41,47 +41,25 @@ urlpatterns = [
         name="update_user_password",
     ),
     # Change Task
-    path(
-        "change_task_information/<int:change_task_id>/",
-        change_task_views.change_task_information,
-        name="change_task_information",
-    ),
-    path(
-        "change_task_information/<int:change_task_id>/delete/",
-        change_task_views.change_task_delete,
-        name="change_task_delete",
-    ),
-    path(
-        "change_task_information/<int:change_task_id>/save/",
-        change_task_views.change_task_save,
-        name="change_task_save",
-    ),
-    path(
-        "change_task_update_status/<int:change_task_id>/",
-        change_task_views.update_status,
-        name="change_task_update_status",
-    ),
+    path('change_task_information/<int:change_task_id>/', change_task_views.change_task_information,
+         name='change_task_information'),
+    path('change_task_information/<int:change_task_id>/delete/', change_task_views.change_task_delete,
+         name='change_task_delete'),
+    path('change_task_information/<int:change_task_id>/save/', change_task_views.change_task_save,
+         name='change_task_save'),
+    path('change_task_update_status/<int:change_task_id>/', change_task_views.update_status,
+         name='change_task_update_status'),
+
     # Customer
-    path(
-        "customer_information/<int:customer_id>/",
-        customer_views.customer_information,
-        name="customer_information",
-    ),
-    path(
-        "customer_information/<int:customer_id>/get_profile_picture/",
-        customer_views.get_profile_picture,
-        name="customer_get_profile_image",
-    ),
-    path(
-        "customer_information/<int:customer_id>/update_profile/",
-        customer_views.customer_update_profile,
-        name="customer_update_profile",
-    ),
-    path(
-        "customer_information/<int:customer_id>/save/",
-        customer_views.customer_information_save,
-        name="customer_information_save",
-    ),
+    path('customer_information/<int:customer_id>/',
+         customer_views.customer_information, name='customer_information'),
+    path('customer_information/<int:customer_id>/get_profile_picture/',
+         customer_views.get_profile_picture, name='customer_get_profile_image'),
+    path('customer_information/<int:customer_id>/update_profile/',
+         customer_views.customer_update_profile, name='customer_update_profile'),
+    path('customer_information/<int:customer_id>/save/', customer_views.customer_information_save,
+         name='customer_information_save'),
+
     # Dashboard
     path("dashboard/get/bug_list/", dashboard_views.get_bug_list, name="get_bug_list"),
     path(
@@ -469,31 +447,17 @@ urlpatterns = [
         name="lead_user_list",
     ),
     # Organisation
-    path(
-        "organisation_duplicates/",
-        organisation_views.organisation_duplicates,
-        name="organisation_duplicates",
-    ),
-    path(
-        "organisation_information/<int:organisation_id>/",
-        organisation_views.organisation_information,
-        name="organisation_information",
-    ),
-    path(
-        "organisation_information/<int:organisation_id>/get_profile_picture/",
-        organisation_views.get_profile_picture,
-        name="organisation_get_profile_picture",
-    ),
-    path(
-        "organisation_information/<int:organisation_id>/save/",
-        organisation_views.organisation_information_save,
-        name="organisation_information_save",
-    ),
-    path(
-        "organisation_information/<int:organisation_id>/update_profile/",
-        organisation_views.organisation_update_profile,
-        name="organisation_update_profile",
-    ),
+    path('organisation_duplicates/', organisation_views.organisation_duplicates,
+         name='organisation_duplicates'),
+    path('organisation_information/<int:organisation_id>/', organisation_views.organisation_information,
+         name='organisation_information'),
+    path('organisation_information/<int:organisation_id>/get_profile_picture/',
+         organisation_views.get_profile_picture, name='organisation_get_profile_picture'),
+    path('organisation_information/<int:organisation_id>/save/', organisation_views.organisation_information_save,
+         name='organisation_information_save'),
+    path('organisation_information/<int:organisation_id>/update_profile/',
+         organisation_views.organisation_update_profile, name='organisation_update_profile'),
+
     # Projects
     path(
         "project_information/<int:project_id>/",

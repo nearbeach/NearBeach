@@ -2,15 +2,8 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Q, Max
 from functools import wraps
 
-from NearBeach.models import (
-    user_group,
-    group,
-    object_assignment,
-    kanban_card,
-    requirement_item,
-    requirement,
-    change_task,
-)
+from NearBeach.models import user_group, group, object_assignment, kanban_card,\
+    requirement_item, requirement, change_task
 
 
 def check_change_task_permissions(min_permission_level):
