@@ -137,7 +137,13 @@
                 type: 'updateUrl',
                 rootUrl: this.rootUrl,
                 staticUrl: this.staticUrl,
-            })
+            });
+
+            this.$store.commit({
+                type: 'updateDestination',
+                destination: "kanban_board",
+                locationId: this.locationId,
+            });
 
             //Send columns and levels into the VueX
             this.$store.commit({

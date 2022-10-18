@@ -79,9 +79,12 @@
                     <label>Change Task Description (Optional):</label>
                     <editor
                        :init="{
+                         file_picker_types: 'image',
                          height: 300,
+                         images_upload_handler: customUploadImage,
                          menubar: false,
-                         plugins: ['lists','table'],
+                         paste_data_images: true,
+                         plugins: ['lists','paste','table'],
                         toolbar: [
                            'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
                            'bold italic strikethrough underline backcolor | table | ' +
@@ -175,7 +178,10 @@
 </template>
 
 <script>
+    //Axios
     const axios = require('axios');
+    
+    //Widgets
     import Editor from '@tinymce/tinymce-vue';
     import BetweenDates from "../dates/BetweenDates.vue";
     import { NSelect } from 'naive-ui';
@@ -232,6 +238,35 @@
             }
         },
         methods: {
+            customUploadImage: function(blobInfo, success, failure, progress) {
+                //Create the form
+                const data_to_send = new FormData();
+                data_to_send.set('document', blobInfo.blob(), blobInfo.filename());
+                data_to_send.set('document_description', blobInfo.filename());
+
+                //Configuration for axios
+                const config = {
+                    onUploadProgress: progressEvent => {
+                        //As the document gets uploaded - we want to update the upload Percentage
+                        progress = parseFloat(progressEvent['loaded']) / parseFloat(progressEvent['total']);
+                    }
+                }
+                
+                //Create url
+                const url = `${this.rootUrl}documentation/request_for_change/${this.changeTaskResults[0].fields.request_for_change}/upload/`;
+
+                //Use axios to send the data
+                axios.post(
+                    url,
+                    data_to_send,
+                    config,
+                ).then(response => {
+                    //Just send the location to the success
+                    success(`/private/${response.data[0].document_key_id}`);
+                }).catch(error => {
+                    failure("Yeah, shit didn't work");
+                })
+            },
             isDowntime: function() {
                 if (this.changeIsDowntimeModel) {
                     return `Downtime Scheduled`;
@@ -296,7 +331,7 @@
                 this.changeStartDateModel = data['start_date'];
                 this.changeEndDateModel = data['end_date'];
             },
-        }
+        },
     }
 </script>
 

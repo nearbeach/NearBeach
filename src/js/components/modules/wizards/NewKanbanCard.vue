@@ -46,9 +46,12 @@
                         <div class="col-md-8">
                             <editor
                                :init="{
+                                 file_picker_types: 'image',
                                  height: 300,
+                                 images_upload_handler: uploadImage,
                                  menubar: false,
-                                 plugins: ['lists','table'],
+                                 paste_data_images: true,
+                                 plugins: ['lists','paste','table'],
                                   toolbar: [
                                      'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
                                      'bold italic strikethrough underline backcolor | table | ' +
@@ -86,6 +89,7 @@
 
     //Mixins
     import iconMixin from "../../../mixins/iconMixin";
+    import uploadMixin from "../../../mixins/uploadMixin";
 
     export default {
         name: "NewKanbanCard",
@@ -121,6 +125,7 @@
         },
         mixins: [
             iconMixin,
+            uploadMixin,
         ],
         data() {
             return {

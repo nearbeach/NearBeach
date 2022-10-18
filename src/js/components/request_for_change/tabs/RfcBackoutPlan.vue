@@ -14,9 +14,12 @@
             </label><br>
             <editor
                :init="{
+                 file_picker_types: 'image',
                  height: 500,
+                 images_upload_handler: uploadImage,
                  menubar: false,
-                 plugins: ['lists','table'],
+                 paste_data_images: true,
+                 plugins: ['lists','paste','table'],
                   toolbar: [
                      'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
                      'bold italic strikethrough underline backcolor | table | ' +
@@ -32,9 +35,15 @@
 </template>
 
 <script>
+    //Validation
     import useVuelidate from '@vuelidate/core'
     import { required, maxLength } from '@vuelidate/validators'
+    
+    //TinyMce Editor
     import Editor from '@tinymce/tinymce-vue';
+
+    //Mixins
+    import uploadMixin from "../../../mixins/uploadMixin";
 
     export default {
         name: "RfcBackoutPlan",
@@ -56,6 +65,9 @@
                 },
             }
         },
+        mixins: [
+            uploadMixin,
+        ],
         data: () => ({
             rfcBackoutPlanModel: '',
         }),

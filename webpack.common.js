@@ -67,6 +67,7 @@ module.exports = {
                 { from: './node_modules/tinymce/themes/silver/theme.min.js', to: './tinymce/themes/silver/theme.min.js' },
                 { from: './node_modules/tinymce/icons/default/icons.min.js', to: './tinymce/icons/default/icons.min.js' },
                 { from: './node_modules/tinymce/plugins/lists/', to: './tinymce/plugins/lists/' },
+                { from: './node_modules/tinymce/plugins/paste/', to: './tinymce/plugins/paste/' },
                 { from: './node_modules/tinymce/plugins/table/', to: './tinymce/plugins/table/' },
             ],
         }),
