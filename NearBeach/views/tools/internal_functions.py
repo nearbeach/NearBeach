@@ -33,7 +33,9 @@ def get_object_from_destination(input_object, destination, location_id):
     :param location_id: The location_id
     :return:
     """
-    input_object = input_object.filter(**{destination: location_id})
+    input_object = input_object.filter(
+        **{destination: location_id}
+    )
 
     # Just send back the array
     return input_object

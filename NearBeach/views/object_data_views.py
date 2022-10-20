@@ -211,7 +211,8 @@ def add_link(request, destination, location_id):
             single_object = object_dict[object_type].get(pk=row)
 
             submit_object_assignment = object_assignment(
-                change_user=request.user, **{object_type: single_object}
+                change_user=request.user,
+                **{object_type: single_object}
             )
 
             # Set the object destination
@@ -970,9 +971,9 @@ def object_link_list(request, destination, location_id):
         Q(
             # Where destination and location id match
             **{destination: location_id},
-        )
-        | Q(
-            **{destination + "__isnull": False},
+        ) |
+        Q(
+            **{destination + '__isnull': False},
             meta_object=location_id,
         )
     ).values(

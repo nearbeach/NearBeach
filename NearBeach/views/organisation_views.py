@@ -192,4 +192,4 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
     update_organisation.save()
 
     # Return success
-    return HttpResponse("")
+    return HttpResponse('')
