@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from email.policy import default
 from django.db import models
 from .private_media import FileStorage
 from django.contrib.auth.models import User
@@ -288,14 +289,42 @@ class campus(models.Model):
         on_delete=models.CASCADE,
         blank=True,
         null=True,
+        default="",
     )
     campus_nickname = models.CharField(max_length=100)
-    campus_phone = models.CharField(max_length=20, null=True)
-    campus_fax = models.CharField(max_length=20, null=True)
-    campus_address1 = models.CharField(max_length=255, null=True)
-    campus_address2 = models.CharField(max_length=255, null=True)
-    campus_address3 = models.CharField(max_length=255, null=True)
-    campus_suburb = models.CharField(max_length=50)
+    campus_phone = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        default="",
+    )
+    campus_fax = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        default="",
+    )
+    campus_address1 = models.CharField(
+        max_length=255, 
+        null=True,
+        blank=True,
+        default="",
+    )
+    campus_address2 = models.CharField(
+        max_length=255, 
+        null=True,
+        blank=True,
+        default="",
+    )
+    campus_address3 = models.CharField(
+        max_length=255, 
+        null=True,
+        blank=True,
+        default="",
+    )
+    campus_suburb = models.CharField(
+        max_length=50
+    )
     campus_region = models.ForeignKey(
         "list_of_country_region",
         on_delete=models.CASCADE,
@@ -1174,7 +1203,12 @@ class list_of_country_region(models.Model):
         on_delete=models.CASCADE,
     )
     region_name = models.CharField(max_length=150)
-    region_type = models.CharField(max_length=80, null=True)
+    region_type = models.CharField(
+        max_length=80,
+        null=True,
+        blank=True,
+        default="",
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
