@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from email.policy import default
 from django.db import models
 from .private_media import FileStorage
 from django.contrib.auth.models import User
@@ -210,7 +211,8 @@ class bug(models.Model):
         "bug_client",
         on_delete=models.CASCADE,
     )
-    bug_code = models.CharField(max_length=255)  # Just stores the code of the bug
+    # Just stores the code of the bug
+    bug_code = models.CharField(max_length=255)
     bug_description = models.TextField()
     bug_status = models.CharField(max_length=50)  # Updated manually?
     project = models.ForeignKey(
@@ -233,11 +235,9 @@ class bug(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="%(class)s_change_user",
-    )
+    change_user = models.ForeignKey(User,
+                                    on_delete=models.CASCADE,
+                                    related_name='%(class)s_change_user',)
     is_deleted = models.BooleanField(
         default=False,
     )
@@ -259,11 +259,10 @@ class bug_client(models.Model):
     bug_client_url = models.URLField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="%(class)s_change_user",
-    )
+    change_user = models.ForeignKey(User,
+                                    on_delete=models.CASCADE,
+                                    related_name='%(class)s_change_user',
+                                    )
     is_deleted = models.BooleanField(
         default=False,
     )
@@ -288,14 +287,42 @@ class campus(models.Model):
         on_delete=models.CASCADE,
         blank=True,
         null=True,
+        default="",
     )
     campus_nickname = models.CharField(max_length=100)
-    campus_phone = models.CharField(max_length=20, null=True)
-    campus_fax = models.CharField(max_length=20, null=True)
-    campus_address1 = models.CharField(max_length=255, null=True)
-    campus_address2 = models.CharField(max_length=255, null=True)
-    campus_address3 = models.CharField(max_length=255, null=True)
-    campus_suburb = models.CharField(max_length=50)
+    campus_phone = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        default="",
+    )
+    campus_fax = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        default="",
+    )
+    campus_address1 = models.CharField(
+        max_length=255, 
+        null=True,
+        blank=True,
+        default="",
+    )
+    campus_address2 = models.CharField(
+        max_length=255, 
+        null=True,
+        blank=True,
+        default="",
+    )
+    campus_address3 = models.CharField(
+        max_length=255, 
+        null=True,
+        blank=True,
+        default="",
+    )
+    campus_suburb = models.CharField(
+        max_length=50
+    )
     campus_region = models.ForeignKey(
         "list_of_country_region",
         on_delete=models.CASCADE,
@@ -1068,9 +1095,9 @@ class list_of_bug_client(models.Model):
     # The different API commands
     api_open_bugs = models.CharField(max_length=255)  # Find all open bugs
     api_search_bugs = models.CharField(max_length=255)  # Search command
-    api_bug = models.CharField(
-        max_length=255
-    )  # Get that particular bug information - direct link to bug
+
+    # Get that particular bug information - direct link to bug
+    api_bug = models.CharField(max_length=255)
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1174,7 +1201,12 @@ class list_of_country_region(models.Model):
         on_delete=models.CASCADE,
     )
     region_name = models.CharField(max_length=150)
-    region_type = models.CharField(max_length=80, null=True)
+    region_type = models.CharField(
+        max_length=80,
+        null=True,
+        blank=True,
+        default="",
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -1448,7 +1480,8 @@ class list_of_tax(models.Model):
     )
 
     def __str__(self):
-        return str(self.tax_amount)  # No need to encode as it is a decimal point
+        # No need to encode as it is a decimal point
+        return str(self.tax_amount)
 
     class Meta:
         db_table = "list_of_tax"

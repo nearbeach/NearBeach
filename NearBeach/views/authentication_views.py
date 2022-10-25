@@ -201,6 +201,9 @@ def login(request):
         Q(
             # is_deleted=False,
             # ADD IN DATES LOGIC HERE
+        ) & Q(
+            Q(notification_location='All') |
+            Q(notification_location='Login Page')
         )
         & Q(Q(notification_location="All") | Q(notification_location="Login Page"))
     )
@@ -210,12 +213,12 @@ def login(request):
 
     # context
     c = {
-        "error_message": error_message,
-        "LoginForm": form,
-        "nearbeach_title": "NearBeach Login",
-        "notification_results": notification_results,
-        "RECAPTCHA_PUBLIC_KEY": RECAPTCHA_PUBLIC_KEY,
-        "image_number": f"{1 + cryptogen.randrange(1, 19):03.0f}",
+        'error_message': error_message,
+        'LoginForm': form,
+        'nearbeach_title': 'NearBeach Login',
+        'notification_results': notification_results,
+        'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
+        'image_number': f"{1 + cryptogen.randrange(1, 19):03.0f}"
     }
 
     return HttpResponse(t.render(c, request))
