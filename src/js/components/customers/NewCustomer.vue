@@ -68,6 +68,7 @@
     import { required, email } from '@vuelidate/validators'
 
     //Mixins
+    import errorModalMixin from "../../mixins/errorModalMixin";
     import searchMixin from "../../mixins/searchMixin";
 
     //Components
@@ -100,6 +101,7 @@
             },
         },
         mixins: [
+            errorModalMixin,
             searchMixin,
         ],
         data() {
@@ -225,7 +227,7 @@
                     //Go to the new customer page
                     window.location.href = response['data'];
                 }).catch(error => {
-                    
+                    this.showErrorModal(error, "customer", "");
                 })
             },
             updateCustomerData: function(data) {
