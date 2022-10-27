@@ -2,6 +2,8 @@
     <div class="card">
         <div class="card-body">
             <h1>Permission Information</h1>
+            <br />
+            <a v-bind:href="`${this.rootUrl}search/permission_set/`">Go back to permission list</a>
             <hr>
 
             <div class="alert alert-danger"
