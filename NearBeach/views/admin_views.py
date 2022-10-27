@@ -1,5 +1,6 @@
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
+from django.core.serializers.json import DjangoJSONEncoder
 from django.views.decorators.http import require_http_methods
 
 from NearBeach.forms import (
@@ -8,8 +9,10 @@ from NearBeach.forms import (
     UpdateGroupLeaderStatusForm,
 )
 from NearBeach.models import user_group
+from NearBeach.views.tools.internal_functions import get_user_permissions
 
 import itertools
+import json
 
 
 @require_http_methods(["POST"])
@@ -73,17 +76,46 @@ def update_group_leader_status(request, destination):
 
     # Depending on the destination - depends what else we filter on
     if destination == "group":
-        user_group_update.filter(
-            group=form.cleaned_data["group"].first(),
-        ).update(group_leader=form.cleaned_data["group_leader"])
-    elif destination == "permission_set":
-        user_group_update.filter(
-            permission_set=form.cleaned_data["permission_set"].first(),
-        ).update(group_leader=form.cleaned_data["group_leader"])
-    else:
-        user_group_update.update(group_leader=form.cleaned_data["group_leader"])
+        # Get group id
+        group_id = form.cleaned_data["group"].first()
 
-    return HttpResponse("")
+        # Update the user group
+        user_group_update.filter(
+            group=group_id,
+        ).update(group_leader=form.cleaned_data["group_leader"])
+
+        # Get new user_list_results
+        user_list_results = get_user_permissions("group_id", group_id)
+    elif destination == "permission_set":
+        # Get Permission Set ID
+        permission_set_id = form.cleaned_data["permission_set"].first()
+
+        # Update the user group
+        user_group_update.filter(
+            permission_set=permission_set_id,
+        ).update(group_leader=form.cleaned_data["group_leader"])
+        
+        # Get new user_list_results
+        user_list_results = get_user_permissions("permission_set_id", permission_set_id)
+    else:
+        # Get group id
+        group_id = form.cleaned_data["group"].first()
+
+        # Update the user list
+        user_group_update.filter(
+            group=group_id,
+        ).update(group_leader=form.cleaned_data["group_leader"])
+
+        user_list_results = get_user_permissions("username", form.cleaned_data["username"])
+    
+    # Convert into json
+    user_list_results = json.dumps(list(user_list_results), cls=DjangoJSONEncoder)
+    
+    return HttpResponse(
+        # serializers.serialize("json", user_list_results),
+        user_list_results,
+        content_type="application/json",
+    )
 
 
 @require_http_methods(["POST"])

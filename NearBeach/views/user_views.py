@@ -10,6 +10,7 @@ from django.contrib.auth import update_session_auth_hash
 
 from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm
 from NearBeach.models import user_group
+from NearBeach.views.tools.internal_functions import get_user_permissions
 
 import json
 
@@ -104,27 +105,7 @@ def user_information(request, username):
     # Get user data
     user_results = User.objects.get(id=username)
 
-    user_list_results = (
-        user_group.objects.filter(
-            is_deleted=False,
-            username=username,
-        )
-        .values(
-            "username",
-            "username__first_name",
-            "username__last_name",
-            "username__email",
-            "group",
-            "group__group_name",
-            "permission_set",
-            "permission_set__permission_set_name",
-        )
-        .order_by(
-            "username__first_name",
-            "username__last_name",
-            "permission_set__permission_set_name",
-        )
-    )
+    user_list_results = get_user_permissions("username", username)
     user_list_results = json.dumps(list(user_list_results), cls=DjangoJSONEncoder)
 
     # Create the context
