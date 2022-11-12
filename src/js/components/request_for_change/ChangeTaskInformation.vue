@@ -26,6 +26,23 @@
                 </div>
             </div>
 
+            <!-- NOTIFY USERS OF DATE RESTRICTIONS -->
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>Date Restrictions</strong>
+                    <p class="text-instructions">
+                        Start and End dates of the RFC
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    Start Date: <span>{{formatDate(rfcStartDate)}}</span>
+                </div>
+                <div class="col-md-4">
+                    End Date: <span>{{formatDate(rfcEndDate)}}</span>
+                </div>
+            </div>
+
             <!-- START DATE & END DATE -->
             <hr>
             <between-dates destination="Change Task"
@@ -48,7 +65,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <lable>Implementation User</lable>
+                                <label>Implementation User</label>
                                 <n-select v-bind:options="userListFixed"
                                             v-model:value="assignedUserModel"
                                 ></n-select>
@@ -56,7 +73,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <lable>QA User</lable>
+                                <label>QA User</label>
                                 <n-select v-model:value="qaUserModel" 
                                             v-bind:options="userListFixed" 
                                 />
@@ -185,6 +202,9 @@
     import Editor from '@tinymce/tinymce-vue';
     import BetweenDates from "../dates/BetweenDates.vue";
     import { NSelect } from 'naive-ui';
+    
+    //Vuex
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "ChangeTaskInformation",
@@ -237,6 +257,12 @@
                 })
             }
         },
+        computed: {
+            ...mapGetters({
+                rfcEndDate: 'getEndDate',
+                rfcStartDate: 'getStartDate',
+            })
+        },
         methods: {
             customUploadImage: function(blobInfo, success, failure, progress) {
                 //Create the form
@@ -281,6 +307,19 @@
                     //If successful, go back
                     window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
                 })
+            },
+            formatDate: function(date) {
+                //Setup the date
+                let new_date = new Date(date);
+                
+                //Split the date into date vs time
+                new_date = new_date.toISOString().split("T");
+
+                //Split the time
+                const time_split = new_date[1].split(".");
+                
+                //Return the date as a string
+                return `${new_date[0]} ${time_split[0]}`
             },
             saveChangeTask: function(event) {
                 //Stop the usual stuff
