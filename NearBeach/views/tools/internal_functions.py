@@ -8,7 +8,6 @@ from NearBeach.models import (
     requirement_item,
     task,
     user_group,
-    whiteboard,
 )
 
 OBJECT_DICT = {
@@ -20,7 +19,6 @@ OBJECT_DICT = {
     "kanban_card": kanban_card.objects,
     "organisation": organisation.objects,
     "request_for_change": request_for_change.objects,
-    "whiteboard": whiteboard.objects,
 }
 
 

@@ -32,7 +32,6 @@ from .models import (
     list_of_country,
     list_of_lead_source,
     list_of_opportunity_stage,
-    list_of_quote_stage,
     list_of_requirement_item_status,
     list_of_requirement_item_type,
     list_of_requirement_status,
@@ -47,9 +46,7 @@ from .models import (
     opportunity,
     organisation,
     permission_set,
-    project_customer,
     project,
-    quote,
     request_for_change,
     request_for_change_group_approval,
     request_for_change_stakeholder,
@@ -66,7 +63,6 @@ from .models import (
     user_group,
     user_want,
     user_weblink,
-    whiteboard,
 )
 
 admin.site.register(about_user)
@@ -99,7 +95,6 @@ admin.site.register(list_of_country_region)
 admin.site.register(list_of_country)
 admin.site.register(list_of_lead_source)
 admin.site.register(list_of_opportunity_stage)
-admin.site.register(list_of_quote_stage)
 admin.site.register(list_of_requirement_item_status)
 admin.site.register(list_of_requirement_item_type)
 admin.site.register(list_of_requirement_status)
@@ -114,9 +109,7 @@ admin.site.register(object_note)
 admin.site.register(opportunity)
 admin.site.register(organisation)
 admin.site.register(permission_set)
-admin.site.register(project_customer)
 admin.site.register(project)
-admin.site.register(quote)
 admin.site.register(request_for_change)
 admin.site.register(request_for_change_group_approval)
 admin.site.register(request_for_change_stakeholder)
@@ -133,4 +126,3 @@ admin.site.register(to_do)
 admin.site.register(user_group)
 admin.site.register(user_want)
 admin.site.register(user_weblink)
-admin.site.register(whiteboard)

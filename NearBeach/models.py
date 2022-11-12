@@ -50,11 +50,6 @@ PROJECT_STATUS_CHOICE = (
     ("Closed", "Closed"),
 )
 
-QUOTE_APPROVAL_STATUS = (
-    ("REJECTED", "REJECTED"),
-    ("DRAFT", "DRAFT"),
-    ("APPROVED", "APPROVED"),
-)
 
 RATING_SCORE = (
     (1, "1 Star"),
@@ -567,12 +562,6 @@ class document(models.Model):
         null=True,
         storage=FileStorage(),
     )
-    whiteboard = models.ForeignKey(
-        "whiteboard",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -621,12 +610,6 @@ class document_permission(models.Model):
     )
     opportunity = models.ForeignKey(
         "opportunity",
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    whiteboard = models.ForeignKey(
-        "whiteboard",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
@@ -716,12 +699,6 @@ class email_contact(models.Model):
     )
     opportunity = models.ForeignKey(
         "opportunity",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    quotes = models.ForeignKey(
-        "quote",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1288,40 +1265,6 @@ class list_of_opportunity_stage(models.Model):
         ordering = ["list_order"]
 
 
-class list_of_quote_stage(models.Model):
-    quote_stage_id = models.AutoField(primary_key=True)
-    quote_stage = models.CharField(
-        max_length=50,
-        unique=True,
-    )
-
-    is_invoice = models.BooleanField(
-        default=False,
-    )
-    quote_closed = models.BooleanField(
-        default=False,
-    )
-    sort_order = models.IntegerField(unique=True, auto_created=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="%(class)s_change_user",
-        blank=True,
-        null=True,
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        return str(self.quote_stage)
-
-    class Meta:
-        db_table = "list_of_quote_stage"
-
-
 class list_of_requirement_item_status(models.Model):
     requirement_item_status_id = models.AutoField(primary_key=True)
     requirement_item_status = models.CharField(
@@ -1614,12 +1557,6 @@ class object_assignment(models.Model):
         blank=True,
         null=True,
     )
-    quote = models.ForeignKey(
-        "quote",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
     requirement = models.ForeignKey(
         "requirement",
         on_delete=models.CASCADE,
@@ -1652,12 +1589,6 @@ class object_assignment(models.Model):
     )
     request_for_change = models.ForeignKey(
         "request_for_change",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    whiteboard = models.ForeignKey(
-        "whiteboard",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1723,12 +1654,6 @@ class object_note(models.Model):
     )
     organisation = models.ForeignKey(
         "organisation",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    quote = models.ForeignKey(
-        "quote",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1872,6 +1797,7 @@ class organisation(models.Model):
         db_table = "organisation"
 
 
+"""
 class permission_set_manager(models.Manager):
     def get_by_natural_key(
         self,
@@ -1912,7 +1838,6 @@ class permission_set_manager(models.Manager):
             opportunity=opportunity,
             organisation=organisation,
             project=project,
-            quote=quote,
             request_for_change=request_for_change,
             requirement=requirement,
             task=task,
@@ -1921,10 +1846,10 @@ class permission_set_manager(models.Manager):
             project_history=project_history,
             task_history=task_history,
         )
-
+"""
 
 class permission_set(models.Model):
-    objects = permission_set_manager()
+    #objects = permission_set_manager()
 
     permission_set_id = models.AutoField(primary_key=True)
     permission_set_name = models.CharField(
@@ -2012,6 +1937,7 @@ class permission_set(models.Model):
         default=False,
     )
 
+    """
     def natural_key(self):
         return (
             self.permission_set_id,  # 0
@@ -2035,6 +1961,7 @@ class permission_set(models.Model):
             self.project_history,  # 20
             self.task_history,  # 21
         )
+    """
 
     def __str__(self):
         return str(self.permission_set_name)
@@ -2108,98 +2035,6 @@ class project_customer(models.Model):
 
     class Meta:
         db_table = "project_customer"
-
-
-class quote(models.Model):
-    quote_id = models.AutoField(primary_key=True)
-    quote_uuid = models.UUIDField(
-        default=uuid.uuid4,
-        editable=False,
-        primary_key=False,
-        unique=True,
-    )
-    quote_title = models.CharField(max_length=255)
-    quote_valid_till = models.DateTimeField()
-    quote_stage = models.ForeignKey(
-        "list_of_quote_stage",
-        on_delete=models.CASCADE,
-    )
-    quote_billing_address = models.ForeignKey(
-        "campus",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    is_invoice = models.BooleanField(
-        default=False,
-    )
-    """
-    quote_approval_status_id = models.CharField(
-        max_length=10,
-        choices=QUOTE_APPROVAL_STATUS,
-        default='DRAFT',
-    )
-    """
-    quote_terms = models.TextField(
-        blank=True,
-        default="",
-    )
-    customer_notes = models.TextField(
-        blank=True,
-        default="",
-    )
-    project = models.ForeignKey(
-        "project",
-        on_delete=models.CASCADE,
-        db_column="project_id",
-        null=True,
-        blank=True,
-    )
-    task = models.ForeignKey(
-        "task",
-        on_delete=models.CASCADE,
-        db_column="task_id",
-        null=True,
-        blank=True,
-    )
-    opportunity = models.ForeignKey(
-        "opportunity",
-        on_delete=models.CASCADE,
-        db_column="opportunity_id",
-        null=True,
-        blank=True,
-    )
-    customer = models.ForeignKey(
-        "customer",
-        on_delete=models.CASCADE,
-        db_column="customer_id",
-        null=True,
-        blank=True,
-    )
-    organisation = models.ForeignKey(
-        "organisation",
-        on_delete=models.CASCADE,
-        db_column="organisation_id",
-        null=True,
-        blank=True,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    creation_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        return str(self.quote_title)
-
-    class Meta:
-        db_table = "quote"
 
 
 class request_for_change(models.Model):
@@ -2794,26 +2629,3 @@ class user_weblink(models.Model):
 
     class Meta:
         db_table = "user_weblink"
-
-
-class whiteboard(models.Model):
-    whiteboard_id = models.AutoField(primary_key=True)
-    whiteboard_title = models.CharField(max_length=255)
-    whiteboard_xml = models.TextField(
-        blank=True,
-        default="",
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        return self.whiteboard_title
-
-    class Meta:
-        db_table = "whiteboard"
