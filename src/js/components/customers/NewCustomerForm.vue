@@ -124,9 +124,11 @@
             customerLastNameModel: {
                 required,
             },
+            /*
             organisationModel: {
                 required,
             },
+            */
             titleModel: {
                 required,
             },

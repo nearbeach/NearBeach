@@ -115,20 +115,22 @@
                 titleModel: [],
             }
         },
-        validations: {
-            customerEmailModel: {
-                required,
-                email,
-            },
-            customerFirstNameModel: {
-                required,
-            },
-            customerLastNameModel: {
-                required,
-            },
-            titleModel: {
-                required,
-            },
+        validations () {
+            return {
+                customerEmailModel: {
+                    required,
+                    email,
+                },
+                customerFirstNameModel: {
+                    required,
+                },
+                customerLastNameModel: {
+                    required,
+                },
+                titleModel: {
+                    required,
+                },
+            }
         },
         methods: {
             fetchOptions: function(search, loading) {
@@ -178,7 +180,7 @@
                     loader_element.style.display = "none";
                 });
             },
-            submitNewCustomer: function() {
+            submitNewCustomer: async function() {
                 //Flag downstream to check validation
                 this.flagValidationCheck = true;
 
@@ -190,22 +192,26 @@
                 // Check the validation at this level
                 this.v$.$touch();
 
+                // Check the validation at this level
+                const hasFormErrors = await this.v$.$validate();
+                console.log("V: ", this.v$);
+
                 //NEED TO USE MIXIN FOR THIS SECTION
-                // if (this.v$.$invalid) {
-                //     //Show the error dialog and notify to the user that there were field missing.
-                //     var elem_cont = document.getElementById("errorModalContent");
+                if (!hasFormErrors) {
+                    //Show the error dialog and notify to the user that there were field missing.
+                    var elem_cont = document.getElementById("errorModalContent");
 
-                //     // Update the content
-                //     elem_cont.innerHTML =
-                //         `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
+                    // Update the content
+                    elem_cont.innerHTML =
+                        `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
 
-                //     // Show the modal
-                //     var errorModal = new Modal(document.getElementById('errorModal'));
-                //     errorModal.show();
+                    // Show the modal
+                    var errorModal = new Modal(document.getElementById('errorModal'));
+                    errorModal.show();
 
-                //     //Just return - as we do not need to do the rest of this function
-                //     return;
-                // }
+                    //Just return - as we do not need to do the rest of this function
+                    return;
+                }
 
                 //Create the data_to_send
                 const data_to_send = new FormData();
