@@ -194,7 +194,6 @@
 
                 // Check the validation at this level
                 const hasFormErrors = await this.v$.$validate();
-                console.log("V: ", this.v$);
 
                 //NEED TO USE MIXIN FOR THIS SECTION
                 if (!hasFormErrors) {
