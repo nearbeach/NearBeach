@@ -109,7 +109,6 @@ def document_add_link(request, destination, location_id):
         "document_key__document_description",
         "document_key__document_url_location",
         "document_key__document",
-        "document_key__whiteboard",
         "folder",
     )
 
@@ -141,7 +140,6 @@ def document_list_files(request, destination, location_id):
         "document_key__document_description",
         "document_key__document_url_location",
         "document_key__document",
-        "document_key__whiteboard",
         "folder",
     )
 
@@ -253,7 +251,6 @@ def document_upload(request, destination, location_id):
         "document_key__document_description",
         "document_key__document_url_location",
         "document_key__document",
-        "document_key__whiteboard",
         "folder",
     )
 
@@ -377,7 +374,7 @@ def private_download_file(request, document_key):
     )
 
     # If the object_assignment_results.count() == 0, then user does not have permissions
-    if object_assignment_results.count() == 0 & request.user.is_superuser is False:
+    if object_assignment_results.count() == 0 & request.user.is_superuser == False:
         return HttpResponseBadRequest("Sorry - there is no document")
 
     # Get Document information
