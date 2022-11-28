@@ -195,7 +195,7 @@
                 let profile_picture = this.customerResults[0].fields.customer_profile_picture;
                 if (profile_picture !== undefined && profile_picture !== null && profile_picture !== "") {
                     //There exists a profile image for the user
-                    this.profilePicture = `/media/${this.rootUrl}${this.customerResults[0].fields.customer_profile_picture}`;
+                    this.profilePicture = `/private${this.rootUrl}${this.customerResults[0].fields.customer_profile_picture}`;
                 } else {
                     //Go back to default
                     this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg` 

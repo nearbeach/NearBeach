@@ -1,4 +1,5 @@
 from NearBeach.models import (
+    customer,
     kanban_board,
     kanban_card,
     organisation,
@@ -11,6 +12,7 @@ from NearBeach.models import (
 )
 
 OBJECT_DICT = {
+    "customer": customer.objects,
     "project": project.objects,
     "task": task.objects,
     "requirement": requirement.objects,

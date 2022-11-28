@@ -329,15 +329,15 @@ def private_download_file(request, document_key):
         )
         & Q(
             # One of these conditions have to be met
+            # Q(
+            #     # If the document is uploaded against a customer
+            #     customer__isnull=False,
+            # )
+            # | Q(
+            #     # If the document is uploaded against an organisation
+            #     organisation__isnull=False,
+            # )
             Q(
-                # If the document is uploaded against a customer
-                customer__isnull=False,
-            )
-            | Q(
-                # If the document is uploaded against an organisation
-                organisation__isnull=False,
-            )
-            | Q(
                 # Project Links
                 project__isnull=False,
                 project_id__in=document_permission_results.values("project_id"),
@@ -373,8 +373,13 @@ def private_download_file(request, document_key):
         )
     )
 
+    profile_picture_permission = document_permission_results.filter(
+        Q(customer__isnull=False,)
+        | Q(organisation__isnull=False)
+    )
+
     # If the object_assignment_results.count() == 0, then user does not have permissions
-    if object_assignment_results.count() == 0 & request.user.is_superuser == False:
+    if object_assignment_results.count() == 0 and profile_picture_permission.count() == 0 and request.user.is_superuser == False:
         return HttpResponseBadRequest("Sorry - there is no document")
 
     # Get Document information

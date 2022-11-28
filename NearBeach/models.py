@@ -488,8 +488,11 @@ class customer(models.Model):
     customer_first_name = models.CharField(max_length=50)
     customer_last_name = models.CharField(max_length=50)
     customer_email = models.CharField(max_length=200)
-    customer_profile_picture = models.ImageField(
-        blank=True, null=True, upload_to="profile_pictures"
+    customer_profile_picture = models.ForeignKey(
+        "document",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
     organisation = models.ForeignKey(
         "organisation",
