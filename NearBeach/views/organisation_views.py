@@ -9,6 +9,7 @@ from NearBeach.decorators.check_user_permissions import (
 )
 from NearBeach.forms import OrganisationForm, ProfilePictureForm
 from NearBeach.models import organisation, customer, list_of_title
+from NearBeach.views.document_views import handle_document_permissions
 
 
 @require_http_methods(["POST"])
@@ -19,8 +20,10 @@ def get_profile_picture(request, organisation_id):
     :return:
     """
     organisation_results = organisation.objects.get(organisation_id=organisation_id)
-
-    return HttpResponse(organisation_results.organisation_profile_picture.url)
+    
+    return HttpResponse(
+        f"/private/{organisation_results.organisation_profile_picture.document_key}"
+    )
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -186,9 +189,22 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    file = form.cleaned_data["file"]
+    document_description = str(file)
+
+    # Upload the document
+    document_submit, _ = handle_document_permissions(
+        request, 
+        request.FILES["file"],
+        file,
+        document_description,
+        "organisation",
+        organisation_id
+    )
+
     # Get the organisation object
     update_organisation = organisation.objects.get(organisation_id=organisation_id)
-    update_organisation.organisation_profile_picture = form.cleaned_data["file"]
+    update_organisation.organisation_profile_picture = document_submit
     update_organisation.save()
 
     # Return success

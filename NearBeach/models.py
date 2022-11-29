@@ -1783,7 +1783,12 @@ class organisation(models.Model):
     organisation_name = models.CharField(max_length=255)
     organisation_website = models.CharField(max_length=50)
     organisation_email = models.CharField(max_length=100)
-    organisation_profile_picture = models.ImageField(blank=True, null=True)
+    organisation_profile_picture = models.ForeignKey(
+        "document",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

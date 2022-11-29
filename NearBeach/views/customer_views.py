@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_customer_permissions
 from NearBeach.models import customer, document, document_permission, list_of_title, organisation
 from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
-from NearBeach.views.document_views import handle_file_upload, set_object_from_destination
+from NearBeach.views.document_views import handle_document_permissions
 
 import boto3
 
@@ -81,78 +81,27 @@ def customer_information_save(request, customer_id, *args, **kwargs):
 @login_required(login_url="login", redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=2)
 def customer_update_profile(request, customer_id, *args, **kwargs):
-    """ """
     form = ProfilePictureForm(request.POST, request.FILES)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # Method
-    # 1. Create a private document (table document)
-    # 2. Connect the document foreign key to the customer
-    # Notes - the permissions will check both customers/organisations
-    # to see if this image is connected to them - if it is pass check
     file = form.cleaned_data["file"]
     document_description = str(file)
 
-    # Add the document row
-    document_submit = document(
-        change_user=request.user,
-        document_description=document_description,
+    # Upload the document
+    document_submit, _ = handle_document_permissions(
+        request, 
+        request.FILES["file"],
+        file,
+        document_description,
+        "customer",
+        customer_id
     )
-    document_submit.save()
-
-    # Add the document location
-    document_submit.document = f"private/{document_submit.document_key}/{file}"
-    document_submit.save()
-
-    # Add the document permission row
-    document_permission_submit = document_permission(
-        change_user=request.user,
-        document_key=document_submit,
-    )
-    document_permission_submit = set_object_from_destination(
-        document_permission_submit, "customer", customer_id
-    )
-    document_permission_submit.save()
-
-    # Get current document results to send back
-    document_results = document_permission.objects.filter(
-        is_deleted=False,
-        document_key=document_submit,
-    ).values(
-        "document_key_id",
-        "document_key__document_description",
-        "document_key__document_url_location",
-        "document_key__document",
-        "folder",
-    )
-
-    # Handle the document upload
-    if hasattr(settings, "AWS_ACCESS_KEY_ID"):
-        # Use boto to upload the file
-        s3 = boto3.client(
-            "s3",
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
-
-        # Upload a new file
-        s3.upload_fileobj(
-            file,
-            settings.AWS_STORAGE_BUCKET_NAME,
-            f"private/{document_submit.document_key}/{file}",
-        )
-    else:
-        print("Before Handle file upload")
-        handle_file_upload(request.FILES["file"], document_results, file)
-        print("After Handle File Upload")
 
     # Update the customer
-    print("Update Customer")
     update_customer = customer.objects.get(customer_id=customer_id)
     update_customer.customer_profile_picture = document_submit
     update_customer.save()
-    print("Customer Updated")
 
     return HttpResponse("")
 
