@@ -6,8 +6,8 @@ import { createApp } from 'vue/dist/vue.esm-bundler';
 import { store } from './vuex-store';
 
 //Import Bootstrap
-// import { createPopper } from '@popperjs/core';
-// import bootstrap from 'bootstrap';
+import { createPopper } from '@popperjs/core';
+import bootstrap from 'bootstrap';
 
 //SCSS Library
 import '../sass/main.scss';
