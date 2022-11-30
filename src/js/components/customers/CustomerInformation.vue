@@ -22,6 +22,7 @@
                              class="customer-profile-image"
                         />
                         <n-upload
+                            v-if="userLevel > 1"
                             :action="`${rootUrl}customer_information/${customerResults[0]['pk']}/update_profile/`"
                             :headers="{
                                 'X-CSRFTOKEN': getToken('csrftoken'),
@@ -88,8 +89,10 @@
 
             <!-- NEED TO APPLY PERMISSIONS -->
             <!-- Submit Button -->
-            <hr>
-            <div class="row submit-row">
+            <hr v-if="userLevel > 1">
+            <div v-if="userLevel > 1" 
+                 class="row submit-row"
+            >
                 <div class="col-md-12">
                     <a href="javascript:void(0)"
                        class="btn btn-primary save-changes"
@@ -157,6 +160,10 @@
                 default: function() {
                     return [];
                 },
+            },
+            userLevel: {
+                type: Number,
+                default: 0,
             },
         },
         data() {

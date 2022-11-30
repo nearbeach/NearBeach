@@ -40,6 +40,7 @@ def customer_information(request, customer_id, *args, **kwargs):
         "nearbeach_title": f"Customer Information {customer_id}",
         "organisation_results": serializers.serialize("json", organisation_results),
         "title_list": serializers.serialize("json", title_list),
+        "user_level": kwargs["user_level"],
     }
 
     return HttpResponse(t.render(c, request))
