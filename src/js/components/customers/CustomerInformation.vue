@@ -3,6 +3,8 @@
         <div class="card-body">
             <!-- TITLE -->
             <h1>Customer Information</h1>
+            <br />
+            <a v-bind:href="`${rootUrl}search/customer/`">Go back to customer search</a>
             <hr>
 
             <!-- FIELDS SECTION -->

@@ -33,8 +33,10 @@
 
         <!-- Submit Button -->
         <!-- TO DO - limit it to certain users -->
-        <hr>
-        <div class="row submit-row">
+        <hr v-if="userLevel > 1">
+        <div v-if="userLevel > 1" 
+             class="row submit-row"
+        >
             <div class="col-md-12">
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
@@ -92,6 +94,7 @@
         computed: {
             ...mapGetters({
                 rootUrl: 'getRootUrl',
+                userLevel: 'getUserLevel',
             })
         },
         methods: {

@@ -102,8 +102,10 @@
 
                     <!-- ADD CUSTOMER BUTTON -->
                     <!-- ADD IN PERMISSIONS -->
-                    <hr>
-                    <div class="row submit-row">
+                    <hr v-if="userLevel > 1">
+                    <div v-if="userLevel > 1"
+                         class="row submit-row"
+                    >
                         <div class="col-md-12">
                             <button class="btn btn-primary save-changes"
                                     v-on:click="addNewContact"
@@ -169,6 +171,9 @@
     import AssociatedObjects from "../modules/sub_modules/AssociatedObjects.vue";
     import DocumentsModule from "../modules/sub_modules/DocumentsModule.vue";
 
+    //VueX
+    import { mapGetters } from 'vuex';
+
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
 
@@ -216,6 +221,11 @@
                 type: Number,
                 default: 0,
             },
+        },
+        computed: {
+            ...mapGetters({
+                userLevel: 'getUserLevel',
+            }),
         },
         mixins: [
             iconMixin,

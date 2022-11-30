@@ -150,9 +150,10 @@
             </div>
             
             <!-- GO BACK -->
-            <hr>
+            <hr v-if="userLevel > 1">
             <!-- CANCEL -->
-            <a v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
+            <a v-if="userLevel > 1"
+               v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
                class="btn btn-secondary cancel-changes"
             >Cancel</a>
 

@@ -129,8 +129,10 @@
             </div>
 
             <!-- Submit Button -->
-            <hr>
-            <div class="row submit-row">
+            <hr v-if="userLevel > 1">
+            <div v-if="userLevel > 1"
+                 class="row submit-row"
+            >
                 <div class="col-md-12">
                     <a href="javascript:void(0)"
                        class="btn btn-primary save-changes"
@@ -205,13 +207,15 @@
             ...mapGetters({
                 rootUrl: "getRootUrl",
                 staticUrl: "getStaticUrl",
+                userLevel: "getUserLevel",
             }),
             getStakeholderImage: function() {
-                if (this.stakeholderModel['organisation_profile_picture'] == '') {
+                const image = this.stakeholderModel['organisation_profile_picture'];
+                if (image === '' || image === null) {
                     //There is no image - return the default image
                     return this.defaultStakeholderImage;
                 }
-                return this.stakeholderModel['organisation_profile_picture']
+                return `${this.rootUrl}private/${this.stakeholderModel['organisation_profile_picture']}`;
             },
         },
         mixins: [

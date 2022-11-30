@@ -1,12 +1,20 @@
 {% extends 'NearBeach/template.html' %}
 {% load static %}
 {% block content %}
+    {% if user_level == 1%}
+        <fieldset disabled="true">
+    {% endif %}
+
     <requirement-item-information v-bind:requirement-item-results="{{requirement_item_results}}"
                              v-bind:organisation-results="{{organisation_results}}"
                              v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
                              v-bind:status-list="{{status_list}}"
                              v-bind:type-list="{{type_list}}"
     ></requirement-item-information>
+    
+    {% if user_level == 1%}
+        </fieldset>
+    {% endif %}
 
     <div class="spacer"></div>
 
