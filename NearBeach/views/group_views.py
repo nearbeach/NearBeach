@@ -8,6 +8,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import SearchForm, NewGroupForm
 from NearBeach.models import group, user_group
+from NearBeach.views.tools.internal_functions import get_user_permissions
 
 import json
 
@@ -53,28 +54,7 @@ def group_information(request, group_id):
         is_deleted=False,
     )
 
-    user_list_results = (
-        user_group.objects.filter(
-            is_deleted=False,
-            group_id=group_id,
-        )
-        .values(
-            "username",
-            "username__first_name",
-            "username__last_name",
-            "username__email",
-            "group_leader",
-            "group",
-            "group__group_name",
-            "permission_set",
-            "permission_set__permission_set_name",
-        )
-        .order_by(
-            "username__first_name",
-            "username__last_name",
-            "permission_set__permission_set_name",
-        )
-    )
+    user_list_results = get_user_permissions("group_id", group_id)
 
     # Convert into json
     user_list_results = json.dumps(list(user_list_results), cls=DjangoJSONEncoder)

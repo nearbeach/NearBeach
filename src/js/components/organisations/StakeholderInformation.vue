@@ -70,11 +70,12 @@
                 staticUrl: 'getStaticUrl',
             }),
             getStakeholderImage: function() {
-                if (this.stakeholderModel['organisation_profile_picture'] === '') {
+                const image = this.stakeholderModel['organisation_profile_picture'];
+                if (image === '' || image === null) {
                     //There is no image - return the default image
                     return this.defaultStakeholderImage;
                 }
-                return "/media/" + this.stakeholderModel['organisation_profile_picture']
+                return `${this.rootUrl}private/${image}`;
             }
         },
     }

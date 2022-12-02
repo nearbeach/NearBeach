@@ -3,6 +3,8 @@
         <div class="card-body">
             <!-- TITLE -->
             <h1>Organisation Information</h1>
+            <br />
+            <a v-bind:href="`${rootUrl}search/organisation/`">Back to organisation search</a>
             <hr>
 
             <!-- FIELDS SECTION -->
@@ -21,7 +23,7 @@
                     />
                     <br/>
                     <!--<button class="btn btn-primary">Update Profile...</button>-->
-                    <n-upload
+                    <n-upload v-if="userLevel > 1"
                         :action="`${rootUrl}organisation_information/${organisationResults[0]['pk']}/update_profile/`"
                         :headers="{
                             'X-CSRFTOKEN': getToken('csrftoken'),
@@ -88,8 +90,10 @@
 
             <!-- NEED TO APPLY PERMISSIONS -->
             <!-- Submit Button -->
-            <hr>
-            <div class="row submit-row">
+            <hr v-if="userLevel > 1">
+            <div v-if="userLevel > 1"
+                 class="row submit-row"
+            >
                 <div class="col-md-12">
                     <a href="javascript:void(0)"
                        class="btn btn-primary save-changes"
@@ -144,6 +148,7 @@
             ...mapGetters({
                 rootUrl: "getRootUrl",
                 staticUrl: "getStaticUrl",
+                userLevel: "getUserLevel",
             }),
         },
         data() {
@@ -174,7 +179,7 @@
 
                 if (profile_picture !== undefined && profile_picture !== null && profile_picture !== "") {
                     //There is a profile image
-                    this.profilePicture = `/media/${this.rootUrl}${profile_picture}`;
+                    this.profilePicture = `${this.rootUrl}private/${profile_picture}`;
                 } else {
                     this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`
                 }

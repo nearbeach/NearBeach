@@ -74,7 +74,7 @@ def change_task_delete(request, change_task_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_change_task_permissions(min_permission_level=2)
-def change_task_save(request, change_task_id):
+def change_task_save(request, change_task_id, *args, **kwargs):
     """ """
     # Get form data
     form = ChangeTaskForm(request.POST)

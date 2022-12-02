@@ -26,6 +26,23 @@
                 </div>
             </div>
 
+            <!-- NOTIFY USERS OF DATE RESTRICTIONS -->
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>Date Restrictions</strong>
+                    <p class="text-instructions">
+                        Start and End dates of the RFC
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    Start Date: <span>{{formatDate(rfcStartDate)}}</span>
+                </div>
+                <div class="col-md-4">
+                    End Date: <span>{{formatDate(rfcEndDate)}}</span>
+                </div>
+            </div>
+
             <!-- START DATE & END DATE -->
             <hr>
             <between-dates destination="Change Task"
@@ -48,7 +65,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <lable>Implementation User</lable>
+                                <label>Implementation User</label>
                                 <n-select v-bind:options="userListFixed"
                                             v-model:value="assignedUserModel"
                                 ></n-select>
@@ -56,7 +73,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <lable>QA User</lable>
+                                <label>QA User</label>
                                 <n-select v-model:value="qaUserModel" 
                                             v-bind:options="userListFixed" 
                                 />
@@ -79,9 +96,12 @@
                     <label>Change Task Description (Optional):</label>
                     <editor
                        :init="{
+                         file_picker_types: 'image',
                          height: 300,
+                         images_upload_handler: customUploadImage,
                          menubar: false,
-                         plugins: ['lists','table'],
+                         paste_data_images: true,
+                         plugins: ['lists','paste','table'],
                         toolbar: [
                            'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
                            'bold italic strikethrough underline backcolor | table | ' +
@@ -130,9 +150,10 @@
             </div>
             
             <!-- GO BACK -->
-            <hr>
+            <hr v-if="userLevel > 1">
             <!-- CANCEL -->
-            <a v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
+            <a v-if="userLevel > 1"
+               v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
                class="btn btn-secondary cancel-changes"
             >Cancel</a>
 
@@ -175,10 +196,16 @@
 </template>
 
 <script>
+    //Axios
     const axios = require('axios');
+    
+    //Widgets
     import Editor from '@tinymce/tinymce-vue';
     import BetweenDates from "../dates/BetweenDates.vue";
     import { NSelect } from 'naive-ui';
+    
+    //Vuex
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "ChangeTaskInformation",
@@ -231,7 +258,42 @@
                 })
             }
         },
+        computed: {
+            ...mapGetters({
+                rfcEndDate: 'getEndDate',
+                rfcStartDate: 'getStartDate',
+            })
+        },
         methods: {
+            customUploadImage: function(blobInfo, success, failure, progress) {
+                //Create the form
+                const data_to_send = new FormData();
+                data_to_send.set('document', blobInfo.blob(), blobInfo.filename());
+                data_to_send.set('document_description', blobInfo.filename());
+
+                //Configuration for axios
+                const config = {
+                    onUploadProgress: progressEvent => {
+                        //As the document gets uploaded - we want to update the upload Percentage
+                        progress = parseFloat(progressEvent['loaded']) / parseFloat(progressEvent['total']);
+                    }
+                }
+                
+                //Create url
+                const url = `${this.rootUrl}documentation/request_for_change/${this.changeTaskResults[0].fields.request_for_change}/upload/`;
+
+                //Use axios to send the data
+                axios.post(
+                    url,
+                    data_to_send,
+                    config,
+                ).then(response => {
+                    //Just send the location to the success
+                    success(`/private/${response.data[0].document_key_id}`);
+                }).catch(error => {
+                    failure("Yeah, shit didn't work");
+                })
+            },
             isDowntime: function() {
                 if (this.changeIsDowntimeModel) {
                     return `Downtime Scheduled`;
@@ -246,6 +308,19 @@
                     //If successful, go back
                     window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
                 })
+            },
+            formatDate: function(date) {
+                //Setup the date
+                let new_date = new Date(date);
+                
+                //Split the date into date vs time
+                new_date = new_date.toISOString().split("T");
+
+                //Split the time
+                const time_split = new_date[1].split(".");
+                
+                //Return the date as a string
+                return `${new_date[0]} ${time_split[0]}`
             },
             saveChangeTask: function(event) {
                 //Stop the usual stuff
@@ -296,7 +371,7 @@
                 this.changeStartDateModel = data['start_date'];
                 this.changeEndDateModel = data['end_date'];
             },
-        }
+        },
     }
 </script>
 

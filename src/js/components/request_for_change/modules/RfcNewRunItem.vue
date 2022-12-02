@@ -31,6 +31,23 @@
                         </div>
                     </div>
                 </div>
+            
+                <!-- NOTIFY USERS OF DATE RESTRICTIONS -->
+                <hr>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Date Restrictions</strong>
+                        <p class="text-instructions">
+                            Start and End dates of the RFC
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        Start Date: <span>{{formatDate(rfcStartDate)}}</span>
+                    </div>
+                    <div class="col-md-4">
+                        End Date: <span>{{formatDate(rfcEndDate)}}</span>
+                    </div>
+                </div>
 
                 <!-- START DATE & END DATE -->
                 <hr>
@@ -197,10 +214,25 @@
         }),
         computed: {
             ...mapGetters({
+                rfcEndDate: 'getEndDate',
+                rfcStartDate: 'getStartDate',
                 rootUrl: 'getRootUrl',
             })
         },
         methods: {
+            formatDate: function(date) {
+                //Setup the date
+                let new_date = new Date(date);
+                
+                //Split the date into date vs time
+                new_date = new_date.toISOString().split("T");
+
+                //Split the time
+                const time_split = new_date[1].split(".");
+                
+                //Return the date as a string
+                return `${new_date[0]} ${time_split[0]}`
+            },
             isDowntime: function() {
                 if (this.changeIsDowntimeModel) {
                     return `Downtime Scheduled`;

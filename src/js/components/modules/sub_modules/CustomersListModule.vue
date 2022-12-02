@@ -62,11 +62,13 @@
         },
         methods: {
             getCustomerImage: function(customer) {
-                if (customer['fields']['customer_profile_picture'] === '') {
+                const image = customer['fields']['customer_profile_picture'];
+
+                if (image === '' || image === null) {
                     //There is no image - return the default image
                     return this.defaultCustomerImage;
                 }
-                return `/media/${customer['fields']['customer_profile_picture']}`;
+                return `${this.rootUrl}private/${image}`;
             },
         },
     }

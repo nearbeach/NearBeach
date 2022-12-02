@@ -2,6 +2,7 @@ from django.core.exceptions import PermissionDenied
 from functools import wraps
 
 OBJECT_ARRAY = [
+    "change_task",
     "customer",
     "kanban",
     "kanban_board",

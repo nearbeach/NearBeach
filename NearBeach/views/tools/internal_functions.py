@@ -1,4 +1,5 @@
 from NearBeach.models import (
+    customer,
     kanban_board,
     kanban_card,
     organisation,
@@ -7,10 +8,11 @@ from NearBeach.models import (
     requirement,
     requirement_item,
     task,
-    whiteboard,
+    user_group,
 )
 
 OBJECT_DICT = {
+    "customer": customer.objects,
     "project": project.objects,
     "task": task.objects,
     "requirement": requirement.objects,
@@ -19,7 +21,6 @@ OBJECT_DICT = {
     "kanban_card": kanban_card.objects,
     "organisation": organisation.objects,
     "request_for_change": request_for_change.objects,
-    "whiteboard": whiteboard.objects,
 }
 
 
@@ -39,6 +40,33 @@ def get_object_from_destination(input_object, destination, location_id):
 
     # Just send back the array
     return input_object
+
+
+# Internal Function
+def get_user_permissions(field, value):
+    return (
+        user_group.objects.filter(
+            is_deleted=False,
+            **{field: value},
+        )
+        .values(
+            "username",
+            "username__first_name",
+            "username__last_name",
+            "username__email",
+            "group",
+            "group__group_name",
+            "group_leader",
+            "permission_set",
+            "permission_set__permission_set_name",
+        )
+        .order_by(
+            "username__first_name",
+            "username__last_name",
+            "group__group_name",
+            "permission_set__permission_set_name",
+        )
+    )
 
 
 # Internal function

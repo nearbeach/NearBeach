@@ -116,7 +116,7 @@
                 },100);
 
                 // Check the validation at this level
-                const isFormCorrect = await this.v$.$validate()
+                const isFormCorrect = await this.v$.$validate();
 
                 //NEED TO USE MIXIN FOR THIS SECTION
                 if (isFormCorrect) {

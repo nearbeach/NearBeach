@@ -11,9 +11,12 @@
             <div class="col-md-8">
                 <editor
                     :init="{
+                        file_picker_types: 'image',
                         height: 300,
+                        images_upload_handler: uploadImage,
                         menubar: false,
-                        plugins: ['lists','table'],
+                        paste_data_images: true,
+                        plugins: ['lists','paste','table'],
                         toolbar: [
                            'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
                            'bold italic strikethrough underline backcolor | table | ' +
@@ -47,9 +50,17 @@
 </template>
 
 <script>
+    //Axios
     const axios = require('axios');
+
+    //TinyMce
     import Editor from '@tinymce/tinymce-vue'
+
+    //VueX
     import { mapGetters } from 'vuex';
+
+    //Mixins
+    import uploadMixin from "../../mixins/uploadMixin";
 
     export default {
         name: 'CardDescription',
@@ -76,6 +87,9 @@
                 },
             },
         },
+        mixins: [
+            uploadMixin,
+        ],
         methods: {
             closeModal: function() {
                 document.getElementById("cardInformationModalCloseButton").click();

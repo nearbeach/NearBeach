@@ -3,6 +3,8 @@
         <div class="card-body">
             <!-- TITLE -->
             <h1>Customer Information</h1>
+            <br />
+            <a v-bind:href="`${rootUrl}search/customer/`">Go back to customer search</a>
             <hr>
 
             <!-- FIELDS SECTION -->
@@ -22,6 +24,7 @@
                              class="customer-profile-image"
                         />
                         <n-upload
+                            v-if="userLevel > 1"
                             :action="`${rootUrl}customer_information/${customerResults[0]['pk']}/update_profile/`"
                             :headers="{
                                 'X-CSRFTOKEN': getToken('csrftoken'),
@@ -88,8 +91,10 @@
 
             <!-- NEED TO APPLY PERMISSIONS -->
             <!-- Submit Button -->
-            <hr>
-            <div class="row submit-row">
+            <hr v-if="userLevel > 1">
+            <div v-if="userLevel > 1" 
+                 class="row submit-row"
+            >
                 <div class="col-md-12">
                     <a href="javascript:void(0)"
                        class="btn btn-primary save-changes"
@@ -158,6 +163,10 @@
                     return [];
                 },
             },
+            userLevel: {
+                type: Number,
+                default: 0,
+            },
         },
         data() {
             return {
@@ -195,7 +204,7 @@
                 let profile_picture = this.customerResults[0].fields.customer_profile_picture;
                 if (profile_picture !== undefined && profile_picture !== null && profile_picture !== "") {
                     //There exists a profile image for the user
-                    this.profilePicture = `/media/${this.rootUrl}${this.customerResults[0].fields.customer_profile_picture}`;
+                    this.profilePicture = `/private${this.rootUrl}${this.customerResults[0].fields.customer_profile_picture}`;
                 } else {
                     //Go back to default
                     this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg` 

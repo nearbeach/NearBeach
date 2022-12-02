@@ -78,7 +78,6 @@ def get_requirement_item_links(requirement_item_id):
         Q(is_deleted=False, requirement_item_id=requirement_item_id)
         & Q(
             Q(opportunity_id__isnull=False)
-            | Q(quote_id__isnull=False)
             | Q(project_id__isnull=False)
             | Q(task_id__isnull=False)
         )
@@ -86,9 +85,6 @@ def get_requirement_item_links(requirement_item_id):
         "opportunity_id",
         "opportunity_id__opportunity_name",
         "opportunity_id__opportunity_stage_id__opportunity_stage_description",
-        "quote_id",
-        "quote_id__quote_title",
-        "quote_id__quote_stage_id__quote_stage",
         "project_id",
         "project_id__project_name",
         "project_id__project_status",

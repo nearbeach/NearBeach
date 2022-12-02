@@ -13,6 +13,7 @@ from NearBeach.models import (
     PERMISSION_BOOLEAN,
     PERMISSION_LEVEL,
 )
+from NearBeach.views.tools.internal_functions import get_user_permissions
 
 import json
 
@@ -83,27 +84,7 @@ def permission_set_information(request, permission_set_id):
         permission_set_id=permission_set_id
     )
 
-    user_list_results = (
-        user_group.objects.filter(
-            is_deleted=False,
-            permission_set_id=permission_set_id,
-        )
-        .values(
-            "username",
-            "username__first_name",
-            "username__last_name",
-            "username__email",
-            "group",
-            "group__group_name",
-            "permission_set",
-            "permission_set__permission_set_name",
-        )
-        .order_by(
-            "username__first_name",
-            "username__last_name",
-            "permission_set__permission_set_name",
-        )
-    )
+    user_list_results = get_user_permissions("permission_set_id", permission_set_id)
     user_list_results = json.dumps(list(user_list_results), cls=DjangoJSONEncoder)
 
     # Create the context

@@ -4,13 +4,7 @@
              :key="customer.pk"
         >
             <div class="organisation-details">
-                <img v-if="customer['fields']['customer_profile_picture'] == ''"
-                     v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"
-                     alt="Stakeholder Logo"
-                     class="organisation-image"
-                >
-                <img v-else
-                     v-bind:src="`${rootUrl}media/${customer['fields']['customer_profile_picture']}`"
+                <img v-bind:src="getProfilePicture(customer)"
                      alt="Stakeholder Logo"
                      class="organisation-image"
                 >
@@ -60,6 +54,18 @@
         mixins: [
             iconMixin
         ],
+        methods: {
+            getProfilePicture: function(customer) {
+                const image = customer['fields']['customer_profile_picture'];
+
+                //If customer profile is blank - return default picture
+                if (image === '' || image === null) {
+                    return `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
+                }
+
+                return `${this.rootUrl}private/${image}`;
+            }
+        }
     }
 </script>
 

@@ -33,8 +33,10 @@
 
         <!-- Submit Button -->
         <!-- TO DO - limit it to certain users -->
-        <hr>
-        <div class="row submit-row">
+        <hr v-if="userLevel > 1">
+        <div v-if="userLevel > 1" 
+             class="row submit-row"
+        >
             <div class="col-md-12">
                 <a href="javascript:void(0)"
                    class="btn btn-primary save-changes"
@@ -92,6 +94,7 @@
         computed: {
             ...mapGetters({
                 rootUrl: 'getRootUrl',
+                userLevel: 'getUserLevel',
             })
         },
         methods: {
@@ -105,18 +108,10 @@
                     object_link = '/',
                     requirement_item_description = '';
 
-                if (link['opportunity_id'] !== null) {
-                    object_description = link['opportunity_id__opportunity_name'];
-                    object_id = `Opportunity ${link['opportunity_id']}`;
-                    object_link = `${this.rootUrl}opportunity_information/${link['opportunity_id']}`;
-                } else if (link['project_id'] !== null) {
+                if (link['project_id'] !== null) {
                     object_description = link['project_id__project_name'];
                     object_id = `Project ${link['project_id']}`;
                     object_link = `${this.rootUrl}project_information/${link['project_id']}`;
-                } else if (link['quote_id'] !== null) {
-                    object_description = link['quote_id__quote_title'];
-                    object_id = `Quote ${link['quote_id']}`;
-                    object_link = `${this.rootUrl}quote_information/${link['quote_id']}`;
                 } else if (link['task_id'] !== null) {
                     object_description = link['task_id__task_short_description'];
                     object_id = `Task ${link['task_id']}`;
@@ -154,8 +149,6 @@
                     object_status = link['opportunity_id__opportunity_stage_id__opportunity_stage_description'];
                 } else if (link['project_id'] !== null) {
                     object_status = link['project_id__project_status'];
-                } else if (link['quote_id'] !== null) {
-                    object_status = link['quote_id__quote_title'];
                 } else if (link['task_id'] !== null) {
                     object_status = link['task_id__task_status'];
                 }

@@ -2,6 +2,8 @@
     <div class="card">
         <div class="card-body">
             <h1>Group Information</h1>
+            <br />
+            <a v-bind:href="`${this.rootUrl}search/group/`">Back to group list</a>
             <hr>
 
             <div class="row">

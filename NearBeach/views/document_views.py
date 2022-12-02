@@ -109,7 +109,6 @@ def document_add_link(request, destination, location_id):
         "document_key__document_description",
         "document_key__document_url_location",
         "document_key__document",
-        "document_key__whiteboard",
         "folder",
     )
 
@@ -141,7 +140,6 @@ def document_list_files(request, destination, location_id):
         "document_key__document_description",
         "document_key__document_url_location",
         "document_key__document",
-        "document_key__whiteboard",
         "folder",
     )
 
@@ -209,7 +207,6 @@ def document_upload(request, destination, location_id):
     :param folder_id: Which folder we will associate this with
     :return:
     """
-    # WRITE CODE TO CHECK THE USER'S PERMISSION
 
     form = DocumentUploadForm(request.POST, request.FILES)
     if not form.is_valid():
@@ -222,58 +219,15 @@ def document_upload(request, destination, location_id):
         # Replace the document description with the file name
         document_description = str(file)
 
-    # Add the document row
-    document_submit = document(
-        change_user=request.user,
-        document_description=document_description,
+    # Upload the document
+    _, document_results = handle_document_permissions(
+        request, 
+        request.FILES["document"],
+        file,
+        document_description,
+        destination,
+        location_id
     )
-    document_submit.save()
-
-    # Add the document location
-    document_submit.document = f"private/{document_submit.document_key}/{file}"
-    document_submit.save()
-
-    # Add the document permission row
-    document_permission_submit = document_permission(
-        change_user=request.user,
-        document_key=document_submit,
-        folder=form.cleaned_data["parent_folder"],
-    )
-    document_permission_submit = set_object_from_destination(
-        document_permission_submit, destination, location_id
-    )
-    document_permission_submit.save()
-
-    # Get current document results to send back
-    document_results = document_permission.objects.filter(
-        is_deleted=False,
-        document_key=document_submit,
-    ).values(
-        "document_key_id",
-        "document_key__document_description",
-        "document_key__document_url_location",
-        "document_key__document",
-        "document_key__whiteboard",
-        "folder",
-    )
-
-    # Handle the document upload
-    if hasattr(settings, "AWS_ACCESS_KEY_ID"):
-        # Use boto to upload the file
-        s3 = boto3.client(
-            "s3",
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
-
-        # Upload a new file
-        s3.upload_fileobj(
-            file,
-            settings.AWS_STORAGE_BUCKET_NAME,
-            f"private/{document_submit.document_key}/{file}",
-        )
-    else:
-        handle_file_upload(request.FILES["document"], document_results, file)
 
     # Send back json data
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
@@ -332,15 +286,15 @@ def private_download_file(request, document_key):
         )
         & Q(
             # One of these conditions have to be met
+            # Q(
+            #     # If the document is uploaded against a customer
+            #     customer__isnull=False,
+            # )
+            # | Q(
+            #     # If the document is uploaded against an organisation
+            #     organisation__isnull=False,
+            # )
             Q(
-                # If the document is uploaded against a customer
-                customer__isnull=False,
-            )
-            | Q(
-                # If the document is uploaded against an organisation
-                organisation__isnull=False,
-            )
-            | Q(
                 # Project Links
                 project__isnull=False,
                 project_id__in=document_permission_results.values("project_id"),
@@ -376,8 +330,13 @@ def private_download_file(request, document_key):
         )
     )
 
+    profile_picture_permission = document_permission_results.filter(
+        Q(customer__isnull=False,)
+        | Q(organisation__isnull=False)
+    )
+
     # If the object_assignment_results.count() == 0, then user does not have permissions
-    if object_assignment_results.count() == 0 & request.user.is_superuser is False:
+    if object_assignment_results.count() == 0 and profile_picture_permission.count() == 0 and request.user.is_superuser == False:
         return HttpResponseBadRequest("Sorry - there is no document")
 
     # Get Document information
@@ -417,6 +376,62 @@ def private_download_file(request, document_key):
 
     # Send file to user
     return FileResponse(open(path, "rb"))
+
+# Internal Function
+def handle_document_permissions(request, upload, file, document_description, destination, location_id):
+    document_submit = document(
+        change_user=request.user,
+        document_description=document_description,
+    )
+    document_submit.save()
+
+    # Add the document location
+    document_submit.document = f"private/{document_submit.document_key}/{file}"
+    document_submit.save()
+
+    # Add the document permission row
+    document_permission_submit = document_permission(
+        change_user=request.user,
+        document_key=document_submit,
+    )
+    document_permission_submit = set_object_from_destination(
+        document_permission_submit, destination, location_id
+    )
+    document_permission_submit.save()
+
+    # Get current document results to send back
+    document_results = document_permission.objects.filter(
+        is_deleted=False,
+        document_key=document_submit,
+    ).values(
+        "document_key_id",
+        "document_key__document_description",
+        "document_key__document_url_location",
+        "document_key__document",
+        "folder",
+    )
+
+    # Handle the document upload
+    if hasattr(settings, "AWS_ACCESS_KEY_ID"):
+        # Use boto to upload the file
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
+
+        # Upload a new file
+        s3.upload_fileobj(
+            file,
+            settings.AWS_STORAGE_BUCKET_NAME,
+            f"private/{document_submit.document_key}/{file}",
+        )
+    else:
+        print("Before Handle file upload")
+        handle_file_upload(upload, document_results, file)
+        print("After Handle File Upload")
+
+    return document_submit, document_results
 
 
 # Internal Function

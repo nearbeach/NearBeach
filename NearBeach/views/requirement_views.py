@@ -85,7 +85,6 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
         )
         & Q(
             Q(opportunity_id__isnull=False)
-            | Q(quote_id__isnull=False)
             | Q(project_id__isnull=False)
             | Q(task_id__isnull=False)
         )
@@ -93,9 +92,6 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
         "opportunity_id",
         "opportunity_id__opportunity_name",
         "opportunity_id__opportunity_stage_id__opportunity_stage_description",
-        "quote_id",
-        "quote_id__quote_title",
-        "quote_id__quote_stage_id__quote_stage",
         "project_id",
         "project_id__project_name",
         "project_id__project_status",
@@ -172,8 +168,7 @@ def get_requirement_links_list(request, requirement_id, *args, **kwargs):
             requirement_id=requirement_id,
         )
         & Q(
-            Q(quote_id__isnull=False)
-            | Q(project_id__isnull=False)
+            Q(project_id__isnull=False)
             | Q(task_id__isnull=False)
         )
     ).values(

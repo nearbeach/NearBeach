@@ -1,13 +1,16 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_customer_permissions
-from NearBeach.models import customer, list_of_title, organisation
+from NearBeach.models import customer, document, document_permission, list_of_title, organisation
 from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
+from NearBeach.views.document_views import handle_document_permissions
 
+import boto3
 
 @login_required(login_url="login", redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=1)
@@ -37,6 +40,7 @@ def customer_information(request, customer_id, *args, **kwargs):
         "nearbeach_title": f"Customer Information {customer_id}",
         "organisation_results": serializers.serialize("json", organisation_results),
         "title_list": serializers.serialize("json", title_list),
+        "user_level": kwargs["user_level"],
     }
 
     return HttpResponse(t.render(c, request))
@@ -78,13 +82,26 @@ def customer_information_save(request, customer_id, *args, **kwargs):
 @login_required(login_url="login", redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=2)
 def customer_update_profile(request, customer_id, *args, **kwargs):
-    """ """
     form = ProfilePictureForm(request.POST, request.FILES)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    file = form.cleaned_data["file"]
+    document_description = str(file)
+
+    # Upload the document
+    document_submit, _ = handle_document_permissions(
+        request, 
+        request.FILES["file"],
+        file,
+        document_description,
+        "customer",
+        customer_id
+    )
+
+    # Update the customer
     update_customer = customer.objects.get(customer_id=customer_id)
-    update_customer.customer_profile_picture = form.cleaned_data["file"]
+    update_customer.customer_profile_picture = document_submit
     update_customer.save()
 
     return HttpResponse("")
@@ -101,7 +118,9 @@ def get_profile_picture(request, customer_id):
     customer_results = customer.objects.get(customer_id=customer_id)
 
     # Just return the customer profile picture
-    return HttpResponse(customer_results.customer_profile_picture.url)
+    return HttpResponse(
+        f"/private/{customer_results.customer_profile_picture.document_key}"
+    )
 
 
 @login_required(login_url="login", redirect_field_name="")

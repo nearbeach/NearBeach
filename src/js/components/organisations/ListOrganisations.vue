@@ -5,13 +5,7 @@
              class="row"
         >
             <div class="organisation-details">
-                <img v-if="organisation['fields']['organisation_profile_picture'] == ''"
-                     v-bind:src="`${staticUrl}/NearBeach/images/placeholder/product_tour.svg`"
-                     alt="Stakeholder Logo"
-                     class="organisation-image"
-                >
-                <img v-else
-                     v-bind:src="organisation['fields']['organisation_profile_picture']"
+                <img v-bind:src="getProfilePicture(organisation)"
                      alt="Stakeholder Logo"
                      class="organisation-image"
                 >
@@ -71,7 +65,16 @@
             iconMixin,
         ],
         methods: {
+            getProfilePicture: function(organisation) {
+                const image = organisation['fields']['organisation_profile_picture'];
 
+                //If customer profile is blank - return default picture
+                if (image === '' || image === null) {
+                    return `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
+                }
+
+                return `${this.rootUrl}private/${image}`;
+            }
         }
     }
 </script>

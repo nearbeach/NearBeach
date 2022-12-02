@@ -11,6 +11,10 @@
                     <p class="text-instructions">
                         To create a new project, fill out the form and submit at the bottom of the page.
                     </p>
+                    <p class="text-instructions">
+                        <strong>Note: </strong>Media files can not be uploaded until AFTER you save.
+                        This is a security feature.
+                    </p>
                 </div>
 
                 <!-- PROJECT FORM -->
@@ -39,8 +43,11 @@
                     />
                     <editor
                        :init="{
+                         file_picker_types: 'image',
+                         images_upload_handler: failUpload,
                          height: 500,
                          menubar: false,
+                         paste_data_images: false,
                          plugins: ['lists','table'],
                          toolbar: [
                              'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
@@ -102,6 +109,7 @@
 
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin";
+    import uploadMixin from "../../mixins/uploadMixin";
 
     export default {
         name: "NewProject",
@@ -138,6 +146,7 @@
         },
         mixins: [
             errorModalMixin,
+            uploadMixin,
         ],
         data() {
             return {

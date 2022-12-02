@@ -41,9 +41,12 @@
                     />
                     <editor
                        :init="{
+                         file_picker_types: 'image',
                          height: 500,
+                         images_upload_handler: uploadImage,
                          menubar: false,
-                         plugins: ['lists','table'],
+                         paste_data_images: true,
+                         plugins: ['lists','paste','table'],
                         toolbar: [
                            'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
                            'bold italic strikethrough underline backcolor | table | ' +
@@ -155,6 +158,7 @@
     //Mixins
     import errorModalMixin from "../../mixins/errorModalMixin.js";
     import loadingModalMixin from "../../mixins/loadingModalMixin.js";
+    import uploadMixin from "../../mixins/uploadMixin";
 
     export default {
         name: "RequirementInformation",
@@ -182,7 +186,8 @@
         },
         mixins: [
             errorModalMixin,
-            loadingModalMixin
+            loadingModalMixin,
+            uploadMixin,
         ],
         data() {
             return {
