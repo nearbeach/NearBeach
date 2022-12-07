@@ -103,7 +103,7 @@ def archive_kanban_cards(request, *args, **kwargs):
     card_list = request.POST.getlist("kanban_card_id")
 
     # Update all cards
-    kanban_card.objects.filter(kanban_card_id__in=card_list,).update(
+    kanban_card.objects.filter(kanban_card_id__in=card_list).update(
         is_archived=True,
     )
 

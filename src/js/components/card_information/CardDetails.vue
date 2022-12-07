@@ -70,6 +70,12 @@
                 >
                     Close
                 </button>
+                <button class="btn btn-danger archive-card"
+                        v-on:click="archiveCard"
+                        v-if="kanbanStatus !== 'Closed'"
+                >
+                    Archive Card
+                </button>
                 <button class="btn btn-primary save-changes"
                         v-on:click="updateCard"
                         v-if="kanbanStatus !== 'Closed'"
@@ -85,6 +91,7 @@
     const axios = require('axios');
     import { NSelect } from 'naive-ui';
     import { mapGetters } from 'vuex';
+    import { Modal } from 'bootstrap';
 
     export default {
         name: 'CardDetails',
@@ -122,6 +129,14 @@
             },
         },
         methods: {
+            archiveCard: function() {
+                //Close the current modal
+                document.getElementById("cardInformationModalCloseButton").click();
+
+                //Open up the archive card modal
+                const confirmCardArchive = new Modal("#confirmCardArchiveModal");
+                confirmCardArchive.show();
+            },
             closeModal: function() {
                 document.getElementById("cardInformationModalCloseButton").click();
             },

@@ -19,6 +19,8 @@
         <!-- MODALS -->
         <archive-cards></archive-cards>
 
+        <confirm-card-archive v-bind:card-information="cardInformation"></confirm-card-archive>
+
         <new-kanban-card v-bind:kanban-card-results="kanbanCardResults"
                          v-bind:column-results="columnResults"
                          v-bind:level-results="levelResults"
@@ -46,12 +48,14 @@
     import NewKanbanCard from "../modules/wizards/NewKanbanCard.vue";
     import CardInformation from "../card_information/CardInformation.vue"
     import NewKanbanLinkWizard from "../modules/wizards/NewKanbanLinkWizard.vue";
+    import ConfirmCardArchive from "./ConfirmCardArchive.vue";
 
     export default {
         name: "KanbanInformation",
         components: {
             ArchiveCards,
             CardInformation,
+            ConfirmCardArchive,
             KanbanBoard,
             NewKanbanCard,
             NewKanbanLinkWizard,

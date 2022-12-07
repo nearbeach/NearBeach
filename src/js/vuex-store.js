@@ -182,22 +182,28 @@ const moduleKanban = {
     addCard(state, payload) {
       state.kanbanCardResults.push(payload.newCard[0]);
     },
+    archiveCard(state, payload) {
+      const cardId = payload.cardId;
+
+      //Filter out the card with the card id
+      state.kanbanCardResults = state.kanbanCardResults.filter(row => {
+        return row.pk !== parseInt(cardId);
+      })
+    },
     archiveCards(state, payload) {
-        //payload will contain both column and level values
-        const column = payload.column,
+      //payload will contain both column and level values
+      const column = payload.column,
             level = payload.level;
 
-        //Filter out the column/level cards - and update the kanban card results
-        state.kanbanCardResults = state.kanbanCardResults.filter(row => {
-            //Check to see if the column and level match
-            const boolean_column = parseInt(row.fields.kanban_column, 10) === column,
-                boolean_level = parseInt(row.fields.kanban_level, 10) === level;
+      //Filter out the column/level cards - and update the kanban card results
+      state.kanbanCardResults = state.kanbanCardResults.filter(row => {
+        //Check to see if the column and level match
+        const boolean_column = parseInt(row.fields.kanban_column, 10) === column,
+            boolean_level = parseInt(row.fields.kanban_level, 10) === level;
 
-
-
-            //If they both match - exclude them from the data;
-            return !(boolean_column && boolean_level);
-        });
+        //If they both match - exclude them from the data;
+        return !(boolean_column && boolean_level);
+      });
     },
     updateKanbanCard(state, payload) {
       //Get the index location
