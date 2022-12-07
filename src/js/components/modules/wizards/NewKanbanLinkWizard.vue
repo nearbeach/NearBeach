@@ -67,10 +67,23 @@
                             >
                                 Sorry - there are no results.
                             </div>
+                            
+                            <!-- SEARCH RESULTS -->
+                            <div class="form-group"
+                                 v-if="!isSearching && objectResults.length > 0 && objectModel != null"
+                            >
+                                <label>Search Terms</label>
+                                <input id="search_terms"
+                                       class="form-control"
+                                       v-model="searchTermModel"
+                                       type="text"
+                                />
+                            </div>
+                            <br/>
 
                             <!-- TABLE CONTAINING RESULTS -->
                             <table class="table"
-                                   v-if="!isSearching && objectResults.length > 0 && objectModel != null"
+                                   v-if="!isSearching && objectFilteredResults.length > 0 && objectModel != null"
                             >
                                 <thead>
                                     <tr>
@@ -81,7 +94,7 @@
 
                                 <!-- PROJECTS -->
                                 <tbody v-if="objectModel == 'Project'">
-                                    <tr v-for="result in objectResults"
+                                    <tr v-for="result in objectFilteredResults"
                                         :key="result.pk"
                                     >
                                         <td>
@@ -108,7 +121,7 @@
 
                                 <!-- REQUIREMENTS -->
                                 <tbody v-if="objectModel == 'Requirement'">
-                                    <tr v-for="result in objectResults"
+                                    <tr v-for="result in objectFilteredResults"
                                         :key="result.pk"
                                     >
                                         <td>
@@ -135,7 +148,7 @@
 
                                 <!-- TASKS -->
                                 <tbody v-if="objectModel == 'Task'">
-                                    <tr v-for="result in objectResults"
+                                    <tr v-for="result in objectFilteredResults"
                                         :key="result.pk"
                                     >
                                         <td>
@@ -230,7 +243,9 @@
         data() {
             return {
                 isSearching: false,
+                linkModel: [],
                 objectModel: null,
+                objectFilteredResults: [],
                 objectResults: [],
                 objectSelection: [
                     {
@@ -244,7 +259,7 @@
                         label: 'Task',
                     },
                 ],
-                linkModel: [],
+                searchTermModel: "",
             }
         },
         methods: {
@@ -298,16 +313,37 @@
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];
+                    this.objectFilteredResults = response['data'];
 
                     //Tell the user we are no longer searching
                     this.isSearching = false;
+
+                    //Clear out search term model
+                    this.searchTermModel = "";
                 }).catch(error => {
                     this.showErrorModal(error,'kanban');
                 })
             },
-            linkModel: function() {
+            searchTermModel: function() {
+                if (this.searchTermModel === "" || this.searchTermModel === null) {
+                    this.objectFilteredResults = this.objectResults;
+                    return;
+                }
 
-            }
+                //Update the filters by checking to see if the string matches
+                this.objectFilteredResults = this.objectResults.filter(row => {
+                    //Get the description from either task or project
+                    let description = "";
+                    if (row.fields.project_description !== undefined) {
+                        description = row.fields.project_description.toLowerCase();
+                    } else {
+                        description = row.fields.task_short_description.toLowerCase();
+                    }
+
+                    //Return true or false if the string is inside the description
+                    return description.includes(this.searchTermModel.toLowerCase());
+                });
+            },
         }
     }
 </script>

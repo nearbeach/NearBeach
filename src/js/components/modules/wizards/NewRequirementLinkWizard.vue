@@ -274,6 +274,7 @@
                 //If search term model is empty - just return all results
                 if (this.searchTermModel === "" || this.searchTermModel === null) {
                     this.objectFilteredResults = this.objectResults;
+                    return;
                 }
 
                 //Update the filters by checking to see if the string matches
