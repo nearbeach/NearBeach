@@ -1534,6 +1534,7 @@ class object_assignment(models.Model):
     - Task
     - Kanban board
     - Request for change
+    - Card
 
     These permission are only "ACCESS" permissions.
     The user/group's over riding permissions determine if
@@ -1550,12 +1551,6 @@ class object_assignment(models.Model):
     )
     group_id = models.ForeignKey(
         "group",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    opportunity = models.ForeignKey(
-        "opportunity",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1586,6 +1581,12 @@ class object_assignment(models.Model):
     )
     kanban_board = models.ForeignKey(
         "kanban_board",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    kanban_card = models.ForeignKey(
+        "kanban_card",
         on_delete=models.CASCADE,
         blank=True,
         null=True,

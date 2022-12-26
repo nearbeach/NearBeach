@@ -126,5 +126,6 @@ const app = createApp({
         }, 500);
     },
 })
+app.config.devtools = true;
 app.use(store)
 app.mount("#app")

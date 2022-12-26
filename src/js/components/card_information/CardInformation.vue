@@ -53,6 +53,17 @@
                                     aria-selected="false"
                             >Notes</button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" 
+                                    id="users-tab" 
+                                    data-bs-toggle="tab" 
+                                    data-bs-target="#user_permissions" 
+                                    type="button" 
+                                    role="tab" 
+                                    aria-controls="contact" 
+                                    aria-selected="false"
+                            >Users</button>
+                        </li>
                     </ul>
                     <hr>
 
@@ -83,6 +94,14 @@
                         >
                             <card-notes></card-notes>
                         </div>
+
+                        <div class="tab-pane fade"
+                             id="user_permissions"
+                             role="tabpanel"
+                             aria-labelledby="user-tab"                        
+                        >
+                            <card-users></card-users>
+                        </div>
                     </div>
                 </div>
            </div>
@@ -96,6 +115,7 @@
     import CardDetails from "./CardDetails.vue";
     import CardNotes from "./CardNotes.vue";
     import CardDescription from "./CardDescription.vue";
+    import CardUsers from "./CardUsers.vue";
 
     //VueX
     import { mapGetters } from 'vuex';
@@ -109,6 +129,7 @@
             CardDescription,
             CardDetails,
             CardNotes,
+            CardUsers,
             Icon,
         },
         mixins: [

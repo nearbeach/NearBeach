@@ -150,8 +150,17 @@
 
             },
             getUserList: function() {
+                //If destination is '' or locationId = 0, there will be no information to get. Escape
+                if (this.destination === '' || this.locationId === 0) {
+                    return;
+                }
+
+                //Setup the url
+                let url = `${this.rootUrl}object_data/${this.destination}/${this.locationId}/user_list_all/`;
+
+                //Use axios to obtain user lists
                 axios.post(
-                    `${this.rootUrl}object_data/${this.destination}/${this.locationId}/user_list_all/`,
+                    url,
                 ).then(response => {
                     //Clear the user fix list
                     this.userFixList = response['data'].map(row => {
