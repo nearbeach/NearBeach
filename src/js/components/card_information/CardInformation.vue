@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Card Information</h2>
+                    <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Card Information - {{cardId}}</h2>
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
@@ -137,7 +137,7 @@
         ],
         data() {
             return {
-                cardId: '',
+                // cardId: '',
                 cardDescriptionModel: '',
                 cardNoteModel: '',
                 cardTitleModel: '',
@@ -146,6 +146,7 @@
         },
         computed: {
             ...mapGetters({
+                cardId: "getCardId",
                 rootUrl: "getRootUrl",
             })
         },
