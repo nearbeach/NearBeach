@@ -66,6 +66,7 @@ const moduleCard = {
     kanbanStatus: "Open",
     listColumns: [],
     listLevels: [],
+    userList: [],
   }),
   mutations: {
     appendNote(state, payload) {
@@ -85,7 +86,15 @@ const moduleCard = {
         .then((response) => {
           //Save the data into noteHistoryResults
           state.cardNotes = response.data;
-        })
+        });
+      
+      //Get data for the user list
+      axios
+        .post(`/object_data/kanban_card/${payload.cardId}/user_list/`)
+        .then((response) => {
+          //Save the data into userList
+          state.userList = response.data;
+        });
     },
     updateKanbanStatus(state, payload) {
       state.kanbanStatus = payload.kanbanStatus;
@@ -107,6 +116,9 @@ const moduleCard = {
         };
       });
     },
+    updateUserList(state, payload) {
+      state.userList = payload.userList;
+    }
   },
   actions: {},
   getters: {
@@ -145,6 +157,9 @@ const moduleCard = {
     },
     getCardNotes: (state) => {
       return state.cardNotes;
+    },
+    getUserList: (state) => {
+      return state.userList;
     },
   },
 };

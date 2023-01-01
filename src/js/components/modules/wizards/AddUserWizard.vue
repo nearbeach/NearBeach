@@ -74,6 +74,7 @@
     import axios from 'axios';
     import { Icon } from '@iconify/vue';
     import { NSelect } from 'naive-ui';
+    import { Modal } from 'bootstrap';
 
     //VueX
     import { mapGetters } from 'vuex'
@@ -144,6 +145,20 @@
 
                     //Update the list of users
                     this.getUserList();
+
+                    //If kanban card - bring up card information again
+                    if (this.destination === "kanban_card") {
+                        //Send the data upstream
+                        this.$store.commit({
+                            type: 'updateUserList',
+                            'userList': response.data,
+                        })
+
+
+                        //Reshow the card information modal
+                        const cardModal = new Modal(document.getElementById('cardInformationModal'));
+                        cardModal.show();
+                    }
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });

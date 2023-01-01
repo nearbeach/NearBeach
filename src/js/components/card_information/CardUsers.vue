@@ -44,20 +44,12 @@
 
     export default {
         name: "CardUsers",
-        data: () => ({
-            userList: []
-        }),
         computed: {
             ...mapGetters({
                 cardId: "getCardId",
                 rootUrl: "getRootUrl",
+                userList: "getUserList",
             })
-        },
-        watch: {
-            cardId: function() {
-                //Update the users
-                this.getUserList();
-            },
         },
         methods: {
             addUser: function() {
@@ -68,16 +60,6 @@
                 const  addUserWizard = new Modal("#addUserModal");
                 addUserWizard.show();
             },
-            getUserList: function() {
-                //User axios to access the data
-                axios.post(
-                    `${this.rootUrl}object_data/kanban_card/${this.cardId}/user_list/`,
-                ).then(response => {
-                    this.userList = response.data;
-                }).catch(error => {
-                    //Do the catch
-                })
-            }
         },
     }
 </script>
