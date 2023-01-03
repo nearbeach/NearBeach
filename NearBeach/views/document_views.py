@@ -18,13 +18,13 @@ from NearBeach.views.tools.internal_functions import (
 )
 from ..forms import (
     AddFolderForm,
-    folder,
+    Folder,
     AddLinkForm,
-    document,
+    Document,
     DocumentUploadForm,
-    requirement_item,
+    RequirementItem,
 )
-from ..models import document_permission, user_group, object_assignment
+from ..models import DocumentPermission, UserGroup, ObjectAssignment
 
 import boto3
 import json
@@ -49,7 +49,7 @@ def document_add_folder(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Save the form information
-    folder_submit = folder(
+    folder_submit = Folder(
         change_user=request.user,
         folder_description=form.cleaned_data["folder_description"],
         parent_folder=form.cleaned_data["parent_folder"],
@@ -58,7 +58,7 @@ def document_add_folder(request, destination, location_id):
     folder_submit.save()
 
     # Return the data back
-    folder_results = folder.objects.filter(folder_id=folder_submit.folder_id)
+    folder_results = Folder.objects.filter(folder_id=folder_submit.folder_id)
 
     return HttpResponse(
         serializers.serialize("json", folder_results), content_type="application/json"
@@ -83,7 +83,7 @@ def document_add_link(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Save the document link
-    document_submit = document(
+    document_submit = Document(
         change_user=request.user,
         document_description=form.cleaned_data["document_description"],
         document_url_location=form.cleaned_data["document_url_location"],
@@ -91,7 +91,7 @@ def document_add_link(request, destination, location_id):
     document_submit.save()
 
     # Save the document permissions
-    document_permission_submit = document_permission(
+    document_permission_submit = DocumentPermission(
         change_user=request.user,
         document_key=document_submit,
         folder=form.cleaned_data["parent_folder"],
@@ -102,7 +102,7 @@ def document_add_link(request, destination, location_id):
     document_permission_submit.save()
 
     # Get current document results to send back
-    document_results = document_permission.objects.filter(
+    document_results = DocumentPermission.objects.filter(
         is_deleted=False,
         document_key=document_submit,
     ).values(
@@ -133,7 +133,7 @@ def document_list_files(request, destination, location_id):
     :param location_id:
     :return:
     """
-    document_permission_results = document_permission.objects.filter(
+    document_permission_results = DocumentPermission.objects.filter(
         is_deleted=False,
     ).values(
         "document_key_id",
@@ -179,7 +179,7 @@ def document_list_folders(request, destination, location_id):
     :return:
     """
     # Get the document information
-    folder_results = folder.objects.filter(
+    folder_results = Folder.objects.filter(
         is_deleted=False,
     )
     folder_results = get_object_from_destination(
@@ -266,19 +266,19 @@ def private_download_file(request, document_key):
     :return:
     """
     # Extract the user groups the user is associated with
-    user_group_results = user_group.objects.filter(
+    user_group_results = UserGroup.objects.filter(
         is_deleted=False,
         username=request.user,
     )
 
     # Extract the permissions the document is associated with
-    document_permission_results = document_permission.objects.filter(
+    document_permission_results = DocumentPermission.objects.filter(
         is_deleted=False,
         document_key=document_key,
     )
 
     # Consolidate at the object assignment
-    object_assignment_results = object_assignment.objects.filter(
+    object_assignment_results = ObjectAssignment.objects.filter(
         Q(
             is_deleted=False,
             # JOIN IN USER GROUPS
@@ -312,7 +312,7 @@ def private_download_file(request, document_key):
             | Q(
                 # Requirement Item
                 # Have to use the requirement item's requirement as permissions are not on the item
-                requirement_id__in=requirement_item.objects.filter(
+                requirement_id__in=RequirementItem.objects.filter(
                     is_deleted=False,
                     requirement_item_id__in=document_permission_results.values(
                         "requirement_item_id"
@@ -340,7 +340,7 @@ def private_download_file(request, document_key):
         return HttpResponseBadRequest("Sorry - there is no document")
 
     # Get Document information
-    document_results = document.objects.get(
+    document_results = Document.objects.get(
         document_key=document_key
     )  # Need to change this to a 404
 
@@ -379,7 +379,7 @@ def private_download_file(request, document_key):
 
 # Internal Function
 def handle_document_permissions(request, upload, file, document_description, destination, location_id):
-    document_submit = document(
+    document_submit = Document(
         change_user=request.user,
         document_description=document_description,
     )
@@ -390,7 +390,7 @@ def handle_document_permissions(request, upload, file, document_description, des
     document_submit.save()
 
     # Add the document permission row
-    document_permission_submit = document_permission(
+    document_permission_submit = DocumentPermission(
         change_user=request.user,
         document_key=document_submit,
     )
@@ -400,7 +400,7 @@ def handle_document_permissions(request, upload, file, document_description, des
     document_permission_submit.save()
 
     # Get current document results to send back
-    document_results = document_permission.objects.filter(
+    document_results = DocumentPermission.objects.filter(
         is_deleted=False,
         document_key=document_submit,
     ).values(

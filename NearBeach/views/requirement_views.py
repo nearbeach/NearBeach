@@ -11,22 +11,22 @@ from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import (
     AddRequirementLinkForm,
     NewRequirementForm,
-    organisation,
+    Organisation,
     UpdateRequirementForm,
 )
 from NearBeach.models import (
-    requirement,
-    object_assignment,
-    project,
-    task,
-    opportunity,
-    requirement_item,
-    list_of_requirement_item_status,
-    list_of_requirement_item_type,
-    list_of_requirement_status,
-    list_of_requirement_type,
-    group,
-    user_group,
+    Requirement,
+    ObjectAssignment,
+    Project,
+    Task,
+    Opportunity,
+    RequirementItem,
+    ListOfRequirementItemStatus,
+    ListOfRequirementItemType,
+    ListOfRequirementStatus,
+    ListOfRequirementType,
+    Group,
+    UserGroup,
 )
 
 
@@ -40,29 +40,29 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the requirement instnace
-    requirement_instance = requirement.objects.get(requirement_id=requirement_id)
+    requirement_instance = Requirement.objects.get(requirement_id=requirement_id)
 
     # Get the project list from the form
     for row in request.POST.getlist("project"):
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             requirement=requirement_instance,
-            project=project.objects.get(project_id=row),
+            project=Project.objects.get(project_id=row),
             change_user=request.user,
         )
         submit_object_assignment.save()
 
     for row in request.POST.getlist("task"):
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             requirement=requirement_instance,
-            task=task.objects.get(task_id=row),
+            task=Task.objects.get(task_id=row),
             change_user=request.user,
         )
         submit_object_assignment.save()
 
     for row in request.POST.getlist("opportunity"):
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             requirement=requirement_instance,
-            opportunity=opportunity.objects.get(opportunity_id=row),
+            opportunity=Opportunity.objects.get(opportunity_id=row),
             change_user=request.user,
         )
         submit_object_assignment.save()
@@ -75,10 +75,10 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
 def get_requirement_item_links(request, requirement_id, *args, **kwargs):
     """Get the requirement informatio"""
-    link_results = object_assignment.objects.filter(
+    link_results = ObjectAssignment.objects.filter(
         Q(
             is_deleted=False,
-            requirement_item_id__in=requirement_item.objects.filter(
+            requirement_item_id__in=RequirementItem.objects.filter(
                 is_deleted=False,
                 requirement_id=requirement_id,
             ).values("requirement_item_id"),
@@ -120,7 +120,7 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
 def get_requirement_item_status_list(request, requirement_id, *args, **kwargs):
     """Get all status - even deleted ones."""
-    status_list = list_of_requirement_item_status.objects.all()
+    status_list = ListOfRequirementItemStatus.objects.all()
 
     # Send back json data
     json_results = serializers.serialize("json", status_list)
@@ -133,7 +133,7 @@ def get_requirement_item_status_list(request, requirement_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
 def get_requirement_item_type_list(request, requirement_id, *args, **kwargs):
     """Get all status - even deleted ones."""
-    type_list = list_of_requirement_item_type.objects.all()
+    type_list = ListOfRequirementItemType.objects.all()
 
     # Send back json data
     json_results = serializers.serialize("json", type_list)
@@ -146,7 +146,7 @@ def get_requirement_item_type_list(request, requirement_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
 def get_requirement_items(request, requirement_id, *args, **kwargs):
     """Get all the requirement items assigned to the requirement"""
-    requirement_item_results = requirement_item.objects.filter(
+    requirement_item_results = RequirementItem.objects.filter(
         is_deleted=False,
         requirement_id=requirement_id,
     )
@@ -162,7 +162,7 @@ def get_requirement_items(request, requirement_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
 def get_requirement_links_list(request, requirement_id, *args, **kwargs):
     """Get the requirement information"""
-    link_results = object_assignment.objects.filter(
+    link_results = ObjectAssignment.objects.filter(
         Q(
             is_deleted=False,
             requirement_id=requirement_id,
@@ -207,22 +207,22 @@ def new_requirement(request, *args, **kwargs):
     :param destination:
     :return:
     """
-    status_list = list_of_requirement_status.objects.filter(
+    status_list = ListOfRequirementStatus.objects.filter(
         is_deleted=False,
         requirement_status_is_closed=False,
     )
 
-    type_list = list_of_requirement_type.objects.filter(
+    type_list = ListOfRequirementType.objects.filter(
         is_deleted=False,
     )
 
-    group_results = group.objects.filter(
+    group_results = Group.objects.filter(
         is_deleted=False,
     )
 
     # Get list of user groups
     user_group_results = (
-        user_group.objects.filter(
+        UserGroup.objects.filter(
             is_deleted=False,
             username=request.user,
         )
@@ -261,7 +261,7 @@ def new_requirement_save(request, *args, **kwargs):
         return HttpResponseBadRequest("There was something wrong with the form")
 
     # Save the form
-    submit_requirement = requirement(
+    submit_requirement = Requirement(
         requirement_title=form.cleaned_data["requirement_title"],
         requirement_scope=form.cleaned_data["requirement_scope"],
         organisation=form.cleaned_data["organisation"],
@@ -277,10 +277,10 @@ def new_requirement_save(request, *args, **kwargs):
 
     for single_group in group_list:
         # Get the group instance
-        group_instance = group.objects.get(group_id=single_group)
+        group_instance = Group.objects.get(group_id=single_group)
 
         # Save the group instance against object assignment
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             group_id=group_instance,
             requirement=submit_requirement,
             change_user=request.user,
@@ -307,7 +307,7 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     user_level = kwargs["user_level"]
 
     # TODO: Check if I need to have a separate read only tempalte now.
-    requirement_results = requirement.objects.get(requirement_id=requirement_id)
+    requirement_results = Requirement.objects.get(requirement_id=requirement_id)
 
     requirement_is_closed = (
         requirement_results.requirement_status.requirement_status_is_closed
@@ -323,23 +323,23 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     t = loader.get_template("NearBeach/requirements/requirement_information.html")
 
     # Get any extra data required
-    organisation_results = organisation.objects.get(
+    organisation_results = Organisation.objects.get(
         organisation_id=requirement_results.organisation_id,
     )
 
-    status_list = list_of_requirement_status.objects.filter(
+    status_list = ListOfRequirementStatus.objects.filter(
         is_deleted=False,
     )
 
-    type_list = list_of_requirement_type.objects.filter(
+    type_list = ListOfRequirementType.objects.filter(
         is_deleted=False,
     )
 
-    group_results = group.objects.filter(
+    group_results = Group.objects.filter(
         is_deleted=False,
     )
 
-    requirement_item_results = requirement_item.objects.filter(
+    requirement_item_results = RequirementItem.objects.filter(
         is_deleted=False,
         requirement_id=requirement_id,
     )
@@ -381,7 +381,7 @@ def requirement_information_save(request, requirement_id, *args, **kwargs):
         )
 
     # Get the requirement
-    requirement_result = requirement.objects.get(requirement_id=requirement_id)
+    requirement_result = Requirement.objects.get(requirement_id=requirement_id)
 
     # Update all the fields
     requirement_result.requirement_title = form.cleaned_data["requirement_title"]

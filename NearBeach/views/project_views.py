@@ -6,8 +6,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.template import loader
 from NearBeach.forms import NewProjectForm, ProjectForm
-from NearBeach.models import group, user_group, object_assignment
-from NearBeach.views.tools.internal_functions import project, organisation
+from NearBeach.models import Group, UserGroup, ObjectAssignment
+from NearBeach.views.tools.internal_functions import Project, Organisation
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 
 import json
@@ -26,13 +26,13 @@ def new_project(request, *args, **kwargs):
     t = loader.get_template("NearBeach/projects/new_project.html")
 
     # Get data we require
-    group_results = group.objects.filter(
+    group_results = Group.objects.filter(
         is_deleted=False,
     )
 
     # Get the USER groups
     user_group_results = (
-        user_group.objects.filter(
+        UserGroup.objects.filter(
             is_deleted=False,
             username=request.user,
         )
@@ -69,7 +69,7 @@ def new_project_save(request, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Create the project
-    project_submit = project(
+    project_submit = Project(
         change_user=request.user,
         creation_user=request.user,
         project_name=form.cleaned_data["project_name"],
@@ -85,10 +85,10 @@ def new_project_save(request, *args, **kwargs):
 
     for single_group in group_list:
         # Get the group instance
-        group_instance = group.objects.get(group_id=single_group)
+        group_instance = Group.objects.get(group_id=single_group)
 
         # Save the group instance against object assignment
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             group_id=group_instance,
             project=project_submit,
             change_user=request.user,
@@ -115,11 +115,11 @@ def project_information(request, project_id, *args, **kwargs):
     t = loader.get_template("NearBeach/projects/project_information.html")
 
     # Get data
-    project_results = project.objects.get(project_id=project_id)
+    project_results = Project.objects.get(project_id=project_id)
     project_status = project_results.project_status
     user_level = kwargs["user_level"]
 
-    organisation_results = organisation.objects.filter(
+    organisation_results = Organisation.objects.filter(
         is_deleted=False,
         organisation_id=project_results.organisation_id,
     )
@@ -157,7 +157,7 @@ def project_information_save(request, project_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the project data
-    project_update = project.objects.get(project_id=project_id)
+    project_update = Project.objects.get(project_id=project_id)
     project_update.project_name = form.cleaned_data["project_name"]
     project_update.project_description = form.cleaned_data["project_description"]
     project_update.project_start_date = form.cleaned_data["project_start_date"]

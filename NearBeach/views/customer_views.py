@@ -6,7 +6,7 @@ from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_customer_permissions
-from NearBeach.models import customer, document, document_permission, list_of_title, organisation
+from NearBeach.models import Customer, Document, DocumentPermission, ListOfTitle, Organisation
 from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
 from NearBeach.views.document_views import handle_document_permissions
 
@@ -23,13 +23,13 @@ def customer_information(request, customer_id, *args, **kwargs):
     # Find out if the user is read only - if they are send them to the read only
 
     # Get customer data
-    customer_results = customer.objects.get(customer_id=customer_id)
+    customer_results = Customer.objects.get(customer_id=customer_id)
 
-    organisation_results = organisation.objects.filter(
+    organisation_results = Organisation.objects.filter(
         organisation_id=customer_results.organisation_id,
     )
 
-    title_list = list_of_title.objects.filter()
+    title_list = ListOfTitle.objects.filter()
 
     # Get tempalte
     t = loader.get_template("NearBeach/customers/customer_information.html")
@@ -63,7 +63,7 @@ def customer_information_save(request, customer_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the customer instance
-    customer_results = customer.objects.get(customer_id=customer_id)
+    customer_results = Customer.objects.get(customer_id=customer_id)
 
     # Update the fields
     customer_results.customer_title = form.cleaned_data["customer_title"]
@@ -100,7 +100,7 @@ def customer_update_profile(request, customer_id, *args, **kwargs):
     )
 
     # Update the customer
-    update_customer = customer.objects.get(customer_id=customer_id)
+    update_customer = Customer.objects.get(customer_id=customer_id)
     update_customer.customer_profile_picture = document_submit
     update_customer.save()
 
@@ -115,7 +115,7 @@ def get_profile_picture(request, customer_id):
     :param customer_id:
     :return:
     """
-    customer_results = customer.objects.get(customer_id=customer_id)
+    customer_results = Customer.objects.get(customer_id=customer_id)
 
     # Just return the customer profile picture
     return HttpResponse(
@@ -133,7 +133,7 @@ def new_customer(request, *args, **kwargs):
     # Get user permission
 
     # Get data
-    title_list = list_of_title.objects.filter(
+    title_list = ListOfTitle.objects.filter(
         is_deleted=False,
     )
 
@@ -165,7 +165,7 @@ def new_customer_save(request, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Save the data
-    customer_submit = customer(
+    customer_submit = Customer(
         change_user=request.user,
         customer_title=form.cleaned_data["customer_title"],
         customer_first_name=form.cleaned_data["customer_first_name"],

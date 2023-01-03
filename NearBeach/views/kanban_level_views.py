@@ -3,8 +3,8 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
-from NearBeach.forms import NewLevelForm, kanban_level, DeleteLevelForm, ResortLevelForm
-from NearBeach.views.tools.internal_functions import kanban_card
+from NearBeach.forms import NewLevelForm, KanbanLevel, DeleteLevelForm, ResortLevelForm
+from NearBeach.views.tools.internal_functions import KanbanCard
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -18,7 +18,7 @@ def edit_level(request, kanban_level_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the instance
-    kanban_level_results = kanban_level.objects.get(
+    kanban_level_results = KanbanLevel.objects.get(
         kanban_level_id=kanban_level_id,
     )
 
@@ -49,13 +49,13 @@ def delete_level(request, kanban_board_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Update the variables
-    kanban_card.objects.filter(
+    KanbanCard.objects.filter(
         is_deleted=False,
         kanban_level_id=form.cleaned_data["delete_item_id"],
     ).update(kanban_level_id=form.cleaned_data["destination_item_id"])
 
     # Soft delete the old column
-    deleted_level = kanban_level.objects.get(
+    deleted_level = KanbanLevel.objects.get(
         kanban_level_id=form.cleaned_data["delete_item_id"].kanban_level_id,
     )
     deleted_level.is_deleted = True
@@ -75,7 +75,7 @@ def new_level(request, kanban_board_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Create a new level
-    kanban_level_submit = kanban_level(
+    kanban_level_submit = KanbanLevel(
         kanban_level_name=form.cleaned_data["kanban_level_name"],
         kanban_board_id=kanban_board_id,
         kanban_level_sort_number=form.cleaned_data["kanban_level_sort_number"],
@@ -84,7 +84,7 @@ def new_level(request, kanban_board_id, *args, **kwargs):
     kanban_level_submit.save()
 
     # Get the information and return as json results
-    _ = kanban_level.objects.filter(
+    _ = KanbanLevel.objects.filter(
         kanban_level_id=kanban_level_submit.kanban_level_id,
     )
 
@@ -109,7 +109,7 @@ def resort_level(request, kanban_board_id, *args, **kwargs):
 
     # Look through the item list and re-index the order
     for index, item in enumerate(items, start=0):
-        kanban_level_update = kanban_level.objects.get(kanban_level_id=item)
+        kanban_level_update = KanbanLevel.objects.get(kanban_level_id=item)
         kanban_level_update.kanban_level_sort_number = index
         kanban_level_update.save()
 

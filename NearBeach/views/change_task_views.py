@@ -6,7 +6,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import ChangeTaskStatusForm, ChangeTaskForm
-from NearBeach.models import change_task, request_for_change, User
+from NearBeach.models import ChangeTask, RequestForChange, User
 
 from NearBeach.decorators.check_user_permissions import check_change_task_permissions
 
@@ -18,7 +18,7 @@ import json
 def change_task_information(request, change_task_id, *args, **kwargs):
     """ """
     # Get Change Task Information
-    change_task_results = change_task.objects.filter(
+    change_task_results = ChangeTask.objects.filter(
         is_deleted=False,
         change_task_id=change_task_id,
     )
@@ -27,7 +27,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     if len(change_task_results) == 0:
         raise Http404()
 
-    rfc_results = request_for_change.objects.get(
+    rfc_results = RequestForChange.objects.get(
         rfc_id=change_task_results[0].request_for_change_id
     )
 
@@ -61,7 +61,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
 @check_change_task_permissions(min_permission_level=4)
 def change_task_delete(request, change_task_id, *args, **kwargs):
     """A simple function to delete the change task"""
-    change_task_update = change_task.objects.get(change_task_id=change_task_id)
+    change_task_update = ChangeTask.objects.get(change_task_id=change_task_id)
 
     # Update the change task is deleted to true
     change_task_update.is_deleted = True
@@ -82,7 +82,7 @@ def change_task_save(request, change_task_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the instance
-    change_task_update = change_task.objects.get(change_task_id=change_task_id)
+    change_task_update = ChangeTask.objects.get(change_task_id=change_task_id)
 
     # Update the values
     change_task_update.change_task_title = form.cleaned_data["change_task_title"]
@@ -124,7 +124,7 @@ def update_status(request, change_task_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get change task
-    change_task_results = change_task.objects.get(change_task_id=change_task_id)
+    change_task_results = ChangeTask.objects.get(change_task_id=change_task_id)
 
     # Update the change task results
     change_task_results.change_task_status = form.cleaned_data["change_task_status"]

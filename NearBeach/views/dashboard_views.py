@@ -14,13 +14,13 @@ import json
 
 # Import NearBeach Models
 from NearBeach.models import (
-    object_assignment,
-    user_group,
-    task,
-    request_for_change,
-    project,
-    bug,
-    requirement,
+    ObjectAssignment,
+    UserGroup,
+    Task,
+    RequestForChange,
+    Project,
+    Bug,
+    Requirement,
 )
 
 
@@ -51,7 +51,7 @@ def get_bug_list(request):
     :return:
     """
     bug_results = (
-        bug.objects.filter(
+        Bug.objects.filter(
             is_deleted=False,
             # Add in ability to tell if bugs are opened or closed
         )
@@ -74,9 +74,9 @@ def get_my_objects(request):
     """
     # Get the user data
     project_results = (
-        project.objects.filter(
+        Project.objects.filter(
             is_deleted=False,
-            project_id__in=object_assignment.objects.filter(
+            project_id__in=ObjectAssignment.objects.filter(
                 is_deleted=False,
                 project_id__isnull=False,
                 assigned_user=request.user,
@@ -94,9 +94,9 @@ def get_my_objects(request):
     )
 
     requirement_results = (
-        requirement.objects.filter(
+        Requirement.objects.filter(
             is_deleted=False,
-            requirement_id__in=object_assignment.objects.filter(
+            requirement_id__in=ObjectAssignment.objects.filter(
                 is_deleted=False,
                 requirement_id__isnull=False,
                 assigned_user=request.user,
@@ -113,9 +113,9 @@ def get_my_objects(request):
     )
 
     task_results = (
-        task.objects.filter(
+        Task.objects.filter(
             is_deleted=False,
-            task_id__in=object_assignment.objects.filter(
+            task_id__in=ObjectAssignment.objects.filter(
                 is_deleted=False,
                 task_id__isnull=False,
                 assigned_user=request.user,
@@ -178,11 +178,11 @@ def get_unassigned_objects(request):
     :return:
     """
     project_results = (
-        project.objects.filter(
+        Project.objects.filter(
             is_deleted=False,
-            project_id__in=object_assignment.objects.filter(
+            project_id__in=ObjectAssignment.objects.filter(
                 is_deleted=False,
-                group_id__in=user_group.objects.filter(
+                group_id__in=UserGroup.objects.filter(
                     is_deleted=False,
                     username=request.user,
                     # We want to make sure the user's permissions for this particular
@@ -197,7 +197,7 @@ def get_unassigned_objects(request):
             )
             | Q(
                 # Project has no users assigned to it
-                project_id__in=object_assignment.objects.filter(
+                project_id__in=ObjectAssignment.objects.filter(
                     is_deleted=False,
                     project_id__isnull=False,
                     assigned_user__isnull=False,
@@ -212,11 +212,11 @@ def get_unassigned_objects(request):
         )
     )
     requirement_results = (
-        requirement.objects.filter(
+        Requirement.objects.filter(
             is_deleted=False,
-            requirement_id__in=object_assignment.objects.filter(
+            requirement_id__in=ObjectAssignment.objects.filter(
                 is_deleted=False,
-                group_id__in=user_group.objects.filter(
+                group_id__in=UserGroup.objects.filter(
                     is_deleted=False,
                     username=request.user,
                     # We want to make sure the user's permissions for this particular
@@ -231,7 +231,7 @@ def get_unassigned_objects(request):
             )
             | Q(
                 # Requirement has no users assigned to it
-                requirement_id__in=object_assignment.objects.filter(
+                requirement_id__in=ObjectAssignment.objects.filter(
                     is_deleted=False,
                     requirement_id__isnull=False,
                     assigned_user__isnull=False,
@@ -246,11 +246,11 @@ def get_unassigned_objects(request):
     )
 
     task_results = (
-        task.objects.filter(
+        Task.objects.filter(
             is_deleted=False,
-            task_id__in=object_assignment.objects.filter(
+            task_id__in=ObjectAssignment.objects.filter(
                 is_deleted=False,
-                group_id__in=user_group.objects.filter(
+                group_id__in=UserGroup.objects.filter(
                     is_deleted=False,
                     username=request.user,
                     # We want to make sure the user's permissions for this particular
@@ -265,7 +265,7 @@ def get_unassigned_objects(request):
             )
             | Q(
                 # Task has no users assigned to it
-                task_id__in=object_assignment.objects.filter(
+                task_id__in=ObjectAssignment.objects.filter(
                     is_deleted=False,
                     task_id__isnull=False,
                     assigned_user__isnull=False,
@@ -316,7 +316,7 @@ def rfc_approvals(request):
     :return:
     """
     # Get a list of RFC's that are awaiting approval
-    rfc_results = request_for_change.objects.filter(
+    rfc_results = RequestForChange.objects.filter(
         is_deleted=False,
         rfc_status=2,  # Waiting for approval
     )
@@ -330,10 +330,10 @@ def rfc_approvals(request):
     """
     rfc_results = rfc_results.filter(
         # Filter for any object assignment that is connected by group that user is group leader of.
-        rfc_id__in=object_assignment.objects.filter(
+        rfc_id__in=ObjectAssignment.objects.filter(
             is_deleted=False,
             request_for_change_id__in=rfc_results.values("rfc_id"),
-            group_id__in=user_group.objects.filter(
+            group_id__in=UserGroup.objects.filter(
                 is_deleted=False,
                 username_id=request.user,
                 group_leader=True,
@@ -361,7 +361,7 @@ def users_with_no_groups(request):
         )
         .exclude(
             # Exclude all users with groups
-            id__in=user_group.objects.filter(
+            id__in=UserGroup.objects.filter(
                 is_deleted=False,
             ).values("username_id")
         )

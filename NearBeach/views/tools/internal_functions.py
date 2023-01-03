@@ -1,26 +1,26 @@
 from NearBeach.models import (
-    customer,
-    kanban_board,
-    kanban_card,
-    organisation,
-    project,
-    request_for_change,
-    requirement,
-    requirement_item,
-    task,
-    user_group,
+    Customer,
+    KanbanBoard,
+    KanbanCard,
+    Organisation,
+    Project,
+    RequestForChange,
+    Requirement,
+    RequirementItem,
+    Task,
+    UserGroup,
 )
 
 OBJECT_DICT = {
-    "customer": customer.objects,
-    "project": project.objects,
-    "task": task.objects,
-    "requirement": requirement.objects,
-    "requirement_item": requirement_item.objects,
-    "kanban_board": kanban_board.objects,
-    "kanban_card": kanban_card.objects,
-    "organisation": organisation.objects,
-    "request_for_change": request_for_change.objects,
+    "customer": Customer.objects,
+    "project": Project.objects,
+    "task": Task.objects,
+    "requirement": Requirement.objects,
+    "requirement_item": RequirementItem.objects,
+    "kanban_board": KanbanBoard.objects,
+    "kanban_card": KanbanCard.objects,
+    "organisation": Organisation.objects,
+    "request_for_change": RequestForChange.objects,
 }
 
 
@@ -45,7 +45,7 @@ def get_object_from_destination(input_object, destination, location_id):
 # Internal Function
 def get_user_permissions(field, value):
     return (
-        user_group.objects.filter(
+        UserGroup.objects.filter(
             is_deleted=False,
             **{field: value},
         )

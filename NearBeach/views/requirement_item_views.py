@@ -18,15 +18,15 @@ from NearBeach.forms import (
 )
 from NearBeach.views.requirement_views import get_requirement_items
 from NearBeach.models import (
-    requirement_item,
-    object_assignment,
-    project,
-    task,
-    requirement,
-    organisation,
-    list_of_requirement_item_status,
-    list_of_requirement_item_type,
-    group,
+    RequirementItem,
+    ObjectAssignment,
+    Project,
+    Task,
+    Requirement,
+    Organisation,
+    ListOfRequirementItemStatus,
+    ListOfRequirementItemType,
+    Group,
 )
 
 
@@ -41,23 +41,23 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the requirement instnace
-    requirement_item_instance = requirement_item.objects.get(
+    requirement_item_instance = RequirementItem.objects.get(
         requirement_item_id=requirement_item_id
     )
 
     # Get the project list from the form
     for row in request.POST.getlist("project"):
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             requirement_item=requirement_item_instance,
-            project=project.objects.get(project_id=row),
+            project=Project.objects.get(project_id=row),
             change_user=request.user,
         )
         submit_object_assignment.save()
 
     for row in request.POST.getlist("task"):
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             requirement_item=requirement_item_instance,
-            task=task.objects.get(task_id=row),
+            task=Task.objects.get(task_id=row),
             change_user=request.user,
         )
         submit_object_assignment.save()
@@ -74,7 +74,7 @@ def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
 # Internal Code
 def get_requirement_item_links(requirement_item_id):
     """Use object_assignment to get the requirments"""
-    return object_assignment.objects.filter(
+    return ObjectAssignment.objects.filter(
         Q(is_deleted=False, requirement_item_id=requirement_item_id)
         & Q(
             Q(opportunity_id__isnull=False)
@@ -130,8 +130,8 @@ def new_requirement_item(request, requirement_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Save the data
-    submit_requirement_item = requirement_item(
-        requirement=requirement.objects.get(requirement_id=requirement_id),
+    submit_requirement_item = RequirementItem(
+        requirement=Requirement.objects.get(requirement_id=requirement_id),
         requirement_item_title=form.cleaned_data["requirement_item_title"],
         requirement_item_scope=form.cleaned_data["requirement_item_scope"],
         requirement_item_status=form.cleaned_data["requirement_item_status"],
@@ -156,7 +156,7 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
     user_level = kwargs["user_level"]
 
     # Get the requirement information
-    requirement_item_results = requirement_item.objects.get(
+    requirement_item_results = RequirementItem.objects.get(
         requirement_item_id=requirement_item_id
     )
 
@@ -172,20 +172,20 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
     )
 
     # Get any extra data required
-    organisation_results = organisation.objects.get(
+    organisation_results = Organisation.objects.get(
         organisation_id=requirement_item_results.requirement.organisation_id,
     )
 
-    status_list = list_of_requirement_item_status.objects.filter(
+    status_list = ListOfRequirementItemStatus.objects.filter(
         is_deleted=False,
         status_is_closed=False,
     )
 
-    type_list = list_of_requirement_item_type.objects.filter(
+    type_list = ListOfRequirementItemType.objects.filter(
         is_deleted=False,
     )
 
-    group_results = group.objects.filter(
+    group_results = Group.objects.filter(
         is_deleted=False,
     )
 
@@ -222,7 +222,7 @@ def requirement_information_save(request, requirement_item_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Save the data
-    requirement_item_submit = requirement_item.objects.get(
+    requirement_item_submit = RequirementItem.objects.get(
         requirement_item_id=requirement_item_id
     )
     requirement_item_submit.change_user = request.user

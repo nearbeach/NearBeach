@@ -2,8 +2,8 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Q, Max
 from functools import wraps
 
-from NearBeach.models import user_group, group, object_assignment, kanban_card,\
-    requirement_item, requirement, change_task
+from NearBeach.models import UserGroup, Group, ObjectAssignment, KanbanCard,\
+    RequirementItem, Requirement, ChangeTask
 
 
 def check_change_task_permissions(min_permission_level):
@@ -18,7 +18,7 @@ def check_change_task_permissions(min_permission_level):
                 return func(request, *args, **kwargs, user_level=4)
 
             # Default user level is 0
-            user_group_results = user_group.objects.filter(
+            user_group_results = UserGroup.objects.filter(
                 is_deleted=False,
                 username=request.user,
             )
@@ -26,16 +26,16 @@ def check_change_task_permissions(min_permission_level):
             # If we are passing in any args like change_task_id, we want to do the following
             if len(kwargs) > 0:
                 # Get the rfc id
-                rfc_id = change_task.objects.get(
+                rfc_id = ChangeTask.objects.get(
                     change_task_id=kwargs["change_task_id"]
                 ).request_for_change_id
 
                 # Determine if there are any cross over change tasks
-                group_results = group.objects.filter(
+                group_results = Group.objects.filter(
                     Q(
                         is_deleted=False,
                         # The object_lookup groups
-                        group_id__in=object_assignment.objects.filter(
+                        group_id__in=ObjectAssignment.objects.filter(
                             is_deleted=False,
                             # **{object_lookup: kwargs[object_lookup]},
                             request_for_change_id=rfc_id,
@@ -81,7 +81,7 @@ def check_user_customer_permissions(min_permission_level):
                 return func(request, *args, **kwargs, user_level=4)
 
             # Default user level is 0
-            user_group_results = user_group.objects.filter(
+            user_group_results = UserGroup.objects.filter(
                 is_deleted=False,
                 username=request.user,
             )
@@ -113,19 +113,19 @@ def check_user_kanban_permissions(min_permission_level):
                 return func(request, kanban_card_id, *args, **kwargs, user_level=4)
 
             # Default user level is 0
-            user_group_results = user_group.objects.filter(
+            user_group_results = UserGroup.objects.filter(
                 is_deleted=False,
                 username=request.user,
             )
 
             # Determine if there are any cross over with user groups and object_lookup groups
-            group_results = group.objects.filter(
+            group_results = Group.objects.filter(
                 Q(
                     is_deleted=False,
                     # The object_lookup groups
-                    group_id__in=object_assignment.objects.filter(
+                    group_id__in=ObjectAssignment.objects.filter(
                         is_deleted=False,
-                        kanban_board_id__in=kanban_card.objects.filter(
+                        kanban_board_id__in=KanbanCard.objects.filter(
                             kanban_card_id=kanban_card_id,
                         ).values("kanban_board_id"),
                     ).values("group_id"),
@@ -172,7 +172,7 @@ def check_user_organisation_permissions(min_permission_level):
                 return func(request, *args, **kwargs, user_level=4)
 
             # Default user level is 0
-            user_group_results = user_group.objects.filter(
+            user_group_results = UserGroup.objects.filter(
                 is_deleted=False,
                 username=request.user,
             )
@@ -209,7 +209,7 @@ def check_user_permissions(min_permission_level, object_lookup=""):
                 return func(request, *args, **kwargs, user_level=4)
 
             # Default user level is 0
-            user_group_results = user_group.objects.filter(
+            user_group_results = UserGroup.objects.filter(
                 is_deleted=False,
                 username=request.user,
             )
@@ -217,11 +217,11 @@ def check_user_permissions(min_permission_level, object_lookup=""):
             # If we are passing the object_lookup through, we will use a different function
             if len(kwargs) > 0:
                 # Determine if there are any cross over with user groups and object_lookup groups
-                group_results = group.objects.filter(
+                group_results = Group.objects.filter(
                     Q(
                         is_deleted=False,
                         # The object_lookup groups
-                        group_id__in=object_assignment.objects.filter(
+                        group_id__in=ObjectAssignment.objects.filter(
                             is_deleted=False,
                             **{object_lookup: kwargs[object_lookup]},
                         ).values("group_id"),
@@ -266,20 +266,20 @@ def check_user_requirement_item_permissions(min_permission_level):
                 return func(request, *args, **kwargs, user_level=4)
 
             # Get the requirement_item instance
-            requirement_item_results = requirement_item.objects.get(
+            requirement_item_results = RequirementItem.objects.get(
                 **{"requirement_item_id": kwargs["requirement_item_id"]},
             )
 
             # Get the requirement instance
-            requirement_results = requirement.objects.get(
+            requirement_results = Requirement.objects.get(
                 requirement_id=requirement_item_results.requirement_id,
             )
 
             # Get the requirement groups
-            user_group_results = user_group.objects.filter(
+            user_group_results = UserGroup.objects.filter(
                 Q(
                     is_deleted=False,
-                    group_id__in=object_assignment.objects.filter(
+                    group_id__in=ObjectAssignment.objects.filter(
                         is_deleted=False,
                         group_id__isnull=False,
                         requirement_id=requirement_results.requirement_id,
@@ -319,7 +319,7 @@ def check_rfc_permissions(min_permission_level):
                 return func(request, *args, **kwargs, user_level=4)
 
             # Default user level is 0
-            user_group_results = user_group.objects.filter(
+            user_group_results = UserGroup.objects.filter(
                 is_deleted=False,
                 username=request.user,
             )
@@ -327,11 +327,11 @@ def check_rfc_permissions(min_permission_level):
             # If we are passing the object_lookup through, we will use a different function
             if len(kwargs) > 0:
                 # Determine if there are any cross over with user groups and object_lookup groups
-                group_results = group.objects.filter(
+                group_results = Group.objects.filter(
                     Q(
                         is_deleted=False,
                         # The object_lookup groups
-                        group_id__in=object_assignment.objects.filter(
+                        group_id__in=ObjectAssignment.objects.filter(
                             is_deleted=False,
                             # **{object_lookup: kwargs[object_lookup]},
                             request_for_change_id=kwargs["rfc_id"],

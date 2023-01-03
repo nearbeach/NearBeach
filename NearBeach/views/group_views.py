@@ -7,7 +7,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import SearchForm, NewGroupForm
-from NearBeach.models import group, user_group
+from NearBeach.models import Group, UserGroup
 from NearBeach.views.tools.internal_functions import get_user_permissions
 
 import json
@@ -26,7 +26,7 @@ def check_group_name(request):
         return HttpResponseBadRequest(form.errors)
 
     # Check to see if the group name exists
-    group_name_results = group.objects.filter(
+    group_name_results = Group.objects.filter(
         is_deleted=False,
         group_name__icontains=form.cleaned_data["search"],
     )
@@ -49,8 +49,8 @@ def group_information(request, group_id):
     t = loader.get_template("NearBeach/groups/group_information.html")
 
     # Get the data we want
-    group_results = group.objects.get(group_id=group_id)
-    parent_group_results = group.objects.filter(
+    group_results = Group.objects.get(group_id=group_id)
+    parent_group_results = Group.objects.filter(
         is_deleted=False,
     )
 
@@ -87,7 +87,7 @@ def group_information_save(request, group_id):
         return HttpResponseBadRequest(form.errors)
 
     # Update the group's data
-    group_update = group.objects.get(group_id=group_id)
+    group_update = Group.objects.get(group_id=group_id)
     group_update.group_name = form.cleaned_data["group_name"]
     group_update.parent_group = form.cleaned_data["parent_group"]
 
@@ -108,7 +108,7 @@ def new_group(request):
     t = loader.get_template("NearBeach/groups/new_group.html")
 
     # Get group data
-    group_results = group.objects.filter(is_deleted=False,).exclude(
+    group_results = Group.objects.filter(is_deleted=False,).exclude(
         group_name__in=["Administration"],
     )
 
@@ -137,7 +137,7 @@ def new_group_save(request):
         return HttpResponseBadRequest(form.errors)
 
     # Create the new group
-    group_submit = group(
+    group_submit = Group(
         group_name=form.cleaned_data["group_name"],
         parent_group=form.cleaned_data["parent_group"],
         change_user=request.user,

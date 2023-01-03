@@ -8,8 +8,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import NewPermissionSetForm, PermissionSetForm
 from NearBeach.models import (
-    permission_set,
-    user_group,
+    PermissionSet,
+    UserGroup,
     PERMISSION_BOOLEAN,
     PERMISSION_LEVEL,
 )
@@ -52,7 +52,7 @@ def new_permission_set_save(request):
         return HttpResponseBadRequest(form.errors)
 
     # Save the data
-    submit_permission_set = permission_set(
+    submit_permission_set = PermissionSet(
         permission_set_name=form.cleaned_data["permission_set_name"],
         change_user=request.user,
     )
@@ -80,7 +80,7 @@ def permission_set_information(request, permission_set_id):
     t = loader.get_template("NearBeach/permission_sets/permission_set_information.html")
 
     # Get data
-    permission_set_results = permission_set.objects.get(
+    permission_set_results = PermissionSet.objects.get(
         permission_set_id=permission_set_id
     )
 
@@ -123,7 +123,7 @@ def permission_set_information_save(request, permission_set_id):
         return HttpResponseBadRequest(form.errors)
 
     # Get the object
-    update_permission_set = permission_set.objects.get(
+    update_permission_set = PermissionSet.objects.get(
         permission_set_id=permission_set_id
     )
 
