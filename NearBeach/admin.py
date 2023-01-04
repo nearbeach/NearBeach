@@ -30,8 +30,6 @@ from .models import (
     ListOfContactType,
     ListOfCountryRegion,
     ListOfCountry,
-    ListOfLeadSource,
-    ListOfOpportunityStage,
     ListOfRequirementItemStatus,
     ListOfRequirementItemType,
     ListOfRequirementStatus,
@@ -43,7 +41,6 @@ from .models import (
     Notification,
     ObjectAssignment,
     ObjectNote,
-    Opportunity,
     Organisation,
     PermissionSet,
     Project,
@@ -93,8 +90,6 @@ admin.site.register(ListOfCurrency)
 admin.site.register(ListOfContactType)
 admin.site.register(ListOfCountryRegion)
 admin.site.register(ListOfCountry)
-admin.site.register(ListOfLeadSource)
-admin.site.register(ListOfOpportunityStage)
 admin.site.register(ListOfRequirementItemStatus)
 admin.site.register(ListOfRequirementItemType)
 admin.site.register(ListOfRequirementStatus)
@@ -106,7 +101,6 @@ admin.site.register(NearbeachOption)
 admin.site.register(Notification)
 admin.site.register(ObjectAssignment)
 admin.site.register(ObjectNote)
-admin.site.register(Opportunity)
 admin.site.register(Organisation)
 admin.site.register(PermissionSet)
 admin.site.register(Project)

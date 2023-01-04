@@ -145,9 +145,7 @@
                  */
                 var object_status = 'ERROR';
 
-                if (link['opportunity_id'] !== null) {
-                    object_status = link['opportunity_id__opportunity_stage_id__opportunity_stage_description'];
-                } else if (link['project_id'] !== null) {
+                if (link['project_id'] !== null) {
                     object_status = link['project_id__project_status'];
                 } else if (link['task_id'] !== null) {
                     object_status = link['task_id__task_status'];

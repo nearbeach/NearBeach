@@ -438,7 +438,6 @@ def associated_objects(request, destination, location_id):
     # Return the JSON Response back - which will return strait to the user
     return JsonResponse(
         {
-            # 'opportunity': list(opportunity_results),
             "project": list(project_results),
             "requirement": list(requirement_results),
             "task": list(task_results),

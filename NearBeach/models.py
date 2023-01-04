@@ -175,7 +175,7 @@ class ContactHistory(models.Model):
         "customer", on_delete=models.CASCADE, blank=True, null=True
     )
     contact_type = models.ForeignKey(
-        "list_of_contact_type",
+        "ListOfContactType",
         on_delete=models.CASCADE,
     )
     contact_date = models.DateTimeField()
@@ -203,7 +203,7 @@ class ContactHistory(models.Model):
 class Bug(models.Model):
     bug_id = models.AutoField(primary_key=True)
     bug_client = models.ForeignKey(
-        "bug_client",
+        "BugClient",
         on_delete=models.CASCADE,
     )
     # Just stores the code of the bug
@@ -248,7 +248,7 @@ class BugClient(models.Model):
     bug_client_id = models.AutoField(primary_key=True)
     bug_client_name = models.CharField(max_length=50)
     list_of_bug_client = models.ForeignKey(
-        "list_of_bug_client",
+        "ListOfBugClient",
         on_delete=models.CASCADE,
     )
     bug_client_url = models.URLField()
@@ -319,7 +319,7 @@ class Campus(models.Model):
         max_length=50
     )
     campus_region = models.ForeignKey(
-        "list_of_country_region",
+        "ListOfCountryRegion",
         on_delete=models.CASCADE,
     )
     campus_postcode = models.CharField(
@@ -328,7 +328,7 @@ class Campus(models.Model):
         blank=True,
     )
     campus_country = models.ForeignKey(
-        "list_of_country",
+        "ListOfCountry",
         on_delete=models.CASCADE,
     )
     campus_longitude = models.DecimalField(
@@ -362,7 +362,7 @@ class Campus(models.Model):
 class ChangeTask(models.Model):
     change_task_id = models.AutoField(primary_key=True)
     request_for_change = models.ForeignKey(
-        "request_for_change",
+        "RequestForChange",
         on_delete=models.CASCADE,
     )
     change_task_title = models.CharField(
@@ -482,7 +482,7 @@ class Cost(models.Model):
 class Customer(models.Model):
     customer_id = models.AutoField(primary_key=True)
     customer_title = models.ForeignKey(
-        "list_of_title",
+        "ListOfTitle",
         on_delete=models.CASCADE,
     )
     customer_first_name = models.CharField(max_length=50)
@@ -611,12 +611,6 @@ class DocumentPermission(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
-    opportunity = models.ForeignKey(
-        "opportunity",
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
     requirement = models.ForeignKey(
         "requirement",
         blank=True,
@@ -624,13 +618,13 @@ class DocumentPermission(models.Model):
         on_delete=models.CASCADE,
     )
     requirement_item = models.ForeignKey(
-        "requirement_item",
+        "RequirementItem",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     request_for_change = models.ForeignKey(
-        "request_for_change",
+        "RequestForChange",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
@@ -658,7 +652,7 @@ class DocumentPermission(models.Model):
 class EmailContact(models.Model):
     email_contact_id = models.AutoField(primary_key=True)
     email_content = models.ForeignKey(
-        "email_content",
+        "EmailContent",
         on_delete=models.CASCADE,
     )
     to_customer = models.ForeignKey(
@@ -696,12 +690,6 @@ class EmailContact(models.Model):
     )
     task = models.ForeignKey(
         "task",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    opportunity = models.ForeignKey(
-        "opportunity",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -763,13 +751,13 @@ class Folder(models.Model):
         null=True,
     )
     requirement_item = models.ForeignKey(
-        "requirement_item",
+        "RequirementItem",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     request_for_change = models.ForeignKey(
-        "request_for_change",
+        "RequestForChange",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -832,7 +820,7 @@ class GroupManager(models.Manager):
 class GroupPermission(models.Model):
     group_permission_id = models.AutoField(primary_key=True)
     permission_set = models.ForeignKey(
-        "permission_set",
+        "PermissionSet",
         on_delete=models.CASCADE,
     )
     group = models.ForeignKey("group", on_delete=models.CASCADE)
@@ -894,15 +882,15 @@ class KanbanCard(models.Model):
     )
     kanban_card_sort_number = models.IntegerField()
     kanban_level = models.ForeignKey(
-        "kanban_level",
+        "KanbanLevel",
         on_delete=models.CASCADE,
     )
     kanban_column = models.ForeignKey(
-        "kanban_column",
+        "KanbanColumn",
         on_delete=models.CASCADE,
     )
     kanban_board = models.ForeignKey(
-        "kanban_board",
+        "KanbanBoard",
         on_delete=models.CASCADE,
     )
     project = models.ForeignKey(
@@ -947,7 +935,7 @@ class KanbanColumn(models.Model):
     kanban_column_name = models.CharField(max_length=255)
     kanban_column_sort_number = models.IntegerField()
     kanban_board = models.ForeignKey(
-        "kanban_board",
+        "KanbanBoard",
         on_delete=models.CASCADE,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -971,7 +959,7 @@ class KanbanLevel(models.Model):
     kanban_level_name = models.CharField(max_length=255)
     kanban_level_sort_number = models.IntegerField()
     kanban_board = models.ForeignKey(
-        "kanban_board",
+        "KanbanBoard",
         on_delete=models.CASCADE,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -1177,7 +1165,7 @@ class ListOfCountry(models.Model):
 class ListOfCountryRegion(models.Model):
     region_id = models.AutoField(primary_key=True)
     country = models.ForeignKey(
-        "list_of_country",
+        "ListOfCountry",
         on_delete=models.CASCADE,
     )
     region_name = models.CharField(max_length=150)
@@ -1205,67 +1193,6 @@ class ListOfCountryRegion(models.Model):
 
     class Meta:
         db_table = "list_of_country_region"
-
-
-class ListOfLeadSource(models.Model):
-    lead_source_id = models.AutoField(primary_key=True)
-    lead_source_description = models.CharField(max_length=20)
-    list_order = models.IntegerField(unique=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="%(class)s_change_user",
-        blank=True,
-        null=True,
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        return str(self.lead_source_description)
-
-    class Meta:
-        db_table = "list_of_lead_source"
-
-
-class ListOfOpportunityStage(models.Model):
-    opportunity_stage_id = models.AutoField(primary_key=True)
-    opportunity_stage_description = models.CharField(max_length=50)
-    probability_success = models.DecimalField(
-        max_digits=3,
-        decimal_places=0,
-    )
-    list_order = models.IntegerField(unique=True)
-    opportunity_closed = models.BooleanField(
-        default=False,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="%(class)s_change_user",
-        blank=True,
-        null=True,
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        return str(self.opportunity_stage_description)
-
-    class Meta:
-        db_table = "list_of_opportunity_stage"
-        ordering = ["list_order"]
 
 
 class ListOfRequirementItemStatus(models.Model):
@@ -1554,12 +1481,6 @@ class ObjectAssignment(models.Model):
         blank=True,
         null=True,
     )
-    opportunity = models.ForeignKey(
-        "opportunity",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
     requirement = models.ForeignKey(
         "requirement",
         on_delete=models.CASCADE,
@@ -1567,7 +1488,7 @@ class ObjectAssignment(models.Model):
         null=True,
     )
     requirement_item = models.ForeignKey(
-        "requirement_item",
+        "RequirementItem",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1585,13 +1506,13 @@ class ObjectAssignment(models.Model):
         null=True,
     )
     kanban_board = models.ForeignKey(
-        "kanban_board",
+        "KanbanBoard",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     request_for_change = models.ForeignKey(
-        "request_for_change",
+        "RequestForChange",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1644,13 +1565,7 @@ class ObjectNote(models.Model):
         default="",
     )
     kanban_card = models.ForeignKey(
-        "kanban_card",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    opportunity = models.ForeignKey(
-        "opportunity",
+        "KanbanCard",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1668,7 +1583,7 @@ class ObjectNote(models.Model):
         null=True,
     )
     requirement_item = models.ForeignKey(
-        "requirement_item",
+        "RequirementItem",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1686,7 +1601,7 @@ class ObjectNote(models.Model):
         null=True,
     )
     request_for_change = models.ForeignKey(
-        "request_for_change",
+        "RequestForChange",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1704,78 +1619,6 @@ class ObjectNote(models.Model):
 
     class Meta:
         db_table = "object_note"
-
-
-class Opportunity(models.Model):
-    opportunity_id = models.AutoField(primary_key=True)
-    opportunity_name = models.CharField(max_length=255)
-    opportunity_description = models.TextField("oppertunity_description")
-    currency = models.ForeignKey(
-        "list_of_currency",
-        on_delete=models.CASCADE,
-    )
-    opportunity_amount = models.DecimalField(
-        max_digits=12, decimal_places=2
-    )  # Turn into a number widget
-    amount_type = models.ForeignKey("list_of_amount_type", on_delete=models.CASCADE)
-    opportunity_expected_close_date = models.DateTimeField()
-    opportunity_stage = models.ForeignKey(
-        "list_of_opportunity_stage", on_delete=models.CASCADE
-    )
-    opportunity_success_probability = models.IntegerField()  # Between 0% and 100%
-    lead_source = models.ForeignKey("list_of_lead_source", on_delete=models.CASCADE)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    creation_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "opportunities"
-
-
-"""
-class opportunity_connection(models.Model):
-    opportunity_connection_id = models.AutoField(primary_key=True)
-    opportunity=models.ForeignKey(
-        'opportunity',
-        on_delete=models.CASCADE,
-    )
-    customer=models.ForeignKey(
-        'customer',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    organisation=models.ForeignKey(
-        'organisation',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='%(class)s_change_user'
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    class Meta:
-        db_table = "organisation_connection"
-        """
 
 
 class Organisation(models.Model):
@@ -1805,60 +1648,7 @@ class Organisation(models.Model):
         db_table = "organisation"
 
 
-"""
-class permission_set_manager(models.Manager):
-    def get_by_natural_key(
-        self,
-        permission_set_id,
-        permission_set_name,
-        administration_assign_user_to_group,
-        administration_create_group,
-        administration_create_permission_set,
-        administration_create_user,
-        bug_client,
-        customer,
-        email,
-        kanban,
-        kanban_card,
-        organisation,
-        project,
-        request_for_change,
-        requirement,
-        task,
-        document,
-        kanban_comment,
-        project_history,
-        task_history,
-    ):
-        return self.get(
-            permission_set_id=permission_set_id,
-            permission_set_name=permission_set_name,
-            administration_assign_user_to_group=administration_assign_user_to_group,
-            administration_create_group=administration_create_group,
-            administration_create_permission_set=administration_create_permission_set,
-            administration_create_user=administration_create_user,
-            bug=bug,
-            bug_client=bug_client,
-            customer=customer,
-            email=email,
-            kanban=kanban,
-            kanban_card=kanban_card,
-            opportunity=opportunity,
-            organisation=organisation,
-            project=project,
-            request_for_change=request_for_change,
-            requirement=requirement,
-            task=task,
-            document=document,
-            kanban_comment=kanban_comment,
-            project_history=project_history,
-            task_history=task_history,
-        )
-"""
-
 class PermissionSet(models.Model):
-    #objects = permission_set_manager()
-
     permission_set_id = models.AutoField(primary_key=True)
     permission_set_name = models.CharField(
         max_length=255,
@@ -1944,32 +1734,6 @@ class PermissionSet(models.Model):
     is_deleted = models.BooleanField(
         default=False,
     )
-
-    """
-    def natural_key(self):
-        return (
-            self.permission_set_id,  # 0
-            self.permission_set_name,  # 1
-            self.administration_assign_user_to_group,  # 2
-            self.administration_create_group,  # 3
-            self.administration_create_permission_set,  # 4
-            self.administration_create_user,  # 5
-            self.assign_campus_to_customer,  # 6
-            self.associate_project_and_task,  # 7
-            self.customer,  # 8
-            self.opportunity,  # 11
-            self.organisation,  # 12
-            self.organisation_campus,  # 13
-            self.project,  # 14
-            self.requirement,  # 15
-            self.requirement_link,  # 16
-            self.task,  # 17
-            self.document,  # 18
-            self.contact_history,  # 19
-            self.project_history,  # 20
-            self.task_history,  # 21
-        )
-    """
 
     def __str__(self):
         return str(self.permission_set_name)
@@ -2068,13 +1832,13 @@ class RequestForChange(models.Model):
         null=True,
     )
     rfc_status = models.ForeignKey(
-        "list_of_rfc_status",
+        "ListOfRfcStatus",
         on_delete=models.CASCADE,
     )
     rfc_lead = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="rfc_lead",
+        related_name="RfcLead",
     )
     rfc_priority = models.IntegerField(
         choices=RFC_PRIORITY,
@@ -2122,7 +1886,7 @@ class RequestForChange(models.Model):
 class RequestForChangeGroupApproval(models.Model):
     rfc_group_approval_id = models.AutoField(primary_key=True)
     rfc = models.ForeignKey(
-        "request_for_change",
+        "RequestForChange",
         on_delete=models.CASCADE,
     )
     group = models.ForeignKey(
@@ -2181,7 +1945,7 @@ class RequestForChangeStakeholder(models.Model):
 
     rfc_stakeholder_id = models.AutoField(primary_key=True)
     request_for_change = models.ForeignKey(
-        "request_for_change",
+        "RequestForChange",
         on_delete=models.CASCADE,
     )
     customer = models.ForeignKey(
@@ -2219,11 +1983,11 @@ class Requirement(models.Model):
         default="",
     )
     requirement_type = models.ForeignKey(
-        "list_of_requirement_type",
+        "ListOfRequirementType",
         on_delete=models.CASCADE,
     )
     requirement_status = models.ForeignKey(
-        "list_of_requirement_status",
+        "ListOfRequirementStatus",
         on_delete=models.CASCADE,
     )
     requirement_story_point_min = models.IntegerField(default=1)
@@ -2291,11 +2055,11 @@ class RequirementItem(models.Model):
         default="",
     )
     requirement_item_status = models.ForeignKey(
-        "list_of_requirement_item_status",
+        "ListOfRequirementItemStatus",
         on_delete=models.CASCADE,
     )
     requirement_item_type = models.ForeignKey(
-        "list_of_requirement_item_type",
+        "ListOfRequirementItemType",
         on_delete=models.CASCADE,
     )
     ri_story_point_min = models.IntegerField(default=4)
@@ -2344,12 +2108,12 @@ class Tag(models.Model):
 class TagAssignment(models.Model):
     class ObjectEnum(models.TextChoices):
         REQUIREMENT = "requirement", _("Requirement")
-        REQUIREMENT_ITEM = "requirement_item", _("Requirement Item")
+        REQUIREMENT_ITEM = "RequirementItem", _("Requirement Item")
         PROJECT = "project", _("Project")
         TASK = "task", _("Task")
-        KANBAN = "kanban_board", _("Kanban Board")
-        CARD = "kanban_card", _("Kanban Card")
-        REQUEST_FOR_CHANGE = "request_for_change", _("Reuqest for Change")
+        KANBAN = "KanbanBoard", _("Kanban Board")
+        CARD = "KanbanCard", _("Kanban Card")
+        REQUEST_FOR_CHANGE = "RequestForChange", _("Request for Change")
         CUSTOMER = "customer", _("Customer")
         ORGANISATION = "organisation", _("Organisation")
 
@@ -2492,7 +2256,7 @@ class Timesheet(models.Model):
         blank=True,
     )
     requirement_item = models.ForeignKey(
-        "requirement_item",
+        "RequirementItem",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -2529,12 +2293,6 @@ class ToDo(models.Model):
         null=True,
         blank=True,
     )
-    opportunity = models.ForeignKey(
-        "opportunity",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -2559,7 +2317,7 @@ class UserGroup(models.Model):
         on_delete=models.CASCADE,
     )
     permission_set = models.ForeignKey(
-        "permission_set",
+        "PermissionSet",
         on_delete=models.CASCADE,
     )
     report_to = models.ForeignKey(

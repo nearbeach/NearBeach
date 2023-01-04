@@ -168,7 +168,6 @@
         ],
         data() {
             return {
-                opportunityResults: [],
                 projectResults: [],
                 requirementResults: [],
                 taskResults: [],
@@ -184,7 +183,6 @@
                 axios.post(
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/associated_objects/`,
                 ).then(response => {
-                    this.opportunityResults = response['data']['opportunity'];
                     this.projectResults = response['data']['project'];
                     this.requirementResults = response['data']['requirement'];
                     this.taskResults = response['data']['task'];

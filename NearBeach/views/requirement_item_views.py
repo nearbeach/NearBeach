@@ -77,14 +77,10 @@ def get_requirement_item_links(requirement_item_id):
     return ObjectAssignment.objects.filter(
         Q(is_deleted=False, requirement_item_id=requirement_item_id)
         & Q(
-            Q(opportunity_id__isnull=False)
-            | Q(project_id__isnull=False)
+            Q(project_id__isnull=False)
             | Q(task_id__isnull=False)
         )
     ).values(
-        "opportunity_id",
-        "opportunity_id__opportunity_name",
-        "opportunity_id__opportunity_stage_id__opportunity_stage_description",
         "project_id",
         "project_id__project_name",
         "project_id__project_status",

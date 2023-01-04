@@ -19,7 +19,6 @@ from NearBeach.models import (
     ObjectAssignment,
     Project,
     Task,
-    Opportunity,
     RequirementItem,
     ListOfRequirementItemStatus,
     ListOfRequirementItemType,
@@ -59,14 +58,6 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
         )
         submit_object_assignment.save()
 
-    for row in request.POST.getlist("opportunity"):
-        submit_object_assignment = ObjectAssignment(
-            requirement=requirement_instance,
-            opportunity=Opportunity.objects.get(opportunity_id=row),
-            change_user=request.user,
-        )
-        submit_object_assignment.save()
-
     return HttpResponse("Success")
 
 
@@ -84,14 +75,10 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
             ).values("requirement_item_id"),
         )
         & Q(
-            Q(opportunity_id__isnull=False)
-            | Q(project_id__isnull=False)
+            Q(project_id__isnull=False)
             | Q(task_id__isnull=False)
         )
     ).values(
-        "opportunity_id",
-        "opportunity_id__opportunity_name",
-        "opportunity_id__opportunity_stage_id__opportunity_stage_description",
         "project_id",
         "project_id__project_name",
         "project_id__project_status",
