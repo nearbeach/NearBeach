@@ -3,7 +3,7 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
-from NearBeach.forms import tag, NewTagForm, TagForm
+from NearBeach.forms import Tag, NewTagForm, TagForm
 
 
 @require_http_methods(["POST"])
@@ -11,7 +11,7 @@ from NearBeach.forms import tag, NewTagForm, TagForm
 @check_user_permissions(min_permission_level=4, object_lookup="tag")
 def delete_tag(request, tag_id, *args, **kwargs):
     # Delete Tag
-    update_tag = tag.objects.get(tag_id=tag_id)
+    update_tag = Tag.objects.get(tag_id=tag_id)
     update_tag.is_deleted = True
     update_tag.save()
 
@@ -33,7 +33,7 @@ def new_tag(request, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Create a new tag
-    submit_tag = tag(
+    submit_tag = Tag(
         tag_name=form.cleaned_data["tag_name"],
         tag_colour=form.cleaned_data["tag_colour"],
         change_user=request.user,
@@ -41,7 +41,7 @@ def new_tag(request, *args, **kwargs):
     submit_tag.save()
 
     # Get the object and send back to the users
-    tag_result = tag.objects.get(tag_id=submit_tag.tag_id)
+    tag_result = Tag.objects.get(tag_id=submit_tag.tag_id)
 
     return HttpResponse(
         serializers.serialize("json", [tag_result]), content_type="application/json"
@@ -64,7 +64,7 @@ def save_tag(request, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the data to manipulate
-    update_tag = tag.objects.get(tag_id=form.cleaned_data["tag_id"])
+    update_tag = Tag.objects.get(tag_id=form.cleaned_data["tag_id"])
 
     # Update the required fields
     update_tag.tag_name = form.cleaned_data["tag_name"]

@@ -7,8 +7,8 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import NewTaskForm, TaskInformationForm
-from NearBeach.models import group, user_group, object_assignment
-from NearBeach.views.tools.internal_functions import task, organisation
+from NearBeach.models import Group, UserGroup, ObjectAssignment
+from NearBeach.views.tools.internal_functions import Task, Organisation
 
 import json
 
@@ -26,13 +26,13 @@ def new_task(request, *args, **kwargs):
     t = loader.get_template("NearBeach/tasks/new_task.html")
 
     # Get data
-    group_results = group.objects.filter(
+    group_results = Group.objects.filter(
         is_deleted=False,
     )
 
     # Get list of user groups
     user_group_results = (
-        user_group.objects.filter(
+        UserGroup.objects.filter(
             is_deleted=False,
             username=request.user,
         )
@@ -71,7 +71,7 @@ def new_task_save(request, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Create the new task
-    task_submit = task(
+    task_submit = Task(
         change_user=request.user,
         creation_user=request.user,
         task_short_description=form.cleaned_data["task_short_description"],
@@ -87,10 +87,10 @@ def new_task_save(request, *args, **kwargs):
 
     for single_group in group_list:
         # Get the group instance
-        group_instance = group.objects.get(group_id=single_group)
+        group_instance = Group.objects.get(group_id=single_group)
 
         # Save the group instance against object assignment
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             group_id=group_instance,
             task=task_submit,
             change_user=request.user,
@@ -117,10 +117,10 @@ def task_information(request, task_id, *args, **kwargs):
     t = loader.get_template("NearBeach/tasks/task_information.html")
 
     # Get Data
-    task_results = task.objects.get(task_id=task_id)
+    task_results = Task.objects.get(task_id=task_id)
     task_status = task_results.task_status
 
-    organisation_results = organisation.objects.filter(
+    organisation_results = Organisation.objects.filter(
         is_deleted=False,
         organisation_id=task_results.organisation_id,
     )
@@ -153,7 +153,7 @@ def task_information_save(request, task_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the instance
-    update_task = task.objects.get(task_id=task_id)
+    update_task = Task.objects.get(task_id=task_id)
 
     # Update the values
     update_task.task_short_description = form.cleaned_data["task_short_description"]

@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.db.models import Q
-from NearBeach.models import user_group, group, object_assignment
+from NearBeach.models import UserGroup, Group, ObjectAssignment
 
 
 def login_user(c: object, self: object) -> object:
@@ -141,16 +141,16 @@ class TeamLeaderPermissionTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # TEMP CODE - CHECK USER PERMISSIONS LOGIC
-        user_group_results = user_group.objects.filter(
+        user_group_results = UserGroup.objects.filter(
             is_deleted=False,
             username=2,
         )
 
-        group_results = group.objects.filter(
+        group_results = Group.objects.filter(
             Q(
                 is_deleted=False,
                 # The object_lookup groups
-                group_id__in=object_assignment.objects.filter(
+                group_id__in=ObjectAssignment.objects.filter(
                     is_deleted=False,
                     kanban_board_id=2,
                 ).values("group_id"),

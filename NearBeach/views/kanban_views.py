@@ -1,17 +1,17 @@
 import json
 from NearBeach.models import (
-    kanban_column,
-    kanban_level,
-    object_assignment,
-    group,
-    user_group,
+    KanbanColumn,
+    KanbanLevel,
+    ObjectAssignment,
+    Group,
+    UserGroup,
 )
 from NearBeach.views.tools.internal_functions import (
-    kanban_card,
-    kanban_board,
-    project,
-    requirement,
-    task,
+    KanbanCard,
+    KanbanBoard,
+    Project,
+    Requirement,
+    Task,
 )
 from NearBeach.decorators.check_user_permissions import (
     check_user_permissions,
@@ -58,7 +58,7 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     kanban_card_sort_number = get_max_sort_id(kanban_board_id, form)
 
     # Submit the kanban board link
-    kanban_card_submit = kanban_card(
+    kanban_card_submit = KanbanCard(
         change_user=request.user,
         kanban_board_id=kanban_board_id,
         kanban_column=form.cleaned_data["kanban_column"],
@@ -80,7 +80,7 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     kanban_card_submit.save()
 
     # Send back the data we just created
-    kanban_card_results = kanban_card.objects.get(
+    kanban_card_results = KanbanCard.objects.get(
         kanban_card_id=kanban_card_submit.kanban_card_id
     )
 
@@ -103,7 +103,7 @@ def archive_kanban_cards(request, *args, **kwargs):
     card_list = request.POST.getlist("kanban_card_id")
 
     # Update all cards
-    kanban_card.objects.filter(kanban_card_id__in=card_list,).update(
+    KanbanCard.objects.filter(kanban_card_id__in=card_list,).update(
         is_archived=True,
     )
 
@@ -126,7 +126,7 @@ def check_kanban_board_name(request, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    kanban_board_results = kanban_board.objects.filter(
+    kanban_board_results = KanbanBoard.objects.filter(
         is_deleted=False,
         kanban_board_name=form.cleaned_data["kanban_board_name"],
     )
@@ -141,16 +141,16 @@ def check_kanban_board_name(request, *args, **kwargs):
 # Internal function
 def get_context(kanban_board_id):
     # Get the kanban data
-    kanban_board_results = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    kanban_board_results = KanbanBoard.objects.get(kanban_board_id=kanban_board_id)
 
-    column_results = kanban_column.objects.filter(
+    column_results = KanbanColumn.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
     ).order_by(
         "kanban_column_sort_number",
     )
 
-    level_results = kanban_level.objects.filter(
+    level_results = KanbanLevel.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
     ).order_by(
@@ -172,7 +172,7 @@ def get_context(kanban_board_id):
 # Internal function
 def get_max_sort_id(kanban_board_id, form):
     """Get the newest card number id"""
-    kanban_card_sort_number = kanban_card.objects.filter(
+    kanban_card_sort_number = KanbanCard.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
         kanban_column=form.cleaned_data["kanban_column"],
@@ -192,7 +192,7 @@ def get_max_sort_id(kanban_board_id, form):
 def kanban_close_board(request, kanban_board_id, *args, **kwargs):
     """Close the kanban board"""
     # Close the kanban board
-    kanban_update = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    kanban_update = KanbanBoard.objects.get(kanban_board_id=kanban_board_id)
     kanban_update.kanban_board_status = "Closed"
     kanban_update.save()
 
@@ -208,7 +208,7 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
     user_level = kwargs["user_level"]
 
     # Get group results
-    group_results = object_assignment.objects.filter(
+    group_results = ObjectAssignment.objects.filter(
         is_deleted=False,
         group_id__isnull=False,
         kanban_board_id=kanban_board_id,
@@ -238,7 +238,7 @@ def kanban_information(request, kanban_board_id, *args, **kwargs):
     user_level = kwargs["user_level"]
 
     # Get kanban card results
-    kanban_card_results = kanban_card.objects.filter(
+    kanban_card_results = KanbanCard.objects.filter(
         is_archived=False,
         is_deleted=False,
         kanban_board_id=kanban_board_id,
@@ -267,26 +267,26 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
     # CHECK USER PERMISSIONS
 
     # Get a list of all existing cards
-    existing_objects = kanban_card.objects.filter(
+    existing_objects = KanbanCard.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
     )
 
     # Get the results we require
     if object_lookup == "Project":
-        object_results = project.objects.filter(is_deleted=False,).exclude(
+        object_results = Project.objects.filter(is_deleted=False,).exclude(
             project_id__in=existing_objects.exclude(project_id__isnull=True).values(
                 "project_id"
             )
         )
     elif object_lookup == "Requirement":
-        object_results = requirement.objects.filter(is_deleted=False,).exclude(
+        object_results = Requirement.objects.filter(is_deleted=False,).exclude(
             requirement_id__in=existing_objects.exclude(
                 requirement_id__isnull=True
             ).values("requirement_id")
         )
     elif object_lookup == "Task":
-        object_results = task.objects.filter(is_deleted=False,).exclude(
+        object_results = Task.objects.filter(is_deleted=False,).exclude(
             task_id__in=existing_objects.exclude(
                 task_id__isnull=True,
             ).values("task_id")
@@ -310,7 +310,7 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     :param kanban_board_id:
     :return:
     """
-    kanban_card_update = kanban_card.objects.get(kanban_card_id=kanban_card_id)
+    kanban_card_update = KanbanCard.objects.get(kanban_card_id=kanban_card_id)
 
     # Get the form data
     form = MoveKanbanCardForm(request.POST)
@@ -337,7 +337,7 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
         and form.cleaned_data["new_card_level"] == form.cleaned_data["old_card_level"]
     ):
         # The card has stayed in the same column/level
-        resort_array = kanban_card.objects.filter(
+        resort_array = KanbanCard.objects.filter(
             Q(
                 Q(
                     is_deleted=False,
@@ -379,7 +379,7 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
 
         The new location will have a delta +1, to move the higher cards away, to create a space for the card
         """
-        old_resort_array = kanban_card.objects.filter(
+        old_resort_array = KanbanCard.objects.filter(
             Q(
                 is_deleted=False,
                 kanban_card_sort_number__gte=form.cleaned_data["old_card_sort_number"],
@@ -389,7 +389,7 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
             )
         ).order_by("kanban_card_sort_number")
 
-        new_resort_array = kanban_card.objects.filter(
+        new_resort_array = KanbanCard.objects.filter(
             Q(
                 is_deleted=False,
                 kanban_card_sort_number__gte=form.cleaned_data["new_card_sort_number"],
@@ -415,13 +415,13 @@ def new_kanban(request, *args, **kwargs):
     # Check user permissions
 
     # Get data
-    group_results = group.objects.filter(
+    group_results = Group.objects.filter(
         is_deleted=False,
     )
 
     # Get list of user groups
     user_group_results = (
-        user_group.objects.filter(
+        UserGroup.objects.filter(
             is_deleted=False,
             username=request.user,
         )
@@ -451,7 +451,7 @@ def new_kanban(request, *args, **kwargs):
 @check_user_permissions(min_permission_level=2, object_lookup="kanban_board_id")
 def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     """Add a new kanban card"""
-    kanban_instance = kanban_board.objects.get(kanban_board_id=kanban_board_id)
+    kanban_instance = KanbanBoard.objects.get(kanban_board_id=kanban_board_id)
 
     # Get the form data
     form = NewKanbanCardForm(request.POST)
@@ -462,7 +462,7 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     kanban_card_sort_number = get_max_sort_id(kanban_board_id, form)
 
     # Save the data
-    submit_kanban_card = kanban_card(
+    submit_kanban_card = KanbanCard(
         change_user=request.user,
         kanban_board=kanban_instance,
         kanban_card_text=form.cleaned_data["kanban_card_text"],
@@ -474,7 +474,7 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     submit_kanban_card.save()
 
     # Send back the kanban card data
-    kanban_card_results = kanban_card.objects.get(
+    kanban_card_results = KanbanCard.objects.get(
         kanban_card_id=submit_kanban_card.kanban_card_id
     )
     return HttpResponse(
@@ -498,7 +498,7 @@ def new_kanban_save(request, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Create the kanban board
-    submit_kanban_board = kanban_board(
+    submit_kanban_board = KanbanBoard(
         change_user=request.user,
         creation_user=request.user,
         kanban_board_name=form.cleaned_data["kanban_board_name"],
@@ -511,7 +511,7 @@ def new_kanban_save(request, *args, **kwargs):
 
     # Loop through the column title list to save the titles
     for index, column_title in enumerate(column_title_list):
-        submit_column_title = kanban_column(
+        submit_column_title = KanbanColumn(
             change_user=request.user,
             kanban_column_name=column_title,
             kanban_board=submit_kanban_board,
@@ -521,7 +521,7 @@ def new_kanban_save(request, *args, **kwargs):
 
     # Loop throuhg the level title list to save the titles
     for index, level_title in enumerate(level_title_list):
-        submit_level_title = kanban_level(
+        submit_level_title = KanbanLevel(
             change_user=request.user,
             kanban_level_name=level_title,
             kanban_board=submit_kanban_board,
@@ -534,10 +534,10 @@ def new_kanban_save(request, *args, **kwargs):
 
     for single_group in group_list:
         # Get the group instance
-        group_instance = group.objects.get(group_id=single_group)
+        group_instance = Group.objects.get(group_id=single_group)
 
         # Save the group instance against object assignment
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             group_id=group_instance,
             kanban_board=submit_kanban_board,
             change_user=request.user,

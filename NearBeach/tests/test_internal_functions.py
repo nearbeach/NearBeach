@@ -1,6 +1,6 @@
 from django.test import TestCase
 from NearBeach.views.tools.internal_functions import get_object_from_destination
-from NearBeach.models import object_assignment
+from NearBeach.models import ObjectAssignment
 
 
 class TestInternalFunctions(TestCase):
@@ -11,7 +11,7 @@ class TestInternalFunctions(TestCase):
     @staticmethod
     def test_kanban_board():
         # Get basic input object
-        input_object = object_assignment.objects.filter(
+        input_object = ObjectAssignment.objects.filter(
             is_deleted=False,
         )
 
@@ -27,7 +27,7 @@ class TestInternalFunctions(TestCase):
     @staticmethod
     def test_organisation():
         # Get basic input object
-        input_object = object_assignment.objects.filter(
+        input_object = ObjectAssignment.objects.filter(
             is_deleted=False,
         )
 

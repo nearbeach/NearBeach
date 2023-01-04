@@ -8,7 +8,7 @@ from NearBeach.forms import (
     PasswordResetForm,
     UpdateGroupLeaderStatusForm,
 )
-from NearBeach.models import user_group
+from NearBeach.models import UserGroup
 from NearBeach.views.tools.internal_functions import get_user_permissions
 
 import itertools
@@ -46,7 +46,7 @@ def add_user(request):
     # ((x,y) for x in A for y in B)
     # itertools
     for row in itertools.product(group_results, permission_set_results):
-        submit_user = user_group(
+        submit_user = UserGroup(
             username=user_results,
             permission_set=row[1],
             group=row[0],
@@ -69,7 +69,7 @@ def update_group_leader_status(request, destination):
         return HttpResponseBadRequest(form.errors)
 
     # Start filtering the user_group
-    user_group_update = user_group.objects.filter(
+    user_group_update = UserGroup.objects.filter(
         is_deleted=False,
         username=form.cleaned_data["username"],
     )

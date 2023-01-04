@@ -2,26 +2,26 @@ import urllib3
 import urllib
 import json
 from NearBeach.models import (
-    bug,
-    bug_client,
-    customer,
-    group,
-    list_of_requirement_item_status,
-    list_of_requirement_status,
-    object_assignment,
-    object_note,
-    organisation,
-    permission_set,
-    requirement_item,
-    tag,
-    tag_assignment,
-    user_group,
+    Bug,
+    BugClient,
+    Customer,
+    Group,
+    ListOfRequirementItemStatus,
+    ListOfRequirementStatus,
+    ObjectAssignment,
+    ObjectNote,
+    Organisation,
+    PermissionSet,
+    RequirementItem,
+    Tag,
+    TagAssignment,
+    UserGroup,
 )
 from NearBeach.views.tools.internal_functions import (
     set_object_from_destination,
-    project,
-    task,
-    requirement,
+    Project,
+    Task,
+    Requirement,
     get_object_from_destination,
 )
 from NearBeach.decorators.check_destination import check_destination
@@ -64,7 +64,7 @@ def add_bug(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Save the data
-    submit_bug = bug(
+    submit_bug = Bug(
         bug_client=form.cleaned_data["bug_client"],
         bug_code=form.cleaned_data["bug_id"],
         bug_description=form.cleaned_data["bug_description"],
@@ -79,7 +79,7 @@ def add_bug(request, destination, location_id):
     submit_bug.save()
 
     # Get new bug to send back to use
-    bug_results = bug.objects.filter(bug_id=submit_bug.bug_id)
+    bug_results = Bug.objects.filter(bug_id=submit_bug.bug_id)
 
     # Return the JSON data
     return HttpResponse(
@@ -99,7 +99,7 @@ def add_customer(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Obtain the data dependent on the destination
-    submit_object_assignment = object_assignment(
+    submit_object_assignment = ObjectAssignment(
         change_user=request.user, customer=form.cleaned_data["customer"]
     )
     submit_object_assignment = set_object_from_destination(
@@ -132,10 +132,10 @@ def add_group(request, destination, location_id):
 
     for single_group in group_list_results:
         # Get group instance
-        group_instance = group.objects.get(group_id=single_group)
+        group_instance = Group.objects.get(group_id=single_group)
 
         # Construct the object assignment
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             group_id=group_instance,
             change_user=request.user,
         )
@@ -172,7 +172,7 @@ def add_link(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Start saving the data
-    object_assignment_submit = object_assignment(
+    object_assignment_submit = ObjectAssignment(
         change_user=request.user,
     )
 
@@ -183,10 +183,10 @@ def add_link(request, destination, location_id):
 
     # Declaring the dict used in the for loop below
     object_dict = {
-        "project": project.objects,
-        "task": task.objects,
-        "requirement": requirement.objects,
-        "requirement_item": requirement_item.objects,
+        "project": Project.objects,
+        "task": Task.objects,
+        "requirement": Requirement.objects,
+        "requirement_item": RequirementItem.objects,
     }
 
     object_title = {
@@ -210,7 +210,7 @@ def add_link(request, destination, location_id):
         for row in request.POST.getlist(object_type):
             single_object = object_dict[object_type].get(pk=row)
 
-            submit_object_assignment = object_assignment(
+            submit_object_assignment = ObjectAssignment(
                 change_user=request.user,
                 **{object_type: single_object}
             )
@@ -255,7 +255,7 @@ def add_notes(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # SAVE DATA
-    submit_object_note = object_note(
+    submit_object_note = ObjectNote(
         change_user=request.user, object_note=form.cleaned_data["note"]
     )
     submit_object_note = set_object_from_destination(
@@ -265,7 +265,7 @@ def add_notes(request, destination, location_id):
     submit_object_note.save()
 
     # Get data to send back to user
-    note_resuts = object_note.objects.filter(
+    note_resuts = ObjectNote.objects.filter(
         object_note_id=submit_object_note.object_note_id
     )
 
@@ -288,9 +288,9 @@ def add_tags(request, destination, location_id):
 
     for single_tag in tag_list_results:
         # Grab the tag instance
-        tag_instance = tag.objects.get(tag_id=single_tag)
+        tag_instance = Tag.objects.get(tag_id=single_tag)
 
-        submit_tag_assignment = tag_assignment(
+        submit_tag_assignment = TagAssignment(
             tag=tag_instance,
             object_enum=destination,
             object_id=location_id,
@@ -299,9 +299,9 @@ def add_tags(request, destination, location_id):
         submit_tag_assignment.save()
 
     # Return all tags associated with the destination/locationid
-    tag_results = tag.objects.filter(
+    tag_results = Tag.objects.filter(
         is_deleted=False,
-        tag_id__in=tag_assignment.objects.filter(
+        tag_id__in=TagAssignment.objects.filter(
             is_deleted=False,
             object_enum=destination,
             object_id=location_id,
@@ -334,7 +334,7 @@ def add_user(request, destination, location_id):
         user_instance = User.objects.get(id=single_user)
 
         # Create object assignment
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             change_user=request.user,
             assigned_user=user_instance,
         )
@@ -360,11 +360,11 @@ def admin_add_user(request):
     """
     # Make sure user has permissions
     # Get data
-    group_results = group.objects.filter(
+    group_results = Group.objects.filter(
         is_deleted=False,
     ).values()
 
-    permission_set_results = permission_set.objects.filter(
+    permission_set_results = PermissionSet.objects.filter(
         is_deleted=False,
     ).values()
 
@@ -407,28 +407,28 @@ def associated_objects(request, destination, location_id):
         return associated_objects_organisations(location_id)
 
     # Get the data
-    object_assignment_results = object_assignment.objects.filter(
+    object_assignment_results = ObjectAssignment.objects.filter(
         is_deleted=False,
     )
     object_assignment_results = get_object_from_destination(
         object_assignment_results, destination, location_id
     )
 
-    project_results = project.objects.filter(
+    project_results = Project.objects.filter(
         is_deleted=False,
         project_id__in=object_assignment_results.filter(
             project_id__isnull=False
         ).values("project_id"),
     ).values()
 
-    requirement_results = requirement.objects.filter(
+    requirement_results = Requirement.objects.filter(
         is_deleted=False,
         requirement_id__in=object_assignment_results.filter(
             requirement_id__isnull=False
         ).values("requirement_id"),
     ).values()
 
-    task_results = task.objects.filter(
+    task_results = Task.objects.filter(
         is_deleted=False,
         task_id__in=object_assignment_results.filter(task_id__isnull=False).values(
             "task_id"
@@ -438,7 +438,6 @@ def associated_objects(request, destination, location_id):
     # Return the JSON Response back - which will return strait to the user
     return JsonResponse(
         {
-            # 'opportunity': list(opportunity_results),
             "project": list(project_results),
             "requirement": list(requirement_results),
             "task": list(task_results),
@@ -458,17 +457,17 @@ def associated_objects_organisations(location_id):
     :return:
     """
     # Get the data
-    project_results = project.objects.filter(
+    project_results = Project.objects.filter(
         is_deleted=False,
         organisation=location_id,
     ).values()
 
-    requirement_results = requirement.objects.filter(
+    requirement_results = Requirement.objects.filter(
         is_deleted=False,
         organisation=location_id,
     ).values()
 
-    task_results = task.objects.filter(
+    task_results = Task.objects.filter(
         is_deleted=False,
         organisation=location_id,
     ).values()
@@ -486,7 +485,7 @@ def associated_objects_organisations(location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 def bug_client_list(request):
-    bug_client_results = bug_client.objects.filter(
+    bug_client_results = BugClient.objects.filter(
         is_deleted=False,
     )
 
@@ -501,7 +500,7 @@ def bug_client_list(request):
 @check_destination()
 def bug_list(request, destination, location_id):
     # Obtain the data dependent on the destination
-    bug_list_results = bug.objects.filter(
+    bug_list_results = Bug.objects.filter(
         is_deleted=False,
     )
     bug_list_results = get_object_from_destination(
@@ -554,31 +553,31 @@ def customer_list(request, destination, location_id):
 def customer_list_all(request, destination, location_id):
     # Get the organisation dependant on the destination source
     if destination == "requirement":
-        organisation_results = organisation.objects.get(
-            organisation_id=requirement.objects.get(
+        organisation_results = Organisation.objects.get(
+            organisation_id=Requirement.objects.get(
                 is_deleted=False,
                 requirement_id=location_id,
             ).organisation_id
         )
     elif destination == "requirement_item":
-        organisation_results = organisation.objects.get(
-            organisation_id=requirement.objects.get(
+        organisation_results = Organisation.objects.get(
+            organisation_id=Requirement.objects.get(
                 is_deleted=False,
-                requirement_id=requirement_item.objects.get(
+                requirement_id=RequirementItem.objects.get(
                     requirement_item_id=location_id
                 ).requirement_id,
             ).organisation_id
         )
     elif destination == "project":
-        organisation_results = organisation.objects.get(
-            organisation_id=project.objects.get(
+        organisation_results = Organisation.objects.get(
+            organisation_id=Project.objects.get(
                 is_deleted=False,
                 project_id=location_id,
             ).organisation_id
         )
     elif destination == "task":
-        organisation_results = organisation.objects.get(
-            organisation_id=task.objects.get(
+        organisation_results = Organisation.objects.get(
+            organisation_id=Task.objects.get(
                 is_deleted=False,
                 task_id=location_id,
             ).organisation_id
@@ -589,7 +588,7 @@ def customer_list_all(request, destination, location_id):
             "Sorry - there was an error getting the Customer List"
         )
 
-    customer_results = customer.objects.filter(
+    customer_results = Customer.objects.filter(
         is_deleted=False, organisation_id=organisation_results.organisation_id
     )
 
@@ -649,7 +648,7 @@ def delete_tag(request):
         return HttpResponseBadRequest(form.errors)
 
     # Update/Delete tag associations
-    tag_assignment.objects.filter(
+    TagAssignment.objects.filter(
         is_deleted=False,
         tag_id=form.cleaned_data["tag"],
         object_enum=form.cleaned_data["object_enum"],
@@ -665,7 +664,7 @@ def delete_tag(request):
 # Internal function
 def get_customer_list(destination, location_id):
     # Get a list of all objects assignments dependant on the destination
-    object_customers = object_assignment.objects.filter(
+    object_customers = ObjectAssignment.objects.filter(
         is_deleted=False,
         customer_id__isnull=False,
     )
@@ -673,14 +672,14 @@ def get_customer_list(destination, location_id):
         object_customers, destination, location_id
     )
 
-    return customer.objects.filter(
+    return Customer.objects.filter(
         is_deleted=False, customer_id__in=object_customers.values("customer_id")
     )
 
 
 # Internal function
 def get_group_list(destination, location_id):
-    object_results = object_assignment.objects.filter(
+    object_results = ObjectAssignment.objects.filter(
         is_deleted=False,
     )
     object_results = get_object_from_destination(
@@ -688,7 +687,7 @@ def get_group_list(destination, location_id):
     )
 
     # Now return the groups
-    return group.objects.filter(
+    return Group.objects.filter(
         is_deleted=False, group_id__in=object_results.values("group_id")
     )
 
@@ -696,7 +695,7 @@ def get_group_list(destination, location_id):
 # Internal Function
 def get_user_list(destination, location_id):
     # Get the data we want
-    object_results = object_assignment.objects.filter(
+    object_results = ObjectAssignment.objects.filter(
         is_deleted=False,
         assigned_user_id__isnull=False,
     )
@@ -721,7 +720,7 @@ def get_user_list(destination, location_id):
 # Internal Function
 def get_user_list_all(destination, location_id):
     # Get a list of users we want to exclude
-    object_results = object_assignment.objects.filter(
+    object_results = ObjectAssignment.objects.filter(
         is_deleted=False,
         assigned_user_id__isnull=False,
     )
@@ -730,7 +729,7 @@ def get_user_list_all(destination, location_id):
     )
 
     # Get a list of all the groups associated with this destination
-    group_results = object_assignment.objects.filter(
+    group_results = ObjectAssignment.objects.filter(
         is_deleted=False,
         group_id__isnull=False,
     )
@@ -739,7 +738,7 @@ def get_user_list_all(destination, location_id):
     # Get a list of users who are associated with these groups & not in the excluded list
     user_results = (
         User.objects.filter(
-            id__in=user_group.objects.filter(
+            id__in=UserGroup.objects.filter(
                 is_deleted=False,
                 group_id__in=group_results.values("group_id"),
             ).values("username_id"),
@@ -779,7 +778,7 @@ def group_list_all(request, destination, location_id):
     # ADD CHECKS FOR USER PERMISSIONS!
 
     # Obtain data
-    group_existing_results = object_assignment.objects.filter(
+    group_existing_results = ObjectAssignment.objects.filter(
         is_deleted=False,
         group_id__isnull=False,
     )
@@ -787,7 +786,7 @@ def group_list_all(request, destination, location_id):
         group_existing_results, destination, location_id
     )
 
-    group_results = group.objects.filter(
+    group_results = Group.objects.filter(
         is_deleted=False,
     ).exclude(group_id__in=group_existing_results.values("group_id"))
 
@@ -844,12 +843,12 @@ def lead_user_list(request):
 def link_list(request, destination, location_id, object_lookup):
     # Get the data dependent on the object lookup
     if object_lookup == "project":
-        data_results = project.objects.filter(is_deleted=False,).exclude(
+        data_results = Project.objects.filter(is_deleted=False,).exclude(
             Q(
                 project_status="Closed",
             )
             | Q(
-                project_id__in=object_assignment.objects.filter(
+                project_id__in=ObjectAssignment.objects.filter(
                     is_deleted=False,
                     project_id__isnull=False,
                     **{destination: location_id},
@@ -857,12 +856,12 @@ def link_list(request, destination, location_id, object_lookup):
             )
         )
     elif object_lookup == "task":
-        data_results = task.objects.filter(is_deleted=False,).exclude(
+        data_results = Task.objects.filter(is_deleted=False,).exclude(
             Q(
                 task_status="Closed",
             )
             | Q(
-                task_id__in=object_assignment.objects.filter(
+                task_id__in=ObjectAssignment.objects.filter(
                     is_deleted=False,
                     task_id__isnull=False,
                     **{destination: location_id},
@@ -870,25 +869,25 @@ def link_list(request, destination, location_id, object_lookup):
             )
         )
     elif object_lookup == "requirement":
-        data_results = requirement.objects.filter(
+        data_results = Requirement.objects.filter(
             is_deleted=False,
-            requirement_status_id__in=list_of_requirement_status.objects.filter(
+            requirement_status_id__in=ListOfRequirementStatus.objects.filter(
                 is_deleted=False,
                 requirement_status_is_closed=False,
             ).values("requirement_status_id"),
         )
     elif object_lookup == "requirement_item":
-        data_results = requirement_item.objects.filter(
+        data_results = RequirementItem.objects.filter(
             is_deleted=False,
-            requirement_item_status_id__in=list_of_requirement_item_status.objects.filter(
+            requirement_item_status_id__in=ListOfRequirementItemStatus.objects.filter(
                 is_deleted=False,
                 status_is_closed=False,
             ).values(
                 "requirement_item_status_id"
             ),
-            requirement_id__in=requirement.objects.filter(
+            requirement_id__in=Requirement.objects.filter(
                 is_deleted=False,
-                requirement_status_id__in=list_of_requirement_status.objects.filter(
+                requirement_status_id__in=ListOfRequirementStatus.objects.filter(
                     is_deleted=False,
                     requirement_status_is_closed=False,
                 ).values("requirement_status_id"),
@@ -915,17 +914,17 @@ def link_object(object_assignment_submit, destination, location_id):
     :return:
     """
     if destination == "project":
-        object_assignment_submit.project = project.objects.get(project_id=location_id)
+        object_assignment_submit.project = Project.objects.get(project_id=location_id)
     elif destination == "requirement":
-        object_assignment_submit.requirement = requirement.objects.get(
+        object_assignment_submit.requirement = Requirement.objects.get(
             requirement_id=location_id
         )
     elif destination == "requirement_item":
-        object_assignment_submit.requirement_item = requirement_item.objects.get(
+        object_assignment_submit.requirement_item = RequirementItem.objects.get(
             requirement_item_id=location_id
         )
     elif destination == "task":
-        object_assignment_submit.task = task.objects.get(task_id=location_id)
+        object_assignment_submit.task = Task.objects.get(task_id=location_id)
 
     # Return the results
     return object_assignment_submit
@@ -938,7 +937,7 @@ def note_list(request, destination, location_id):
     # Everyone should have access to the notes section.
 
     # Get the notes dependent on the user destination and location
-    note_results = object_note.objects.filter(
+    note_results = ObjectNote.objects.filter(
         is_deleted=False,
     )
 
@@ -961,7 +960,7 @@ def object_link_list(request, destination, location_id):
     :param location_id:
     :return:
     """
-    object_assignment_results = object_assignment.objects.filter(
+    object_assignment_results = ObjectAssignment.objects.filter(
         is_deleted=False,
     )
 
@@ -1023,7 +1022,7 @@ def query_bug_client(request, destination, location_id):
     _ = form.cleaned_data["search"]
 
     # Get existing bugs that we want to extract out
-    existing_bugs = bug.objects.filter(
+    existing_bugs = Bug.objects.filter(
         is_deleted=False,
         bug_client_id=bug_client_instance.bug_client_id,
     )
@@ -1085,7 +1084,7 @@ def remove_group(request, destination, location_id):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    update_object_assignment = object_assignment.objects.filter(
+    update_object_assignment = ObjectAssignment.objects.filter(
         group_id=form.cleaned_data["group_id"],
     )
 
@@ -1111,7 +1110,7 @@ def remove_link(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Now we limit the data to what we want, and then soft delete it
-    update_object_assignment = object_assignment.objects.filter(
+    update_object_assignment = ObjectAssignment.objects.filter(
         is_deleted=False,
         **{destination: location_id},
         **{form.cleaned_data["link_connection"]: form.cleaned_data["link_id"]},
@@ -1134,7 +1133,7 @@ def remove_user(request, destination, location_id):
     user_instance = User.objects.get(username=form.cleaned_data["username"])
 
     # Delete user from object assignment for destination and location_id
-    update_object_assignment = object_assignment.objects.filter(
+    update_object_assignment = ObjectAssignment.objects.filter(
         assigned_user=user_instance,
     )
 
@@ -1156,9 +1155,9 @@ def remove_user(request, destination, location_id):
 @check_destination()
 def tag_list(request, destination, location_id):
     # Get the data we want
-    tag_results = tag.objects.filter(
+    tag_results = Tag.objects.filter(
         is_deleted=False,
-        tag_id__in=tag_assignment.objects.filter(
+        tag_id__in=TagAssignment.objects.filter(
             is_deleted=False,
             object_enum=destination,
             object_id=location_id,
@@ -1175,7 +1174,7 @@ def tag_list(request, destination, location_id):
 @login_required(login_url="login", redirect_field_name="")
 def tag_list_all(request):
     # Get the data we want
-    tag_results = tag.objects.filter(
+    tag_results = Tag.objects.filter(
         is_deleted=False,
     )
 

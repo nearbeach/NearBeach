@@ -1,6 +1,6 @@
 # Import Forms
-from ..forms import permission_set, group, LoginForm, User
-from ..models import user_group, notification
+from ..forms import PermissionSet, Group, LoginForm, User
+from ..models import UserGroup, Notification
 
 # Import Django Libraries
 from django.contrib import auth
@@ -32,9 +32,9 @@ def check_first_time_login(request):
     ~~~~~~~~~~~
     If permission_set with id of 1 does not exist, go through first stage setup.
     """
-    if not permission_set.objects.all():
+    if not PermissionSet.objects.all():
         # Create administration permission_set
-        submit_permission_set = permission_set(
+        submit_permission_set = PermissionSet(
             permission_set_name="Administration Permission Set",
             administration_assign_user_to_group=4,
             administration_create_group=4,
@@ -56,14 +56,14 @@ def check_first_time_login(request):
         submit_permission_set.save()
 
         # Create admin group
-        submit_group = group(
+        submit_group = Group(
             group_name="Administration",
             change_user=request.user,
         )
         submit_group.save()
 
         # Add user to admin group
-        submit_user_group = user_group(
+        submit_user_group = UserGroup(
             username=request.user,
             group=submit_group,
             permission_set=submit_permission_set,
@@ -166,7 +166,7 @@ def login(request):
 
             # Check how many groups user is in
             user_group_count = len(
-                user_group.objects.filter(
+                UserGroup.objects.filter(
                     is_deleted=False,
                     username_id=User.objects.get(username=username).id,
                 )
@@ -197,7 +197,7 @@ def login(request):
     t = loader.get_template("NearBeach/authentication/login.html")
 
     # Get notification results
-    notification_results = notification.objects.filter(
+    notification_results = Notification.objects.filter(
         Q(
             # is_deleted=False,
             # ADD IN DATES LOGIC HERE

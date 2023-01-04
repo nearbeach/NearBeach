@@ -8,20 +8,20 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from NearBeach.forms import SearchObjectsForm, SearchForm
 from NearBeach.models import (
-    object_assignment,
-    request_for_change,
-    requirement,
-    project,
-    task,
-    kanban_board,
-    list_of_requirement_status,
-    customer,
-    group,
-    organisation,
-    permission_set,
+    ObjectAssignment,
+    RequestForChange,
+    Requirement,
+    Project,
+    Task,
+    KanbanBoard,
+    ListOfRequirementStatus,
+    Customer,
+    Group,
+    Organisation,
+    PermissionSet,
     User,
-    tag,
-    user_group,
+    Tag,
+    UserGroup,
 )
 
 
@@ -39,28 +39,28 @@ def get_object_search_data(search_form, request):
     :return:
     """
     # Get instance data for all objects
-    rfc_results = request_for_change.objects.filter(is_deleted=False,).values(
+    rfc_results = RequestForChange.objects.filter(is_deleted=False,).values(
         "rfc_id",
         "rfc_title",
         "rfc_status",
         "rfc_status__rfc_status",
     )
-    requirement_results = requirement.objects.filter(is_deleted=False,).values(
+    requirement_results = Requirement.objects.filter(is_deleted=False,).values(
         "requirement_id",
         "requirement_title",
         "requirement_status__requirement_status",
     )
-    project_results = project.objects.filter(is_deleted=False,).values(
+    project_results = Project.objects.filter(is_deleted=False,).values(
         "project_id",
         "project_name",
         "project_status",
     )
-    task_results = task.objects.filter(is_deleted=False,).values(
+    task_results = Task.objects.filter(is_deleted=False,).values(
         "task_id",
         "task_short_description",
         "task_status",
     )
-    kanban_results = kanban_board.objects.filter(is_deleted=False,).values(
+    kanban_results = KanbanBoard.objects.filter(is_deleted=False,).values(
         "kanban_board_id",
         "kanban_board_name",
         "kanban_board_status",
@@ -68,9 +68,9 @@ def get_object_search_data(search_form, request):
 
     # Check to see if not superuser - if not we limit to user's own groups
     if not request.user.is_superuser:
-        object_assignment_results = object_assignment.objects.filter(
+        object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
-            group_id__in=user_group.objects.filter(
+            group_id__in=UserGroup.objects.filter(
                 is_deleted=False,
                 username=request.user,
             ).values("group_id"),
@@ -116,7 +116,7 @@ def get_object_search_data(search_form, request):
         )
 
         requirement_results = requirement_results.exclude(
-            requirement_status__in=list_of_requirement_status.objects.filter(
+            requirement_status__in=ListOfRequirementStatus.objects.filter(
                 is_deleted=False,
                 requirement_status_is_closed=True,
             ).values("requirement_status_id")
@@ -246,7 +246,7 @@ def search_customer(request):
     t = loader.get_template("NearBeach/search/search_customers.html")
 
     # Get the first 50 customers
-    customer_results = customer.objects.filter(is_deleted=False,).order_by(
+    customer_results = Customer.objects.filter(is_deleted=False,).order_by(
         "customer_last_name", "customer_first_name"
     )[:50]
 
@@ -269,7 +269,7 @@ def search_customer_data(request):
         return HttpResponseBadRequest("There is an issue with the search functionality")
 
     # Get the base results
-    customer_results = customer.objects.filter(is_deleted=False)
+    customer_results = Customer.objects.filter(is_deleted=False)
 
     # Split the space results - then apply the filter of each split value
     for split_row in search_form.cleaned_data["search"].split(" "):
@@ -304,7 +304,7 @@ def search_group(request):
     t = loader.get_template("NearBeach/search/search_groups.html")
 
     # Get user data
-    group_results = group.objects.filter(is_deleted=False,).order_by(
+    group_results = Group.objects.filter(is_deleted=False,).order_by(
         "group_name"
     )[:25]
 
@@ -330,7 +330,7 @@ def search_group_data(request):
         return HttpResponseBadRequest(search_form.errors)
 
     # Get the base group results
-    group_results = group.objects.filter(
+    group_results = Group.objects.filter(
         is_deleted=False,
     )
 
@@ -357,7 +357,7 @@ def search_organisation(request):
     t = loader.get_template("NearBeach/search/search_organisations.html")
 
     # Get the first 25 organisations
-    organisation_results = organisation.objects.filter(is_deleted=False,).order_by(
+    organisation_results = Organisation.objects.filter(is_deleted=False,).order_by(
         "organisation_name"
     )[:25]
 
@@ -380,7 +380,7 @@ def search_organisation_data(request):
         return HttpResponseBadRequest("There is an issue with the search functionality")
 
     # Get the base results
-    organisation_results = organisation.objects.filter(is_deleted=False)
+    organisation_results = Organisation.objects.filter(is_deleted=False)
 
     # Split the space results - then apply the filter of each split value
     for split_row in search_form.cleaned_data["search"].split(" "):
@@ -410,7 +410,7 @@ def search_permission_set(request):
     t = loader.get_template("NearBeach/search/search_permission_sets.html")
 
     # Get data
-    permission_set_results = permission_set.objects.filter(is_deleted=False,).order_by(
+    permission_set_results = PermissionSet.objects.filter(is_deleted=False,).order_by(
         "permission_set_name"
     )[:25]
 
@@ -438,7 +438,7 @@ def search_permission_set_data(request):
         return HttpResponseBadRequest(search_form.errors)
 
     # Get base data
-    permission_set_results = permission_set.objects.filter(
+    permission_set_results = PermissionSet.objects.filter(
         is_deleted=False,
     )
 
@@ -462,7 +462,7 @@ def search_tag(request):
     t = loader.get_template("NearBeach/search/search_tags.html")
 
     # Get data
-    tag_results = tag.objects.filter(
+    tag_results = Tag.objects.filter(
         is_deleted=False,
     ).order_by("tag_name")
 

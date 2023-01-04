@@ -5,11 +5,11 @@ from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import (
     NewColumnForm,
-    kanban_column,
+    KanbanColumn,
     DeleteColumnForm,
     ResortColumnForm,
 )
-from NearBeach.views.tools.internal_functions import kanban_card
+from NearBeach.views.tools.internal_functions import KanbanCard
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -23,7 +23,7 @@ def edit_column(request, kanban_column_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the kanban_column
-    kanban_column_update = kanban_column.objects.get(kanban_column_id=kanban_column_id)
+    kanban_column_update = KanbanColumn.objects.get(kanban_column_id=kanban_column_id)
 
     # Update data
     kanban_column_update.kanban_column_name = form.cleaned_data["kanban_column_name"]
@@ -52,13 +52,13 @@ def delete_column(request, kanban_board_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Update the variables
-    kanban_card.objects.filter(
+    KanbanCard.objects.filter(
         is_deleted=False,
         kanban_column_id=form.cleaned_data["delete_item_id"],
     ).update(kanban_column_id=form.cleaned_data["destination_item_id"])
 
     # Soft delete the old column
-    deleted_column = kanban_column.objects.get(
+    deleted_column = KanbanColumn.objects.get(
         kanban_column_id=form.cleaned_data["delete_item_id"].kanban_column_id,
     )
     deleted_column.is_deleted = True
@@ -78,7 +78,7 @@ def new_column(request, kanban_board_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Create a new column
-    kanban_column_submit = kanban_column(
+    kanban_column_submit = KanbanColumn(
         kanban_column_name=form.cleaned_data["kanban_column_name"],
         kanban_board_id=kanban_board_id,
         kanban_column_sort_number=form.cleaned_data["kanban_column_sort_number"],
@@ -87,7 +87,7 @@ def new_column(request, kanban_board_id, *args, **kwargs):
     kanban_column_submit.save()
 
     # Get the information and return as json results
-    _ = kanban_column.objects.filter(
+    _ = KanbanColumn.objects.filter(
         kanban_column_id=kanban_column_submit.kanban_column_id,
     )
 
@@ -112,7 +112,7 @@ def resort_column(request, kanban_board_id, *args, **kwargs):
 
     # Look through the item list and re-index the order
     for index, item in enumerate(items, start=0):
-        kanban_column_update = kanban_column.objects.get(kanban_column_id=item)
+        kanban_column_update = KanbanColumn.objects.get(kanban_column_id=item)
         kanban_column_update.kanban_column_sort_number = index
         kanban_column_update.save()
 

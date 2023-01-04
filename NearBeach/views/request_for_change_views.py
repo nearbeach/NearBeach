@@ -8,14 +8,14 @@ from NearBeach.forms import (
 )
 from NearBeach.decorators.check_user_permissions import check_rfc_permissions
 from NearBeach.models import (
-    request_for_change,
+    RequestForChange,
     User,
-    user_group,
-    object_assignment,
-    group,
-    change_task,
-    request_for_change_group_approval,
-    list_of_rfc_status,
+    UserGroup,
+    ObjectAssignment,
+    Group,
+    ChangeTask,
+    RequestForChangeGroupApproval,
+    ListOfRFCStatus,
 )
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.urls import reverse
@@ -34,7 +34,7 @@ def get_rfc_context(rfc_id):
     :return:
     """
     # Get data
-    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+    rfc_results = RequestForChange.objects.get(rfc_id=rfc_id)
     rfc_change_lead = User.objects.filter(id=rfc_results.rfc_lead.id).values(
         "id",
         "email",
@@ -44,9 +44,9 @@ def get_rfc_context(rfc_id):
     )
     user_list = User.objects.filter(
         is_active=True,
-        id__in=user_group.objects.filter(
+        id__in=UserGroup.objects.filter(
             is_deleted=False,
-            group_id__in=object_assignment.objects.filter(
+            group_id__in=ObjectAssignment.objects.filter(
                 is_deleted=False,
                 request_for_change_id=rfc_id,
             ).values("group_id"),
@@ -86,13 +86,13 @@ def new_request_for_change(request, *args, **kwargs):
     t = loader.get_template("NearBeach/request_for_change/new_request_for_change.html")
 
     # Get data
-    group_results = group.objects.filter(
+    group_results = Group.objects.filter(
         is_deleted=False,
     )
 
     # Get list of user groups
     user_group_results = (
-        user_group.objects.filter(
+        UserGroup.objects.filter(
             is_deleted=False,
             username=request.user,
         )
@@ -132,10 +132,10 @@ def new_request_for_change_save(request, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Save the data
-    rfc_submit = request_for_change(
+    rfc_submit = RequestForChange(
         change_user=request.user,
         creation_user=request.user,
-        rfc_status=list_of_rfc_status.objects.get(rfc_status_id=1),
+        rfc_status=ListOfRFCStatus.objects.get(rfc_status_id=1),
         rfc_title=form.cleaned_data["rfc_title"],
         rfc_summary=form.cleaned_data["rfc_summary"],
         rfc_type=form.cleaned_data["rfc_type"],
@@ -163,10 +163,10 @@ def new_request_for_change_save(request, *args, **kwargs):
 
     for single_group in group_list:
         # Get the group instance
-        group_instance = group.objects.get(group_id=single_group)
+        group_instance = Group.objects.get(group_id=single_group)
 
         # Save the group instance against object assignment
-        submit_object_assignment = object_assignment(
+        submit_object_assignment = ObjectAssignment(
             group_id=group_instance,
             request_for_change=rfc_submit,
             change_user=request.user,
@@ -184,7 +184,7 @@ def new_request_for_change_save(request, *args, **kwargs):
 @check_rfc_permissions(min_permission_level=1)
 def rfc_change_task_list(request, rfc_id, *args, **kwargs):
     """ """
-    change_task_results = change_task.objects.filter(
+    change_task_results = ChangeTask.objects.filter(
         is_deleted=False,
         request_for_change=rfc_id,
     ).order_by("change_task_start_date", "change_task_end_date")
@@ -205,7 +205,7 @@ def rfc_deployment(request, rfc_id, *args, **kwargs):
     :return:
     """
     # If rfc is not in draft mode - send user away
-    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+    rfc_results = RequestForChange.objects.get(rfc_id=rfc_id)
     if not rfc_results.rfc_status == 3:  # Approved
         return HttpResponseRedirect(reverse("rfc_readonly", args={rfc_id}))
 
@@ -236,7 +236,7 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Save the data
-    submit_change_task = change_task(
+    submit_change_task = ChangeTask(
         request_for_change=form.cleaned_data["request_for_change"],
         change_task_title=form.cleaned_data["change_task_title"],
         change_task_description=form.cleaned_data["change_task_description"],
@@ -260,7 +260,7 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     # )
 
     # Get all the change task results and send it back
-    change_task_results = change_task.objects.filter(
+    change_task_results = ChangeTask.objects.filter(
         is_deleted=False,
         request_for_change=rfc_id,
     ).order_by("change_task_start_date", "change_task_end_date")
@@ -281,7 +281,7 @@ def rfc_information(request, rfc_id, *args, **kwargs):
     :return:
     """
     # If rfc is not in draft mode - send user away
-    rfc_results = request_for_change.objects.get(rfc_id=rfc_id)
+    rfc_results = RequestForChange.objects.get(rfc_id=rfc_id)
     if not rfc_results.rfc_status_id == 1 or kwargs["user_level"] == 1:  # Draft
         return HttpResponseRedirect(reverse("rfc_readonly", args={rfc_id}))
 
@@ -312,7 +312,7 @@ def rfc_information_save(request, rfc_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the request for change data
-    update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
+    update_rfc = RequestForChange.objects.get(rfc_id=rfc_id)
 
     # Update the data
     update_rfc.rfc_title = form.cleaned_data["rfc_title"]
@@ -351,10 +351,10 @@ def rfc_readonly(request, rfc_id, *args, **kwargs):
     c = get_rfc_context(rfc_id)
 
     # Determine if the user is a group leader for ANY of the groups assigned to this rfc
-    group_leader_count = object_assignment.objects.filter(
+    group_leader_count = ObjectAssignment.objects.filter(
         is_deleted=False,
         request_for_change_id=rfc_id,
-        group_id__in=user_group.objects.filter(
+        group_id__in=UserGroup.objects.filter(
             is_deleted=False,
             username_id=request.user,
             group_leader=True,
@@ -382,7 +382,7 @@ def rfc_save_backout(request, rfc_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the RFC in question
-    update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
+    update_rfc = RequestForChange.objects.get(rfc_id=rfc_id)
 
     # Update the rfc
     update_rfc.rfc_backout_plan = form.cleaned_data["text_input"]
@@ -406,7 +406,7 @@ def rfc_save_implementation(request, rfc_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the rfc in question
-    update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
+    update_rfc = RequestForChange.objects.get(rfc_id=rfc_id)
 
     # Update the data
     update_rfc.rfc_implementation_plan = form.cleaned_data["text_input"]
@@ -430,7 +430,7 @@ def rfc_save_risk(request, rfc_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the RFC in question
-    update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
+    update_rfc = RequestForChange.objects.get(rfc_id=rfc_id)
 
     # Fill in the data
     update_rfc.rfc_priority = form.cleaned_data["priority_of_change"]
@@ -457,7 +457,7 @@ def rfc_save_test(request, rfc_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the rfc in question
-    update_rfc = request_for_change.objects.get(rfc_id=rfc_id)
+    update_rfc = RequestForChange.objects.get(rfc_id=rfc_id)
 
     # Update the rfc's data
     update_rfc.rfc_test_plan = form.cleaned_data["text_input"]
@@ -482,13 +482,13 @@ def rfc_status_approved(rfc_id, rfc_results, request):
     :return:
     """
     # Get group results
-    group_results = user_group.objects.filter(
+    group_results = UserGroup.objects.filter(
         is_deleted=False,
         username=request.user,
     )
 
     # Update all user's rfc_group_approvals to approved
-    request_for_change_group_approval.objects.filter(
+    RequestForChangeGroupApproval.objects.filter(
         is_deleted=False, rfc_id=rfc_id, group_id__in=group_results.values("group_id")
     ).update(approval=2)
 
@@ -506,7 +506,7 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
     """
     # Check all submitted group approvals to make sure that they are all approved -
     # if they are, update the status.
-    non_approved_group_approvals = request_for_change_group_approval.objects.filter(
+    non_approved_group_approvals = RequestForChangeGroupApproval.objects.filter(
         is_deleted=False,
         group_id__in=group_results.values("group_id"),
         rfc_id=rfc_id,
@@ -516,7 +516,7 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
     # If there are no waiting for approval results - we default up to approved
     print(f"NON APPROVED: {non_approved_group_approvals}")
     if non_approved_group_approvals == 0:
-        rfc_results.rfc_status = list_of_rfc_status.objects.get(
+        rfc_results.rfc_status = ListOfRFCStatus.objects.get(
             rfc_status_id=3
         )  # Approved value
         rfc_results.save()
@@ -524,7 +524,7 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
         print("GOT IN HERE!")
 
         # Update all change tasks to approved
-        change_task.objects.filter(
+        ChangeTask.objects.filter(
             is_deleted=False,
             request_for_change_id=rfc_id,
             # change_task_status=2,
@@ -539,7 +539,7 @@ def rfc_status_rejected(rfc_id, rfc_results):
     :return:
     """
     # Update all user's rfc_group_approvals to approved
-    request_for_change_group_approval.objects.filter(
+    RequestForChangeGroupApproval.objects.filter(
         is_deleted=False,
         rfc_id=rfc_id,
     ).update(approval=3)
@@ -549,7 +549,7 @@ def rfc_status_rejected(rfc_id, rfc_results):
     rfc_results.save()
 
     # Reject all the change tasks
-    change_task.objects.filter(
+    ChangeTask.objects.filter(
         is_deleted=False,
         rfc_id=rfc_id,
     ).update(change_task_status=6)
@@ -570,9 +570,9 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
     :return:
     """
     # Get the group results
-    group_results = group.objects.filter(
+    group_results = Group.objects.filter(
         is_deleted=False,
-        group_id__in=object_assignment.objects.filter(
+        group_id__in=ObjectAssignment.objects.filter(
             is_deleted=False,
             group_id__isnull=False,
             request_for_change_id=rfc_id,
@@ -581,7 +581,7 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
 
     # Place all change tasks into waiting
     print(f"\n\nRFC ID: {rfc_id}\nARGH\n\n")
-    change_task.objects.filter(
+    ChangeTask.objects.filter(
         is_deleted=False,
         request_for_change_id=rfc_id,
         # change_task_status=1,
@@ -591,14 +591,14 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
     # and see if there are ANY group leaders
     for single_group in group_results:
         # Create the group_approval
-        submit_group_approval = request_for_change_group_approval(
+        submit_group_approval = RequestForChangeGroupApproval(
             rfc_id=rfc_id,
             group_id=single_group.group_id,
             change_user_id=request.user.id,
         )
 
         # Check to see if there are any group leaders
-        group_leader_count = user_group.objects.filter(
+        group_leader_count = UserGroup.objects.filter(
             is_deleted=False,
             group_id=single_group.group_id,
             group_leader=True,
@@ -634,7 +634,7 @@ def rfc_update_status(request, rfc_id, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Get the rfc
-    rfc_update = request_for_change.objects.get(rfc_id=rfc_id)
+    rfc_update = RequestForChange.objects.get(rfc_id=rfc_id)
 
     # Update the status
     rfc_update.rfc_status = form.cleaned_data["rfc_status"]
