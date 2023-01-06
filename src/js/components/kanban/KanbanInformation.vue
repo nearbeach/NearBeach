@@ -17,7 +17,15 @@
         ></kanban-board>
 
         <!-- MODALS -->
+        <add-user-wizard v-bind:destination="'kanban_card'"
+                         v-bind:location-id="cardId"
+                         v-bind:refresh-user-list="refreshUserList"
+                         v-on:reset_refresh_user_list="resetRefreshUserList"
+        ></add-user-wizard>
+
         <archive-cards></archive-cards>
+
+        <confirm-card-archive v-bind:card-information="cardInformation"></confirm-card-archive>
 
         <new-kanban-card v-bind:kanban-card-results="kanbanCardResults"
                          v-bind:column-results="columnResults"
@@ -41,17 +49,24 @@
 
 <script>
     import { Modal } from "bootstrap";
+    import AddUserWizard from "../modules/wizards/AddUserWizard.vue";
     import ArchiveCards from "./ArchiveCards.vue"; 
     import KanbanBoard from "./KanbanBoard.vue";
     import NewKanbanCard from "../modules/wizards/NewKanbanCard.vue";
     import CardInformation from "../card_information/CardInformation.vue"
     import NewKanbanLinkWizard from "../modules/wizards/NewKanbanLinkWizard.vue";
+    import ConfirmCardArchive from "./ConfirmCardArchive.vue";
+
+    //VueX
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "KanbanInformation",
         components: {
+            AddUserWizard,
             ArchiveCards,
             CardInformation,
+            ConfirmCardArchive,
             KanbanBoard,
             NewKanbanCard,
             NewKanbanLinkWizard,
@@ -98,10 +113,21 @@
                 default: 0,
             },
         },
+        computed: {
+            ...mapGetters({
+                cardId: "getCardId",
+            })
+        },
+        watch: {
+            cardId: function() {
+                this.refreshUserList = true;
+            },
+        },
         data() {
             return {
                 cardInformation: {},
                 localKanbanCardResults: this.kanbanCardResults,
+                refreshUserList: false,
                 newCardInfo: [],
             }
         },
@@ -117,6 +143,9 @@
                     type: 'addCard',
                     newCard: data,
                 });
+            },
+            resetRefreshUserList: function() {
+                this.refreshUserList = false;
             },
             updateCard: function(data) {
                 //Loop through the results - when the id's match. Update the data.

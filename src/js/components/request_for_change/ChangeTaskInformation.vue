@@ -291,7 +291,6 @@
                     //Just send the location to the success
                     success(`/private/${response.data[0].document_key_id}`);
                 }).catch(error => {
-                    failure("Yeah, shit didn't work");
                 })
             },
             isDowntime: function() {

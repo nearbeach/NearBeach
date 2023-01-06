@@ -66,6 +66,7 @@ const moduleCard = {
     kanbanStatus: "Open",
     listColumns: [],
     listLevels: [],
+    userList: [],
   }),
   mutations: {
     appendNote(state, payload) {
@@ -85,7 +86,15 @@ const moduleCard = {
         .then((response) => {
           //Save the data into noteHistoryResults
           state.cardNotes = response.data;
-        })
+        });
+      
+      //Get data for the user list
+      axios
+        .post(`/object_data/kanban_card/${payload.cardId}/user_list/`)
+        .then((response) => {
+          //Save the data into userList
+          state.userList = response.data;
+        });
     },
     updateKanbanStatus(state, payload) {
       state.kanbanStatus = payload.kanbanStatus;
@@ -107,6 +116,9 @@ const moduleCard = {
         };
       });
     },
+    updateUserList(state, payload) {
+      state.userList = payload.userList;
+    }
   },
   actions: {},
   getters: {
@@ -146,6 +158,9 @@ const moduleCard = {
     getCardNotes: (state) => {
       return state.cardNotes;
     },
+    getUserList: (state) => {
+      return state.userList;
+    },
   },
 };
 
@@ -182,22 +197,28 @@ const moduleKanban = {
     addCard(state, payload) {
       state.kanbanCardResults.push(payload.newCard[0]);
     },
+    archiveCard(state, payload) {
+      const cardId = payload.cardId;
+
+      //Filter out the card with the card id
+      state.kanbanCardResults = state.kanbanCardResults.filter(row => {
+        return row.pk !== parseInt(cardId);
+      })
+    },
     archiveCards(state, payload) {
-        //payload will contain both column and level values
-        const column = payload.column,
+      //payload will contain both column and level values
+      const column = payload.column,
             level = payload.level;
 
-        //Filter out the column/level cards - and update the kanban card results
-        state.kanbanCardResults = state.kanbanCardResults.filter(row => {
-            //Check to see if the column and level match
-            const boolean_column = parseInt(row.fields.kanban_column, 10) === column,
-                boolean_level = parseInt(row.fields.kanban_level, 10) === level;
+      //Filter out the column/level cards - and update the kanban card results
+      state.kanbanCardResults = state.kanbanCardResults.filter(row => {
+        //Check to see if the column and level match
+        const boolean_column = parseInt(row.fields.kanban_column, 10) === column,
+            boolean_level = parseInt(row.fields.kanban_level, 10) === level;
 
-
-
-            //If they both match - exclude them from the data;
-            return !(boolean_column && boolean_level);
-        });
+        //If they both match - exclude them from the data;
+        return !(boolean_column && boolean_level);
+      });
     },
     updateKanbanCard(state, payload) {
       //Get the index location

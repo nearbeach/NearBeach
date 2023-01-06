@@ -6,6 +6,7 @@ from NearBeach.models import (
     BugClient,
     Customer,
     Group,
+    KanbanCard,
     ListOfRequirementItemStatus,
     ListOfRequirementStatus,
     ObjectAssignment,
@@ -699,6 +700,8 @@ def get_user_list(destination, location_id):
         is_deleted=False,
         assigned_user_id__isnull=False,
     )
+
+    # Most times - we will use this function
     object_results = get_object_from_destination(
         object_results, destination, location_id
     )
@@ -724,16 +727,37 @@ def get_user_list_all(destination, location_id):
         is_deleted=False,
         assigned_user_id__isnull=False,
     )
-    object_results = get_object_from_destination(
-        object_results, destination, location_id
-    )
 
     # Get a list of all the groups associated with this destination
     group_results = ObjectAssignment.objects.filter(
         is_deleted=False,
         group_id__isnull=False,
     )
-    group_results = get_object_from_destination(group_results, destination, location_id)
+
+    if destination != "kanban_card":
+        object_results = get_object_from_destination(
+            object_results, destination, location_id
+        )
+    
+        group_results = get_object_from_destination(group_results, destination, location_id)
+    else:
+        # Get the kanban board information from the card
+        kanban_card_results = kanban_card.objects.get(
+            kanban_card_id=location_id
+        )
+
+        object_results = get_object_from_destination(
+            object_results, 
+            "kanban_board", 
+            kanban_card_results.kanban_board_id,
+        )
+
+        group_results = get_object_from_destination(
+            group_results, 
+            "kanban_board", 
+            kanban_card_results.kanban_board_id
+        )
+
 
     # Get a list of users who are associated with these groups & not in the excluded list
     user_results = (

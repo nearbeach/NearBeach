@@ -28,15 +28,12 @@
                             </p>
                         </div>
                         <div class="col-md-8">
-                            <n-select :options="objectSelection"
-                                      v-model:value="objectModel"
-                                      class="object-selection"
-                                      v-if="!isSearching"
-                            ></n-select>
-                            <div v-else
-                                 class="alert alert-success"
-                            >
-                                Searching for {{objectModel}}s
+                            <div class="form-group">
+                                <label>Object Selection</label>
+                                <n-select :options="objectSelection"
+                                        v-model:value="objectModel"
+                                        class="object-selection"
+                                ></n-select>
                             </div>
                         </div>
                     </div>
@@ -66,6 +63,19 @@
                                 Sorry - there are no results.
                             </div>
 
+                            <!-- SEARCH RESULTS -->
+                            <div class="form-group"
+                                 v-if="!isSearching && objectResults.length > 0 && objectModel != null"
+                            >
+                                <label>Search Terms</label>
+                                <input id="search_terms"
+                                       class="form-control"
+                                       v-model="searchTermModel"
+                                       type="text"
+                                />
+                            </div>
+                            <br/>
+
                             <!-- TABLE CONTAINING RESULTS -->
                             <table class="table"
                                    v-if="!isSearching && objectResults.length > 0 && objectModel != null"
@@ -79,7 +89,7 @@
 
                                 <!-- PROJECTS -->
                                 <tbody v-if="objectModel == 'Project'">
-                                    <tr v-for="result in objectResults"
+                                    <tr v-for="result in objectFilteredResults"
                                         :key="result.pk"
                                     >
                                         <td>
@@ -105,7 +115,7 @@
 
                                 <!-- TASKS -->
                                 <tbody v-if="objectModel == 'Task'">
-                                    <tr v-for="result in objectResults"
+                                    <tr v-for="result in objectFilteredResults"
                                         :key="result.pk"
                                     >
                                         <td>
@@ -126,32 +136,6 @@
                                             <p class="small-text">Task {{result['pk']}}</p>
                                         </td>
                                         <td>{{result['fields']['task_status']}}</td>
-                                    </tr>
-                                </tbody>
-
-                                <!-- OPPORTUNITY -->
-                                <tbody v-if="objectModel == 'Opportunity'">
-                                    <tr v-for="result in objectResults"
-                                        :key="result.pk"
-                                    >
-                                        <td>
-                                            <div class="form-check">
-                                                <input class="form-check-input"
-                                                       type="checkbox"
-                                                       v-bind:value="result['pk']"
-                                                       v-bind:id="`checkbox_opportunity_${result['pk']}`"
-                                                       v-model="linkModel"
-                                                >
-                                                <label class="form-check-label"
-                                                       v-bind:for="`checkbox_opportunity_${result['pk']}`"
-                                                >
-                                                    {{result['fields']['opportunity_name']}}
-                                                </label>
-                                            </div>
-                                            <div class="spacer"></div>
-                                            <p class="small-text">Opportunity {{result['pk']}}</p>
-                                        </td>
-                                        <td>{{result['fields']['opportunity_success_probability']}}%</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -217,13 +201,15 @@
         data() {
             return {
                 isSearching: false,
+                linkModel: [],
                 objectModel: null,
+                objectFilteredResults: [],
                 objectResults: [],
                 objectSelection: [
                     { value: 'Project', label: 'Project'},
                     { value: 'Task', label: 'Task'},
                 ],
-                linkModel: [],
+                searchTermModel: "",
             }
         },
         methods: {
@@ -250,7 +236,7 @@
                     //Clear results
                     this.objectModel = null;
                 });
-            }
+            },
         },
         watch: {
             objectModel: function() {
@@ -273,15 +259,37 @@
                 ).then(response => {
                     //Load the data into the array
                     this.objectResults = response['data'];
+                    this.objectFilteredResults = response['data'];
 
                     //Tell the user we are no longer searching
                     this.isSearching = false;
+
+                    //Clear the search term results
+                    this.searchTermModel = "";
                 }).catch((error) => {
                     this.showErrorModal(error, this.destination);
                 })
             },
-            linkModel: function() {
+            searchTermModel: function() {
+                //If search term model is empty - just return all results
+                if (this.searchTermModel === "" || this.searchTermModel === null) {
+                    this.objectFilteredResults = this.objectResults;
+                    return;
+                }
 
+                //Update the filters by checking to see if the string matches
+                this.objectFilteredResults = this.objectResults.filter(row => {
+                    //Get the description from either task or project
+                    let description = "";
+                    if (row.fields.project_description !== undefined) {
+                        description = row.fields.project_description.toLowerCase();
+                    } else {
+                        description = row.fields.task_short_description.toLowerCase();
+                    }
+
+                    //Return true or false if the string is inside the description
+                    return description.includes(this.searchTermModel.toLowerCase());
+                });
             }
         }
     }
