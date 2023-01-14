@@ -111,6 +111,7 @@
             ...mapGetters({
                 rootUrl: "getRootUrl",
                 staticURL: "getStaticUrl",
+                userLevel: "getUserLevel",
             }),
         },
         data() {
@@ -166,7 +167,7 @@
             },
             getUserList: function() {
                 //If destination is '' or locationId = 0, there will be no information to get. Escape
-                if (this.destination === '' || this.locationId === 0) {
+                if (this.destination === '' || this.locationId === 0 || this.userLevel <= 1) {
                     return;
                 }
 

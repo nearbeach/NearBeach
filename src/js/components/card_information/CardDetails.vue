@@ -62,8 +62,8 @@
             </div>
         </div>
 
-        <hr>
-        <div class="row">
+        <hr v-if="userLevel > 1">
+        <div class="row" v-if="userLevel > 1">
             <div class="col-md-12">
                 <button class="btn btn-secondary"
                         v-on:click="closeModal"
@@ -107,13 +107,13 @@
         computed: {
             ...mapGetters({
                 cardId: 'getCardId',
-                // cardColumn: 'getCardColumn',
                 cardLevel: 'getCardLevel',
                 cardLink: 'getCardLink',
                 cardTitle: 'getCardTitle',
                 kanbanStatus: 'getKanbanStatus',
                 listColumns: 'getListColumns',
                 listLevels: 'getListLevels',
+                userLevel: 'getUserLevel',
             }),
             cardColumn: {
                 get() {

@@ -180,6 +180,12 @@
                 'columnResults': this.columnResults,
                 'levelResults': this.levelResults,
             })
+
+            //Update the user permissions
+            this.$store.commit({
+                type: 'updateUserLevel',
+                'userLevel': this.userLevel,
+            })
         }
     }
 </script>

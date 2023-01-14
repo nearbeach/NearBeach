@@ -24,7 +24,7 @@
             </tbody>
         </table>
     </div>
-    <div class="row">
+    <div class="row" v-if="userLevel > 1">
         <div class="col-md-12">
             <button class="btn btn-primary"
                     v-on:click="addUser"
@@ -48,6 +48,7 @@
             ...mapGetters({
                 cardId: "getCardId",
                 rootUrl: "getRootUrl",
+                userLevel: "getUserLevel",
                 userList: "getUserList",
             })
         },

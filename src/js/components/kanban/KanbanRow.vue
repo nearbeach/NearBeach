@@ -1,22 +1,34 @@
 <template>
-    <div class="kanban-row">
-        <kanban-card v-for="column in columnResults" :key="column.pk"
+    <div class="kanban-row" v-if="userLevel > 1">
+        <!-- Users can edit kanban board - can drag -->
+        <kanban-column-draggable v-for="column in columnResults" :key="column.pk"
                      v-bind:level-id="levelId"
                      v-bind:column-id="column['pk']"
                      v-bind:new-card-info="newCardInfo"
                      v-on:double_clicked_card="doubleClickedCard($event)"
-        ></kanban-card>
+        ></kanban-column-draggable>
+    </div>
+    <div class="kanban-row" v-else>
+        <!-- Read Only Users -->
+        <kanban-column v-for="column in columnResults" :key="column.pk"
+                     v-bind:level-id="levelId"
+                     v-bind:column-id="column['pk']"
+                     v-bind:new-card-info="newCardInfo"
+                     v-on:double_clicked_card="doubleClickedCard($event)"
+        ></kanban-column>
     </div>
 </template>
 
 <script>
     import { mapGetters } from 'vuex';
-    import KanbanCard from "./KanbanCard.vue";
+    import KanbanColumn from "./KanbanColumn.vue";
+    import KanbanColumnDraggable from './kanbanColumnDraggable.vue';
     
     export default {
         name: "KanbanRow",
         components: {
-            KanbanCard,
+            KanbanColumn,
+            KanbanColumnDraggable,
         },
         props: {
             levelId: {
@@ -33,6 +45,7 @@
         computed: {
             ...mapGetters({
                 columnResults: 'getColumns',
+                userLevel: 'getUserLevel',
             })
         },
         methods: {

@@ -68,7 +68,7 @@
     import { mapGetters } from 'vuex';
 
     export default {
-        name: "KanbanCard",
+        name: "kanbanColumnDraggable",
         components: {
             Icon,
             draggable,
