@@ -94,6 +94,7 @@ RFC_STATUS = (
     (4, "Started"),
     (5, "Finished"),
     (6, "Rejected"),
+    (7, "Paused"),
 )
 
 RFC_TYPE = (

@@ -103,6 +103,20 @@ def initialise_data(apps, schema_editor):
         ]
     )
 
+    # List of RFC Status
+    list_of_rfc_status = apps.get_model("NearBeach", "ListOfRFCStatus")
+    list_of_rfc_status.objects.using(db_alias).bulk_create(
+        [
+            list_of_rfc_status(rfc_status_id=1, rfc_status="Draft"),
+            list_of_rfc_status(rfc_status_id=2, rfc_status="Waiting for approval"),
+            list_of_rfc_status(rfc_status_id=3, rfc_status="Approved"),
+            list_of_rfc_status(rfc_status_id=4, rfc_status="Started"),
+            list_of_rfc_status(rfc_status_id=5, rfc_status="Finished"),
+            list_of_rfc_status(rfc_status_id=6, rfc_status="Rejected"),
+            list_of_rfc_status(rfc_status_id=7, rfc_status="Paused"),
+        ]
+    )
+
 
 class Migration(migrations.Migration):
 
