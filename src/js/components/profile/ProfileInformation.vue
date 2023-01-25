@@ -99,6 +99,10 @@
                 type: String,
                 default: '/',
             },
+            staticUrl: {
+                type: String,
+                default: '/',
+            },
             userResults: {
                 type: Array,
                 default: () => {
@@ -170,6 +174,7 @@
             this.$store.commit({
                 type: 'updateUrl',
                 rootUrl: this.rootUrl,
+                staticUrl: this.staticUrl,
             });
         }
     }

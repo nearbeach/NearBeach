@@ -427,9 +427,7 @@ def handle_document_permissions(request, upload, file, document_description, des
             f"private/{document_submit.document_key}/{file}",
         )
     else:
-        print("Before Handle file upload")
         handle_file_upload(upload, document_results, file)
-        print("After Handle File Upload")
 
     return document_submit, document_results
 

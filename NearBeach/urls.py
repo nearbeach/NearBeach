@@ -253,6 +253,11 @@ urlpatterns = [
         profile_views.update_data,
         name="profile_update_data",
     ),
+    path(
+        "profile_information/update_profile/",
+        profile_views.update_profile,
+        name="profile_update_profile",
+    ),
     # New Objects
     path("new_customer/", customer_views.new_customer, name="new_customer"),
     path(

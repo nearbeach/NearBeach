@@ -8,6 +8,7 @@ from NearBeach.models import (
     Requirement,
     RequirementItem,
     Task,
+    User,
     UserGroup,
 )
 
@@ -21,6 +22,7 @@ OBJECT_DICT = {
     "kanban_card": KanbanCard.objects,
     "organisation": Organisation.objects,
     "request_for_change": RequestForChange.objects,
+    "user": User.objects
 }
 
 

@@ -63,6 +63,7 @@ import {
     SearchTags,
     SearchUsers,
     TaskInformation,
+    UpdateProfilePicture,
     UserInformation,
     UserList,
 } from './components';
@@ -111,6 +112,7 @@ const app = createApp({
         SearchTags,
         SearchUsers,
         TaskInformation,
+        UpdateProfilePicture,
         UserInformation,
         UserList,
     },

@@ -3,7 +3,12 @@
 {% block content %}
     <profile-information v-bind:user-results="{{user_results}}"
                          v-bind:root-url="`{% url 'dashboard' %}`"
+                         v-bind:static-url="`{% static '' %}`"
     ></profile-information>
+    <br/>
+
+    <update-profile-picture v-bind:user-profile="{{user_profile}}"
+    ></update-profile-picture>
     <br/>
 
     <!-- The location has a / in it, because that information is required for

@@ -259,6 +259,12 @@ export const
             './components/tasks/TaskInformation.vue'
         )
     ),
+    UpdateProfilePicture = defineAsyncComponent(() => 
+            import(
+                /* webpackChunkName: "update-profile-picture" */
+                './components/profile/UpdateProfilePicture.vue'
+            )
+    ),
     UserInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "user-information" */
