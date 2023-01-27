@@ -217,10 +217,6 @@
                     return [];
                 }
             },
-            userLevel: {
-                type: Number,
-                default: 0,
-            },
         },
         computed: {
             ...mapGetters({

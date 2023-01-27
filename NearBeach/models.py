@@ -95,6 +95,7 @@ RFC_STATUS = (
     (5, "Finished"),
     (6, "Rejected"),
     (7, "Paused"),
+    (8, "Ready for QA"),
 )
 
 RFC_TYPE = (
@@ -169,9 +170,6 @@ class Bug(models.Model):
     def __str__(self):
         return str(self.bug_description)
 
-    class Meta:
-        db_table = "bug"
-
 
 class BugClient(models.Model):
     bug_client_id = models.BigAutoField(primary_key=True)
@@ -193,9 +191,6 @@ class BugClient(models.Model):
 
     def __str__(self):
         return str(self.bug_client_name)
-
-    class Meta:
-        db_table = "bug_client"
 
 
 class ChangeTask(models.Model):
@@ -254,9 +249,6 @@ class ChangeTask(models.Model):
     def __str__(self):
         return str("$" + str(self.change_task_title))
 
-    class Meta:
-        db_table = "change_task"
-
 
 class ChangeTaskBlock(models.Model):
     change_task_block_id = models.BigAutoField(primary_key=True)
@@ -286,9 +278,6 @@ class ChangeTaskBlock(models.Model):
 
     def __str__(self):
         return str("$" + str(self.change_task_title))
-
-    class Meta:
-        db_table = "change_task_block"
 
 
 class Customer(models.Model):
@@ -330,9 +319,6 @@ class Customer(models.Model):
             + self.customer_last_name
         )
 
-    class Meta:
-        db_table = "customer"
-
 
 class Document(models.Model):
     document_key = models.UUIDField(
@@ -360,9 +346,6 @@ class Document(models.Model):
     is_deleted = models.BooleanField(
         default=False,
     )
-
-    class Meta:
-        db_table = "document"
 
     def __str__(self):
         return str(self.document_description)
@@ -432,9 +415,6 @@ class DocumentPermission(models.Model):
         default=False,
     )
 
-    class Meta:
-        db_table = "document_permission"
-
 
 class Folder(models.Model):
     folder_id = models.BigAutoField(primary_key=True)
@@ -488,9 +468,6 @@ class Folder(models.Model):
     def __str__(self):
         return str(self.folder_description)
 
-    class Meta:
-        db_table = "folder"
-
 
 class Group(models.Model):
     group_id = models.BigAutoField(primary_key=True)
@@ -518,9 +495,6 @@ class Group(models.Model):
     def __str__(self):
         return str(self.group_name)
 
-    class Meta:
-        db_table = "group"
-
 
 class GroupPermission(models.Model):
     group_permission_id = models.BigAutoField(primary_key=True)
@@ -540,9 +514,6 @@ class GroupPermission(models.Model):
 
     def __str__(self):
         return str(self.permission_set)
-
-    class Meta:
-        db_table = "group_permission"
 
 
 class KanbanBoard(models.Model):
@@ -570,9 +541,6 @@ class KanbanBoard(models.Model):
     is_deleted = models.BooleanField(
         default=False,
     )
-
-    class Meta:
-        db_table = "kanban_board"
 
     def __str__(self):
         return str(self.kanban_board_name)
@@ -628,9 +596,6 @@ class KanbanCard(models.Model):
         default=False,
     )
 
-    class Meta:
-        db_table = "kanban_card"
-
     def __str__(self):
         return str(self.kanban_card_text)
 
@@ -652,9 +617,6 @@ class KanbanColumn(models.Model):
         default=False,
     )
 
-    class Meta:
-        db_table = "kanban_column"
-
     def __str__(self):
         return str(self.kanban_column_name)
 
@@ -675,9 +637,6 @@ class KanbanLevel(models.Model):
     is_deleted = models.BooleanField(
         default=False,
     )
-
-    class Meta:
-        db_table = "kanban_level"
 
     def __str__(self):
         return str(self.kanban_level_name)
@@ -713,9 +672,6 @@ class ListOfBugClient(models.Model):
     def __str__(self):
         return str(self.bug_client_name)
 
-    class Meta:
-        db_table = "list_of_bug_client"
-
 
 class ListOfRequirementItemStatus(models.Model):
     requirement_item_status_id = models.BigAutoField(primary_key=True)
@@ -741,9 +697,6 @@ class ListOfRequirementItemStatus(models.Model):
     def __str__(self):
         return str(self.requirement_item_status)
 
-    class Meta:
-        db_table = "list_of_requirement_item_status"
-
 
 class ListOfRequirementItemType(models.Model):
     requirement_item_type_id = models.BigAutoField(primary_key=True)
@@ -765,9 +718,6 @@ class ListOfRequirementItemType(models.Model):
 
     def __str__(self):
         return str(self.requirement_item_type)
-
-    class Meta:
-        db_table = "list_of_requirement_item_type"
 
 
 class ListOfRequirementStatus(models.Model):
@@ -794,9 +744,6 @@ class ListOfRequirementStatus(models.Model):
     def __str__(self):
         return str(self.requirement_status)
 
-    class Meta:
-        db_table = "list_of_requirement_status"
-
 
 class ListOfRequirementType(models.Model):
     requirement_type_id = models.BigAutoField(primary_key=True)
@@ -818,9 +765,6 @@ class ListOfRequirementType(models.Model):
 
     def __str__(self):
         return str(self.requirement_type)
-
-    class Meta:
-        db_table = "list_of_requirement_type"
 
 
 class ListOfRFCStatus(models.Model):
@@ -844,9 +788,6 @@ class ListOfRFCStatus(models.Model):
     def __str__(self):
         return str(self.rfc_status)
 
-    class Meta:
-        db_table = "list_of_rfc_status"
-
 
 class ListOfTitle(models.Model):
     title_id = models.BigAutoField(primary_key=True)
@@ -866,9 +807,6 @@ class ListOfTitle(models.Model):
 
     def __str__(self):
         return str(self.title)
-
-    class Meta:
-        db_table = "list_of_title"
 
 
 class Notification(models.Model):
@@ -905,9 +843,6 @@ class Notification(models.Model):
         blank=True,
         null=True,
     )
-
-    class Meta:
-        db_table = "notification"
 
 
 class ObjectAssignment(models.Model):
@@ -1018,9 +953,6 @@ class ObjectAssignment(models.Model):
         default=False,
     )
 
-    class Meta:
-        db_table = "object_assignment"
-
 
 class ObjectNote(models.Model):
     object_note_id = models.BigAutoField(primary_key=True)
@@ -1081,9 +1013,6 @@ class ObjectNote(models.Model):
         default=False,
     )
 
-    class Meta:
-        db_table = "object_note"
-
 
 class Organisation(models.Model):
     organisation_id = models.BigAutoField(primary_key=True)
@@ -1107,9 +1036,6 @@ class Organisation(models.Model):
 
     def __str__(self):
         return str(self.organisation_name)
-
-    class Meta:
-        db_table = "organisation"
 
 
 class PermissionSet(models.Model):
@@ -1202,9 +1128,6 @@ class PermissionSet(models.Model):
     def __str__(self):
         return str(self.permission_set_name)
 
-    class Meta:
-        db_table = "permission_set"
-
 
 class Project(models.Model):
     project_id = models.BigAutoField(primary_key=True)
@@ -1244,9 +1167,6 @@ class Project(models.Model):
 
     def __str__(self):
         return str(self.project_name)
-
-    class Meta:
-        db_table = "project"
 
 
 class RequestForChange(models.Model):
@@ -1319,9 +1239,6 @@ class RequestForChange(models.Model):
     def __str__(self):
         return str(self.rfc_title)
 
-    class Meta:
-        db_table = "request_for_change"
-
 
 class RequestForChangeGroupApproval(models.Model):
     rfc_group_approval_id = models.BigAutoField(primary_key=True)
@@ -1348,9 +1265,6 @@ class RequestForChangeGroupApproval(models.Model):
 
     def __str__(self):
         return str(self.approval)
-
-    class Meta:
-        db_table = "request_for_change_group_approval"
 
 
 class Requirement(models.Model):
@@ -1393,9 +1307,6 @@ class Requirement(models.Model):
     def __str__(self):
         return str(self.requirement_title)
 
-    class Meta:
-        db_table = "requirement"
-
 
 class RequirementItem(models.Model):
     requirement_item_id = models.BigAutoField(primary_key=True)
@@ -1430,9 +1341,6 @@ class RequirementItem(models.Model):
     def __str__(self):
         return str(self.requirement_item_title)
 
-    class Meta:
-        db_table = "requirement_item"
-
 
 class Tag(models.Model):
     tag_id = models.BigAutoField(primary_key=True)
@@ -1454,9 +1362,6 @@ class Tag(models.Model):
 
     def __str__(self):
         return str(self.tag_name)
-
-    class Meta:
-        db_table = "tag"
 
 
 class TagAssignment(models.Model):
@@ -1492,9 +1397,6 @@ class TagAssignment(models.Model):
     is_deleted = models.BooleanField(
         default=False,
     )
-
-    class Meta:
-        db_table = "tag_assignment"
 
 
 class Task(models.Model):
@@ -1535,9 +1437,6 @@ class Task(models.Model):
     def __str__(self):
         return str(self.task_short_description)
 
-    class Meta:
-        db_table = "task"
-
 
 class TaskAction(models.Model):
     task_action_id = models.BigAutoField(primary_key=True)
@@ -1558,9 +1457,6 @@ class TaskAction(models.Model):
     is_deleted = models.BooleanField(
         default=False,
     )
-
-    class Meta:
-        db_table = "task_action"
 
 
 class UserGroup(models.Model):
@@ -1596,9 +1492,6 @@ class UserGroup(models.Model):
         default=False,
     )
 
-    class Meta:
-        db_table = "user_group"
-
 
 class UserProfilePicture(models.Model):
     username = models.OneToOneField(
@@ -1618,6 +1511,3 @@ class UserProfilePicture(models.Model):
     is_deleted = models.BooleanField(
         default=False,
     )
-
-    class Meta:
-        db_table = "user_profile_picture" 

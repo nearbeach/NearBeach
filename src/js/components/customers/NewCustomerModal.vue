@@ -119,7 +119,7 @@
                 const isFormCorrect = await this.v$.$validate();
 
                 //NEED TO USE MIXIN FOR THIS SECTION
-                if (isFormCorrect) {
+                if (!isFormCorrect) {
                     //Show the error dialog and notify to the user that there were field missing.
                     var elem_cont = document.getElementById("errorModalContent");
 
