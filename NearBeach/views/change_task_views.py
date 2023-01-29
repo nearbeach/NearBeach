@@ -4,6 +4,7 @@ from django.views.decorators.http import require_http_methods
 from django.template import loader
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
+from django.shortcuts import get_object_or_404
 
 from NearBeach.forms import ChangeTaskStatusForm, ChangeTaskForm
 from NearBeach.models import ChangeTask, RequestForChange, User
@@ -18,17 +19,14 @@ import json
 def change_task_information(request, change_task_id, *args, **kwargs):
     """ """
     # Get Change Task Information
-    change_task_results = ChangeTask.objects.filter(
-        is_deleted=False,
+    change_task_results = get_object_or_404(
+        ChangeTask,
         change_task_id=change_task_id,
+        is_deleted=False,
     )
 
-    # If the change task has been deleted or does not exist, go to 404
-    if len(change_task_results) == 0:
-        raise Http404()
-
     rfc_results = RequestForChange.objects.get(
-        rfc_id=change_task_results[0].request_for_change_id
+        rfc_id=change_task_results.request_for_change_id
     )
 
     # Load the template
@@ -47,7 +45,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
 
     # Context
     c = {
-        "change_task_results": serializers.serialize("json", change_task_results),
+        "change_task_results": serializers.serialize("json", [change_task_results]),
         "rfc_status": rfc_results.rfc_status,
         "user_level": kwargs["user_level"],
         "user_list": user_list,

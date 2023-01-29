@@ -1,6 +1,6 @@
 <template>
     <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-fullscreen-xl-down">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2><Icon v-bind:icon="icons.userIcon"></Icon> Add Customer Wizard</h2>

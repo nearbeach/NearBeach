@@ -18,7 +18,7 @@
                     <label>
                         Title:
                         <span class="error"
-                              v-if="!v$.titleModel.required && v$.titleModel.$dirty"
+                              v-if="v$.titleModel.$error"
                               > Please supply
                         </span>
                     </label>
@@ -32,7 +32,7 @@
                     <label>
                         First Name:
                         <span class="error"
-                              v-if="!v$.customerFirstNameModel.required && v$.customerFirstNameModel.$dirty"
+                              v-if="v$.customerFirstNameModel.$error"
                               > Please supply
                         </span>
                     </label>
@@ -45,7 +45,7 @@
                     <label>
                         Last Name:
                         <span class="error"
-                              v-if="!v$.customerLastNameModel.required && v$.customerLastNameModel.$dirty"
+                              v-if="v$.customerLastNameModel.$error"
                               > Please supply
                         </span>
                     </label>
@@ -62,11 +62,11 @@
                 <label>
                     Email:
                     <span class="error"
-                          v-if="!v$.customerEmailModel.required && v$.customerEmailModel.$dirty"
+                          v-if="v$.customerEmailModel.$error"
                           > Please supply
                     </span>
                     <span class="error"
-                          v-if="!v$.customerEmailModel.email && v$.customerEmailModel.$dirty"
+                          v-if="v$.customerEmailModel.$error"
                           > Please format as Email
                     </span>
                 </label>
@@ -124,11 +124,6 @@
             customerLastNameModel: {
                 required,
             },
-            /*
-            organisationModel: {
-                required,
-            },
-            */
             titleModel: {
                 required,
             },
@@ -172,18 +167,10 @@
                 if (!this.flagValidationCheck) return;
 
                 //Touch the validation
+                console.log("GOT HERE!!");
                 this.v$.$touch();
+                console.log("V: ", this.v$);
             },
-            // organisationModel: function() {
-            //     //Emit up this function's data
-            //     this.$emit(
-            //         'update_customer_data',
-            //         {
-            //             'field': 'organisationModel',
-            //             'value': this.organisationModel
-            //         }
-            //     )
-            // },
             titleModel: function() {
                 //Emit up this function's data
                 this.$emit(

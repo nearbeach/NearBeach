@@ -172,7 +172,7 @@
     import DocumentsModule from "../modules/sub_modules/DocumentsModule.vue";
 
     //VueX
-    import { mapGetters } from 'vuex';
+    // import { mapGetters } from 'vuex';
 
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
@@ -217,11 +217,15 @@
                     return [];
                 }
             },
+            userLevel: {
+                type: Number,
+                default: 0,
+            },
         },
         computed: {
-            ...mapGetters({
-                userLevel: 'getUserLevel',
-            }),
+            // ...mapGetters({
+            //     userLevel: 'getUserLevel',
+            // }),
         },
         mixins: [
             iconMixin,
