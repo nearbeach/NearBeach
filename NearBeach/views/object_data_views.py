@@ -742,7 +742,7 @@ def get_user_list_all(destination, location_id):
         group_results = get_object_from_destination(group_results, destination, location_id)
     else:
         # Get the kanban board information from the card
-        kanban_card_results = kanban_card.objects.get(
+        kanban_card_results = KanbanCard.objects.get(
             kanban_card_id=location_id
         )
 

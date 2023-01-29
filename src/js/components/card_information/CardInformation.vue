@@ -1,6 +1,6 @@
 <template>
    <div class="modal fade" id="cardInformationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-fullscreen-lg-down">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2><Icon v-bind:icon="icons.usersIcon"></Icon> Card Information - {{cardId}}</h2>
