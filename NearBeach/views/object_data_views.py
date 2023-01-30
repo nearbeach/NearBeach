@@ -865,9 +865,25 @@ def lead_user_list(request):
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
 def link_list(request, destination, location_id, object_lookup):
+    # Get user groups
+    user_group_results = UserGroup.objects.filter(
+        is_deleted=False,
+        username=request.user,
+        group_id__isnull=False,
+    ).values('group_id')
+
     # Get the data dependent on the object lookup
     if object_lookup == "project":
-        data_results = Project.objects.filter(is_deleted=False,).exclude(
+        data_results = Project.objects.filter(
+            is_deleted=False,
+            project_id__in=ObjectAssignment.objects.filter(
+                is_deleted=False,
+                project_id__isnull=False,
+                group_id__in=user_group_results,
+            ).values(
+                'project_id'
+            )
+        ).exclude(
             Q(
                 project_status="Closed",
             )
@@ -880,7 +896,16 @@ def link_list(request, destination, location_id, object_lookup):
             )
         )
     elif object_lookup == "task":
-        data_results = Task.objects.filter(is_deleted=False,).exclude(
+        data_results = Task.objects.filter(
+            is_deleted=False,
+            task_id__in=ObjectAssignment.objects.filter(
+                is_deleted=False,
+                task_id__isnull=False,
+                group_id__in=user_group_results,
+            ).values(
+                'task_id',
+            )
+        ).exclude(
             Q(
                 task_status="Closed",
             )
