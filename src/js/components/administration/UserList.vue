@@ -103,6 +103,9 @@
                 localListResults: [],
             }
         },
+        mixins: [
+            errorModalMixin,
+        ],
         methods: {
             addUser: function() {
                 //Show the user's modal
@@ -119,6 +122,14 @@
                 return count > 0;
             },
             updateGroupLeader: function(event) {
+                //Setup modal telling user of update
+                const loadingModal = new Modal("#loadingModal");
+                loadingModal.show();
+                
+                //Update the loading modal content
+                const loadingModalContent = document.getElementById("loadingModalContent");
+                loadingModalContent.innerHTML = "Updating Team Leader Status";
+
                 //Get if the checkbox is ticked or not
                 const group_leader = event.target.checked;
 
@@ -138,7 +149,11 @@
                     `/update_group_leader_status/${this.destination}/`,
                     data_to_send,
                 ).then(response => {
+                    //Updated data
                     this.localListResults = response.data;
+
+                    //Update the loading Modal status
+                    loadingModalContent.innerHTML = "Updated  Team Leader Status Complete";
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });
