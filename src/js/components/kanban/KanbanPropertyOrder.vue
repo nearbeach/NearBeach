@@ -64,6 +64,14 @@
                                    type="text"
                                    class="form-control">
                         </div>
+                        <div class="form-group"
+                             v-if="propertyName.toLowerCase() === 'column'"
+                        >
+                            <label>{{propertyName}} Property</label>
+                            <n-select v-model:value="columnPropertyModel" 
+                                      :options="columnPropertyOptions" 
+                            />
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -196,6 +204,21 @@
         },
         data() {
             return {
+                columnPropertyModel: "Normal",
+                columnPropertyOptions: [
+                    {
+                        label: "Normal",
+                        value: "Normal"
+                    },
+                    {
+                        label: "Blocked",
+                        value: "Blocked"
+                    },
+                    {
+                        label: "Closed",
+                        value: "Closed"
+                    }
+                ],
                 deleteItemId: '',
                 destinationItemId: '',
                 localPropertyList: this.propertyList,

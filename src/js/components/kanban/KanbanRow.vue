@@ -3,7 +3,8 @@
         <!-- Users can edit kanban board - can drag -->
         <kanban-column-draggable v-for="column in columnResults" :key="column.pk"
                      v-bind:level-id="levelId"
-                     v-bind:column-id="column['pk']"
+                     v-bind:column-id="column.pk"
+                     v-bind:column-property="column.fields.kanban_column_property"
                      v-bind:new-card-info="newCardInfo"
                      v-on:double_clicked_card="doubleClickedCard($event)"
         ></kanban-column-draggable>
@@ -12,7 +13,7 @@
         <!-- Read Only Users -->
         <kanban-column v-for="column in columnResults" :key="column.pk"
                      v-bind:level-id="levelId"
-                     v-bind:column-id="column['pk']"
+                     v-bind:column-id="column.pk"
                      v-bind:new-card-info="newCardInfo"
                      v-on:double_clicked_card="doubleClickedCard($event)"
         ></kanban-column>

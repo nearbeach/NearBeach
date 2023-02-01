@@ -203,9 +203,8 @@ def login(request):
             # ADD IN DATES LOGIC HERE
         ) & Q(
             Q(notification_location='All') |
-            Q(notification_location='Login Page')
+            Q(notification_location='Login')
         )
-        & Q(Q(notification_location="All") | Q(notification_location="Login Page"))
     )
 
     # Get random number

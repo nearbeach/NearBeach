@@ -17,6 +17,12 @@ KANBAN_BOARD_STATUS_CHOICE = (
     ("Closed", "Closed"),
 )
 
+KANBAN_COLUMN_PROPERTY = (
+    ("Normal", "Normal"),
+    ("Blocked", "Blocked"),
+    ("Closed", "Closed"),
+)
+
 NOTIFICATION_LOCATION = (
     ("All", "All"),
     ("Login", "Login"),
@@ -603,6 +609,11 @@ class KanbanCard(models.Model):
 class KanbanColumn(models.Model):
     kanban_column_id = models.BigAutoField(primary_key=True)
     kanban_column_name = models.CharField(max_length=255)
+    kanban_column_property = models.CharField(
+        max_length=10,
+        choices=KANBAN_COLUMN_PROPERTY,
+        default="Normal",
+    )
     kanban_column_sort_number = models.IntegerField()
     kanban_board = models.ForeignKey(
         "KanbanBoard",

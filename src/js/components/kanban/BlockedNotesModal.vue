@@ -1,0 +1,112 @@
+<template>
+   <div class="modal fade" id="blockedNotesModal" tabindex="-1" aria-labelledby="blockedNotesModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-fullscreen-lg-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Blocked Card Notes</h2>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                            id="blockedNotesModalButton"
+                    >
+                        <span aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Blocked Card Notes</strong>
+                            <p class="text-instructions">
+                                Please write a reason why this particular card is blocked at the moment.
+                            </p>
+                        </div>
+                        <div class="col-md-8">
+                            <editor
+                                :init="{
+                                    file_picker_types: 'image',
+                                    height: 250,
+                                    menubar: false,
+                                    plugins: ['lists','paste','table'],
+                                    toolbar: [
+                                        'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
+                                        'bold italic strikethrough underline backcolor | table | ' +
+                                        'bullist numlist outdent indent | removeformat'
+                                    ]}"
+                                v-bind:content_css="false"
+                                v-bind:skin="false"
+                                v-model="noteModal"
+                            /> 
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary"
+                            v-on:click="closeModal"
+                    >
+                        Close
+                    </button>
+                    <button class="btn btn-primary save-changes"
+                            v-on:click="addNote"
+                            v-bind:disabled="noteModal===''"
+                    >
+                        Add Note
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    import axios from 'axios';
+    import Editor from '@tinymce/tinymce-vue'
+
+    //VueX
+    import { mapGetters } from 'vuex';
+
+    export default {
+        name: "BlockedNotesModal",
+        components: {
+            'editor': Editor,
+        },
+        props: {},
+        data() {
+            return {
+                noteModal: "",
+            }
+        },
+        computed: {
+            ...mapGetters({
+                cardId: "getCardId",
+                rootUrl: "getRootUrl",
+            })
+        },
+        methods: {
+            addNote: function() {
+                //Setup data to send
+                const data_to_send = new FormData();
+                data_to_send.set('note',this.noteModal);
+
+                //Use axios to send the data
+                axios.post(
+                    `${this.rootUrl}object_data/kanban_card/${this.cardId}/add_notes/`,
+                    data_to_send,
+                ).then(() => {
+                    this.closeModal();
+                })
+            },
+            closeModal: function() {
+                //Clear the data
+                this.noteModal = '';
+
+                //Close the modal
+                document.getElementById("blockedNotesModalButton").click();
+            }
+        }
+    }
+</script>
+
+<style scoped>
+
+</style>

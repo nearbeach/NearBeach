@@ -25,6 +25,8 @@
 
         <archive-cards></archive-cards>
 
+        <blocked-notes-modal></blocked-notes-modal>
+
         <confirm-card-archive v-bind:card-information="cardInformation"></confirm-card-archive>
 
         <new-kanban-card v-bind:kanban-card-results="kanbanCardResults"
@@ -51,6 +53,7 @@
     import { Modal } from "bootstrap";
     import AddUserWizard from "../modules/wizards/AddUserWizard.vue";
     import ArchiveCards from "./ArchiveCards.vue"; 
+    import BlockedNotesModal from "./BlockedNotesModal.vue";
     import KanbanBoard from "./KanbanBoard.vue";
     import NewKanbanCard from "../modules/wizards/NewKanbanCard.vue";
     import CardInformation from "../card_information/CardInformation.vue"
@@ -65,6 +68,7 @@
         components: {
             AddUserWizard,
             ArchiveCards,
+            BlockedNotesModal,
             CardInformation,
             ConfirmCardArchive,
             KanbanBoard,

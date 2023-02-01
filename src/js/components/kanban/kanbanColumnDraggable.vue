@@ -3,6 +3,7 @@
                v-bind:id="`kanban_cell_${levelId}_${columnId}`"
                v-bind:data-level="levelId"
                v-bind:data-column="columnId"
+               v-bind:data-column-property="columnProperty"
                :disabled="kanbanStatus==='Closed'"
                group="tasks"
                @end="onEnd($event)"
@@ -11,10 +12,10 @@
     >
         <template #item="{element}">
             <div class="list-group-item"
-                 :key="element['pk']"
-                 :id="element['pk']"
-                 v-bind:data-sort-number="element['fields']['kanban_card_sort_number']"
-                 v-bind:data-card-id="element['pk']"
+                 :key="element.pk"
+                 :id="element.pk"
+                 v-bind:data-sort-number="element.fields.kanban_card_sort_number"
+                 v-bind:data-card-id="element.pk"
                  v-on:dblclick="doubleClickCard($event)"
             >
                 <b>#{{element['pk']}}</b><br/>
@@ -33,12 +34,14 @@
                 <a class="kanban-link btn btn-primary"
                    href="javascript:void(0)"
                    v-on:click="addNewKanbanCard"
+                   v-if="columnProperty !== 'Closed'"
                 >
                     New Card
                 </a>
                 <a class="kanban-link btn btn-warning"
                    href="javascript:void(0)"
                    v-on:click="addNewLink"
+                   v-if="columnProperty !== 'Closed'"
                 >
                     Link Object
                 </a>
@@ -77,6 +80,10 @@
             columnId: {
                 type: Number,
                 default: 0,
+            },
+            columnProperty: {
+                type: String,
+                default: "Normal",
             },
             levelId: {
                 type: Number,
@@ -356,17 +363,19 @@
                 two sort orders to both the old and the new*/
                 
                 //Get the y=data
-                var new_elem = event['to'],
-                    old_elem = event['from'],
-                    card_id = event['item']['dataset']['cardId'];
+                var new_elem = event.to,
+                    old_elem = event.from,
+                    card_id = event.item.dataset.cardId;
+
 
                 //Setup variables (for shorthand)
-                let new_card_column = new_elem['dataset']['column'],
-                    new_card_level = new_elem['dataset']['level'],
-                    new_card_sort_number = event['newIndex'],
-                    old_card_column = old_elem['dataset']['column'],
-                    old_card_level = old_elem['dataset']['level'],
-                    old_card_sort_number = event['oldIndex'];
+                let new_card_column = new_elem.dataset.column,
+                    new_card_level = new_elem.dataset.level,
+                    new_card_sort_number = event.newIndex,
+                    old_card_column = old_elem.dataset.column,
+                    old_card_level = old_elem.dataset.level,
+                    old_card_sort_number = event.oldIndex,
+                    column_property = new_elem.dataset.columnProperty;
 
 
                 //Create data_to_send
@@ -398,10 +407,10 @@
                 cards_to_change.forEach(row => {
                     this.$store.commit({
                         type: 'updateKanbanCard',
-                        card_id: row['card_id'],
-                        kanban_column: row['kanban_column'],
-                        kanban_level: row['kanban_level'],
-                        kanban_card_sort_number: row['kanban_card_sort_number'],
+                        card_id: row.card_id,
+                        kanban_column: row.kanban_column,
+                        kanban_level: row.kanban_level,
+                        kanban_card_sort_number: row.kanban_card_sort_number,
                     })
                 })
 
@@ -409,7 +418,24 @@
                 axios.post(
                     `${this.rootUrl}kanban_information/${card_id}/move_card/`,
                     data_to_send,
-                );
+                ).then(() => {
+                    //We need to look at the DESTINATION's Column Properties
+                    if (column_property !== "Blocked") {
+                        //Nothing needs to be done if not blocked
+                        return;
+                    }
+
+                    //Update the card id focus in the state management
+                    this.$store.commit({
+                        type: 'updateValue',
+                        field: 'cardId',
+                        value: parseInt(card_id),
+                    })
+
+                    //Open the BlockedCardModal
+                    const blockedNotes = new Modal("#blockedNotesModal");
+                    blockedNotes.show();
+                })
             },
             sendDataUpstream: function(filtered_data) {
                 // Determine if the card has a link
