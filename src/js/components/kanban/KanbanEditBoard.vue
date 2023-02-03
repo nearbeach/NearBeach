@@ -158,15 +158,17 @@
             //Map the variables into a useable format
             this.columnModel = this.columnResults.map(row => {
                 return {
-                    'id': row['pk'],
-                    'title': row['fields']['kanban_column_name'],
+                    'id': row.pk,
+                    'property': row.fields.kanban_column_property,
+                    'title': row.fields.kanban_column_name,
                 };
             });
 
             this.levelModel = this.levelResults.map(row => {
                 return {
-                    'id': row['pk'],
-                    'title': row['fields']['kanban_level_name'],
+                    'id': row.pk,
+                    'property': '',
+                    'title': row.fields.kanban_level_name,
                 };
             });
         }

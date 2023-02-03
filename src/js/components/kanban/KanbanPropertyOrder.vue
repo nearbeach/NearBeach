@@ -15,16 +15,18 @@
                       name="flip-list"
             >
                 <div class="sortable"
-                     v-bind:key="element['id']"
-                     v-bind:id="element['id']"
-                     v-bind:data-id="element['id']"
-                     v-bind:data-title="element['title']"
+                     v-bind:key="element.id"
+                     v-bind:id="element.id"
+                     v-bind:data-property="element.property"
+                     v-bind:data-id="element.id"
+                     v-bind:data-title="element.title"
                      v-on:dblclick="editItem($event)"
                 >
-                    <strong v-bind:key="element['id']"
-                            v-bind:id="element['id']"
-                            v-bind:data-id="element['id']"
-                            v-bind:data-title="element['title']"
+                    <strong v-bind:key="element.id"
+                            v-bind:id="element.id"
+                            v-bind:data-id="element.id"
+                            v-bind:data-property="element.property"
+                            v-bind:data-title="element.title"
                     >
                         {{element['title']}}
                     </strong>
@@ -260,10 +262,6 @@
                     this.editModeAddItem();
                 }
 
-                //Now that the card has been updated - lets flatten the variables
-                //this.singleItemId = '';
-                //this.newPropertyItem = '';
-
                 //Push changes upstream
                 this.sendPropertyListUp();
 
@@ -304,8 +302,11 @@
             },
             editItem: function(event) {
                 //Get the id and title from the item
-                this.newPropertyItem = event['target']['dataset']['title'];
-                this.singleItemId = event['target']['dataset']['id'];
+                this.newPropertyItem = event.target.dataset.title;
+                this.singleItemId = event.target.dataset.id;
+                this.columnPropertyModel = event.target.dataset.property;
+
+                console.log("PROPERTY: ", event.target.dataset);
 
                 //Open up the modal
                 this.openModal();
@@ -321,6 +322,12 @@
                 data_to_send.set(name, this.newPropertyItem);
                 data_to_send.set(sort_number, this.getMaxId() + 1);
                 
+                //If property name is a column, we add in the column properties as data to send
+                if (this.propertyName === "Column")
+                {
+                    data_to_send.set("kanban_column_property", this.columnPropertyModel);
+                }
+
                 // Check to see if we are editing an existing item, or adding
                 if (single_item_id == '') {
                     //Get the url
@@ -336,21 +343,23 @@
                     data_to_send,
                 ).then(response => {
                     //Data
-                    const data = response['data'][0];
+                    const data = response.data[0];
 
                     //Add as a new item
                     if (single_item_id == '') {
                         //Add as a new item
                         this.localPropertyList.push({
-                            'id': data['pk'],
-                            'title': data['fields'][name],
+                            'id': data.pk,
+                            'property': data.fields.kanban_column_property,
+                            'title': data.fields[name],
                         });
                     } else {
                         //Item already exists - edit the item.
                         this.localPropertyList.forEach(row => {
                             //If the id is the same - update the values
-                            if (row['id'] == this.singleItemId) {
-                                row['title'] = this.newPropertyItem;
+                            if (row.id == this.singleItemId) {
+                                row.title = this.newPropertyItem;
+                                row.property = this.columnPropertyModel;
                             }
                         });
                     }
@@ -380,14 +389,16 @@
                     //Add as a new item
                     this.localPropertyList.push({
                         'id': this.getMaxId() + 1,
+                        'property': this.columnPropertyModel,
                         'title': this.newPropertyItem,
                     });
                 } else {
                     //Item already exists - edit the item.
                     this.localPropertyList.forEach(row => {
                         //If the id is the same - update the values
-                        if (row['id'] == this.singleItemId) {
-                            row['title'] = this.newPropertyItem;
+                        if (row.id == this.singleItemId) {
+                            row.title = this.newPropertyItem;
+                            row.property = this.columnPropertyModel;
                         }
                     });
                 }

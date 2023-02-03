@@ -494,7 +494,6 @@ def new_kanban_save(request, *args, **kwargs):
     # Check the user form
     form = NewKanbanForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Create the kanban board
@@ -507,6 +506,7 @@ def new_kanban_save(request, *args, **kwargs):
 
     # Get both lists
     column_title_list = request.POST.getlist("column_title")
+    column_property_list = request.POST.getlist("column_property")
     level_title_list = request.POST.getlist("level_title")
 
     # Loop through the column title list to save the titles
@@ -514,6 +514,7 @@ def new_kanban_save(request, *args, **kwargs):
         submit_column_title = KanbanColumn(
             change_user=request.user,
             kanban_column_name=column_title,
+            kanban_column_property=column_property_list[index],
             kanban_board=submit_kanban_board,
             kanban_column_sort_number=index,
         )

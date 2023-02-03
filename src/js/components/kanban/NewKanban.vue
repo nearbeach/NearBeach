@@ -44,7 +44,7 @@
                     </p>
                 </div>
                 <div class="col-md-4">
-                    <kanban-property-order v-bind:property-name="'Columns'"
+                    <kanban-property-order v-bind:property-name="'Column'"
                                            v-bind:property-list="columnModel"
                                            v-bind:source="'columnModel'"
                                            v-bind:is-dirty="v$.columnModel.$dirty"
@@ -52,7 +52,7 @@
                     ></kanban-property-order>
                 </div>
                 <div class="col-md-4">
-                    <kanban-property-order v-bind:property-name="'Levels'"
+                    <kanban-property-order v-bind:property-name="'Level'"
                                            v-bind:property-list="levelModel"
                                            v-bind:source="'levelModel'"
                                            v-bind:is-dirty="v$.columnModel.$dirty"
@@ -135,18 +135,23 @@
                 checkingKanbanBoardName: false,
                 columnModel: [{
                     id: 0,
+                    property: 'Normal',
                     title: 'Backlog',
                 }, {
                     id: 1,
+                    property: 'Blocked',
                     title: 'Blocked',
                 }, {
                     id: 2,
+                    property: 'Normal',
                     title: 'In Progress',
                 }, {
                     id: 4,
+                    property: 'Normal',
                     title: 'Review and QA',
                 }, {
                     id: 5,
+                    property: 'Closed',
                     title: 'Completed',
                 },],
                 groupModel: [],
@@ -227,11 +232,12 @@
 
                 //Loop through all the column models
                 this.columnModel.forEach(column => {
-                    data_to_send.append('column_title',column['title']);
+                    data_to_send.append('column_title', column.title);
+                    data_to_send.append('column_property', column.property);
                 });
 
                 this.levelModel.forEach(level => {
-                    data_to_send.append('level_title',level['title']);
+                    data_to_send.append('level_title', level.title);
                 });
 
                 this.groupModel.forEach(single_group => {

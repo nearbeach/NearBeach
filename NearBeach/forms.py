@@ -398,6 +398,7 @@ class NewColumnForm(forms.ModelForm):
         model = KanbanColumn
         fields = [
             "kanban_column_name",
+            "kanban_column_property",
             "kanban_column_sort_number",
         ]
 
@@ -453,6 +454,7 @@ class NewKanbanCardForm(forms.ModelForm):
 
 class NewKanbanForm(forms.ModelForm):
     column_title = forms.SelectMultiple()
+    column_property = forms.SelectMultiple()
     level_title = forms.SelectMultiple()
 
     # Basic Meta Data
