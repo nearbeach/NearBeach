@@ -191,6 +191,7 @@ const moduleKanban = {
     kanbanCardResults: [],
     columnResults: [],
     levelResults: [],
+    openCardOnLoad: 0,
   }),
   mutations: {
     //CUD Operations
@@ -243,6 +244,7 @@ const moduleKanban = {
       state.kanbanCardResults = payload.kanbanCardResults;
       state.columnResults = payload.columnResults;
       state.levelResults = payload.levelResults;
+      state.openCardOnLoad = payload.openCardOnLoad;
     },
   },
   actions: {},
@@ -250,8 +252,14 @@ const moduleKanban = {
     getCards: (state) => {
       return state.kanbanCardResults;
     },
-    getColumns: (state) => {
+    getColumnResults: (state) => {
       return state.columnResults;
+    },
+    getLevelResults: (state) => {
+      return state.levelResults;
+    },
+    getOpenCardOnLoad: (state) => {
+      return state.openCardOnLoad;
     },
   },
 };

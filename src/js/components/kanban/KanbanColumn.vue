@@ -65,6 +65,7 @@
             ...mapGetters({
                 allCards: 'getCards',
                 kanbanStatus: 'getKanbanStatus',
+                openCardOnLoad: 'getOpenCardOnLoad',
                 rootUrl: 'getRootUrl',
             }),
             masterList: function() {
@@ -228,6 +229,16 @@
         },
         mounted() {
             this.checkCardOrder();
+
+            //Check to see if the "openCardOnLoad" card ID exists on in this section
+            const count = this.masterList.filter((row) => {
+                return row.pk == this.openCardOnLoad;
+            }).length;
+
+            if (count > 0) {
+                //Card exists here. Run function to open the card
+                this.singleClickCard(this.openCardOnLoad);
+            }
         },
     }
 </script>

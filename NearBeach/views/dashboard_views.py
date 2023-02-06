@@ -14,6 +14,7 @@ import json
 
 # Import NearBeach Models
 from NearBeach.models import (
+    KanbanCard,
     ObjectAssignment,
     UserGroup,
     Task,
@@ -132,6 +133,35 @@ def get_my_objects(request):
         )
     )
 
+    card_results = (
+        KanbanCard.objects.filter(
+            is_deleted=False,
+            kanban_card_id__in=ObjectAssignment.objects.filter(
+                is_deleted=False,
+                kanban_card_id__isnull=False,
+                assigned_user=request.user,
+            ).values("kanban_card_id")
+        )
+        .exclude(
+            Q (
+                # Exclude cards that are archived
+                is_archived=True,
+            ) |
+            Q(
+                # Exclude cards that are inside columns that are closed
+                kanban_column_id__in=KanbanColumn.objects.filter(
+                    is_deleted=False,
+                    kanban_column_property="Closed",
+                )
+            )
+        )
+        .values(
+            "kanban_card_id",
+            "kanban_card_text",
+            "kanban_column__kanban_column_name", # Check this field
+        )
+    )
+
     # Only have 25 results and order by alphabetical order
     # requirement_results.order_by('requirement_title')[:25]
     # project_results.order_by('project_name')[:25]
@@ -150,6 +180,7 @@ def get_my_objects(request):
     requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
+    card_results = json.dumps(list(card_results), cls=DjangoJSONEncoder)
 
     # Send back a JSON array with JSON arrays inside
     return JsonResponse(
@@ -157,6 +188,7 @@ def get_my_objects(request):
             "requirement": json.loads(requirement_results),
             "project": json.loads(project_results),
             "task": json.loads(task_results),
+            "card": json.loads(card_results),
         }
     )
 

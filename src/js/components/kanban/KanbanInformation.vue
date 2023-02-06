@@ -1,9 +1,9 @@
 <template>
     <div>
-        <h1 class="kanban-header">{{kanbanBoardResults[0]['fields']['kanban_board_name']}}</h1>
+        <h1 class="kanban-header">{{kanbanBoardResults[0].fields.kanban_board_name}}</h1>
         <a class="kanban-edit-text"
            v-if="userLevel >= 3"
-           href="edit_board/"
+           v-bind:href="`${rootUrl}kanban_information/${kanbanBoardResults[0].pk}/edit_board/`"
         >
             Edit Kanban
         </a>
@@ -104,6 +104,10 @@
                 type: Number,
                 default: 0,
             },
+            openCardOnLoad: {
+                type: Number,
+                default: 0,
+            },
             rootUrl: {
                 type: String,
                 default: '/',
@@ -165,6 +169,15 @@
             },
         },
         mounted() {
+            //Send data to VueX
+            this.$store.commit({
+                type: 'initPayload',
+                kanbanCardResults: this.kanbanCardResults,
+                levelResults: this.levelResults,
+                columnResults: this.columnResults,
+                openCardOnLoad: this.openCardOnLoad,
+            })
+
             //Send the urls upstream
             this.$store.commit({
                 type: 'updateUrl',

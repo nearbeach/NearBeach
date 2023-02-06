@@ -22,8 +22,8 @@
                 {{element['fields']['kanban_card_text']}}
                 <Icon class="kanban-card-info-icon"
                              v-bind:icon="icons.infoCircle"
-                             v-on:click="singleClickCard(element['pk'])"
-                             v-on:dblclick="singleClickCard(element['pk'])"
+                             v-on:click="singleClickCard(element.pk)"
+                             v-on:dblclick="singleClickCard(element.pk)"
                 ></Icon>
             </div>
         </template>
@@ -106,18 +106,19 @@
             ...mapGetters({
                 allCards: 'getCards',
                 kanbanStatus: 'getKanbanStatus',
+                openCardOnLoad: 'getOpenCardOnLoad',
                 rootUrl: 'getRootUrl',
             }),
             masterList: function() {
                 //Filter the data
                 let return_array = this.allCards.filter(card => {
-                    return parseInt(card['fields']['kanban_column']) === this.columnId &&
-                           parseInt(card['fields']['kanban_level']) === this.levelId;
+                    return parseInt(card.fields.kanban_column) === this.columnId &&
+                           parseInt(card.fields.kanban_level) === this.levelId;
                 })
 
                 //Make sure it is sorted
                 return_array = return_array.sort((a,b) => {
-                    return a['fields']['kanban_card_sort_number'] - b['fields']['kanban_card_sort_number'];
+                    return a.fields.kanban_card_sort_number - b.fields.kanban_card_sort_number;
                 })
 
                 return return_array;
@@ -502,6 +503,16 @@
         },
         mounted() {
             this.checkCardOrder();
+
+            //Check to see if the "openCardOnLoad" card ID exists on in this section
+            const count = this.masterList.filter((row) => {
+                return row.pk == this.openCardOnLoad;
+            }).length;
+
+            if (count > 0) {
+                //Card exists here. Run function to open the card
+                this.singleClickCard(this.openCardOnLoad);
+            }
         },
     }
 </script>

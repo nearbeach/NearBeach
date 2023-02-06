@@ -43,7 +43,10 @@
 <script>
     //Mixins
     import iconMixin from "../../mixins/iconMixin";
-    import KanbanRow from "./KanbanRow.vue"
+    import KanbanRow from "./KanbanRow.vue";
+
+    //VueX
+    import { mapGetters } from "vuex";
 
     export default {
         name: "KanbanBoard",
@@ -51,25 +54,7 @@
             KanbanRow,
         },
         props: {
-            columnResults: {
-                type: Array,
-                default: () => {
-                    return [];
-                },
-            },
             kanbanBoardResults: {
-                type: Array,
-                default: () => {
-                    return [];
-                },
-            },
-            kanbanCardResults: {
-                type: Array,
-                default: () => {
-                    return [];
-                },
-            },
-            levelResults: {
                 type: Array,
                 default: () => {
                     return [];
@@ -81,6 +66,12 @@
                     return [];
                 },
             },
+        },
+        computed: {
+            ...mapGetters({
+                columnResults: "getColumnResults",
+                levelResults: "getLevelResults",
+            })
         },
         mixins: [
             iconMixin,
@@ -148,14 +139,6 @@
         mounted() {
             //Check the resize procedure
             this.resizeProcedure();
-
-            //Send data to VueX
-            this.$store.commit({
-                type: 'initPayload',
-                kanbanCardResults: this.kanbanCardResults,
-                levelResults: this.levelResults,
-                columnResults: this.columnResults,
-            })
 
             this.$store.commit({
                 type: 'updateKanbanStatus',

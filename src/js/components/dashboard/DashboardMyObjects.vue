@@ -11,28 +11,37 @@
             </div>
             
             <!-- Requirements -->
-            <render-object-table v-if="objectResults['requirement'].length > 0"
-                                 v-bind:search-results="objectResults['requirement']"
+            <render-object-table v-if="objectResults.requirement.length > 0"
+                                 v-bind:search-results="objectResults.requirement"
                                  v-bind:import-variables="requirementVariables"
                                  v-bind:destination="'requirement'"
                                  v-bind:root-url="rootUrl"
             ></render-object-table>
 
             <!-- Projects -->
-            <render-object-table v-if="objectResults['project'].length > 0"
-                                 v-bind:search-results="objectResults['project']"
+            <render-object-table v-if="objectResults.project.length > 0"
+                                 v-bind:search-results="objectResults.project"
                                  v-bind:import-variables="projectVariables"
                                  v-bind:destination="'project'"
                                  v-bind:root-url="rootUrl"
             ></render-object-table>
 
             <!-- Tasks -->
-            <render-object-table v-if="objectResults['task'].length > 0"
-                                 v-bind:search-results="objectResults['task']"
+            <render-object-table v-if="objectResults.task.length > 0"
+                                 v-bind:search-results="objectResults.task"
                                  v-bind:import-variables="taskVariables"
                                  v-bind:destination="'task'"
                                  v-bind:root-url="rootUrl"
             ></render-object-table>
+            
+            <!-- Kanban Cards -->
+            <render-object-table v-if="objectResults.card.length > 0"
+                                 v-bind:search-results="objectResults.card"
+                                 v-bind:import-variables="cardVariables"
+                                 v-bind:destination="'card'"
+                                 v-bind:root-url="rootUrl"
+            ></render-object-table>
+            
             
             <!-- If there are no objects -->
             <div v-if="countObjects === 0 && isLoaded"
@@ -68,9 +77,18 @@
             return {
                 isLoaded: false,
                 objectResults: {
+                    'card': [],
                     'requirement': [],
                     'project': [],
                     'task': [],
+                },
+                cardVariables: {
+                    header: 'Cards',
+                    prefix: 'Card',
+                    id: 'kanban_card_id',
+                    title: 'kanban_card_text',
+                    status: 'kanban_column__kanban_column_name',
+                    end_date: '',
                 },
                 projectVariables: {
                     header: 'Projects',
@@ -118,9 +136,10 @@
         },
         computed: {
             countObjects: function() {
-                return this.objectResults['requirement'].length + 
-                    this.objectResults['project'].length +
-                    this.objectResults['task'].length;
+                return this.objectResults.requirement.length + 
+                    this.objectResults.project.length +
+                    this.objectResults.task.length + 
+                    this.objectResults.card.length;
             },
         },
         mounted() {

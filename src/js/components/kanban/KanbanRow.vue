@@ -45,7 +45,7 @@
         },
         computed: {
             ...mapGetters({
-                columnResults: 'getColumns',
+                columnResults: 'getColumnResults',
                 userLevel: 'getUserLevel',
             })
         },

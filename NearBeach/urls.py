@@ -6,6 +6,7 @@ from .views import (
     admin_views,
     authentication_views,
     change_task_views,
+    card_views,
     customer_views,
     dashboard_views,
     document_views,
@@ -40,6 +41,8 @@ urlpatterns = [
         admin_views.update_user_password,
         name="update_user_password",
     ),
+    # Card Information
+    path('card_information/<int:card_id>/', card_views.card_information, name="card_information"),
     # Change Task
     path('change_task_information/<int:change_task_id>/', change_task_views.change_task_information,
          name='change_task_information'),
@@ -179,6 +182,11 @@ urlpatterns = [
     ),
     path(
         "kanban_information/<int:kanban_board_id>/",
+        kanban_views.kanban_information,
+        name="kanban_information",
+    ),
+    path(
+        "kanban_information/<int:kanban_board_id>/card/<int:open_card_on_load>/",
         kanban_views.kanban_information,
         name="kanban_information",
     ),
