@@ -68,6 +68,31 @@ def get_bug_list(request):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
+def get_kanban_list(request):
+    object_assignment_results = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        kanban_board_id__isnull=False,
+        group_id__in=UserGroup.objects.filter(
+            is_deleted=False,
+            username=request.user
+        ).values('group_id')
+    )
+
+    kanban_results = KanbanBoard.objects.filter(
+        is_deleted=False,
+        kanban_board_status="Open",
+        kanban_board_id__in=object_assignment_results.values('kanban_board_id'),
+    )
+    
+    # Send back json data
+    return HttpResponse(
+        serializers.serialize("json", kanban_results), 
+        content_type="application/json"
+    )
+
+
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 def get_my_objects(request):
     """
     :param request:
@@ -352,8 +377,6 @@ def rfc_approvals(request):
         is_deleted=False,
         rfc_status=2,  # Waiting for approval
     )
-
-    print(f"\n\nRFC_RESULTS: {rfc_results}")
 
     """
     Filter the rfc_results, with any object assignment that the user is currently;

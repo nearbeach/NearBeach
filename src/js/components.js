@@ -19,6 +19,12 @@ export const
             './components/customers/CustomerInformation.vue'
         )
     ),
+    DashboardKanbanList = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "dashboard-kanban-list" */
+            './components/dashboard/DashboardKanbanList.vue'
+        )
+    ),
     DashboardMyObjects = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "dashboard-my-objects" */

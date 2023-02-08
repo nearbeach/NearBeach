@@ -66,6 +66,11 @@ urlpatterns = [
     # Dashboard
     path("dashboard/get/bug_list/", dashboard_views.get_bug_list, name="get_bug_list"),
     path(
+        "dashboard/get/kanban_list/",
+        dashboard_views.get_kanban_list,
+        name="get_kanban_list",
+    ),
+    path(
         "dashboard/get/my_objects/",
         dashboard_views.get_my_objects,
         name="get_my_objects",
