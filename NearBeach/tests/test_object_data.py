@@ -26,22 +26,77 @@ class TestObjectData(TestCase):
     def setUp(self):
         self.credentials = {"username": username, "password": password}
 
-    def test_incorrect_location_data(self):
+    def test_incorrect_destination_data(self):
+        '''
+        The following test will make sure;
+        1. Each of the Object data functions that has destinations has the decorator @check_destination
+        2. Make sure the @check_destination works
+        '''
         c = Client()
 
         # User wil be logged in
         login_user(c, self)
 
-        # Get data of wrong location - gets a 403
-        response = c.post(reverse("associated_objects", args=["taks", 1]))
-        self.assertEqual(response.status_code, 403)
+        # List or URLS
+        url_list = ['add_bug',
+            'add_customer',
+            'add_group',
+            'add_link',
+            'add_notes',
+            'add_tags',
+            'add_user',
+            'associated_objects',
+            'bug_list',
+            'customer_list',
+            'customer_list_all',
+            'group_list',
+            'group_list_all',
+            'note_list',
+            'object_link_list',
+            'query_bug_client',
+            'remove_group',
+            'remove_link',
+            'remove_user',
+            'tag_list',
+            'user_list',
+            'user_list_all',
+        ]
 
-    def test_team_leader_searches(self):
+        # Loop through each url to test to make sure the decorator is applied
+        for url in url_list:
+            with self.subTest(url):
+                # Get data of wrong location - gets a 403
+                response = c.post(reverse(url, args=["taks", 1]))
+                self.assertEqual(response.status_code, 403)
+    
+    
+    def test_incorrect_destination_data__link_list(self):
+        '''
+        The following test will make sure;
+        1. Link List functions has the decorator @check_destination
+        2. Make sure the @check_destination works
+        '''
         c = Client()
-
-        # User will be logged in
+        
+        # User wil be logged in
         login_user(c, self)
 
-        # Go to an existing customer -> user should have access
-        response = c.get(reverse("search"))
+        # Get data of wrong location - gets a 403
+        response = c.post(reverse("link_list", args=["taks", 1, "project"]))
+        self.assertEqual(response.status_code, 403)
+
+
+    def test_correct_destination_data__link_list(self):
+        '''
+        The following test will make sure;
+        1. Link List functions has the decorator @check_destination
+        2. Make sure the @check_destination works
+        '''
+        c = Client()
+        
+        # User wil be logged in
+        login_user(c, self)
+
+        # Get data of wrong location - gets a 403
+        response = c.post(reverse("link_list", args=["task", 1, "project"]))
         self.assertEqual(response.status_code, 200)

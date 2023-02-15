@@ -2,7 +2,7 @@ from django.urls import reverse
 
 
 def assertEqual200(response_array, self):
-    # Look through the array to see if it response with 405
+    # Look through the array to see if it response with 200
     for response in response_array:
         self.assertEqual(response.status_code, 200)
 
