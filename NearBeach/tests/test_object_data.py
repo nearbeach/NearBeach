@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 
+
 # Declaration of Username and Password
 username = "team_leader"
 password = "Test1234$"
@@ -100,3 +101,75 @@ class TestObjectData(TestCase):
         # Get data of wrong location - gets a 403
         response = c.post(reverse("link_list", args=["task", 1, "project"]))
         self.assertEqual(response.status_code, 200)
+
+    def test_correct_object_data__without_forms(self):
+        '''
+        The following test will make sure;
+        1. Each object data function will work correctly when given the correct;
+            b. Description
+            c. Location
+        Form data is not required for these tests.
+        '''
+        c = Client()
+
+        # User wil be logged in
+        login_user(c, self)
+
+        # List or URLS
+        url_list = [
+            'associated_objects',
+            'bug_list',
+            'customer_list',
+            'customer_list_all',
+            'group_list',
+            'group_list_all',
+            'note_list',
+            'object_link_list',
+            'tag_list',
+            'user_list',
+            'user_list_all',
+        ]
+
+        # Loop through each url to test to make sure the decorator is applied
+        for url in url_list:
+            with self.subTest(url):
+                # Get data of wrong location - gets a 403
+                response = c.post(reverse(url, args=["task", 1]))
+                self.assertEqual(response.status_code, 200)
+
+
+    def test_correct_object_data__with_forms(self):
+        '''
+        The following test will make sure;
+        1. Each object data function will work correctly when given the correct;
+            a. Form data
+            b. Description
+            c. Location
+        '''
+        c = Client()
+
+        # User wil be logged in
+        login_user(c, self)
+
+        # List or URLS
+        data_list = [
+            #{'url' :'add_bug', 'formData': AddBugForm(data={})}, # TODO: need to setup bugs on fixtures
+            {'url': 'add_customer', 'formData': {'customer': 1}},
+            {'url': 'add_group', 'formData': {'group_list': [1,2]}},
+            # {'url': 'add_link', 'formData': {'document_description': 'NearBeach Homepage', 'document_url_location':'https://nearbeach.org', 'parent_folder': 1}}, # TODO: need to setup a folder on fixtures
+            {'url': 'add_link', 'formData': {'document_description': 'NearBeach Homepage', 'document_url_location':'https://nearbeach.org'}},
+            {'url': 'add_notes', 'formData': {'note': '<p>Add a note</p>'}},
+            # {'url': 'add_tags', 'formData': {'tag_id': 1}}, # TODO: need to setup tags on fixtures
+            {'url': 'add_user', 'formData': {'user_list': [1,2,3]}},
+            # {'url': 'query_bug_client', 'formData': {}}, # TODO: need to setup bug client on fixtures
+            {'url': 'remove_group', 'formData': {'group_id': 1}},
+            # {'url': 'remove_link', 'formData': {}}, # TODO: Setup links in fixtures
+            {'url': 'remove_user', 'formData': {'username': 'admin'}},
+        ]
+
+        # Loop through each url to test to make sure the decorator is applied
+        for data in data_list:
+            with self.subTest(data):
+                # Get data of wrong location - gets a 403
+                response = c.post(reverse(data['url'], args=["task", 1]), data['formData'])
+                self.assertEqual(response.status_code, 200)
