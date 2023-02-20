@@ -1,3 +1,5 @@
+from django.core.exceptions import PermissionDenied
+
 import urllib3
 import urllib
 import json
@@ -13,6 +15,7 @@ from NearBeach.models import (
     ObjectNote,
     Organisation,
     PermissionSet,
+    RequestForChange,
     RequirementItem,
     Tag,
     TagAssignment,
@@ -957,23 +960,23 @@ def link_object(object_assignment_submit, destination, location_id):
     """
     This is an internal function - depending on the destination, depends on what we are linking in the
     object_association_submit
-    :param object_assignment_submit:
-    :param destination:
-    :param location_id:
-    :return:
     """
-    if destination == "project":
-        object_assignment_submit.project = Project.objects.get(project_id=location_id)
-    elif destination == "requirement":
-        object_assignment_submit.requirement = Requirement.objects.get(
-            requirement_id=location_id
-        )
-    elif destination == "requirement_item":
-        object_assignment_submit.requirement_item = RequirementItem.objects.get(
-            requirement_item_id=location_id
-        )
-    elif destination == "task":
-        object_assignment_submit.task = Task.objects.get(task_id=location_id)
+    allowed_destinations = [
+        'project',
+        'request_for_change',
+        'requirement',
+        'requirement_item',
+        'task',
+    ]
+
+    #Double checking that the specified destinations are allowed
+    if destination not in allowed_destinations:
+        raise PermissionDenied
+
+    object_assignment_submit = object_assignment_submit.filter(
+        is_deleted=False,
+        **{destination: location_id}
+    )
 
     # Return the results
     return object_assignment_submit
