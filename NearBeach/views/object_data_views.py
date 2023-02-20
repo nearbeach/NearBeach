@@ -176,14 +176,15 @@ def add_link(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Start saving the data
-    object_assignment_submit = ObjectAssignment(
-        change_user=request.user,
-    )
+    # object_assignment_submit = ObjectAssignment(
+    #     change_user=request.user,
+    #     **{destination: location_id},
+    # )
 
     # Add the destination/location_id to the object
-    object_assignment_submit = link_object(
-        object_assignment_submit, destination, location_id
-    )
+    # object_assignment_submit = link_object(
+    #     object_assignment_submit, destination, location_id
+    # )
 
     # Declaring the dict used in the for loop below
     object_dict = {
