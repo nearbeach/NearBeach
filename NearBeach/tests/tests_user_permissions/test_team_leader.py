@@ -26,60 +26,63 @@ class TeamLeaderPermissionTests(TestCase):
         # Setup the client
         self.client = Client()
 
+        login_user(self.client, self)
+
     
-    # def test_dashboard_loads_successful(self):
-    #     '''
-    #     Make sure the dashboard will load for the user
-    #     '''
-    #     response = self.client.get(reverse('dashboard', args=[]), {})
-    #     self.assertEqual(response.status_code, 302) 
-
-
     def test_basic_page_loads_successful(self):
         '''
         The following tests will make sure the team leader can access most pages on the
         system. This is only testing pages they can LAND on.
         '''
-        # urlObject = namedtuple('url','arguments','form_data','response_status_code', defaults=['/',[],{},302])
+        # urlObject = namedtuple('url','arguments','form_data','response_status_code', defaults=['/',[],{},200])
         URLTest = namedtuple('URLTest', ['url', 'args', 'data', 'status_code'], defaults=["", [], {}, 200])
 
         data_list = [
-            URLTest('dashboard',[],{},302),
-            URLTest('change_task_information',[2],{},302),
-            URLTest('customer_information',[2],{},302),
-            URLTest('kanban_information',[2],{},302),
-            URLTest('permission_set_information',[2],{},302),
-            URLTest('profile_information',[],{},302),
-            URLTest('new_customer',[],{},302),
-            URLTest('new_group',[],{},302),
-            URLTest('new_kanban',[],{},302),
-            URLTest('new_organisation',[],{},302),
-            URLTest('new_permission_set',[],{},302),
-            URLTest('new_project',[],{},302),
-            URLTest('new_request_for_change',[],{},302),
-            URLTest('new_requirement',[],{},302),
-            URLTest('new_task',[],{},302),
-            URLTest('new_user',[],{},302),
-            URLTest('organisation_information',[2],{},302),
-            URLTest('project_information',[2],{},302),
-            URLTest('requirement_information',[2],{},302),
-            URLTest('requirement_item_information',[2],{},302),
-            URLTest('rfc_information',[2],{},302),
-            URLTest('rfc_readonly',[2],{},302),
-            URLTest('search',[],{},302),
-            URLTest('search_group',[],{},302),
-            URLTest('search_customer',[],{},302),
-            URLTest('search_organisation',[],{},302),
-            URLTest('search_permission_set',[],{},302),
-            URLTest('search_tag',[],{},302),
-            URLTest('search_user',[],{},302),
-            URLTest('task_information',[2],{},302),
-            URLTest('user_information',[2],{},302),
+            URLTest('dashboard',[],{},200),
+            URLTest('change_task_information',[2],{},200),
+            URLTest('customer_information',[1],{},200),
+            URLTest('kanban_information',[2],{},200),
+            URLTest('permission_set_information',[2],{},200),
+            URLTest('profile_information',[],{},200),
+            URLTest('new_customer',[],{},200),
+            URLTest('new_group',[],{},200),
+            URLTest('new_kanban',[],{},200),
+            URLTest('new_organisation',[],{},200),
+            URLTest('new_permission_set',[],{},200),
+            URLTest('new_project',[],{},200),
+            URLTest('new_request_for_change',[],{},200),
+            URLTest('new_requirement',[],{},200),
+            URLTest('new_task',[],{},200),
+            URLTest('new_user',[],{},403),
+            URLTest('organisation_information',[1],{},200),
+            URLTest('project_information',[2],{},200),
+            URLTest('requirement_information',[2],{},200),
+            URLTest('requirement_item_information',[2],{},200),
+            URLTest('rfc_information',[2],{},200),
+            URLTest('rfc_readonly',[2],{},200),
+            URLTest('search',[],{},200),
+            URLTest('search_group',[],{},200),
+            URLTest('search_customer',[],{},200),
+            URLTest('search_organisation',[],{},200),
+            URLTest('search_permission_set',[],{},200),
+            URLTest('search_tag',[],{},200),
+            URLTest('search_user',[],{},200),
+            URLTest('task_information',[2],{},200),
+            # URLTest('change_task_information',[1],{},403),
+            URLTest('kanban_information',[1],{},403),
+            # URLTest('permission_set_information',[1],{},403),
+            # URLTest('private_download_file',[1],{},403),
+            URLTest('project_information',[1],{},403),
+            # URLTest('requirement_information',[1],{},403),
+            # URLTest('requirement_item_information',[1],{},403),
+            URLTest('rfc_information',[1],{},403),
+            URLTest('rfc_readonly',[1],{},403),
+            URLTest('task_information',[1],{},403),
+            URLTest('user_information',[1],{},403),
         ]
 
         # Loop through each url to test to make sure the decorator is applied
         for data in data_list:
             with self.subTest(data):
-                response = self.client.get(reverse(data.url, args=data.args), data.data)
-                #response = c.post(reverse(data['url'], args=["task", 1]), data['formData'])
+                response = self.client.get(reverse(data.url, args=data.args), data.data, follow=True)
                 self.assertEqual(response.status_code, data.status_code)
