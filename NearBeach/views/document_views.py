@@ -5,12 +5,14 @@ from django.http import (
     HttpResponse,
     HttpResponseRedirect,
     HttpResponseBadRequest,
+    Http404,
     FileResponse,
     JsonResponse,
 )
 from django.db.models import Q
 from django.views.decorators.http import require_http_methods
 from django.core.serializers.json import DjangoJSONEncoder
+from django.shortcuts import get_object_or_404
 
 from NearBeach.views.tools.internal_functions import (
     set_object_from_destination,
@@ -337,12 +339,13 @@ def private_download_file(request, document_key):
 
     # If the object_assignment_results.count() == 0, then user does not have permissions
     if object_assignment_results.count() == 0 and profile_picture_permission.count() == 0 and request.user.is_superuser == False:
-        return HttpResponseBadRequest("Sorry - there is no document")
+        raise Http404
 
     # Get Document information
-    document_results = Document.objects.get(
+    document_results = get_object_or_404(
+        Document,
         document_key=document_key
-    )  # Need to change this to a 404
+    )
 
     # If not a document but a URL
     if document_results.document_url_location:

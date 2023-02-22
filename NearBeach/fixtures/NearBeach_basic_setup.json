@@ -60,6 +60,72 @@
   }
 },
 {
+  "model": "NearBeach.document",
+  "pk": "2fc398ee-d12b-4f60-9ecb-40199ac74f13",
+  "fields": {
+    "document_description": "NearBeach Homepage",
+    "document_url_location": "https://nearbeach.org",
+    "document": "",
+    "date_created": "2023-02-22T09:18:33.040Z",
+    "date_modified": "2023-02-22T09:18:33.040Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.document",
+  "pk": "80a7bd50-eba9-49f8-a55c-d1febd052ab9",
+  "fields": {
+    "document_description": "NearBeach Homepage",
+    "document_url_location": "https://nearbeach.org",
+    "document": "",
+    "date_created": "2023-02-22T09:18:51.309Z",
+    "date_modified": "2023-02-22T09:18:51.309Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.documentpermission",
+  "pk": 1,
+  "fields": {
+    "document_key": "2fc398ee-d12b-4f60-9ecb-40199ac74f13",
+    "project": 1,
+    "task": null,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "requirement_item": null,
+    "request_for_change": null,
+    "user": null,
+    "folder": null,
+    "date_created": "2023-02-22T09:18:33.044Z",
+    "date_modified": "2023-02-22T09:18:33.044Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.documentpermission",
+  "pk": 2,
+  "fields": {
+    "document_key": "80a7bd50-eba9-49f8-a55c-d1febd052ab9",
+    "project": 2,
+    "task": null,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "requirement_item": null,
+    "request_for_change": null,
+    "user": null,
+    "folder": null,
+    "date_created": "2023-02-22T09:18:51.313Z",
+    "date_modified": "2023-02-22T09:18:51.313Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.group",
   "pk": 1,
   "fields": {

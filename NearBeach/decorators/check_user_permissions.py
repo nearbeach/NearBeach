@@ -332,6 +332,11 @@ def check_user_requirement_item_permissions(min_permission_level):
                 )
             )
 
+            # Check to see if there are any groups associated
+            if len(user_group_results) == 0:
+                # No groups - meaning no permissions
+                raise PermissionDenied
+
             # Get the max permission value from user_group_results
             user_level = user_group_results.aggregate(
                 Max("permission_set__requirement")

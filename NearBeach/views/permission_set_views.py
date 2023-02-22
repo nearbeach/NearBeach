@@ -6,6 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
+from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
 from NearBeach.forms import NewPermissionSetForm, PermissionSetForm
 from NearBeach.models import (
     PermissionSet,
@@ -19,7 +20,8 @@ import json
 
 
 @login_required(login_url="login", redirect_field_name="")
-def new_permission_set(request):
+@check_user_admin_permissions(3, "administration_create_permission_set")
+def new_permission_set(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -39,7 +41,8 @@ def new_permission_set(request):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def new_permission_set_save(request):
+@check_user_admin_permissions(3, "administration_create_permission_set")
+def new_permission_set_save(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -68,7 +71,8 @@ def new_permission_set_save(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def permission_set_information(request, permission_set_id):
+@check_user_admin_permissions(1, "administration_create_permission_set")
+def permission_set_information(request, permission_set_id, *args, **kwargs):
     """
     :param request:
     :param permission_set_id:
@@ -104,7 +108,8 @@ def permission_set_information(request, permission_set_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def permission_set_information_save(request, permission_set_id):
+@check_user_admin_permissions(2, "administration_create_permission_set")
+def permission_set_information_save(request, permission_set_id, *args, **kwargs):
     """
     :param request:
     :param permission_set_id:
