@@ -742,7 +742,7 @@ def get_user_list_all(destination, location_id):
         object_results = get_object_from_destination(
             object_results, destination, location_id
         )
-    
+
         group_results = get_object_from_destination(group_results, destination, location_id)
     else:
         # Get the kanban board information from the card
