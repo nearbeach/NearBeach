@@ -10,7 +10,6 @@ from NearBeach.decorators.check_user_permissions import check_user_admin_permiss
 from NearBeach.forms import NewPermissionSetForm, PermissionSetForm
 from NearBeach.models import (
     PermissionSet,
-    UserGroup,
     PERMISSION_BOOLEAN,
     PERMISSION_LEVEL,
 )

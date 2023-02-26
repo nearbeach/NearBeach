@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
 
-from NearBeach.models import KanbanBoard, KanbanCard
+from NearBeach.models import KanbanCard
 
 
 @login_required(login_url="login", redirect_field_name="")
