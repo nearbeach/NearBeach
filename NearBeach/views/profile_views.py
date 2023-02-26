@@ -65,7 +65,7 @@ def update_profile(request):
     form = ProfilePictureForm(request.POST, request.FILES)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     file = form.cleaned_data["file"]
     document_description = str(file)
 
@@ -94,7 +94,7 @@ def update_profile(request):
         # Profile already exists - so just update it
         user_profile_results = UserProfilePicture.objects.get(username_id=request.user.id)
         user_profile_results.document = document_submit
-    
+
     user_profile_results.save()
 
     return HttpResponse("")

@@ -20,7 +20,7 @@ def get_profile_picture(request, organisation_id):
     :return:
     """
     organisation_results = Organisation.objects.get(organisation_id=organisation_id)
-    
+
     return HttpResponse(
         f"/private/{organisation_results.organisation_profile_picture.document_key}"
     )

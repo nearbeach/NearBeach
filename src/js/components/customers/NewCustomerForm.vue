@@ -167,9 +167,9 @@
                 if (!this.flagValidationCheck) return;
 
                 //Touch the validation
-                console.log("GOT HERE!!");
+                
                 this.v$.$touch();
-                console.log("V: ", this.v$);
+                
             },
             titleModel: function() {
                 //Emit up this function's data

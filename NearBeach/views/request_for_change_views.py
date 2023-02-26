@@ -527,7 +527,6 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
         ChangeTask.objects.filter(
             is_deleted=False,
             request_for_change_id=rfc_id,
-            # change_task_status=2,
         ).update(change_task_status=3)
 
 
@@ -584,7 +583,6 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
     ChangeTask.objects.filter(
         is_deleted=False,
         request_for_change_id=rfc_id,
-        # change_task_status=1,
     ).update(change_task_status=2)
 
     # Loop through the groups, create the group approval,

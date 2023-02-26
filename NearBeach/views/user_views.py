@@ -10,7 +10,6 @@ from django.contrib.auth import update_session_auth_hash
 
 from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
 from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm
-from NearBeach.models import UserGroup, UserProfilePicture
 from NearBeach.views.tools.internal_functions import get_user_permissions
 
 import json

@@ -83,7 +83,7 @@ def get_kanban_list(request):
         kanban_board_status="Open",
         kanban_board_id__in=object_assignment_results.values('kanban_board_id'),
     )
-    
+
     # Send back json data
     return HttpResponse(
         serializers.serialize("json", kanban_results), 

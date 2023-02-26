@@ -98,7 +98,7 @@ def update_group_leader_status(request, destination, *args, **kwargs):
         user_group_update.filter(
             permission_set=permission_set_id,
         ).update(group_leader=form.cleaned_data["group_leader"])
-        
+
         # Get new user_list_results
         user_list_results = get_user_permissions("permission_set_id", permission_set_id)
     else:
@@ -111,12 +111,11 @@ def update_group_leader_status(request, destination, *args, **kwargs):
         ).update(group_leader=form.cleaned_data["group_leader"])
 
         user_list_results = get_user_permissions("username", form.cleaned_data["username"])
-    
+
     # Convert into json
     user_list_results = json.dumps(list(user_list_results), cls=DjangoJSONEncoder)
-    
+
     return HttpResponse(
-        # serializers.serialize("json", user_list_results),
         user_list_results,
         content_type="application/json",
     )
