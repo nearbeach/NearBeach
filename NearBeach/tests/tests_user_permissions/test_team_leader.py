@@ -34,12 +34,8 @@ class TeamLeaderPermissionTests(TestCase):
         The following tests will make sure the team leader can access most pages on the
         system. This is only testing pages they can LAND on.
         '''
-<<<<<<< HEAD
         # urlObject = namedtuple('url','arguments','form_data','response_status_code', defaults=['/',[],{},200])
         URLTest = namedtuple('URLTest', ['url', 'args', 'data', 'status_code','method'], defaults=["", [], {}, 200,"GET"])
-=======
-        URLTest = namedtuple('URLTest', ['url', 'args', 'data', 'status_code'], defaults=["", [], {}, 200])
->>>>>>> 1b6d144bdd5496640b982c407664bf922162b9fe
 
         data_list = [
             URLTest('dashboard',[],{},200),
