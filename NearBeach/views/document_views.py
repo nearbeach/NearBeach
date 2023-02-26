@@ -209,7 +209,6 @@ def document_upload(request, destination, location_id):
     :param folder_id: Which folder we will associate this with
     :return:
     """
-
     form = DocumentUploadForm(request.POST, request.FILES)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
