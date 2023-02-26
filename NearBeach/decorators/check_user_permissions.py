@@ -101,7 +101,7 @@ def check_user_admin_permissions(min_permission_level, permission_lookup=""):
             if user_level >= min_permission_level:
                 # Everything is fine - move on
                 return func(request, *args, **kwargs, user_level=user_level)
-            
+
             # Does not meet conditions
             raise PermissionDenied
         return inner
