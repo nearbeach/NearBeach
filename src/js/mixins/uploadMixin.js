@@ -14,7 +14,7 @@ export default {
     },
     methods: {
         uploadImage: function(blobInfo, success, failure, progress) {
-            console.log("Upload Image");
+            
             //Create the form
             const data_to_send = new FormData();
             data_to_send.set('document', blobInfo.blob(), blobInfo.filename());
@@ -37,7 +37,7 @@ export default {
                 //Just send the location to the success
                 success(`/private/${response.data[0].document_key_id}`);
             }).catch(error => {
-                console.log("An error occurred: ", error);
+                
                 failure("Yeah, shit didn't work");
             })
             
