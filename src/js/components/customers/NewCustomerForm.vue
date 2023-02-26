@@ -186,8 +186,8 @@
             //Get the data formatted how the NSelect wants
             this.titleFixList = this.titleList.map(row => {
                 return {
-                    value: row['pk'],
-                    label: row['fields']['title'],
+                    value: row.pk,
+                    label: row.fields.title,
                 }
             });
         },

@@ -4,8 +4,8 @@
          tabindex="-1"
          aria-labelledby="kanbanLinkModal"
          aria-hidden="true"
-         v-bind:data-kanban-level="levelResults[0]['pk']"
-         v-bind:data-kanban-column="columnResults[0]['pk']"
+         v-bind:data-kanban-level="levelResults[0].pk"
+         v-bind:data-kanban-column="columnResults[0].pk"
     >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -102,20 +102,20 @@
                                                 <input class="form-check-input"
                                                        type="radio"
                                                        name="link-option"
-                                                       v-bind:value="result['pk']"
-                                                       v-bind:id="`radio_project_${result['pk']}`"
+                                                       v-bind:value="result.pk"
+                                                       v-bind:id="`radio_project_${result.pk}`"
                                                        v-model="linkModel"
                                                 >
                                                 <label class="form-check-label"
-                                                       v-bind:for="`radio_project_${result['pk']}`"
+                                                       v-bind:for="`radio_project_${result.pk}`"
                                                 >
-                                                    {{result['fields']['project_name']}}
+                                                    {{result.fields.project_name}}
                                                 </label>
                                             </div>
                                             <div class="spacer"></div>
-                                            <p class="small-text">Project {{result['pk']}}</p>
+                                            <p class="small-text">Project {{result.pk}}</p>
                                         </td>
-                                        <td>{{result['fields']['project_status']}}</td>
+                                        <td>{{result.fields.project_status}}</td>
                                     </tr>
                                 </tbody>
 
@@ -129,20 +129,20 @@
                                                 <input class="form-check-input"
                                                        type="radio"
                                                        name="link-option"
-                                                       v-bind:value="result['pk']"
-                                                       v-bind:id="`radio_requirement_${result['pk']}`"
+                                                       v-bind:value="result.pk"
+                                                       v-bind:id="`radio_requirement_${result.pk}`"
                                                        v-model="linkModel"
                                                 >
                                                 <label class="form-check-label"
-                                                       v-bind:for="`radio_task_${result['pk']}`"
+                                                       v-bind:for="`radio_task_${result.pk}`"
                                                 >
-                                                    {{result['fields']['requirement_title']}}
+                                                    {{result.fields.requirement_title}}
                                                 </label>
                                             </div>
                                             <div class="spacer"></div>
-                                            <p class="small-text">Requirement {{result['pk']}}</p>
+                                            <p class="small-text">Requirement {{result.pk}}</p>
                                         </td>
-                                        <td>{{result['fields']['requirement_status']}}</td>
+                                        <td>{{result.fields.requirement_status}}</td>
                                     </tr>
                                 </tbody>
 
@@ -155,20 +155,20 @@
                                             <div class="form-check">
                                                 <input class="form-check-input"
                                                        type="radio"
-                                                       v-bind:value="result['pk']"
-                                                       v-bind:id="`radio_task_${result['pk']}`"
+                                                       v-bind:value="result.pk"
+                                                       v-bind:id="`radio_task_${result.pk}`"
                                                        v-model="linkModel"
                                                 >
                                                 <label class="form-check-label"
-                                                       v-bind:for="`radio_task_${result['pk']}`"
+                                                       v-bind:for="`radio_task_${result.pk}`"
                                                 >
-                                                    {{result['fields']['task_short_description']}}
+                                                    {{result.fields.task_short_description}}
                                                 </label>
                                             </div>
                                             <div class="spacer"></div>
-                                            <p class="small-text">Task {{result['pk']}}</p>
+                                            <p class="small-text">Task {{result.pk}}</p>
                                         </td>
-                                        <td>{{result['fields']['task_status']}}</td>
+                                        <td>{{result.fields.task_status}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -273,8 +273,8 @@
 
                 //Depending on what the object model is - depends what is sent
                 data_to_send.set(`${this.objectModel.toLowerCase()}`,this.linkModel);
-                data_to_send.set('kanban_level',self_modal['dataset']['kanbanLevel']);
-                data_to_send.set('kanban_column',self_modal['dataset']['kanbanColumn']);
+                data_to_send.set('kanban_level',self_modal.dataset.kanbanLevel);
+                data_to_send.set('kanban_column',self_modal.dataset.kanbanColumn);
 
                 // Use axios to send data
                 axios.post(
@@ -282,7 +282,7 @@
                     data_to_send,
                 ).then(response => {
                     //Data has been successfully saved. Time to add the card to the board
-                    this.$emit('new_card',response['data']);
+                    this.$emit('new_card',response.data);
 
                     //Clear the object model
                     this.objectModel = null;
@@ -312,8 +312,8 @@
                     `${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`
                 ).then(response => {
                     //Load the data into the array
-                    this.objectResults = response['data'];
-                    this.objectFilteredResults = response['data'];
+                    this.objectResults = response.data;
+                    this.objectFilteredResults = response.data;
 
                     //Tell the user we are no longer searching
                     this.isSearching = false;

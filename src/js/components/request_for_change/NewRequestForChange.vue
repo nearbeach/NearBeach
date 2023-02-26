@@ -182,18 +182,18 @@
                     data_to_send,
                 ).then(response => {
                     // Just go to the location the data sent back
-                    window.location.href = response['data'];
+                    window.location.href = response.data;
                 }).catch(error => {
                     this.showErrorModal(error,'request_for_change','')
                 });
             },
             updateValidation: function(data) {
                 //Update the value
-                this.validationData[data['tab']] = data['value'];
+                this.validationData[data.tab] = data.value;
             },
             updateValues: function(data) {
                 //Update the value
-                this.rfcData[data['modelName']] = data['modelValue'];
+                this.rfcData[data.modelName] = data.modelValue;
             }
         },
         mounted() {

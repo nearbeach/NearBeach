@@ -6,7 +6,7 @@
                  v-for="column in columnResults"
                  :key="column.pk"
             >
-                {{column['fields']['kanban_column_name']}}
+                {{column.fields.kanban_column_name}}
             </div>
         </div>
 
@@ -16,7 +16,7 @@
                  v-for="column in columnResults"
                  :key="column.pk"
             >
-                {{column['fields']['kanban_column_name']}}
+                {{column.fields.kanban_column_name}}
             </div>
         </div>
 
@@ -27,11 +27,11 @@
             <!-- CREATE THE LEVEL HEADER -->
             <div class="kanban-level-header">
                 <div class="kanban-level-div"
-                >{{level['fields']['kanban_level_name']}}</div>
+                >{{level.fields.kanban_level_name}}</div>
             </div>
 
             <!-- RENDER THE CELLS -->
-            <kanban-row v-bind:level-id="level['pk']"
+            <kanban-row v-bind:level-id="level.pk"
                         v-bind:new-card-info="newCardInfo"
                         v-on:double_clicked_card="doubleClickedCard($event)"
             ></kanban-row>
@@ -130,9 +130,9 @@
 
                 //Determine if we are hidding the element or not
                 if (scrollTop < 90) {
-                    kanban_sticky['style']['display'] = "none";
+                    kanban_sticky.style.display = "none";
                 } else {
-                    kanban_sticky['style']['display'] = "";
+                    kanban_sticky.style.display = "";
                 }
             },
         },

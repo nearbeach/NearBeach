@@ -253,7 +253,7 @@
                     data_to_send
                 ).then((response) => {
                     // Use the result to go to the url
-                    window.location.href = response['data']
+                    window.location.href = response.data
                 }).catch((error) => {
                     // Get the error modal
                     var elem_cont = document.getElementById("errorModalContent");
@@ -286,15 +286,15 @@
             //We need to map "fields" array from the statusList/typeList json data
             this.statusFixList = this.statusList.map((row) => {
                 return {
-                    value: row['pk'],
-                    label: row['fields']['requirement_status'],
+                    value: row.pk,
+                    label: row.fields.requirement_status,
                 };
             });
 
             this.typeFixList = this.typeList.map((row) => {
                 return {
-                    value: row['pk'],
-                    label: row['fields']['requirement_type'],
+                    value: row.pk,
+                    label: row.fields.requirement_type,
                 }
             });
         },

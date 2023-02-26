@@ -7,23 +7,23 @@
         <div class="col-md-8 organisation-details">
             <img v-bind:src="getStakeholderImage" alt="Stakeholder Logo" class="organisation-image">
             <div class="organisation-name">
-                <a v-bind:href="`${rootUrl}organisation_information/${organisationResults[0]['pk']}/`">
-                    {{stakeholderModel['organisation_name']}}
+                <a v-bind:href="`${rootUrl}organisation_information/${organisationResults[0].pk}/`">
+                    {{stakeholderModel.organisation_name}}
                 </a>
             </div>
             <div class="organisation-link">
                 <Icon v-bind:icon="icons.linkOut"></Icon> Website:
-                <a v-bind:href="stakeholderModel['organisation_website']" 
+                <a v-bind:href="stakeholderModel.organisation_website" 
                    target="_blank"
                    rel="noopener noreferrer"
                 >
-                    {{ stakeholderModel['organisation_website'] }}
+                    {{ stakeholderModel.organisation_website }}
                 </a>
             </div>
             <div class="organisation-email">
                 <Icon v-bind:icon="icons.mailIcon"></Icon> Email:
-                <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
-                    {{stakeholderModel['organisation_email']}}
+                <a v-bind:href="`mailto:${stakeholderModel.organisation_email}`">
+                    {{stakeholderModel.organisation_email}}
                 </a>
             </div>
         </div>
@@ -58,7 +58,7 @@
         },
         data() {
             return {
-                stakeholderModel: this.organisationResults[0]['fields'],
+                stakeholderModel: this.organisationResults[0].fields,
             }
         },
         mixins: [
@@ -70,7 +70,7 @@
                 staticUrl: 'getStaticUrl',
             }),
             getStakeholderImage: function() {
-                const image = this.stakeholderModel['organisation_profile_picture'];
+                const image = this.stakeholderModel.organisation_profile_picture;
                 if (image === '' || image === null) {
                     //There is no image - return the default image
                     return this.defaultStakeholderImage;

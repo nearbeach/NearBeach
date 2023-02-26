@@ -201,11 +201,11 @@
         data() {
             return {
                 isReadOnly: false,
-                projectDescriptionModel: this.projectResults[0]['fields']['project_description'],
-                projectEndDateModel: new Date(this.projectResults[0]['fields']['project_end_date']),
-                projectNameModel: this.projectResults[0]['fields']['project_name'],
-                projectStartDateModel: new Date(this.projectResults[0]['fields']['project_start_date']),
-                projectStatusModel: this.projectResults[0]['fields']['project_status'],
+                projectDescriptionModel: this.projectResults[0].fields.project_description,
+                projectEndDateModel: new Date(this.projectResults[0].fields.project_end_date),
+                projectNameModel: this.projectResults[0].fields.project_name,
+                projectStartDateModel: new Date(this.projectResults[0].fields.project_start_date),
+                projectStatusModel: this.projectResults[0].fields.project_status,
                 statusOptions: [
                     { value: 'Backlog', label: 'Backlog'},
                     { value: 'Blocked', label: 'Blocked'},
@@ -238,8 +238,8 @@
                 this.updateProject();
             },
             updateDates: function(data) {
-                this.projectEndDateModel = new Date(data['end_date']);
-                this.projectStartDateModel = new Date(data['start_date']);
+                this.projectEndDateModel = new Date(data.end_date);
+                this.projectStartDateModel = new Date(data.start_date);
             },
             updateProject: function() {
                 // Check the validation first
@@ -265,7 +265,7 @@
 
                 //Use axios to send data
                 axios.post(
-                    `${this.rootUrl}project_information/${this.projectResults[0]['pk']}/save/`,
+                    `${this.rootUrl}project_information/${this.projectResults[0].pk}/save/`,
                     data_to_send
                 ).then(response => {
                     //Notify user of success update
@@ -285,7 +285,7 @@
             }
 
             //If the project status is closed => set the isReadOnly to true
-            this.isReadOnly = this.projectResults[0]['fields']['project_status'] === 'Closed';
+            this.isReadOnly = this.projectResults[0].fields.project_status === 'Closed';
         }
     }
 </script>

@@ -154,20 +154,20 @@
                     object_link = `${this.rootUrl}`,
                     requirement_item_description = '';
 
-                if (link['project_id'] !== null) {
-                    object_description = link['project_id__project_name'];
-                    object_id = `Project ${link['project_id']}`;
-                    object_link = `${this.rootUrl}project_information/${link['project_id']}`;
-                } else if (link['task_id'] !== null) {
-                    object_description = link['task_id__task_short_description'];
-                    object_id = `Task ${link['task_id']}`;
-                    object_link = `${this.rootUrl}task_information/${link['task_id']}`;
+                if (link.project_id !== null) {
+                    object_description = link.project_id__project_name;
+                    object_id = `Project ${link.project_id}`;
+                    object_link = `${this.rootUrl}project_information/${link.project_id}`;
+                } else if (link.task_id !== null) {
+                    object_description = link.task_id__task_short_description;
+                    object_id = `Task ${link.task_id}`;
+                    object_link = `${this.rootUrl}task_information/${link.task_id}`;
                 }
 
                 //Check to see if we need to insert the requirement item description.
-                if (link['requirement_item_id'] !== null) {
-                    requirement_item_description = `<p class="requirement-item-link-type">${link['requirement_item_id__requirement_item_title']}</p>`;
-                    object_id = `${object_id} / Item ${link['requirement_item_id']}`;
+                if (link.requirement_item_id !== null) {
+                    requirement_item_description = `<p class="requirement-item-link-type">${link.requirement_item_id__requirement_item_title}</p>`;
+                    object_id = `${object_id} / Item ${link.requirement_item_id}`;
                 }
 
                 //Return the HTML
@@ -191,10 +191,10 @@
                  */
                 var object_status = 'ERROR';
 
-                if (link['project_id'] !== null) {
-                    object_status = link['project_id__project_status'];
-                } else if (link['task_id'] !== null) {
-                    object_status = link['task_id__task_status'];
+                if (link.project_id !== null) {
+                    object_status = link.project_id__project_status;
+                } else if (link.task_id !== null) {
+                    object_status = link.task_id__task_status;
                 }
 
                 return object_status;
@@ -226,7 +226,7 @@
                 axios.post(
                     'data/item_links/',
                 ).then((response) => {
-                    this.itemLinkResults = response['data'];
+                    this.itemLinkResults = response.data;
                 });
             },
             updateLinkResults: function() {
@@ -234,7 +234,7 @@
                 axios.post(
                     'data/links/',
                 ).then((response) => {
-                    this.linkResults = response['data'];
+                    this.linkResults = response.data;
                 });
             },
             updateModel: function() {

@@ -13,7 +13,7 @@
                 </div>
                 <div class="col-md-8">
                     <p>
-                        <strong>Username: </strong>{{userResults[0]['username']}}
+                        <strong>Username: </strong>{{userResults[0].username}}
                     </p>
                     <div class="row">
                         <div class="col-md-6">
@@ -115,9 +115,9 @@
         },
         data() {
             return {
-                emailModel: this.userResults[0]['email'],
-                firstNameModel: this.userResults[0]['first_name'],
-                lastNameModel: this.userResults[0]['last_name'],
+                emailModel: this.userResults[0].email,
+                firstNameModel: this.userResults[0].first_name,
+                lastNameModel: this.userResults[0].last_name,
             };
         },
         mixins: [
@@ -149,7 +149,7 @@
 
                 //Create data_to_send
                 const data_to_send = new FormData();
-                data_to_send.set('username', this.userResults[0]['id']);
+                data_to_send.set('username', this.userResults[0].id);
                 data_to_send.set('first_name', this.firstNameModel);
                 data_to_send.set('last_name', this.lastNameModel);
 

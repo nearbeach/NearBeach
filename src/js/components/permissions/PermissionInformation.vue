@@ -7,7 +7,7 @@
             <hr>
 
             <div class="alert alert-danger"
-                 v-if="this.permissionSetResults[0]['pk'] === 1"
+                 v-if="this.permissionSetResults[0].pk === 1"
             >Can not edit administration permission set.</div>
 
             <!-- BASIC INFORMATION -->
@@ -201,9 +201,9 @@
 
             <!-- Save Changes -->
             <!-- Don't show if we are looking at admin -->
-            <hr v-if="this.permissionSetResults[0]['pk'] !== 1">
+            <hr v-if="this.permissionSetResults[0].pk !== 1">
             <div class="row submit-row"
-                 v-if="this.permissionSetResults[0]['pk'] !== 1"
+                 v-if="this.permissionSetResults[0].pk !== 1"
             >
                 <div class="col-md-12">
                     <a href="javascript:void(0)"
@@ -255,24 +255,24 @@
         },
         data() {
             return {
-                permissionSetNameModel: this.permissionSetResults[0]['fields']['permission_set_name'],
-                administrationAssignUserToGroupModel: this.permissionSetResults[0]['fields']['administration_assign_user_to_group'],
-                administrationCreateGroupModel: this.permissionSetResults[0]['fields']['administration_create_group'],
-                administrationCreatePermissionSetModel: this.permissionSetResults[0]['fields']['administration_create_permission_set'],
-                administrationCreateUserModel: this.permissionSetResults[0]['fields']['administration_create_user'],
-                bugClientModel: this.permissionSetResults[0]['fields']['bug_client'],
-                customerModel: this.permissionSetResults[0]['fields']['customer'],
-                kanbanModel: this.permissionSetResults[0]['fields']['kanban_board'],
-                kanbanCardModel: this.permissionSetResults[0]['fields']['kanban_card'],
-                organisationModel: this.permissionSetResults[0]['fields']['organisation'],
-                projectModel: this.permissionSetResults[0]['fields']['project'],
-                requestForChangeModel: this.permissionSetResults[0]['fields']['request_for_change'],
-                requirementModel: this.permissionSetResults[0]['fields']['requirement'],
-                taskModel: this.permissionSetResults[0]['fields']['task'],
-                documentModel: this.permissionSetResults[0]['fields']['document'],
-                kanbanCommentModel: this.permissionSetResults[0]['fields']['kanban_comment'],
-                projectHistoryModel: this.permissionSetResults[0]['fields']['project_history'],
-                taskHistoryModel: this.permissionSetResults[0]['fields']['task_history'],
+                permissionSetNameModel: this.permissionSetResults[0].fields.permission_set_name,
+                administrationAssignUserToGroupModel: this.permissionSetResults[0].fields.administration_assign_user_to_group,
+                administrationCreateGroupModel: this.permissionSetResults[0].fields.administration_create_group,
+                administrationCreatePermissionSetModel: this.permissionSetResults[0].fields.administration_create_permission_set,
+                administrationCreateUserModel: this.permissionSetResults[0].fields.administration_create_user,
+                bugClientModel: this.permissionSetResults[0].fields.bug_client,
+                customerModel: this.permissionSetResults[0].fields.customer,
+                kanbanModel: this.permissionSetResults[0].fields.kanban_board,
+                kanbanCardModel: this.permissionSetResults[0].fields.kanban_card,
+                organisationModel: this.permissionSetResults[0].fields.organisation,
+                projectModel: this.permissionSetResults[0].fields.project,
+                requestForChangeModel: this.permissionSetResults[0].fields.request_for_change,
+                requirementModel: this.permissionSetResults[0].fields.requirement,
+                taskModel: this.permissionSetResults[0].fields.task,
+                documentModel: this.permissionSetResults[0].fields.document,
+                kanbanCommentModel: this.permissionSetResults[0].fields.kanban_comment,
+                projectHistoryModel: this.permissionSetResults[0].fields.project_history,
+                taskHistoryModel: this.permissionSetResults[0].fields.task_history,
             }
         },
         mixins: [
@@ -283,7 +283,7 @@
             saveChanges: function() {
                 //Setup the data we want to send to the backend
                 const data_to_send = new FormData();
-                data_to_send.set('permission_set_id', this.permissionSetResults[0]['pk']);
+                data_to_send.set('permission_set_id', this.permissionSetResults[0].pk);
                 data_to_send.set('permission_set_name', this.permissionSetNameModel);
                 data_to_send.set('administration_assign_user_to_group', this.administrationAssignUserToGroupModel);
                 data_to_send.set('administration_create_group', this.administrationCreateGroupModel);
@@ -308,7 +308,7 @@
 
                 //Send data
                 axios.post(
-                    `${this.rootUrl}permission_set_information/${this.permissionSetResults[0]['pk']}/save/`,
+                    `${this.rootUrl}permission_set_information/${this.permissionSetResults[0].pk}/save/`,
                     data_to_send
                 ).then(response => {
                     //Hide loading modal mixing
@@ -319,7 +319,7 @@
             },
             updatePropertyValue: function(data) {
                 //Update the property with what we require
-                this[data['property']] = data['value'];
+                this[data.property] = data.value;
             },
         },
         mounted() {

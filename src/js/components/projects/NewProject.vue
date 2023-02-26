@@ -217,15 +217,15 @@
                     data_to_send
                 ).then(response => {
                     //Go to the new project
-                    window.location.href = response['data'];
+                    window.location.href = response.data;
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });
             },
             updateDates: function(data) {
                 //Update both the start and end dates
-                this.projectStartDateModel = new Date(data['start_date']);
-                this.projectEndDateModel = new Date(data['end_date']);
+                this.projectStartDateModel = new Date(data.start_date);
+                this.projectEndDateModel = new Date(data.end_date);
             },
             updateGroupModel: function(data) {
                 this.groupModel = data;
@@ -240,8 +240,8 @@
             setTimeout(() => {
                 this.groupModel = this.userGroupResults.map(row => {
                     return {
-                        group: row['group__group_name'],
-                        value: row['group_id'],
+                        group: row.group__group_name,
+                        value: row.group_id,
                     }
                 });
             },100);

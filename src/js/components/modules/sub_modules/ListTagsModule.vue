@@ -7,12 +7,12 @@
         </p>
         <div class="tag-list">
             <div v-for="tag in tagList"
-                 :key="tag['pk']"
+                 :key="tag.pk"
                  class="single-tag"
-                 v-bind:style="`background-color: ${tag['fields']['tag_colour']};`"
+                 v-bind:style="`background-color: ${tag.fields.tag_colour};`"
             >
-                {{tag['fields']['tag_name']}}
-                <span v-on:click="removeTag(tag['pk'])"
+                {{tag.fields.tag_name}}
+                <span v-on:click="removeTag(tag.pk)"
                       v-if="userLevel > 1"
                 >
                     <Icon v-bind:icon="icons.xCircle"></Icon>
@@ -97,7 +97,7 @@
                 axios.post(
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/tag_list/`
                 ).then(response => {
-                    this.tagList = response['data'];
+                    this.tagList = response.data;
                 }).catch(error => {
                     
                 })
@@ -116,7 +116,7 @@
                 ).then(response => {
                     //Remove data from tagList
                     this.tagList = this.tagList.filter(row => {
-                        return row['pk'] !== tag_id;
+                        return row.pk !== tag_id;
                     });
                 }).catch(error => {
                     

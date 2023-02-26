@@ -131,7 +131,7 @@
                     data_to_send,
                 ).then(response => {
                     //Send the data upstream
-                    this.$emit('update_group_list',response['data']);
+                    this.$emit('update_group_list',response.data);
 
                     //Close this modal
                     document.getElementById("addGroupCloseButton").click();
@@ -147,10 +147,10 @@
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_list_all/`,
                 ).then(response => {
                     //Clear the groupFixList
-                    this.groupFixList = response['data'].map(row => {
+                    this.groupFixList = response.data.map(row => {
                         return {
-                            'value': row['pk'],
-                            'label': row['fields']['group_name'],
+                            'value': row.pk,
+                            'label': row.fields.group_name,
                         };
                     });
                 }).catch(error => {

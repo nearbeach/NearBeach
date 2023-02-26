@@ -18,8 +18,8 @@
                  v-bind:data-card-id="element.pk"
                  v-on:dblclick="doubleClickCard($event)"
             >
-                <b>#{{element['pk']}}</b><br/>
-                {{element['fields']['kanban_card_text']}}
+                <b>#{{element.pk}}</b><br/>
+                {{element.fields.kanban_card_text}}
                 <Icon class="kanban-card-info-icon"
                              v-bind:icon="icons.infoCircle"
                              v-on:click="singleClickCard(element.pk)"
@@ -131,8 +131,8 @@
             addNewKanbanCard: function() {
                 //Update the modal's data-attributes to reflect the column ID and Level ID
                 var addKanbanCardModal = document.getElementById('addKanbanCardModal');
-                addKanbanCardModal['dataset']['kanbanLevel'] = this.levelId;
-                addKanbanCardModal['dataset']['kanbanColumn'] = this.columnId;
+                addKanbanCardModal.dataset.kanbanLevel = this.levelId;
+                addKanbanCardModal.dataset.kanbanColumn = this.columnId;
 
                 //Get the Modal from the above modal
                 var addKanbanCardModal = new Modal(addKanbanCardModal);
@@ -141,8 +141,8 @@
             addNewLink: function() {
                 //Update the modal's data-attributes to reflect the column ID and Level ID
                 var newLinkModal = document.getElementById('newLinkModal');
-                newLinkModal['dataset']['kanbanLevel'] = this.levelId;
-                newLinkModal['dataset']['kanbanColumn'] = this.columnId;
+                newLinkModal.dataset.kanbanLevel = this.levelId;
+                newLinkModal.dataset.kanbanColumn = this.columnId;
 
                 //Get the Modal from the above modal
                 var newLinkModal = new Modal(newLinkModal);
@@ -176,7 +176,7 @@
 
                 //Get the list of values for sort array
                 const sort_array = this.masterList.map(row => {
-                    return row['fields']['kanban_card_sort_number'];
+                    return row.fields.kanban_card_sort_number;
                 });
 
                 //Get the min and max
@@ -189,7 +189,7 @@
                 }
 
                 //Show error screen
-                document.getElementById('sort_error')['style']['display'] = "flex";
+                document.getElementById('sort_error').style.display = "flex";
 
                 //There is an issue - we need to fix all the variables and send that information upstream to the
                 //backend AND the VueX
@@ -200,15 +200,15 @@
                     data_to_send.set('new_card_column', this.columnId.toString());
                     data_to_send.set('new_card_level', this.levelId.toString());
                     data_to_send.set('new_card_sort_number', index.toString());
-                    data_to_send.set('old_card_column', row['fields']['kanban_column']);
-                    data_to_send.set('old_card_level', row['fields']['kanban_level']);
-                    data_to_send.set('old_card_sort_number', row['fields']['kanban_card_sort_number']);
-                    data_to_send.set('card_id', row['pk']);
+                    data_to_send.set('old_card_column', row.fields.kanban_column);
+                    data_to_send.set('old_card_level', row.fields.kanban_level);
+                    data_to_send.set('old_card_sort_number', row.fields.kanban_card_sort_number);
+                    data_to_send.set('card_id', row.pk);
 
                     //Update kanban card
                     this.$store.commit({
                         type: 'updateKanbanCard',
-                        card_id: row['pk'],
+                        card_id: row.pk,
                         kanban_column: this.columnId,
                         kanban_level: this.levelId,
                         kanban_card_sort_number: index,
@@ -216,18 +216,18 @@
 
                     //Use axios to send the data to the database
                     axios.post(
-                        `${this.rootUrl}kanban_information/${row['pk']}/move_card/`,
+                        `${this.rootUrl}kanban_information/${row.pk}/move_card/`,
                         data_to_send,
                     );
                 });
 
                 //Done - hide the error screen
-                document.getElementById('sort_error')['style']['display'] = "";
+                document.getElementById('sort_error').style.display = "";
             },
             doubleClickCard: function(data) {
                 //Filter out the data we want to send up stream
                 const filtered_data = this.masterList.filter(row => {
-                    return row['pk'] == data['target']['dataset']['cardId'];
+                    return row.pk == data.target.dataset.cardId;
                 })[0];
 
                 //Setup data to send upstream
@@ -250,36 +250,36 @@
                 //Filter for all data effected in the new column
                 let filter_new_column = this.allCards.filter(row => {
                     //return where column = new_card_column, and sort level >= new sort level
-                    return row['fields']['kanban_column'] == new_card_column &&
-                           row['fields']['kanban_level'] == new_card_level &&
-                           row['fields']['kanban_card_sort_number'] >= new_card_sort_number;
+                    return row.fields.kanban_column == new_card_column &&
+                           row.fields.kanban_level == new_card_level &&
+                           row.fields.kanban_card_sort_number >= new_card_sort_number;
                 });
 
                 //Loop through the filtered new columns and add the required data to the return array
                 filter_new_column.forEach(row => {
                     //Move the cards up by one
                     return_array.push({
-                        card_id: row['pk'],
+                        card_id: row.pk,
                         kanban_column: new_card_column,
                         kanban_level: new_card_level,
-                        kanban_card_sort_number: row['fields']['kanban_card_sort_number'] + 1, 
+                        kanban_card_sort_number: row.fields.kanban_card_sort_number + 1, 
                     });
                 })
 
                 //Filter for all data effected in old column
                 let filter_old_column = this.allCards.filter(row => {
                     //Return where column = old_card_column, and the sort level >= old sort level
-                    return row['fields']['kanban_column'] == old_card_column &&
-                           row['fields']['kanban_level'] == old_card_level &&
-                           row['fields']['kanban_card_sort_number'] >= old_card_sort_number;
+                    return row.fields.kanban_column == old_card_column &&
+                           row.fields.kanban_level == old_card_level &&
+                           row.fields.kanban_card_sort_number >= old_card_sort_number;
                 })
 
                 //Loop through the filter old columns and add the required data to return array
                 filter_old_column.forEach(row => {
-                    if (row['pk'] == card_id) {
+                    if (row.pk == card_id) {
                         //Move this to the new column
                         return_array.push({
-                            card_id: row['pk'],
+                            card_id: row.pk,
                             kanban_column: new_card_column,
                             kanban_level: new_card_level,
                             kanban_card_sort_number: new_card_sort_number, 
@@ -288,10 +288,10 @@
                     } else {
                         //Move the cards down by 1
                         return_array.push({
-                            card_id: row['pk'],
+                            card_id: row.pk,
                             kanban_column: old_card_column,
                             kanban_level: old_card_level,
-                            kanban_card_sort_number: row['fields']['kanban_card_sort_number'] - 1, 
+                            kanban_card_sort_number: row.fields.kanban_card_sort_number - 1, 
                         });
                     }
                 })
@@ -324,10 +324,10 @@
                 //Filter for the data we need
                 let filtered_data = this.allCards.filter(row => {
                     //Return when same column and level, whilst also in range of smallest and largest
-                    return parseInt(row['fields']['kanban_column']) === column &&
-                           parseInt(row['fields']['kanban_level']) === level &&
-                           row['fields']['kanban_card_sort_number'] >= smallest &&
-                           row['fields']['kanban_card_sort_number'] <= largest;
+                    return parseInt(row.fields.kanban_column) === column &&
+                           parseInt(row.fields.kanban_level) === level &&
+                           row.fields.kanban_card_sort_number >= smallest &&
+                           row.fields.kanban_card_sort_number <= largest;
                 })
 
                 //Create the return array
@@ -336,10 +336,10 @@
                 //Loop through the filtered data, and apply the changes required
                 filtered_data.forEach(row => {
                     
-                    if (row['pk'] == card_id) {
+                    if (row.pk == card_id) {
                         //Make sure this card has the new sort number
                         return_array.push({
-                            card_id: row['pk'],
+                            card_id: row.pk,
                             kanban_column: column,
                             kanban_level: level,
                             kanban_card_sort_number: new_sort, 
@@ -347,10 +347,10 @@
                     } else {
                         //Not the card we moved, apply the delta to move the sort order
                         return_array.push({
-                            card_id: row['pk'],
+                            card_id: row.pk,
                             kanban_column: column,
                             kanban_level: level,
-                            kanban_card_sort_number: row['fields']['kanban_card_sort_number'] + delta, 
+                            kanban_card_sort_number: row.fields.kanban_card_sort_number + delta, 
                         });
                     }
                 })
@@ -464,11 +464,11 @@
                 // Update VueX
                 this.$store.commit({
                     type: 'updateCard',
-                    'cardId': filtered_data['pk'],
-                    'cardTitle': filtered_data['fields']['kanban_card_text'],
-                    'cardDescription': filtered_data['fields']['kanban_card_description'],
-                    'cardColumn': filtered_data['fields']['kanban_column'],
-                    'cardLevel': filtered_data['fields']['kanban_level'],
+                    'cardId': filtered_data.pk,
+                    'cardTitle': filtered_data.fields.kanban_card_text,
+                    'cardDescription': filtered_data.fields.kanban_card_description,
+                    'cardColumn': filtered_data.fields.kanban_column,
+                    'cardLevel': filtered_data.fields.kanban_level,
                     'cardLink': card_link,
                 })
 
@@ -482,7 +482,7 @@
             singleClickCard: function(data) {
                 //Filter out the data we want to send up stream
                 const filtered_data = this.masterList.filter(row => {
-                    return row['pk'] == data;
+                    return row.pk == data;
                 })[0];
 
                 //Setup data to send upstream
@@ -493,8 +493,8 @@
             newCardInfo: function() {
                 //Only add the card if the column and the level match
                 if (
-                    (this.columnId == this.newCardInfo[0]['fields']['kanban_column']) &&
-                    (this.levelId == this.newCardInfo[0]['fields']['kanban_level'])
+                    (this.columnId == this.newCardInfo[0].fields.kanban_column) &&
+                    (this.levelId == this.newCardInfo[0].fields.kanban_level)
                 ) {
                     //The new card is for this level and column. Add it to the masterList
                     this.masterList.push(this.newCardInfo[0]);

@@ -10,12 +10,12 @@
                     <img v-bind:src="getCustomerImage(customer)" alt="default profile picture" />
                     <div class="customer-card-name">
                         <a v-bind:href="`${rootUrl}customer_information/${customer.pk}/`">
-                            {{customer['fields']['customer_first_name']}} {{customer['fields']['customer_last_name']}}
+                            {{customer.fields.customer_first_name}} {{customer.fields.customer_last_name}}
                         </a>
                     </div>
                     <div class="customer-card-email">
                         <Icon v-bind:icon="icons.mailIcon"></Icon>
-                        {{customer['fields']['customer_email']}}
+                        {{customer.fields.customer_email}}
                     </div>
                 </div>
             </div>
@@ -62,7 +62,7 @@
         },
         methods: {
             getCustomerImage: function(customer) {
-                const image = customer['fields']['customer_profile_picture'];
+                const image = customer.fields.customer_profile_picture;
 
                 if (image === '' || image === null) {
                     //There is no image - return the default image

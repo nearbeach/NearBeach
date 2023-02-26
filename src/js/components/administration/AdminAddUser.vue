@@ -154,24 +154,24 @@
                     `${this.rootUrl}object_data/admin_add_user/`,
                 ).then(response => {
                     //Assign it to the appropriate variable
-                    this.groupResults = response['data']['group_results'].map(data => {
+                    this.groupResults = response.data.group_results.map(data => {
                         return {
-                            'label': data['group_name'],
-                            'value': data['group_id'],
+                            'label': data.group_name,
+                            'value': data.group_id,
                         }
                     });
 
-                    this.permissionSetResults = response['data']['permission_set_results'].map(data => {
+                    this.permissionSetResults = response.data.permission_set_results.map(data => {
                         return {
-                            'label': data['permission_set_name'],
-                            'value': data['permission_set_id'],
+                            'label': data.permission_set_name,
+                            'value': data.permission_set_id,
                         }
                     });
 
-                    this.userResults = response['data']['user_results'].map(data => {
+                    this.userResults = response.data.user_results.map(data => {
                         return {
-                            'label': `${data['id']}: ${data['first_name']} ${data['last_name']}`,
-                            'value': data['id'],
+                            'label': `${data.id}: ${data.first_name} ${data.last_name}`,
+                            'value': data.id,
                         }
                     });
 

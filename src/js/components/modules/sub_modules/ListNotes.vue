@@ -17,13 +17,13 @@
                 </thead>
                 <tbody>
                     <tr v-for="noteHistory in noteHistoryResults"
-                        v-bind:key="noteHistory['pk']"
+                        v-bind:key="noteHistory.pk"
                     >
                         <td>
-                            <div v-html="noteHistory['fields']['object_note']" />
+                            <div v-html="noteHistory.fields.object_note" />
                             <div class="spacer"></div>
                             <p class="small-text">
-                                {{noteHistory['fields']['date_created']}}
+                                {{noteHistory.fields.date_created}}
                             </p>
                         </td>
                     </tr>

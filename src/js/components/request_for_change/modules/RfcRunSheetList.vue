@@ -23,56 +23,56 @@
                 </thead>
                 <tbody>
                     <tr v-for="changeTask in changeTaskList"
-                        v-bind:key="changeTask['pk']"
+                        v-bind:key="changeTask.pk"
                     >
                         <td>
                             <div>Start Time:</div>
-                            <div class="small-text">{{getNiceDate(changeTask['fields']['change_task_start_date'])}}</div>
+                            <div class="small-text">{{getNiceDate(changeTask.fields.change_task_start_date)}}</div>
                             <div class="spacer"></div>
                             <div>End Time:</div>
-                            <div class="small-text">{{getNiceDate(changeTask['fields']['change_task_end_date'])}}</div>
+                            <div class="small-text">{{getNiceDate(changeTask.fields.change_task_end_date)}}</div>
                         </td>
                         <td>
-                            <a v-bind:href="`${rootUrl}change_task_information/${changeTask['pk']}/`">{{changeTask['fields']['change_task_title']}}</a>
+                            <a v-bind:href="`${rootUrl}change_task_information/${changeTask.pk}/`">{{changeTask.fields.change_task_title}}</a>
                         </td>
                         <td>
                             <div>Assigned User:</div>
-                            <div class="small-text">{{getUserName(changeTask['fields']['change_task_assigned_user'])}}</div>
+                            <div class="small-text">{{getUserName(changeTask.fields.change_task_assigned_user)}}</div>
                             <div class="spacer"></div>
                             <div>QA User:</div>
-                            <div class="small-text">{{getUserName(changeTask['fields']['change_task_qa_user'])}}</div>
+                            <div class="small-text">{{getUserName(changeTask.fields.change_task_qa_user)}}</div>
                             <div class="spacer"></div>
                             <div>Status:</div>
                             <div class="small-text"
                                  v-if="rfcStatus !== 4"
                             >
-                                {{getStatus(changeTask['fields']['change_task_status'])}}
+                                {{getStatus(changeTask.fields.change_task_status)}}
                             </div>
                             <div v-else>
                                 <!-- START BUTTON -->
                                 <a href="javascript:void(0)"
                                    class="btn btn-primary change-task-button"
-                                   v-on:click="updateChangeTaskStatus(changeTask['pk'],4)"
-                                   v-if="changeTask['fields']['change_task_status']==3 && userLevel > 1"
+                                   v-on:click="updateChangeTaskStatus(changeTask.pk,4)"
+                                   v-if="changeTask.fields.change_task_status==3 && userLevel > 1"
                                 >Start Task</a>
 
                                 <!-- FINISH BUTTON -->
                                 <a href="javascript:void(0)"
                                    class="btn btn-warning change-task-button"
-                                   v-on:click="updateChangeTaskStatus(changeTask['pk'],5)"
-                                   v-if="changeTask['fields']['change_task_status']==4 && userLevel > 1"
+                                   v-on:click="updateChangeTaskStatus(changeTask.pk,5)"
+                                   v-if="changeTask.fields.change_task_status==4 && userLevel > 1"
                                 >Finish Task</a>
 
                                 <!-- SUCCESS BUTTON -->
                                 <a href="javascript:void(0)"
                                    class="btn btn-success change-task-button"
-                                   v-if="changeTask['fields']['change_task_status']==5 && userLevel > 1"
+                                   v-if="changeTask.fields.change_task_status==5 && userLevel > 1"
                                 >Successful</a>
 
                                 <!-- FAILED BUTTON -->
                                 <a href="javascript:void(0)"
                                    class="btn btn-danger change-task-button"
-                                   v-if="changeTask['fields']['change_task_status']==6 && userLevel > 1"
+                                   v-if="changeTask.fields.change_task_status==6 && userLevel > 1"
                                 >Failed</a>
                             </div>
                         </td>
@@ -179,7 +179,7 @@
             }),
             isCompleted: function() {
                 var count_of_uncompleted_tasks = this.changeTaskList.filter(changeTask => {
-                    const change_task_status = changeTask['fields']['change_task_status'];
+                    const change_task_status = changeTask.fields.change_task_status;
                     return change_task_status !== 5 && change_task_status !== 6;
                 }).length;
 
@@ -212,7 +212,7 @@
                     `${this.rootUrl}rfc_information/${this.locationId}/change_task_list/`,
                 ).then(response => {
                     // Update the changeTaskList
-                    this.changeTaskList = response['data'];
+                    this.changeTaskList = response.data;
 
                     // Update the changeTaskCount in statemanagement
                     this.$store.commit({
@@ -251,7 +251,7 @@
             getUserName: function(user_id) {
                 //Filter for the user by using the user_id
                 var single_user = this.userList.filter(row => {
-                    return row['id'] == user_id;
+                    return row.id == user_id;
                 });
                 
                 //If there are no results - default to ---
@@ -260,7 +260,7 @@
                 }
                 
                 //User was filtered out - return their name
-                return `${single_user[0]['username']}: ${single_user[0]['first_name']} ${single_user[0]['last_name']}`;
+                return `${single_user[0].username}: ${single_user[0].first_name} ${single_user[0].last_name}`;
             },
             updateChangeTaskList: function(data) {
                 //Update change task list
@@ -288,9 +288,9 @@
                      */
                     this.changeTaskList = this.changeTaskList.map(changeTask => {
                         //The change task that we have just updated :)
-                        if (changeTask['pk'] == change_task_id) {
+                        if (changeTask.pk == change_task_id) {
                             //Update the change Task Status
-                            changeTask['fields']['change_task_status'] = change_task_status;
+                            changeTask.fields.change_task_status = change_task_status;
 
                             //Send back the change task status
                             return changeTask;

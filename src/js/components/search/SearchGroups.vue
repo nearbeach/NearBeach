@@ -19,12 +19,12 @@
                 <a class="list-group-item list-group-item-action"
                    v-for="group in groupList"
                    :key="group.pk"
-                   v-bind:href="`/group_information/${group['pk']}/`"
+                   v-bind:href="`/group_information/${group.pk}/`"
                 >
-                    <strong>{{group['fields']['group_name']}}</strong>
+                    <strong>{{group.fields.group_name}}</strong>
                     <br>
                     <p class="small-text">
-                        Parent Group: {{group['fields']['parent_group']}}
+                        Parent Group: {{group.fields.parent_group}}
                     </p>
                 </a>
             </div>
@@ -89,7 +89,7 @@
                     `${this.rootUrl}search/group/data/`,
                     data_to_send,
                 ).then(response => {
-                    this.groupList = response['data'];
+                    this.groupList = response.data;
                 }).catch(error => {
                     //Show error
                     this.showErrorModal(error,'Search Groups','')

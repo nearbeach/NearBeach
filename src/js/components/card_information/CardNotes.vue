@@ -69,7 +69,6 @@
         props: {},
         data() {
             return {
-                // ...mapGetters(['getCardNotes']),
                 cardNoteModel: '',
             }
         },
@@ -95,7 +94,7 @@
                     //Add the response to the end of the noteHistoryResults
                     this.$store.commit({
                         type: 'appendNote',
-                        newNote: response['data'][0],
+                        newNote: response.data[0],
                     });
 
                     //Clear the card note model

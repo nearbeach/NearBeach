@@ -23,13 +23,13 @@
 
                 <div class="col-md-8 tag-list">
                     <div v-for="tag in localTagResults"
-                         v-bind:key="tag['pk']" 
-                         v-bind:style="`background-color: ${tag['fields']['tag_colour']};`"
-                         v-on:dblclick="editTag(tag['pk'])"
+                         v-bind:key="tag.pk" 
+                         v-bind:style="`background-color: ${tag.fields.tag_colour};`"
+                         v-on:dblclick="editTag(tag.pk)"
                          class="single-tag"
                     >
-                        {{tag['fields']['tag_name']}}
-                        <span v-on:click="editTag(tag['pk'])"
+                        {{tag.fields.tag_name}}
+                        <span v-on:click="editTag(tag.pk)"
                         >
                             <Icon v-bind:icon="icons.infoCircle"></Icon>
                         </span>
@@ -115,19 +115,19 @@
             deleteTag: function(data) {
                 //Filter out the tag
                 this.localTagResults = this.localTagResults.filter(row => {
-                    return row['pk'] !== data['tag_id'];
+                    return row.pk !== data.tag_id;
                 })
             },
             editTag: function(tag_id) {
                 //Filter for the tag information
                 let single_tag = this.localTagResults.filter(row => {
-                    return row['pk'] == tag_id;
+                    return row.pk == tag_id;
                 })[0];
 
                 //Send data down to the modal
-                this.singleTagName = single_tag['fields']['tag_name'];
+                this.singleTagName = single_tag.fields.tag_name;
                 this.singleTagId = tag_id;
-                this.singleTagColour = single_tag['fields']['tag_colour'];
+                this.singleTagColour = single_tag.fields.tag_colour;
 
                 //Open up modal
                 let edit_tag_modal = new Modal(document.getElementById('editTagModal'));
@@ -140,12 +140,12 @@
             updateTags: function(data) {
                 //Get the index location of the object we are updating
                 let index = this.localTagResults.findIndex( row => {
-                    return row['pk'] === data['tag_id'];
+                    return row.pk === data.tag_id;
                 });
 
                 // Update the data
-                this.localTagResults[index]['fields']['tag_name'] = data['tag_name'];
-                this.localTagResults[index]['fields']['tag_colour'] = data['tag_colour'];
+                this.localTagResults[index].fields.tag_name = data.tag_name;
+                this.localTagResults[index].fields.tag_colour = data.tag_colour;
             }
         },
         mounted() {

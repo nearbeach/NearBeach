@@ -17,17 +17,17 @@
                 <div v-for="user in userList" 
                      :key="user.id"
                      class="user-card"
-                     v-on:click="goToUser(user['id'])"
+                     v-on:click="goToUser(user.id)"
                 >
                     <img v-bind:src="`${staticUrl}NearBeach/images/placeholder/people_tax.svg`" 
                          alt="default profile" 
                          class="default-user-profile" 
                     />
                     <div class="user-details">
-                        <strong>{{user['first_name']}} {{user['last_name']}}</strong><br/>
-                        {{user['username']}}
+                        <strong>{{user.first_name}} {{user.last_name}}</strong><br/>
+                        {{user.username}}
                         <div class="spacer"></div>
-                        {{user['email']}}
+                        {{user.email}}
                     </div>
                 </div>
               </div>
@@ -62,7 +62,7 @@
           axios.post(
             `${this.rootUrl}dashboard/get/users_with_no_groups/`,
           ).then(response => {
-              this.userList = response['data'];
+              this.userList = response.data;
           }).catch(error => {
               this.showErrorModal(error, this.destination);
           });

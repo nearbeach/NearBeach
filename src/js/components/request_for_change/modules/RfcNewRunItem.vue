@@ -263,7 +263,7 @@
                     data_to_send,
                 ).then(response => {
                     //Update the runsheet variables
-                    this.$emit('update_change_task_list',response['data']);
+                    this.$emit('update_change_task_list',response.data);
 
                     //Clear the modal
                     this.changeDescriptionModel = '';
@@ -281,8 +281,8 @@
 
             },
             updateDates: function(data) {
-                this.changeStartDateModel = data['start_date'];
-                this.changeEndDateModel = data['end_date'];
+                this.changeStartDateModel = data.start_date;
+                this.changeEndDateModel = data.end_date;
             },
         },
         mounted() {

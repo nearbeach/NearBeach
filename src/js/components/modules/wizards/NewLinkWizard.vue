@@ -86,20 +86,20 @@
                                             <div class="form-check">
                                                 <input class="form-check-input"
                                                        type="checkbox"
-                                                       v-bind:value="result['pk']"
-                                                       v-bind:id="`checkbox_project_${result['pk']}`"
+                                                       v-bind:value="result.pk"
+                                                       v-bind:id="`checkbox_project_${result.pk}`"
                                                        v-model="linkModel"
                                                 >
                                                 <label class="form-check-label"
-                                                       v-bind:for="`checkbox_project_${result['pk']}`"
+                                                       v-bind:for="`checkbox_project_${result.pk}`"
                                                 >
-                                                    {{result['fields']['project_name']}}
+                                                    {{result.fields.project_name}}
                                                 </label>
                                             </div>
                                             <div class="spacer"></div>
-                                            <p class="small-text">Project {{result['pk']}}</p>
+                                            <p class="small-text">Project {{result.pk}}</p>
                                         </td>
-                                        <td>{{result['fields']['project_status']}}</td>
+                                        <td>{{result.fields.project_status}}</td>
                                     </tr>
                                 </tbody>
 
@@ -112,20 +112,20 @@
                                             <div class="form-check">
                                                 <input class="form-check-input"
                                                        type="checkbox"
-                                                       v-bind:value="result['pk']"
-                                                       v-bind:id="`checkbox_task_${result['pk']}`"
+                                                       v-bind:value="result.pk"
+                                                       v-bind:id="`checkbox_task_${result.pk}`"
                                                        v-model="linkModel"
                                                 >
                                                 <label class="form-check-label"
-                                                       v-bind:for="`checkbox_task_${result['pk']}`"
+                                                       v-bind:for="`checkbox_task_${result.pk}`"
                                                 >
-                                                    {{result['fields']['task_short_description']}}
+                                                    {{result.fields.task_short_description}}
                                                 </label>
                                             </div>
                                             <div class="spacer"></div>
-                                            <p class="small-text">Task {{result['pk']}}</p>
+                                            <p class="small-text">Task {{result.pk}}</p>
                                         </td>
-                                        <td>{{result['fields']['task_status']}}</td>
+                                        <td>{{result.fields.task_status}}</td>
                                     </tr>
                                 </tbody>
 
@@ -138,20 +138,20 @@
                                             <div class="form-check">
                                                 <input class="form-check-input"
                                                        type="checkbox"
-                                                       v-bind:value="result['pk']"
-                                                       v-bind:id="`checkbox_requirement_${result['pk']}`"
+                                                       v-bind:value="result.pk"
+                                                       v-bind:id="`checkbox_requirement_${result.pk}`"
                                                        v-model="linkModel"
                                                 >
                                                 <label class="form-check-label"
-                                                       v-bind:for="`checkbox_requirement_${result['pk']}`"
+                                                       v-bind:for="`checkbox_requirement_${result.pk}`"
                                                 >
-                                                    {{result['fields']['requirement_title']}}
+                                                    {{result.fields.requirement_title}}
                                                 </label>
                                             </div>
                                             <div class="spacer"></div>
-                                            <p class="small-text">Requirement {{result['pk']}}</p>
+                                            <p class="small-text">Requirement {{result.pk}}</p>
                                         </td>
-                                        <td>{{result['fields']['requirement_status']}}</td>
+                                        <td>{{result.fields.requirement_status}}</td>
                                     </tr>
                                 </tbody>
 
@@ -164,20 +164,20 @@
                                             <div class="form-check">
                                                 <input class="form-check-input"
                                                        type="checkbox"
-                                                       v-bind:value="result['pk']"
-                                                       v-bind:id="`checkbox_requirement_item_${result['pk']}`"
+                                                       v-bind:value="result.pk"
+                                                       v-bind:id="`checkbox_requirement_item_${result.pk}`"
                                                        v-model="linkModel"
                                                 >
                                                 <label class="form-check-label"
-                                                       v-bind:for="`checkbox_requirement_item_${result['pk']}`"
+                                                       v-bind:for="`checkbox_requirement_item_${result.pk}`"
                                                 >
-                                                    {{result['fields']['requirement_item_title']}}
+                                                    {{result.fields.requirement_item_title}}
                                                 </label>
                                             </div>
                                             <div class="spacer"></div>
-                                            <p class="small-text">Requirement Item {{result['pk']}}</p>
+                                            <p class="small-text">Requirement Item {{result.pk}}</p>
                                         </td>
-                                        <td>{{result['fields']['requirement_item_status']}}</td>
+                                        <td>{{result.fields.requirement_item_status}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -300,7 +300,7 @@
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
                 ).then(response => {
                     //Load the data into the array
-                    this.objectResults = response['data'];
+                    this.objectResults = response.data;
 
                     //Tell the user we are no longer searching
                     this.isSearching = false;

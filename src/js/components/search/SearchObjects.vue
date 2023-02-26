@@ -29,42 +29,42 @@
         <br/>
 
         <!-- REQUEST FOR CHANGE RESULTS -->
-        <list-search-results v-if="localSearchResults['request_for_change'].length > 0"
-                             v-bind:search-results="localSearchResults['request_for_change']"
+        <list-search-results v-if="localSearchResults.request_for_change.length > 0"
+                             v-bind:search-results="localSearchResults.request_for_change"
                              v-bind:import-variables="requestForChangeVariables"
                              v-bind:destination="'rfc'"
         ></list-search-results>
 
         <!-- REQUIREMENTS RESULTS -->
-        <list-search-results v-if="localSearchResults['requirement'].length > 0"
-                             v-bind:search-results="localSearchResults['requirement']"
+        <list-search-results v-if="localSearchResults.requirement.length > 0"
+                             v-bind:search-results="localSearchResults.requirement"
                              v-bind:import-variables="requirementVariables"
                              v-bind:destination="'requirement'"
         ></list-search-results>
 
         <!-- PROJECT RESULTS -->
-        <list-search-results v-if="localSearchResults['project'].length > 0"
-                             v-bind:search-results="localSearchResults['project']"
+        <list-search-results v-if="localSearchResults.project.length > 0"
+                             v-bind:search-results="localSearchResults.project"
                              v-bind:import-variables="projectVariables"
                              v-bind:destination="'project'"
         ></list-search-results>
 
         <!-- TASK RESULTS -->
-        <list-search-results v-if="localSearchResults['task'].length > 0"
-                             v-bind:search-results="localSearchResults['task']"
+        <list-search-results v-if="localSearchResults.task.length > 0"
+                             v-bind:search-results="localSearchResults.task"
                              v-bind:import-variables="taskVariables"
                              v-bind:destination="'task'"
         ></list-search-results>
 
         <!-- KANBAN RESULTS -->
-        <list-search-results v-if="localSearchResults['kanban'].length > 0"
-                             v-bind:search-results="localSearchResults['kanban']"
+        <list-search-results v-if="localSearchResults.kanban.length > 0"
+                             v-bind:search-results="localSearchResults.kanban"
                              v-bind:import-variables="kanbanVariables"
                              v-bind:destination="'kanban'"
         ></list-search-results>
 
         <!-- WHEN THERE ARE NO RESULTS -->
-        <div v-if="localSearchResults['requirement'].length + localSearchResults['project'].length + localSearchResults['task'].length + localSearchResults['request_for_change'] == 0"
+        <div v-if="localSearchResults.requirement.length + localSearchResults.project.length + localSearchResults.task.length + localSearchResults.request_for_change == 0"
              class="alert alert-warning"
         >
             Sorry - but there are no results for this search term. Please try searching for a different search term.
@@ -168,7 +168,7 @@
                     data_to_send,
                 ).then(response => {
                     //Update the localSearchResults with the data
-                    this.localSearchResults = response['data'];
+                    this.localSearchResults = response.data;
                 }).catch(error => {
                     
                 })

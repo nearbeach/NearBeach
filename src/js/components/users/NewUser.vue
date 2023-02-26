@@ -188,7 +188,7 @@
                     data_to_send,
                 ).then(response => {
                     //Send user to the user information page
-                    window.location.href = response['data'];
+                    window.location.href = response.data;
                 }).catch(error => {
                     this.showErrorModal(error, 'New User', '');
                 });

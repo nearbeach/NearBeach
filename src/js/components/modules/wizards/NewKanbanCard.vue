@@ -4,8 +4,8 @@
          tabindex="-1" 
          aria-labelledby="addKanbanCardModalLabel" 
          aria-hidden="true"
-         v-bind:data-kanban-level="levelResults[0]['pk']"
-         v-bind:data-kanban-column="columnResults[0]['pk']"
+         v-bind:data-kanban-level="levelResults[0].pk"
+         v-bind:data-kanban-column="columnResults[0].pk"
     >
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -148,16 +148,16 @@
                 const data_to_send = new FormData();
                 data_to_send.set('kanban_card_text',this.kanbanCardTextModel);
                 data_to_send.set('kanban_card_description',this.kanbanCardDescriptionModel);
-                data_to_send.set('kanban_level',self_modal['dataset']['kanbanLevel']);
-                data_to_send.set('kanban_column',self_modal['dataset']['kanbanColumn']);
+                data_to_send.set('kanban_level',self_modal.dataset.kanbanLevel);
+                data_to_send.set('kanban_column',self_modal.dataset.kanbanColumn);
 
                 //Send the data
                 axios.post(
-                    `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0]['pk']}/new_card/`,
+                    `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/new_card/`,
                     data_to_send,
                 ).then(response => {
                     //Emit the data upstream
-                    this.$emit('new_card',response['data']);
+                    this.$emit('new_card',response.data);
 
                     //Blank the model
                     this.kanbanCardTextModel = '';
@@ -181,7 +181,7 @@
 
                 //Check to make sure it does not exist
                 var filtered_results = this.kanbanCardResults.filter(row => {
-                    return row['fields']['kanban_card_text'] == this.kanbanCardTextModel;
+                    return row.fields.kanban_card_text == this.kanbanCardTextModel;
                 });
 
                 if (filtered_results.length > 0) {

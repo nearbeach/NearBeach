@@ -117,7 +117,7 @@
                     data_to_send,
                 ).then(response => {
                     //Send the data up stream to get appended
-                    this.$emit('update_folder_list',response['data']);
+                    this.$emit('update_folder_list',response.data);
 
                     //Clear the model
                     this.folderDescriptionModel = '';
@@ -133,7 +133,7 @@
             /*If there is no folder description OR the folder description already exists - we want to disable the add
             button.*/
             var match = this.existingFolders.filter(row => {
-                return row['fields']['folder_description'] == this.folderDescriptionModel;
+                return row.fields.folder_description == this.folderDescriptionModel;
             });
 
             this.disableAddFolderButton = match.length > 0 || this.folderDescriptionModel == '';

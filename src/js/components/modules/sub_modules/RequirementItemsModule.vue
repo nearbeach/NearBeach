@@ -25,17 +25,17 @@
                         :key="item.pk"
                     >
                         <td>
-                            <a v-bind:href="`${rootUrl}requirement_item_information/${item['pk']}/`">
+                            <a v-bind:href="`${rootUrl}requirement_item_information/${item.pk}/`">
                                 <p>
-                                    {{item['fields']['requirement_item_title']}}
+                                    {{item.fields.requirement_item_title}}
                                 </p>
                                 <div class="spacer"></div>
                                 <p class="small-text">
-                                    Item No. {{item['pk']}} - {{getType(item['fields']['requirement_item_type'])}}
+                                    Item No. {{item.pk}} - {{getType(item.fields.requirement_item_type)}}
                                 </p>
                             </a>
                         </td>
-                        <td>{{getStatus(item['fields']['requirement_item_status'])}}</td>
+                        <td>{{getStatus(item.fields.requirement_item_status)}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -112,7 +112,7 @@
             getStatus: function(status_id) {
                 //Filter the status status id
                 var filtered_data = this.itemStatusList.filter((row) => {
-                    return row['pk'] == status_id;
+                    return row.pk == status_id;
                 });
 
                 //If there are no results, send back "Unknown Status"
@@ -126,7 +126,7 @@
             getType: function(type_id) {
                 //Filter the type id
                 var filtered_data = this.itemTypeList.filter((row) => {
-                    return row['pk'] == type_id;
+                    return row.pk == type_id;
                 });
 
                 //If there are no results, send back "Unknown Type"
@@ -150,7 +150,7 @@
                         this.itemResults = [];
 
                         //Loop through the results, and push each rows into the array
-                        response['data'].forEach((row) => {
+                        response.data.forEach((row) => {
                             //Update the itemResults
                             this.itemResults.push(row);
                         });
@@ -164,7 +164,7 @@
                         this.itemStatusList = [];
 
                         //Loop through the results, and push each rows into the array
-                        response['data'].forEach((row) => {
+                        response.data.forEach((row) => {
                             this.itemStatusList.push(row);
                         });
                     });
@@ -177,7 +177,7 @@
                         this.itemTypeList = [];
 
                         //Loop through the results, and push each rows into the array
-                        response['data'].forEach((row) => {
+                        response.data.forEach((row) => {
                             this.itemTypeList.push(row);
                         });
                     });

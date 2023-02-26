@@ -22,7 +22,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="link in linkResults"
-                        v-bind:key="link['pk']"
+                        v-bind:key="link.pk"
                     >
                         <td v-html="extractObjectDescription(link)"></td>
                         <td>
@@ -111,34 +111,34 @@
                     link_text = '',
                     link_location = '';
 
-                if (link['project_id'] !== null && this.destination !== 'project') {
+                if (link.project_id !== null && this.destination !== 'project') {
                     // The link is a project link
-                    link_title = link['project_id__project_name'];
-                    link_id = link['project_id'];
-                    link_text = `Project ${link['project_id']}`;
+                    link_title = link.project_id__project_name;
+                    link_id = link.project_id;
+                    link_text = `Project ${link.project_id}`;
                     link_location = '/project_information/';
-                } else if (link['requirement_id'] !== null) {
+                } else if (link.requirement_id !== null) {
                     // The link is a requirement link
-                    link_title = link['requirement_id__requirement_title'];
-                    link_id = link['requirement_id'];
-                    link_text = `Requirement ${link['requirement_id']}`;
+                    link_title = link.requirement_id__requirement_title;
+                    link_id = link.requirement_id;
+                    link_text = `Requirement ${link.requirement_id}`;
                     link_location = '/requirement_information/';
-                } else if (link['requirement_item_id'] !== null) {
+                } else if (link.requirement_item_id !== null) {
                     // The link is a requirement item link
-                    link_title = link['requirement_item_id__requirement_item_title'];
-                    link_id = link['requirement_item_id'];
-                    link_text = `Requirement Item ${link['requirement_item_id']}`;
+                    link_title = link.requirement_item_id__requirement_item_title;
+                    link_id = link.requirement_item_id;
+                    link_text = `Requirement Item ${link.requirement_item_id}`;
                     link_location = '/requirement_item_information/';
-                } else if (link['task_id'] !== null && this.destination !== 'task') {
+                } else if (link.task_id !== null && this.destination !== 'task') {
                     // The link is a requirement item link
-                    link_title = link['task_id__task_short_description'];
-                    link_id = link['task_id'];
-                    link_text = `Task ${link['task_id']}`;
+                    link_title = link.task_id__task_short_description;
+                    link_id = link.task_id;
+                    link_text = `Task ${link.task_id}`;
                     link_location = '/task_information/';
-                } else if (link['meta_object'] !== null) {
-                    link_title = link['meta_object_title'];
-                    link_id = link['meta_object'];
-                    link_text = `${this.destination} ${link['meta_object']}`;
+                } else if (link.meta_object !== null) {
+                    link_title = link.meta_object_title;
+                    link_id = link.meta_object;
+                    link_text = `${this.destination} ${link.meta_object}`;
                     link_location = `/${this.destination}_information/`
                 }
 
@@ -148,20 +148,20 @@
                 //Declare some variables
                 var link_status = '';
 
-                if (link['project_id'] !== null && this.destination !== 'project') {
+                if (link.project_id !== null && this.destination !== 'project') {
                     // The link is a project link
-                    link_status = link['project_id__project_status'];
-                } else if (link['requirement_id'] !== null && this.destination !== 'requirement') {
+                    link_status = link.project_id__project_status;
+                } else if (link.requirement_id !== null && this.destination !== 'requirement') {
                     // The link is a requirement link
-                    link_status = link['requirement_id__requirement_status__requirement_status'];
-                } else if (link['requirement_item_id'] !== null && this.destination !== 'requirement_item') {
+                    link_status = link.requirement_id__requirement_status__requirement_status;
+                } else if (link.requirement_item_id !== null && this.destination !== 'requirement_item') {
                     // The link is a requirement item link
-                    link_status = link['requirement_item_id__requirement_item_status__requirement_item_status'];
-                } else if (link['task_id'] !== null && this.destination !== 'task') {
+                    link_status = link.requirement_item_id__requirement_item_status__requirement_item_status;
+                } else if (link.task_id !== null && this.destination !== 'task') {
                     // The link is a requirement item link
-                    link_status = link['task_id__task_status'];
-                } else if (link['meta_object'] !== null) {
-                    link_status = link['meta_object_status'];
+                    link_status = link.task_id__task_status;
+                } else if (link.meta_object !== null) {
+                    link_status = link.meta_object_status;
                 }
 
                 return `${link_status}`;
@@ -180,21 +180,21 @@
                 let link_id = 0;
 
                 //Apply the correct values depending on teh conditions
-                if (link['project_id'] !== null && this.destination !== 'project') {
+                if (link.project_id !== null && this.destination !== 'project') {
                     link_connection = "project";
-                    link_id = link['project_id'];
-                } else if (link['requirement_id'] !== null && this.destination !== 'requirement') {
+                    link_id = link.project_id;
+                } else if (link.requirement_id !== null && this.destination !== 'requirement') {
                     link_connection = "requirement";
-                    link_id = link['requirement_id'];
-                } else if (link['requirement_item_id'] !== null && this.destination !== 'requirement_item') {
+                    link_id = link.requirement_id;
+                } else if (link.requirement_item_id !== null && this.destination !== 'requirement_item') {
                     link_connection = "requirement_item"
-                    link_id = link['requirement_item_id'];
-                } else if (link['task_id'] !== null && this.destination !== 'task') {
+                    link_id = link.requirement_item_id;
+                } else if (link.task_id !== null && this.destination !== 'task') {
                     link_connection = "task";
-                    link_id = link['task_id'];
-                } else if (link['meta_object'] !== null) {
+                    link_id = link.task_id;
+                } else if (link.meta_object !== null) {
                     link_connection = "meta_object";
-                    link_id = link['meta_object'];
+                    link_id = link.meta_object;
                 }
 
                 //Get the data to send into the backend
@@ -219,7 +219,7 @@
                 axios.post(
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/object_link_list/`,
                 ).then((response) => {
-                    this.linkResults = response['data'].filter(row => {
+                    this.linkResults = response.data.filter(row => {
                         /*
                         We want to filter out any rows where the only link available is just the destination/locationID's
                         link. For example, this object row might be linked to a customer - and that data is not shown
@@ -231,9 +231,9 @@
                         that the only data in this is the destination/locationID. We want to filter out these values.
                          */
 
-                        var sum = parseInt(0 + row['project_id']) + parseInt(0 + row['requirement_id']) +
-                            parseInt(0 + row['requirement_item_id']) + parseInt(0 + row['task_id']) +
-                            parseInt(0 + row['meta_object']);
+                        var sum = parseInt(0 + row.project_id) + parseInt(0 + row.requirement_id) +
+                            parseInt(0 + row.requirement_item_id) + parseInt(0 + row.task_id) +
+                            parseInt(0 + row.meta_object);
                         
                         return sum > this.locationId;
                     });

@@ -116,18 +116,14 @@
                     data_to_send
                 ).then(response => {
                     //Extract the required JSON data
-                    var extracted_data = response['data'];
+                    var extracted_data = response.data;
 
                     //Look through the extracted data - and map the required fields into stakeholder fix list
                     this.stakeholderFixList = extracted_data.map((row) => {
                         //Create the creation object
                         return {
-                            value: row['pk'],
-                            label: row['fields']['organisation_name'],
-                            // 'organisation_name': row['fields']['organisation_name'],
-                            // 'organisation_website': row['fields']['organisation_website'],
-                            // 'organisation_email': row['fields']['organisation_email'],
-                            // 'organisation_profile_picture': row['fields']['organisation_profile_picture'],
+                            value: row.pk,
+                            label: row.fields.organisation_name,
                         };
                     });
                 }).catch(function (error) {

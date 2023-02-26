@@ -198,15 +198,15 @@
             //When template loads - check to see if there is any data within the rfcResults. If so -> update all models
             if (this.rfcResults.length > 0) {
                 // Filter for the correct rfcPriority
-                this.rfcPriorityModel = this.rfcResults[0]['fields']['rfc_priority'];
+                this.rfcPriorityModel = this.rfcResults[0].fields.rfc_priority;
 
                 //Filter for the correct rfcRisk
-                this.rfcRiskModel = this.rfcResults[0]['fields']['rfc_risk'];
+                this.rfcRiskModel = this.rfcResults[0].fields.rfc_risk;
 
-                this.rfcRiskSummaryModel = this.rfcResults[0]['fields']['rfc_risk_and_impact_analysis'];
+                this.rfcRiskSummaryModel = this.rfcResults[0].fields.rfc_risk_and_impact_analysis;
 
                 //Filter for the correct rfc Impact
-                this.rfcImpactModel = this.rfcResults[0]['fields']['rfc_impact'];
+                this.rfcImpactModel = this.rfcResults[0].fields.rfc_impact;
             }
 
             //Just run the validations to show the error messages

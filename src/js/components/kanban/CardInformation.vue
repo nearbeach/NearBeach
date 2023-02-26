@@ -169,15 +169,15 @@
             cardInformation: function() {
                 
                 //Update the local information
-                this.cardId = this.cardInformation['cardId'];
-                this.cardTitleModel = this.cardInformation['cardTitle'];
+                this.cardId = this.cardInformation.cardId;
+                this.cardTitleModel = this.cardInformation.cardTitle;
 
                 //Bug fix - needs to blank it out or the value does nto blank out correctly
-                if (this.cardInformation['cardDescription'] === null) {
+                if (this.cardInformation.cardDescription === null) {
                     //Can not seem to blank out the model correctly?
                     this.cardDescriptionModel = "No Description";
                 } else {
-                    this.cardDescriptionModel = `${this.cardInformation['cardDescription']}`;
+                    this.cardDescriptionModel = `${this.cardInformation.cardDescription}`;
                 }
 
 
@@ -197,7 +197,7 @@
                     data_to_send,
                 ).then(response => {
                     //Add the response to the end of the noteHistoryResults
-                    this.noteHistoryResults.push(response['data'][0]);
+                    this.noteHistoryResults.push(response.data[0]);
 
                     //Clear the card note model
                     this.cardNoteModel = '';
@@ -214,7 +214,7 @@
                     `${this.rootUrl}object_data/kanban_card/${this.cardId}/note_list/`
                 ).then(response => {
                     //Save the data into noteHistoryResults
-                    this.noteHistoryResults = response['data'];
+                    this.noteHistoryResults = response.data;
                 }).catch(error => {
                     
                 })

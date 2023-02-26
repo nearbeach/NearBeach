@@ -97,7 +97,7 @@
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list/`,
                 ).then((response) => {
                     
-                    this.customerResults = response['data'];
+                    this.customerResults = response.data;
                 }).catch((error) => {
                     this.showErrorModal(error, this.destination);
                 })

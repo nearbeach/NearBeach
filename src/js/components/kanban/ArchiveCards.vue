@@ -75,12 +75,9 @@
                 const data_to_send = new FormData();
 
                 // Loop through the master list and get all card ids
-                // this.masterList.forEach(row => {
-                //     data_to_send.append('kanban_card_id', row['pk']);
-                // });
                 this.allCards.filter((card) => {
-                    return parseInt(card['fields']['kanban_column']) === column &&
-                        parseInt(card['fields']['kanban_level']) === level;
+                    return parseInt(card.fields.kanban_column) === column &&
+                        parseInt(card.fields.kanban_level) === level;
                 }).forEach((card) => {
                     data_to_send.append('kanban_card_id', card.pk);
                 })

@@ -287,7 +287,7 @@
                     this.rfcChangeLeadFixList = [];
 
                     //Extract the required JSON data
-                    var extracted_data = response['data'];
+                    var extracted_data = response.data;
 
                     
 
@@ -295,8 +295,8 @@
                     extracted_data.forEach((row) => {
                         //Create the creation object
                         var creation_object = {
-                            'value': row['pk'],
-                            'label': `${row['fields']['username']} - ${row['fields']['first_name']} ${row['fields']['last_name']}`,
+                            'value': row.pk,
+                            'label': `${row.fields.username} - ${row.fields.first_name} ${row.fields.last_name}`,
                         };
 
                         //Push that object into the stakeholders

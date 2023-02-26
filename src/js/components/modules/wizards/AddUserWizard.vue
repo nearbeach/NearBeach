@@ -136,7 +136,7 @@
                     data_to_send
                 ).then(response => {
                     //Emit the data up
-                    this.$emit('update_user_list',response['data']);
+                    this.$emit('update_user_list',response.data);
 
                     //Close the modal
                     document.getElementById("addUserCloseButton").click();
@@ -179,10 +179,10 @@
                     url,
                 ).then(response => {
                     //Clear the user fix list
-                    this.userFixList = response['data'].map(row => {
+                    this.userFixList = response.data.map(row => {
                         return {
-                            'value': row['id'],
-                            'label': `${row['username']}: ${row['first_name']} ${row['last_name']}`
+                            'value': row.id,
+                            'label': `${row.username}: ${row.first_name} ${row.last_name}`
                         }
                     });
                 });

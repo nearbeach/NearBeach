@@ -78,7 +78,7 @@
                     `${this.rootUrl}search/organisation/data/`,
                     data_to_send
                 ).then(response => {
-                    this.localOrganisationResults = response['data'];
+                    this.localOrganisationResults = response.data;
                 }).catch(error => {
                     
                 });

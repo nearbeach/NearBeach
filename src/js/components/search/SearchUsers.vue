@@ -18,14 +18,14 @@
             >
                 <a class="list-group-item list-group-item-action"
                    v-for="user in userList"
-                   v-bind:key="user['username']"
-                   v-bind:href="`/user_information/${user['id']}/`"
+                   v-bind:key="user.username"
+                   v-bind:href="`/user_information/${user.id}/`"
                 >
                     <strong>
-                        {{user['username']}}: {{user['first_name']}} {{user['last_name']}}
+                        {{user.username}}: {{user.first_name}} {{user.last_name}}
                     </strong>
                     <div class="spacer"></div>
-                    <p class="small-text">{{user['email']}}</p>
+                    <p class="small-text">{{user.email}}</p>
                 </a>
             </div>
 
@@ -89,7 +89,7 @@
                     `${this.rootUrl}search/user/data/`,
                     data_to_send,
                 ).then(response => {
-                    this.userList = response['data'];
+                    this.userList = response.data;
                 }).catch(error => {
                     //Show error
                     this.showErrorModal(error,'Search Users','')

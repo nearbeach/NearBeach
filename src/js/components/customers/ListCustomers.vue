@@ -9,14 +9,14 @@
                      class="organisation-image"
                 >
                 <div class="organisation-name">
-                    <a v-bind:href="`${rootUrl}customer_information/${customer['pk']}/`">
-                        {{customer['fields']['customer_first_name']}} {{customer['fields']['customer_last_name']}}
+                    <a v-bind:href="`${rootUrl}customer_information/${customer.pk}/`">
+                        {{customer.fields.customer_first_name}} {{customer.fields.customer_last_name}}
                     </a>
                 </div>
                 <div class="organisation-email">
                     <Icon v-bind:icon="icons.mailIcon"></Icon> Email:
-                    <a v-bind:href="`mailto:${customer['fields']['customer_email']}`">
-                        {{customer['fields']['customer_email']}}
+                    <a v-bind:href="`mailto:${customer.fields.customer_email}`">
+                        {{customer.fields.customer_email}}
                     </a>
                 </div>
             </div>
@@ -56,7 +56,7 @@
         ],
         methods: {
             getProfilePicture: function(customer) {
-                const image = customer['fields']['customer_profile_picture'];
+                const image = customer.fields.customer_profile_picture;
 
                 //If customer profile is blank - return default picture
                 if (image === '' || image === null) {

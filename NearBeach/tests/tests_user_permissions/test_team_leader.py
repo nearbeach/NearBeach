@@ -35,7 +35,7 @@ class TeamLeaderPermissionTests(TestCase):
         system. This is only testing pages they can LAND on.
         '''
         # urlObject = namedtuple('url','arguments','form_data','response_status_code', defaults=['/',[],{},200])
-        URLTest = namedtuple('URLTest', ['url', 'args', 'data', 'status_code'], defaults=["", [], {}, 200])
+        URLTest = namedtuple('URLTest', ['url', 'args', 'data', 'status_code','method'], defaults=["", [], {}, 200,"GET"])
 
         data_list = [
             URLTest('dashboard',[],{},200),
@@ -80,10 +80,15 @@ class TeamLeaderPermissionTests(TestCase):
             URLTest('rfc_readonly',[1],{},403),
             URLTest('task_information',[1],{},403),
             URLTest('user_information',[1],{},403),
+            URLTest('add_customer', ["project",2], {"customer":1}, 200,"POST"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied
         for data in data_list:
             with self.subTest(data):
-                response = self.client.get(reverse(data.url, args=data.args), data.data, follow=True)
+                if data.method == "GET":
+                    response = self.client.get(reverse(data.url, args=data.args), data.data, follow=True)
+                else:
+                    response = self.client.post(reverse(data.url, args=data.args), data.data, follow=True)
+                
                 self.assertEqual(response.status_code, data.status_code)

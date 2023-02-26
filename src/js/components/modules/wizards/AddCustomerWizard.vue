@@ -125,7 +125,7 @@
                     data_to_send,
                 ).then((response) => {
                     //Send the new data up stream
-                    this.$emit('update_customer_results',response['data']);
+                    this.$emit('update_customer_results',response.data);
 
                     //Clear the model
                     this.customerModel = '';
@@ -141,7 +141,7 @@
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list_all/`,
                 ).then(response => {
                     //Place all the data into the "CustomerList" array.
-                    this.customerList = response['data'];
+                    this.customerList = response.data;
 
                     //Update the fixed list
                     this.updateCustomerFixList();
@@ -156,16 +156,16 @@
                 //Create an array of ids we should be excluding
                 var exclude_array = [];
                 this.excludeCustomers.forEach(row => {
-                    exclude_array.push(row['pk']);
+                    exclude_array.push(row.pk);
                 });
 
                 //Set the customerFixList
                 this.customerFixList = this.customerList.filter(row => {
-                    return !exclude_array.includes(row['pk']);
+                    return !exclude_array.includes(row.pk);
                 }).map(row => {
                     return {
-                        value: row['pk'],
-                        label: `${row['fields']['customer_first_name']} ${row['fields']['customer_last_name']}`,
+                        value: row.pk,
+                        label: `${row.fields.customer_first_name} ${row.fields.customer_last_name}`,
                     }
                 });
             },

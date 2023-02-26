@@ -208,13 +208,13 @@
                     this.dataToSend(),
                 ).then(response => {
                     //If the response data has nothing in it - we want to submit that data.
-                    if (response['data'].length === 0) {
+                    if (response.data.length === 0) {
                         //Submit that data
                         this.uploadOrganisationData();
                     }
 
                     //Copy over the response data
-                    this.duplicateOrganisations = response['data'];
+                    this.duplicateOrganisations = response.data;
                 }).catch(error => {
                     this.showErrorModal(error,'organisation','')
                 })
@@ -236,7 +236,7 @@
                     this.dataToSend(),
                 ).then(response => {
                     //Go to the url sent back
-                    window.location.href = `${this.rootUrl}organisation_information/${response.data[0]['pk']}/`;
+                    window.location.href = `${this.rootUrl}organisation_information/${response.data[0].pk}/`;
                 }).catch(error => {
                     
                 });

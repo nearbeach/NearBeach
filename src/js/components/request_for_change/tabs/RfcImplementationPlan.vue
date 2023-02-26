@@ -101,7 +101,7 @@
         mounted() {
             //If the rfcResults are imported, update the rfcImplementationPlan
             if (this.rfcResults.length > 0) {
-                this.rfcImplementationPlanModel = this.rfcResults[0]['fields']['rfc_implementation_plan'];
+                this.rfcImplementationPlanModel = this.rfcResults[0].fields.rfc_implementation_plan;
             }
         }
     }

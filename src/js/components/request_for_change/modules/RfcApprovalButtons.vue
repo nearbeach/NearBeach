@@ -70,7 +70,7 @@
                 // Only show this section when;
                 // - RFC Status is waiting for approval
                 // - User is a group leader (groupLeaderCount > 0)
-                return this.rfcResults[0]['fields']['rfc_status'] === 2 && this.groupLeaderCount > 0;
+                return this.rfcResults[0].fields.rfc_status === 2 && this.groupLeaderCount > 0;
             },
         },
         methods: {
@@ -94,7 +94,7 @@
 
                 //Use axios to send the status update to the backend
                 axios.post(
-                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
+                    `${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/update_status/`,
                     data_to_send,
                 ).then(response => {
                     //Notify user of success update

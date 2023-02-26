@@ -78,7 +78,7 @@
                     `${this.rootUrl}search/customer/data/`,
                     data_to_send
                 ).then(response => {
-                    this.localCustomerResults = response['data'];
+                    this.localCustomerResults = response.data;
                 }).catch(error => {
                     
                 });

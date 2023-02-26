@@ -29,21 +29,21 @@
                                target="_blank"
                             >
                                 <p>
-                                    {{bug['bug_description']}}
+                                    {{bug.bug_description}}
                                 </p>
                                 <div class="spacer"></div>
                                 <p class="small-text">
-                                    Bug No. {{bug['bug_code']}} - {{bug['bug_client__bug_client_name']}}
+                                    Bug No. {{bug.bug_code}} - {{bug.bug_client__bug_client_name}}
                                 </p>
                             </a>
                         </td>
                         <td>
-                            {{bug['bug_status']}}
+                            {{bug.bug_status}}
                             <span class="remove-link"
                                   v-if="userLevel >= 2"
                             >
                                 <Icon v-bind:icon="icons.trashCan"
-                                      v-on:click="removeBug(bug['bug_id'])"
+                                      v-on:click="removeBug(bug.bug_id)"
                                 />
                             </span>
                         </td>
@@ -126,17 +126,17 @@
             },
             appendBugList: function(data) {
                 //Create object for the data
-                let data_object = data[0]['fields'];
+                let data_object = data[0].fields;
 
                 //Add the bug id
-                data_object.bug_id = data[0]['pk'];
+                data_object.bug_id = data[0].pk;
 
                 //Append the data
                 this.bugList.push(data_object);
             },
             getBugHyperLink: function(bug) {
-                if (bug['bug_client__list_of_bug_client__bug_client_name'] == 'Bugzilla') {
-                    return `${bug['bug_client__bug_client_url']}/show_bug.cgi?id=${bug['bug_code']}`;
+                if (bug.bug_client__list_of_bug_client__bug_client_name == 'Bugzilla') {
+                    return `${bug.bug_client__bug_client_url}/show_bug.cgi?id=${bug.bug_code}`;
                 }
                 return 'javascript:void(0)';
             },
@@ -154,7 +154,7 @@
                     this.bugList = [];
 
                     //Loop through the results, and push each rows into the array
-                    response['data'].forEach((row) => {
+                    response.data.forEach((row) => {
                         this.bugList.push(row);
                     });
                 }).catch((error) => {

@@ -221,7 +221,7 @@
                     this.typeItemModel = ''
 
                     //EMIT THE NEW DATA UPSTREAM
-                    this.$emit('new_item_added',response['data']);
+                    this.$emit('new_item_added',response.data);
 
                     //SHOULD CLOSE MODAL HERE!
                     document.getElementById("requirementItemCloseButton").click();
@@ -236,16 +236,16 @@
                 //We need to transform the data from the JSON array given to one vue-select can read
                 this.statusItemFixList = this.itemStatusList.map((row) => {
                     return {
-                        value: row['pk'],
-                        label: row['fields']['requirement_item_status'],
+                        value: row.pk,
+                        label: row.fields.requirement_item_status,
                     };
                 });
             },
             itemTypeList: function() {
                 this.typeItemFixList = this.itemTypeList.map((row) => {
                     return {
-                        value: row['pk'],
-                        label: row['fields']['requirement_item_type'],
+                        value: row.pk,
+                        label: row.fields.requirement_item_type,
                     };
                 });
             },

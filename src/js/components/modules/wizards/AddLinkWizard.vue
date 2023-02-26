@@ -166,7 +166,7 @@
                     data_to_send,
                 ).then(response => {
                     //Emit the results up stream
-                    this.$emit('update_document_list',response['data']);
+                    this.$emit('update_document_list',response.data);
 
                     //Clear the data
                     this.documentDescriptionModel = '';
@@ -182,7 +182,7 @@
         updated() {
             //We need to make sure both fields are not blank & to make sure the description is not duplicated
             var match = this.excludeDocuments.filter(row => {
-                return row['document_key__document_description'] === this.documentDescriptionModel;
+                return row.document_key__document_description === this.documentDescriptionModel;
             });
 
             //Notify the user of duplicate descriptions (if there is any)

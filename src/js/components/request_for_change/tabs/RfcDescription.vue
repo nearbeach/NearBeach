@@ -134,8 +134,8 @@
         mounted() {
             //If there is data in the rfcResults - we will update the rfcSummary and rfcTitle
             if (this.rfcResults.length > 0) {
-                this.rfcSummaryModel = this.rfcResults[0]['fields']['rfc_summary'];
-                this.rfcTitleModel = this.rfcResults[0]['fields']['rfc_title'];
+                this.rfcSummaryModel = this.rfcResults[0].fields.rfc_summary;
+                this.rfcTitleModel = this.rfcResults[0].fields.rfc_title;
             }
 
             //Just run the validations to show the error messages

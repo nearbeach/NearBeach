@@ -16,7 +16,7 @@
                 <tr v-for="group in groupList" 
                     v-bind:key="group.pk"
                 >
-                    <td>{{ group['fields']['group_name'] }}</td>
+                    <td>{{ group.fields.group_name }}</td>
                     <td>
                         <span class="remove-link" 
                               v-if="userLevel >= 2"
@@ -65,16 +65,16 @@
                      class="default-user-profile"
                 />
                 <div class="user-details">
-                    <strong>{{user['first_name']}} {{user['last_name']}}</strong><br/>
-                    {{user['username']}}
+                    <strong>{{user.first_name}} {{user.last_name}}</strong><br/>
+                    {{user.username}}
                     <div class="spacer"></div>
-                    {{user['email']}}
+                    {{user.email}}
                 </div>
                 <div class="remove-user"
                      v-if="userLevel>=3"
                 >
                     <Icon v-bind:icon="icons.trashCan"
-                                 v-on:click="removeUser(user['username'])"
+                                 v-on:click="removeUser(user.username)"
                     />
                 </div>
             </div>
@@ -171,7 +171,7 @@
                 axios.post(
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_list/`,
                 ).then(response => {
-                    this.groupList = response['data'];
+                    this.groupList = response.data;
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 })
@@ -181,7 +181,7 @@
                 axios.post(
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/user_list/`,
                 ).then(response => {
-                    this.userList = response['data'];
+                    this.userList = response.data;
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });
@@ -209,7 +209,7 @@
                 //Optimistic Update - we assume everything is going to be ok
                 //Remove the user from the list
                 this.userList = this.userList.filter(row => {
-                    return row['username'] !== username;
+                    return row.username !== username;
                 });
 
                 //Setup data to send

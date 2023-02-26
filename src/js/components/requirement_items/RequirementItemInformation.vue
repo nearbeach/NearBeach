@@ -3,7 +3,7 @@
         <div class="card-body">
             <h1>Requirement Item Information</h1>
             <br/>
-            <a v-bind:href="`${rootUrl}requirement_information/${requirementItemResults[0]['fields']['requirement']}/`">
+            <a v-bind:href="`${rootUrl}requirement_information/${requirementItemResults[0].fields.requirement}/`">
                 Go Back to requirement
             </a>
             <hr>
@@ -76,21 +76,21 @@
                 <div class="col-md-8 organisation-details">
                     <img v-bind:src="getStakeholderImage" alt="Stakeholder Logo" class="organisation-image">
                     <div class="organisation-name">
-                        {{stakeholderModel['organisation_name']}}
+                        {{stakeholderModel.organisation_name}}
                     </div>
                     <div class="organisation-link">
                         <Icon v-bind:icon="icons.linkOut"></Icon> Website:
-                        <a v-bind:href="stakeholderModel['organisation_website']" 
+                        <a v-bind:href="stakeholderModel.organisation_website" 
                            target="_blank"
                            rel="noopener noreferrer"
                         >
-                            {{ stakeholderModel['organisation_website'] }}
+                            {{ stakeholderModel.organisation_website }}
                         </a>
                     </div>
                     <div class="organisation-email">
                         <Icon v-bind:icon="icons.mailIcon"></Icon> Email:
-                        <a v-bind:href="`mailto:${stakeholderModel['organisation_email']}`">
-                            {{stakeholderModel['organisation_email']}}
+                        <a v-bind:href="`mailto:${stakeholderModel.organisation_email}`">
+                            {{stakeholderModel.organisation_email}}
                         </a>
                     </div>
                 </div>
@@ -210,12 +210,12 @@
                 userLevel: "getUserLevel",
             }),
             getStakeholderImage: function() {
-                const image = this.stakeholderModel['organisation_profile_picture'];
+                const image = this.stakeholderModel.organisation_profile_picture;
                 if (image === '' || image === null) {
                     //There is no image - return the default image
                     return this.defaultStakeholderImage;
                 }
-                return `${this.rootUrl}private/${this.stakeholderModel['organisation_profile_picture']}`;
+                return `${this.rootUrl}private/${this.stakeholderModel.organisation_profile_picture}`;
             },
         },
         mixins: [
@@ -314,32 +314,32 @@
         },
         mounted() {
             //Get data from the requirementResults and delegate to the Models
-            var requirement_item_results = this.requirementItemResults[0]['fields'];
+            var requirement_item_results = this.requirementItemResults[0].fields;
 
-            this.requirementItemScopeModel = requirement_item_results['requirement_item_scope'];
-            this.requirementItemTitleModel = requirement_item_results['requirement_item_title'];
+            this.requirementItemScopeModel = requirement_item_results.requirement_item_scope;
+            this.requirementItemTitleModel = requirement_item_results.requirement_item_title;
 
             //Extract the organisation results directly
-            this.stakeholderModel = this.organisationResults[0]['fields'];
+            this.stakeholderModel = this.organisationResults[0].fields;
 
             //Map the original lists to something NSelect can read
             this.statusFixList = this.statusList.map((row) => {
                 return {
-                    value: row['pk'],
-                    label: row['fields']['requirement_item_status'],
+                    value: row.pk,
+                    label: row.fields.requirement_item_status,
                 };
             });
 
             this.typeFixList = this.typeList.map((row) => {
                 return {
-                    value: row['pk'],
-                    label: row['fields']['requirement_item_type'],
+                    value: row.pk,
+                    label: row.fields.requirement_item_type,
                 }
             });
 
             //Set the status and type models
-            this.statusModel = requirement_item_results['requirement_item_status'];
-            this.typeModel = requirement_item_results['requirement_item_type'];
+            this.statusModel = requirement_item_results.requirement_item_status;
+            this.typeModel = requirement_item_results.requirement_item_type;
         },
     }
 </script>

@@ -28,9 +28,9 @@
                             v-bind:data-property="element.property"
                             v-bind:data-title="element.title"
                     >
-                        {{element['title']}}
+                        {{element.title}}
                     </strong>
-                    <span v-on:click="removeItem(element['id'])"
+                    <span v-on:click="removeItem(element.id)"
                           v-if="localPropertyList.length > 1"
                     >
                         <Icon v-bind:icon="icons.xCircle"></Icon>
@@ -285,7 +285,7 @@
                     //Filter out the id we want to remove
                     this.localPropertyList = this.localPropertyList.filter(row => {
                         //Filter out the id we don't want
-                        return row['id'] != this.deleteItemId;
+                        return row.id != this.deleteItemId;
                     });
 
                     //Send the data upstream
@@ -373,7 +373,7 @@
             },
             getMaxId: function() {
                 //Lets use some math trickery
-                const ids = this.localPropertyList.map(property => property['id']);
+                const ids = this.localPropertyList.map(property => property.id);
 
                 //Now lets sort from smallest to largest
                 const sorted = ids.sort((a, b) => a - b);
@@ -416,7 +416,7 @@
                     //Filter out the id we want to remove
                     this.localPropertyList = this.localPropertyList.filter(row => {
                         //Filter out the id we don't want
-                        return row['id'] != id;
+                        return row.id != id;
                     });
 
                     //Send the data upstream
@@ -427,7 +427,7 @@
 
                     //Create an array of potential destinations for the cards
                     this.newCardDestinationList = this.localPropertyList.filter(row => {
-                        return row['id'] != this.deleteItemId;
+                        return row.id != this.deleteItemId;
                     }).map(row => {
                         return {
                             value: row.id,
@@ -436,7 +436,7 @@
                     });
                     
                     //Pick the first option by default
-                    this.destinationItemId = this.newCardDestinationList[0]['value'];
+                    this.destinationItemId = this.newCardDestinationList[0].value;
 
                     //Show the delete modal
                     var deleteItemModal = new Modal(
@@ -461,7 +461,7 @@
 
                     // Insert a new row for each group list item
                     this.localPropertyList.forEach((row,index) => {
-                        data_to_send.append(`item`,row['id']);
+                        data_to_send.append(`item`,row.id);
                     });
 
                     axios.post(

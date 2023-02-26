@@ -149,14 +149,14 @@
                     data_to_send,
                 ).then(response => {
                     //Go to the new customer page
-                    window.location.href = response['data'];
+                    window.location.href = response.data;
                 }).catch(error => {
                     
                 })
             },
             updateCustomerData: function(data) {
                 //Update the modal field with the value data
-                this[data['field']] = data['value'];
+                this[data.field] = data.value;
             },
 
         },

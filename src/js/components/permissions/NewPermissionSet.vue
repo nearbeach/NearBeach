@@ -68,7 +68,7 @@
                     data_to_send,
                 ).then(response => {
                     //Go to the new location
-                    window.location.href = response['data'];
+                    window.location.href = response.data;
                 }).catch(error => {
                     this.showErrorModal(error, 'New Permission Set','');
                 })

@@ -25,7 +25,7 @@
                         />
                         <n-upload
                             v-if="userLevel > 1"
-                            :action="`${rootUrl}customer_information/${customerResults[0]['pk']}/update_profile/`"
+                            :action="`${rootUrl}customer_information/${customerResults[0].pk}/update_profile/`"
                             :headers="{
                                 'X-CSRFTOKEN': getToken('csrftoken'),
                             }"
@@ -170,10 +170,10 @@
         },
         data() {
             return {
-                customerEmailModel: this.customerResults[0]['fields']['customer_email'],
-                customerFirstNameModel: this.customerResults[0]['fields']['customer_first_name'],
-                customerLastNameModel: this.customerResults[0]['fields']['customer_last_name'],
-                customerTitleModel: this.customerResults[0]['fields']['customer_title'],
+                customerEmailModel: this.customerResults[0].fields.customer_email,
+                customerFirstNameModel: this.customerResults[0].fields.customer_first_name,
+                customerLastNameModel: this.customerResults[0].fields.customer_last_name,
+                customerTitleModel: this.customerResults[0].fields.customer_title,
                 profilePicture: `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`,
                 titleFixList: [],
             }
@@ -223,7 +223,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `${this.rootUrl}customer_information/${this.customerResults[0]['pk']}/save/`,
+                    `${this.rootUrl}customer_information/${this.customerResults[0].pk}/save/`,
                     data_to_send,
                 ).then(response => {
                     //Close the loading screen
@@ -233,13 +233,13 @@
                     this.updateProfilePicture();
                 }).catch(error => {
                     //Show the error modal
-                    this.showErrorModal(error, 'customer',this.customerResults[0]['pk']);
+                    this.showErrorModal(error, 'customer',this.customerResults[0].pk);
                 })
             },
             updateProfilePicture: function() {
                 //Contact the API to get the location of the new image
                 axios.post(
-                    `${this.rootUrl}customer_information/${this.customerResults[0]['pk']}/get_profile_picture/`,
+                    `${this.rootUrl}customer_information/${this.customerResults[0].pk}/get_profile_picture/`,
                     {},
                 ).then(response => {
                     this.profilePicture = response.data;
@@ -259,8 +259,8 @@
             //Convert the title list data into a format NSelect can use
             this.titleFixList = this.titleList.map(row => {
                 return {
-                    value: row['pk'],
-                    label: row['fields']['title'],
+                    value: row.pk,
+                    label: row.fields.title,
                 }
             });
 

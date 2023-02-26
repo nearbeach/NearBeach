@@ -75,7 +75,7 @@
                 </div>
                 <div class="col-md-8">
                     <div class="col-md-12"
-                         v-if="!statusModel['status_closed']"
+                         v-if="!statusModel.status_closed"
                     >
                         <div class="row">
                             <div class="col-md-6">
@@ -92,7 +92,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="alert alert-danger"
-                                     v-if="statusModel['status_closed']"
+                                     v-if="statusModel.status_closed"
                                 >
                                     Please note - saving the requirement with this status will 
                                     close the requirement.
@@ -245,7 +245,7 @@
                     this.closeLoadingModal();
 
                     //If the status is closed - refresh the page
-                    if (this.statusModel['status_closed']) {
+                    if (this.statusModel.status_closed) {
                         window.location.reload();
                     }
                 }).catch((error) => {
@@ -255,34 +255,34 @@
         },
         mounted() {
             //Get data from the requirementResults and delegate to the Models
-            var requirement_results = this.requirementResults[0]['fields'];
+            var requirement_results = this.requirementResults[0].fields;
 
-            this.requirementScopeModel = requirement_results['requirement_scope'];
-            this.requirementTitleModel = requirement_results['requirement_title'];
+            this.requirementScopeModel = requirement_results.requirement_scope;
+            this.requirementTitleModel = requirement_results.requirement_title;
 
             //We need to extract "fields" array from the statusList/typeList json data
             this.statusFixList = this.statusList.map((row) => {
                 //Construct the object
                 return {
-                    value: row['pk'],
-                    label: row['fields']['requirement_status'],
+                    value: row.pk,
+                    label: row.fields.requirement_status,
                 };
             });
             this.typeFixList = this.typeList.map((row) => {
                 return {
-                    value: row['pk'],
-                    label: row['fields']['requirement_type'],
+                    value: row.pk,
+                    label: row.fields.requirement_type,
                 }
             });
 
             //Get the requirement status id from the requirement results
-            this.statusModel = requirement_results['requirement_status'];
+            this.statusModel = requirement_results.requirement_status;
 
             //Update type model
-            this.typeModel = requirement_results['requirement_type'];
+            this.typeModel = requirement_results.requirement_type;
 
             //Check for the read only
-            if (this.statusModel['status_closed'] || this.userLevel === 1) {
+            if (this.statusModel.status_closed || this.userLevel === 1) {
                 this.isReadOnly = true;
             }
         }

@@ -117,10 +117,10 @@
                                     />
                                 </td>
                                 <td>
-                                    <strong>{{rfcChangeLead[0]['username']}}: </strong>{{rfcChangeLead[0]['first_name']}} {{rfcChangeLead[0]['last_name']}}
+                                    <strong>{{rfcChangeLead[0].username}}: </strong>{{rfcChangeLead[0].first_name}} {{rfcChangeLead[0].last_name}}
                                     <div class="spacer"></div>
                                     <p class="user-card-email">
-                                        {{rfcChangeLead[0]['email']}}
+                                        {{rfcChangeLead[0].email}}
                                     </p>
                                 </td>
                             </tr>
@@ -300,11 +300,11 @@
                 localStartDate: 0,
                 rfcChangeLeadFixList: [],
                 rfcChangeLeadModel: '',
-                rfcTitleModel: this.rfcResults[0]['fields']['rfc_title'],
-                rfcSummaryModel: this.rfcResults[0]['fields']['rfc_summary'],
-                // rfcImplementationStartModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_start_date']).getTime(),
-                // rfcImplementationEndModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_end_date']).getTime(),
-                // rfcReleaseModel: new Date(this.rfcResults[0]['fields']['rfc_implementation_release_date']).getTime(),
+                rfcTitleModel: this.rfcResults[0].fields.rfc_title,
+                rfcSummaryModel: this.rfcResults[0].fields.rfc_summary,
+                // rfcImplementationStartModel: new Date(this.rfcResults[0].fields.rfc_implementation_start_date).getTime(),
+                // rfcImplementationEndModel: new Date(this.rfcResults[0].fields.rfc_implementation_end_date).getTime(),
+                // rfcReleaseModel: new Date(this.rfcResults[0].fields.rfc_implementation_release_date).getTime(),
                 rfcStatus: [
                     { label: 'Draft', value: 1 },
                     { label: 'Waiting for approval', value: 2 },
@@ -328,7 +328,7 @@
                     { label: 'Low', value: 1 },
                 ],
                 rfcTypeModel: '',
-                rfcVersionModel: this.rfcResults[0]['fields']['rfc_version_number'],
+                rfcVersionModel: this.rfcResults[0].fields.rfc_version_number,
             }
         },
         validations: {
@@ -375,14 +375,14 @@
             },
             sendUpdate: function(data_to_send) {
                 axios.post(
-                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/update_status/`,
+                    `${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/update_status/`,
                     data_to_send,
                 ).then(response => {
                     //Reload the page to get redirected to the correct place
                     window.location.reload(true);
                 }).catch(error => {
                     //Show error if there is one
-                    this.showErrorModal(error, 'Request for Change', this.rfcResults[0]['pk']);
+                    this.showErrorModal(error, 'Request for Change', this.rfcResults[0].pk);
                 })
                 
             },
@@ -418,7 +418,7 @@
 
                 //Use Axios to send the data
                 axios.post(
-                    `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/`,
+                    `${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/`,
                     data_to_send,
                 ).then(response => {
                     //Notify user of success update
@@ -445,12 +445,12 @@
             },
             updateValues: function(data) {
                 //Update the value
-                this[data['modelName']] = data['modelValue'];
+                this[data.modelName] = data.modelValue;
             },
         },
         mounted() {
             //Set the type model
-            this.rfcTypeModel = this.rfcResults[0]['fields']['rfc_type'];
+            this.rfcTypeModel = this.rfcResults[0].fields.rfc_type;
 
             //Send root and static url to VueX
             this.$store.commit({

@@ -26,17 +26,17 @@
                             :key="project.project_id"
                         >
                             <td>
-                                <a v-bind:href="`${rootUrl}project_information/${project['project_id']}/`">
-                                    <p>{{project['project_name']}}</p>
+                                <a v-bind:href="`${rootUrl}project_information/${project.project_id}/`">
+                                    <p>{{project.project_name}}</p>
                                     <div class="spacer"></div>
                                     <p class="small-text">
-                                        Project {{project['project_id']}} -
+                                        Project {{project.project_id}} -
                                         End Date:
-                                        {{getFriendlyDate(project['project_end_date'])}}
+                                        {{getFriendlyDate(project.project_end_date)}}
                                     </p>
                                 </a>
                             </td>
-                            <td>{{project['project_status']}}</td>
+                            <td>{{project.project_status}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -67,11 +67,11 @@
                             :key="requirement.requirement_id"
                         >
                             <td>
-                                <a v-bind:href="`${rootUrl}requirement_information/${requirement['requirement_id']}/`">
-                                    <p>{{requirement['requirement_title']}}</p>
+                                <a v-bind:href="`${rootUrl}requirement_information/${requirement.requirement_id}/`">
+                                    <p>{{requirement.requirement_title}}</p>
                                     <div class="spacer"></div>
                                     <p class="small-text">
-                                        Requirement {{requirement['requirement_id']}}
+                                        Requirement {{requirement.requirement_id}}
                                     </p>
                                 </a>
                             </td>
@@ -106,17 +106,17 @@
                             :key="task.task_id"
                         >
                             <td>
-                                <a v-bind:href="`${rootUrl}task_information/${task['task_id']}/`">
-                                    <p>{{task['task_short_description']}}</p>
+                                <a v-bind:href="`${rootUrl}task_information/${task.task_id}/`">
+                                    <p>{{task.task_short_description}}</p>
                                     <div class="spacer"></div>
                                     <p class="small-text">
-                                        Task {{task['task_id']}} -
+                                        Task {{task.task_id}} -
                                         End Date:
-                                        {{getFriendlyDate(task['task_end_date'])}}
+                                        {{getFriendlyDate(task.task_end_date)}}
                                     </p>
                                 </a>
                             </td>
-                            <td>{{task['task_status']}}</td>
+                            <td>{{task.task_status}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -183,9 +183,9 @@
                 axios.post(
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/associated_objects/`,
                 ).then(response => {
-                    this.projectResults = response['data']['project'];
-                    this.requirementResults = response['data']['requirement'];
-                    this.taskResults = response['data']['task'];
+                    this.projectResults = response.data.project;
+                    this.requirementResults = response.data.requirement;
+                    this.taskResults = response.data.task;
                 }).catch(error => {
                     
                 })

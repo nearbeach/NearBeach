@@ -80,18 +80,18 @@
                                         <tr v-for="bug in bugResults"
                                             :key="bug.id"
                                         >
-                                            <td v-bind:id="`bug_no_${bug['id']}`">
-                                                <a href="javascript:void(0)" v-on:click="submitBug(bug['id'])">
+                                            <td v-bind:id="`bug_no_${bug.id}`">
+                                                <a href="javascript:void(0)" v-on:click="submitBug(bug.id)">
                                                     Add Bug
                                                 </a>
                                             </td>
                                             <td>
-                                                {{bug['summary']}}
+                                                {{bug.summary}}
                                                 <div class="spacer"></div>
-                                                <p class="small-text">Assigned to: {{bug['assigned_to']}}</p>
-                                                <p class="small-text">Bug No. {{bug['id']}} | Priority. {{bug['priority']}}</p>
+                                                <p class="small-text">Assigned to: {{bug.assigned_to}}</p>
+                                                <p class="small-text">Bug No. {{bug.id}} | Priority. {{bug.priority}}</p>
                                             </td>
-                                            <td>{{bug['status']}}</td>
+                                            <td>{{bug.status}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -163,10 +163,10 @@
                     `${this.rootUrl}object_data/bug_client_list/`,
                 ).then(response => {
                     //Clear out the bug list
-                    this.bugClientList = response['data'].map(row => {
+                    this.bugClientList = response.data.map(row => {
                         return {
-                            value: row['pk'],
-                            label: row['fields']['bug_client_name'],
+                            value: row.pk,
+                            label: row.fields.bug_client_name,
                         }
                     });
                 });
@@ -202,7 +202,7 @@
                     data_to_send,
                 ).then(response => {
                     //Update the bug results
-                    this.bugResults = response['data'];
+                    this.bugResults = response.data;
 
                     //Turn off the search
                     this.searchOn = false;
@@ -217,15 +217,15 @@
 
                 //Filter for the bug information out of the bugResults
                 var filted_bug_results = this.bugResults.filter((row) => {
-                    return row['id'] == bug_id;
+                    return row.id == bug_id;
                 });
 
                 //Setup data
                 const data_to_send = new FormData();
                 data_to_send.set('bug_client',this.bugClientModel)
                 data_to_send.set('bug_id',bug_id);
-                data_to_send.set('bug_description', filted_bug_results[0]['summary']);
-                data_to_send.set('bug_status', filted_bug_results[0]['status']);
+                data_to_send.set('bug_description', filted_bug_results[0].summary);
+                data_to_send.set('bug_status', filted_bug_results[0].status);
 
                 //Send data to the backend
                 axios.post(
@@ -233,7 +233,7 @@
                     data_to_send,
                 ).then(response => {
                     //Send the updated bug list up
-                    this.$emit('append_bug_list',response['data']);
+                    this.$emit('append_bug_list',response.data);
 
                     //Update the user that the bug has been added
                     add_bug_element.innerHTML = "Done";

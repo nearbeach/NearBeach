@@ -110,7 +110,7 @@
                     data_to_send,
                 ).then((response) => {
                     //Submit the note up
-                    this.$emit('update_note_history_results',response['data']);
+                    this.$emit('update_note_history_results',response.data);
 
                     //Close the modal
                     document.getElementById("newNoteCloseButton").click();

@@ -152,14 +152,14 @@
                     data_to_send
                 ).then(response => {
                     //Extract the required JSON data
-                    var extracted_data = response['data'];
+                    var extracted_data = response.data;
 
                     //Look through the extracted data - and map the required fields into stakeholder fix list
                     this.organisationFixList = extracted_data.map((row) => {
                         //Create the creation object
                         return {
-                            value: row['pk'],
-                            label: row['fields']['organisation_name'],
+                            value: row.pk,
+                            label: row.fields.organisation_name,
                         }
                     });
                 }).catch(function (error) {
@@ -230,14 +230,14 @@
                     data_to_send,
                 ).then(response => {
                     //Go to the new customer page
-                    window.location.href = response['data'];
+                    window.location.href = response.data;
                 }).catch(error => {
                     this.showErrorModal(error, "customer", "");
                 })
             },
             updateCustomerData: function(data) {
                 //Update the modal field with the value data
-                this[data['field']] = data['value'];
+                this[data.field] = data.value;
             },
         },
         mounted() {

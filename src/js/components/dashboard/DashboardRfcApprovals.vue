@@ -24,13 +24,13 @@
                         class="bg-white"
                     >
                         <td>
-                            <a v-bind:href="`${rootUrl}rfc_readonly/${rfc['pk']}/`">
-                                <p>{{ rfc['fields']['rfc_title'] }}</p>
+                            <a v-bind:href="`${rootUrl}rfc_readonly/${rfc.pk}/`">
+                                <p>{{ rfc.fields.rfc_title}}</p>
                                 <div class="spacer"></div>
-                                <p class="small-text">RFC{{rfc['pk']}}</p>
+                                <p class="small-text">RFC{{rfc.pk}}</p>
                             </a>
                         </td>
-                        <td>{{getNiceDate(rfc['fields']['rfc_implementation_start_date'])}}</td>
+                        <td>{{getNiceDate(rfc.fields.rfc_implementation_start_date)}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -69,7 +69,7 @@
                     `${this.rootUrl}dashboard/get/rfc_approvals/`,
                 ).then(response => {
                     //Place the data into rfcApprovalsList
-                    this.rfcApprovalsList = response['data'];
+                    this.rfcApprovalsList = response.data;
                 }).catch(error => {
                     this.showErrorModal(error,'Dashboard','');
                 });

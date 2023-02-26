@@ -29,7 +29,7 @@
             <!-- RENDER THE FOLDERS -->
             <div v-for="folder in folderFilteredList"
                  :key="folder.pk"
-                 v-on:click="updateCurrentFolder(folder['pk'])"
+                 v-on:click="updateCurrentFolder(folder.pk)"
                  class="document-child"
             >
                 <Icon v-bind:icon="icons.folderIcon"
@@ -37,7 +37,7 @@
                              height="80px"
                 />
                 <p class="text-instructions">
-                    {{shortName(folder['fields']['folder_description'])}}
+                    {{shortName(folder.fields.folder_description)}}
                 </p>
             </div>
 
@@ -46,7 +46,7 @@
                  :key="document.document_key_id"
                  class="document-child"
             >
-                <a v-bind:href="`/private/${document['document_key_id']}/`" 
+                <a v-bind:href="`/private/${document.document_key_id}/`" 
                    rel="noopener noreferrer"
                    target="_blank"
                 >
@@ -55,7 +55,7 @@
                                  height="80px"
                     />
                     <p class="text-instructions">
-                        {{shortName(document['document_key__document_description'])}}
+                        {{shortName(document.document_key__document_description)}}
                     </p>
                 </a>
             </div>
@@ -190,7 +190,7 @@
                 axios.post(
                     `${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/files/`,
                 ).then(response => {
-                    this.documentList = response['data'];
+                    this.documentList = response.data;
 
                     this.updateDocumentFilteredList();
                 });
@@ -199,20 +199,20 @@
                 axios.post(
                     `${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/folders/`,
                 ).then(response => {
-                    this.folderList = response['data'];
+                    this.folderList = response.data;
 
                     this.updateFolderFilteredList();
                 });
             },
             getIcon: function(document) {
                 //If the document is a weblink - just return the link image
-                if (document['document_key__document_url_location'] != "" &&
-                    document['document_key__document_url_location'] !== null) {
+                if (document.document_key__document_url_location != "" &&
+                    document.document_key__document_url_location !== null) {
                     return this.icons.linkOut;
                 }
 
                 //We know the document is not a link - now we use the suffix to the document name to determine the icon
-                var split_document = document['document_key__document'].split(".");
+                var split_document = document.document_key__document.split(".");
 
                 //Get the last result
                 var document_suffic = split_document[split_document.length - 1];
@@ -240,11 +240,11 @@
             goToParentDirectory: function() {
                 //Filter for the directory - then obtain it's parent directory variable.
                 var filtered_data = this.folderList.filter(row => {
-                    return row['pk'] == this.currentFolder;
+                    return row.pk == this.currentFolder;
                 })[0];
 
                 //Update the current directory to the parent folder
-                this.updateCurrentFolder(filtered_data['fields']['parent_folder']);
+                this.updateCurrentFolder(filtered_data.fields.parent_folder);
             },
             shortName: function(input_string) {
                 //The following method will determine if we need an ellipsis (...) at the end of the file/folder name
@@ -279,7 +279,7 @@
             updateDocumentFilteredList: function() {
                 //Filter the results to contain only the documents in the current folder
                 this.documentFilteredList = this.documentList.filter(row => {
-                    return row['folder'] == this.currentFolder;
+                    return row.folder == this.currentFolder;
                 });
             },
             updateFolderList: function(data) {
@@ -292,7 +292,7 @@
             updateFolderFilteredList: function() {
                 //Filter the results to contain only the folders in the current folder
                 this.folderFilteredList = this.folderList.filter(row => {
-                    return row['fields']['parent_folder'] == this.currentFolder;
+                    return row.fields.parent_folder == this.currentFolder;
                 })
             },
             uploadDocument: function() {

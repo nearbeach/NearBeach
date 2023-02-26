@@ -18,10 +18,10 @@
             >
                 <a class="list-group-item list-group-item-action"
                    v-for="permissionSet in permissionSetList"
-                   v-bind:key="permissionSet['pk']"
-                   v-bind:href="`/permission_set_information/${permissionSet['pk']}/`"
+                   v-bind:key="permissionSet.pk"
+                   v-bind:href="`/permission_set_information/${permissionSet.pk}/`"
                 >
-                    <strong>{{permissionSet['fields']['permission_set_name']}}</strong>
+                    <strong>{{permissionSet.fields.permission_set_name}}</strong>
                     <br>
                 </a>
             </div>
@@ -86,7 +86,7 @@
                     `${this.rootUrl}search/permission_set/data/`,
                     data_to_send,
                 ).then(response => {
-                    this.permissionSetList = response['data'];
+                    this.permissionSetList = response.data;
                 }).catch(error => {
                     //Show error
                     this.showErrorModal(error,'Search Permission Set','')

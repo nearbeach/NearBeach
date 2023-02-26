@@ -1,7 +1,7 @@
 <template>
     <div class="card">
         <div class="card-body">
-            <h1>{{kanbanBoardResults[0]['fields']['kanban_board_name']}}</h1>
+            <h1>{{kanbanBoardResults[0].fields.kanban_board_name}}</h1>
             <hr>
 
             <!-- Properties for the drag and drop coloumns/levels -->
@@ -18,7 +18,7 @@
                                            v-bind:source="'columnModel'"
                                            v-bind:is-dirty="v$.columnModel.$dirty"
                                            v-bind:is-new-mode="false"
-                                           v-bind:kanban-board-id="kanbanBoardResults[0]['pk']"
+                                           v-bind:kanban-board-id="kanbanBoardResults[0].pk"
                                            v-on:update_property_list="updatePropertyList($event)"
                     ></kanban-property-order>
                 </div>
@@ -28,7 +28,7 @@
                                            v-bind:source="'levelModel'"
                                            v-bind:is-dirty="v$.columnModel.$dirty"
                                            v-bind:is-new-mode="false"
-                                           v-bind:kanban-board-id="kanbanBoardResults[0]['pk']"
+                                           v-bind:kanban-board-id="kanbanBoardResults[0].pk"
                                            v-on:update_property_list="updatePropertyList($event)"
                     ></kanban-property-order>
                 </div>
@@ -127,11 +127,11 @@
         },
         methods: {
             backToBoard: function() {
-                window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0]['pk']}/`
+                window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/`
             },
             closeKanban: function() {
                 axios.post(
-                    `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0]['pk']}/close_board/`
+                    `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/close_board/`
                 ).then(response => {
                     window.location.href = `${this.rootUrl}`;
                 }).catch(error => {
@@ -139,7 +139,7 @@
                 })
             },
             updatePropertyList: function(data) {
-                this[data['source']] = data['data'];
+                this[data.source] = data.data;
             },
         },
         mounted() {

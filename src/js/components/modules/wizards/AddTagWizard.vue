@@ -96,7 +96,7 @@
             tagList: function() {
                 return this.allTagList.filter(row => {
                     return this.assignedTags.findIndex(tag => {
-                        return tag['pk'] == row['value'];
+                        return tag.pk == row.value;
                     }) < 0;
                 });
             }
@@ -117,7 +117,7 @@
                     data_to_send
                 ).then(response => {
                     //Emit data up
-                    this.$emit('add_tags',response['data']);
+                    this.$emit('add_tags',response.data);
 
                     //Close the modal
                     document.getElementById('addTagsCloseButton').click();
@@ -131,10 +131,10 @@
                     `${this.rootUrl}object_data/tag_list_all/`
                 ).then(response => {
                     //Map data to the preferred data format for vue-select
-                    this.allTagList = response['data'].map(row => {
+                    this.allTagList = response.data.map(row => {
                         return {
-                            value: row['pk'],
-                            label: row['fields']['tag_name'],
+                            value: row.pk,
+                            label: row.fields.tag_name,
                         }
                     });
                 }).catch(error => {

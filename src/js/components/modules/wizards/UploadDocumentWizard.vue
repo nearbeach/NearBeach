@@ -180,7 +180,7 @@
                 /*Check that the size of the fileList is not too big
                   The boolean (0!=this.maxUploadSize) will product a 0 result when maxUploadSize is 0. Thus negating
                   the need for an extra if statement*/
-                if (fileList[0]['size']*(this.maxUploadSize!=0) > this.maxUploadSize) {
+                if (fileList[0].size*(this.maxUploadSize!=0) > this.maxUploadSize) {
                     this.maxUploadWarning = true;
 
                     //Just return
@@ -194,7 +194,7 @@
                 this.documentModel = fileList[0];
 
                 //Extract the file name and place into the document description for the user
-                this.documentDescriptionModel = fileList[0]['name'];
+                this.documentDescriptionModel = fileList[0].name;
             },
             resetForm: function() {
                 //Blank out all the models
@@ -217,7 +217,7 @@
                 const config = {
                     onUploadProgress: progressEvent => {
                         //As the document gets uploaded - we want to update the upload Percentage
-                        this.uploadPercentage = parseFloat(progressEvent['loaded']) / parseFloat(progressEvent['total']);
+                        this.uploadPercentage = parseFloat(progressEvent.loaded) / parseFloat(progressEvent.total);
                     }
                 }
 
@@ -228,7 +228,7 @@
                     config,
                 ).then(response => {
                     //Send the data upstream
-                    this.$emit('update_document_list',response['data']);
+                    this.$emit('update_document_list',response.data);
 
                     //Close the modal
                     document.getElementById('uploadDocumentCloseButton').click();
@@ -259,7 +259,7 @@
         },
         updated() {
             var match = this.excludeDocuments.filter(row => {
-                return row['document_key__document_description'] == this.documentDescriptionModel;
+                return row.document_key__document_description == this.documentDescriptionModel;
             });
 
             this.disableUploadButton = this.documentModel == '' || this.documentDescriptionModel.length == 0 ||
@@ -273,7 +273,7 @@
                   `${this.rootUrl}documentation/get/max_upload/`,
               ).then(response => {
                   //Set the value
-                  this.maxUploadSize = response['data']['max_upload_size'];
+                  this.maxUploadSize = response.data.max_upload_size;
               }).catch(error => {
                   this.showErrorModal(error,this.destination);
               })

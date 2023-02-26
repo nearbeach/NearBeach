@@ -102,7 +102,7 @@
         mounted() {
             //If the rfc results import - update the rfcBackout Model
             if (this.rfcResults.length > 0) {
-                this.rfcBackoutPlanModel = this.rfcResults[0]['fields']['rfc_backout_plan'];
+                this.rfcBackoutPlanModel = this.rfcResults[0].fields.rfc_backout_plan;
             }
         }
     }

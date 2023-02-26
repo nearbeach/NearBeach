@@ -216,8 +216,8 @@
                     <rfc-run-sheet-list v-bind:is-read-only="isReadOnly"
                                         v-bind:location-id="locationId" 
                                         v-bind:user-list="userList"
-                                        v-bind:rfc-id="rfcResults[0]['pk']"
-                                        v-bind:rfc-status="rfcResults[0]['fields']['rfc_status']"
+                                        v-bind:rfc-id="rfcResults[0].pk"
+                                        v-bind:rfc-status="rfcResults[0].fields.rfc_status"
                                         v-on:update_values="updateValues($event)"
                     ></rfc-run-sheet-list>
                 </div>
@@ -321,7 +321,7 @@
                 })
             },
             updateBackoutPlan: function() {
-                if (this.validationData['tab_4'] === false) {
+                if (this.validationData.tab_4 === false) {
                     //The data isn't valid. Notify the user, and do nothing else
                     this.showErrorModal("Please fill out all data","Backout Plan","");
 
@@ -330,13 +330,13 @@
                 }
 
                 const data_to_send = new FormData();
-                data_to_send.set('text_input', this.rfcData['rfcBackoutPlan']);
+                data_to_send.set('text_input', this.rfcData.rfcBackoutPlan);
 
                 //Send data
-                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/backout/`)
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/backout/`)
             },
             updateImplementation: function() {
-                if (this.validationData['tab_3'] === false) {
+                if (this.validationData.tab_3 === false) {
                     //The data isn't valid. Notify the user, and do nothing else
                     this.showErrorModal("Please fill out all data","Implementation","");
 
@@ -345,13 +345,13 @@
                 }
 
                 const data_to_send = new FormData();
-                data_to_send.set('text_input', this.rfcData['rfcImplementationPlanModel']);
+                data_to_send.set('text_input', this.rfcData.rfcImplementationPlanModel);
                 
                 //Send data
-                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/implementation/`);
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/implementation/`);
             },
             updateRisk: function() {
-                if (this.validationData['tab_2'] === false) {
+                if (this.validationData.tab_2 === false) {
                     //The data isn't valid. Notify the user, and do nothing else
                     this.showErrorModal("Please fill out all data","Risk","");
 
@@ -361,20 +361,20 @@
 
                 //Create the data to send
                 const data_to_send = new FormData();
-                data_to_send.set('priority_of_change', this.rfcData['rfcPriorityModel']);
-                data_to_send.set('risk_of_change', this.rfcData['rfcRiskModel']);
-                data_to_send.set('impact_of_change', this.rfcData['rfcImpactModel']);
-                data_to_send.set('text_input', this.rfcData['rfcRiskSummaryModel']);
+                data_to_send.set('priority_of_change', this.rfcData.rfcPriorityModel);
+                data_to_send.set('risk_of_change', this.rfcData.rfcRiskModel);
+                data_to_send.set('impact_of_change', this.rfcData.rfcImpactModel);
+                data_to_send.set('text_input', this.rfcData.rfcRiskSummaryModel);
 
                 //Send the data
-                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/risk/`)
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/risk/`)
             },
             updateValidation: function(data) {
                 //Update the value
-                this.validationData[data['tab']] = data['value'];
+                this.validationData[data.tab] = data.value;
             },
             updateTestPlan: function() {
-                if (this.validationData['tab_5'] === false) {
+                if (this.validationData.tab_5 === false) {
                     //The data isn't valid. Notify the user, and do nothing else
                     this.showErrorModal("Please fill out all data","Test Plan","");
 
@@ -383,14 +383,14 @@
                 }
 
                 const data_to_send = new FormData();
-                data_to_send.set('text_input', this.rfcData['rfcTestPlanModel']);
+                data_to_send.set('text_input', this.rfcData.rfcTestPlanModel);
 
                 //Send data
-                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0]['pk']}/save/test/`);
+                this.sendData(data_to_send, `${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/test/`);
             },
             updateValues: function(data) {
                 //Update the value
-                this.rfcData[data['modelName']] = data['modelValue'];
+                this.rfcData[data.modelName] = data.modelValue;
             }
         },
         mounted() {

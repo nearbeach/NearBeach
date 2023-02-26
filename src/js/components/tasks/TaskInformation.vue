@@ -211,11 +211,11 @@
                     { value: 'In Progress', label: 'In Progress'},
                     { value: 'Test/Review', label: 'Test/Review'},
                 ],
-                taskDescriptionModel: this.taskResults[0]['fields']['task_long_description'],
-                taskEndDateModel: new Date(this.taskResults[0]['fields']['task_end_date']),
-                taskShortDescriptionModel: this.taskResults[0]['fields']['task_short_description'],
-                taskStartDateModel: new Date(this.taskResults[0]['fields']['task_start_date']),
-                taskStatusModel: this.taskResults[0]['fields']['task_status'],
+                taskDescriptionModel: this.taskResults[0].fields.task_long_description,
+                taskEndDateModel: new Date(this.taskResults[0].fields.task_end_date),
+                taskShortDescriptionModel: this.taskResults[0].fields.task_short_description,
+                taskStartDateModel: new Date(this.taskResults[0].fields.task_start_date),
+                taskStatusModel: this.taskResults[0].fields.task_status,
             }
         },
         mixins: [
@@ -271,7 +271,7 @@
 
                 //Send data to backend
                 axios.post(
-                    `${this.rootUrl}task_information/${this.taskResults[0]['pk']}/save/`,
+                    `${this.rootUrl}task_information/${this.taskResults[0].pk}/save/`,
                     data_to_send
                 ).then(response => {
                     //Hide the loading modal
@@ -286,8 +286,8 @@
                 });
             },
             updateDates: function(data) {
-                this.taskEndDateModel = new Date(data['end_date']);
-                this.taskStartDateModel = new Date(data['start_date']);
+                this.taskEndDateModel = new Date(data.end_date);
+                this.taskStartDateModel = new Date(data.start_date);
             },
             updateGroupModel: function(data) {
                 this.groupModel = data;
@@ -300,7 +300,7 @@
             }
 
             //If the project is closed -> we state that is read only is true
-            this.isReadOnly = this.taskResults[0]['fields']['task_status'] === 'Closed';
+            this.isReadOnly = this.taskResults[0].fields.task_status === 'Closed';
         },
     }
 </script>

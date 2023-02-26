@@ -193,7 +193,7 @@
                   clearTimeout(this.searchTimeout);
                 }
 
-                // If the obj['search'] is defined, we want to use the search Defined. Otherwise search undefined
+                // If the obj.search is defined, we want to use the search Defined. Otherwise search undefined
                 if (this.kanbanBoardNameModel === undefined) {
                     // Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
                     this.searchTimeout = setTimeout(
@@ -250,7 +250,7 @@
                     data_to_send
                 ).then(response => {
                     //Go to that webpage
-                    window.location.href = response['data'];
+                    window.location.href = response.data;
                 }).catch(error => {
                     
                 });
@@ -266,7 +266,7 @@
                     data_to_send,
                 ).then(response => {
                     //If the data came back empty - then the kanban board name is unique
-                    this.uniqueKanbanBoardName = response['data'].length == 0;
+                    this.uniqueKanbanBoardName = response.data.length == 0;
 
                     //Checking kanban board name is finished
                     this.checkingKanbanBoardName = false;
@@ -278,7 +278,7 @@
                 this.groupModel = data;
             },
             updatePropertyList: function(data) {
-                this[data['source']] = data['data'];
+                this[data.source] = data.data;
             },
         }
     }

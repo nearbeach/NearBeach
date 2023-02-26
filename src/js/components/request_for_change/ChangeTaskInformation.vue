@@ -1,7 +1,7 @@
 <template>
     <div class="card">
         <div class="card-body">
-            <h1>Change Task - {{changeTaskResults[0]['pk']}}</h1>
+            <h1>Change Task - {{changeTaskResults[0].pk}}</h1>
             <br/>
             RFC Status: {{rfcStatus}}
             <br/>
@@ -153,42 +153,42 @@
             <hr v-if="userLevel > 1">
             <!-- CANCEL -->
             <a v-if="userLevel > 1"
-               v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0]['fields']['request_for_change']}/`"
+               v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0].fields.request_for_change}/`"
                class="btn btn-secondary cancel-changes"
             >Cancel</a>
 
             <!-- DELETE -->
             <a href="javascript:void(0)"
                class="btn btn-warning"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 1 && userLevel == 4"
+               v-if="changeTaskResults[0].fields.change_task_status == 1 && userLevel == 4"
                v-on:click="deleteChangeTask"
             >Delete</a>
 
             <!-- SAVE -->
             <a href="javascript:void(0)"
                class="btn btn-primary save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 1 && userLevel >= 2"
+               v-if="changeTaskResults[0].fields.change_task_status == 1 && userLevel >= 2"
                v-on:click="saveChangeTask"
             >Save</a>
 
             <!-- START CHANGE TASK -->
             <a href="javascript:void(0)"
                class="btn btn-danger save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 3 && userLevel >= 2 && rfcStatus === 'Started'"
+               v-if="changeTaskResults[0].fields.change_task_status == 3 && userLevel >= 2 && rfcStatus === 'Started'"
                v-on:click="updateStatus(4)"
             >Start Task</a>
 
             <!-- FINISH CHANGE TASK -->
             <a href="javascript:void(0)"
                class="btn btn-success save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4 && userLevel >= 2"
+               v-if="changeTaskResults[0].fields.change_task_status == 4 && userLevel >= 2"
                v-on:click="updateStatus(5)"
             >Finish Task</a>
 
             <!-- REJECT CHANGE TASK -->
             <a href="javascript:void(0)"
                class="btn btn-danger save-changes"
-               v-if="changeTaskResults[0]['fields']['change_task_status'] == 4 && userLevel >= 2"
+               v-if="changeTaskResults[0].fields.change_task_status == 4 && userLevel >= 2"
                v-on:click="updateStatus(6)"
             >REJECT Task</a>
         </div>
@@ -242,14 +242,14 @@
         },
         data() {
             return {
-                assignedUserModel: this.changeTaskResults[0]['fields']['change_task_assigned_user'],
-                changeTitleModel: this.changeTaskResults[0]['fields']['change_task_title'],
-                changeDescriptionModel: this.changeTaskResults[0]['fields']['change_task_description'],
-                changeStakeholderModel: this.changeTaskResults[0]['fields']['change_task_required_by'],
-                changeIsDowntimeModel: this.changeTaskResults[0]['fields']['is_downtime'],
-                changeStartDateModel: new Date(this.changeTaskResults[0]['fields']['change_task_start_date']).getTime(),
-                changeEndDateModel: new Date(this.changeTaskResults[0]['fields']['change_task_end_date']).getTime(),
-                qaUserModel: this.changeTaskResults[0]['fields']['change_task_qa_user'],
+                assignedUserModel: this.changeTaskResults[0].fields.change_task_assigned_user,
+                changeTitleModel: this.changeTaskResults[0].fields.change_task_title,
+                changeDescriptionModel: this.changeTaskResults[0].fields.change_task_description,
+                changeStakeholderModel: this.changeTaskResults[0].fields.change_task_required_by,
+                changeIsDowntimeModel: this.changeTaskResults[0].fields.is_downtime,
+                changeStartDateModel: new Date(this.changeTaskResults[0].fields.change_task_start_date).getTime(),
+                changeEndDateModel: new Date(this.changeTaskResults[0].fields.change_task_end_date).getTime(),
+                qaUserModel: this.changeTaskResults[0].fields.change_task_qa_user,
                 userListFixed: this.userList.map((row) => {
                     return {
                         label: `${row.username}: ${row.first_name} ${row.last_name}`,
@@ -275,7 +275,7 @@
                 const config = {
                     onUploadProgress: progressEvent => {
                         //As the document gets uploaded - we want to update the upload Percentage
-                        progress = parseFloat(progressEvent['loaded']) / parseFloat(progressEvent['total']);
+                        progress = parseFloat(progressEvent.loaded) / parseFloat(progressEvent.total);
                     }
                 }
                 
@@ -302,10 +302,10 @@
             deleteChangeTask: function() {
                 //Send the trigger
                 axios.post(
-                    `${this.rootUrl}change_task_information/${this.changeTaskResults[0]['pk']}/delete/`,
+                    `${this.rootUrl}change_task_information/${this.changeTaskResults[0].pk}/delete/`,
                 ).then(response => {
                     //If successful, go back
-                    window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
+                    window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0].fields.request_for_change}/`;
                 })
             },
             formatDate: function(date) {
@@ -340,11 +340,11 @@
                 data_to_send.set('is_downtime', this.changeIsDowntimeModel);
 
                 axios.post(
-                    `${this.rootUrl}change_task_information/${this.changeTaskResults[0]['pk']}/save/`,
+                    `${this.rootUrl}change_task_information/${this.changeTaskResults[0].pk}/save/`,
                     data_to_send,
                 ).then(response => {
                     //If successful, go back
-                    window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0]['fields']['request_for_change']}/`;
+                    window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0].fields.request_for_change}/`;
                 }).catch(error => {
                     //this.showErrorModal(error, 'Change Task');
                     
@@ -357,7 +357,7 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `${this.rootUrl}change_task_update_status/${this.changeTaskResults[0]['pk']}/`,
+                    `${this.rootUrl}change_task_update_status/${this.changeTaskResults[0].pk}/`,
                     data_to_send,
                 ).then(response => {
                     //Reload the page
@@ -367,8 +367,8 @@
                 })
             },
             updateDates: function(data) {
-                this.changeStartDateModel = data['start_date'];
-                this.changeEndDateModel = data['end_date'];
+                this.changeStartDateModel = data.start_date;
+                this.changeEndDateModel = data.end_date;
             },
         },
     }

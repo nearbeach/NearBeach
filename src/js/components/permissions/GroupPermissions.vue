@@ -80,14 +80,14 @@
             //Fix up the list to remove any django nested loops
             this.groupFixResults = this.groupResults.map((row) => {
                 return {
-                    value: row['pk'],
-                    label: row['fields']['group_name'],
+                    value: row.pk,
+                    label: row.fields.group_name,
                 }
             });
 
             //Any User groups are added to the group Model
             this.groupModel = this.userGroupResults.map(row => {
-                return row['group_id'];
+                return row.group_id;
             });
         }
     }

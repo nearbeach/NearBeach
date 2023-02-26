@@ -144,7 +144,7 @@
                     data_to_send,
                 ).then(response => {
                     //Go to that webpage
-                    window.location.href = response['data'];
+                    window.location.href = response.data;
                 }).catch(error => {
                     this.showErrorModal(error, 'New Group', '');
                 });
@@ -160,7 +160,7 @@
                     data_to_send,
                 ).then(response => {
                     // Update the uniqueGroupName
-                    this.uniqueGroupName = response['data'].length == 0;
+                    this.uniqueGroupName = response.data.length == 0;
 
                     // Hide the checking group name
                     this.checkingGroupName = false;
@@ -173,8 +173,8 @@
             //This will map reconstruct the JSON data into a V-SELECT friendly data
             this.groupResultsFixList = this.groupResults.map(row => {
                 return {
-                    'label': row['fields']['group_name'],
-                    'value': row['pk'],
+                    'label': row.fields.group_name,
+                    'value': row.pk,
                 }
             });
         }

@@ -38,7 +38,7 @@
                     `${this.rootUrl}dashboard/get/bug_list/`
                 ).then(response => {
                     //Update Bug Response
-                    this.bugResults = response['data'];
+                    this.bugResults = response.data;
 
                     //Start rendering the graph
                     this.renderGraph();
@@ -101,7 +101,7 @@
                     })
                     .attr("y",(d) => {
                         
-                        return y(d['bug_status__count']);
+                        return y(d.bug_status__count);
                     })
                     .attr("height",(d) => {
                         return 50;

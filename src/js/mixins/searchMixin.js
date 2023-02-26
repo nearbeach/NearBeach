@@ -9,7 +9,7 @@ export default {
         clearTimeout(obj.searchTimeout);
       }
 
-      // If the obj['search'] is defined, we want to use the search Defined. Otherwise search undefined
+      // If the obj.search is defined, we want to use the search Defined. Otherwise search undefined
       if (obj.search === undefined) {
         this.searchUndefined(obj);
       } else {

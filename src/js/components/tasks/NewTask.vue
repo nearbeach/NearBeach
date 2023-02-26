@@ -215,14 +215,14 @@
                     data_to_send
                 ).then(response => {
                     //Go to the new project
-                    window.location.href = response['data'];
+                    window.location.href = response.data;
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 });
             },
             updateDates: function(data) {
-                this.taskEndDateModel = new Date(data['end_date']);
-                this.taskStartDateModel = new Date(data['start_date']);
+                this.taskEndDateModel = new Date(data.end_date);
+                this.taskStartDateModel = new Date(data.start_date);
             },
             updateGroupModel: function(data) {
                 this.groupModel = data;

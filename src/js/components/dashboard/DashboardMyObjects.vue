@@ -125,7 +125,7 @@
                 axios.post(
                     `${this.rootUrl}dashboard/get/my_objects/`,
                 ).then(response => {
-                    this.objectResults = response['data'];
+                    this.objectResults = response.data;
 
                     //Update loading status
                     this.isLoaded = true;

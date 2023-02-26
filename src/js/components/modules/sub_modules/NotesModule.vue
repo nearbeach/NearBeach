@@ -78,7 +78,7 @@
                 axios.post(
                     `${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
                 ).then(response => {
-                    this.noteHistoryResults = response['data'];
+                    this.noteHistoryResults = response.data;
                 }).catch(error => {
                     this.showErrorModal(error, this.destination);
                 })

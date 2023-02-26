@@ -79,9 +79,9 @@
         },
         data() {
             return {
-                groupNameModel: this.groupResults[0]['fields']['group_name'],
+                groupNameModel: this.groupResults[0].fields.group_name,
                 parentGroupFixList: [],
-                parentGroupModel: this.groupResults[0]['fields']['parent_group'],
+                parentGroupModel: this.groupResults[0].fields.parent_group,
             }
         },
         mixins: [
@@ -100,7 +100,7 @@
 
                 //User axios to send data
                 axios.post(
-                    `${this.rootUrl}group_information/${this.groupResults[0]['pk']}/save/`,
+                    `${this.rootUrl}group_information/${this.groupResults[0].pk}/save/`,
                     data_to_send,
                 ).then(response => {
                     this.closeLoadingModal();
@@ -113,24 +113,14 @@
             // Create the parent group fix list
             const parent_group_fix_list = this.parentGroupResults.map(row => {
                 return {
-                    'group_name': row['fields']['group_name'],
-                    'label': row['fields']['group_name'],
-                    'value': row['pk'],
+                    'group_name': row.fields.group_name,
+                    'label': row.fields.group_name,
+                    'value': row.pk,
                 }
             });
 
-
-            // Get the parent object from the parent group fix list
-            // const parent_group = parent_group_fix_list.filter(row => {
-            //     return row['value'] === this.groupResults[0]['fields']['parent_group'];
-            // });
-
             //Set the variables
             this.parentGroupFixList = parent_group_fix_list;
-            // this.parentGroupModel = '';
-            // if (parent_group.length > 0) {
-            //     this.parentGroupModel = parent_group[0];
-            // }
 
             //Send the rootUrl to VueX
             this.$store.commit({

@@ -24,7 +24,7 @@
                     <br/>
                     <!--<button class="btn btn-primary">Update Profile...</button>-->
                     <n-upload v-if="userLevel > 1"
-                        :action="`${rootUrl}organisation_information/${organisationResults[0]['pk']}/update_profile/`"
+                        :action="`${rootUrl}organisation_information/${organisationResults[0].pk}/update_profile/`"
                         :headers="{
                             'X-CSRFTOKEN': getToken('csrftoken'),
                         }"
@@ -153,9 +153,9 @@
         },
         data() {
             return {
-                organisationNameModel: this.organisationResults[0]['fields']['organisation_name'],
-                organisationEmailModel: this.organisationResults[0]['fields']['organisation_email'],
-                organisationWebsiteModel: this.organisationResults[0]['fields']['organisation_website'],
+                organisationNameModel: this.organisationResults[0].fields.organisation_name,
+                organisationEmailModel: this.organisationResults[0].fields.organisation_email,
+                organisationWebsiteModel: this.organisationResults[0].fields.organisation_website,
                 profilePicture: "",    
             }
         },
@@ -206,18 +206,18 @@
 
                 //Use axios to send the data
                 axios.post(
-                    `${this.rootUrl}organisation_information/${this.organisationResults[0]['pk']}/save/`,
+                    `${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/save/`,
                     data_to_send,
                 ).then(response => {
                     this.closeLoadingModal();
                 }).catch(error => {
-                    this.showErrorModal(error,'organisation',this.organisationResults[0]['pk']);
+                    this.showErrorModal(error,'organisation',this.organisationResults[0].pk);
                 })
             },
             updateProfilePicture: function() {
                 //Contact the API to get the location of the new image
                 axios.post(
-                    `${this.rootUrl}organisation_information/${this.organisationResults[0]['pk']}/get_profile_picture/`,
+                    `${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/get_profile_picture/`,
                     {},
                 ).then(response => {
                     this.profilePicture = response.data;

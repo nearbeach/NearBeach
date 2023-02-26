@@ -138,11 +138,11 @@
             canSave: function() {
                 //Return false if user has written a duplicate tag name
                 const count = this.existingTags.filter(row => {
-                    const tag_name_1 = row['fields']['tag_name'].toUpperCase(),
+                    const tag_name_1 = row.fields.tag_name.toUpperCase(),
                           tag_name_2 = this.tagNameModel.toUpperCase();
 
                     //Return if the tag names are the same WHILST NOT being the same tag ID
-                    return tag_name_1 === tag_name_2 && row['pk'] !== this.tagId;
+                    return tag_name_1 === tag_name_2 && row.pk !== this.tagId;
                 }).length;
 
                 //Return true if there is no duplicate
@@ -182,7 +182,7 @@
                     data_to_send,
                 ).then(response => {
                     // Send data upstream
-                    this.$emit('new_tag', response['data']);
+                    this.$emit('new_tag', response.data);
 
                     //Close the modal
                     document.getElementById("editTagCloseModal").click();
