@@ -116,7 +116,6 @@ def update_group_leader_status(request, destination, *args, **kwargs):
     user_list_results = json.dumps(list(user_list_results), cls=DjangoJSONEncoder)
     
     return HttpResponse(
-        # serializers.serialize("json", user_list_results),
         user_list_results,
         content_type="application/json",
     )

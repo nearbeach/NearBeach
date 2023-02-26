@@ -153,17 +153,12 @@ class TestObjectData(TestCase):
 
         # List or URLS
         data_list = [
-            #{'url' :'add_bug', 'formData': AddBugForm(data={})}, # TODO: need to setup bugs on fixtures
             {'url': 'add_customer', 'formData': {'customer': 1}},
             {'url': 'add_group', 'formData': {'group_list': [1,2]}},
-            # {'url': 'add_link', 'formData': {'document_description': 'NearBeach Homepage', 'document_url_location':'https://nearbeach.org', 'parent_folder': 1}}, # TODO: need to setup a folder on fixtures
             {'url': 'add_link', 'formData': {'document_description': 'NearBeach Homepage', 'document_url_location':'https://nearbeach.org'}},
             {'url': 'add_notes', 'formData': {'note': '<p>Add a note</p>'}},
-            # {'url': 'add_tags', 'formData': {'tag_id': 1}}, # TODO: need to setup tags on fixtures
             {'url': 'add_user', 'formData': {'user_list': [1,2,3]}},
-            # {'url': 'query_bug_client', 'formData': {}}, # TODO: need to setup bug client on fixtures
             {'url': 'remove_group', 'formData': {'group_id': 1}},
-            # {'url': 'remove_link', 'formData': {}}, # TODO: Setup links in fixtures
             {'url': 'remove_user', 'formData': {'username': 'admin'}},
         ]
 
