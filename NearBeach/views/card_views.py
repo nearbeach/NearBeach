@@ -13,7 +13,7 @@ def card_information(request, card_id):
 
     # Using the kanban board id - we can now go to the kanban board
     return redirect(
-        'kanban_information',
+        "kanban_information",
         kanban_board_id=card_results.kanban_board_id,
-        open_card_on_load=card_id
+        open_card_on_load=card_id,
     )

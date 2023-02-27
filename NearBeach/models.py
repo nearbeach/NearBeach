@@ -165,9 +165,11 @@ class Bug(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(User,
-                                    on_delete=models.CASCADE,
-                                    related_name='%(class)s_change_user',)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+    )
     is_deleted = models.BooleanField(
         default=False,
     )
@@ -186,10 +188,11 @@ class BugClient(models.Model):
     bug_client_url = models.URLField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(User,
-                                    on_delete=models.CASCADE,
-                                    related_name='%(class)s_change_user',
-                                    )
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+    )
     is_deleted = models.BooleanField(
         default=False,
     )

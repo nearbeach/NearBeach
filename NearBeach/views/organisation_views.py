@@ -194,12 +194,12 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
 
     # Upload the document
     document_submit, _ = handle_document_permissions(
-        request, 
+        request,
         request.FILES["file"],
         file,
         document_description,
         "organisation",
-        organisation_id
+        organisation_id,
     )
 
     # Get the organisation object
@@ -208,4 +208,4 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
     update_organisation.save()
 
     # Return success
-    return HttpResponse('')
+    return HttpResponse("")

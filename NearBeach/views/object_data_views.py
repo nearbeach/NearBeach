@@ -215,8 +215,7 @@ def add_link(request, destination, location_id):
             single_object = object_dict[object_type].get(pk=row)
 
             submit_object_assignment = ObjectAssignment(
-                change_user=request.user,
-                **{object_type: single_object}
+                change_user=request.user, **{object_type: single_object}
             )
 
             # Set the object destination
@@ -742,25 +741,22 @@ def get_user_list_all(destination, location_id):
             object_results, destination, location_id
         )
 
-        group_results = get_object_from_destination(group_results, destination, location_id)
+        group_results = get_object_from_destination(
+            group_results, destination, location_id
+        )
     else:
         # Get the kanban board information from the card
-        kanban_card_results = KanbanCard.objects.get(
-            kanban_card_id=location_id
-        )
+        kanban_card_results = KanbanCard.objects.get(kanban_card_id=location_id)
 
         object_results = get_object_from_destination(
-            object_results, 
-            "kanban_board", 
+            object_results,
+            "kanban_board",
             kanban_card_results.kanban_board_id,
         )
 
         group_results = get_object_from_destination(
-            group_results, 
-            "kanban_board", 
-            kanban_card_results.kanban_board_id
+            group_results, "kanban_board", kanban_card_results.kanban_board_id
         )
-
 
     # Get a list of users who are associated with these groups & not in the excluded list
     user_results = (
@@ -873,7 +869,7 @@ def link_list(request, destination, location_id, object_lookup):
         is_deleted=False,
         username=request.user,
         group_id__isnull=False,
-    ).values('group_id')
+    ).values("group_id")
 
     # Get the data dependent on the object lookup
     if object_lookup == "project":
@@ -883,9 +879,7 @@ def link_list(request, destination, location_id, object_lookup):
                 is_deleted=False,
                 project_id__isnull=False,
                 group_id__in=user_group_results,
-            ).values(
-                'project_id'
-            )
+            ).values("project_id"),
         ).exclude(
             Q(
                 project_status="Closed",
@@ -906,8 +900,8 @@ def link_list(request, destination, location_id, object_lookup):
                 task_id__isnull=False,
                 group_id__in=user_group_results,
             ).values(
-                'task_id',
-            )
+                "task_id",
+            ),
         ).exclude(
             Q(
                 task_status="Closed",
@@ -934,9 +928,7 @@ def link_list(request, destination, location_id, object_lookup):
             requirement_item_status_id__in=ListOfRequirementItemStatus.objects.filter(
                 is_deleted=False,
                 status_is_closed=False,
-            ).values(
-                "requirement_item_status_id"
-            ),
+            ).values("requirement_item_status_id"),
             requirement_id__in=Requirement.objects.filter(
                 is_deleted=False,
                 requirement_status_id__in=ListOfRequirementStatus.objects.filter(
@@ -962,20 +954,19 @@ def link_object(object_assignment_submit, destination, location_id):
     object_association_submit
     """
     allowed_destinations = [
-        'project',
-        'request_for_change',
-        'requirement',
-        'requirement_item',
-        'task',
+        "project",
+        "request_for_change",
+        "requirement",
+        "requirement_item",
+        "task",
     ]
 
-    #Double checking that the specified destinations are allowed
+    # Double checking that the specified destinations are allowed
     if destination not in allowed_destinations:
         raise PermissionDenied
 
     object_assignment_submit = object_assignment_submit.filter(
-        is_deleted=False,
-        **{destination: location_id}
+        is_deleted=False, **{destination: location_id}
     )
 
     # Return the results
@@ -1022,9 +1013,9 @@ def object_link_list(request, destination, location_id):
         Q(
             # Where destination and location id match
             **{destination: location_id},
-        ) |
-        Q(
-            **{destination + '__isnull': False},
+        )
+        | Q(
+            **{destination + "__isnull": False},
             meta_object=location_id,
         )
     ).values(

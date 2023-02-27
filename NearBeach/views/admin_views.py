@@ -110,7 +110,9 @@ def update_group_leader_status(request, destination, *args, **kwargs):
             group=group_id,
         ).update(group_leader=form.cleaned_data["group_leader"])
 
-        user_list_results = get_user_permissions("username", form.cleaned_data["username"])
+        user_list_results = get_user_permissions(
+            "username", form.cleaned_data["username"]
+        )
 
     # Convert into json
     user_list_results = json.dumps(list(user_list_results), cls=DjangoJSONEncoder)

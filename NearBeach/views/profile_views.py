@@ -71,17 +71,19 @@ def update_profile(request):
 
     # Upload the document
     document_submit, _ = handle_document_permissions(
-        request, 
+        request,
         request.FILES["file"],
         file,
         document_description,
         "user",
-        request.user.id
+        request.user.id,
     )
 
     # Update user profile
     # Determine if there is already a user profile
-    user_profile_results = UserProfilePicture.objects.filter(username_id=request.user.id)
+    user_profile_results = UserProfilePicture.objects.filter(
+        username_id=request.user.id
+    )
 
     if len(user_profile_results) == 0:
         # Not profile picture - create one
@@ -92,7 +94,9 @@ def update_profile(request):
         )
     else:
         # Profile already exists - so just update it
-        user_profile_results = UserProfilePicture.objects.get(username_id=request.user.id)
+        user_profile_results = UserProfilePicture.objects.get(
+            username_id=request.user.id
+        )
         user_profile_results.document = document_submit
 
     user_profile_results.save()

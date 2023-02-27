@@ -2,8 +2,16 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Q, Max
 from functools import wraps
 
-from NearBeach.models import UserGroup, Group, ObjectAssignment, KanbanCard,\
-    PermissionSet, RequirementItem, Requirement, ChangeTask
+from NearBeach.models import (
+    UserGroup,
+    Group,
+    ObjectAssignment,
+    KanbanCard,
+    PermissionSet,
+    RequirementItem,
+    Requirement,
+    ChangeTask,
+)
 
 
 def check_change_task_permissions(min_permission_level):
@@ -89,14 +97,13 @@ def check_user_admin_permissions(min_permission_level, permission_lookup=""):
             permission_set_results = PermissionSet.objects.filter(
                 is_deleted=False,
                 permission_set_id__in=UserGroup.objects.filter(
-                    is_deleted=False,
-                    username=request.user
-                ).values('permission_set_id'),
+                    is_deleted=False, username=request.user
+                ).values("permission_set_id"),
             )
 
-            user_level = permission_set_results.aggregate(
-                Max(permission_lookup)
-            )[f"{permission_lookup}__max"]
+            user_level = permission_set_results.aggregate(Max(permission_lookup))[
+                f"{permission_lookup}__max"
+            ]
 
             if user_level >= min_permission_level:
                 # Everything is fine - move on
@@ -104,7 +111,9 @@ def check_user_admin_permissions(min_permission_level, permission_lookup=""):
 
             # Does not meet conditions
             raise PermissionDenied
+
         return inner
+
     return decorator
 
 

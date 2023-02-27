@@ -73,21 +73,19 @@ def get_kanban_list(request):
         is_deleted=False,
         kanban_board_id__isnull=False,
         group_id__in=UserGroup.objects.filter(
-            is_deleted=False,
-            username=request.user
-        ).values('group_id')
+            is_deleted=False, username=request.user
+        ).values("group_id"),
     )
 
     kanban_results = KanbanBoard.objects.filter(
         is_deleted=False,
         kanban_board_status="Open",
-        kanban_board_id__in=object_assignment_results.values('kanban_board_id'),
+        kanban_board_id__in=object_assignment_results.values("kanban_board_id"),
     )
 
     # Send back json data
     return HttpResponse(
-        serializers.serialize("json", kanban_results), 
-        content_type="application/json"
+        serializers.serialize("json", kanban_results), content_type="application/json"
     )
 
 
@@ -165,14 +163,14 @@ def get_my_objects(request):
                 is_deleted=False,
                 kanban_card_id__isnull=False,
                 assigned_user=request.user,
-            ).values("kanban_card_id")
+            ).values("kanban_card_id"),
         )
         .exclude(
-            Q (
+            Q(
                 # Exclude cards that are archived
                 is_archived=True,
-            ) |
-            Q(
+            )
+            | Q(
                 # Exclude cards that are inside columns that are closed
                 kanban_column_id__in=KanbanColumn.objects.filter(
                     is_deleted=False,
@@ -183,7 +181,7 @@ def get_my_objects(request):
         .values(
             "kanban_card_id",
             "kanban_card_text",
-            "kanban_column__kanban_column_name", # Check this field
+            "kanban_column__kanban_column_name",  # Check this field
         )
     )
 

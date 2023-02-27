@@ -4,10 +4,12 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+
 from NearBeach.decorators.check_user_permissions import check_user_customer_permissions
-from NearBeach.models import Customer, ListOfTitle, Organisation
 from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
+from NearBeach.models import Customer, ListOfTitle, Organisation
 from NearBeach.views.document_views import handle_document_permissions
+
 
 @login_required(login_url="login", redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=1)
@@ -88,12 +90,12 @@ def customer_update_profile(request, customer_id, *args, **kwargs):
 
     # Upload the document
     document_submit, _ = handle_document_permissions(
-        request, 
+        request,
         request.FILES["file"],
         file,
         document_description,
         "customer",
-        customer_id
+        customer_id,
     )
 
     # Update the customer

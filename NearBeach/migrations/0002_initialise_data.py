@@ -67,9 +67,7 @@ def initialise_data(apps, schema_editor):
     )
 
     # List of requirement  status
-    list_of_requirement_status = apps.get_model(
-        "NearBeach", "ListOfRequirementStatus"
-    )
+    list_of_requirement_status = apps.get_model("NearBeach", "ListOfRequirementStatus")
     list_of_requirement_status.objects.using(db_alias).bulk_create(
         [
             list_of_requirement_status(requirement_status="Backlog"),

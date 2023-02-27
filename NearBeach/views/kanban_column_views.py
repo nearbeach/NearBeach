@@ -27,7 +27,9 @@ def edit_column(request, kanban_column_id, *args, **kwargs):
 
     # Update data
     kanban_column_update.kanban_column_name = form.cleaned_data["kanban_column_name"]
-    kanban_column_update.kanban_column_property = form.cleaned_data["kanban_column_property"]
+    kanban_column_update.kanban_column_property = form.cleaned_data[
+        "kanban_column_property"
+    ]
     kanban_column_update.kanban_column_sort_number = form.cleaned_data[
         "kanban_column_sort_number"
     ]

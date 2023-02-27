@@ -74,10 +74,7 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
                 requirement_id=requirement_id,
             ).values("requirement_item_id"),
         )
-        & Q(
-            Q(project_id__isnull=False)
-            | Q(task_id__isnull=False)
-        )
+        & Q(Q(project_id__isnull=False) | Q(task_id__isnull=False))
     ).values(
         "project_id",
         "project_id__project_name",
@@ -154,10 +151,7 @@ def get_requirement_links_list(request, requirement_id, *args, **kwargs):
             is_deleted=False,
             requirement_id=requirement_id,
         )
-        & Q(
-            Q(project_id__isnull=False)
-            | Q(task_id__isnull=False)
-        )
+        & Q(Q(project_id__isnull=False) | Q(task_id__isnull=False))
     ).values(
         "object_assignment_id",
         "project_id",

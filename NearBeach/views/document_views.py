@@ -222,12 +222,12 @@ def document_upload(request, destination, location_id):
 
     # Upload the document
     _, document_results = handle_document_permissions(
-        request, 
+        request,
         request.FILES["document"],
         file,
         document_description,
         destination,
-        location_id
+        location_id,
     )
 
     # Send back json data
@@ -332,19 +332,22 @@ def private_download_file(request, document_key):
     )
 
     profile_picture_permission = document_permission_results.filter(
-        Q(customer__isnull=False,)
+        Q(
+            customer__isnull=False,
+        )
         | Q(organisation__isnull=False)
     )
 
     # If the object_assignment_results.count() == 0, then user does not have permissions
-    if object_assignment_results.count() == 0 and profile_picture_permission.count() == 0 and request.user.is_superuser is False:
+    if (
+        object_assignment_results.count() == 0
+        and profile_picture_permission.count() == 0
+        and request.user.is_superuser is False
+    ):
         raise Http404
 
     # Get Document information
-    document_results = get_object_or_404(
-        Document,
-        document_key=document_key
-    )
+    document_results = get_object_or_404(Document, document_key=document_key)
 
     # If not a document but a URL
     if document_results.document_url_location:
@@ -379,8 +382,11 @@ def private_download_file(request, document_key):
     # Send file to user
     return FileResponse(open(path, "rb"))
 
+
 # Internal Function
-def handle_document_permissions(request, upload, file, document_description, destination, location_id):
+def handle_document_permissions(
+    request, upload, file, document_description, destination, location_id
+):
     document_submit = Document(
         change_user=request.user,
         document_description=document_description,
