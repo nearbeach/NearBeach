@@ -256,7 +256,7 @@
 			}),
 		},
 		methods: {
-			formatDate: function (date) {
+			formatDate(date) {
 				//Setup the date
 				let new_date = new Date(date);
 
@@ -269,13 +269,13 @@
 				//Return the date as a string
 				return `${new_date[0]} ${time_split[0]}`;
 			},
-			isDowntime: function () {
+			isDowntime() {
 				if (this.changeIsDowntimeModel) {
 					return `Downtime Scheduled`;
 				}
 				return `No Downtime`;
 			},
-			submitChangeTask: function (event) {
+			submitChangeTask(event) {
 				//Stop the usual stuff
 				event.preventDefault();
 
@@ -343,7 +343,7 @@
 						this.showErrorModal(error, "Change Task");
 					});
 			},
-			updateDates: function (data) {
+			updateDates(data) {
 				this.changeStartDateModel = data.start_date;
 				this.changeEndDateModel = data.end_date;
 			},

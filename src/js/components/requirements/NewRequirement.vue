@@ -335,11 +335,11 @@
 						errorModal.show();
 					});
 			},
-			updateGroupModel: function (newGroupModel) {
+			updateGroupModel(newGroupModel) {
 				//Update the group model
 				this.groupModel = newGroupModel;
 			},
-			updateStakeholderModel: function (newStakeholderModel) {
+			updateStakeholderModel(newStakeholderModel) {
 				this.stakeholderModel = newStakeholderModel;
 			},
 		},

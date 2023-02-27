@@ -71,7 +71,7 @@
 			}),
 		},
 		methods: {
-			archiveCard: function () {
+			archiveCard() {
 				//Create data to send
 				const data_to_send = new FormData();
 
@@ -100,7 +100,7 @@
 						//TODO: show card error
 					});
 			},
-			goBack: function () {
+			goBack() {
 				//Close current modal
 				document
 					.getElementById("confirmCardArchiveModalCloseButton")

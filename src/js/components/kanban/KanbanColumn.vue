@@ -72,7 +72,7 @@
 				openCardOnLoad: "getOpenCardOnLoad",
 				rootUrl: "getRootUrl",
 			}),
-			masterList: function () {
+			masterList() {
 				//Filter the data
 				let return_array = this.allCards.filter((card) => {
 					return (
@@ -94,7 +94,7 @@
 		},
 		mixins: [iconMixin],
 		methods: {
-			checkCardOrder: function () {
+			checkCardOrder() {
 				/* Due to an issue - sometimes some of the cards will contain a -1 for the sort order. This sadly
                 throws a spanner into the dragging and dropping functionality. When the board boots up, we will check to
                 make sure the cards are in order. If they are not - we adjust them and upload the changes.
@@ -174,7 +174,7 @@
 				//Done - hide the error screen
 				document.getElementById("sort_error").style.display = "";
 			},
-			doubleClickCard: function (data) {
+			doubleClickCard(data) {
 				//Filter out the data we want to send up stream
 				const filtered_data = this.masterList.filter((row) => {
 					return row.pk == data.target.dataset.cardId;
@@ -183,7 +183,7 @@
 				//Setup data to send upstream
 				this.sendDataUpstream(filtered_data);
 			},
-			sendDataUpstream: function (filtered_data) {
+			sendDataUpstream(filtered_data) {
 				// Determine if the card has a link
 				let card_link = {};
 				if (filtered_data.fields.project !== undefined) {
@@ -224,7 +224,7 @@
 				);
 				cardInformationModal.show();
 			},
-			singleClickCard: function (data) {
+			singleClickCard(data) {
 				//Filter out the data we want to send up stream
 				const filtered_data = this.masterList.filter((row) => {
 					return row.pk == data;
@@ -235,7 +235,7 @@
 			},
 		},
 		watch: {
-			newCardInfo: function () {
+			newCardInfo() {
 				//Only add the card if the column and the level match
 				if (
 					this.columnId == this.newCardInfo[0].fields.kanban_column &&

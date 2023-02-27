@@ -135,7 +135,7 @@
 			...mapGetters({
 				rootUrl: "getRootUrl",
 			}),
-			disableButton: function () {
+			disableButton() {
 				//Both passwords have to be the same
 				let condition_1 = this.password1Model == this.password2Model;
 
@@ -147,7 +147,7 @@
 			},
 		},
 		methods: {
-			closeModal: function () {
+			closeModal() {
 				//Clear both passwords
 				this.password1Model = "";
 				this.password2Model = "";
@@ -155,14 +155,14 @@
 				//Close modal
 				document.getElementById("passwordResetCloseButton").click();
 			},
-			passwordResetClicked: function () {
+			passwordResetClicked() {
 				//Opens the password reset modal
 				let passwordResetModal = new Modal(
 					document.getElementById("passwordResetModal")
 				);
 				passwordResetModal.show();
 			},
-			updatePassword: function () {
+			updatePassword() {
 				//Create data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("password", this.password1Model);

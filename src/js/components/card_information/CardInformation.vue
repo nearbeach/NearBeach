@@ -193,7 +193,7 @@
 			}),
 		},
 		methods: {
-			updateCard: function () {
+			updateCard() {
 				//Get all data from VueX
 				const all_data = this.$store.getters.getAllCardData;
 

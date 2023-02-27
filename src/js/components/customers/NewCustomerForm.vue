@@ -141,28 +141,28 @@
 		},
 		methods: {},
 		watch: {
-			customerEmailModel: function () {
+			customerEmailModel() {
 				//Emit up this function's data
 				this.$emit("update_customer_data", {
 					field: "customerEmailModel",
 					value: this.customerEmailModel,
 				});
 			},
-			customerFirstNameModel: function () {
+			customerFirstNameModel() {
 				//Emit up this function's data
 				this.$emit("update_customer_data", {
 					field: "customerFirstNameModel",
 					value: this.customerFirstNameModel,
 				});
 			},
-			customerLastNameModel: function () {
+			customerLastNameModel() {
 				//Emit up this function's data
 				this.$emit("update_customer_data", {
 					field: "customerLastNameModel",
 					value: this.customerLastNameModel,
 				});
 			},
-			flagValidationCheck: function () {
+			flagValidationCheck() {
 				//Don't worry if it is false
 				if (!this.flagValidationCheck) return;
 
@@ -170,7 +170,7 @@
 
 				this.v$.$touch();
 			},
-			titleModel: function () {
+			titleModel() {
 				//Emit up this function's data
 				this.$emit("update_customer_data", {
 					field: "titleModel",

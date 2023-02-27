@@ -143,10 +143,10 @@
 			};
 		},
 		watch: {
-			tagColour: function () {
+			tagColour() {
 				this.tagColourModel = this.tagColour;
 			},
-			tagName: function () {
+			tagName() {
 				this.tagNameModel = this.tagName;
 			},
 		},
@@ -154,7 +154,7 @@
 			...mapGetters({
 				rootUrl: "getRootUrl",
 			}),
-			canSave: function () {
+			canSave() {
 				//Return false if user has written a duplicate tag name
 				const count = this.existingTags.filter((row) => {
 					const tag_name_1 = row.fields.tag_name.toUpperCase(),
@@ -169,7 +169,7 @@
 			},
 		},
 		methods: {
-			deleteTag: function () {
+			deleteTag() {
 				//Use axios to send the request
 				axios
 					.post(`${this.rootUrl}tag/delete/${this.tagId}/`)
@@ -184,7 +184,7 @@
 					})
 					.catch((error) => {});
 			},
-			getClasses: function (colour) {
+			getClasses(colour) {
 				let return_class = "single-colour";
 
 				if (colour == this.tagColourModel) {
@@ -193,7 +193,7 @@
 
 				return return_class;
 			},
-			newTag: function (data_to_send) {
+			newTag(data_to_send) {
 				//Use axios to send data
 				axios
 					.post(`${this.rootUrl}tag/new/`, data_to_send)
@@ -208,7 +208,7 @@
 						//ADD CODE
 					});
 			},
-			saveTag: function () {
+			saveTag() {
 				//Create data to send
 				const data_to_send = new FormData();
 				data_to_send.set("tag_id", this.tagId);
@@ -223,10 +223,10 @@
 					this.updateTag(data_to_send);
 				}
 			},
-			updateColour: function (selected_colour) {
+			updateColour(selected_colour) {
 				this.tagColourModel = selected_colour;
 			},
-			updateTag: function (data_to_send) {
+			updateTag(data_to_send) {
 				//Use axios to send data
 				axios
 					.post(`${this.rootUrl}tag/save/`, data_to_send)

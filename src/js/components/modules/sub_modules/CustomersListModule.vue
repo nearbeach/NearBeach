@@ -56,7 +56,7 @@
 				rootUrl: "getRootUrl",
 				staticUrl: "getStaticUrl",
 			}),
-			defaultCustomerImage: function () {
+			defaultCustomerImage() {
 				return `${this.staticUrl}/NearBeach/images/placeholder/people_tax.svg`;
 			},
 		},
@@ -65,7 +65,7 @@
 			return {};
 		},
 		methods: {
-			getCustomerImage: function (customer) {
+			getCustomerImage(customer) {
 				const image = customer.fields.customer_profile_picture;
 
 				if (image === "" || image === null) {

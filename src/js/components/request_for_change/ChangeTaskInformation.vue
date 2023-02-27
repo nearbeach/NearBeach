@@ -325,7 +325,7 @@
 			}),
 		},
 		methods: {
-			customUploadImage: function (blobInfo, success, failure, progress) {
+			customUploadImage(blobInfo, success, failure, progress) {
 				//Create the form
 				const data_to_send = new FormData();
 				data_to_send.set(
@@ -357,13 +357,13 @@
 					})
 					.catch((error) => {});
 			},
-			isDowntime: function () {
+			isDowntime() {
 				if (this.changeIsDowntimeModel) {
 					return `Downtime Scheduled`;
 				}
 				return `No Downtime`;
 			},
-			deleteChangeTask: function () {
+			deleteChangeTask() {
 				//Send the trigger
 				axios
 					.post(
@@ -374,7 +374,7 @@
 						window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0].fields.request_for_change}/`;
 					});
 			},
-			formatDate: function (date) {
+			formatDate(date) {
 				//Setup the date
 				let new_date = new Date(date);
 
@@ -387,7 +387,7 @@
 				//Return the date as a string
 				return `${new_date[0]} ${time_split[0]}`;
 			},
-			saveChangeTask: function (event) {
+			saveChangeTask(event) {
 				//Stop the usual stuff
 				event.preventDefault();
 
@@ -437,7 +437,7 @@
 						//this.showErrorModal(error, 'Change Task');
 					});
 			},
-			updateStatus: function (new_status) {
+			updateStatus(new_status) {
 				//Setup data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("change_task_status", new_status);
@@ -454,7 +454,7 @@
 					})
 					.catch((error) => {});
 			},
-			updateDates: function (data) {
+			updateDates(data) {
 				this.changeStartDateModel = data.start_date;
 				this.changeEndDateModel = data.end_date;
 			},

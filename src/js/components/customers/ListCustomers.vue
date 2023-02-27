@@ -46,7 +46,7 @@
 		props: {
 			customerResults: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},
@@ -59,7 +59,7 @@
 		},
 		mixins: [iconMixin],
 		methods: {
-			getProfilePicture: function (customer) {
+			getProfilePicture(customer) {
 				const image = customer.fields.customer_profile_picture;
 
 				//If customer profile is blank - return default picture

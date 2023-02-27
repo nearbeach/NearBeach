@@ -141,7 +141,7 @@
 			};
 		},
 		methods: {
-			addCustomer: function () {
+			addCustomer() {
 				// Set up the data object to send
 				const data_to_send = new FormData();
 				data_to_send.set("customer", this.customerModel);
@@ -167,7 +167,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			getCustomerList: function () {
+			getCustomerList() {
 				axios
 					.post(
 						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list_all/`
@@ -183,7 +183,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			updateCustomerFixList: function () {
+			updateCustomerFixList() {
 				//If no customer list result - just exit
 				if (this.customerList.length === 0) return;
 
@@ -217,7 +217,7 @@
 			}, 200);
 		},
 		watch: {
-			excludeCustomers: function () {
+			excludeCustomers() {
 				this.updateCustomerFixList();
 			},
 		},

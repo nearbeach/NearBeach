@@ -87,17 +87,17 @@
 			}),
 		},
 		methods: {
-			addTags: function (data) {
+			addTags(data) {
 				this.tagList = data;
 			},
-			createNewTag: function () {
+			createNewTag() {
 				//Open up modal
 				var newTagModal = new Modal(
 					document.getElementById("addTagModal")
 				);
 				newTagModal.show();
 			},
-			getAssignedTags: function () {
+			getAssignedTags() {
 				axios
 					.post(
 						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/tag_list/`
@@ -107,7 +107,7 @@
 					})
 					.catch((error) => {});
 			},
-			removeTag: function (tag_id) {
+			removeTag(tag_id) {
 				//Create data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("tag", tag_id);

@@ -99,7 +99,7 @@
 			},
 			titleList: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},
@@ -134,7 +134,7 @@
 			};
 		},
 		methods: {
-			fetchOptions: function (search, loading) {
+			fetchOptions(search, loading) {
 				this.searchTrigger({
 					return_function: this.getOrganisationData,
 					searchTimeout: this.searchTimeout,
@@ -142,7 +142,7 @@
 					loading: loading,
 				});
 			},
-			getOrganisationData: function (search, loading) {
+			getOrganisationData(search, loading) {
 				// Save the seach data in FormData
 				const data_to_send = new FormData();
 				data_to_send.set("search", search);
@@ -254,7 +254,7 @@
 						this.showErrorModal(error, "customer", "");
 					});
 			},
-			updateCustomerData: function (data) {
+			updateCustomerData(data) {
 				//Update the modal field with the value data
 				this[data.field] = data.value;
 			},

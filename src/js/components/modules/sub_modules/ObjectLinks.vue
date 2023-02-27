@@ -114,7 +114,7 @@
 			}),
 		},
 		methods: {
-			extractObjectDescription: function (link) {
+			extractObjectDescription(link) {
 				//Declare some variables
 				var link_title = "",
 					link_id = "",
@@ -161,7 +161,7 @@
 
 				return `<a href="${link_location}${link_id}/"><p>${link_title}</p><div class="spacer"></div><p class="small-text">${link_text}</p></a>`;
 			},
-			extractObjectStatus: function (link) {
+			extractObjectStatus(link) {
 				//Declare some variables
 				var link_status = "";
 
@@ -197,7 +197,7 @@
 
 				return `${link_status}`;
 			},
-			newLink: function () {
+			newLink() {
 				//Open up the modal
 
 				var elem_modal = new Modal(
@@ -206,7 +206,7 @@
 
 				elem_modal.show();
 			},
-			removeLink: function (link) {
+			removeLink(link) {
 				// Determine the link connection
 				let link_connection = "";
 				let link_id = 0;
@@ -260,7 +260,7 @@
 						this.updateLinkResults();
 					});
 			},
-			updateLinkResults: function () {
+			updateLinkResults() {
 				//Get the data from the database
 				axios
 					.post(

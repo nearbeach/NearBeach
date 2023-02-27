@@ -62,7 +62,7 @@
 		},
 		mixins: [getToken],
 		methods: {
-			setProfilePicture: function () {
+			setProfilePicture() {
 				//Set the default
 				this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
 

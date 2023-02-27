@@ -145,17 +145,17 @@
 			},
 		}),
 		methods: {
-			beforeChange: function () {
+			beforeChange() {
 				return this.validationData[`tab_${this.currentTab}`];
 			},
-			onChange: function (prevIndex, nextIndex) {
+			onChange(prevIndex, nextIndex) {
 				//Update current tab once the validation has been completed.
 				this.currentTab = nextIndex;
 
 				//Scroll to the top of the page
 				window.scrollTo(0, 60);
 			},
-			onComplete: function () {
+			onComplete() {
 				// Setup the new data form
 				const data_to_send = new FormData();
 				const data = this.rfcData;
@@ -209,11 +209,11 @@
 						this.showErrorModal(error, "request_for_change", "");
 					});
 			},
-			updateValidation: function (data) {
+			updateValidation(data) {
 				//Update the value
 				this.validationData[data.tab] = data.value;
 			},
-			updateValues: function (data) {
+			updateValues(data) {
 				//Update the value
 				this.rfcData[data.modelName] = data.modelValue;
 			},

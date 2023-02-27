@@ -80,7 +80,7 @@
 			},
 		},
 		methods: {
-			archiveCards: function () {
+			archiveCards() {
 				//Simplify the variables
 				let column = this.archiveDestination.column;
 				let level = this.archiveDestination.level;
@@ -127,7 +127,7 @@
 						//TODO: Return cards back into state management. They errored out.
 					});
 			},
-			closeModal: function () {
+			closeModal() {
 				//Close the modal
 				this.archiveCardsModal.hide();
 

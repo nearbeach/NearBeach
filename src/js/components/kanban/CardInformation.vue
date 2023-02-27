@@ -188,7 +188,7 @@
 			}),
 		},
 		watch: {
-			cardInformation: function () {
+			cardInformation() {
 				//Update the local information
 				this.cardId = this.cardInformation.cardId;
 				this.cardTitleModel = this.cardInformation.cardTitle;
@@ -206,7 +206,7 @@
 			},
 		},
 		methods: {
-			addNote: function () {
+			addNote() {
 				//Setup data to send
 				const data_to_send = new FormData();
 				data_to_send.set("note", this.cardNoteModel);
@@ -226,7 +226,7 @@
 					})
 					.catch((error) => {});
 			},
-			getCardNotes: function () {
+			getCardNotes() {
 				//Clear the current list of notes
 				this.noteHistoryResults = [];
 
@@ -241,7 +241,7 @@
 					})
 					.catch((error) => {});
 			},
-			updateCard: function () {
+			updateCard() {
 				//Create the data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("kanban_card_text", this.cardTitleModel);

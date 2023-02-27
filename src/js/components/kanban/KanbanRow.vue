@@ -60,7 +60,7 @@
 			}),
 		},
 		methods: {
-			doubleClickedCard: function (data) {
+			doubleClickedCard(data) {
 				//Emit the card id up stream
 				this.$emit("double_clicked_card", data);
 			},

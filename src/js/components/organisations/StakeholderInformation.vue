@@ -76,7 +76,7 @@
 				rootUrl: "getRootUrl",
 				staticUrl: "getStaticUrl",
 			}),
-			getStakeholderImage: function () {
+			getStakeholderImage() {
 				const image =
 					this.stakeholderModel.organisation_profile_picture;
 				if (image === "" || image === null) {

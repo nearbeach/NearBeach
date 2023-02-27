@@ -282,14 +282,14 @@
 			},
 		},
 		methods: {
-			closeTask: function () {
+			closeTask() {
 				//Set the status to closed
 				this.taskStatusModel = "Closed";
 
 				//Save the status
 				this.updateTask();
 			},
-			updateTask: function () {
+			updateTask() {
 				//Check validation
 				this.v$.$touch();
 
@@ -345,11 +345,11 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			updateDates: function (data) {
+			updateDates(data) {
 				this.taskEndDateModel = new Date(data.end_date);
 				this.taskStartDateModel = new Date(data.start_date);
 			},
-			updateGroupModel: function (data) {
+			updateGroupModel(data) {
 				this.groupModel = data;
 			},
 		},

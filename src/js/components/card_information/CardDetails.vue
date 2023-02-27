@@ -141,7 +141,7 @@
 			},
 		},
 		methods: {
-			archiveCard: function () {
+			archiveCard() {
 				//Close the current modal
 				document
 					.getElementById("cardInformationModalCloseButton")
@@ -153,12 +153,12 @@
 				);
 				confirmCardArchive.show();
 			},
-			closeModal: function () {
+			closeModal() {
 				document
 					.getElementById("cardInformationModalCloseButton")
 					.click();
 			},
-			updateCard: function () {
+			updateCard() {
 				this.$store.commit({
 					type: "updateKanbanCard",
 					card_id: this.cardId,

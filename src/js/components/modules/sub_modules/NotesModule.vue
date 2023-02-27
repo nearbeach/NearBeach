@@ -69,13 +69,13 @@
 			}),
 		},
 		methods: {
-			createNewNote: function () {
+			createNewNote() {
 				var newNoteModal = new Modal(
 					document.getElementById("newNoteModal")
 				);
 				newNoteModal.show();
 			},
-			getNoteHistoryResults: function () {
+			getNoteHistoryResults() {
 				axios
 					.post(
 						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`
@@ -87,7 +87,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			updateNoteHistoryResults: function (data) {
+			updateNoteHistoryResults(data) {
 				//Add the extra data
 				this.noteHistoryResults.push(data[0]);
 			},

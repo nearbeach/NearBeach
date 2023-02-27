@@ -153,7 +153,7 @@
 			}),
 		},
 		methods: {
-			addKanbanCard: function () {
+			addKanbanCard() {
 				//Get the modal to extract data from
 				var self_modal = document.getElementById("addKanbanCardModal");
 
@@ -196,7 +196,7 @@
 			},
 		},
 		watch: {
-			kanbanCardTextModel: function () {
+			kanbanCardTextModel() {
 				// If the model is blank OR the text already exists - turn disableAddButton to true
 				this.disableAddButton = false; //People can click the "Add" button
 

@@ -102,7 +102,7 @@
 			}),
 		},
 		methods: {
-			extractObjectDescription: function (link) {
+			extractObjectDescription(link) {
 				/*
                 The following function will accept a link in. It will then check what that link is connected to. From
                 there it will determine which fields it will extract out.
@@ -142,7 +142,7 @@
                     </a>
                 `;
 			},
-			extractObjectStatus: function (link) {
+			extractObjectStatus(link) {
 				/*
                 The following function will accept a link in. It will then check what that link is connected to. From
                 there it will determine what status field it will extract out.
@@ -157,20 +157,20 @@
 
 				return object_status;
 			},
-			updateLinkResults: function () {
+			updateLinkResults() {
 				//Get the data from the database
 				axios.post("data/links/").then((response) => {
 					this.itemLinkResults = response.data;
 				});
 			},
-			newRequirementItemLink: function () {
+			newRequirementItemLink() {
 				//Open up the modal
 				var elem_modal = new Modal(
 					document.getElementById("newRequirementLinkModal")
 				);
 				elem_modal.show();
 			},
-			updateModel: function (data) {
+			updateModel(data) {
 				this.itemLinkResults = data;
 			},
 		},

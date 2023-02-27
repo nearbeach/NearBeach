@@ -2,7 +2,7 @@ import { Modal } from "bootstrap";
 
 export default {
 	methods: {
-		showErrorModal: function (error, destination, location_id) {
+		showErrorModal(error, destination, location_id) {
 			//Get the loading modal
 			const loadingModal = new Modal(
 				document.getElementById("loadingModal")
@@ -21,7 +21,7 @@ export default {
 			const errorModal = new Modal(document.getElementById("errorModal"));
 			errorModal.show();
 		},
-		showValidationErrorModal: function () {
+		showValidationErrorModal() {
 			//Show the error dialog and notify to the user that there were field missing.
 			const elem_cont = document.getElementById("errorModalContent");
 

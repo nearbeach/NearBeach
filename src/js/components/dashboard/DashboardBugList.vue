@@ -31,7 +31,7 @@
 		},
 		mixins: [errorModalMixin],
 		methods: {
-			getBugData: function () {
+			getBugData() {
 				axios
 					.post(`${this.rootUrl}dashboard/get/bug_list/`)
 					.then((response) => {
@@ -48,7 +48,7 @@
 						);
 					});
 			},
-			renderGraph: function () {
+			renderGraph() {
 				//Declare size variables
 				var margin = { top: 10, right: 30, bottom: 20, left: 50 },
 					width = 460 - margin.left - margin.right,

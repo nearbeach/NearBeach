@@ -78,7 +78,7 @@
 		},
 		mixins: [iconMixin],
 		methods: {
-			addUser: function () {
+			addUser() {
 				//Close the current modal
 				document
 					.getElementById("cardInformationModalCloseButton")
@@ -88,7 +88,7 @@
 				const addUserWizard = new Modal("#addUserModal");
 				addUserWizard.show();
 			},
-			removeUser: function (username) {
+			removeUser(username) {
 				//Data to send
 				const data_to_send = new FormData();
 				data_to_send.set("username", username);

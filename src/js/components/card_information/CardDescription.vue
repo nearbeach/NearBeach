@@ -96,12 +96,12 @@
 		},
 		mixins: [uploadMixin],
 		methods: {
-			closeModal: function () {
+			closeModal() {
 				document
 					.getElementById("cardInformationModalCloseButton")
 					.click();
 			},
-			updateCard: function () {
+			updateCard() {
 				this.$emit("update_card");
 			},
 		},

@@ -253,14 +253,14 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			updateDates: function (data) {
+			updateDates(data) {
 				this.taskEndDateModel = new Date(data.end_date);
 				this.taskStartDateModel = new Date(data.start_date);
 			},
-			updateGroupModel: function (data) {
+			updateGroupModel(data) {
 				this.groupModel = data;
 			},
-			updateStakeholderModel: function (data) {
+			updateStakeholderModel(data) {
 				this.stakeholderModel = data;
 			},
 		},

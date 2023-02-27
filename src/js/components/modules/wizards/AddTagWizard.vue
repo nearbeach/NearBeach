@@ -108,7 +108,7 @@
 			...mapGetters({
 				rootUrl: "getRootUrl",
 			}),
-			tagList: function () {
+			tagList() {
 				return this.allTagList.filter((row) => {
 					return (
 						this.assignedTags.findIndex((tag) => {
@@ -119,7 +119,7 @@
 			},
 		},
 		methods: {
-			addTag: function () {
+			addTag() {
 				//Construct data_to_send
 				const data_to_send = new FormData();
 
@@ -145,7 +145,7 @@
 						this.tagModel = [];
 					});
 			},
-			getTagList: function () {
+			getTagList() {
 				axios
 					.post(`${this.rootUrl}object_data/tag_list_all/`)
 					.then((response) => {

@@ -45,7 +45,7 @@
 			},
 			noteHistoryResults: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},

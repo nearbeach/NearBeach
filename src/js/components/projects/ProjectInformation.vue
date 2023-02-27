@@ -275,18 +275,18 @@
 			},
 		},
 		methods: {
-			closeProject: function () {
+			closeProject() {
 				//Set the project status to Closed
 				this.projectStatusModel = "Closed";
 
 				//Update the project
 				this.updateProject();
 			},
-			updateDates: function (data) {
+			updateDates(data) {
 				this.projectEndDateModel = new Date(data.end_date);
 				this.projectStartDateModel = new Date(data.start_date);
 			},
-			updateProject: function () {
+			updateProject() {
 				// Check the validation first
 				this.v$.$touch();
 

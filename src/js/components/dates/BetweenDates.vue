@@ -122,14 +122,14 @@
 			};
 		},
 		methods: {
-			emitDates: function () {
+			emitDates() {
 				//Send this data upstream
 				this.$emit("update_dates", {
 					start_date: this.localStartDateModel,
 					end_date: this.localEndDateModel,
 				});
 			},
-			endDateDisabled: function (endDate) {
+			endDateDisabled(endDate) {
 				//If user has flagged they want to remove any dates prior to today - we will
 				let disable_date = false;
 				if (!this.noBackDating) {
@@ -142,7 +142,7 @@
 					disable_date
 				);
 			},
-			startDateDisabled: function (startDate) {
+			startDateDisabled(startDate) {
 				//If user has flagged they want to remove any dates prior to today - we will
 				let disable_date = false;
 				if (!this.noBackDating) {
@@ -154,7 +154,7 @@
 			},
 		},
 		watch: {
-			localEndDateModel: function () {
+			localEndDateModel() {
 				//Makes sure the end date is not less than the start date
 				// - if it is, turn it into the start date
 				if (this.localEndDateModel < this.localStartDateModel) {
@@ -165,7 +165,7 @@
 				//Send the new results up steam
 				this.emitDates();
 			},
-			localStartDateModel: function () {
+			localStartDateModel() {
 				//Makes sure the start date is not greater than the end date
 				// - if it is, turn it into the end date
 				if (this.localEndDateModel < this.localStartDateModel) {

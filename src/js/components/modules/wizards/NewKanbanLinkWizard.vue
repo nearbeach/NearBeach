@@ -321,7 +321,7 @@
 			};
 		},
 		methods: {
-			saveLinks: function () {
+			saveLinks() {
 				// Set up the data object to send
 				const data_to_send = new FormData();
 
@@ -365,7 +365,7 @@
 			},
 		},
 		watch: {
-			objectModel: function () {
+			objectModel() {
 				//Clear data
 				this.linkModel = [];
 
@@ -399,7 +399,7 @@
 						this.showErrorModal(error, "kanban");
 					});
 			},
-			searchTermModel: function () {
+			searchTermModel() {
 				if (
 					this.searchTermModel === "" ||
 					this.searchTermModel === null

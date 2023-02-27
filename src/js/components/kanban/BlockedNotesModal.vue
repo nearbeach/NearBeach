@@ -94,7 +94,7 @@
 			}),
 		},
 		methods: {
-			addNote: function () {
+			addNote() {
 				//Setup data to send
 				const data_to_send = new FormData();
 				data_to_send.set("note", this.noteModal);
@@ -109,7 +109,7 @@
 						this.closeModal();
 					});
 			},
-			closeModal: function () {
+			closeModal() {
 				//Clear the data
 				this.noteModal = "";
 

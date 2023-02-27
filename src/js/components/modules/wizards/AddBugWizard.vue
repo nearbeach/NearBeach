@@ -190,7 +190,7 @@
 			};
 		},
 		methods: {
-			loadBugClientList: function () {
+			loadBugClientList() {
 				axios
 					.post(`${this.rootUrl}object_data/bug_client_list/`)
 					.then((response) => {
@@ -203,7 +203,7 @@
 						});
 					});
 			},
-			startSearchTimer: function () {
+			startSearchTimer() {
 				//Destroy the first timer if it exists
 				if (this.searchTimer != "") {
 					clearTimeout(this.searchTimer);
@@ -214,7 +214,7 @@
 					this.startSearch();
 				}, 700);
 			},
-			startSearch: function () {
+			startSearch() {
 				//Escape conditions
 				if (this.searchModel === "") {
 					return;
@@ -245,7 +245,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			submitBug: function (bug_id) {
+			submitBug(bug_id) {
 				//Tell user you are adding the bug
 				var add_bug_element = document.getElementById(
 					`bug_no_${bug_id}`

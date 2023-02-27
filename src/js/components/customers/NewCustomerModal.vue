@@ -174,7 +174,7 @@
 					})
 					.catch((error) => {});
 			},
-			updateCustomerData: function (data) {
+			updateCustomerData(data) {
 				//Update the modal field with the value data
 				this[data.field] = data.value;
 			},

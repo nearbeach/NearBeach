@@ -161,7 +161,7 @@
 		props: {
 			customerResults: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},
@@ -171,7 +171,7 @@
 			},
 			organisationResults: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},
@@ -185,7 +185,7 @@
 			},
 			titleList: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},
@@ -225,7 +225,7 @@
 			},
 		},
 		methods: {
-			setProfilePicture: function () {
+			setProfilePicture() {
 				//If there is a profile picture/image, update. Otherwise use default
 				let profile_picture =
 					this.customerResults[0].fields.customer_profile_picture;
@@ -241,7 +241,7 @@
 					this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
 				}
 			},
-			updateCustomer: function () {
+			updateCustomer() {
 				//Construct the data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("customer_email", this.customerEmailModel);
@@ -280,7 +280,7 @@
 						);
 					});
 			},
-			updateProfilePicture: function () {
+			updateProfilePicture() {
 				//Contact the API to get the location of the new image
 				axios
 					.post(

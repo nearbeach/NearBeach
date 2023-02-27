@@ -70,7 +70,7 @@
 		},
 		mixins: [datetimeMixin, errorModalMixin],
 		methods: {
-			getRfcApprovalsList: function () {
+			getRfcApprovalsList() {
 				//Use axios to get data
 				axios
 					.post(`${this.rootUrl}dashboard/get/rfc_approvals/`)

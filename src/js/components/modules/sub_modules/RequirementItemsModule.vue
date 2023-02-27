@@ -123,13 +123,13 @@
 			}),
 		},
 		methods: {
-			createNewItem: function () {
+			createNewItem() {
 				var new_item_modal = new Modal(
 					document.getElementById("newItemModal")
 				);
 				new_item_modal.show();
 			},
-			getStatus: function (status_id) {
+			getStatus(status_id) {
 				//Filter the status status id
 				var filtered_data = this.itemStatusList.filter((row) => {
 					return row.pk == status_id;
@@ -143,7 +143,7 @@
 				//Return the first result
 				return filtered_data[0]["fields"]["requirement_item_status"];
 			},
-			getType: function (type_id) {
+			getType(type_id) {
 				//Filter the type id
 				var filtered_data = this.itemTypeList.filter((row) => {
 					return row.pk == type_id;
@@ -157,12 +157,12 @@
 				//Return the first result
 				return filtered_data[0]["fields"]["requirement_item_type"];
 			},
-			new_item_added: function (data) {
+			new_item_added(data) {
 				//A new item has been added in the wizard. We use the new data that has passed through to update
 				//the item results array.
 				this.itemResults = data;
 			},
-			updateItemResults: function () {
+			updateItemResults() {
 				axios.post("data/items/").then((response) => {
 					//Clear the current list
 					this.itemResults = [];
@@ -174,7 +174,7 @@
 					});
 				});
 			},
-			updateStatusList: function () {
+			updateStatusList() {
 				axios.post("data/item_status/").then((response) => {
 					//Clear the current list
 					this.itemStatusList = [];
@@ -185,7 +185,7 @@
 					});
 				});
 			},
-			updateTypeList: function () {
+			updateTypeList() {
 				axios.post("data/item_type/").then((response) => {
 					//Clear the current list
 					this.itemTypeList = [];

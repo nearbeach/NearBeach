@@ -205,7 +205,7 @@
 			},
 		},
 		methods: {
-			updateUser: function () {
+			updateUser() {
 				//Check form validation
 				this.v$.$touch();
 

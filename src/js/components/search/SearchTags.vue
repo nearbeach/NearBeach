@@ -105,7 +105,7 @@
 		},
 		mixins: [iconMixin],
 		methods: {
-			addTag: function () {
+			addTag() {
 				//Send data down to the modal
 				this.singleTagName = "default tag";
 				this.singleTagId = 0;
@@ -117,13 +117,13 @@
 				);
 				edit_tag_modal.show();
 			},
-			deleteTag: function (data) {
+			deleteTag(data) {
 				//Filter out the tag
 				this.localTagResults = this.localTagResults.filter((row) => {
 					return row.pk !== data.tag_id;
 				});
 			},
-			editTag: function (tag_id) {
+			editTag(tag_id) {
 				//Filter for the tag information
 				let single_tag = this.localTagResults.filter((row) => {
 					return row.pk == tag_id;
@@ -140,10 +140,10 @@
 				);
 				edit_tag_modal.show();
 			},
-			newTag: function (data) {
+			newTag(data) {
 				this.localTagResults.push(data[0]);
 			},
-			updateTags: function (data) {
+			updateTags(data) {
 				//Get the index location of the object we are updating
 				let index = this.localTagResults.findIndex((row) => {
 					return row.pk === data.tag_id;

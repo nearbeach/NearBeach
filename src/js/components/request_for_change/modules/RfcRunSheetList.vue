@@ -242,7 +242,7 @@
 				userLevel: "getUserLevel",
 				rootUrl: "getRootUrl",
 			}),
-			isCompleted: function () {
+			isCompleted() {
 				var count_of_uncompleted_tasks = this.changeTaskList.filter(
 					(changeTask) => {
 						const change_task_status =
@@ -261,13 +261,13 @@
 			},
 		},
 		methods: {
-			addNewChangeItem: function () {
+			addNewChangeItem() {
 				var newChangeTaskModal = new Modal(
 					document.getElementById("newRunItemModal")
 				);
 				newChangeTaskModal.show();
 			},
-			closeRfc: function () {
+			closeRfc() {
 				//Construct the data to send
 				const data_to_send = new FormData();
 				data_to_send.set("rfc_status", 5);
@@ -285,7 +285,7 @@
 						this.showErrorModal(error, "request_for_change");
 					});
 			},
-			getRunSheetList: function () {
+			getRunSheetList() {
 				axios
 					.post(
 						`${this.rootUrl}rfc_information/${this.locationId}/change_task_list/`
@@ -304,7 +304,7 @@
 						this.showErrorModal(error, "request_for_change");
 					});
 			},
-			getStatus: function (status_id) {
+			getStatus(status_id) {
 				switch (status_id) {
 					case 1:
 						return "Draft";
@@ -328,7 +328,7 @@
 						return "---";
 				}
 			},
-			getUserName: function (user_id) {
+			getUserName(user_id) {
 				//Filter for the user by using the user_id
 				var single_user = this.userList.filter((row) => {
 					return row.id == user_id;
@@ -342,7 +342,7 @@
 				//User was filtered out - return their name
 				return `${single_user[0].username}: ${single_user[0].first_name} ${single_user[0].last_name}`;
 			},
-			updateChangeTaskList: function (data) {
+			updateChangeTaskList(data) {
 				//Update change task list
 				this.changeTaskList = data;
 
@@ -352,7 +352,7 @@
 					changeTaskCount: data.length,
 				});
 			},
-			updateChangeTaskStatus: function (
+			updateChangeTaskStatus(
 				change_task_id,
 				change_task_status
 			) {

@@ -2,7 +2,7 @@ import { Modal } from "bootstrap";
 
 export default {
 	methods: {
-		closeLoadingModal: function () {
+		closeLoadingModal() {
 			//Get loader modal
 			const loadingModal = new Modal(
 				document.getElementById("loadingModal")
@@ -18,7 +18,7 @@ export default {
 				loadingModal.hide();
 			}, 1000);
 		},
-		showLoadingModal: function (destination) {
+		showLoadingModal(destination) {
 			//Open up the loading modal
 			const loadingModal = new Modal(
 				document.getElementById("loadingModal")

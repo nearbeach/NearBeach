@@ -92,7 +92,7 @@
 		props: {
 			groupResults: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},
@@ -117,7 +117,7 @@
 			},
 		},
 		watch: {
-			groupNameModel: function () {
+			groupNameModel() {
 				// Tell user that we are searching for the group name
 				this.checkingGroupName = true;
 
@@ -129,7 +129,7 @@
 			},
 		},
 		methods: {
-			addNewGroup: function () {
+			addNewGroup() {
 				//Check to make sure everythign is validated
 				this.v$.$touch();
 
@@ -160,7 +160,7 @@
 						this.showErrorModal(error, "New Group", "");
 					});
 			},
-			checkGroupName: function () {
+			checkGroupName() {
 				//Send group name to backend to make sure it is not a duplicate
 				const data_to_send = new FormData();
 				data_to_send.set("search", this.groupNameModel);

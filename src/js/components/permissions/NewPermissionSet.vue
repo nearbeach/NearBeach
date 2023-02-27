@@ -59,7 +59,7 @@
 		},
 		mixins: [errorModalMixin],
 		methods: {
-			addNewPermissionSet: function () {
+			addNewPermissionSet() {
 				//Data to send
 				const data_to_send = new FormData();
 				data_to_send.set(

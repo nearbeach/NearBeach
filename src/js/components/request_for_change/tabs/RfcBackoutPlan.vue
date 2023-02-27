@@ -79,7 +79,7 @@
 			},
 			rfcResults: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},
@@ -95,7 +95,7 @@
 			},
 		},
 		methods: {
-			updateValidation: function () {
+			updateValidation() {
 				this.v$.$touch();
 
 				this.$emit("update_validation", {
@@ -103,7 +103,7 @@
 					value: !this.v$.$invalid,
 				});
 			},
-			updateValues: function (modelName, modelValue) {
+			updateValues(modelName, modelValue) {
 				this.$emit("update_values", {
 					modelName: modelName,
 					modelValue: modelValue,
@@ -111,7 +111,7 @@
 			},
 		},
 		watch: {
-			rfcBackoutPlanModel: function () {
+			rfcBackoutPlanModel() {
 				this.updateValues("rfcBackoutPlan", this.rfcBackoutPlanModel);
 				this.updateValidation();
 			},

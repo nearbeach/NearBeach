@@ -108,7 +108,7 @@
 			},
 			rfcResults: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},
@@ -134,7 +134,7 @@
 			},
 		},
 		methods: {
-			updateValues: function (modelName, modelValue) {
+			updateValues(modelName, modelValue) {
 				this.$emit("update_values", {
 					modelName: modelName,
 					modelValue: modelValue,
@@ -142,10 +142,10 @@
 			},
 		},
 		watch: {
-			rfcSummaryModel: function () {
+			rfcSummaryModel() {
 				this.updateValues("rfcSummaryModel", this.rfcSummaryModel);
 			},
-			rfcTitleModel: function () {
+			rfcTitleModel() {
 				this.updateValues("rfcTitleModel", this.rfcTitleModel);
 			},
 		},

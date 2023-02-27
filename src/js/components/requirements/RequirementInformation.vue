@@ -263,7 +263,7 @@
 			},
 		},
 		methods: {
-			updateRequirement: function () {
+			updateRequirement() {
 				// Check the validation first
 				this.v$.$touch();
 

@@ -357,7 +357,7 @@
 			}),
 		},
 		methods: {
-			sendData: function (data_to_send, url) {
+			sendData(data_to_send, url) {
 				//Open up the loading modal
 				this.showLoadingModal("Project");
 
@@ -372,7 +372,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			updateBackoutPlan: function () {
+			updateBackoutPlan() {
 				if (this.validationData.tab_4 === false) {
 					//The data isn't valid. Notify the user, and do nothing else
 					this.showErrorModal(
@@ -394,7 +394,7 @@
 					`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/backout/`
 				);
 			},
-			updateImplementation: function () {
+			updateImplementation() {
 				if (this.validationData.tab_3 === false) {
 					//The data isn't valid. Notify the user, and do nothing else
 					this.showErrorModal(
@@ -419,7 +419,7 @@
 					`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/implementation/`
 				);
 			},
-			updateRisk: function () {
+			updateRisk() {
 				if (this.validationData.tab_2 === false) {
 					//The data isn't valid. Notify the user, and do nothing else
 					this.showErrorModal("Please fill out all data", "Risk", "");
@@ -450,11 +450,11 @@
 					`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/risk/`
 				);
 			},
-			updateValidation: function (data) {
+			updateValidation(data) {
 				//Update the value
 				this.validationData[data.tab] = data.value;
 			},
-			updateTestPlan: function () {
+			updateTestPlan() {
 				if (this.validationData.tab_5 === false) {
 					//The data isn't valid. Notify the user, and do nothing else
 					this.showErrorModal(
@@ -476,7 +476,7 @@
 					`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/test/`
 				);
 			},
-			updateValues: function (data) {
+			updateValues(data) {
 				//Update the value
 				this.rfcData[data.modelName] = data.modelValue;
 			},

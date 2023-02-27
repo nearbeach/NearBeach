@@ -89,13 +89,13 @@
 			}),
 		},
 		methods: {
-			addNewCustomer: function () {
+			addNewCustomer() {
 				var addCustomerModal = new Modal(
 					document.getElementById("addCustomerModal")
 				);
 				addCustomerModal.show();
 			},
-			loadCustomerResults: function () {
+			loadCustomerResults() {
 				axios
 					.post(
 						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list/`
@@ -107,7 +107,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			updateCustomerResults: function (data) {
+			updateCustomerResults(data) {
 				this.customerResults = data;
 			},
 		},

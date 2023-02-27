@@ -226,7 +226,7 @@
 			}),
 		},
 		methods: {
-			handleFileUploads: function (fileList) {
+			handleFileUploads(fileList) {
 				/*Check that the size of the fileList is not too big
                   The boolean (0!=this.maxUploadSize) will product a 0 result when maxUploadSize is 0. Thus negating
                   the need for an extra if statement*/
@@ -249,13 +249,13 @@
 				//Extract the file name and place into the document description for the user
 				this.documentDescriptionModel = fileList[0].name;
 			},
-			resetForm: function () {
+			resetForm() {
 				//Blank out all the models
 				this.documentModel = "";
 				this.documentDescriptionModel = "";
 				this.uploadPercentage = "";
 			},
-			uploadFile: function () {
+			uploadFile() {
 				//Create the data to send
 				const data_to_send = new FormData();
 				data_to_send.set(
@@ -308,7 +308,7 @@
 			},
 		},
 		watch: {
-			maxUploadSize: function () {
+			maxUploadSize() {
 				//If the user has set 0 -> just say "No Upload Limit"
 				if (this.maxUploadSize === 0) {
 					return "No Upload Limit";

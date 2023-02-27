@@ -123,7 +123,7 @@
 		},
 		mixins: [errorModalMixin],
 		methods: {
-			getMyObjects: function () {
+			getMyObjects() {
 				//Use axios to get the objects assigned to me
 				axios
 					.post(`${this.rootUrl}dashboard/get/my_objects/`)
@@ -139,7 +139,7 @@
 			},
 		},
 		computed: {
-			countObjects: function () {
+			countObjects() {
 				return (
 					this.objectResults.requirement.length +
 					this.objectResults.project.length +

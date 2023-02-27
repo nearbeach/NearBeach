@@ -13,7 +13,7 @@ export default {
 		}),
 	},
 	methods: {
-		uploadImage: function (blobInfo, success, failure, progress) {
+		uploadImage(blobInfo, success, failure, progress) {
 			//Create the form
 			const data_to_send = new FormData();
 			data_to_send.set("document", blobInfo.blob(), blobInfo.filename());

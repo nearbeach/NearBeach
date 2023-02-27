@@ -98,7 +98,7 @@
 			}),
 		},
 		methods: {
-			createdNewOrganisation: function (data) {
+			createdNewOrganisation(data) {
 				//We have recieved a new organisation that the user has created.
 				//Place them into the model
 				this.stakeholderModel = data;
@@ -108,7 +108,7 @@
 					.getElementById("newOrganisationModalCloseButton")
 					.click();
 			},
-			fetchOptions: function (search, loading) {
+			fetchOptions(search, loading) {
 				this.searchTrigger({
 					return_function: this.getOrganisationData,
 					searchTimeout: this.searchTimeout,
@@ -116,7 +116,7 @@
 					loading: loading,
 				});
 			},
-			getOrganisationData: function (search, loading) {
+			getOrganisationData(search, loading) {
 				// Save the seach data in FormData
 				const data_to_send = new FormData();
 				data_to_send.set("search", search);
@@ -162,7 +162,7 @@
 						loader_element.style.display = "none";
 					});
 			},
-			openNewOrganisationModal: function () {
+			openNewOrganisationModal() {
 				var newModal = new Modal(
 					document.getElementById("newOrganisationModal")
 				);
@@ -176,7 +176,7 @@
 			},
 		},
 		watch: {
-			stakeholderModel: function () {
+			stakeholderModel() {
 				//Send the changes upstream
 				this.$emit("update_stakeholder_model", this.stakeholderModel);
 			},

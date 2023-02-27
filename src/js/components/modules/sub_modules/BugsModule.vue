@@ -128,13 +128,13 @@
 			}),
 		},
 		methods: {
-			addNewBug: function () {
+			addNewBug() {
 				var addBugModal = new Modal(
 					document.getElementById("addBugModal")
 				);
 				addBugModal.show();
 			},
-			appendBugList: function (data) {
+			appendBugList(data) {
 				//Create object for the data
 				let data_object = data[0].fields;
 
@@ -144,7 +144,7 @@
 				//Append the data
 				this.bugList.push(data_object);
 			},
-			getBugHyperLink: function (bug) {
+			getBugHyperLink(bug) {
 				if (
 					bug.bug_client__list_of_bug_client__bug_client_name ==
 					"Bugzilla"
@@ -153,7 +153,7 @@
 				}
 				return "javascript:void(0)";
 			},
-			getBugList: function () {
+			getBugList() {
 				//We don't need to get the bug list when destination is requirement_items
 				if (this.destination === "requirement_item") {
 					//Jet pack out of there
@@ -177,7 +177,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			removeBug: function (bug_id) {
+			removeBug(bug_id) {
 				//Create data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("bug_id", bug_id);

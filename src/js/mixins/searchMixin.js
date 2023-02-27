@@ -1,6 +1,6 @@
 export default {
 	methods: {
-		searchTrigger: function (obj) {
+		searchTrigger(obj) {
 			//obj is an object passed through with references to the original sources. We will manipulate these sources
 
 			//Reset the timer if it exists
@@ -16,7 +16,7 @@ export default {
 				this.searchDefined(obj);
 			}
 		},
-		searchDefined: function (obj) {
+		searchDefined(obj) {
 			// Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
 			if (obj.search.length >= 3) {
 				obj.searchTimeout = setTimeout(
@@ -27,7 +27,7 @@ export default {
 				);
 			}
 		},
-		searchUndefined: function (obj) {
+		searchUndefined(obj) {
 			// Reset the clock, to only search if there is an uninterupted 0.5s of no typing.
 			obj.searchTimeout = setTimeout(obj.return_function, 500);
 		},

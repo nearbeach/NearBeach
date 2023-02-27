@@ -208,7 +208,7 @@
 			},
 		},
 		watch: {
-			kanbanBoardNameModel: function () {
+			kanbanBoardNameModel() {
 				//Apply checking flag
 				this.checkingKanbanBoardName = true;
 
@@ -239,7 +239,7 @@
 			},
 		},
 		methods: {
-			addNewKanban: function () {
+			addNewKanban() {
 				//Check form validation
 				this.v$.$touch();
 
@@ -284,7 +284,7 @@
 					})
 					.catch((error) => {});
 			},
-			checkKanbanBoardName: function () {
+			checkKanbanBoardName() {
 				//Send the Kanban board name to the backend - it will send back the results.
 				const data_to_send = new FormData();
 				data_to_send.set(
@@ -307,10 +307,10 @@
 					})
 					.catch((error) => {});
 			},
-			updateGroupModel: function (data) {
+			updateGroupModel(data) {
 				this.groupModel = data;
 			},
-			updatePropertyList: function (data) {
+			updatePropertyList(data) {
 				this[data.source] = data.data;
 			},
 		},

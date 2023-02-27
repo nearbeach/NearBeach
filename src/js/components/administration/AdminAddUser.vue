@@ -160,7 +160,7 @@
 		},
 		mixins: [errorModalMixin],
 		methods: {
-			addUser: function () {
+			addUser() {
 				//Create the data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("username", this.userModel);
@@ -185,7 +185,7 @@
 						this.showErrorModal(error, "Admin Add user", "");
 					});
 			},
-			getData: function () {
+			getData() {
 				//Use Axios to obtain all the group, permission-set, and user results
 				axios
 					.post(`${this.rootUrl}object_data/admin_add_user/`)

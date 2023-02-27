@@ -91,7 +91,7 @@
 			}),
 		},
 		methods: {
-			addNote: function () {
+			addNote() {
 				//Create the data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("note", this.cardNoteModel);
@@ -114,7 +114,7 @@
 					})
 					.catch((error) => {});
 			},
-			closeModal: function () {
+			closeModal() {
 				document
 					.getElementById("cardInformationModalCloseButton")
 					.click();

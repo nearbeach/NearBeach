@@ -261,7 +261,7 @@
 				staticUrl: "getStaticUrl",
 				userLevel: "getUserLevel",
 			}),
-			getStakeholderImage: function () {
+			getStakeholderImage() {
 				const image =
 					this.stakeholderModel.organisation_profile_picture;
 				if (image === "" || image === null) {
@@ -300,7 +300,7 @@
 			},
 		},
 		methods: {
-			updateRequirementItem: function () {
+			updateRequirementItem() {
 				// Check the validation first
 				this.v$.$touch();
 

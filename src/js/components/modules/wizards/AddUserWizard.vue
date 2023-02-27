@@ -144,7 +144,7 @@
 			};
 		},
 		methods: {
-			addUser: function () {
+			addUser() {
 				//Construct the data_to_send array
 				const data_to_send = new FormData();
 
@@ -191,7 +191,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			getUserList: function () {
+			getUserList() {
 				//If destination is '' or locationId = 0, there will be no information to get. Escape
 				if (
 					this.destination === "" ||
@@ -217,7 +217,7 @@
 			},
 		},
 		watch: {
-			refreshUserList: function () {
+			refreshUserList() {
 				//Looks like the system has send the call function to reset the user list.
 				if (this.refreshUserList) {
 					this.getUserList();

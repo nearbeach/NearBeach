@@ -120,7 +120,7 @@
 			}),
 		},
 		methods: {
-			addFolder: function () {
+			addFolder() {
 				//Construct the data to send
 				const data_to_send = new FormData();
 				data_to_send.set(

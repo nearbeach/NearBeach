@@ -143,7 +143,7 @@
 			},
 			rfcResults: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},
@@ -189,7 +189,7 @@
 			},
 		},
 		methods: {
-			updateValidation: function () {
+			updateValidation() {
 				this.v$.$touch();
 
 				this.$emit("update_validation", {
@@ -197,7 +197,7 @@
 					value: !this.v$.$invalid,
 				});
 			},
-			updateValues: function (modelName, modelValue) {
+			updateValues(modelName, modelValue) {
 				this.$emit("update_values", {
 					modelName: modelName,
 					modelValue: modelValue,
@@ -205,34 +205,34 @@
 			},
 		},
 		watch: {
-			rfcPriority: function () {
+			rfcPriority() {
 				this.updateValues("rfcPriority", this.rfcPriority);
 				this.updateValidation();
 			},
-			rfcPriorityModel: function () {
+			rfcPriorityModel() {
 				this.updateValues("rfcPriorityModel", this.rfcPriorityModel);
 				this.updateValidation();
 			},
-			rfcRisk: function () {
+			rfcRisk() {
 				this.updateValues("rfcRisk", this.rfcRisk);
 				this.updateValidation();
 			},
-			rfcRiskModel: function () {
+			rfcRiskModel() {
 				this.updateValues("rfcRiskModel", this.rfcRiskModel);
 				this.updateValidation();
 			},
-			rfcRiskSummaryModel: function () {
+			rfcRiskSummaryModel() {
 				this.updateValues(
 					"rfcRiskSummaryModel",
 					this.rfcRiskSummaryModel
 				);
 				this.updateValidation();
 			},
-			rfcImpact: function () {
+			rfcImpact() {
 				this.updateValues("rfcImpact", this.rfcImpact);
 				this.updateValidation();
 			},
-			rfcImpactModel: function () {
+			rfcImpactModel() {
 				this.updateValues("rfcImpactModel", this.rfcImpactModel);
 				this.updateValidation();
 			},

@@ -283,7 +283,7 @@
 			},
 		},
 		watch: {
-			propertyList: function () {
+			propertyList() {
 				this.localPropertyList = this.propertyList;
 			},
 		},
@@ -293,7 +293,7 @@
 			}),
 		},
 		methods: {
-			addItem: function () {
+			addItem() {
 				//Check to make sure it isn't blank
 				if (this.newPropertyItem == "") {
 					return;
@@ -314,7 +314,7 @@
 					.getElementById(`addItemClose${this.propertyName}`)
 					.click();
 			},
-			deleteItem: function () {
+			deleteItem() {
 				//Construct the data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("delete_item_id", this.deleteItemId);
@@ -360,7 +360,7 @@
 						);
 					});
 			},
-			editItem: function (event) {
+			editItem(event) {
 				//Get the id and title from the item
 				this.newPropertyItem = event.target.dataset.title;
 				this.singleItemId = event.target.dataset.id;
@@ -441,7 +441,7 @@
 						);
 					});
 			},
-			getMaxId: function () {
+			getMaxId() {
 				//Lets use some math trickery
 				const ids = this.localPropertyList.map(
 					(property) => property.id
@@ -453,7 +453,7 @@
 				//Return the last array
 				return sorted[ids.length - 1];
 			},
-			newModeAddItem: function (/*var*/) {
+			newModeAddItem(/*var*/) {
 				//NEW MODE -> we are creating a NEW kanban board
 				//Depending if there is an ID associated with this depends if we are actually adding an extra item or
 				//editing an already existing one.
@@ -479,13 +479,13 @@
 				this.singleItemId = "";
 				this.newPropertyItem = "";
 			},
-			openModal: function () {
+			openModal() {
 				var newItemModal = new Modal(
 					document.getElementById(`addItem${this.propertyName}`)
 				);
 				newItemModal.show();
 			},
-			removeItem: function (id) {
+			removeItem(id) {
 				if (this.isNewMode) {
 					//Filter out the id we want to remove
 					this.localPropertyList = this.localPropertyList.filter(
@@ -526,7 +526,7 @@
 					deleteItemModal.show();
 				}
 			},
-			sendPropertyListUp: function () {
+			sendPropertyListUp() {
 				this.$emit("update_property_list", {
 					source: this.source,
 					data: this.localPropertyList,

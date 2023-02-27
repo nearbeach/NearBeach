@@ -154,7 +154,7 @@
 			}),
 		},
 		methods: {
-			extractObjectDescription: function (link) {
+			extractObjectDescription(link) {
 				/*
                 The following function will accept a link in. It will then check what that link is connected to. From
                 there it will determine which fields it will extract out.
@@ -194,7 +194,7 @@
                     </a>
                 `;
 			},
-			extractObjectStatus: function (link) {
+			extractObjectStatus(link) {
 				/*
                 The following function will accept a link in. It will then check what that link is connected to. From
                 there it will determine what status field it will extract out.
@@ -209,14 +209,14 @@
 
 				return object_status;
 			},
-			newRequirementLink: function () {
+			newRequirementLink() {
 				//Open up the modal
 				var elem_modal = new Modal(
 					document.getElementById("newRequirementLinkModal")
 				);
 				elem_modal.show();
 			},
-			removeLink: function (link_id) {
+			removeLink(link_id) {
 				//Use Axios to send data to the backend
 				const data_to_send = new FormData();
 				data_to_send.set("object_assignment_id", link_id);
@@ -234,19 +234,19 @@
 						});
 					});
 			},
-			updateItemLinkResults: function () {
+			updateItemLinkResults() {
 				//Get the data from the database
 				axios.post("data/item_links/").then((response) => {
 					this.itemLinkResults = response.data;
 				});
 			},
-			updateLinkResults: function () {
+			updateLinkResults() {
 				//Get the data from the database
 				axios.post("data/links/").then((response) => {
 					this.linkResults = response.data;
 				});
 			},
-			updateModel: function () {
+			updateModel() {
 				this.updateLinkResults();
 				this.updateItemLinkResults();
 			},

@@ -96,11 +96,11 @@
 			window.removeEventListener("scroll", this.scrollProcedure);
 		},
 		methods: {
-			doubleClickedCard: function (data) {
+			doubleClickedCard(data) {
 				//Send data upstream
 				this.$emit("double_clicked_card", data);
 			},
-			resizeProcedure: function () {
+			resizeProcedure() {
 				// Get the screen size and the columns width
 				const columns_width = this.columnResults.length * 400;
 				let kanban_container_width =
@@ -129,7 +129,7 @@
 					});
 				}
 			},
-			scrollProcedure: function () {
+			scrollProcedure() {
 				//Make sure the kanban-sticky-row matches the scroll left for the kanban-container
 				var kanban_sticky =
 						document.getElementsByClassName("kanban-sticky-row")[0],

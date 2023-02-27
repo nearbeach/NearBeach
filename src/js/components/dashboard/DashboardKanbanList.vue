@@ -51,7 +51,7 @@
 		}),
 		mixins: [errorModalMixin],
 		methods: {
-			getMyKanbanList: function () {
+			getMyKanbanList() {
 				//Use axios to get data
 				axios
 					.post(`${this.rootUrl}dashboard/get/kanban_list/`)

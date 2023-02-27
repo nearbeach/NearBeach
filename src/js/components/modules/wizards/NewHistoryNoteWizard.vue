@@ -98,7 +98,7 @@
 			}),
 		},
 		methods: {
-			submitNote: function () {
+			submitNote() {
 				//Construct the form data to send
 				const data_to_send = new FormData();
 				data_to_send.set("destination", this.destination);

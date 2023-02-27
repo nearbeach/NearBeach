@@ -135,7 +135,7 @@
 			};
 		},
 		methods: {
-			addGroup: function () {
+			addGroup() {
 				//Send the database the new groups to add
 				//Get the data_to_send ready
 				const data_to_send = new FormData();
@@ -165,7 +165,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			getGroupList: function () {
+			getGroupList() {
 				axios
 					.post(
 						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_list_all/`

@@ -213,21 +213,21 @@
 			};
 		},
 		watch: {
-			organisationNameModel: function () {
+			organisationNameModel() {
 				//If user changes anything - reset the duplicate results
 				this.duplicateOrganisations = [];
 			},
-			organisationWebsiteModel: function () {
+			organisationWebsiteModel() {
 				//If user changes anything - reset the duplicate results
 				this.duplicateOrganisations = [];
 			},
-			organisationEmailModel: function () {
+			organisationEmailModel() {
 				//If user changes anything - reset the duplicate results
 				this.duplicateOrganisations = [];
 			},
 		},
 		methods: {
-			addOrganisation: function () {
+			addOrganisation() {
 				// Check the validation first
 				this.v$.$touch();
 
@@ -258,7 +258,7 @@
 						this.showErrorModal(error, "organisation", "");
 					});
 			},
-			dataToSend: function () {
+			dataToSend() {
 				const data_to_send = new FormData();
 				data_to_send.set(
 					"organisation_name",
@@ -276,7 +276,7 @@
 				//Return the data
 				return data_to_send;
 			},
-			uploadOrganisationData: function () {
+			uploadOrganisationData() {
 				//Use Axios to send the data
 				//Get the data to send
 				axios

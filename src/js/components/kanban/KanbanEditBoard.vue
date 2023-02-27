@@ -127,10 +127,10 @@
 			},
 		},
 		methods: {
-			backToBoard: function () {
+			backToBoard() {
 				window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/`;
 			},
-			closeKanban: function () {
+			closeKanban() {
 				axios
 					.post(
 						`${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/close_board/`
@@ -142,7 +142,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			updatePropertyList: function (data) {
+			updatePropertyList(data) {
 				this[data.source] = data.data;
 			},
 		},

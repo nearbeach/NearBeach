@@ -253,7 +253,7 @@
 				rootUrl: "getRootUrl",
 				staticUrl: "getStaticUrl",
 			}),
-			checkDateValidation: function () {
+			checkDateValidation() {
 				//Check the validation for each date
 				const start_date =
 						!this.v$.rfcImplementationStartModel.required &&
@@ -301,7 +301,7 @@
 
 				return end_date.getTime();
 			},
-			fetchOptions: function (search, loading) {
+			fetchOptions(search, loading) {
 				this.searchTrigger({
 					return_function: this.getChangeLeadData,
 					searchTimeout: this.searchTimeout,
@@ -309,7 +309,7 @@
 					loading: loading,
 				});
 			},
-			getChangeLeadData: function (search, loading) {
+			getChangeLeadData(search, loading) {
 				// Save the seach data in FormData
 				const data_to_send = new FormData();
 				data_to_send.set("search", search);
@@ -361,14 +361,14 @@
 						loader_element.style.display = "none";
 					});
 			},
-			updateGroupModel: function (data) {
+			updateGroupModel(data) {
 				this.groupModel = data;
 
 				//Update up stream
 				this.updateValues("groupModel", data);
 				this.updateValidation();
 			},
-			updateValidation: function () {
+			updateValidation() {
 				this.v$.$touch();
 
 				this.$emit("update_validation", {
@@ -376,7 +376,7 @@
 					value: !this.v$.$invalid,
 				});
 			},
-			updateValues: function (modelName, modelValue) {
+			updateValues(modelName, modelValue) {
 				this.$emit("update_values", {
 					modelName: modelName,
 					modelValue: modelValue,
@@ -384,14 +384,14 @@
 			},
 		},
 		watch: {
-			rfcChangeLeadModel: function () {
+			rfcChangeLeadModel() {
 				this.updateValues(
 					"rfcChangeLeadModel",
 					this.rfcChangeLeadModel
 				);
 				this.updateValidation();
 			},
-			rfcImplementationStartModel: function () {
+			rfcImplementationStartModel() {
 				//Check to make sure endModel >= startModel;
 				if (
 					this.rfcImplementationStartModel >
@@ -408,7 +408,7 @@
 				);
 				this.updateValidation();
 			},
-			rfcImplementationEndModel: function () {
+			rfcImplementationEndModel() {
 				//Check to make sure the releaseModel >= endModel
 				if (this.rfcImplementationEndModel > this.rfcReleaseModel) {
 					this.rfcReleaseModel = this.rfcImplementationEndModel;
@@ -430,7 +430,7 @@
 				);
 				this.updateValidation();
 			},
-			rfcReleaseModel: function () {
+			rfcReleaseModel() {
 				//Check to make sure the releaseModel >= endModel
 				if (this.rfcImplementationEndModel > this.rfcReleaseModel) {
 					this.rfcReleaseModel = this.rfcImplementationEndModel;
@@ -440,19 +440,19 @@
 				this.updateValues("rfcReleaseModel", this.rfcReleaseModel);
 				this.updateValidation();
 			},
-			rfcStatus: function () {
+			rfcStatus() {
 				this.updateValues("rfcStatus", this.rfcStatus);
 				this.updateValidation();
 			},
-			rfcType: function () {
+			rfcType() {
 				this.updateValues("rfcType", this.rfcType);
 				this.updateValidation();
 			},
-			rfcTypeModel: function () {
+			rfcTypeModel() {
 				this.updateValues("rfcTypeModel", this.rfcTypeModel);
 				this.updateValidation();
 			},
-			rfcVersionModel: function () {
+			rfcVersionModel() {
 				this.updateValues("rfcVersionModel", this.rfcVersionModel);
 				this.updateValidation();
 			},

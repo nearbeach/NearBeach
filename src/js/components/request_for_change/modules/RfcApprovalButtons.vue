@@ -68,7 +68,7 @@
 			...mapGetters({
 				rootUrl: "getRootUrl",
 			}),
-			showApprovalButton: function () {
+			showApprovalButton() {
 				// Only show this section when;
 				// - RFC Status is waiting for approval
 				// - User is a group leader (groupLeaderCount > 0)
@@ -79,21 +79,21 @@
 			},
 		},
 		methods: {
-			approveRfc: function () {
+			approveRfc() {
 				//Send the approval signal to the backend
 				const data_to_send = new FormData();
 				data_to_send.set("rfc_status", "3"); //Value 2: Waiting for Approval
 
 				this.sendStatus(data_to_send);
 			},
-			rejectRfc: function () {
+			rejectRfc() {
 				//Send the rejection signal to the backend
 				const data_to_send = new FormData();
 				data_to_send.set("rfc_status", "6"); //Value 2: Waiting for Approval
 
 				this.sendStatus(data_to_send);
 			},
-			sendStatus: function (data_to_send) {
+			sendStatus(data_to_send) {
 				//Open up the loading modal
 				this.showLoadingModal("Request for Change");
 

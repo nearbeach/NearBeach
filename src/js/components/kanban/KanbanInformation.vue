@@ -136,7 +136,7 @@
 			}),
 		},
 		watch: {
-			cardId: function () {
+			cardId() {
 				this.refreshUserList = true;
 			},
 		},
@@ -149,11 +149,11 @@
 			};
 		},
 		methods: {
-			doubleClickedCard: function (data) {
+			doubleClickedCard(data) {
 				//Update the cardInformationId with the card id
 				this.cardInformation = data;
 			},
-			newCard: function (data) {
+			newCard(data) {
 				//this.newCardInfo = data;
 
 				this.$store.commit({
@@ -161,10 +161,10 @@
 					newCard: data,
 				});
 			},
-			resetRefreshUserList: function () {
+			resetRefreshUserList() {
 				this.refreshUserList = false;
 			},
-			updateCard: function (data) {
+			updateCard(data) {
 				//Loop through the results - when the id's match. Update the data.
 				this.localKanbanCardResults.forEach((row, index) => {
 					//Check to see if the primary keys match - if they do update the data

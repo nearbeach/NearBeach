@@ -248,7 +248,7 @@
 			},
 		},
 		methods: {
-			saveItem: function () {
+			saveItem() {
 				// Check the validation first
 				this.v$.$touch();
 
@@ -298,7 +298,7 @@
 			},
 		},
 		watch: {
-			itemStatusList: function () {
+			itemStatusList() {
 				//We need to transform the data from the JSON array given to one vue-select can read
 				this.statusItemFixList = this.itemStatusList.map((row) => {
 					return {
@@ -307,7 +307,7 @@
 					};
 				});
 			},
-			itemTypeList: function () {
+			itemTypeList() {
 				this.typeItemFixList = this.itemTypeList.map((row) => {
 					return {
 						value: row.pk,

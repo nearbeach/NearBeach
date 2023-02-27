@@ -197,7 +197,7 @@
 			},
 		},
 		methods: {
-			setProfilePicture: function () {
+			setProfilePicture() {
 				let profile_picture =
 					this.organisationResults[0].fields
 						.organisation_profile_picture;
@@ -213,7 +213,7 @@
 					this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
 				}
 			},
-			updateOrganisation: function () {
+			updateOrganisation() {
 				//Check validation
 				this.v$.$touch();
 
@@ -259,7 +259,7 @@
 						);
 					});
 			},
-			updateProfilePicture: function () {
+			updateProfilePicture() {
 				//Contact the API to get the location of the new image
 				axios
 					.post(

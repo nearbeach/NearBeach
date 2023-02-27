@@ -70,7 +70,7 @@
 		},
 		mixins: [iconMixin],
 		methods: {
-			getProfilePicture: function (organisation) {
+			getProfilePicture(organisation) {
 				const image = organisation.fields.organisation_profile_picture;
 
 				//If customer profile is blank - return default picture

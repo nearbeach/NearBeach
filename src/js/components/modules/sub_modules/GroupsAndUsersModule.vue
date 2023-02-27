@@ -174,19 +174,19 @@
 			};
 		},
 		methods: {
-			addNewGroup: function () {
+			addNewGroup() {
 				var addGroupModal = new Modal(
 					document.getElementById("addGroupModal")
 				);
 				addGroupModal.show();
 			},
-			addNewUser: function () {
+			addNewUser() {
 				var addUserModal = new Modal(
 					document.getElementById("addUserModal")
 				);
 				addUserModal.show();
 			},
-			getGroupList: function () {
+			getGroupList() {
 				//Get the data from the database
 				axios
 					.post(
@@ -199,7 +199,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			getUserList: function () {
+			getUserList() {
 				//Get the data from the database
 				axios
 					.post(
@@ -212,7 +212,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			removeGroup: function (group_id) {
+			removeGroup(group_id) {
 				//Setup data to send
 				const data_to_send = new FormData();
 				data_to_send.set("group_id", group_id);
@@ -236,7 +236,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			removeUser: function (username) {
+			removeUser(username) {
 				//Optimistic Update - we assume everything is going to be ok
 				//Remove the user from the list
 				this.userList = this.userList.filter((row) => {
@@ -257,17 +257,17 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			resetRefreshUserList: function () {
+			resetRefreshUserList() {
 				this.refreshUserListBoolean = false;
 			},
-			updateGroupList: function (data) {
+			updateGroupList(data) {
 				//Clear the group list
 				this.groupList = data;
 
 				//Now update the list of potential users
 				this.refreshUserListBoolean = true;
 			},
-			updateUserList: function (data) {
+			updateUserList(data) {
 				//Loop throught the data array and add each line item
 				// data.forEach(row => {
 				//     this.userList.push(row);

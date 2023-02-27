@@ -264,7 +264,7 @@
 		},
 		mixins: [iconMixin],
 		methods: {
-			addNewContact: function () {
+			addNewContact() {
 				var new_customer_modal = new Modal(
 					document.getElementById("addCustomerModal")
 				);

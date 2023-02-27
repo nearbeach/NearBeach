@@ -199,19 +199,19 @@
 			}),
 		},
 		methods: {
-			addFolder: function () {
+			addFolder() {
 				var addFolderModal = new Modal(
 					document.getElementById("addFolderModal")
 				);
 				addFolderModal.show();
 			},
-			addLink: function () {
+			addLink() {
 				var addLinkModal = new Modal(
 					document.getElementById("addLinkModal")
 				);
 				addLinkModal.show();
 			},
-			getDocumentList: function () {
+			getDocumentList() {
 				axios
 					.post(
 						`${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/files/`
@@ -222,7 +222,7 @@
 						this.updateDocumentFilteredList();
 					});
 			},
-			getFolderList: function () {
+			getFolderList() {
 				axios
 					.post(
 						`${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/folders/`
@@ -233,7 +233,7 @@
 						this.updateFolderFilteredList();
 					});
 			},
-			getIcon: function (document) {
+			getIcon(document) {
 				//If the document is a weblink - just return the link image
 				if (
 					document.document_key__document_url_location != "" &&
@@ -268,7 +268,7 @@
 						return this.icons.documentText;
 				}
 			},
-			goToParentDirectory: function () {
+			goToParentDirectory() {
 				//Filter for the directory - then obtain it's parent directory variable.
 				var filtered_data = this.folderList.filter((row) => {
 					return row.pk == this.currentFolder;
@@ -277,7 +277,7 @@
 				//Update the current directory to the parent folder
 				this.updateCurrentFolder(filtered_data.fields.parent_folder);
 			},
-			shortName: function (input_string) {
+			shortName(input_string) {
 				//The following method will determine if we need an ellipsis (...) at the end of the file/folder name
 				const max_string_length = 50;
 
@@ -295,7 +295,7 @@
 				//Return the new string
 				return new_string;
 			},
-			updateCurrentFolder: function (new_folder_id) {
+			updateCurrentFolder(new_folder_id) {
 				//Update the current folder id
 				this.currentFolder = new_folder_id;
 
@@ -303,33 +303,33 @@
 				this.updateDocumentFilteredList();
 				this.updateFolderFilteredList();
 			},
-			updateDocumentList: function (data) {
+			updateDocumentList(data) {
 				//Add data to the docuemnt List
 				this.documentList.push(data[0]);
 
 				//Update the filtered list
 				this.updateDocumentFilteredList();
 			},
-			updateDocumentFilteredList: function () {
+			updateDocumentFilteredList() {
 				//Filter the results to contain only the documents in the current folder
 				this.documentFilteredList = this.documentList.filter((row) => {
 					return row.folder == this.currentFolder;
 				});
 			},
-			updateFolderList: function (data) {
+			updateFolderList(data) {
 				//Append the first row of the data (there will always be one row)
 				this.folderList.push(data[0]);
 
 				//Update the folder filtered list
 				this.updateFolderFilteredList();
 			},
-			updateFolderFilteredList: function () {
+			updateFolderFilteredList() {
 				//Filter the results to contain only the folders in the current folder
 				this.folderFilteredList = this.folderList.filter((row) => {
 					return row.fields.parent_folder == this.currentFolder;
 				});
 			},
-			uploadDocument: function () {
+			uploadDocument() {
 				var uploadDocumentModal = new Modal(
 					document.getElementById("uploadDocumentModal")
 				);

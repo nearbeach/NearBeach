@@ -170,7 +170,7 @@
 			};
 		},
 		methods: {
-			getSearchResults: function () {
+			getSearchResults() {
 				// Setup the data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("search", this.searchModel);
@@ -190,7 +190,7 @@
 			},
 		},
 		watch: {
-			includeClosedObjectsModel: function () {
+			includeClosedObjectsModel() {
 				//Stop the clock
 				if (this.searchTimeout != "") {
 					//Stop the clock!
@@ -200,7 +200,7 @@
 				//Get the search results - we don't need to wait for this case
 				this.getSearchResults();
 			},
-			searchModel: function () {
+			searchModel() {
 				this.searchTrigger({
 					return_function: this.getSearchResults,
 					searchTimeout: this.searchTimeout,

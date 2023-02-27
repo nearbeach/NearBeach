@@ -69,7 +69,7 @@
 			},
 		},
 		watch: {
-			groupModel: function () {
+			groupModel() {
 				//Send the data upstream
 				this.$emit("update_group_model", this.groupModel);
 			},

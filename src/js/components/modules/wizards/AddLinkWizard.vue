@@ -190,7 +190,7 @@
 			}),
 		},
 		methods: {
-			addLink: function () {
+			addLink() {
 				const data_to_send = new FormData();
 				data_to_send.set(
 					"document_description",

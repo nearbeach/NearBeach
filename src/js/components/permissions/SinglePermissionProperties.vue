@@ -44,7 +44,7 @@
 			};
 		},
 		watch: {
-			propertyModel: function () {
+			propertyModel() {
 				//If there are no values - use the default value
 				if (this.propertyModel === null) {
 					//Define the default of 0
@@ -59,7 +59,7 @@
 			},
 		},
 		methods: {
-			getLabel: function (input_data) {
+			getLabel(input_data) {
 				//Use the input data to filter the list of choices, to object the label
 				const filtered_value = this.listOfChoices.filter((row) => {
 					return row[0] === input_data;

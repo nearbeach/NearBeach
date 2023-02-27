@@ -64,7 +64,7 @@
 			};
 		},
 		methods: {
-			getUserList: function () {
+			getUserList() {
 				//Get the data from the database
 				axios
 					.post(`${this.rootUrl}dashboard/get/users_with_no_groups/`)
@@ -75,7 +75,7 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			goToUser: function (user_id) {
+			goToUser(user_id) {
 				window.location.href = `${this.rootUrl}user_information/${user_id}/`;
 			},
 		},

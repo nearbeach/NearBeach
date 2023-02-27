@@ -261,15 +261,15 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			updateDates: function (data) {
+			updateDates(data) {
 				//Update both the start and end dates
 				this.projectStartDateModel = new Date(data.start_date);
 				this.projectEndDateModel = new Date(data.end_date);
 			},
-			updateGroupModel: function (data) {
+			updateGroupModel(data) {
 				this.groupModel = data;
 			},
-			updateStakeholderModel: function (data) {
+			updateStakeholderModel(data) {
 				this.stakeholderModel = data;
 			},
 		},

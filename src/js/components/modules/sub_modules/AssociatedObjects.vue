@@ -202,7 +202,7 @@
 			}),
 		},
 		methods: {
-			getAssociatedObjectResults: function () {
+			getAssociatedObjectResults() {
 				axios
 					.post(
 						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/associated_objects/`
@@ -214,7 +214,7 @@
 					})
 					.catch((error) => {});
 			},
-			getFriendlyDate: function (input_date) {
+			getFriendlyDate(input_date) {
 				var options = {
 						weekday: "long",
 						year: "numeric",

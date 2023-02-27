@@ -324,7 +324,7 @@
 				rfcImplementationStartModel: "getStartDate",
 				rfcReleaseModel: "getReleaseDateModel",
 			}),
-			checkDateValidation: function () {
+			checkDateValidation() {
 				//Check the validation for each date
 				const start_date =
 						!this.v$.rfcImplementationStartModel.required &&
@@ -404,24 +404,24 @@
 			},
 		},
 		methods: {
-			approveRFCStatus: function () {
+			approveRFCStatus() {
 				const data_to_send = new FormData();
 				data_to_send.set("rfc_status", "3"); //Value 3: Approved
 
 				//Send data
 				this.sendUpdate(data_to_send);
 			},
-			getStatus: function () {
+			getStatus() {
 				return this.rfcStatusDict[this.rfcResults[0].fields.rfc_status];
 			},
-			rejectRFCStatus: function () {
+			rejectRFCStatus() {
 				const data_to_send = new FormData();
 				data_to_send.set("rfc_status", "6"); //Value 6: Rejected
 
 				//Send data
 				this.sendUpdate(data_to_send);
 			},
-			sendUpdate: function (data_to_send) {
+			sendUpdate(data_to_send) {
 				axios
 					.post(
 						`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/update_status/`,
@@ -440,7 +440,7 @@
 						);
 					});
 			},
-			startRFCStatus: function () {
+			startRFCStatus() {
 				const data_to_send = new FormData();
 				data_to_send.set("rfc_status", 4);
 
@@ -493,13 +493,13 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			updateRFCStatus: function () {
+			updateRFCStatus() {
 				const data_to_send = new FormData();
 				data_to_send.set("rfc_status", "2"); //Value 2: Waiting for Approval
 
 				this.sendUpdate(data_to_send);
 			},
-			updateStateManagement: function () {
+			updateStateManagement() {
 				//Update the vuex
 				this.$store.commit({
 					type: "updateRfcDates",
@@ -508,7 +508,7 @@
 					startDateModel: this.localStartDate,
 				});
 			},
-			updateValues: function (data) {
+			updateValues(data) {
 				//Update the value
 				this[data.modelName] = data.modelValue;
 			},

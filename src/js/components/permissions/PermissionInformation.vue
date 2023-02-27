@@ -327,7 +327,7 @@
 		},
 		mixins: [errorModalMixin, loadingModalMixin],
 		methods: {
-			saveChanges: function () {
+			saveChanges() {
 				//Setup the data we want to send to the backend
 				const data_to_send = new FormData();
 				data_to_send.set(
@@ -388,7 +388,7 @@
 						this.showErrorModal(error, "Permission Set", "");
 					});
 			},
-			updatePropertyValue: function (data) {
+			updatePropertyValue(data) {
 				//Update the property with what we require
 				this[data.property] = data.value;
 			},

@@ -85,7 +85,7 @@
 			};
 		},
 		methods: {
-			getSearchResults: function () {
+			getSearchResults() {
 				//Setup data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("search", this.searchModel);
@@ -103,7 +103,7 @@
 			},
 		},
 		watch: {
-			searchModel: function () {
+			searchModel() {
 				this.searchTrigger({
 					return_function: this.getSearchResults,
 					searchTimeout: this.searchTimeout,

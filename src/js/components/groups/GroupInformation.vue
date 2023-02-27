@@ -69,13 +69,13 @@
 		props: {
 			groupResults: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},
 			parentGroupResults: {
 				type: Array,
-				default: function () {
+				default() {
 					return [];
 				},
 			},
@@ -93,7 +93,7 @@
 		},
 		mixins: [errorModalMixin, loadingModalMixin],
 		methods: {
-			updateGroup: function () {
+			updateGroup() {
 				//Construct data to send
 				const data_to_send = new FormData();
 				data_to_send.set("group_name", this.groupNameModel);
