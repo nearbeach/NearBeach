@@ -1,27 +1,27 @@
 .closed-folder {
-  i {
-    font-size: 10px;
-  }
+	i {
+		font-size: 10px;
+	}
 
-  ul {
-    display: none;
-  }
+	ul {
+		display: none;
+	}
 }
 
 .document-widget {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: flex-start;
-  padding: 10px 0;
-  text-align: center;
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: flex-start;
+	padding: 10px 0;
+	text-align: center;
 }
 
 .document-child {
-  width: 120px;
-  //height: 100px;
-  margin: 10px 7px;
+	width: 120px;
+	//height: 100px;
+	margin: 10px 7px;
 
-  &:hover {
-    background-color: #F4F2F2;
-  }
+	&:hover {
+		background-color: #f4f2f2;
+	}
 }

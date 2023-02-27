@@ -2,6 +2,7 @@
 build
 coverage
 NearBeach
+NearBeach/**
 .circleci
 .github
 .pytest_cache

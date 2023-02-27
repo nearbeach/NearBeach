@@ -6,8 +6,8 @@ NearBeach looks at security as a high importance. If you find any security issue
 
 The following versions are supported for security updates.
 
-| Version | Supported          |
-| ------- | ------------------ |
+| Version | Supported                 |
+| ------- | ------------------------- |
 | 0.28    | Until the release of 0.29 |
 
 ## Reporting a Vulnerability

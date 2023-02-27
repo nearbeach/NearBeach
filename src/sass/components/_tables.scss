@@ -1,28 +1,29 @@
 thead {
-  background-color: #cecece;
+	background-color: #cecece;
 }
 
-.requirement-link-type, .small-text {
-  padding: 0;
-  margin: 0;
-  font-weight: 300;
+.requirement-link-type,
+.small-text {
+	padding: 0;
+	margin: 0;
+	font-weight: 300;
 }
 
 td {
-  word-wrap: anywhere;
-  a {
-    text-decoration: none;
-    color: black
-  }
-  a:hover {
-    text-decoration: none;
-    color: black;
-    text-shadow: 1px 1px #cecece;
-  }
+	word-wrap: anywhere;
+	a {
+		text-decoration: none;
+		color: black;
+	}
+	a:hover {
+		text-decoration: none;
+		color: black;
+		text-shadow: 1px 1px #cecece;
+	}
 }
 
 .remove-link {
-    color: red;
-    float: right;
-    font-size: 20px;
+	color: red;
+	float: right;
+	font-size: 20px;
 }
