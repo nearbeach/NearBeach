@@ -93,9 +93,9 @@
             },
             userListResults: {
                 type: Array, 
-                default: function() { 
+                default() { 
                     return []; 
-                }, 
+                },
             },
         },
         data() {
@@ -107,12 +107,12 @@
             errorModalMixin,
         ],
         methods: {
-            addUser: function() {
+            addUser() {
                 //Show the user's modal
                 const addUserModal = new Modal(document.getElementById('addUserModal'))
                 addUserModal.show();
             },
-            isTeamLeader: function(username /* As an ID*/) {
+            isTeamLeader(username /* As an ID*/) {
                 //Get count of the data from userListResults, where username and group_leader == true
                 const count = this.userListResults.filter(row => {
                     return row.username === username && row.group_leader;
@@ -121,7 +121,7 @@
                 //If length > 0, return true
                 return count > 0;
             },
-            updateGroupLeader: function(event) {
+            updateGroupLeader(event) {
                 //Setup modal telling user of update
                 const loadingModal = new Modal("#loadingModal");
                 loadingModal.show();
