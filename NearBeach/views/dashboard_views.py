@@ -14,7 +14,9 @@ import json
 
 # Import NearBeach Models
 from NearBeach.models import (
+    KanbanBoard,
     KanbanCard,
+    KanbanColumn,
     ObjectAssignment,
     UserGroup,
     Task,
