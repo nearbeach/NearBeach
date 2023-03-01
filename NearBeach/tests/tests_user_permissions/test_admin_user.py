@@ -33,7 +33,6 @@ class AdminPermissionTests(TestCase):
         The following tests will make sure the admin can access most pages on the
         system.
         """
-        # urlObject = namedtuple('url','arguments','form_data','response_status_code', defaults=['/',[],{},200])
         URLTest = namedtuple(
             "URLTest",
             ["url", "args", "data", "status_code", "method"],
@@ -58,7 +57,6 @@ class AdminPermissionTests(TestCase):
             URLTest("new_project", [], {}, 200, "GET"),
             URLTest("new_request_for_change", [], {}, 200, "GET"),
             URLTest("new_requirement", [], {}, 200, "GET"),
-            # URLTest('new_requirement_item', [1], {"requirement_item_title":"A simple requirement item title","requirement_item_scope":"A simple requirement item scope","requirement_item_status":1,"requirement_item_type":1}, 200,'GET'),
             URLTest("new_task", [], {}, 200, "GET"),
             URLTest("new_user", [], {}, 200, "GET"),
             URLTest("organisation_information", [1], {}, 200, "GET"),
@@ -77,9 +75,7 @@ class AdminPermissionTests(TestCase):
             URLTest(
                 "add_notes", ["project", 1], {"note": "A simple note"}, 200, "POST"
             ),
-            # URLTest('add_user', ["project",1], {"username":1}, 200,"POST"),
             URLTest("add_link", ["project", 1], {}, 200, "POST"),
-            # URLTest('add_tags', ["project",1], {"tag":1}, 200,'POST'),
             URLTest("associated_objects", ["project", 1], {}, 200, "POST"),
             URLTest("bug_list", ["project", 1], {}, 200, "POST"),
             URLTest("customer_list", ["project", 1], {}, 200, "POST"),
