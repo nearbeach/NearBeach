@@ -52,11 +52,13 @@ def delete_level(request, kanban_board_id, *args, **kwargs):
     KanbanCard.objects.filter(
         is_deleted=False,
         kanban_level_id=form.cleaned_data["delete_item_id"],
+        kanban_board_id=kanban_board_id,
     ).update(kanban_level_id=form.cleaned_data["destination_item_id"])
 
     # Soft delete the old column
     deleted_level = KanbanLevel.objects.get(
         kanban_level_id=form.cleaned_data["delete_item_id"].kanban_level_id,
+        kanban_board_id=kanban_board_id,
     )
     deleted_level.is_deleted = True
     deleted_level.save()
@@ -109,7 +111,10 @@ def resort_level(request, kanban_board_id, *args, **kwargs):
 
     # Look through the item list and re-index the order
     for index, item in enumerate(items, start=0):
-        kanban_level_update = KanbanLevel.objects.get(kanban_level_id=item)
+        kanban_level_update = KanbanLevel.objects.get(
+            kanban_level_id=item,
+            kanban_board_id=kanban_board_id
+        )
         kanban_level_update.kanban_level_sort_number = index
         kanban_level_update.save()
 

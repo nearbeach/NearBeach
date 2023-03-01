@@ -58,11 +58,13 @@ def delete_column(request, kanban_board_id, *args, **kwargs):
     KanbanCard.objects.filter(
         is_deleted=False,
         kanban_column_id=form.cleaned_data["delete_item_id"],
+        kanban_board_id=kanban_board_id,
     ).update(kanban_column_id=form.cleaned_data["destination_item_id"])
 
     # Soft delete the old column
     deleted_column = KanbanColumn.objects.get(
         kanban_column_id=form.cleaned_data["delete_item_id"].kanban_column_id,
+        kanban_board_id=kanban_board_id,
     )
     deleted_column.is_deleted = True
     deleted_column.save()
@@ -116,7 +118,10 @@ def resort_column(request, kanban_board_id, *args, **kwargs):
 
     # Look through the item list and re-index the order
     for index, item in enumerate(items, start=0):
-        kanban_column_update = KanbanColumn.objects.get(kanban_column_id=item)
+        kanban_column_update = KanbanColumn.objects.get(
+            kanban_column_id=item,
+            kanban_board_id=kanban_board_id
+        )
         kanban_column_update.kanban_column_sort_number = index
         kanban_column_update.save()
 

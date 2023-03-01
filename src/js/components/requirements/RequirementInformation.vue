@@ -220,14 +220,40 @@
 			NSelect,
 			StakeholderInformation,
 		},
-		props: [
-			"defaultStakeholderImage",
-			"organisationResults",
-			"requirementResults",
-			"statusList",
-			"typeList",
-			"userLevel",
-		],
+		props: {
+			defaultStakeholderImage: {
+				type: String,
+				default: "",
+			},
+			organisationResults: {
+				type: Array,
+				default() {
+					return [];
+				},
+			},
+			requirementResults: {
+				type: Array,
+				default() {
+					return [];
+				},
+			},
+			statusList: {
+				type: Array,
+				default() {
+					return [];
+				},
+			}, 
+			typeList: {
+				type: Array,
+				default() {
+					return [];
+				},
+			},
+			userLevel:  {
+				type: Number,
+				default: 0
+			},
+		},
 		computed: {
 			...mapGetters({
 				rootUrl: "getRootUrl",

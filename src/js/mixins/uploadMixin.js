@@ -3,6 +3,9 @@ import axios from "axios";
 
 //VueX
 import { mapGetters } from "vuex";
+ 
+//Import Mixins
+import errorModalMixin from "./errorModalMixin";
 
 export default {
 	computed: {
@@ -12,6 +15,7 @@ export default {
 			rootUrl: "getRootUrl",
 		}),
 	},
+	mixins: [errorModalMixin],
 	methods: {
 		uploadImage(blobInfo, success, failure, progress) {
 			//Create the form
@@ -41,7 +45,11 @@ export default {
 					success(`/private/${response.data[0].document_key_id}`);
 				})
 				.catch((error) => {
-					failure("Yeah, shit didn't work");
+					this.showErrorModal(
+						error,
+						"kanban item delete",
+						this.kanbanBoardId
+					);
 				});
 		},
 	},

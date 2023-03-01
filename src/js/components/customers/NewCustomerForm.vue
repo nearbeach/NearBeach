@@ -112,7 +112,22 @@
 		components: {
 			NSelect,
 		},
-		props: ["flagValidationCheck", "organisationName", "titleList"],
+		props: {
+			flagValidationCheck: {
+				type: Boolean,
+				default: false,
+			},
+			organisationName: {
+				type: String,
+				default: "",
+			},
+			titleList: {
+				type: Array,
+				default() {
+					return [];
+				},
+			},
+		},
 		data() {
 			return {
 				customerEmailModel: "",

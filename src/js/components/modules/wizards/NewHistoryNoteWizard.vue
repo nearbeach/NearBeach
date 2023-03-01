@@ -85,7 +85,16 @@
 			editor: Editor,
 			Icon,
 		},
-		props: ["locationId", "destination"],
+		props: {
+			destination: {
+				type: String,
+				default: "",
+			},
+			locationId: {
+				type: Number,
+				default: 0,
+			},
+		},
 		mixins: [errorModalMixin, iconMixin],
 		data() {
 			return {

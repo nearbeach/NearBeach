@@ -50,17 +50,17 @@
 			},
 			renderGraph() {
 				//Declare size variables
-				var margin = { top: 10, right: 30, bottom: 20, left: 50 },
+				const margin = { top: 10, right: 30, bottom: 20, left: 50 },
 					width = 460 - margin.left - margin.right,
 					height = 400 - margin.top - margin.bottom;
 
 				//Clear the destination
-				var outward_location =
+				let outward_location =
 					document.getElementById("active_bug_graph");
 				outward_location.innerHTML = "";
 
 				//Start Rendering SVG
-				var svg = d3
+				let svg = d3
 					.select(outward_location)
 					.append("svg")
 					.attr("width", width + margin.left + margin.right)
@@ -70,25 +70,25 @@
 					.attr("id", "active_bug_d3")
 					.attr(
 						"transform",
-						"translate(" + margin.left + "," + margin.top + ")"
+						`translate(${margin.left}, ${margin.top})`
 					);
 
 				//Setup the x and y domain and range
-				var x = d3
+				const x = d3
 					.scaleBand()
 					.rangeRound([0, width], 0.15)
 					.paddingInner(0.2)
 					.paddingOuter(0.2);
 
-				var y = d3.scaleLinear().range([height, 0]);
+				const y = d3.scaleLinear().range([height, 0]);
 
 				//Get axis ready
-				var xAxis = d3.axisBottom().scale(x);
+				const xAxis = d3.axisBottom().scale(x);
 
-				var yAxis = d3.axisLeft().scale(y).ticks(10);
+				const yAxis = d3.axisLeft().scale(y).ticks(10);
 
 				//Get colour ready
-				var color = d3.scaleOrdinal(d3.schemePastel2);
+				const color = d3.scaleOrdinal(d3.schemePastel2);
 
 				//Render the Elements
 				svg.selectAll("#active_bug_d3")
@@ -109,7 +109,7 @@
 				//Render the X-AXIS
 				svg.append("g")
 					.attr("class", "x-axis")
-					.attr("transform", "translate(0," + height + ")")
+					.attr("transform", `translate(0, ${height})`)
 					.call(xAxis);
 
 				//Render the Y-AXIS

@@ -112,7 +112,7 @@
 				return this.allTagList.filter((row) => {
 					return (
 						this.assignedTags.findIndex((tag) => {
-							return tag.pk == row.value;
+							return tag.pk === parseInt(row.value);
 						}) < 0
 					);
 				});
@@ -162,7 +162,7 @@
 		},
 		mounted() {
 			//If the location is inside the array - don't bother getting the data
-			var escape_array = ["requirement_item"];
+			const escape_array = ["requirement_item"];
 			if (escape_array.indexOf(this.destination) >= 0) return;
 
 			//Wait 200ms before getting data

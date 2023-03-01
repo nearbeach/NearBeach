@@ -16,7 +16,16 @@
 		components: {
 			ListTagsModule,
 		},
-		props: ["destination", "locationId"],
+		props: {
+			destination: {
+				type: String,
+				default: "",
+			},
+			locationId: {
+				type: Number,
+				default: 0,
+			},
+		},
 		mixins: [],
 		computed: {},
 		data() {

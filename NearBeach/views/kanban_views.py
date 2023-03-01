@@ -229,7 +229,7 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
 @never_cache
 @login_required(login_url="login", redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup="kanban_board_id")
-def kanban_information(request, kanban_board_id, open_card_on_load=0, *args, **kwargs):
+def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **kwargs,):
     """
     :param request:
     :param kanban_board_id:

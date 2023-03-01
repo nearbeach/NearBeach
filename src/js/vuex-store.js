@@ -212,7 +212,7 @@ const moduleKanban = {
 
 			//Filter out the card with the card id
 			state.kanbanCardResults = state.kanbanCardResults.filter((row) => {
-				return row.pk !== parseInt(cardId);
+				return row.pk !== parseInt(cardId, 10);
 			});
 		},
 		archiveCards(state, payload) {
@@ -235,7 +235,7 @@ const moduleKanban = {
 		updateKanbanCard(state, payload) {
 			//Get the index location
 			const index_location = state.kanbanCardResults.findIndex((row) => {
-				return row.pk == payload.card_id;
+				return row.pk === parseInt(payload.card_id, 10);
 			});
 
 			//Loop through each keys for the payload, and update the relevant field

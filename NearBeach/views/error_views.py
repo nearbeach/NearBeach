@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 
 @login_required(login_url="login", redirect_field_name="")
-def error_403(request, exception):
+def error_403(request, _):
     """
     :param request:
     :param destination:
@@ -21,7 +21,7 @@ def error_403(request, exception):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def error_404(request, exception):
+def error_404(request, _):
     """
     :param request:
     :param destination:

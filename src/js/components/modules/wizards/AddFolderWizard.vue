@@ -128,7 +128,7 @@
 					this.folderDescriptionModel
 				);
 
-				if (this.currentFolder !== null && this.currentFolder != "") {
+				if (this.currentFolder !== null && this.currentFolder !== "") {
 					data_to_send.set("parent_folder", this.currentFolder);
 				}
 
@@ -156,14 +156,14 @@
 		updated() {
 			/*If there is no folder description OR the folder description already exists - we want to disable the add
             button.*/
-			var match = this.existingFolders.filter((row) => {
+			const match = this.existingFolders.filter((row) => {
 				return (
-					row.fields.folder_description == this.folderDescriptionModel
+					row.fields.folder_description === this.folderDescriptionModel
 				);
 			});
 
 			this.disableAddFolderButton =
-				match.length > 0 || this.folderDescriptionModel == "";
+				match.length > 0 || this.folderDescriptionModel === "" || this.folderDescriptionModel === null;
 		},
 	};
 </script>

@@ -202,7 +202,7 @@
 				);
 
 				//Only set the parent folder variable if there exists a variable in current folder
-				if (this.currentFolder !== null && this.currentFolder != "") {
+				if (this.currentFolder !== null && this.currentFolder !== "") {
 					data_to_send.set("parent_folder", this.currentFolder);
 				}
 
@@ -229,7 +229,7 @@
 		},
 		updated() {
 			//We need to make sure both fields are not blank & to make sure the description is not duplicated
-			var match = this.excludeDocuments.filter((row) => {
+			const match = this.excludeDocuments.filter((row) => {
 				return (
 					row.document_key__document_description ===
 					this.documentDescriptionModel

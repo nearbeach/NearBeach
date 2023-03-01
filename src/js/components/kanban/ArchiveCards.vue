@@ -103,8 +103,8 @@
 				//Mutate the data to exclude the archived cards
 				this.$store.commit({
 					type: "archiveCards",
-					column: column,
-					level: level,
+					column,
+					level,
 				});
 
 				//Close the modal

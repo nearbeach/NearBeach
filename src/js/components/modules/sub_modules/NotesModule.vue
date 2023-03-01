@@ -55,7 +55,16 @@
 			ListNotes,
 			NewHistoryNoteWizard,
 		},
-		props: ["destination", "locationId"],
+		props: {
+			destination: {
+				type: String,
+				default: "",
+			},
+			locationId: {
+				type: Number,
+				default: 0,
+			},
+		},
 		mixins: [errorModalMixin, iconMixin],
 		data() {
 			return {

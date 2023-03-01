@@ -108,7 +108,7 @@
 	export default {
 		name: "CardDetails",
 		components: {
-			mapGetters,
+			// mapGetters,
 			NSelect,
 		},
 		data() {
