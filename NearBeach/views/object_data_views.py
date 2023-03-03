@@ -167,23 +167,11 @@ def add_link(request, destination, location_id):
     :param location_id:
     :return:
     """
-    # ADD IN CHECKER FOR USER PERMISSIONS
-
+    
     # Get the data
     form = AddObjectLinkForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-
-    # Start saving the data
-    # object_assignment_submit = ObjectAssignment(
-    #     change_user=request.user,
-    #     **{destination: location_id},
-    # )
-
-    # Add the destination/location_id to the object
-    # object_assignment_submit = link_object(
-    #     object_assignment_submit, destination, location_id
-    # )
 
     # Declaring the dict used in the for loop below
     object_dict = {
@@ -1153,12 +1141,11 @@ def remove_link(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Now we limit the data to what we want, and then soft delete it
-    update_object_assignment = ObjectAssignment.objects.filter(
+    ObjectAssignment.objects.filter(
         is_deleted=False,
         **{destination: location_id},
         **{form.cleaned_data["link_connection"]: form.cleaned_data["link_id"]},
     ).update(is_deleted=True)
-    update_object_assignment.save()
 
     return HttpResponse("")
 

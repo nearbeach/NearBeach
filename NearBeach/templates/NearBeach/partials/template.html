@@ -1,4 +1,5 @@
-{% include 'NearBeach/partials/header.html' %}
+{% extends "NearBeach/master.html" %}
+{% block template %}
 <main class="container" role="main">
     <div id="app">
         {% if user.is_authenticated %}
@@ -10,4 +11,4 @@
         {% endif %}
     </div>
 </main>
-{% include 'NearBeach/partials/footer.html' %}
+{% endblock %}
