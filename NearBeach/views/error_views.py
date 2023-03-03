@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 
 @login_required(login_url="login", redirect_field_name="")
-def error_403(request, _):
+def error_403(request, exception):
     """
     :param request:
     :param destination:
@@ -15,13 +15,14 @@ def error_403(request, _):
 
     c = {
         "nearbeach_title": "NearBeach Forbidden",
+        "exception": exception,
     }
 
     return HttpResponseForbidden(t.render(c, request))
 
 
 @login_required(login_url="login", redirect_field_name="")
-def error_404(request, _):
+def error_404(request, exception):
     """
     :param request:
     :param destination:
@@ -32,6 +33,7 @@ def error_404(request, _):
 
     c = {
         "nearbeach_title": "NearBeach Not Found",
+        "exception": exception,
     }
 
     return Http404(t.render(c, request))
