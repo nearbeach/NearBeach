@@ -42,14 +42,12 @@ from django.views.decorators.cache import never_cache
 @check_user_permissions(min_permission_level=2, object_lookup="kanban_board_id")
 def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     """
+    Adds a link to an object to a kanban board
     :param request:
-    :param destination:
-    :param location_id:
+    :param kanban_board_id: The board we are focusing on
+    :param object_lookup: The object we are linking 
     :return:
     """
-    # CHECK USER PERMISSION LATER
-
-    # Get form data and check
     form = AddKanbanLinkForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -121,7 +119,6 @@ def check_kanban_board_name(request, *args, **kwargs):
     :param request:
     :return:
     """
-    # Get the form data
     form = CheckKanbanBoardName(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -191,7 +188,6 @@ def get_max_sort_id(kanban_board_id, form):
 @check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
 def kanban_close_board(request, kanban_board_id, *args, **kwargs):
     """Close the kanban board"""
-    # Close the kanban board
     kanban_update = KanbanBoard.objects.get(kanban_board_id=kanban_board_id)
     kanban_update.kanban_board_status = "Closed"
     kanban_update.save()
@@ -231,8 +227,9 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=1, object_lookup="kanban_board_id")
 def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **kwargs,):
     """
+    Renders out the kanban board information
     :param request:
-    :param kanban_board_id:
+    :param kanban_board_id: The board id we wish to render out
     :return:
     """
     user_level = kwargs["user_level"]
@@ -261,13 +258,11 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
 @check_user_permissions(min_permission_level=1, object_lookup="kanban_board_id")
 def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
     """
+    Obtains the data for the kanban links
     :param request:
     :param kanban_board_id:
     :return:
     """
-    # CHECK USER PERMISSIONS
-
-    # Get a list of all existing cards
     existing_objects = KanbanCard.objects.filter(
         is_deleted=False,
         kanban_board_id=kanban_board_id,
@@ -307,8 +302,9 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
 @check_user_kanban_permissions(min_permission_level=2)
 def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     """
+    Updates a kanban kard when it moves
     :param request:
-    :param kanban_board_id:
+    :param kanban_card_id: The card we are focusing on
     :return:
     """
     kanban_card_update = KanbanCard.objects.get(kanban_card_id=kanban_card_id)
@@ -410,6 +406,7 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
 def new_kanban(request, *args, **kwargs):
     """
+    Renders out the new kanban page
     :param request:
     :return:
     """
@@ -489,6 +486,7 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
 @check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
 def new_kanban_save(request, *args, **kwargs):
     """
+    Saves the new kanban board
     :param request:
     :return:
     """

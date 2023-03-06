@@ -59,9 +59,11 @@ from NearBeach.forms import (
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
 def add_bug(request, destination, location_id):
-    # ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
-
-    # Get data from form
+    """
+    Function to add a bug to an object
+    :param: destination: Defines what object the bug is getting added too
+    :param: location_id: Defines the object ID that the bug is getting added too
+    """
     form = AddBugForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -94,9 +96,11 @@ def add_bug(request, destination, location_id):
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
 def add_customer(request, destination, location_id):
-    # ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
-
-    # Get data from form
+    """
+    Add customer to an object
+    :param: destination: the type of object we are adding the customer too
+    :param: location_id: the object id we are adding the customer too
+    """
     form = AddCustomerForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)

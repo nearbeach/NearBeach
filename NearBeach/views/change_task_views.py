@@ -17,7 +17,13 @@ import json
 @login_required(login_url="login", redirect_field_name="")
 @check_change_task_permissions(min_permission_level=1)
 def change_task_information(request, change_task_id, *args, **kwargs):
-    """ """
+    """
+    Render the Change Task information page
+
+    :param request:
+    :param change_task_id: the change task ID
+    :return: Change Task information page
+    """
     # Get Change Task Information
     change_task_results = get_object_or_404(
         ChangeTask,
@@ -58,7 +64,11 @@ def change_task_information(request, change_task_id, *args, **kwargs):
 @login_required(login_url="login", redirect_field_name="")
 @check_change_task_permissions(min_permission_level=4)
 def change_task_delete(request, change_task_id, *args, **kwargs):
-    """A simple function to delete the change task"""
+    """
+    A simple function to delete the change task
+    :param: change_task_id: The change task to delete
+    :return: Success 200
+    """
     change_task_update = ChangeTask.objects.get(change_task_id=change_task_id)
 
     # Update the change task is deleted to true
@@ -73,7 +83,11 @@ def change_task_delete(request, change_task_id, *args, **kwargs):
 @login_required(login_url="login", redirect_field_name="")
 @check_change_task_permissions(min_permission_level=2)
 def change_task_save(request, change_task_id, *args, **kwargs):
-    """ """
+    """
+    A simple POST function where the user can save the change task data
+    :param: change_task_id: The change task we are updating
+    :return: Success 200
+    """
     # Get form data
     form = ChangeTaskForm(request.POST)
     if not form.is_valid():
@@ -112,9 +126,10 @@ def change_task_save(request, change_task_id, *args, **kwargs):
 @check_change_task_permissions(min_permission_level=2)
 def update_status(request, change_task_id, *args, **kwargs):
     """
+    A POST node to update the change task status
     :param request:
-    :param change_task_id:
-    :return:
+    :param change_task_id: the change task id to update
+    :return: Success 200
     """
     # Get form data
     form = ChangeTaskStatusForm(request.POST)

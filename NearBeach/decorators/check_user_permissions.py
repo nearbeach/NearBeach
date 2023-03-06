@@ -16,7 +16,6 @@ from NearBeach.models import (
 
 def check_change_task_permissions(min_permission_level):
     """Check the user's ability to interact with change tasks via the RFC"""
-
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -81,7 +80,6 @@ def check_user_admin_permissions(min_permission_level, permission_lookup=""):
     1. Is an admin or
     2. Has some administration permissions attributes associated with them
     """
-
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -122,7 +120,6 @@ def check_user_customer_permissions(min_permission_level):
     Function is only used when checking user permissions against customers
      - as they are different
     """
-
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -155,6 +152,10 @@ def check_user_customer_permissions(min_permission_level):
 
 
 def check_user_kanban_permissions(min_permission_level):
+    """
+    Checks the user permissions for the kanban board. It returns the user's permission
+    levels, unless they have none. If there are none - it returns permission denied.
+    """
     def decorator(func):
         @wraps(func)
         def inner(request, kanban_card_id, *args, **kwargs):
@@ -250,7 +251,6 @@ def check_user_permissions(min_permission_level, object_lookup=""):
     Check the user permissions - if they pass they can implement the function.
     Otherwise send them to the permission denied page
     """
-
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):

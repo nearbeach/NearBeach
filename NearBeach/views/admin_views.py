@@ -21,38 +21,36 @@ import json
 @login_required(login_url="login", redirect_field_name="")
 @check_user_admin_permissions(3, "administration_create_user")
 def add_user(request, *args, **kwargs):
-    """
+    '''
+    Adds a user to either;
+    - Multiple groups and/or
+    - Multiple permission sets
     :param request:
-    :return:
-    """
-    # Add in user permissions
-
-    # Check the form data
+    :return: Successful result
+    '''
     form = AdminAddUserForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    """
+    '''
     We can assume that there are;
     - Single User
     - Multiple Groups
     - Multiple Permission Sets
 
     We need to loop through these permutations, and add them into the database
-    """
+    '''
 
     group_results = form.cleaned_data["group"]
     permission_set_results = form.cleaned_data["permission_set"]
     user_results = form.cleaned_data["username"]
 
-    # Simple double for loops
-    # ((x,y) for x in A for y in B)
-    # itertools
-    for row in itertools.product(group_results, permission_set_results):
+    # Loop through the results from itertools.product - and apply permissions
+    for group_row, permission_set_row in itertools.product(group_results, permission_set_results):
         submit_user = UserGroup(
             username=user_results,
-            permission_set=row[1],
-            group=row[0],
+            permission_set=permission_set_row,
+            group=group_row,
             change_user=request.user,
         )
         submit_user.save()
@@ -63,11 +61,12 @@ def add_user(request, *args, **kwargs):
 @require_http_methods(["POST"])
 @check_user_admin_permissions(2, "administration_create_group")
 def update_group_leader_status(request, destination, *args, **kwargs):
-    """
+    '''
     This function will update the user's group leader status against a particular group.
     :param request: Normal stuff.
+    :param destination: 
     :return:
-    """
+    '''
     form = UpdateGroupLeaderStatusForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -127,7 +126,9 @@ def update_group_leader_status(request, destination, *args, **kwargs):
 @login_required(login_url="login", redirect_field_name="")
 @check_user_admin_permissions(2, "administration_create_user")
 def update_user_password(request, *args, **kwargs):
-    """ """
+    '''
+    Will update the users password
+    ''' 
     # Get form data
     form = PasswordResetForm(request.POST)
     if not form.is_valid():

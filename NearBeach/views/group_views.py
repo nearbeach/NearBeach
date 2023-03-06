@@ -17,6 +17,7 @@ import json
 @require_http_methods(["POST"])
 def check_group_name(request):
     """
+    Checks to see if the group name exists
     :param request:
     :return:
     """
@@ -41,6 +42,7 @@ def check_group_name(request):
 @login_required(login_url="login", redirect_field_name="")
 def group_information(request, group_id):
     """
+    Render the group information page
     :param request:
     :param group_id:
     :return:
@@ -75,6 +77,7 @@ def group_information(request, group_id):
 @login_required(login_url="login", redirect_field_name="")
 def group_information_save(request, group_id):
     """
+    Save/Update the group data
     :param request:
     :param group_id:
     :return:
@@ -99,6 +102,7 @@ def group_information_save(request, group_id):
 @login_required(login_url="login", redirect_field_name="")
 def new_group(request):
     """
+    Create a new group
     :param request:
     :return:
     """
@@ -126,6 +130,7 @@ def new_group(request):
 @login_required(login_url="login", redirect_field_name="")
 def new_group_save(request):
     """
+    Save the new group
     :param request:
     :return:
     """

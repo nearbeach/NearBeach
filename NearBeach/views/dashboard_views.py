@@ -50,6 +50,7 @@ def dashboard(request):
 @require_http_methods(["POST"])
 def get_bug_list(request):
     """
+    Gets a list of all the bugs
     :param request:
     :return:
     """
@@ -71,6 +72,9 @@ def get_bug_list(request):
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
 def get_kanban_list(request):
+    """
+    Gets a list of all kanban's the users assigned to
+    """
     object_assignment_results = ObjectAssignment.objects.filter(
         is_deleted=False,
         kanban_board_id__isnull=False,
@@ -95,6 +99,7 @@ def get_kanban_list(request):
 @require_http_methods(["POST"])
 def get_my_objects(request):
     """
+    Get any objects the user is assigned too
     :param request:
     :return:
     """
@@ -369,6 +374,7 @@ def get_unassigned_objects(request):
 @require_http_methods(["POST"])
 def rfc_approvals(request):
     """
+    Will get the rfc approvals that the user will need to approve
     :param request:
     :return:
     """

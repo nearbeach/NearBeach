@@ -71,6 +71,7 @@ def document_add_folder(request, destination, location_id):
 @login_required(login_url="login", redirect_field_name="")
 def document_add_link(request, destination, location_id):
     """
+    Will add a link to the document
     :param request:
     :param destination:
     :param location_id:
@@ -387,6 +388,11 @@ def private_download_file(request, document_key):
 def handle_document_permissions(
     request, upload, file, document_description, destination, location_id
 ):
+    """
+    The function that handles the document permission - i.e. if user has access to the 
+    document then it'll send it to the user. Otherwise it will send a 404 not found.
+    Please note - we don't use permission denied here to hopefully trip people up
+    """
     document_submit = Document(
         change_user=request.user,
         document_description=document_description,

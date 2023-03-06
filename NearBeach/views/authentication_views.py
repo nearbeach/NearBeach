@@ -77,7 +77,7 @@ def check_first_time_login(request):
 def check_recaptcha(post_data):
     """
     Determine if the user has setup the recaptcha in the settings.py file, and then check the result against google.
-    :param post_data:
+    :param post_data: data from user's POST
     :return:
     """
     if hasattr(settings, "RECAPTCHA_PUBLIC_KEY") and hasattr(
@@ -124,7 +124,7 @@ def check_recaptcha(post_data):
     ) as response:  # nosec
         result = json.load(response)
 
-        # Check to see if the user is a robot. Success = human
+    # Check to see if the user is a robot. Success = human
     if result["success"]:
         return True
     return False
@@ -132,8 +132,7 @@ def check_recaptcha(post_data):
 
 def login(request):
     """
-    For some reason I can not use the varable "LoginForm" here as it is already being used.
-    Instead I will use the work form.
+    Will either log user in (if POST is submitted) or take the user to the login screen.
 
     The form is declared at the start and filled with either the POST data OR nothing. If this
     process is called in POST, then the form will be checked and if it passes the checks, the
@@ -229,7 +228,7 @@ def logout(request):
 
 @login_required(login_url="login", redirect_field_name="")
 def permission_denied(request):
-    # Load the template
+    # Load up the permission denied template and show user
     t = loader.get_template("NearBeach/authentication/permission_denied.html")
 
     # context
@@ -242,5 +241,8 @@ def permission_denied(request):
 
 @check_permission_denied()
 def test_permission_denied(request):
-    """A simple test - ALWAYS respond with permission denied"""
+    """
+    A simple test - ALWAYS respond with permission denied.
+    This function will never return HttpResponse - because the decorator will raise PermissionDenied ALWAYS!!!
+    """
     return HttpResponse("Hello World")

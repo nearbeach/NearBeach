@@ -8,7 +8,11 @@ from NearBeach.models import KanbanCard
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["GET"])
 def card_information(request, card_id):
-    # Get the card or 404
+    '''
+    Will get the card information, and redirect to the correct kanban board
+
+    If there is no card - return a 404.
+    '''
     card_results = get_object_or_404(KanbanCard, kanban_card_id=card_id)
 
     # Using the kanban board id - we can now go to the kanban board
