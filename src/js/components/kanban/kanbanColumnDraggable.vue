@@ -20,6 +20,7 @@
 				v-bind:data-card-id="element.pk"
 				v-on:dblclick="doubleClickCard($event)"
 			>
+				<div v-bind:class="`card-priority-line priority-${priorityList[element.fields.kanban_card_priority]}`"></div>
 				<b>#{{ element.pk }}</b
 				><br />
 				{{ element.fields.kanban_card_text }}
@@ -107,6 +108,13 @@
 			return {
 				//masterList: [],
 				drag: false,
+				priorityList: [
+					'highest',
+					'high',
+					'normal',
+					'low',
+					'lowest',
+				],
 			};
 		},
 		computed: {
@@ -512,6 +520,7 @@
 					cardColumn: filtered_data.fields.kanban_column,
 					cardLevel: filtered_data.fields.kanban_level,
 					cardLink: card_link,
+					cardPriority: filtered_data.fields.kanban_card_priority,
 				});
 
 				//Emit the current card information

@@ -305,6 +305,7 @@ class KanbanCardForm(forms.ModelForm):
             "kanban_card_id",
             "kanban_card_text",
             "kanban_card_description",
+            "kanban_card_priority",
             "kanban_column",
             "kanban_level",
         }
@@ -447,6 +448,7 @@ class NewKanbanCardForm(forms.ModelForm):
         fields = [
             "kanban_card_text",
             "kanban_card_description",
+            "kanban_card_priority",
             "kanban_level",
             "kanban_column",
         ]

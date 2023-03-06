@@ -179,7 +179,6 @@
 		mixins: [iconMixin],
 		data() {
 			return {
-				// cardId: '',
 				cardDescriptionModel: "",
 				cardNoteModel: "",
 				cardTitleModel: "",
@@ -207,6 +206,7 @@
 				data_to_send.set("kanban_level", all_data.cardLevel);
 				data_to_send.set("kanban_column", all_data.cardColumn);
 				data_to_send.set("kanban_card_id", all_data.cardId);
+				data_to_send.set("kanban_card_priority", all_data.cardPriority);
 
 				//Use Axios to send data to backend
 				axios
@@ -214,7 +214,7 @@
 						`${this.rootUrl}kanban_information/update_card/`,
 						data_to_send
 					)
-					.then((response) => {
+					.then(() => {
 						//Send the new data upstream
 						this.$emit("update_card", {
 							kanban_card_id: all_data.cardId,
@@ -223,6 +223,7 @@
 								all_data.cardDescriptionModel,
 							kanban_column: all_data.cardColumn,
 							kanban_level: all_data.cardLevel,
+							kanban_card_priority: all_data.cardPriority,
 						});
 
 						document

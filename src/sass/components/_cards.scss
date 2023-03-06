@@ -193,3 +193,33 @@
 .user-details {
 	padding: 20px 15px;
 }
+
+.card-priority-line {
+	width: 93%;
+	height: 5px;
+
+	&.priority-highest {
+		background: rgb(255,83,75);
+		background: rgba(255,83,75,1); 
+	}
+
+	&.priority-high {
+		background: rgb(255,172,78);
+		background: linear-gradient(90deg, rgba(255,172,78,1) 50%, rgb(255, 255, 255) 100%); 
+	}
+
+	&.priority-normal {
+		background: rgb(115,223,175);
+		background: linear-gradient(90deg, rgba(115,223,175,1) 0%, rgb(255, 255, 255) 80%); 
+	}
+
+	&.priority-low {
+		background: rgb(73,197,238);
+		background: linear-gradient(90deg, rgba(73,197,238,1) 0%, rgb(255, 255, 255) 50%); 
+	}
+
+	&.priority-lowest {
+		background: rgb(212,212,212);
+		background: linear-gradient(90deg, rgba(212,212,212,1) 0%, rgb(255, 255, 255) 35%); 
+	}
+}

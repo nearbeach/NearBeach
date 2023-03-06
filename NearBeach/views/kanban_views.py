@@ -468,6 +468,7 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
         kanban_column=form.cleaned_data["kanban_column"],
         kanban_level=form.cleaned_data["kanban_level"],
         kanban_card_sort_number=kanban_card_sort_number + 1,
+        kanban_card_priority=form.cleaned_data["kanban_card_priority"],
     )
     submit_kanban_card.save()
 
@@ -570,6 +571,7 @@ def update_card(request, *args, **kwargs):
     kanban_card_update.kanban_card_description = form.cleaned_data[
         "kanban_card_description"
     ]
+    kanban_card_update.kanban_card_priority = form.cleaned_data["kanban_card_priority"]
     kanban_card_update.kanban_column = form.cleaned_data["kanban_column"]
     kanban_card_update.kanban_level = form.cleaned_data["kanban_level"]
     kanban_card_update.save()

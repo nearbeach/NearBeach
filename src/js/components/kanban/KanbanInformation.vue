@@ -181,6 +181,8 @@
 						].fields.kanban_column = data.kanban_column;
 						this.localKanbanCardResults[index].fields.kanban_level =
 							data.kanban_level;
+						this.localKanbanCardResults[index].fields.kanban_card_priority =
+							data.kanban_card_priority;
 					}
 				});
 			},

@@ -8,7 +8,7 @@
 		v-bind:data-kanban-level="levelResults[0].pk"
 		v-bind:data-kanban-column="columnResults[0].pk"
 	>
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-lg modal-fullscreen-lg-down">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
@@ -39,6 +39,22 @@
 								v-on:keydown.enter="addKanbanCard"
 								class="form-control"
 							/>
+						</div>
+					</div>
+					<!-- CARD PRIORITY -->
+					<div class="row">
+						<div class="col-md-4">
+							<strong>Card Priority</strong>
+							<p class="text-instructions">
+								Please select the apprioriate card priority.
+							</p>
+						</div>
+						<div class="col-md-8">
+							<label>Card Priority</label>
+							<n-select
+								v-bind:options="listPriority"
+								v-model:value="kanbanCardPriorityModal"
+							></n-select>
 						</div>
 					</div>
 					<!-- CARD DESCRIPTION -->
@@ -99,6 +115,7 @@
 	import axios from "axios";
 	import { Icon } from "@iconify/vue";
 	import Editor from "@tinymce/tinymce-vue";
+	import { NSelect} from "naive-ui";
 
 	//VueX
 	import { mapGetters } from "vuex";
@@ -112,6 +129,7 @@
 		components: {
 			editor: Editor,
 			Icon,
+			NSelect,
 		},
 		props: {
 			columnResults: {
@@ -145,6 +163,29 @@
 				disableAddButton: true,
 				kanbanCardDescriptionModel: "",
 				kanbanCardTextModel: "",
+				kanbanCardPriorityModal: 2,
+				listPriority: [
+					{
+						label: "Highest",
+						value: 0,
+					},
+					{
+						label: "High",
+						value: 1,
+					},
+					{
+						label: "Normal",
+						value: 2,
+					},
+					{
+						label: "Low",
+						value: 3,
+					},
+					{
+						label: "Lowest",
+						value: 4,
+					},
+				],
 			};
 		},
 		computed: {
@@ -172,6 +213,10 @@
 					"kanban_column",
 					self_modal.dataset.kanbanColumn
 				);
+				data_to_send.set(
+					"kanban_card_priority",
+					this.kanbanCardPriorityModal
+				)
 
 				//Send the data
 				axios

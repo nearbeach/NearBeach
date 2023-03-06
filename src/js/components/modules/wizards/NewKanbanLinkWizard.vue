@@ -8,7 +8,7 @@
 		v-bind:data-kanban-level="levelResults[0].pk"
 		v-bind:data-kanban-column="columnResults[0].pk"
 	>
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-lg modal-fullscreen-lg-down">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>

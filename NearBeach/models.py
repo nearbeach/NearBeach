@@ -16,6 +16,14 @@ KANBAN_BOARD_STATUS_CHOICE = (
     ("Closed", "Closed"),
 )
 
+KANBAN_CARD_PRIORITY = (
+    (0, "Highest"),
+    (1, "High"),
+    (2, "Normal"),
+    (3, "Low"),
+    (4, "Lowest"),
+)
+
 KANBAN_COLUMN_PROPERTY = (
     ("Normal", "Normal"),
     ("Blocked", "Blocked"),
@@ -573,6 +581,10 @@ class KanbanCard(models.Model):
     kanban_board = models.ForeignKey(
         "KanbanBoard",
         on_delete=models.CASCADE,
+    )
+    kanban_card_priority = models.IntegerField(
+        choices=KANBAN_CARD_PRIORITY,
+        default=2,
     )
     project = models.ForeignKey(
         "project",

@@ -32,6 +32,24 @@
 				/>
 			</div>
 		</div>
+
+		<hr />
+		<div class="row">
+			<div class="col-md-4">
+				<strong>Card Priority</strong>
+				<p class="text-instructions">
+					Define what the priority of the card is.
+				</p>
+			</div>
+			<div class="col-md-8">
+				<label>Card Priority</label>
+				<n-select
+					v-bind:options="listPriority"
+					v-model:value="cardPriority"
+					:disabled="kanbanStatus === 'Closed'"
+				></n-select>
+			</div>
+		</div>
 		<hr />
 
 		<!-- CARD LOCATION -->
@@ -113,6 +131,28 @@
 		},
 		data() {
 			return {
+				listPriority: [
+					{
+						label: "Highest",
+						value: 0,
+					},
+					{
+						label: "High",
+						value: 1,
+					},
+					{
+						label: "Normal",
+						value: 2,
+					},
+					{
+						label: "Low",
+						value: 3,
+					},
+					{
+						label: "Lowest",
+						value: 4,
+					},
+				],
 				tempModel: "",
 			};
 		},
@@ -135,6 +175,18 @@
 					this.$store.commit({
 						type: "updateValue",
 						field: "cardColumn",
+						value: value,
+					});
+				},
+			},
+			cardPriority: {
+				get() {
+					return this.$store.state.card.cardPriority;
+				},
+				set(value) {
+					this.$store.commit({
+						type: "updateValue",
+						field: "cardPriority",
 						value: value,
 					});
 				},

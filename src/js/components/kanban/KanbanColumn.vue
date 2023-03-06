@@ -216,6 +216,7 @@
 					cardColumn: filtered_data.fields.kanban_column,
 					cardLevel: filtered_data.fields.kanban_level,
 					cardLink: card_link,
+					cardPriority: filtered_data.fields.kanban_card_priority,
 				});
 
 				//Show the modal

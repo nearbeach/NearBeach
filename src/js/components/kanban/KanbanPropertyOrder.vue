@@ -366,8 +366,6 @@
 				this.singleItemId = event.target.dataset.id;
 				this.columnPropertyModel = event.target.dataset.property;
 
-				console.log("PROPERTY: ", event.target.dataset);
-
 				//Open up the modal
 				this.openModal();
 			},
