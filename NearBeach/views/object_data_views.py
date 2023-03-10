@@ -1,8 +1,9 @@
+from collections import namedtuple
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q, CharField, Value as V
+from django.db.models import Q, CharField, Value as V, F
 from django.db.models.functions import Concat
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.views.decorators.http import require_http_methods
@@ -1010,35 +1011,49 @@ def object_link_list(request, destination, location_id):
             **{destination + "__isnull": False},
             meta_object=location_id,
         )
-    ).values(
-        "project_id",
-        "project_id__project_name",
-        "project_id__project_status",
-        "task_id",
-        "task_id__task_short_description",
-        "task_id__task_status",
-        "requirement_id",
-        "requirement_id__requirement_title",
-        "requirement_id__requirement_status__requirement_status",
-        "requirement_item_id",
-        "requirement_item_id__requirement_item_title",
-        "requirement_item_id__requirement_item_status__requirement_item_status",
-        "meta_object",
-        "meta_object_title",
-        "meta_object_status",
     )
 
-    """
-    As explained on stack overflow here -
-    https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard
-    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
-    """
+    # Separate each section into;
+    # - projects
+    # - tasks
+    # - requirements
+    # - requirement items
+    # - meta
+    ObjectStructure = namedtuple(
+        "ObjectStructure",
+        ["object_id", "object_title", "object_status", "object_type","non_null_field"]    
+    )
 
-    # Send back json data
-    json_results = json.dumps(list(object_assignment_results), cls=DjangoJSONEncoder)
+    data_point_list = [
+        ObjectStructure("project_id","project_id__project_name","project_id__project_status","project","project"),
+        ObjectStructure("task_id","task_id__task_short_description","task_id__task_status","task","task"),
+        ObjectStructure("requirement_id","requirement_id__requirement_title","requirement_id__requirement_status__requirement_status","requirement","requirement"),
+        ObjectStructure("requirement_item_id","requirement_item_id__requirement_item_title","requirement_item_id__requirement_item_status__requirement_item_status","requirement_item","requirement_item"),
+        ObjectStructure("meta_object","meta_object_title","meta_object_status",destination,"meta_object"),
+    ]
 
-    return HttpResponse(json_results, content_type="application/json")
+    data_results = []
+    for data_point in data_point_list:
+        # If destination == non_null_field - we skip as it excludes all those rows
+        if destination == data_point.non_null_field:
+            continue
+
+        # Append onto data results
+        data_results.extend(object_assignment_results.filter(
+                **{data_point.non_null_field + "__isnull": False},
+        ).annotate(
+            object_id=F(data_point.object_id),
+            object_title=F(data_point.object_title),
+            object_status=F(data_point.object_status),
+            object_type=V(data_point.object_type),
+        ).values(
+            "object_id",
+            "object_title",
+            "object_status",
+            "object_type", 
+        ))
+
+    return JsonResponse(data_results, safe=False)
 
 
 @require_http_methods(["POST"])

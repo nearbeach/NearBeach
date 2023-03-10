@@ -64,16 +64,6 @@
 			AddTagWizard,
 			Icon,
 		},
-		props: {
-			destination: {
-				type: String,
-				default: "",
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
-		},
 		data() {
 			return {
 				tagList: [],
@@ -82,6 +72,8 @@
 		mixins: [iconMixin],
 		computed: {
 			...mapGetters({
+				destination: "getDestination",
+				locationId: "getLocationId",
 				rootUrl: "getRootUrl",
 				userLevel: "getUserLevel",
 			}),

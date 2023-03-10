@@ -30,6 +30,12 @@ KANBAN_COLUMN_PROPERTY = (
     ("Closed", "Closed"),
 )
 
+LINK_RELATIONSHIP = (
+    ("Block", "Block"),
+    ("Duplicate", "Duplicate"),
+    ("Relate", "Relate"),
+)
+
 NOTIFICATION_LOCATION = (
     ("All", "All"),
     ("Login", "Login"),
@@ -39,6 +45,16 @@ NOTIFICATION_LOCATION = (
 PAGE_LAYOUT = (
     ("Landscape", "Landscape"),
     ("Portrait", "Portrait"),
+)
+
+PARENT_LINK = (
+    ("change_task", "change_task"),
+    ("kanban_card", "kanban_card"),
+    ("requirement", "requirement"),
+    ("requirement_item", "requirement_item"),
+    ("request_for_change", "request_for_change"),
+    ("project", "project"),
+    ("task", "task"),
 )
 
 PERMISSION_LEVEL = (
@@ -953,6 +969,12 @@ class ObjectAssignment(models.Model):
         blank=True,
         null=True,
     )
+    change_task = models.ForeignKey(
+        "ChangeTask",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     meta_object = models.BigIntegerField(
         blank=True,
         null=True,
@@ -964,6 +986,17 @@ class ObjectAssignment(models.Model):
     )
     meta_object_status = models.CharField(
         max_length=255,
+        blank=True,
+        null=True,
+    )
+    link_relationship = models.CharField(
+        max_length=10,
+        choices=LINK_RELATIONSHIP,
+        blank=True,
+        null=True,
+    )
+    parent_link = models.CharField(
+        max_length=20,
         blank=True,
         null=True,
     )

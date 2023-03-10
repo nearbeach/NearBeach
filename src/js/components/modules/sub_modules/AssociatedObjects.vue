@@ -178,19 +178,11 @@
 		components: {
 			Icon,
 		},
-		props: {
-			destination: {
-				type: String,
-				default: "",
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
-		},
 		mixins: [iconMixin],
 		data() {
 			return {
+				destination: "getDestination",
+				locationId: "getLocationId",
 				projectResults: [],
 				requirementResults: [],
 				taskResults: [],

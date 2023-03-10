@@ -148,18 +148,10 @@
 			AddUserWizard,
 			Icon,
 		},
-		props: {
-			destination: {
-				type: String,
-				default: "",
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
-		},
 		computed: {
 			...mapGetters({
+				destination: "getDestination",
+				locationId: "getLocationId",
 				rootUrl: "getRootUrl",
 				staticUrl: "getStaticUrl",
 				userLevel: "getUserLevel",

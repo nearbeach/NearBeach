@@ -130,14 +130,6 @@
 				type: Boolean,
 				default: false,
 			},
-			destination: {
-				type: String,
-				default: "/",
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
 		},
 		mixins: [iconMixin],
 		data() {
@@ -149,6 +141,8 @@
 		},
 		computed: {
 			...mapGetters({
+				destination: "getDestination",
+				locationId: "getLocationId",
 				rootUrl: "getRootUrl",
 				userLevel: "getUserLevel",
 			}),

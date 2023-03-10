@@ -66,16 +66,6 @@
 			CustomersListModule,
 			Icon,
 		},
-		props: {
-			destination: {
-				type: String,
-				default: "",
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
-		},
 		mixins: [errorModalMixin, iconMixin],
 		data() {
 			return {
@@ -84,6 +74,8 @@
 		},
 		computed: {
 			...mapGetters({
+				destination: "getDestination",
+				locationId: "getLocationId",
 				userLevel: "getUserLevel",
 				rootUrl: "getRootUrl",
 			}),

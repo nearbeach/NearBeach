@@ -224,10 +224,7 @@
 					role="tabpanel"
 					aria-labelledby="contact-tab"
 				>
-					<groups-and-users-module
-						v-bind:location-id="locationId"
-						v-bind:destination="destination"
-					></groups-and-users-module>
+					<groups-and-users-module></groups-and-users-module>
 				</div>
 				<div
 					class="tab-pane fade"
@@ -236,10 +233,7 @@
 					aria-labelledby="home-tab"
 					v-if="destination == 'requirement'"
 				>
-					<requirement-items-module
-						v-bind:location-id="locationId"
-						v-bind:destination="destination"
-					></requirement-items-module>
+					<requirement-items-module></requirement-items-module>
 				</div>
 				<div
 					class="tab-pane fade"
@@ -248,10 +242,7 @@
 					aria-labelledby="profile-tab"
 					v-if="destination == 'requirement'"
 				>
-					<requirement-links-module
-						v-bind:location-id="locationId"
-						v-bind:destination="destination"
-					></requirement-links-module>
+					<requirement-links-module></requirement-links-module>
 				</div>
 				<div
 					class="tab-pane fade"
@@ -260,10 +251,7 @@
 					aria-labelledby="profile-tab"
 					v-else-if="destination == 'requirement_item'"
 				>
-					<requirement-item-links-module
-						v-bind:location-id="locationId"
-						v-bind:destination="destination"
-					></requirement-item-links-module>
+					<requirement-item-links-module></requirement-item-links-module>
 				</div>
 
 				<div
@@ -272,10 +260,7 @@
 					role="tabpanel"
 					aria-labelledby="contact-tab"
 				>
-					<documents-module
-						v-bind:location-id="locationId"
-						v-bind:destination="destination"
-					></documents-module>
+					<documents-module></documents-module>
 				</div>
 				<div
 					class="tab-pane fade"
@@ -283,10 +268,7 @@
 					role="tabpanel"
 					aria-labelledby="contact-tab"
 				>
-					<object-links
-						v-bind:destination="destination"
-						v-bind:location-id="locationId"
-					></object-links>
+					<object-links></object-links>
 				</div>
 				<div
 					class="tab-pane fade"
@@ -294,10 +276,7 @@
 					role="tabpanel"
 					aria-labelledby="contact-tab"
 				>
-					<customers-module
-						v-bind:location-id="locationId"
-						v-bind:destination="destination"
-					></customers-module>
+					<customers-module></customers-module>
 				</div>
 				<div
 					class="tab-pane fade"
@@ -305,10 +284,7 @@
 					role="tabpanel"
 					aria-labelledby="contact-tab"
 				>
-					<bugs-module
-						v-bind:location-id="locationId"
-						v-bind:destination="destination"
-					></bugs-module>
+					<bugs-module></bugs-module>
 				</div>
 				<div
 					class="tab-pane fade"
@@ -327,10 +303,7 @@
 					role="tabpanel"
 					aria-labelledby="contact-tab"
 				>
-					<notes-module
-						v-bind:location-id="locationId"
-						v-bind:destination="destination"
-					></notes-module>
+					<notes-module></notes-module>
 				</div>
 			</div>
 		</div>

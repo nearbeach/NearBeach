@@ -172,16 +172,6 @@
 			Icon,
 			UploadDocumentWizard,
 		},
-		props: {
-			destination: {
-				type: String,
-				default: "",
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
-		},
 		data() {
 			return {
 				currentFolder: null,
@@ -194,6 +184,8 @@
 		mixins: [iconMixin],
 		computed: {
 			...mapGetters({
+				destination: "getDestination",
+				locationId: "getLocationId",
 				userLevel: "getUserLevel",
 				rootUrl: "getRootUrl",
 			}),
