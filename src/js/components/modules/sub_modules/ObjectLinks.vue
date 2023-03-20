@@ -19,30 +19,40 @@
 			</div>
 		</div>
 		<div v-else>
-			<h3>Relates</h3>
-			<div v-for="link in linkResults"
-				 v-bind:key="link.pk"
-			>
-				<!-- Object ID + Title -->
-				<div>
-					<div>{{link.object_type}} - {{link.object_id}}</div>
-					<div>{{link.object_title}}</div>
-				</div>
+			<!-- Relates To -->
+			<sub-object-links v-bind:title="'Relates To'"
+				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Relate'})"
+			></sub-object-links>
 
-				<!-- Object Status -->
-				<div>
-					{{link.object_status}}
-					<span
-						class="remove-link"
-						v-if="userLevel >= 2"
-					>
-						<Icon
-							v-bind:icon="icons.trashCan"
-							v-on:click="removeLink(link)"
-						/>
-					</span>
-				</div>
-			</div>
+			<!-- Is Blocked By -->
+			<sub-object-links v-bind:title="'Is Blocked By'"
+				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Block' && row.parent_link !== destination})"
+			></sub-object-links>
+
+			<!-- Is Currently Blocking -->
+			<sub-object-links v-bind:title="'Is Currently Blocking'"
+				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Block' && row.parent_link === destination})"
+			></sub-object-links>
+			
+			<!-- Is Sub Object Of -->
+			<sub-object-links v-bind:title="'Is Subobject Of'"
+				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Subobject' && row.parent_link !== destination})"
+			></sub-object-links>
+
+			<!-- Is Parent Object Of -->
+			<sub-object-links v-bind:title="'Is Parent Object Of'"
+				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Subobject' && row.parent_link === destination})"
+			></sub-object-links>
+
+			<!-- Has Duplicate Object Of -->
+			<sub-object-links v-bind:title="'Has Duplicate Object Of'"
+				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Duplicate' && row.parent_link === destination})"
+			></sub-object-links>
+
+			<!-- Is Duplicate Object Of -->
+			<sub-object-links v-bind:title="'Is Duplicate Object Of'"
+				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Duplicate' && row.parent_link !== destination})"
+			></sub-object-links>
 		</div>
 
 		<!-- Submit Button -->
@@ -73,6 +83,7 @@
 	import { Icon } from "@iconify/vue";
 	import axios from "axios";
 	import NewLinkWizard from "../wizards/NewLinkWizard.vue";
+	import SubObjectLinks from "./SubObjectLinks.vue";
 
 	//Mixins
 	import iconMixin from "../../../mixins/iconMixin";
@@ -85,6 +96,7 @@
 		components: {
 			Icon,
 			NewLinkWizard,
+			SubObjectLinks,
 		},
 		mixins: [iconMixin],
 		data() {
@@ -110,27 +122,10 @@
 
 				elem_modal.show();
 			},
-			removeLink(link) {
-				//Get the data to send into the backend
-				let data_to_send = new FormData();
-				data_to_send.set("link_id", link.object_id);
-				data_to_send.set("link_connection", link.object_type);
-
-				//Send the data to the backend
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_link/`,
-						data_to_send
-					)
-					.then(() => {
-						//Clear the data
-						this.linkResults = [];
-
-						//Update the data
-						this.updateLinkResults();
-					});
-			},
 			updateLinkResults() {
+				//Clear the data
+				this.linkResults = [];
+
 				//Get the data from the database
 				axios
 					.post(

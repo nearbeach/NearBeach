@@ -1,0 +1,54 @@
+.object-link {
+    margin-top: 12px;
+}
+
+.object-link--border {
+    border-bottom: 1px #51ceff solid;
+    width: calc(100% - 22px);
+    margin: 5px 11px;
+}
+
+.object-link--details {
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .object-link--link {
+        color: #4f4f4f;
+        font-weight: lighter;
+    }
+
+    .object-link--title {
+        @media screen and (min-width: 768px) {
+            white-space: nowrap;
+            overflow: clip;
+        }
+    }
+}
+
+.object-link--status {
+    color: #4f4f4f;
+    font-weight: lighter;
+
+    @media screen and (min-width: 768px) {
+        padding-right: 30px;
+        white-space: nowrap;
+
+        span {
+            display: block;
+            overflow: clip;
+        }
+
+        span:first-child {
+            display: none;
+        }
+    }
+}
+
+.object-link--remove {
+    position: absolute;
+    right: 0px;
+    width: 44px;
+    color: red;
+}

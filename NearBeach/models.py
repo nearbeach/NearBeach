@@ -31,9 +31,10 @@ KANBAN_COLUMN_PROPERTY = (
 )
 
 LINK_RELATIONSHIP = (
-    ("Block", "Block"),
-    ("Duplicate", "Duplicate"),
-    ("Relate", "Relate"),
+    ("block", "Block"),
+    ("duplicate", "Duplicate"),
+    ("relate", "Relate"),
+    ("subobject","Subobject"),
 )
 
 NOTIFICATION_LOCATION = (

@@ -142,6 +142,9 @@ class AddObjectLinkForm(forms.Form):
         queryset=Task.objects.all(),
         required=False,
     )
+    object_relation = forms.CharField(
+        max_length=20,
+    )
 
 
 class AddRequirementLinkForm(forms.Form):

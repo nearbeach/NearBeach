@@ -50,6 +50,27 @@
 					</div>
 					<hr />
 
+					<!-- CHOOSE RELATIONSHIP TYPE -->
+					<div class="row">
+						<div class="col-md-4">
+							<strong>Relationship</strong>
+							<p class="text-instructions">
+								Please select an appropriate relation for the objects. 
+								Default is "Relates"
+							</p>
+						</div>
+						<div class="col-md-8">
+							Current object <br />
+							<n-select
+								:options="objectRelation"
+								v-model:value="objectRelationModel"
+								class="object-selection"
+								:disabled="objectModel === null"
+							></n-select>
+						</div>
+					</div>
+					<hr />
+
 					<!-- SELECTING WHICH OBJECTS TO LINK TO -->
 					<div class="row">
 						<div class="col-md-4">
@@ -309,6 +330,16 @@
 			return {
 				isSearching: false,
 				objectModel: null,
+				objectRelation: [
+					{ value: "relates", label: "Relates To" },
+					{ value: "blocked_by", label: "Is Blocked By" },
+					{ value: "blocking", label: "Is Currently Blocking" },
+					{ value: "sub_object_of", label: "Is Sub Object Of" },
+					{ value: "parent_object_of", label: "Is Parent Object Of" },
+					{ value: "has_duplicate", label: "Has Duplicate Object Of" },
+					{ value: "duplicate_object", label: "Is Duplicate Object Of" },
+				],
+				objectRelationModel: "relates",
 				objectResults: [],
 				objectSelection: [
 					{ value: "Project", label: "Project" },
@@ -331,6 +362,9 @@
 						link
 					);
 				});
+
+				//Tells the backend the relationship we want
+				data_to_send.set("object_relation", this.objectRelationModel);
 
 				// Use axios to send data
 				axios

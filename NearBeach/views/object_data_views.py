@@ -178,12 +178,25 @@ def add_link(request, destination, location_id):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    # Get the parent object of
+    object_relation = form.cleaned_data['object_relation']
+
     # Declaring the dict used in the for loop below
     object_dict = {
         "project": Project.objects,
         "task": Task.objects,
         "requirement": Requirement.objects,
         "requirement_item": RequirementItem.objects,
+    }
+
+    relation_dict = {
+        "relates": "Relate",
+        "blocked_by": "Block",
+        "blocking": "Block",
+        "sub_object_of": "Subobject",
+        "parent_object_of": "Subobject",
+        "has_duplicate": "Duplicate",
+        "duplicate_object": "Duplicate",
     }
 
     object_title = {
@@ -208,13 +221,27 @@ def add_link(request, destination, location_id):
             single_object = object_dict[object_type].get(pk=row)
 
             submit_object_assignment = ObjectAssignment(
-                change_user=request.user, **{object_type: single_object}
+                change_user=request.user, 
+                **{object_type: single_object}
             )
 
             # Set the object destination
             set_object_from_destination(
                 submit_object_assignment, destination, location_id
             )
+
+            # Set the parent object if it relates. Depending on the wording - depends if the current
+            # Object is the parent object, or not.
+            if object_relation in ['relates', 'blocking', 'parent_object_of', 'has_duplicate']:
+                submit_object_assignment.parent_link = destination
+            else:
+                if destination == object_type: 
+                    submit_object_assignment.parent_link = "meta_object"
+                else:
+                    submit_object_assignment.parent_link = object_type
+            
+            # Add the link relationship from the dictionary
+            submit_object_assignment.link_relationship = relation_dict[object_relation]
 
             # If object destination is the same as the object type, add the meta_object value
             if destination == object_type:
@@ -1051,6 +1078,8 @@ def object_link_list(request, destination, location_id):
             "object_title",
             "object_status",
             "object_type", 
+            "link_relationship",
+            "parent_link",
         ))
 
     return JsonResponse(data_results, safe=False)
