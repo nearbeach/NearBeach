@@ -1,156 +1,112 @@
 <template>
 	<div class="row">
-		<div class="col-md-4">
-			<strong>Run Sheet List</strong>
-			<p class="text-instructions">
-				The run sheet will specify specific tasks for each user to
-				implement. Each run item can be specified to;
-			</p>
-			<ul class="text-instructions">
-				<li>Block other run items</li>
-				<li>Block out downtime</li>
-			</ul>
-		</div>
-		<div class="col-md-8">
-			<table
-				class="table"
-				v-if="changeTaskList.length > 0"
+		<strong>Run Sheet List</strong>
+		<p class="text-instructions">
+			The run sheet will specify specific tasks for each user to
+			implement. Each run item can be specified to;<br/>
+			- Block other run items<br/>
+			- Block out downtime
+		</p>
+	</div>
+
+	<!-- LOOP FOR CHANGE TASKS -->
+	<div v-if="changeTaskList.length > 0">
+		<div  v-for="changeTask in changeTaskList"
+			  v-bind:key="changeTask.pk"
+			  class="row change-task--detail"
+		>
+			<a class="change-task--name"
+				v-bind:href="`${rootUrl}change_task_information/${changeTask.pk}/`"
 			>
-				<thead>
-					<tr>
-						<td style="width: 20%">Timings</td>
-						<td style="width: 55%">Title</td>
-						<td style="width: 25%">Assigned Users</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-						v-for="changeTask in changeTaskList"
-						v-bind:key="changeTask.pk"
-					>
-						<td>
-							<div>Start Time:</div>
-							<div class="small-text">
-								{{
-									getNiceDate(
-										changeTask.fields.change_task_start_date
-									)
-								}}
-							</div>
-							<div class="spacer"></div>
-							<div>End Time:</div>
-							<div class="small-text">
-								{{
-									getNiceDate(
-										changeTask.fields.change_task_end_date
-									)
-								}}
-							</div>
-						</td>
-						<td>
-							<a
-								v-bind:href="`${rootUrl}change_task_information/${changeTask.pk}/`"
-								>{{ changeTask.fields.change_task_title }}</a
-							>
-						</td>
-						<td>
-							<div>Assigned User:</div>
-							<div class="small-text">
-								{{
-									getUserName(
-										changeTask.fields
-											.change_task_assigned_user
-									)
-								}}
-							</div>
-							<div class="spacer"></div>
-							<div>QA User:</div>
-							<div class="small-text">
-								{{
-									getUserName(
-										changeTask.fields.change_task_qa_user
-									)
-								}}
-							</div>
-							<div class="spacer"></div>
-							<div>Status:</div>
-							<div
-								class="small-text"
-								v-if="rfcStatus !== 4"
-							>
-								{{
-									getStatus(
-										changeTask.fields.change_task_status
-									)
-								}}
-							</div>
-							<div v-else>
-								<!-- START BUTTON -->
-								<a
-									href="javascript:void(0)"
-									class="btn btn-primary change-task-button"
-									v-on:click="
-										updateChangeTaskStatus(changeTask.pk, 4)
-									"
-									v-if="
-										changeTask.fields.change_task_status ==
-											3 && userLevel > 1
-									"
-									>Start Task</a
-								>
-
-								<!-- FINISH BUTTON -->
-								<a
-									href="javascript:void(0)"
-									class="btn btn-warning change-task-button"
-									v-on:click="
-										updateChangeTaskStatus(changeTask.pk, 5)
-									"
-									v-if="
-										changeTask.fields.change_task_status ==
-											4 && userLevel > 1
-									"
-									>Finish Task</a
-								>
-
-								<!-- SUCCESS BUTTON -->
-								<a
-									href="javascript:void(0)"
-									class="btn btn-success change-task-button"
-									v-if="
-										changeTask.fields.change_task_status ==
-											5 && userLevel > 1
-									"
-									>Successful</a
-								>
-
-								<!-- FAILED BUTTON -->
-								<a
-									href="javascript:void(0)"
-									class="btn btn-danger change-task-button"
-									v-if="
-										changeTask.fields.change_task_status ==
-											6 && userLevel > 1
-									"
-									>Failed</a
-								>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-
-			<div
-				class="alert alert-primary"
-				v-if="changeTaskList.length == 0"
+				{{ changeTask.fields.change_task_title }}
+			</a>
+			
+			<a class="change-task--dates"
+				v-bind:href="`${rootUrl}change_task_information/${changeTask.pk}/`"
 			>
-				Currently there are no Change Tasks associated with this Request
-				for Change. Please add some by clicking on the button below.
+				{{ getNiceDate(changeTask.fields.change_task_start_date) }} - 
+				{{ getNiceDate(changeTask.fields.change_task_end_date) }}
+			</a>
+
+			<a class="change-task--responsibility"
+				v-bind:href="`${rootUrl}change_task_information/${changeTask.pk}/`"
+			>
+				<div>
+					Assigned User:
+					<span class="small-text">
+						{{getUserName(changeTask.fields.change_task_assigned_user)}}
+					</span>
+				</div>
+				<div>
+					QA User:
+					<span class="small-text">
+						{{getUserName(changeTask.fields.change_task_qa_user)}}
+					</span>
+				</div>
+			</a>
+
+			<div class="change-task--status">
+				Status: 
+				<span class="small-text">
+					{{getStatus(changeTask.fields.change_task_status)}}
+				</span>
+			</div>
+
+			<div v-if="userLevel > 1"
+				class="change-task--buttons"
+			>
+				<!-- START TASK -->
+				<button class="btn btn-primary"
+					v-on:click="updateChangeTaskStatus(changeTask.pk, 4)"
+					v-if="[3, 7, 8].includes(changeTask.fields.change_task_status)"
+				>
+					Start Task
+				</button>
+
+				<!-- PAUSE -->
+				<button class="btn btn-secondary"
+					v-on:click="updateChangeTaskStatus(changeTask.pk, 7)"
+					v-if="[4].includes(changeTask.fields.change_task_status)"
+				>
+					Pause Task
+				</button>
+
+				<!-- READY FOR QA -->
+				<button class="btn btn-info"
+					v-on:click="updateChangeTaskStatus(changeTask.pk, 8)"
+					v-if="[4].includes(changeTask.fields.change_task_status)"
+				>
+					Set Task Ready for QA
+				</button>
+
+				<!-- SUCCESS -->
+				<button class="btn btn-success"
+					v-on:click="updateChangeTaskStatus(changeTask.pk, 5)"
+					v-if="[8].includes(changeTask.fields.change_task_status)"
+				>
+					Set Task to Success
+				</button>
+
+				<!-- FAIL -->
+				<button class="btn btn-danger"
+					v-on:click="updateChangeTaskStatus(changeTask.pk, 6)"
+					v-if="[4, 8].includes(changeTask.fields.change_task_status)"
+				>
+					Set Task to Fail
+				</button>
 			</div>
 		</div>
+	</div>
 
+	<div
+		class="alert alert-primary"
+		v-else
+	>
+		Currently there are no Change Tasks associated with this Request
+		for Change. Please add some by clicking on the button below.
+	</div>
+	<div class="row">
 		<!-- ADD NEW CHANGE TASK TO RUN SHEET -->
-		<hr v-if="!isReadOnly" />
 		<div
 			class="row submit-row"
 			v-if="!isReadOnly"
@@ -319,10 +275,16 @@
 						return "Task Started";
 
 					case 5:
-						return "Task Finished";
+						return "Task Finished Successfully";
 
 					case 6:
 						return "Task FAILED";
+
+					case 7:
+						return "PAUSED Task"
+
+					case 8:
+						return "Ready for QA"
 
 					default:
 						return "---";

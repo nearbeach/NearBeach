@@ -33,9 +33,6 @@
                 v-on:click="removeLink(link)"
             />
         </div>
-
-        <!-- Border Hack -->
-        <div class="object-link--border"></div>
     </div>
     <div class="spacer-extra"
         v-if="linkResults.length > 0"

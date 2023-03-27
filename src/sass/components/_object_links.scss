@@ -1,16 +1,12 @@
 .object-link {
-    margin-top: 12px;
-}
-
-.object-link--border {
-    border-bottom: 1px #51ceff solid;
-    width: calc(100% - 22px);
-    margin: 5px 11px;
+    border: 1px solid lightgray;
+    margin: 10px 5px;
+    padding: 10px 5px;
+    background-color: #fcfcfcf0;;
 }
 
 .object-link--details {
     a {
-        color: inherit;
         text-decoration: none;
     }
 
@@ -48,7 +44,7 @@
 
 .object-link--remove {
     position: absolute;
-    right: 0px;
+    right: 13px;
     width: 44px;
     color: red;
 }

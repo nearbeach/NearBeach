@@ -1,0 +1,47 @@
+.change-task--detail {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid lightgray;
+    margin: 10px 5px;
+    padding: 10px 5px;
+    background-color: #fcfcfcf0;
+
+    .change-task--dates,
+    .change-task--responsibility
+    {
+        color: #4f4f4f;
+        font-weight: lighter;
+    }
+
+    .change-task--name {
+        a {
+            text-decoration: none;
+            color: black;
+        }
+    }
+
+    .change-task--responsibility {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .change-task--buttons {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        margin: 15px 0 10px 0;
+
+        button {
+            margin: 10px 0;
+        }
+
+        @media screen and (min-width: 577px) {
+            flex-direction: row;
+        }
+    }
+
+    > a {
+        text-decoration: none;
+    }
+}
