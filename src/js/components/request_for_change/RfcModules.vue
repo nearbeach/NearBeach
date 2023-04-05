@@ -267,14 +267,13 @@
 					role="tabpanel"
 					aria-labelledby="home-tab"
 				>
-					<rfc-run-sheet-list
+					<change-task-list
 						v-bind:is-read-only="isReadOnly"
 						v-bind:location-id="locationId"
 						v-bind:user-list="userList"
 						v-bind:rfc-id="rfcResults[0].pk"
 						v-bind:rfc-status="rfcResults[0].fields.rfc_status"
-						v-on:update_values="updateValues($event)"
-					></rfc-run-sheet-list>
+					></change-task-list>
 				</div>
 			</div>
 		</div>
@@ -283,10 +282,11 @@
 
 <script>
 	const axios = require("axios");
+	import ChangeTaskList from "./modules/ChangeTaskList.vue";
 	import RfcBackoutPlan from "./tabs/RfcBackoutPlan.vue";
 	import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
 	import RfcRisk from "./tabs/RfcRisk.vue";
-	import RfcRunSheetList from "./modules/RfcRunSheetList.vue";
+	// import RfcRunSheetList from "./modules/ChangeTaskList.vue";
 	import RfcTestPlan from "./tabs/RfcTestPlan.vue";
 	import GroupsAndUsersModule from "../modules/sub_modules/GroupsAndUsersModule.vue";
 
@@ -300,11 +300,12 @@
 	export default {
 		name: "RfcModules",
 		components: {
+			ChangeTaskList,
 			GroupsAndUsersModule,
 			RfcBackoutPlan,
 			RfcImplementationPlan,
 			RfcRisk,
-			RfcRunSheetList,
+			// RfcRunSheetList,
 			RfcTestPlan,
 		},
 		props: {

@@ -139,19 +139,20 @@
 		</div>
 
 		<!-- Modal -->
-		<rfc-new-run-item
+		<new-change-task
 			v-bind:location-id="locationId"
 			v-bind:user-list="userList"
 			v-on:update_change_task_list="updateChangeTaskList($event)"
 			v-if="!isReadOnly"
-		></rfc-new-run-item>
+		></new-change-task>
 	</div>
 </template>
 
 <script>
 	const axios = require("axios");
 	import { Modal } from "bootstrap";
-	import RfcNewRunItem from "./RfcNewRunItem.vue";
+	// import RfcNewRunItem from "../../change_task/NewChangeTask.vue";
+	import NewChangeTask from "../../change_task/NewChangeTask.vue";
 
 	// Mixins
 	import datetimeMixin from "../../../mixins/datetimeMixin";
@@ -161,9 +162,10 @@
 	import { mapGetters } from "vuex";
 
 	export default {
-		name: "RfcRunSheetList",
+		name: "ChangeTaskList",
 		components: {
-			RfcNewRunItem,
+			// RfcNewRunItem,
+			NewChangeTask,
 		},
 		props: {
 			isReadOnly: {

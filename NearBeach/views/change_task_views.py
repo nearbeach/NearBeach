@@ -36,7 +36,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     )
 
     # Load the template
-    t = loader.get_template("NearBeach/request_for_change/change_task_information.html")
+    t = loader.get_template("NearBeach/change_task/change_task_information.html")
 
     user_list = User.objects.filter(is_active=True,).values(
         "id",

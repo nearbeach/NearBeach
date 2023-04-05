@@ -175,13 +175,13 @@
 	import { NSelect, NDatePicker } from "naive-ui";
 
 	//Import mixins
-	import errorModalMixin from "../../../mixins/errorModalMixin";
+	import errorModalMixin from "../../mixins/errorModalMixin";
 
 	//VueX
 	import { mapGetters } from "vuex";
 
 	export default {
-		name: "RfcNewRunItem",
+		name: "NewChangeTask",
 		components: {
 			editor: Editor,
 			NDatePicker,
