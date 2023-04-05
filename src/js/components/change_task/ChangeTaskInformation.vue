@@ -271,11 +271,23 @@
 					return [];
 				},
 			},
+			destination: {
+				type: String,
+				default: "",
+			},
+			locationId: {
+				type: Number,
+				default: 0,
+			},
 			rfcStatus: {
 				type: String,
 				default: "Empty Status",
 			},
 			rootUrl: {
+				type: String,
+				default: "/",
+			},
+			staticUrl: {
 				type: String,
 				default: "/",
 			},
@@ -458,6 +470,23 @@
 				this.changeStartDateModel = data.start_date;
 				this.changeEndDateModel = data.end_date;
 			},
+		},
+		mounted() {
+			//Send data to required VueX states
+			this.$store.commit({
+				type: "updateDestination",
+				destination: this.destination,
+				locationId: this.locationId,
+			});
+			this.$store.commit({
+				type: "updateUrl",
+				rootUrl: this.rootUrl,
+				staticUrl: this.staticUrl,
+			});
+			this.$store.commit({
+				type: "updateUserLevel",
+				userLevel: this.userLevel,
+			});
 		},
 	};
 </script>

@@ -12,6 +12,12 @@ export const // BugsModule = defineAsyncComponent(() =>
 			"./components/change_task/ChangeTaskInformation.vue"
 		)
 	),
+	ChangeTaskModules = defineAsyncComponent(() => 
+		import(
+			/* webpackChunkName: "change-task-modules" */
+			"./components/change_task/ChangeTaskModules.vue"
+		)
+	),
 	CustomerInformation = defineAsyncComponent(() =>
 		import(
 			/* webpackChunkName: "customer-information" */

@@ -51,6 +51,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
 
     # Context
     c = {
+        "change_task_id": change_task_id,
         "change_task_results": serializers.serialize("json", [change_task_results]),
         "rfc_status": rfc_results.rfc_status,
         "user_level": kwargs["user_level"],
@@ -119,6 +120,32 @@ def change_task_save(request, change_task_id, *args, **kwargs):
 
     # Send back empty but successful data
     return HttpResponse("")
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_change_task_permissions(min_permission_level=1)
+def get_change_task_list(request, change_task_id, *args, **kwargs):
+    """
+    A POST node to get a list of all change tasks assigned to an RFC
+     - the RFC is linked to the change task id
+    :param request:
+    : param change_task_id: the change task id which we will obtain the RFC from
+    : return: List of all Change Tasks assigned to this RFC
+    """
+    change_task_instance = ChangeTask.objects.get(change_task_id=change_task_id)
+
+    change_task_results = ChangeTask.objects.filter(
+        is_deleted=False,
+        request_for_change_id=change_task_instance.request_for_change_id,
+    ).exclude(
+        change_task_id=change_task_id,
+    )
+
+    # Send data to user
+    return HttpResponse(
+        serializers.serialize("json", change_task_results), content_type="application/json"
+    )
 
 
 @require_http_methods(["POST"])

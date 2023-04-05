@@ -59,6 +59,11 @@ urlpatterns = [
         name="change_task_delete",
     ),
     path(
+        "change_task_information/<int:change_task_id>/get_change_task_list/",
+        change_task_views.get_change_task_list,
+        name="change_task_get_change_task_list",
+    ),
+    path(
         "change_task_information/<int:change_task_id>/save/",
         change_task_views.change_task_save,
         name="change_task_save",

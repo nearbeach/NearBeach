@@ -24,6 +24,7 @@ axios.defaults.xsrfCookieName = "csrftoken";
 import {
 	//BugsModule,
 	ChangeTaskInformation,
+	ChangeTaskModules,
 	CustomerInformation,
 	DashboardKanbanList,
 	DashboardMyObjects,
@@ -74,6 +75,7 @@ const app = createApp({
 	components: {
 		//BugsModule,
 		ChangeTaskInformation,
+		ChangeTaskModules,
 		CustomerInformation,
 		DashboardKanbanList,
 		DashboardMyObjects,
