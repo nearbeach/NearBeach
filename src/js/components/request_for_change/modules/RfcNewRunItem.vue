@@ -47,31 +47,65 @@
 						</div>
 					</div>
 
-					<!-- NOTIFY USERS OF DATE RESTRICTIONS -->
+					<!-- START DATE & END DATE -->
 					<hr />
 					<div class="row">
 						<div class="col-md-4">
-							<strong>Date Restrictions</strong>
+							<strong>Between Dates</strong>
 							<p class="text-instructions">
-								Start and End dates of the RFC
+								Choose the start and end date of the Change Task. Please
+								note the end date can not be earlier than the start date and
+								the start time has to be between the RFC's start and end date.
+								This information is show below the dates
 							</p>
 						</div>
-						<div class="col-md-4">
-							Start Date:
-							<span>{{ formatDate(rfcStartDate) }}</span>
-						</div>
-						<div class="col-md-4">
-							End Date: <span>{{ formatDate(rfcEndDate) }}</span>
+						<div class="col-md-8">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label
+											>Start Date:
+										</label>
+										<n-date-picker
+											type="datetime"
+											v-model:value="changeStartDateModel"
+											class="form-control"
+										></n-date-picker>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label
+											>End Date:
+										</label>
+										<n-date-picker
+											type="datetime"
+											v-model:value="changeEndDateModel"
+											class="form-control"
+										></n-date-picker>
+									</div>
+								</div>
+							</div>
+							<div v-if="changeStartDateModel < rfcStartDate"
+								class="row"
+							>
+								<div class="spacer"></div>
+								<div class="alert alert-danger">
+									The Start date can not be earlier than the start date of the RFC -
+									{{ formatDate(rfcStartDate) }}
+								</div>
+							</div>
+							<div v-if="changeEndDateModel > rfcEndDate"
+								class="row"
+							>
+								<div class="spacer"></div>
+								<div class="alert alert-info">
+									The End date when saved will automatically update the End Date for the RFC -
+									{{ formatDate(rfcEndDate) }}
+								</div>
+							</div>
 						</div>
 					</div>
-
-					<!-- START DATE & END DATE -->
-					<hr />
-					<between-dates
-						destination="Change Task"
-						v-on:update_dates="updateDates($event)"
-						v-bind:no-back-dating="false"
-					></between-dates>
 
 					<!-- IMPLEMENTATION USER & QA USER -->
 					<hr />
@@ -106,83 +140,6 @@
 							</div>
 						</div>
 					</div>
-
-					<!-- DESCRIPTION OPTIONAL -->
-					<hr />
-					<div class="row">
-						<div class="col-md-4">
-							<strong>Description</strong>
-							<p class="text-instructions">
-								Write a detail description of this particular
-								task.
-							</p>
-						</div>
-						<div class="col-md-8">
-							<label>Change Task Description (Optional):</label>
-							<editor
-								:init="{
-									height: 300,
-									menubar: false,
-									plugins: ['lists', 'table'],
-									toolbar: [
-										'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-										'bold italic strikethrough underline backcolor | table | ' +
-											'bullist numlist outdent indent | removeformat',
-									],
-								}"
-								v-bind:content_css="false"
-								v-bind:skin="false"
-								v-model="changeDescriptionModel"
-							/>
-						</div>
-					</div>
-
-					<!-- MISC -->
-					<hr />
-					<div class="row">
-						<div class="col-md-4">
-							<strong>Misc</strong>
-							<p class="text-instructions">
-								Please fill in the stakeholders for this
-								particular change task. Default value will be
-								"Stakeholders".
-							</p>
-							<p class="text-instructions">
-								To state if there is downtime, please click the
-								"No Downtime" to change it's statue.
-							</p>
-						</div>
-						<div class="col-md-8">
-							<div class="form-group">
-								<label>Stakeholders:</label>
-								<input
-									type="text"
-									class="form-control"
-									v-model="changeStakeholderModel"
-								/>
-							</div>
-
-							<br />
-							<div
-								class="btn-group"
-								role="group"
-								aria-label="Basic checkbox toggle button group"
-							>
-								<input
-									type="checkbox"
-									id="isDowntime"
-									class="btn-check"
-									autocomplete="off"
-									v-model="changeIsDowntimeModel"
-								/>
-								<label
-									class="btn btn-outline-primary"
-									for="isDowntime"
-									>{{ isDowntime() }}</label
-								>
-							</div>
-						</div>
-					</div>
 				</div>
 				<div class="modal-footer">
 					<button
@@ -195,9 +152,16 @@
 					<button
 						type="button"
 						class="btn btn-primary"
+						v-on:click="submitAndClose($event)"
+					>
+						Add & Close Modal
+					</button>
+					<button
+						type="button"
+						class="btn btn-success"
 						v-on:click="submitChangeTask($event)"
 					>
-						Add Change Task
+						Add & Create another
 					</button>
 				</div>
 			</div>
@@ -208,8 +172,7 @@
 <script>
 	const axios = require("axios");
 	import Editor from "@tinymce/tinymce-vue";
-	import BetweenDates from "../../dates/BetweenDates.vue";
-	import { NSelect } from "naive-ui";
+	import { NSelect, NDatePicker } from "naive-ui";
 
 	//Import mixins
 	import errorModalMixin from "../../../mixins/errorModalMixin";
@@ -220,8 +183,8 @@
 	export default {
 		name: "RfcNewRunItem",
 		components: {
-			BetweenDates,
 			editor: Editor,
+			NDatePicker,
 			NSelect,
 		},
 		props: {
@@ -239,11 +202,8 @@
 		mixins: [errorModalMixin],
 		data: () => ({
 			assignedUserModel: "",
-			changeDescriptionModel: "",
-			changeEndDateModel: "",
-			changeIsDowntimeModel: false,
-			changeStakeholderModel: "Stakeholder(s)",
-			changeStartDateModel: "",
+			changeEndDateModel: 0,
+			changeStartDateModel: 0,
 			changeTitleModel: "",
 			qaUserModel: "",
 			userListFixed: [],
@@ -269,11 +229,13 @@
 				//Return the date as a string
 				return `${new_date[0]} ${time_split[0]}`;
 			},
-			isDowntime() {
-				if (this.changeIsDowntimeModel) {
-					return `Downtime Scheduled`;
-				}
-				return `No Downtime`;
+			submitAndClose(event) {
+				this.submitChangeTask(event);
+
+				//Close the modal
+				document
+					.getElementById("newRunItemCloseButton")
+					.click();
 			},
 			submitChangeTask(event) {
 				//Stop the usual stuff
@@ -291,10 +253,6 @@
 				);
 				data_to_send.set("change_task_title", this.changeTitleModel);
 				data_to_send.set(
-					"change_task_description",
-					this.changeDescriptionModel
-				);
-				data_to_send.set(
 					"change_task_start_date",
 					new Date(this.changeStartDateModel).toISOString()
 				);
@@ -311,11 +269,6 @@
 					this.assignedUserModel
 				);
 				data_to_send.set("change_task_qa_user", this.qaUserModel);
-				data_to_send.set(
-					"change_task_required_by",
-					this.changeStakeholderModel
-				);
-				data_to_send.set("is_downtime", this.changeIsDowntimeModel);
 
 				axios
 					.post(
@@ -327,34 +280,27 @@
 						this.$emit("update_change_task_list", response.data);
 
 						//Clear the modal
-						this.changeDescriptionModel = "";
-						//this.changeEndDateModel = '';
-						this.changeIsDowntimeModel = false;
-						this.changeStakeholderModel = "Stakeholder(s)";
-						//this.changeStartDateModel = '';
 						this.changeTitleModel = "";
-
-						//Close the modal
-						document
-							.getElementById("newRunItemCloseButton")
-							.click();
+						this.assignedUserModel = "";
+						this.qaUserModel = "";
 					})
 					.catch((error) => {
 						this.showErrorModal(error, "Change Task");
 					});
 			},
-			updateDates(data) {
-				this.changeStartDateModel = data.start_date;
-				this.changeEndDateModel = data.end_date;
-			},
 		},
 		mounted() {
+			//Update the user fixed list
 			this.userListFixed = this.userList.map((row) => {
 				return {
 					label: `${row.username}: ${row.first_name} ${row.last_name}`,
 					value: row.id,
 				};
 			});
+
+			//Update Times
+			this.changeEndDateModel = this.rfcStartDate + (15 * 1000 * 60);
+			this.changeStartDateModel = this.rfcStartDate;
 		},
 	};
 </script>

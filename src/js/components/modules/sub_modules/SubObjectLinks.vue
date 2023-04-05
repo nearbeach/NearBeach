@@ -9,7 +9,9 @@
         <!-- Object ID + Title -->
         <div class="col-md-10 object-link--details">
             <a v-bind:href="`${this.rootUrl}${link.object_type}_information/${link.object_id}/`" 
-                target="_blank">
+                target="_blank"
+                rel="noopener noreferrer"
+            >
                 <div class="object-link--link">{{link.object_type}} - {{link.object_id}}</div>
                 <div class="object-link--title">{{link.object_title}}</div>
             </a>

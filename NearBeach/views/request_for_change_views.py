@@ -239,25 +239,16 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     submit_change_task = ChangeTask(
         request_for_change=form.cleaned_data["request_for_change"],
         change_task_title=form.cleaned_data["change_task_title"],
-        change_task_description=form.cleaned_data["change_task_description"],
         change_task_start_date=form.cleaned_data["change_task_start_date"],
         change_task_end_date=form.cleaned_data["change_task_end_date"],
         change_task_seconds=form.cleaned_data["change_task_seconds"],
         change_task_assigned_user=form.cleaned_data["change_task_assigned_user"],
         change_task_qa_user=form.cleaned_data["change_task_qa_user"],
-        change_task_required_by=form.cleaned_data["change_task_required_by"],
-        is_downtime=form.cleaned_data["is_downtime"],
         change_task_status=1,
         change_user=request.user,
         creation_user=request.user,
     )
     submit_change_task.save()
-
-    # Send back all the RFC change items
-    # change_item_results = change_task.objects.filter(
-    #     is_deleted=False,
-    #     request_for_change_id=rfc_id,
-    # )
 
     # Get all the change task results and send it back
     change_task_results = ChangeTask.objects.filter(
