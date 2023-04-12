@@ -487,6 +487,13 @@
 				type: "updateUserLevel",
 				userLevel: this.userLevel,
 			});
+			this.$store.commit({
+				type: "updateChangeTask",
+				description: this.changeTaskResults[0].fields.change_task_description,
+				endDate: this.changeTaskResults[0].fields.change_task_end_date, 
+				startDate: this.changeTaskResults[0].fields.change_task_start_date, 
+
+			});
 		},
 	};
 </script>

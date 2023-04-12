@@ -44,13 +44,10 @@
 		</div>
 		<hr />
 
-		<!-- MODAL FOR NEW OBJECT LINKS -->
-		<!-- <new-link-wizard
-			v-bind:destination="destination"
-			v-bind:location-id="locationId"
+		<!-- MODAL FOR NEW CHANGE TASK LINKS -->
+		<new-change-task-link-wizard-vue
 			v-on:update_link_results="updateLinkResults"
-		></new-link-wizard> -->
-		<new-change-task-link-wizard-vue></new-change-task-link-wizard-vue>
+		></new-change-task-link-wizard-vue>
 	</div>
 </template>
 
@@ -80,6 +77,16 @@
 		data() {
 			return {
 				linkResults: [],
+				translateStatus: {
+					1: "Draft",
+					2: "Waiting for approval",
+					3: "Approved",
+					4: "Started",
+					5: "Finished",
+					6: "Rejected",
+					7: "Paused",
+					8: "Ready for QA",
+				}
 			};
 		},
 		computed: {
@@ -106,10 +113,19 @@
 				//Get the data from the database
 				axios
 					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/object_link_list/`
+						`${this.rootUrl}object_data/change_task/${this.locationId}/object_link_list/`
 					)
 					.then((response) => {
-						this.linkResults = response.data
+						this.linkResults = response.data.map((row) => {
+							//Get results
+							let results = row;
+
+							//Mutate the object_status
+							results.object_status = this.translateStatus[row.object_status];
+
+							//Return results
+							return results;
+						})
 					});
 			},
 		},

@@ -372,7 +372,7 @@
 						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_link/`,
 						data_to_send
 					)
-					.then((response) => {
+					.then(() => {
 						//Data has been successfully saved. Time to update the requirement links
 						this.$emit("update_link_results", {});
 

@@ -17,7 +17,8 @@ from NearBeach.models import (
     RequestForChangeGroupApproval,
     ListOfRFCStatus,
 )
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.db.models import Q
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.template import loader
 from django.core.serializers.json import DjangoJSONEncoder
@@ -183,17 +184,34 @@ def new_request_for_change_save(request, *args, **kwargs):
 @login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=1)
 def rfc_change_task_list(request, rfc_id, *args, **kwargs):
-    """ """
+    """ 
+    Obtains a list of change tasks for this particular RFC, along with any blocked information.
+    """
     change_task_results = ChangeTask.objects.filter(
         is_deleted=False,
         request_for_change=rfc_id,
-    ).order_by("change_task_start_date", "change_task_end_date")
+    ).order_by("change_task_start_date", "change_task_end_date").values()
 
-    # Send back JSON response
-    return HttpResponse(
-        serializers.serialize("json", change_task_results),
-        content_type="application/json",
-    )
+    blocked_list = ObjectAssignment.objects.filter(
+        Q(
+            is_deleted=False,
+            change_task_id__in=change_task_results.values('change_task_id'),
+        )
+        | Q(
+            is_deleted=False,
+            meta_object__in=change_task_results.values('change_task_id'),
+        )
+    ).values()
+
+    # Convert data into json format
+    change_task_results = json.dumps(list(change_task_results), cls=DjangoJSONEncoder)
+    blocked_list = json.dumps(list(blocked_list), cls=DjangoJSONEncoder)
+
+    # # Send back JSON response
+    return JsonResponse({
+        "change_tasks": json.loads(change_task_results),
+        "blocked_list": json.loads(blocked_list),
+    })
 
 
 @login_required(login_url="login", redirect_field_name="")

@@ -44,4 +44,12 @@
     > a {
         text-decoration: none;
     }
+
+    &.change-task--selected {
+        background-color: rgb(178, 230, 253);
+    }
+
+    .change-task--blocked-by {
+        margin-top: 15px;
+    }      
 }

@@ -126,6 +126,10 @@ class AddNoteForm(forms.Form):
 
 
 class AddObjectLinkForm(forms.Form):
+    change_task = forms.ModelMultipleChoiceField(
+        queryset=ChangeTask.objects.all(),
+        required=False,
+    )
     project = forms.ModelMultipleChoiceField(
         queryset=Project.objects.all(),
         required=False,

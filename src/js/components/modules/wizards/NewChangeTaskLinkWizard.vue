@@ -55,13 +55,32 @@
 						</div>
 						<div class="col-md-8">
 							<div
-								v-if="changeTaskResults.length === 0"
+								v-if="filteredChangeTaskResults.length === 0"
 								class="alert alert-warning"
 							>
 								Sorry - there are no results.
 							</div>
 
-							TODO: ADD IN RENDER CONTENT
+							<div v-for="changeTask in filteredChangeTaskResults"
+								:key="changeTask.pk"
+								v-bind:class="checkSelected(changeTask.pk)"
+							>
+								<div class="form-check">
+									<input
+										class="form-check-input"
+										type="checkbox"
+										v-bind:value="changeTask.pk"
+										v-bind:id="`checkbox_change_task_${changeTask.pk}`"
+										v-model="linkModel"
+									/>
+									<label
+										class="form-check-label"
+										v-bind:for="`checkbox_change_task_${changeTask.pk}`"
+									>
+										Change Task {{changeTask.pk}} - {{changeTask.fields.change_task_title}}
+									</label>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -111,27 +130,94 @@
 				],
 				changeTaskRelationModel: "blocking",
 				changeTaskResults: [],
+				filteredChangeTaskResults: [],
                 linkModel: [],
             }
         },  
         computed: {
 			...mapGetters({
                 destination: "getDestination",
+				endDate: "getChangeTaskEndDate",
                 locationId: "getLocationId",
 				rootUrl: "getRootUrl",
+				startDate: "getChangeTaskStartDate",
 				staticUrl: "getStaticUrl",
 			}),
 		},
+		watch: {
+			changeTaskRelationModel() {
+				if (this.changeTaskRelationModel === "blocking") {
+					this.filterBlocking();
+				} else {
+					this.filterBlockedBy();
+				}
+			},
+		},
         mixins: [iconMixin],
         methods: {
+			checkSelected(pk) {
+				if (this.linkModel.includes(pk)) {
+					return "row change-task--detail change-task--selected";
+				}
+				
+				return "row change-task--detail";
+			},
+			filterBlockedBy() {
+				//Filter out all dates where the change task end date <= start_date of current change task
+				this.filteredChangeTaskResults = this.changeTaskResults.filter(row => {
+					const end_date = new Date(row.fields.change_task_end_date);
+
+					return end_date.getTime() <= this.startDate.getTime();
+				})
+			},
+			filterBlocking() {
+				//Filter out all dates where the change task start date >= end_date of the current change task
+				this.filteredChangeTaskResults = this.changeTaskResults.filter(row => {
+					const start_date = new Date(row.fields.change_task_start_date);
+					
+					return start_date.getTime() >= this.endDate.getTime();
+				})
+			},
             getAllChangeTasks() {
                 //Use Axios to get data
                 axios.post(
                     `${this.rootUrl}change_task_information/${this.locationId}/get_change_task_list/`
                 ).then(response => {
                     this.changeTaskResults = response.data;
+
+					//Get filtered data
+					this.filterBlocking();
                 })
-            }
+            },
+			saveLinks() {
+				// Set up the data object to send
+				const data_to_send = new FormData();
+
+				// Go through all link models to add to data_to_send
+				this.linkModel.forEach((link) => {
+					data_to_send.append(
+						"change_task",
+						link
+					);
+				});
+
+				//Tells the backend the relationship we want
+				data_to_send.set("object_relation", this.changeTaskRelationModel);
+
+				// Use axios to send data
+				axios
+					.post(
+						`${this.rootUrl}object_data/change_task/${this.locationId}/add_link/`,
+						data_to_send
+					)
+					.then(() => {
+						//Data has been successfully saved. Time to update the requirement links
+						this.$emit("update_link_results", {});
+
+						//Click on the close button - a hack, but it should close the modal
+						document.getElementById("linkCloseButton").click();
+					});
+			}
         },
         mounted() {
             //Get the required data

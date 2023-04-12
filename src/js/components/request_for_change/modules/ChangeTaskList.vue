@@ -12,35 +12,35 @@
 	<!-- LOOP FOR CHANGE TASKS -->
 	<div v-if="changeTaskList.length > 0">
 		<div  v-for="changeTask in changeTaskList"
-			  v-bind:key="changeTask.pk"
+			  v-bind:key="changeTask.change_task_id"
 			  class="row change-task--detail"
 		>
 			<a class="change-task--name"
-				v-bind:href="`${rootUrl}change_task_information/${changeTask.pk}/`"
+				v-bind:href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
 			>
-				{{ changeTask.fields.change_task_title }}
+				{{ changeTask.change_task_title }}
 			</a>
 			
 			<a class="change-task--dates"
-				v-bind:href="`${rootUrl}change_task_information/${changeTask.pk}/`"
+				v-bind:href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
 			>
-				{{ getNiceDate(changeTask.fields.change_task_start_date) }} - 
-				{{ getNiceDate(changeTask.fields.change_task_end_date) }}
+				{{ getNiceDate(changeTask.change_task_start_date) }} - 
+				{{ getNiceDate(changeTask.change_task_end_date) }}
 			</a>
 
 			<a class="change-task--responsibility"
-				v-bind:href="`${rootUrl}change_task_information/${changeTask.pk}/`"
+				v-bind:href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
 			>
 				<div>
 					Assigned User:
 					<span class="small-text">
-						{{getUserName(changeTask.fields.change_task_assigned_user)}}
+						{{getUserName(changeTask.change_task_assigned_user)}}
 					</span>
 				</div>
 				<div>
 					QA User:
 					<span class="small-text">
-						{{getUserName(changeTask.fields.change_task_qa_user)}}
+						{{getUserName(changeTask.change_task_qa_user)}}
 					</span>
 				</div>
 			</a>
@@ -48,49 +48,64 @@
 			<div class="change-task--status">
 				Status: 
 				<span class="small-text">
-					{{getStatus(changeTask.fields.change_task_status)}}
+					{{getStatus(changeTask.change_task_status)}}
 				</span>
 			</div>
 
-			<div v-if="userLevel > 1"
+			<div v-if="blockedBy(changeTask.change_task_id).length > 0">
+				<div class="change-task--blocked-by">
+					Change task currently blocked by;
+					<ul>
+						<li v-for="singleBlock in blockedBy(changeTask.change_task_id)"
+							:key="singleBlock.object_assignment_id"
+						>
+							<a v-bind:href="`${this.rootUrl}change_task_information/${singleBlock.change_task_id}/`"
+							>
+								{{singleBlock.change_task_title}}
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div v-else-if="userLevel > 1"
 				class="change-task--buttons"
 			>
 				<!-- START TASK -->
 				<button class="btn btn-primary"
-					v-on:click="updateChangeTaskStatus(changeTask.pk, 4)"
-					v-if="[3, 7, 8].includes(changeTask.fields.change_task_status)"
+					v-on:click="updateChangeTaskStatus(changeTask.change_task_id, 4)"
+					v-if="[3, 7, 8].includes(changeTask.change_task_status)"
 				>
 					Start Task
 				</button>
 
 				<!-- PAUSE -->
 				<button class="btn btn-secondary"
-					v-on:click="updateChangeTaskStatus(changeTask.pk, 7)"
-					v-if="[4].includes(changeTask.fields.change_task_status)"
+					v-on:click="updateChangeTaskStatus(changeTask.change_task_id, 7)"
+					v-if="[4].includes(changeTask.change_task_status)"
 				>
 					Pause Task
 				</button>
 
 				<!-- READY FOR QA -->
 				<button class="btn btn-info"
-					v-on:click="updateChangeTaskStatus(changeTask.pk, 8)"
-					v-if="[4].includes(changeTask.fields.change_task_status)"
+					v-on:click="updateChangeTaskStatus(changeTask.change_task_id, 8)"
+					v-if="[4].includes(changeTask.change_task_status)"
 				>
 					Set Task Ready for QA
 				</button>
 
 				<!-- SUCCESS -->
 				<button class="btn btn-success"
-					v-on:click="updateChangeTaskStatus(changeTask.pk, 5)"
-					v-if="[8].includes(changeTask.fields.change_task_status)"
+					v-on:click="updateChangeTaskStatus(changeTask.change_task_id, 5)"
+					v-if="[8].includes(changeTask.change_task_status)"
 				>
 					Set Task to Success
 				</button>
 
 				<!-- FAIL -->
 				<button class="btn btn-danger"
-					v-on:click="updateChangeTaskStatus(changeTask.pk, 6)"
-					v-if="[4, 8].includes(changeTask.fields.change_task_status)"
+					v-on:click="updateChangeTaskStatus(changeTask.change_task_id, 6)"
+					v-if="[4, 8].includes(changeTask.change_task_status)"
 				>
 					Set Task to Fail
 				</button>
@@ -193,6 +208,7 @@
 		},
 		mixins: [datetimeMixin, errorModalMixin],
 		data: () => ({
+			blockedTaskList: [],
 			changeTaskList: [],
 		}),
 		computed: {
@@ -204,7 +220,7 @@
 				var count_of_uncompleted_tasks = this.changeTaskList.filter(
 					(changeTask) => {
 						const change_task_status =
-							changeTask.fields.change_task_status;
+							changeTask.change_task_status;
 						return (
 							change_task_status !== 5 && change_task_status !== 6
 						);
@@ -224,6 +240,55 @@
 					document.getElementById("newRunItemModal")
 				);
 				newChangeTaskModal.show();
+			},
+			blockedBy: function(change_task_id) {
+				/*
+				The blockedBy function accepts the current change_task_id.
+
+				We are trying to find out which change tasks currently block the change_task_id.
+				
+				There are two possible solutions;
+				1. parent link = change_task + meta_object = change_task_id
+				2. parent link = meta_object + change_task_id = change_task_id
+
+				We ignore all change tasks that are currently completed. i.e. failed or success.
+				*/
+				var condition_1 = this.blockedTaskList.filter((row) => {
+					return row.parent_link === "change_task" & row.meta_object === change_task_id;
+				}).map((row) => {
+					return row.change_task_id;
+				}) //Meta object is blocked by change task
+
+				var condition_2 = this.blockedTaskList.filter((row) => {
+					return row.parent_link === "meta_object" & row.change_task_id === change_task_id;
+				}).map((row) => {
+					return row.meta_object;
+				}) //Change task is blocked by meta object
+
+				//Finished Change Task status ids
+				const finished_status = [5, 6];
+
+				//Filter and map out data we want
+				condition_1 = this.changeTaskList.filter((row) => {
+					return condition_1.includes(row.change_task_id) && !finished_status.includes(row.change_task_status);
+				}).map((row) => {
+					return {
+						"change_task_id": row.change_task_id,
+						"change_task_title": row.change_task_title,
+					}
+				});
+
+				condition_2 = this.changeTaskList.filter((row) => {
+					return condition_2.includes(row.change_task_id) && !finished_status.includes(row.change_task_status);
+				}).map((row) => {
+					return {
+						"change_task_id": row.change_task_id,
+						"change_task_title": row.change_task_title,
+					}
+				});
+
+				//Add both arrays together and send back
+				return condition_1.concat(condition_2);
 			},
 			closeRfc() {
 				//Construct the data to send
@@ -249,13 +314,14 @@
 						`${this.rootUrl}rfc_information/${this.locationId}/change_task_list/`
 					)
 					.then((response) => {
-						// Update the changeTaskList
-						this.changeTaskList = response.data;
+						// Update the blockedTaskList and changeTaskList
+						this.blockedTaskList = response.data.blocked_list;
+						this.changeTaskList = response.data.change_tasks;
 
 						// Update the changeTaskCount in statemanagement
 						this.$store.commit({
 							type: "updateChangeTaskCount",
-							changeTaskCount: response.data.length,
+							changeTaskCount: response.data.change_tasks.length,
 						});
 					})
 					.catch((error) => {
@@ -338,9 +404,9 @@
 						this.changeTaskList = this.changeTaskList.map(
 							(changeTask) => {
 								//The change task that we have just updated :)
-								if (changeTask.pk == change_task_id) {
+								if (changeTask.change_task_id == change_task_id) {
 									//Update the change Task Status
-									changeTask.fields.change_task_status =
+									changeTask.change_task_status =
 										change_task_status;
 
 									//Send back the change task status

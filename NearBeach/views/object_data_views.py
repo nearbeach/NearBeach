@@ -14,6 +14,7 @@ import json
 from NearBeach.models import (
     Bug,
     BugClient,
+    ChangeTask,
     Customer,
     Group,
     KanbanCard,
@@ -183,6 +184,7 @@ def add_link(request, destination, location_id):
 
     # Declaring the dict used in the for loop below
     object_dict = {
+        "change_task": ChangeTask.objects,
         "project": Project.objects,
         "task": Task.objects,
         "requirement": Requirement.objects,
@@ -200,6 +202,7 @@ def add_link(request, destination, location_id):
     }
 
     object_title = {
+        "change_task": "change_task_title",
         "project": "project_name",
         "task": "task_short_description",
         "requirement": "requirement_title",
@@ -207,6 +210,7 @@ def add_link(request, destination, location_id):
     }
 
     object_status = {
+        "change_task": "change_task_status",
         "project": "project_status",
         "task": "task_status",
         "requirement": "requirement_status",
@@ -215,7 +219,7 @@ def add_link(request, destination, location_id):
 
     # Loop through the results and add them in.
     # We will loop through each object type, and add them in accordinly
-    for object_type in ["project", "task", "requirement", "requirement_item"]:
+    for object_type in ["change_task", "project", "task", "requirement", "requirement_item"]:
         # Get the results of each object type and add them
         for row in request.POST.getlist(object_type):
             single_object = object_dict[object_type].get(pk=row)
