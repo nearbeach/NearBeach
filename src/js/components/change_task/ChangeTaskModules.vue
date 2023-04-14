@@ -12,7 +12,7 @@
 					role="presentation"
 				>
 					<button
-						class="nav-link"
+						class="nav-link active"
 						id="change-task-links-tab"
 						data-bs-toggle="tab"
 						data-bs-target="#change_task_links"

@@ -93,84 +93,6 @@
 				</div>
 			</div>
 
-			<!-- DESCRIPTION OPTIONAL -->
-			<hr />
-			<div class="row">
-				<div class="col-md-4">
-					<strong>Description</strong>
-					<p class="text-instructions">
-						Write a detail description of this particular task.
-					</p>
-				</div>
-				<div class="col-md-8">
-					<label>Change Task Description (Optional):</label>
-					<editor
-						:init="{
-							file_picker_types: 'image',
-							height: 300,
-							images_upload_handler: customUploadImage,
-							menubar: false,
-							paste_data_images: true,
-							plugins: ['lists', 'paste', 'table'],
-							toolbar: [
-								'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-								'bold italic strikethrough underline backcolor | table | ' +
-									'bullist numlist outdent indent | removeformat',
-							],
-						}"
-						v-bind:content_css="false"
-						v-bind:skin="false"
-						v-model="changeDescriptionModel"
-					/>
-				</div>
-			</div>
-
-			<!-- MISC -->
-			<hr />
-			<div class="row">
-				<div class="col-md-4">
-					<strong>Misc</strong>
-					<p class="text-instructions">
-						Please fill in the stakeholders for this particular
-						change task. Default value will be "Stakeholders".
-					</p>
-					<p class="text-instructions">
-						To state if there is downtime, please click the "No
-						Downtime" to change it's statue.
-					</p>
-				</div>
-				<div class="col-md-8">
-					<div class="form-group">
-						<label>Stakeholders:</label>
-						<input
-							type="text"
-							class="form-control"
-							v-model="changeStakeholderModel"
-						/>
-					</div>
-
-					<br />
-					<div
-						class="btn-group"
-						role="group"
-						aria-label="Basic checkbox toggle button group"
-					>
-						<input
-							type="checkbox"
-							id="isDowntime"
-							class="btn-check"
-							autocomplete="off"
-							v-model="changeIsDowntimeModel"
-						/>
-						<label
-							class="btn btn-outline-primary"
-							for="isDowntime"
-							>{{ isDowntime() }}</label
-						>
-					</div>
-				</div>
-			</div>
-
 			<!-- GO BACK -->
 			<hr v-if="userLevel > 1" />
 			<!-- CANCEL -->
@@ -250,7 +172,6 @@
 	const axios = require("axios");
 
 	//Widgets
-	import Editor from "@tinymce/tinymce-vue";
 	import BetweenDates from "../dates/BetweenDates.vue";
 	import { NSelect } from "naive-ui";
 
@@ -261,7 +182,6 @@
 		name: "ChangeTaskInformation",
 		components: {
 			BetweenDates,
-			editor: Editor,
 			NSelect,
 		},
 		props: {
@@ -308,12 +228,6 @@
 					this.changeTaskResults[0].fields.change_task_assigned_user,
 				changeTitleModel:
 					this.changeTaskResults[0].fields.change_task_title,
-				changeDescriptionModel:
-					this.changeTaskResults[0].fields.change_task_description,
-				changeStakeholderModel:
-					this.changeTaskResults[0].fields.change_task_required_by,
-				changeIsDowntimeModel:
-					this.changeTaskResults[0].fields.is_downtime,
 				changeStartDateModel: new Date(
 					this.changeTaskResults[0].fields.change_task_start_date
 				).getTime(),
@@ -337,44 +251,6 @@
 			}),
 		},
 		methods: {
-			customUploadImage(blobInfo, success, failure, progress) {
-				//Create the form
-				const data_to_send = new FormData();
-				data_to_send.set(
-					"document",
-					blobInfo.blob(),
-					blobInfo.filename()
-				);
-				data_to_send.set("document_description", blobInfo.filename());
-
-				//Configuration for axios
-				const config = {
-					onUploadProgress: (progressEvent) => {
-						//As the document gets uploaded - we want to update the upload Percentage
-						progress =
-							parseFloat(progressEvent.loaded) /
-							parseFloat(progressEvent.total);
-					},
-				};
-
-				//Create url
-				const url = `${this.rootUrl}documentation/request_for_change/${this.changeTaskResults[0].fields.request_for_change}/upload/`;
-
-				//Use axios to send the data
-				axios
-					.post(url, data_to_send, config)
-					.then((response) => {
-						//Just send the location to the success
-						success(`/private/${response.data[0].document_key_id}`);
-					})
-					.catch((error) => {});
-			},
-			isDowntime() {
-				if (this.changeIsDowntimeModel) {
-					return `Downtime Scheduled`;
-				}
-				return `No Downtime`;
-			},
 			deleteChangeTask() {
 				//Send the trigger
 				axios
@@ -409,10 +285,10 @@
 				// Create data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("change_task_title", this.changeTitleModel);
-				data_to_send.set(
-					"change_task_description",
-					this.changeDescriptionModel
-				);
+				// data_to_send.set(
+				// 	"change_task_description",
+				// 	this.changeDescriptionModel
+				// );
 				data_to_send.set(
 					"change_task_start_date",
 					new Date(this.changeStartDateModel).toISOString()
@@ -443,7 +319,7 @@
 					)
 					.then((response) => {
 						//If successful, go back
-						window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0].fields.request_for_change}/`;
+						//window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0].fields.request_for_change}/`;
 					})
 					.catch((error) => {
 						//this.showErrorModal(error, 'Change Task');
@@ -491,9 +367,12 @@
 				type: "updateChangeTask",
 				description: this.changeTaskResults[0].fields.change_task_description,
 				endDate: this.changeTaskResults[0].fields.change_task_end_date, 
+				isDowntime: this.changeTaskResults[0].fields.is_downtime,
+				requiredBy: this.changeTaskResults[0].fields.change_task_required_by,
 				startDate: this.changeTaskResults[0].fields.change_task_start_date, 
 
 			});
+				// changeIsDowntimeModel:
 		},
 	};
 </script>

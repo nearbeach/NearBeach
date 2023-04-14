@@ -69,6 +69,21 @@ urlpatterns = [
         name="change_task_save",
     ),
     path(
+        "change_task_information/<int:change_task_id>/update/description/",
+        change_task_views.update_description,
+        name="change_task_update_description",
+    ),
+    path(
+        "change_task_information/<int:change_task_id>/update/is_downtime/",
+        change_task_views.update_is_downtime,
+        name="change_task_update_is_downtime",
+    ),
+    path(
+        "change_task_information/<int:change_task_id>/update/required_by/",
+        change_task_views.update_required_by,
+        name="change_task_update_required_by",
+    ),
+    path(
         "change_task_update_status/<int:change_task_id>/",
         change_task_views.update_status,
         name="change_task_update_status",

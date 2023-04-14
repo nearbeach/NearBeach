@@ -274,18 +274,6 @@
 			},
 		},
 		mounted() {
-			//Map the results from the user_group_results to groupModels
-			/*
-            setTimeout(() => {
-                this.groupModel = this.userGroupResults.map(row => {
-                    return {
-                        group: row.group__group_name,
-                        value: row.group_id,
-                    }
-                });
-            },100);
-            */
-
 			this.$store.commit({
 				type: "updateUrl",
 				rootUrl: this.rootUrl,

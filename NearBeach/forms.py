@@ -202,6 +202,30 @@ class ChangeTaskForm(forms.ModelForm):
         ]
 
 
+class ChangeTaskDescriptionForm(forms.ModelForm):
+    class Meta:
+        model = ChangeTask
+        fields = [
+            'change_task_description',
+        ]
+
+
+class ChangeTaskIsDowntimeForm(forms.ModelForm):
+    class Meta:
+        model = ChangeTask
+        fields = [
+            'is_downtime',
+        ]
+
+
+class ChangeTaskRequiredByForm(forms.ModelForm):
+    class Meta:
+        model = ChangeTask
+        fields = [
+            'change_task_required_by',
+        ]
+
+
 class ChangeTaskStatusForm(forms.ModelForm):
     class Meta:
         model = ChangeTask
