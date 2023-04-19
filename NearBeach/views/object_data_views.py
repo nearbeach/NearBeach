@@ -1065,26 +1065,52 @@ def object_link_list(request, destination, location_id):
 
     data_results = []
     for data_point in data_point_list:
-        # If destination == non_null_field - we skip as it excludes all those rows
+        # When the destination == non_null_field, we specifically want to check out all meta_objects 
+        # that equal the location id. We want to make sure;
+        # 1. the destination column is not null
+        # 2. the meta_object == location_id
+        # These will be all meta_object assigned to the current object
         if destination == data_point.non_null_field:
-            continue
-
-        # Append onto data results
-        data_results.extend(object_assignment_results.filter(
-                **{data_point.non_null_field + "__isnull": False},
-        ).annotate(
-            object_id=F(data_point.object_id),
-            object_title=F(data_point.object_title),
-            object_status=F(data_point.object_status),
-            object_type=V(data_point.object_type),
-        ).values(
-            "object_id",
-            "object_title",
-            "object_status",
-            "object_type", 
-            "link_relationship",
-            "parent_link",
-        ))
+            data_results.extend(object_assignment_results.filter(
+                meta_object=location_id,
+                **{destination + "__isnull": False},
+            ).annotate(
+                object_id=F(data_point.object_id),
+                object_title=F(data_point.object_title),
+                object_status=F(data_point.object_status),
+                object_type=V(data_point.object_type),
+                reverse_relation=V(True),
+            ).values(
+                "object_id",
+                "object_title",
+                "object_status",
+                "object_type", 
+                "link_relationship",
+                "parent_link",
+                "reverse_relation",
+            ))
+        else:
+            # The following looks at the other fields, where the object is assigned to it's associated
+            # object field (and not meta). i.e. project is in project column.
+            data_results.extend(object_assignment_results.filter(
+                    **{data_point.non_null_field + "__isnull": False},
+            ).exclude(
+                meta_object=location_id,
+            ).annotate(
+                object_id=F(data_point.object_id),
+                object_title=F(data_point.object_title),
+                object_status=F(data_point.object_status),
+                object_type=V(data_point.object_type),
+                reverse_relation=V(False),
+            ).values(
+                "object_id",
+                "object_title",
+                "object_status",
+                "object_type", 
+                "link_relationship",
+                "parent_link",
+                "reverse_relation",
+            ))
 
     return JsonResponse(data_results, safe=False)
 

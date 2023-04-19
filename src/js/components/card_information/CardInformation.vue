@@ -99,6 +99,23 @@
 								Users
 							</button>
 						</li>
+						<li
+							class="nav-item"
+							role="presentation"
+						>
+							<button
+								class="nav-link"
+								id="downloads-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#downloads"
+								type="button"
+								role="tab"
+								aria-controls="contact"
+								aria-selected="false"
+							>
+								Downloads
+							</button>
+						</li>
 					</ul>
 					<hr />
 
@@ -146,6 +163,17 @@
 						>
 							<card-users></card-users>
 						</div>
+						<div
+							class="tab-pane fade"
+							id="downloads"
+							role="tabpanel"
+							aria-labelledby="user-tab"
+						>
+							<documents-module
+								v-bind:override-destination="'kanban_card'"
+								v-bind:override-location-id="cardId"
+							></documents-module>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -160,6 +188,7 @@
 	import CardNotes from "./CardNotes.vue";
 	import CardDescription from "./CardDescription.vue";
 	import CardUsers from "./CardUsers.vue";
+	import DocumentsModule from '../modules/sub_modules/DocumentsModule.vue';
 
 	//VueX
 	import { mapGetters } from "vuex";
@@ -174,6 +203,7 @@
 			CardDetails,
 			CardNotes,
 			CardUsers,
+			DocumentsModule,
 			Icon,
 		},
 		mixins: [iconMixin],

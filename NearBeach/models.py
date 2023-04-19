@@ -432,6 +432,12 @@ class DocumentPermission(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
+    kanban_card = models.ForeignKey(
+        "KanbanCard",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     folder = models.ForeignKey(
         "folder",
@@ -481,6 +487,12 @@ class Folder(models.Model):
     )
     request_for_change = models.ForeignKey(
         "RequestForChange",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    kanban_card = models.ForeignKey(
+        "KanbanCard",
         on_delete=models.CASCADE,
         blank=True,
         null=True,

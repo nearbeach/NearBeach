@@ -34,35 +34,6 @@
 						</div>
 						<div class="col-md-8">
 							<div class="form-group">
-								<label for="document_url_location">
-									Document URL
-									<span
-										class="error"
-										v-if="
-											!v$.documentUrlLocationModel
-												.required &&
-											v$.documentUrlLocationModel.$dirty
-										"
-									>
-										Please suppy a URL.</span
-									>
-									<span
-										class="error"
-										v-if="
-											!v$.documentUrlLocationModel.url &&
-											v$.documentUrlLocationModel.$dirty
-										"
-									>
-										Please suppy a proper URL.</span
-									>
-								</label>
-								<input
-									id="document_url_location"
-									v-model="documentUrlLocationModel"
-									class="form-control"
-								/>
-							</div>
-							<div class="form-group">
 								<label for="document_description">
 									Document Description
 									<span
@@ -89,6 +60,37 @@
 									v-model="documentDescriptionModel"
 									class="form-control"
 									maxlength="50"
+									placeholder="NearBeach Homepage"
+								/>
+							</div>
+							<div class="form-group">
+								<label for="document_url_location">
+									Document URL
+									<span
+										class="error"
+										v-if="
+											!v$.documentUrlLocationModel
+												.required &&
+											v$.documentUrlLocationModel.$dirty
+										"
+									>
+										Please suppy a URL.</span
+									>
+									<span
+										class="error"
+										v-if="
+											!v$.documentUrlLocationModel.url &&
+											v$.documentUrlLocationModel.$dirty
+										"
+									>
+										Please suppy a proper URL.</span
+									>
+								</label>
+								<input
+									id="document_url_location"
+									v-model="documentUrlLocationModel"
+									class="form-control"
+									placeholder="https://nearbeach.org"
 								/>
 							</div>
 						</div>

@@ -3,7 +3,7 @@
 		<h2><Icon :icon="icons.bxBriefcase" /> Documents</h2>
 		<p class="text-instructions">
 			The following is a folder structure of all documents uploaded to
-			this {{ destination }}
+			this {{ this.getDestination() }}
 		</p>
 
 		<!-- DOCUMENT FOLDER TREE -->
@@ -123,7 +123,7 @@
 		<!-- MODALS -->
 		<!-- ADD FOLDER ID -->
 		<add-folder-wizard
-			v-bind:destination="destination"
+			v-bind:destination="getDestination()"
 			v-bind:location-id="locationId"
 			v-bind:current-folder="currentFolder"
 			v-bind:existing-folders="folderFilteredList"
@@ -132,7 +132,7 @@
 
 		<!-- ADD LINK WIZARD -->
 		<add-link-wizard
-			v-bind:destination="destination"
+			v-bind:destination="getDestination()"
 			v-bind:location-id="locationId"
 			v-bind:current-folder="currentFolder"
 			v-bind:exclude-documents="documentFilteredList"
@@ -141,7 +141,7 @@
 
 		<!-- UPLOAD DOCUMENT WIZARD -->
 		<upload-document-wizard
-			v-bind:destination="destination"
+			v-bind:destination="getDestination()"
 			v-bind:location-id="locationId"
 			v-bind:current-folder="currentFolder"
 			v-bind:exclude-documents="documentFilteredList"
@@ -172,6 +172,16 @@
 			Icon,
 			UploadDocumentWizard,
 		},
+		props: {
+			overrideDestination: {
+				type: String,
+				default: "",
+			},
+			overrideLocationId: {
+				type: Number,
+				default: 0,
+			},
+		},
 		data() {
 			return {
 				currentFolder: null,
@@ -190,6 +200,13 @@
 				rootUrl: "getRootUrl",
 			}),
 		},
+		watch: {
+			overrideLocationId() {
+				//Update the data
+				this.getDocumentList();
+				this.getFolderList();
+			},
+		},
 		methods: {
 			addFolder() {
 				var addFolderModal = new Modal(
@@ -203,10 +220,17 @@
 				);
 				addLinkModal.show();
 			},
+			getDestination() {
+				console.log("OVERRIDE: ", this.overrideDestination);
+				return this.overrideDestination !== "" ? this.overrideDestination : this.destination;
+			},
 			getDocumentList() {
+				//If getLocationID === 0 - bail on axios
+				if (this.getLocationId() === 0) return;
+				
 				axios
 					.post(
-						`${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/files/`
+						`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/list/files/`
 					)
 					.then((response) => {
 						this.documentList = response.data;
@@ -215,9 +239,12 @@
 					});
 			},
 			getFolderList() {
+				//If getLocationID === 0 - bail on axios
+				if (this.getLocationId() === 0) return;
+				
 				axios
 					.post(
-						`${this.rootUrl}documentation/${this.destination}/${this.locationId}/list/folders/`
+						`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/list/folders/`
 					)
 					.then((response) => {
 						this.folderList = response.data;
@@ -259,6 +286,10 @@
 					default:
 						return this.icons.documentText;
 				}
+			},
+			getLocationId() {
+				//If there is an overrideDestination - we want to use the overrideLocationId
+				return this.overrideDestination !== "" ? this.overrideLocationId : this.locationId;
 			},
 			goToParentDirectory() {
 				//Filter for the directory - then obtain it's parent directory variable.
