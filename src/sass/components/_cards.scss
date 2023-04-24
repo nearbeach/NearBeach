@@ -89,44 +89,44 @@
 	}
 
 	//Customer Module
-	.customer-modules {
-		display: flex;
-		flex-wrap: wrap;
-		min-width: 420px;
-		margin: 0 40px;
+	// .customer-modules {
+	// 	display: flex;
+	// 	flex-wrap: wrap;
+	// 	min-width: 420px;
+	// 	margin: 0 40px;
 
-		.card-customer {
-			display: block;
-			margin: 14px 35px;
+	// 	.card-customer {
+	// 		display: block;
+	// 		margin: 14px 35px;
 
-			.single-customer-card {
-				margin-left: 110px;
-				min-height: 75px;
+	// 		.single-customer-card {
+	// 			margin-left: 110px;
+	// 			min-height: 75px;
 
-				.customer-card-name {
-					margin-bottom: 6px;
-					font-weight: bold;
-					font-size: 20px;
-				}
+	// 			.customer-card-name {
+	// 				margin-bottom: 6px;
+	// 				font-weight: bold;
+	// 				font-size: 20px;
+	// 			}
 
-				.customer-card-email {
-					font-weight: lighter;
-					colour: #737373;
-					font-size: 15px;
-					margin-bottom: 2px;
-				}
+	// 			.customer-card-email {
+	// 				font-weight: lighter;
+	// 				colour: #737373;
+	// 				font-size: 15px;
+	// 				margin-bottom: 2px;
+	// 			}
 
-				img {
-					width: 100px;
-					height: 100px;
-					position: absolute;
-					border-radius: 50%;
-					transform: translateX(-110px) translateY(-13px);
-					object-fit: contain;
-				}
-			}
-		}
-	}
+	// 			img {
+	// 				width: 100px;
+	// 				height: 100px;
+	// 				position: absolute;
+	// 				border-radius: 50%;
+	// 				transform: translateX(-110px) translateY(-13px);
+	// 				object-fit: contain;
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	.group-and-user-table {
 		max-width: 350px;

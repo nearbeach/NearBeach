@@ -45,6 +45,7 @@ from NearBeach.forms import (
     AddNoteForm,
     AddTagsForm,
     AddUserForm,
+    RemoveCustomerForm,
     RemoveGroupForm,
     User,
     DeleteBugForm,
@@ -1182,6 +1183,32 @@ def query_bug_client(request, destination, location_id):
 
     # Send back the JSON data
     return JsonResponse(json_data["bugs"], safe=False)
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_destination()
+def remove_customer(request, destination, location_id):
+    # Get the form data
+    form = RemoveCustomerForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+    
+    update_object_assignment = ObjectAssignment.objects.filter(
+        customer_id=form.cleaned_data["customer_id"],
+    )
+
+    # Using internal functions - get the relevant data
+    update_object_assignment = link_object(
+        update_object_assignment, destination, location_id
+    )
+
+    # Update and save data
+    update_object_assignment.update(
+        is_deleted=True,
+    )
+
+    return HttpResponse("") 
 
 
 @require_http_methods(["POST"])

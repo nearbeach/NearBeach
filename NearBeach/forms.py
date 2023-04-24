@@ -749,6 +749,13 @@ class QueryBugClientForm(forms.Form):
     )
 
 
+class RemoveCustomerForm(forms.Form):
+    customer_id = forms.ModelChoiceField(
+        required=True,
+        queryset=Customer.objects.all()
+    )
+
+
 class RemoveGroupForm(forms.Form):
     group_id = forms.ModelChoiceField(required=True, queryset=Group.objects.all())
 

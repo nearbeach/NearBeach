@@ -470,6 +470,11 @@ urlpatterns = [
         name="query_bug_client",
     ),
     path(
+        "object_data/<destination>/<location_id>/remove_customer/",
+        object_data_views.remove_customer,
+        name="remove_customer",
+    ),
+    path(
         "object_data/<destination>/<location_id>/remove_group/",
         object_data_views.remove_group,
         name="remove_group",

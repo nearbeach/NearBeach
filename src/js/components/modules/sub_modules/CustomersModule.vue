@@ -18,6 +18,7 @@
 		<div v-else>
 			<customers-list-module
 				v-bind:customer-results="customerResults"
+				v-on:remove_customer="removeCustomer($event)"
 			></customers-list-module>
 		</div>
 
@@ -98,6 +99,11 @@
 					.catch((error) => {
 						this.showErrorModal(error, this.destination);
 					});
+			},
+			removeCustomer(customer_id) {
+				this.customerResults = this.customerResults.filter((row) => {
+					return row.pk !== customer_id;
+				});
 			},
 			updateCustomerResults(data) {
 				this.customerResults = data;
