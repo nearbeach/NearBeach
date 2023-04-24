@@ -297,6 +297,13 @@ class DeleteTagForm(forms.ModelForm):
         }
 
 
+class DocumentRemoveForm(forms.Form):
+    document_key = forms.ModelChoiceField(
+        queryset=Document.objects.all(),
+        required=True,
+    )
+
+
 class DocumentUploadForm(forms.ModelForm):
     document = forms.FileField(
         required=True,

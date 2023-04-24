@@ -17,13 +17,13 @@
 		</div>
 		<div
 			v-else
-			class="document-widget"
+			class="document--widget"
 		>
 			<!-- GO TO PARENT DIRECTORY -->
 			<div
 				v-if="this.currentFolder != null"
 				v-on:click="goToParentDirectory()"
-				class="document-child"
+				class="document--child"
 			>
 				<Icon
 					v-bind:icon="icons.arrowUp"
@@ -38,7 +38,7 @@
 				v-for="folder in folderFilteredList"
 				:key="folder.pk"
 				v-on:click="updateCurrentFolder(folder.pk)"
-				class="document-child"
+				class="document--child"
 			>
 				<Icon
 					v-bind:icon="icons.folderIcon"
@@ -54,7 +54,7 @@
 			<div
 				v-for="document in documentFilteredList"
 				:key="document.document_key_id"
-				class="document-child"
+				class="document--child"
 			>
 				<a
 					v-bind:href="`/private/${document.document_key_id}/`"
@@ -74,6 +74,17 @@
 						}}
 					</p>
 				</a>
+
+				<!-- REMOVE DOCUMENT -->
+				<div
+					class="document--remove"
+					v-if="userLevel >= 2"
+				>
+					<Icon
+						v-bind:icon="icons.trashCan"
+						v-on:click="removeDocument(document.document_key_id)"
+					/>
+				</div>
 			</div>
 		</div>
 
@@ -221,7 +232,6 @@
 				addLinkModal.show();
 			},
 			getDestination() {
-				console.log("OVERRIDE: ", this.overrideDestination);
 				return this.overrideDestination !== "" ? this.overrideDestination : this.destination;
 			},
 			getDocumentList() {
@@ -300,6 +310,22 @@
 				//Update the current directory to the parent folder
 				this.updateCurrentFolder(filtered_data.fields.parent_folder);
 			},
+			removeDocument(document_key) {
+				//Create data_to_send
+				const data_to_send = new FormData();
+				data_to_send.set("document_key", document_key);
+
+				axios.post(
+					`${this.rootUrl}documentation/${this.destination}/${this.locationId}/remove/`,
+					data_to_send,
+				).then(() => {
+					this.documentList = this.documentList.filter((row) => {
+						return row.document_key_id !== document_key;
+					});
+
+					this.updateDocumentFilteredList();
+				});
+			},
 			shortName(input_string) {
 				//The following method will determine if we need an ellipsis (...) at the end of the file/folder name
 				const max_string_length = 50;
@@ -337,7 +363,9 @@
 				//Filter the results to contain only the documents in the current folder
 				this.documentFilteredList = this.documentList.filter((row) => {
 					return row.folder == this.currentFolder;
-				});
+				}).sort((a, b) => {
+					return a.document_key__document_description > b.document_key__document_description;
+				});;
 			},
 			updateFolderList(data) {
 				//Append the first row of the data (there will always be one row)
@@ -350,6 +378,8 @@
 				//Filter the results to contain only the folders in the current folder
 				this.folderFilteredList = this.folderList.filter((row) => {
 					return row.fields.parent_folder == this.currentFolder;
+				}).sort((a, b) => {
+					return a.fields.folder_description > b.fields.folder_description;
 				});
 			},
 			uploadDocument() {
