@@ -34,13 +34,13 @@
 				<div>
 					Assigned User:
 					<span class="small-text">
-						{{getUserName(changeTask.change_task_assigned_user)}}
+						{{getUserName(changeTask.change_task_assigned_user_id)}}
 					</span>
 				</div>
 				<div>
 					QA User:
 					<span class="small-text">
-						{{getUserName(changeTask.change_task_qa_user)}}
+						{{getUserName(changeTask.change_task_qa_user_id)}}
 					</span>
 				</div>
 			</a>
@@ -96,7 +96,7 @@
 
 				<!-- SUCCESS -->
 				<button class="btn btn-success"
-					v-on:click="updateChangeTaskStatus(changeTask.change_task_id, 5)"
+					v-on:click="openConfirmModal(changeTask.change_task_id, 'Success', 5)"
 					v-if="[8].includes(changeTask.change_task_status)"
 				>
 					Set Task to Success
@@ -104,7 +104,7 @@
 
 				<!-- FAIL -->
 				<button class="btn btn-danger"
-					v-on:click="updateChangeTaskStatus(changeTask.change_task_id, 6)"
+					v-on:click="openConfirmModal(changeTask.change_task_id, 'Failure', 6)"
 					v-if="[4, 8].includes(changeTask.change_task_status)"
 				>
 					Set Task to Fail
@@ -161,13 +161,22 @@
 			v-if="!isReadOnly"
 		></new-change-task>
 	</div>
+
+	<!-- Confirm Change Task Closure -->
+	<confirm-change-task-closure
+		v-bind:closure-id="closureId"
+		v-bind:closure-status="closureStatus"
+		v-bind:closure-status-id="closureStatusId"
+		v-on:close_change_task="closeChangeTask($event)"
+	></confirm-change-task-closure>
 </template>
 
 <script>
 	const axios = require("axios");
 	import { Modal } from "bootstrap";
-	// import RfcNewRunItem from "../../change_task/NewChangeTask.vue";
+	import ConfirmChangeTaskClosure from "./ConfirmChangeTaskClosure.vue";
 	import NewChangeTask from "../../change_task/NewChangeTask.vue";
+
 
 	// Mixins
 	import datetimeMixin from "../../../mixins/datetimeMixin";
@@ -179,7 +188,7 @@
 	export default {
 		name: "ChangeTaskList",
 		components: {
-			// RfcNewRunItem,
+			ConfirmChangeTaskClosure,
 			NewChangeTask,
 		},
 		props: {
@@ -210,6 +219,9 @@
 		data: () => ({
 			blockedTaskList: [],
 			changeTaskList: [],
+			closureId: 0,
+			closureStatus: "",
+			closureStatusId: 0,
 		}),
 		computed: {
 			...mapGetters({
@@ -289,6 +301,10 @@
 
 				//Add both arrays together and send back
 				return condition_1.concat(condition_2);
+			},
+			closeChangeTask(options) {
+				//User has selectes YES to close the change task from the modal
+				this.updateChangeTaskStatus(options.closureId, options.closureStatusId);
 			},
 			closeRfc() {
 				//Construct the data to send
@@ -372,14 +388,27 @@
 				//User was filtered out - return their name
 				return `${single_user[0].username}: ${single_user[0].first_name} ${single_user[0].last_name}`;
 			},
+			openConfirmModal(closureId, closureStatus, closureStatusId) {
+				//Update the data
+				this.closureId = closureId;
+				this.closureStatus = closureStatus;
+				this.closureStatusId = closureStatusId;
+
+				//Open the modal
+				const confirmModal = new Modal(
+					document.getElementById("confirmChangeTaskClosure")
+				);
+				confirmModal.show();
+			},
 			updateChangeTaskList(data) {
-				//Update change task list
-				this.changeTaskList = data;
+				//Update blocked task & change task list
+				this.blockedTaskList = data.blocked_list;
+				this.changeTaskList = data.change_tasks;
 
 				//Send the new count upstream
 				this.$store.commit({
 					type: "updateChangeTaskCount",
-					changeTaskCount: data.length,
+					changeTaskCount: data.change_tasks.length,
 				});
 			},
 			updateChangeTaskStatus(
