@@ -250,6 +250,7 @@ def document_upload(request, destination, location_id):
         document_description,
         destination,
         location_id,
+        form.cleaned_data["parent_folder"],
     )
 
     # Send back json data
@@ -407,7 +408,7 @@ def private_download_file(request, document_key):
 
 # Internal Function
 def handle_document_permissions(
-    request, upload, file, document_description, destination, location_id
+    request, upload, file, document_description, destination, location_id, parent_folder = 0
 ):
     """
     The function that handles the document permission - i.e. if user has access to the 
@@ -432,6 +433,12 @@ def handle_document_permissions(
     document_permission_submit = set_object_from_destination(
         document_permission_submit, destination, location_id
     )
+
+    # Apply the parent folder if required
+    if parent_folder is not 0:
+        document_permission_submit.folder = parent_folder
+    
+    # Save document permission
     document_permission_submit.save()
 
     # Get current document results to send back
