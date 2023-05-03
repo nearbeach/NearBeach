@@ -83,7 +83,6 @@ def document_add_link(request, destination, location_id):
     # Get the form data
     form = AddLinkForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Save the document link
@@ -110,6 +109,7 @@ def document_add_link(request, destination, location_id):
         is_deleted=False,
         document_key=document_submit,
     ).values(
+        "document_key_id",
         "document_key__document_description",
         "document_key__document_url_location",
         "document_key__document",

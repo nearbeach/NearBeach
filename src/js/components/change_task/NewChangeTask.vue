@@ -37,7 +37,15 @@
 						</div>
 						<div class="col-md-8">
 							<div class="form-group">
-								<label>Change Title:</label>
+								<label>
+									Change Title:
+									<span 
+										class="error"
+										v-if="v$.changeTitleModel.$errors.length > 0"
+									>
+										Please supply a title.
+									</span>
+								</label>
 								<input
 									type="text"
 									class="form-control"
@@ -63,8 +71,14 @@
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
-										<label
-											>Start Date:
+										<label>
+											Start Date:
+											<span 
+												class="error"
+												v-if="v$.changeStartDateModel.$errors.length > 0"
+											>
+												Please supply a start date.
+											</span>
 										</label>
 										<n-date-picker
 											type="datetime"
@@ -75,8 +89,14 @@
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-										<label
-											>End Date:
+										<label>
+											End Date:
+											<span 
+												class="error"
+												v-if="v$.changeEndDateModel.$errors.length > 0"
+											>
+												Please supply a end date.
+											</span>
 										</label>
 										<n-date-picker
 											type="datetime"
@@ -121,7 +141,15 @@
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
-										<label>Implementation User</label>
+										<label>
+											Implementation User
+											<span 
+												class="error"
+												v-if="v$.assignedUserModel.$errors.length > 0"
+											>
+												Please supply.
+											</span>
+										</label>
 										<n-select
 											v-bind:options="userListFixed"
 											v-model:value="assignedUserModel"
@@ -130,7 +158,15 @@
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-										<label>QA User</label>
+										<label>
+											QA User
+											<span 
+												class="error"
+												v-if="v$.qaUserModel.$errors.length > 0"
+											>
+												Please supply. A
+											</span>
+										</label>
 										<n-select
 											v-model:value="qaUserModel"
 											v-bind:options="userListFixed"
@@ -179,9 +215,16 @@
 
 	//VueX
 	import { mapGetters } from "vuex";
+	
+	//Validation
+	import useVuelidate from "@vuelidate/core";
+	import { required, numeric } from "@vuelidate/validators";
 
 	export default {
 		name: "NewChangeTask",
+		setup() {
+			return { v$: useVuelidate() };
+		},
 		components: {
 			editor: Editor,
 			NDatePicker,
@@ -201,13 +244,32 @@
 		},
 		mixins: [errorModalMixin],
 		data: () => ({
-			assignedUserModel: "",
+			assignedUserModel: null,
 			changeEndDateModel: 0,
 			changeStartDateModel: 0,
 			changeTitleModel: "",
-			qaUserModel: "",
+			qaUserModel: null,
 			userListFixed: [],
 		}),
+		validations: {
+			assignedUserModel: {
+				required,
+				numeric,
+			},
+			changeEndDateModel: {
+				required,
+			},
+			changeStartDateModel: {
+				required,
+			},
+			changeTitleModel: {
+				required,
+			},
+			qaUserModel: {
+				required,
+				numeric,
+			},
+		},
 		computed: {
 			...mapGetters({
 				rfcEndDate: "getEndDate",
@@ -229,7 +291,13 @@
 				//Return the date as a string
 				return `${new_date[0]} ${time_split[0]}`;
 			},
-			submitAndClose(event) {
+			async submitAndClose(event) {
+				//Check validation
+				const isFormCorrect = await this.v$.$validate();
+				if (!isFormCorrect) {
+					return;
+				}
+
 				this.submitChangeTask(event);
 
 				//Close the modal
@@ -237,9 +305,16 @@
 					.getElementById("newRunItemCloseButton")
 					.click();
 			},
-			submitChangeTask(event) {
+			async submitChangeTask(event) {
 				//Stop the usual stuff
 				event.preventDefault();
+				
+				//Check validation
+				const isFormCorrect = await this.v$.$validate();
+				console.log("VALIDATION: ", this.v$);
+				if (!isFormCorrect) {
+					return;
+				}
 
 				var change_task_seconds =
 					parseInt(this.changeEndDateModel) -
