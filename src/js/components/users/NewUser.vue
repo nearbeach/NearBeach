@@ -16,15 +16,8 @@
 				<div class="col-md-8">
 					<label
 						>Username:
-						<span
-							class="error"
-							v-if="
-								!v$.usernameModel.required &&
-								v$.usernameModel.$dirty
-							"
-						>
-							Please supply a username.</span
-						>
+						<validation-rendering v-bind:error-list="v$.usernameModel.$errors"
+						></validation-rendering>
 					</label>
 					<input
 						type="text"
@@ -48,15 +41,8 @@
 						<div class="col-md-6">
 							<label
 								>First Name:
-								<span
-									class="error"
-									v-if="
-										!v$.firstNameModel.required &&
-										v$.firstNameModel.$dirty
-									"
-								>
-									Please supply a first name.</span
-								>
+								<validation-rendering v-bind:error-list="v$.firstNameModel.$errors"
+								></validation-rendering>	
 							</label>
 							<input
 								type="text"
@@ -67,15 +53,8 @@
 						<div class="col-md-6">
 							<label
 								>Last Name:
-								<span
-									class="error"
-									v-if="
-										!v$.lastNameModel.required &&
-										v$.lastNameModel.$dirty
-									"
-								>
-									Please supply a last name.</span
-								>
+								<validation-rendering v-bind:error-list="v$.lastNameModel.$errors"
+								></validation-rendering>	
 							</label>
 							<input
 								type="text"
@@ -86,21 +65,8 @@
 						<div class="col-md-6">
 							<label
 								>Email:
-								<span
-									class="error"
-									v-if="
-										!v$.emailModel.required &&
-										v$.emailModel.$dirty
-									"
-								>
-									Please supply an email.</span
-								>
-								<span
-									class="error"
-									v-if="!v$.emailModel.email"
-								>
-									Please supply a valid email.</span
-								>
+								<validation-rendering v-bind:error-list="v$.emailModel.$errors"
+								></validation-rendering>	
 							</label>
 							<input
 								type="email"
@@ -125,7 +91,11 @@
 				<div class="col-md-8">
 					<div class="row">
 						<div class="col-md-6">
-							<label>Password</label>
+							<label>
+								Password
+								<validation-rendering v-bind:error-list="v$.password1Model.$errors"
+								></validation-rendering>
+							</label>
 							<input
 								type="password"
 								v-model="password1Model"
@@ -133,7 +103,11 @@
 							/>
 						</div>
 						<div class="col-md-6">
-							<label>Retype Password</label>
+							<label>
+								Retype Password
+								<validation-rendering v-bind:error-list="v$.password2Model.$errors"
+								></validation-rendering>
+							</label>
 							<input
 								type="password"
 								v-model="password2Model"
@@ -162,16 +136,19 @@
 
 <script>
 	const axios = require("axios");
-	import useVuelidate from "@vuelidate/core";
-	import { required, maxLength, email } from "@vuelidate/validators";
 
-	//Import mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
+	//Validation
+	import useVuelidate from "@vuelidate/core";
+	import { alphaNum, email, required } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	export default {
 		name: "NewUser",
 		setup() {
 			return { v$: useVuelidate() };
+		},
+		components: {
+			ValidationRendering,
 		},
 		props: {
 			rootUrl: {
@@ -207,18 +184,15 @@
 				required,
 			},
 			usernameModel: {
+				alphaNum,
 				required,
 			},
 		},
-		mixins: [errorModalMixin],
 		methods: {
 			addUser: async function () {
 				//Check validation
 				const isFormCorrect = await this.v$.$validate();
 				if (!isFormCorrect) {
-					this.showValidationErrorModal();
-
-					//Just return
 					return;
 				}
 
