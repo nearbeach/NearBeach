@@ -16,15 +16,9 @@
 				<div class="col-md-4">
 					<label>
 						Priority of Change
-						<span
-							class="error"
-							v-if="
-								!v$.rfcPriorityModel.required &&
-								v$.rfcPriorityModel.$dirty
-							"
-						>
-							Please select a Change Type.</span
-						>
+						<validation-rendering
+							v-bind:error-list="v$.rfcPriorityModel.$errors"
+						></validation-rendering>
 					</label>
 					<n-select
 						v-bind:options="rfcPriority"
@@ -35,15 +29,9 @@
 				<div class="col-md-4">
 					<label>
 						Risk of Change
-						<span
-							class="error"
-							v-if="
-								!v$.rfcRiskModel.required &&
-								v$.rfcRiskModel.$dirty
-							"
-						>
-							Please select a Change Type.</span
-						>
+						<validation-rendering
+							v-bind:error-list="v$.rfcRiskModel.$errors"
+						></validation-rendering>
 					</label>
 					<n-select
 						v-bind:options="rfcRisk"
@@ -54,15 +42,9 @@
 				<div class="col-md-4">
 					<label>
 						Impact of Change
-						<span
-							class="error"
-							v-if="
-								!v$.rfcImpactModel.required &&
-								v$.rfcImpactModel.$dirty
-							"
-						>
-							Please select a Change Type.</span
-						>
+						<validation-rendering
+							v-bind:error-list="v$.rfcImpactModel.$errors"
+						></validation-rendering>
 					</label>
 					<n-select
 						v-bind:options="rfcImpact"
@@ -74,24 +56,13 @@
 			<br />
 
 			<!-- RFC SUMMARY -->
-			<label
-				>Risk Association:
-				<span
-					class="error"
-					v-if="
-						!v$.rfcRiskSummaryModel.required &&
-						v$.rfcRiskSummaryModel.$dirty
-					"
-				>
-					Please supply a description.</span
-				>
-				<span
-					class="error"
-					v-if="!v$.rfcRiskSummaryModel.maxLength"
-				>
-					Sorry - too many characters.</span
-				> </label
-			><br />
+			<label>
+				Risk Association:
+				<validation-rendering
+					v-bind:error-list="v$.rfcRiskSummaryModel.$errors"
+				></validation-rendering>
+			</label>
+			<br />
 			<editor
 				:init="{
 					file_picker_types: 'image',
@@ -119,6 +90,7 @@
 	//Validations
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../../validation/ValidationRendering.vue";
 
 	//Widgets
 	import { NSelect } from "naive-ui";
@@ -135,6 +107,7 @@
 		components: {
 			editor: Editor,
 			NSelect,
+			ValidationRendering,
 		},
 		props: {
 			isReadOnly: {

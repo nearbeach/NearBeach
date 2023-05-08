@@ -20,12 +20,9 @@
 			<div class="form-group">
 				<label
 					>Stakeholder Organisation
-					<span
-						class="error"
-						v-if="!v$.stakeholderModel.required && isDirty"
-					>
-						Please search for a Stakeholder.</span
-					>
+					<validation-rendering
+						v-bind:error-list="v$.stakeholderModel.$errors"
+					></validation-rendering>
 				</label>
 				<n-select
 					:options="stakeholderFixList"
@@ -59,6 +56,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	//Mixins
 	import searchMixin from "../../mixins/searchMixin";
@@ -71,6 +69,7 @@
 		components: {
 			NewOrganisationModal,
 			NSelect,
+			ValidationRendering,
 		},
 		mixins: [searchMixin],
 		props: {

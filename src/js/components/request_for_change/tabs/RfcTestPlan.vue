@@ -11,24 +11,13 @@
 			class="col-md-8"
 			style="min-height: 610px"
 		>
-			<label
-				>Test Plan:
-				<span
-					class="error"
-					v-if="
-						!v$.rfcTestPlanModel.required &&
-						v$.rfcTestPlanModel.$dirty
-					"
-				>
-					Please supply a description.</span
-				>
-				<span
-					class="error"
-					v-if="!v$.rfcTestPlanModel.maxLength"
-				>
-					Sorry - too many characters.</span
-				> </label
-			><br />
+			<label>
+				Test Plan:
+				<validation-rendering
+					v-bind:error-list="v$.rfcTestPlanModel.$errors"
+				></validation-rendering>
+			</label>
+			<br />
 			<editor
 				:init="{
 					file_picker_types: 'image',
@@ -56,6 +45,7 @@
 	//Validations
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../../validation/ValidationRendering.vue";
 
 	//TinyMce editor
 	import Editor from "@tinymce/tinymce-vue";
@@ -70,6 +60,7 @@
 		},
 		components: {
 			editor: Editor,
+			ValidationRendering,
 		},
 		props: {
 			isReadOnly: {

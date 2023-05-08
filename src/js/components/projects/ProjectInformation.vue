@@ -23,15 +23,9 @@
 					<div class="form-group">
 						<label
 							>Project Name
-							<span
-								class="error"
-								v-if="
-									!v$.projectNameModel.required &&
-									v$.projectNameModel.$dirty
-								"
-							>
-								Please supply a title.</span
-							>
+							<validation-rendering
+								v-bind:error-list="v$.projectNameModel.$errors"
+							></validation-rendering>
 						</label>
 						<input
 							type="text"
@@ -42,24 +36,13 @@
 					<br />
 
 					<!-- PROJECT DESCRIPTION -->
-					<label
-						>Project Description:
-						<span
-							class="error"
-							v-if="
-								!v$.projectDescriptionModel.required &&
-								v$.projectDescriptionModel.$dirty
-							"
-						>
-							Please supply a description.</span
-						>
-						<span
-							class="error"
-							v-if="!v$.projectDescriptionModel.maxLength"
-						>
-							Sorry - too many characters.</span
-						> </label
-					><br />
+					<label>
+						Project Description:
+						<validation-rendering
+							v-bind:error-list="v$.projectDescriptionModel.$errors"
+						></validation-rendering>
+					</label>
+					<br />
 					<img
 						v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 						class="loader-image"
@@ -191,6 +174,7 @@
 	//Validations
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
@@ -207,6 +191,7 @@
 			editor: Editor,
 			NSelect,
 			StakeholderInformation,
+			ValidationRendering,
 		},
 		props: {
 			defaultStakeholderImage: {

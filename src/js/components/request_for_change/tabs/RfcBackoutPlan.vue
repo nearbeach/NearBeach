@@ -12,24 +12,13 @@
 			class="col-md-8"
 			style="min-height: 610px"
 		>
-			<label
-				>Backout Plan:
-				<span
-					class="error"
-					v-if="
-						!v$.rfcBackoutPlanModel.required &&
-						v$.rfcBackoutPlanModel.$dirty
-					"
-				>
-					Please supply a description.</span
-				>
-				<span
-					class="error"
-					v-if="!v$.rfcBackoutPlanModel.maxLength"
-				>
-					Sorry - too many characters.</span
-				> </label
-			><br />
+			<label>
+				Backout Plan:
+				<validation-rendering
+					v-bind:error-list="v$.rfcBackoutPlanModel.$errors"
+				></validation-rendering>
+			</label>
+			<br />
 			<editor
 				:init="{
 					file_picker_types: 'image',
@@ -57,6 +46,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../../validation/ValidationRendering.vue";
 
 	//TinyMce Editor
 	import Editor from "@tinymce/tinymce-vue";
@@ -71,6 +61,7 @@
 		},
 		components: {
 			editor: Editor,
+			ValidationRendering,
 		},
 		props: {
 			isReadOnly: {

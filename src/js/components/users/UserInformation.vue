@@ -43,12 +43,9 @@
 						<div class="col-md-6">
 							<label>
 								First Name:
-								<span
-									class="error"
-									v-if="v$.firstNameModel.$errors.length > 0"
-								>
-									Please suppy a first name.</span
-								>
+								<validation-rendering
+									v-bind:error-list="v$.firstNameModel.$errors"
+								></validation-rendering>
 								<br />
 							</label>
 							<input
@@ -60,12 +57,9 @@
 						<div class="col-md-6">
 							<label>
 								Last Name:
-								<span
-									class="error"
-									v-if="v$.lastNameModel.$errors.length > 0"
-								>
-									Please suppy a last name.</span
-								>
+								<validation-rendering
+									v-bind:error-list="v$.lastNameModel.$errors"
+								></validation-rendering>
 								<br />
 							</label>
 							<input
@@ -77,12 +71,9 @@
 						<div class="col-md-6">
 							<label>
 								Email:
-								<span
-									class="error"
-									v-if="v$.emailModel.$errors.length > 0"
-								>
-									Please suppy an email.</span
-								>
+								<validation-rendering
+									v-bind:error-list="v$.emailModel.$errors"
+								></validation-rendering>
 								<br />
 							</label>
 							<input
@@ -161,6 +152,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength, email } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	export default {
 		name: "UserInformation",
@@ -178,6 +170,9 @@
 				type: String,
 				default: "/",
 			},
+		},
+		components: {
+			ValidationRendering,
 		},
 		data() {
 			return {

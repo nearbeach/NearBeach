@@ -44,14 +44,9 @@
 					<div class="form-group">
 						<label for="id_organisation_name">
 							Organisation Name
-							<span
-								class="error"
-								v-if="
-									v$.organisationNameModel.$error.length > 0
-								"
-							>
-								Please suppy a title.
-							</span>
+							<validation-rendering
+								v-bind:error-list="v$.organisationNameModel.$errors"
+							></validation-rendering>
 						</label>
 						<input
 							id="id_organisation_name"
@@ -66,15 +61,9 @@
 					<div class="form-group">
 						<label for="id_organisation_website">
 							Organisation Website
-							<span
-								class="error"
-								v-if="
-									v$.organisationWebsiteModel.$error.length >
-									0
-								"
-							>
-								Please supply a properly formatted URL
-							</span>
+							<validation-rendering
+								v-bind:error-list="v$.organisationWebsiteModel.$errors"
+							></validation-rendering>
 						</label>
 						<input
 							id="id_organisation_website"
@@ -89,14 +78,9 @@
 					<div class="form-group">
 						<label for="id_organisation_email">
 							Organisation Email
-							<span
-								class="error"
-								v-if="
-									v$.organisationEmailModel.$error.length > 0
-								"
-							>
-								Please supply a valid Email
-							</span>
+							<validation-rendering
+								v-bind:error-list="v$.organisationWebsiteModel.$errors"
+							></validation-rendering>
 						</label>
 						<input
 							id="id_organisation_email"
@@ -140,6 +124,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { email, maxLength, required, url } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
@@ -154,6 +139,7 @@
 		components: {
 			NButton,
 			NUpload,
+			ValidationRendering,
 		},
 		props: {
 			organisationResults: {

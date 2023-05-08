@@ -39,12 +39,9 @@
 							<div class="form-group">
 								<label>
 									Change Title:
-									<span 
-										class="error"
-										v-if="v$.changeTitleModel.$errors.length > 0"
-									>
-										Please supply a title.
-									</span>
+									<validation-rendering 
+										v-bind:error-list="v$.changeTitleModel.$errors"
+									></validation-rendering>
 								</label>
 								<input
 									type="text"
@@ -73,12 +70,9 @@
 									<div class="form-group">
 										<label>
 											Start Date:
-											<span 
-												class="error"
-												v-if="v$.changeStartDateModel.$errors.length > 0"
-											>
-												Please supply a start date.
-											</span>
+											<validation-rendering 
+												v-bind:error-list="v$.changeStartDateModel.$errors"
+											></validation-rendering>
 										</label>
 										<n-date-picker
 											type="datetime"
@@ -91,12 +85,9 @@
 									<div class="form-group">
 										<label>
 											End Date:
-											<span 
-												class="error"
-												v-if="v$.changeEndDateModel.$errors.length > 0"
-											>
-												Please supply a end date.
-											</span>
+											<validation-rendering 
+												v-bind:error-list="v$.changeEndDateModel.$errors"
+											></validation-rendering>
 										</label>
 										<n-date-picker
 											type="datetime"
@@ -143,12 +134,9 @@
 									<div class="form-group">
 										<label>
 											Implementation User
-											<span 
-												class="error"
-												v-if="v$.assignedUserModel.$errors.length > 0"
-											>
-												Please supply.
-											</span>
+											<validation-rendering
+												v-bind:error-list="v$.assignedUserModel.$errors"
+											></validation-rendering>
 										</label>
 										<n-select
 											v-bind:options="userListFixed"
@@ -160,12 +148,9 @@
 									<div class="form-group">
 										<label>
 											QA User
-											<span 
-												class="error"
-												v-if="v$.qaUserModel.$errors.length > 0"
-											>
-												Please supply. A
-											</span>
+											<validation-rendering
+												v-bind:error-list="v$.qaUserModel.$errors"
+											></validation-rendering>
 										</label>
 										<n-select
 											v-model:value="qaUserModel"
@@ -219,6 +204,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required, numeric } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	export default {
 		name: "NewChangeTask",
@@ -229,6 +215,7 @@
 			editor: Editor,
 			NDatePicker,
 			NSelect,
+			ValidationRendering,
 		},
 		props: {
 			locationId: {

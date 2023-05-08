@@ -15,15 +15,9 @@
 			<div class="form-group">
 				<label>
 					Request for Change Title:
-					<span
-						class="error"
-						v-if="
-							!v$.rfcTitleModel.required &&
-							v$.rfcTitleModel.$dirty
-						"
-					>
-						Please suppy a title.</span
-					>
+					<validation-rendering
+						v-bind:error-list="v$.rfcTitleModel.$errors"
+					></validation-rendering>
 				</label>
 				<input
 					type="text"
@@ -35,23 +29,12 @@
 			<br />
 
 			<!-- RFC SUMMARY -->
-			<label
-				>Request for Change Summary:
-				<span
-					class="error"
-					v-if="
-						!v$.rfcSummaryModel.required &&
-						v$.rfcSummaryModel.$dirty
-					"
-				>
-					Please supply a description.</span
-				>
-				<span
-					class="error"
-					v-if="!v$.rfcSummaryModel.maxLength"
-				>
-					Sorry - too many characters.</span
-				> </label
+			<label>
+				Request for Change Summary:
+				<validation-rendering
+					v-bind:error-list="v$.rfcTitleModel.$errors"
+				></validation-rendering>
+			</label
 			><br />
 			<img
 				v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
@@ -85,6 +68,9 @@
 	//Validations
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../../validation/ValidationRendering.vue";
+
+	//TinyMce
 	import Editor from "@tinymce/tinymce-vue";
 
 	//Mixins
@@ -100,6 +86,7 @@
 		},
 		components: {
 			editor: Editor,
+			ValidationRendering,
 		},
 		props: {
 			isReadOnly: {

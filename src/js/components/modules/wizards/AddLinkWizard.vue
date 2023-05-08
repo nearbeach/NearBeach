@@ -36,17 +36,9 @@
 							<div class="form-group">
 								<label for="document_description">
 									Document Description
-									<span
-										class="error"
-										v-if="
-											!v$.documentDescriptionModel
-												.required &&
-											v$.documentDescriptionModel.$dirty
-										"
-									>
-										Please suppy a description of the
-										link.</span
-									>
+									<validation-rendering
+										v-bind:error-list="v$.documentDescriptionModel.$errors"
+									></validation-rendering>
 									<span
 										class="error"
 										v-if="duplicateDescription"
@@ -66,25 +58,9 @@
 							<div class="form-group">
 								<label for="document_url_location">
 									Document URL
-									<span
-										class="error"
-										v-if="
-											!v$.documentUrlLocationModel
-												.required &&
-											v$.documentUrlLocationModel.$dirty
-										"
-									>
-										Please suppy a URL.</span
-									>
-									<span
-										class="error"
-										v-if="
-											!v$.documentUrlLocationModel.url &&
-											v$.documentUrlLocationModel.$dirty
-										"
-									>
-										Please suppy a proper URL.</span
-									>
+									<validation-rendering
+										v-bind:error-list="v$.documentUrlLocationModel.$errors"
+									></validation-rendering>	
 								</label>
 								<input
 									id="document_url_location"
@@ -132,6 +108,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required, url } from "@vuelidate/validators";
+	import ValidationRendering from "../../validation/ValidationRendering.vue";
 
 	export default {
 		name: "AddLinkWizard",
@@ -140,6 +117,7 @@
 		},
 		components: {
 			Icon,
+			ValidationRendering,
 		},
 		props: {
 			currentFolder: {

@@ -15,12 +15,9 @@
 		<div class="col-md-8">
 			<label
 				>Group List
-				<span
-					class="error"
-					v-if="!v$.groupModel.required && isDirty"
-				>
-					Please select at least one group.</span
-				>
+				<validation-rendering
+					v-bind:error-list="v$.groupModel.$errors"
+				></validation-rendering>
 			</label>
 			<n-select
 				:options="groupFixResults"
@@ -36,6 +33,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 	import { NSelect } from "naive-ui";
 
 	export default {
@@ -45,6 +43,7 @@
 		},
 		components: {
 			NSelect,
+			ValidationRendering,
 		},
 		props: {
 			destination: {

@@ -23,12 +23,9 @@
 					<div class="form-group">
 						<label for="id_requirement_title"
 							>Requirement Title:
-							<span
-								class="error"
-								v-if="!v$.requirementTitleModel.required"
-							>
-								Please suppy a title.</span
-							>
+							<validation-rendering
+								v-bind:error-list="v$.requirementTitleModel.$errors"
+							></validation-rendering>
 						</label>
 						<input
 							id="id_requirement_title"
@@ -42,21 +39,13 @@
 					</div>
 
 					<br />
-					<label
-						>Requirement Scope:
-						<span
-							class="error"
-							v-if="!v$.requirementScopeModel.required"
-						>
-							Please supply a scope.</span
-						>
-						<span
-							class="error"
-							v-if="!v$.requirementScopeModel.maxLength"
-						>
-							Sorry - too many characters.</span
-						> </label
-					><br />
+					<label>
+						Requirement Scope:
+						<validation-rendering
+							v-bind:error-list="v$.requirementScopeModel.$errors"
+						></validation-rendering>
+					</label>
+					<br />
 					<img
 						v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 						class="loader-image"
@@ -110,15 +99,9 @@
 								<div class="form-group">
 									<label
 										>Requirement Status
-										<span
-											class="error"
-											v-if="
-												!v$.statusModel.required &&
-												v$.statusModel.$dirty
-											"
-										>
-											Please select a status.</span
-										>
+										<validation-rendering
+											v-bind:error-list="v$.statusModel.$errors"
+										></validation-rendering>
 									</label>
 									<n-select
 										:options="statusFixList"
@@ -152,12 +135,9 @@
 							<div class="form-group">
 								<label
 									>Requirement Type
-									<span
-										class="error"
-										v-if="!v$.typeModel.$error.length > 0"
-									>
-										Please select a type.</span
-									>
+									<validation-rendering
+										v-bind:error-list="v$.typeModel.$errors"
+									></validation-rendering>
 								</label>
 								<n-select
 									:options="typeFixList"
@@ -204,6 +184,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin.js";
@@ -219,6 +200,7 @@
 			editor: Editor,
 			NSelect,
 			StakeholderInformation,
+			ValidationRendering,
 		},
 		props: {
 			defaultStakeholderImage: {

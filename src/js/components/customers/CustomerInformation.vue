@@ -46,15 +46,9 @@
 						<div class="form-group col-sm-3">
 							<label>
 								Title:
-								<span
-									class="error"
-									v-if="
-										!v$.customerTitleModel.required &&
-										v$.customerTitleModel.$dirty
-									"
-								>
-									Please supply
-								</span>
+								<validation-rendering
+									v-bind:error-list="v$.customerTitleModel.$errors"
+								></validation-rendering>
 							</label>
 							<n-select
 								:options="titleFixList"
@@ -64,15 +58,9 @@
 						<div class="form-group col-sm-4">
 							<label>
 								First Name:
-								<span
-									class="error"
-									v-if="
-										!v$.customerFirstNameModel.required &&
-										v$.customerFirstNameModel.$dirty
-									"
-								>
-									Please supply
-								</span>
+								<validation-rendering
+									v-bind:error-list="v$.customerFirstNameModel.$errors"
+								></validation-rendering>
 							</label>
 							<input
 								type="text"
@@ -83,15 +71,9 @@
 						<div class="form-group col-sm-5">
 							<label>
 								Last Name:
-								<span
-									class="error"
-									v-if="
-										!v$.customerLastNameModel.required &&
-										v$.customerLastNameModel.$dirty
-									"
-								>
-									Please supply
-								</span>
+								<validation-rendering
+									v-bind:error-list="v$.customerLastNameModel.$errors"
+								></validation-rendering>
 							</label>
 							<input
 								type="text"
@@ -141,6 +123,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required, email } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue"
 
 	//Import Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
@@ -157,6 +140,7 @@
 			NSelect,
 			NUpload,
 			StakeholderInformation,
+			ValidationRendering,
 		},
 		props: {
 			customerResults: {

@@ -12,12 +12,9 @@
 			<div class="form-group">
 				<label
 					>{{ destination }} Start Date:
-					<span
-						class="error"
-						v-if="v$.localStartDateModel.$error.length > 0"
-					>
-						Please select a date.</span
-					>
+					<validation-rendering
+						v-bind:error-list="v$.localStartDateModel.$errors"
+					></validation-rendering>
 				</label>
 				<n-date-picker
 					type="datetime"
@@ -32,12 +29,9 @@
 			<div class="form-group">
 				<label
 					>{{ destination }} End Date:
-					<span
-						class="error"
-						v-if="v$.localEndDateModel.$error.length > 0"
-					>
-						Please select a date.</span
-					>
+					<validation-rendering
+						v-bind:error-list="v$.localEndDateModel.$errors"
+					></validation-rendering>
 				</label>
 				<n-date-picker
 					type="datetime"
@@ -57,6 +51,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	//Mixin
 	import disableDate from "../../mixins/datetimeMixin";
@@ -68,6 +63,7 @@
 		},
 		components: {
 			NDatePicker,
+			ValidationRendering,
 		},
 		mixins: [disableDate],
 		props: {

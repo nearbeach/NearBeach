@@ -16,15 +16,9 @@
 					<div class="form-group">
 						<label
 							>Kanban Board Name
-							<span
-								class="error"
-								v-if="
-									!v$.kanbanBoardNameModel.required &&
-									v$.kanbanBoardNameModel.$dirty
-								"
-							>
-								Please suppy a title.
-							</span>
+							<validation-rendering
+								v-bind:error-list="v$.kanbanBoardNameModel.$errors"
+							></validation-rendering>
 							<span
 								class="error"
 								v-if="!uniqueKanbanBoardName"
@@ -111,6 +105,7 @@
 	// Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
@@ -124,6 +119,7 @@
 		components: {
 			GroupPermissions,
 			KanbanPropertyOrder,
+			ValidationRendering,
 		},
 		props: {
 			groupResults: {

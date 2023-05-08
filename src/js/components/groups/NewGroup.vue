@@ -16,12 +16,9 @@
 					<div class="form-group">
 						<label>
 							Group Name
-							<span
-								class="error"
-								v-if="v$.groupNameModel.$errors.length > 0"
-							>
-								Please suppy a title.
-							</span>
+							<validation-rendering
+								v-bind:error-list="v$.groupNameModel.$errors"
+							></validation-rendering>
 							<span
 								class="error"
 								v-if="!uniqueGroupName"
@@ -76,6 +73,7 @@
 	// Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	// Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
@@ -88,6 +86,7 @@
 		},
 		components: {
 			NSelect,
+			ValidationRendering,
 		},
 		props: {
 			groupResults: {

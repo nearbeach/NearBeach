@@ -17,12 +17,9 @@
 						<div class="col-md-6">
 							<label>
 								First Name:
-								<span
-									class="error"
-									v-if="v$.firstNameModel.$errors.length > 0"
-								>
-									Please suppy a first name.</span
-								>
+								<validation-rendering
+									v-bind:error-list="v$.firstNameModel.$errors"
+								></validation-rendering>
 								<br />
 							</label>
 							<input
@@ -34,12 +31,9 @@
 						<div class="col-md-6">
 							<label>
 								Last Name:
-								<span
-									class="error"
-									v-if="v$.lastNameModel.$errors.length > 0"
-								>
-									Please suppy a last name.</span
-								>
+								<validation-rendering
+									v-bind:error-list="v$.firstNameModel.$errors"
+								></validation-rendering>
 								<br />
 							</label>
 							<input
@@ -85,11 +79,11 @@
 
 <script>
 	const axios = require("axios");
-	import { Modal } from "bootstrap";
 
 	//Validations
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
@@ -116,8 +110,8 @@
 				},
 			},
 		},
-		setup() {
-			return { v$: useVuelidate() };
+		components: {
+			ValidationRendering,
 		},
 		data() {
 			return {

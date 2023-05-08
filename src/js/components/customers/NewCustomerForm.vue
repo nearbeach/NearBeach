@@ -18,12 +18,9 @@
 				<div class="form-group col-sm-3">
 					<label>
 						Title:
-						<span
-							class="error"
-							v-if="v$.titleModel.$error"
-						>
-							Please supply
-						</span>
+						<validation-rendering
+							v-bind:error-list="v$.titleModel.$errors"
+						></validation-rendering>
 					</label>
 					<n-select
 						:options="titleFixList"
@@ -35,12 +32,9 @@
 				<div class="form-group col-sm-4">
 					<label>
 						First Name:
-						<span
-							class="error"
-							v-if="v$.customerFirstNameModel.$error"
-						>
-							Please supply
-						</span>
+						<validation-rendering
+							v-bind:error-list="v$.customerFirstNameModel.$errors"
+						></validation-rendering>
 					</label>
 					<input
 						type="text"
@@ -51,12 +45,9 @@
 				<div class="form-group col-sm-5">
 					<label>
 						Last Name:
-						<span
-							class="error"
-							v-if="v$.customerLastNameModel.$error"
-						>
-							Please supply
-						</span>
+						<validation-rendering
+							v-bind:error-list="v$.customerLastNameModel.$errors"
+						></validation-rendering>
 					</label>
 					<input
 						type="text"
@@ -71,18 +62,9 @@
 			<div class="form-group col-sm-8">
 				<label>
 					Email:
-					<span
-						class="error"
-						v-if="v$.customerEmailModel.$error"
-					>
-						Please supply
-					</span>
-					<span
-						class="error"
-						v-if="v$.customerEmailModel.$error"
-					>
-						Please format as Email
-					</span>
+					<validation-rendering
+						v-bind:error-list="v$.customerEmailModel.$errors"
+					></validation-rendering>
 				</label>
 				<input
 					type="text"
@@ -96,13 +78,12 @@
 </template>
 
 <script>
-	const axios = require("axios");
-	import { Modal } from "bootstrap";
 	import { NSelect } from "naive-ui";
 
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required, email } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	export default {
 		name: "NewCustomerForm",
@@ -111,6 +92,7 @@
 		},
 		components: {
 			NSelect,
+			ValidationRendering,
 		},
 		props: {
 			flagValidationCheck: {

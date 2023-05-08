@@ -27,15 +27,9 @@
 					<div class="form-group">
 						<label>
 							Request for Change Type:
-							<span
-								class="error"
-								v-if="
-									!v$.rfcTypeModel.required &&
-									v$.rfcTypeModel.$dirty
-								"
-							>
-								Please suppy a title.</span
-							>
+							<validation-rendering
+								v-bind:error-list="v$.rfcTypeModel.$errors"
+							></validation-rendering>
 						</label>
 						<n-select
 							v-bind:options="rfcType"
@@ -238,6 +232,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	export default {
 		name: "RfcInformation",
@@ -248,6 +243,7 @@
 			NDatePicker,
 			NSelect,
 			RfcDescription,
+			ValidationRendering,
 		},
 		props: {
 			groupLeaderCount: {

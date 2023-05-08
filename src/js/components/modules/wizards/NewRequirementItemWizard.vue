@@ -36,14 +36,9 @@
 						<div class="col-md-8">
 							<label for="id_requirement_item_title"
 								>Requirement Item Title:
-								<span
-									class="error"
-									v-if="
-										!v$.requirementItemTitleModel.required
-									"
-								>
-									Please suppy a title.</span
-								>
+								<validation-rendering
+									v-bind:error-list="v$.requirementItemTitleModel.$errors"
+								></validation-rendering>
 							</label>
 							<input
 								id="id_requirement_item_title"
@@ -56,27 +51,13 @@
 							/>
 
 							<br />
-							<label
-								>Requirement Item Scope:
-								<span
-									class="error"
-									v-if="
-										!v$.requirementItemScopeModel
-											.required &&
-										v$.requirementItemScopeModel.$dirty
-									"
-								>
-									Please supply a scope.</span
-								>
-								<span
-									class="error"
-									v-if="
-										!v$.requirementItemScopeModel.maxLength
-									"
-								>
-									Sorry - too many characters.</span
-								> </label
-							><br />
+							<label>
+								Requirement Item Scope:
+								<validation-rendering
+									v-bind:error-list="v$.requirementItemTitleModel.$errors"
+								></validation-rendering>
+							</label>
+							<br />
 							<editor
 								:init="{
 									height: 500,
@@ -108,15 +89,9 @@
 							<div class="form-group">
 								<label
 									>Requirement Status
-									<span
-										class="error"
-										v-if="
-											!v$.statusItemModel.required &&
-											v$.statusItemModel.$dirty
-										"
-									>
-										Please select a status.</span
-									>
+									<validation-rendering
+										v-bind:error-list="v$.requirementItemTitleModel.$errors"
+									></validation-rendering>
 								</label>
 								<n-select
 									:options="statusItemFixList"
@@ -129,15 +104,9 @@
 							<div class="form-group">
 								<label
 									>Requirement Type
-									<span
-										class="error"
-										v-if="
-											!v$.typeItemModel.required &&
-											v$.typeItemModel.$dirty
-										"
-									>
-										Please select a type.</span
-									>
+									<validation-rendering
+										v-bind:error-list="v$.typeItemModel.$errors"
+									></validation-rendering>
 								</label>
 								<n-select
 									:options="typeItemFixList"
@@ -184,6 +153,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../../validation/ValidationRendering.vue";
 
 	//Vuex
 	import { mapGetters } from "vuex";
@@ -197,6 +167,7 @@
 			editor: Editor,
 			Icon,
 			NSelect,
+			ValidationRendering,
 		},
 		props: {
 			itemStatusList: {

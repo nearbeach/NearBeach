@@ -27,12 +27,6 @@
 				<div class="col-md-8">
 					<div class="form-group col-sm-8">
 						<label>Organisation:</label>
-						<!-- <v-select :options="organisationFixList"
-                          @search="fetchOptions"
-                          v-model="organisationModel"
-                          label="organisation_name"
-                          class="get-stakeholders"
-                        ></v-select> -->
 						<n-select
 							:options="organisationFixList"
 							filterable

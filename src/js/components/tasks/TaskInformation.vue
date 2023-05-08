@@ -23,15 +23,9 @@
 					<div class="form-group">
 						<label
 							>Task Short Description:
-							<span
-								class="error"
-								v-if="
-									!v$.taskShortDescriptionModel.required &&
-									v$.taskShortDescriptionModel.$dirty
-								"
-							>
-								Please supply a title.</span
-							>
+							<validation-rendering
+								v-bind:error-list="v$.taskShortDescriptionModel.$errors"
+							></validation-rendering>
 						</label>
 						<input
 							type="text"
@@ -42,24 +36,13 @@
 					<br />
 
 					<!-- TASK DESCRIPTION -->
-					<label
-						>Task Long Description:
-						<span
-							class="error"
-							v-if="
-								!v$.taskDescriptionModel.required &&
-								v$.taskDescriptionModel.$dirty
-							"
-						>
-							Please supply a description.</span
-						>
-						<span
-							class="error"
-							v-if="!v$.taskDescriptionModel.maxLength"
-						>
-							Sorry - too many characters.</span
-						> </label
-					><br />
+					<label>
+						Task Long Description:
+						<validation-rendering
+							v-bind:error-list="v$.taskDescriptionModel.$errors"
+						></validation-rendering>
+					</label>
+					<br />
 					<img
 						v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 						class="loader-image"
@@ -179,6 +162,7 @@
 	const axios = require("axios");
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 	import Editor from "@tinymce/tinymce-vue";
 	import { NSelect } from "naive-ui";
 	import StakeholderInformation from "../organisations/StakeholderInformation.vue";
@@ -202,6 +186,7 @@
 			editor: Editor,
 			NSelect,
 			StakeholderInformation,
+			ValidationRendering,
 		},
 		props: {
 			defaultStakeholderImage: {

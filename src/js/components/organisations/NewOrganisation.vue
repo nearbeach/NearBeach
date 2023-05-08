@@ -20,15 +20,9 @@
 					<div class="form-group">
 						<label for="id_organisation_name">
 							Organisation Name:
-							<span
-								class="error"
-								v-if="
-									!v$.organisationNameModel.required &&
-									v$.organisationNameModel.$dirty
-								"
-							>
-								Please suppy a title.
-							</span>
+							<validation-rendering
+								v-bind:error-list="v$.organisationNameModel.$errors"
+							></validation-rendering>
 						</label>
 						<input
 							id="id_organisation_name"
@@ -45,24 +39,9 @@
 						<div class="form-group col-md-6">
 							<label for="id_organisation_website">
 								Organisation Website:
-								<span
-									class="error"
-									v-if="
-										!v$.organisationWebsiteModel.required &&
-										v$.organisationWebsiteModel.$dirty
-									"
-								>
-									Please supply
-								</span>
-								<span
-									class="error"
-									v-if="
-										!v$.organisationWebsiteModel.url &&
-										v$.organisationWebsiteModel.$dirty
-									"
-								>
-									Please format at URL
-								</span>
+								<validation-rendering
+									v-bind:error-list="v$.organisationWebsiteModel.$errors"
+								></validation-rendering>
 							</label>
 							<input
 								id="id_organisation_website"
@@ -77,24 +56,9 @@
 						<div class="form-group col-md-6">
 							<label for="id_organisation_email">
 								Organisation Email:
-								<span
-									class="error"
-									v-if="
-										!v$.organisationEmailModel.required &&
-										v$.organisationEmailModel.$dirty
-									"
-								>
-									Please supply
-								</span>
-								<span
-									class="error"
-									v-if="
-										!v$.organisationEmailModel.email &&
-										v$.organisationEmailModel.$dirty
-									"
-								>
-									Please format as Email
-								</span>
+								<validation-rendering
+									v-bind:error-list="v$.organisationEmailModel.$errors"
+								></validation-rendering>
 							</label>
 							<input
 								id="id_organisation_email"
@@ -184,6 +148,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { email, maxLength, required, url } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
@@ -196,6 +161,7 @@
 		},
 		components: {
 			ListOrganisations,
+			ValidationRendering,
 		},
 		props: {
 			rootUrl: {

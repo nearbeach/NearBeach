@@ -28,12 +28,9 @@
 					<div class="form-group">
 						<label for="requirement_item_title">
 							Requirement Item Title:
-							<span
-								class="error"
-								v-if="!v$.requirementItemTitleModel.required"
-							>
-								Please suppy a title.
-							</span>
+							<validation-rendering
+								v-bind:error-list="v$.requirementItemTitleModel.$errors"
+							></validation-rendering>
 						</label>
 						<input
 							id="requirement_item_title"
@@ -45,21 +42,13 @@
 						/>
 					</div>
 					<div class="form-group">
-						<label
-							>Requirement Item Scope:
-							<span
-								class="error"
-								v-if="!v$.requirementItemScopeModel.required"
-							>
-								Please supply a scope.</span
-							>
-							<span
-								class="error"
-								v-if="!v$.requirementItemScopeModel.maxLength"
-							>
-								Sorry - too many characters.</span
-							> </label
-						><br />
+						<label>
+							Requirement Item Scope:
+							<validation-rendering
+								v-bind:error-list="v$.requirementItemScopeModel.$errors"
+							></validation-rendering>
+						</label>
+						<br />
 						<img
 							v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 							class="loader-image"
@@ -137,15 +126,9 @@
 					<div class="form-group">
 						<label
 							>Requirement Status
-							<span
-								class="error"
-								v-if="
-									!v$.statusModel.required &&
-									v$.statusModel.$dirty
-								"
-							>
-								Please select a status.</span
-							>
+							<validation-rendering
+								v-bind:error-list="v$.statusFixList.$errors"
+							></validation-rendering>
 						</label>
 						<n-select
 							:options="statusFixList"
@@ -158,15 +141,9 @@
 					<div class="form-group">
 						<label
 							>Requirement Type
-							<span
-								class="error"
-								v-if="
-									!v$.typeModel.required &&
-									v$.typeModel.$dirty
-								"
-							>
-								Please select a type.</span
-							>
+							<validation-rendering
+								v-bind:error-list="v$.typeModel.$errors"
+							></validation-rendering>
 						</label>
 						<n-select
 							:options="typeFixList"
@@ -214,6 +191,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	export default {
 		name: "RequirementItemInformation.vue",
@@ -224,6 +202,7 @@
 			editor: Editor,
 			Icon,
 			NSelect,
+			ValidationRendering,
 		},
 		props: {
 			requirementItemResults: {

@@ -15,15 +15,9 @@
 				<div class="form-group">
 					<label>
 						Request for Change Type:
-						<span
-							class="error"
-							v-if="
-								!v$.rfcTypeModel.required &&
-								v$.rfcTypeModel.$dirty
-							"
-						>
-							Please select a Change Type.</span
-						>
+						<validation-rendering
+							v-bind:error-list="v$.rfcTypeModel.$errors"
+						></validation-rendering>
 					</label>
 					<n-select
 						v-bind:options="rfcType"
@@ -35,12 +29,9 @@
 				<div class="form-group">
 					<label>
 						Version/Release Number
-						<span
-							class="error"
-							v-if="!v$.rfcVersionModel.maxLength"
-						>
-							Sorry - too many characters.</span
-						>
+						<validation-rendering
+							v-bind:error-list="v$.rfcVersionModel.$errors"
+						></validation-rendering>
 					</label>
 					<input
 						type="text"
@@ -172,6 +163,7 @@
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../../validation/ValidationRendering.vue";
 
 	export default {
 		name: "RfcDetails",
@@ -182,6 +174,7 @@
 			GroupPermissions,
 			NDatePicker,
 			NSelect,
+			ValidationRendering,
 		},
 		props: {
 			groupResults: {

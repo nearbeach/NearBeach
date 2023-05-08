@@ -27,15 +27,9 @@
 					<div class="form-group">
 						<label
 							>Project Name
-							<span
-								class="error"
-								v-if="
-									!v$.projectNameModel.required &&
-									v$.projectNameModel.$dirty
-								"
-							>
-								Please suppy a title.</span
-							>
+							<validation-rendering
+								v-bind:error-list="v$.projectNameModel.$errors"
+							></validation-rendering>
 						</label>
 						<input
 							type="text"
@@ -46,24 +40,13 @@
 					<br />
 
 					<!-- PROJECT DESCRIPTION -->
-					<label
-						>Project Description:
-						<span
-							class="error"
-							v-if="
-								!v$.projectDescriptionModel.required &&
-								v$.projectDescriptionModel.$dirty
-							"
-						>
-							Please supply a description.</span
-						>
-						<span
-							class="error"
-							v-if="!v$.projectDescriptionModel.maxLength"
-						>
-							Sorry - too many characters.</span
-						> </label
-					><br />
+					<label>
+						Project Description:
+						<validation-rendering
+							v-bind:error-list="v$.projectDescriptionModel.$errors"
+						></validation-rendering>
+					</label>
+					<br />
 					<img
 						v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 						class="loader-image"
@@ -134,6 +117,7 @@
 	const axios = require("axios");
 	import useVuelidate from "@vuelidate/core";
 	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 	import BetweenDates from "../dates/BetweenDates.vue";
 	import Editor from "@tinymce/tinymce-vue";
 	import GroupPermissions from "../permissions/GroupPermissions.vue";
@@ -153,6 +137,7 @@
 			editor: Editor,
 			GetStakeholders,
 			GroupPermissions,
+			ValidationRendering,
 		},
 		props: {
 			groupResults: {
