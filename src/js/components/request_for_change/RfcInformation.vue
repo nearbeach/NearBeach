@@ -188,8 +188,9 @@
 							groupLeaderCount > 0 &&
 							rfcResults[0].fields.rfc_status == 2
 						"
-						>Reject RFC</a
 					>
+						Reject RFC
+					</a>
 
 					<a
 						href="javascript:void(0)"
@@ -199,8 +200,9 @@
 							userLevel > 1 &&
 							rfcResults[0].fields.rfc_status == 3
 						"
-						>Start RFC</a
 					>
+						Start RFC
+					</a>
 
 					<a
 						href="javascript:void(0)"
@@ -210,8 +212,30 @@
 							groupLeaderCount > 0 &&
 							rfcResults[0].fields.rfc_status == 2
 						"
-						>Approve RFC</a
 					>
+						Approve RFC
+					</a>
+
+					<a
+						href="javascript:void(0)"
+						class="pause-rfc-button save-changes"
+						v-on:click="pauseRFCStatus"
+						v-if="rfcResults[0].fields.rfc_status == 4"
+					>
+						Pause RFC
+					</a>
+
+					<a
+						href="javascript:void(0)"
+						class="restart-rfc-button save-changes"
+						v-on:click="startRFCStatus"
+						v-if="
+							userLevel > 1 &&
+							rfcResults[0].fields.rfc_status == 7
+						"
+					>
+						Restart RFC
+					</a>
 				</div>
 			</div>
 		</div>
@@ -409,6 +433,13 @@
 			},
 			getStatus() {
 				return this.rfcStatusDict[this.rfcResults[0].fields.rfc_status];
+			},
+			pauseRFCStatus() {
+				const data_to_send = new FormData();
+				data_to_send.set("rfc_status", "7"); //Value 7: Paused
+
+				//Send data
+				this.sendUpdate(data_to_send);
 			},
 			rejectRFCStatus() {
 				const data_to_send = new FormData();

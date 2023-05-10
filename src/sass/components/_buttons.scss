@@ -36,6 +36,8 @@
 }
 
 .accept-rfc-button,
+.pause-rfc-button,
+.restart-rfc-button,
 .reject-rfc-button {
 	display: inline-block;
 	font-weight: 400;
@@ -68,6 +70,28 @@
 		color: #fff !important;
 		background-color: #0b5ed7;
 		border-color: #0a58ca;
+	}
+}
+
+.pause-rfc-button {
+	color: #dc3545;
+	background-color: none;
+	border-color: #dc3545;
+
+	&:hover {
+		color: #9b1624 !important;
+		border-color: #9b1624;
+	}
+}
+
+.restart-rfc-button {
+	color: #198754;
+	background-color: none;
+	border-color: #198754;
+
+	&:hover {
+		color: #086339;
+		border-color: #086339;
 	}
 }
 
