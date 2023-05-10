@@ -61,6 +61,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'NearBeach.context_processors.django_version',
+                'NearBeach.context_processors.nearbeach_version',
             ],
         },
     },
