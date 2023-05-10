@@ -490,13 +490,13 @@
 			sendDataUpstream(filtered_data) {
 				// Determine if the card has a link
 				let card_link = {};
-				if (filtered_data.fields.project !== undefined) {
+				if (filtered_data.fields.project !== null) {
 					card_link = {
 						id: filtered_data.fields.project,
 						hyperlink: `${this.rootUrl}project_information/${filtered_data.fields.project}/`,
 						type: "Project",
 					};
-				} else if (filtered_data.fields.task !== undefined) {
+				} else if (filtered_data.fields.task !== null) {
 					card_link = {
 						id: filtered_data.fields.task,
 						hyperlink: `${this.rootUrl}task_information/${filtered_data.fields.task}/`,
