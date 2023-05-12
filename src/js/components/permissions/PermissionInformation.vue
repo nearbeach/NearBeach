@@ -84,24 +84,6 @@
 			</div>
 			<hr />
 
-			<!-- BUGS -->
-			<div class="row">
-				<div class="col-md-4">
-					<strong>Bug Permissions</strong>
-					<p class="text-instructions"></p>
-				</div>
-				<div class="col-md-8">
-					<single-permission-properties
-						v-bind:property="'bugClientModel'"
-						v-bind:property-label="'Configure bug clients'"
-						v-bind:property-value="bugClientModel"
-						v-bind:list-of-choices="permissionLevel"
-						v-on:update_property_value="updatePropertyValue($event)"
-					></single-permission-properties>
-				</div>
-			</div>
-			<hr />
-
 			<!-- Customers and Organisations -->
 			<div class="row">
 				<div class="col-md-4">
@@ -229,6 +211,32 @@
 					></single-permission-properties>
 				</div>
 			</div>
+			<hr />
+
+			<!-- MISC -->
+			<div class="row">
+				<div class="col-md-4">
+					<strong>Misc Permissions</strong>
+					<p class="text-instructions"></p>
+				</div>
+				<div class="col-md-8">
+					<single-permission-properties
+						v-bind:property="'bugClientModel'"
+						v-bind:property-label="'Configure bug clients'"
+						v-bind:property-value="bugClientModel"
+						v-bind:list-of-choices="permissionLevel"
+						v-on:update_property_value="updatePropertyValue($event)"
+					></single-permission-properties>
+
+					<single-permission-properties
+						v-bind:property="'tagModel'"
+						v-bind:property-label="'Configure tags'"
+						v-bind:property-value="tagModel"
+						v-bind:list-of-choices="permissionLevel"
+						v-on:update_property_value="updatePropertyValue($event)"
+					></single-permission-properties>
+				</div>
+			</div>
 
 			<!-- Save Changes -->
 			<!-- Don't show if we are looking at admin -->
@@ -315,6 +323,7 @@
 					this.permissionSetResults[0].fields.request_for_change,
 				requirementModel:
 					this.permissionSetResults[0].fields.requirement,
+				tagModel: this.permissionSetResults[0].fields.tag,
 				taskModel: this.permissionSetResults[0].fields.task,
 				documentModel: this.permissionSetResults[0].fields.document,
 				kanbanCommentModel:
@@ -370,6 +379,7 @@
 				data_to_send.set("kanban_comment", this.kanbanCommentModel);
 				data_to_send.set("project_history", this.projectHistoryModel);
 				data_to_send.set("task_history", this.taskHistoryModel);
+				data_to_send.set("tag", this.tagModel);
 
 				//Show the loading modal mixing
 				this.showLoadingModal("permission set");

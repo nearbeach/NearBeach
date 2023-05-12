@@ -1164,6 +1164,10 @@ class PermissionSet(models.Model):
         choices=PERMISSION_LEVEL,
         default=0,
     )
+    tag = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
     """
     ADDITIVE permission
     ~~~~~~~~~~~~~~~~~~~~

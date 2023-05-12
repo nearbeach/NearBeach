@@ -47,6 +47,7 @@ def check_first_time_login(request):
             project=4,
             requirement=4,
             task=4,
+            tag=4,
             document=1,
             kanban_comment=1,
             project_history=1,

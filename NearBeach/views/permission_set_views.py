@@ -114,8 +114,6 @@ def permission_set_information_save(request, permission_set_id, *args, **kwargs)
     :param permission_set_id:
     :return:
     """
-    # ADD IN USER PERMISSIONS LATER
-
     # Check to make sure nothing changes for the administration permissions
     if permission_set_id == 1:
         return HttpResponseBadRequest("Error - can not edit administration")
@@ -123,7 +121,6 @@ def permission_set_information_save(request, permission_set_id, *args, **kwargs)
     # Get form data
     form = PermissionSetForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Get the object
@@ -154,6 +151,7 @@ def permission_set_information_save(request, permission_set_id, *args, **kwargs)
     update_permission_set.requirement = form.cleaned_data["requirement"]
     update_permission_set.request_for_change = form.cleaned_data["request_for_change"]
     update_permission_set.task = form.cleaned_data["task"]
+    update_permission_set.tag = form.cleaned_data["tag"]
     update_permission_set.document = form.cleaned_data["document"]
     update_permission_set.kanban_comment = form.cleaned_data["kanban_comment"]
     update_permission_set.project_history = form.cleaned_data["project_history"]
