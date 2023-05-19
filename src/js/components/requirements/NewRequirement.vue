@@ -237,32 +237,9 @@
 		},
 		methods: {
 			submitNewRequirement: async function () {
-				// Check the validation first
+				//Check validation
 				const isFormCorrect = await this.v$.$validate();
-
-				if (
-					!isFormCorrect &&
-					(this.v$.groupModel.$error.length > 0 ||
-						this.v$.stakeholderModel.length > 0 ||
-						this.v$.requirementTitleModel.length > 0 ||
-						this.v$.requirementScopeModel.length > 0 ||
-						this.v$.statusModel.length > 0 ||
-						this.v$.typeModel.length > 0)
-				) {
-					//Show the error dialog and notify to the user that there were field missing.
-					var elem_cont =
-						document.getElementById("errorModalContent");
-
-					// Update the content
-					elem_cont.innerHTML = `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
-
-					// Show the modal
-					var errorModal = new Modal(
-						document.getElementById("errorModal")
-					);
-					errorModal.show();
-
-					//Just return - as we do not need to do the rest of this function
+				if (!isFormCorrect) {
 					return;
 				}
 

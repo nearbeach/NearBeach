@@ -253,6 +253,7 @@
 				required,
 			},
 			projectNameModel: {
+				maxLength: maxLength(255),
 				required,
 			},
 			projectStartDateModel: {
@@ -271,14 +272,10 @@
 				this.projectEndDateModel = new Date(data.end_date);
 				this.projectStartDateModel = new Date(data.start_date);
 			},
-			updateProject() {
-				// Check the validation first
-				this.v$.$touch();
-
-				if (this.v$.$invalid) {
-					this.showValidationErrorModal();
-
-					//Just return - as we do not need to do the rest of this function
+			async updateProject() {
+				//Check validation
+				const isFormCorrect = await this.v$.$validate();
+				if (!isFormCorrect) {
 					return;
 				}
 

@@ -194,20 +194,7 @@
 			submitNewTask: async function () {
 				//Check validation
 				const isFormCorrect = await this.v$.$validate();
-
-				//If the form is not validated
-				if (
-					!isFormCorrect &&
-					(this.v$.groupModel.$error.length > 0 ||
-						this.v$.stakeholderModel.length > 0 ||
-						this.v$.taskDescriptionModel.length > 0 ||
-						this.v$.taskEndDateModel.length > 0 ||
-						this.v$.taskShortDescriptionModel.length > 0 ||
-						this.v$.taskStartDateModel.length > 0)
-				) {
-					this.showValidationErrorModal();
-
-					//User does not need to do anything else
+				if (!isFormCorrect) {
 					return;
 				}
 

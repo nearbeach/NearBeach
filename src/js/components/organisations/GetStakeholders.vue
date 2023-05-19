@@ -8,12 +8,10 @@
 			</p>
 			<p class="text-instructions">
 				If you can not find your organisation, please
-				<a
-					href="javascript:void(0)"
-					v-on:click="openNewOrganisationModal"
-				>
+				<a v-bind:href="`${rootUrl}new_organisation/`" target="_blank">
 					click here to create it.
 				</a>
+				Then search for it again
 			</p>
 		</div>
 		<div class="col-md-8">
@@ -35,11 +33,6 @@
 				/>
 			</div>
 		</div>
-
-		<!-- MODAL -->
-		<new-organisation-modal
-			v-on:created_new_organisation="createdNewOrganisation($event)"
-		></new-organisation-modal>
 	</div>
 </template>
 
@@ -48,7 +41,6 @@
 	const axios = require("axios");
 	import { Modal } from "bootstrap";
 	import { NSelect } from "naive-ui";
-	import NewOrganisationModal from "./NewOrganisationModal.vue";
 
 	//VueX
 	import { mapGetters } from "vuex";
@@ -67,7 +59,6 @@
 			return { v$: useVuelidate() };
 		},
 		components: {
-			NewOrganisationModal,
 			NSelect,
 			ValidationRendering,
 		},
@@ -97,16 +88,6 @@
 			}),
 		},
 		methods: {
-			createdNewOrganisation(data) {
-				//We have recieved a new organisation that the user has created.
-				//Place them into the model
-				this.stakeholderModel = data;
-
-				//Close the modal
-				document
-					.getElementById("newOrganisationModalCloseButton")
-					.click();
-			},
 			fetchOptions(search, loading) {
 				this.searchTrigger({
 					return_function: this.getOrganisationData,
@@ -160,18 +141,6 @@
 						var loader_element = document.getElementById("loader");
 						loader_element.style.display = "none";
 					});
-			},
-			openNewOrganisationModal() {
-				var newModal = new Modal(
-					document.getElementById("newOrganisationModal")
-				);
-
-				newModal.show();
-				// var newModal = new bootstrap.Modal(
-				//     document.getElementById("newOrganisationModal"), {
-				//         keyboard: false
-				//     })
-				// newModal.show();
 			},
 		},
 		watch: {

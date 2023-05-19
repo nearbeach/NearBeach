@@ -55,7 +55,6 @@
 					<editor
 						:init="{
 							file_picker_types: 'image',
-							images_upload_handler: failUpload,
 							height: 500,
 							menubar: false,
 							paste_data_images: false,
@@ -184,6 +183,7 @@
 				required,
 			},
 			projectNameModel: {
+				maxLength: maxLength(255),
 				required,
 			},
 			projectStartDateModel: {
@@ -197,19 +197,7 @@
 			submitNewProject: async function () {
 				//Check validation
 				const isFormCorrect = await this.v$.$validate();
-
-				if (
-					!isFormCorrect &&
-					(this.v$.groupModel.$error.length > 0 ||
-						this.v$.stakeholderModel.length > 0 ||
-						this.v$.projectDescriptionModel.length > 0 ||
-						this.v$.projectEndDateModel.length > 0 ||
-						this.v$.projectNameModel.length > 0 ||
-						this.v$.projectStartDateModel.length > 0)
-				) {
-					this.showValidationErrorModal();
-
-					//Just return - as we do not need to do the rest of this function
+				if (!isFormCorrect) {
 					return;
 				}
 
