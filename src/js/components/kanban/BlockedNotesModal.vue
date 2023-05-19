@@ -35,11 +35,11 @@
 									file_picker_types: 'image',
 									height: 250,
 									menubar: false,
-									plugins: ['lists', 'paste', 'table'],
+									plugins: ['lists', 'image', 'table'],
 									toolbar: [
 										'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
 										'bold italic strikethrough underline backcolor | table | ' +
-											'bullist numlist outdent indent | removeformat',
+											'bullist numlist outdent indent | removeformat | image',
 									],
 								}"
 								v-bind:content_css="false"

@@ -17,7 +17,7 @@ export default {
 	},
 	mixins: [errorModalMixin],
 	methods: {
-		uploadImage(blobInfo, success, failure, progress) {
+		uploadImage(blobInfo, progress) {
 			//Create the form
 			const data_to_send = new FormData();
 			data_to_send.set("document", blobInfo.blob(), blobInfo.filename());
@@ -34,7 +34,7 @@ export default {
 			};
 
 			//Use axios to send the data
-			axios
+			return axios
 				.post(
 					`${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
 					data_to_send,
@@ -42,14 +42,16 @@ export default {
 				)
 				.then((response) => {
 					//Just send the location to the success
-					success(`/private/${response.data[0].document_key_id}`);
+					return `/private/${response.data[0].document_key_id}`;
 				})
 				.catch((error) => {
 					this.showErrorModal(
 						error,
-						"kanban item delete",
-						this.kanbanBoardId
+						"Upload Image",
+						""
 					);
+
+					return;
 				});
 		},
 	},
