@@ -70,11 +70,11 @@
 					images_upload_handler: uploadImage,
 					menubar: false,
 					paste_data_images: true,
-					plugins: ['lists', 'image', 'table'],
+					plugins: ['lists', 'image', 'codesample', 'table'],
 					toolbar: [
 						'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
 						'bold italic strikethrough underline backcolor | table | ' +
-							'bullist numlist outdent indent | removeformat | image',
+							'bullist numlist outdent indent | removeformat | image codesample',
 					],
 				}"
 				v-bind:content_css="false"

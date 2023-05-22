@@ -17,11 +17,11 @@
 					:init="{
 						height: 250,
 						menubar: false,
-						plugins: ['lists', 'table'],
+						plugins: ['lists', 'codesample', 'table'],
 						toolbar: [
 							'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
 							'bold italic strikethrough underline backcolor | table | ' +
-								'bullist numlist outdent indent | removeformat | image',
+								'bullist numlist outdent indent | removeformat | image codesample',
 						],
 					}"
 					v-bind:content_css="false"
