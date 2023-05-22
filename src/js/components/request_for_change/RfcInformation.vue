@@ -176,7 +176,7 @@
 			</div>
 			<div
 				class="row submit-row"
-				v-else
+				v-else-if="userLevel >= 2"
 			>
 				<div class="col-md-12">
 					<a
