@@ -225,6 +225,16 @@ def update_status(request, change_task_id, *args, **kwargs):
 
     # Get change task
     change_task_results = ChangeTask.objects.get(change_task_id=change_task_id)
+    
+    # Double check RFC is still open - otherwise send back a 423
+    rfc_results = RequestForChange.objects.get(
+        rfc_id=change_task_results.request_for_change_id
+    )
+    if not rfc_results.rfc_status == 4:
+        return HttpResponse(
+            "RFC Currently Locked - not in start mode",
+            status = 423 # Locked
+        )
 
     # Update the change task results
     change_task_results.change_task_status = form.cleaned_data["change_task_status"]

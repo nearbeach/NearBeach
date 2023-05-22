@@ -73,7 +73,7 @@
 				<!-- START TASK -->
 				<button class="btn btn-primary"
 					v-on:click="updateChangeTaskStatus(changeTask.change_task_id, 4)"
-					v-if="[3, 7, 8].includes(changeTask.change_task_status)"
+					v-if="[3, 7, 8].includes(changeTask.change_task_status) && rfcStatus === 4"
 				>
 					Start Task
 				</button>
