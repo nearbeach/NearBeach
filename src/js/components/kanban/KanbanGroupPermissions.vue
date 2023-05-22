@@ -3,8 +3,6 @@
 		<div class="card-body">
 			<!-- Group Permissions -->
 			<groups-and-users-module
-				v-bind:location-id="locationId"
-				v-bind:destination="'kanban_board'"
 			></groups-and-users-module>
 		</div>
 	</div>
@@ -17,12 +15,6 @@
 		name: "KanbanGroupPermissions",
 		components: {
 			GroupsAndUsersModule,
-		},
-		props: {
-			locationId: {
-				type: Number,
-				default: 0,
-			},
 		},
 	};
 </script>

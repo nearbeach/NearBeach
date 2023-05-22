@@ -98,6 +98,10 @@
 					return [];
 				},
 			},
+			locationId: {
+				type: Number,
+				default: 0,
+			},
 			rootUrl: {
 				type: String,
 				default: "/",
@@ -147,6 +151,13 @@
 			},
 		},
 		mounted() {
+			//Send the location id and destination
+			this.$store.commit({
+				type: "updateDestination",
+				destination: "kanban_board",
+				locationId: this.locationId,
+			});
+
 			//Send the rootURL to the vuex
 			this.$store.commit({
 				type: "updateUrl",
