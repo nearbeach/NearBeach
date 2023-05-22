@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from NearBeach.forms import SearchObjectsForm, SearchForm
+from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.models import (
     ObjectAssignment,
     RequestForChange,
@@ -457,7 +458,8 @@ def search_permission_set_data(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def search_tag(request):
+@check_user_permissions(min_permission_level=1, object_lookup="tag")
+def search_tag(request, *args, **kwargs):
     # Get template
     t = loader.get_template("NearBeach/search/search_tags.html")
 
