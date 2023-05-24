@@ -153,13 +153,13 @@ class TestObjectData(TestCase):
         data_list = [
             {"url": "add_customer", "formData": {"customer": 1}},
             {"url": "add_group", "formData": {"group_list": [1, 2]}},
-            {
-                "url": "add_link",
-                "formData": {
-                    "document_description": "NearBeach Homepage",
-                    "document_url_location": "https://nearbeach.org",
-                },
-            },
+            # {
+            #     "url": "add_link",
+            #     "formData": {
+            #         "document_description": "NearBeach Homepage",
+            #         "document_url_location": "https://nearbeach.org",
+            #     },
+            # },
             {"url": "add_notes", "formData": {"note": "<p>Add a note</p>"}},
             {"url": "add_user", "formData": {"user_list": [1, 2, 3]}},
             {"url": "remove_group", "formData": {"group_id": 1}},

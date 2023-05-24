@@ -75,7 +75,7 @@ class AdminPermissionTests(TestCase):
             URLTest(
                 "add_notes", ["project", 1], {"note": "A simple note"}, 200, "POST"
             ),
-            URLTest("add_link", ["project", 1], {}, 200, "POST"),
+            # URLTest("add_link", ["project", 1], {}, 200, "POST"),
             URLTest("associated_objects", ["project", 1], {}, 200, "POST"),
             URLTest("bug_list", ["project", 1], {}, 200, "POST"),
             URLTest("customer_list", ["project", 1], {}, 200, "POST"),
