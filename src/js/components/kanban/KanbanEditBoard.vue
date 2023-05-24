@@ -60,7 +60,9 @@
 </template>
 
 <script>
-	const axios = require("axios");
+	import { Modal } from "bootstrap";
+
+	// Components
 	import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
 
 	// Validation
@@ -135,16 +137,8 @@
 				window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/`;
 			},
 			closeKanban() {
-				axios
-					.post(
-						`${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/close_board/`
-					)
-					.then((response) => {
-						window.location.href = `${this.rootUrl}`;
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
+				const modal = new Modal("#confirmKanbanBoardClosure");
+				modal.show();
 			},
 			updatePropertyList(data) {
 				this[data.source] = data.data;
