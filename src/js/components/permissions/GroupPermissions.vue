@@ -30,11 +30,12 @@
 </template>
 
 <script>
+	import { NSelect } from "naive-ui";
+	
 	//Validation
 	import useVuelidate from "@vuelidate/core";
 	import { required } from "@vuelidate/validators";
 	import ValidationRendering from "../validation/ValidationRendering.vue";
-	import { NSelect } from "naive-ui";
 
 	export default {
 		name: "GroupPermissions",

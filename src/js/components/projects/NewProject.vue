@@ -114,17 +114,20 @@
 
 <script>
 	const axios = require("axios");
-	import useVuelidate from "@vuelidate/core";
-	import { required, maxLength } from "@vuelidate/validators";
-	import ValidationRendering from "../validation/ValidationRendering.vue";
-	import BetweenDates from "../dates/BetweenDates.vue";
 	import Editor from "@tinymce/tinymce-vue";
+	
+	//Components
+	import BetweenDates from "../dates/BetweenDates.vue";
 	import GroupPermissions from "../permissions/GroupPermissions.vue";
 	import GetStakeholders from "../organisations/GetStakeholders.vue";
 
+	//Validation
+	import useVuelidate from "@vuelidate/core";
+	import { required, maxLength } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
+
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
-	import uploadMixin from "../../mixins/uploadMixin";
 
 	export default {
 		name: "NewProject",
@@ -160,7 +163,7 @@
 				},
 			},
 		},
-		mixins: [errorModalMixin, uploadMixin],
+		mixins: [errorModalMixin],
 		data() {
 			return {
 				groupModel: {},
@@ -250,6 +253,7 @@
 			this.$store.commit({
 				type: "updateUrl",
 				rootUrl: this.rootUrl,
+				staticUrl: this.staticUrl,
 			});
 		},
 	};

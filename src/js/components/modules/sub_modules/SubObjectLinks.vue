@@ -54,6 +54,7 @@
         components: {
             Icon,
         },
+        emits: ["update_link_results"],
         mixins: [iconMixin],
         props: {
             linkResults: {
@@ -93,7 +94,7 @@
 					)
 					.then(() => {
 						//Update the data
-                        this.$emit("update_link_results");
+                        this.$emit("update_link_results", {});
 					});
 			},
         }

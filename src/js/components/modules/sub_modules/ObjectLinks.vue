@@ -21,44 +21,44 @@
 		<div v-else>
 			<!-- Relates To -->
 			<sub-object-links v-bind:title="'Relates To'"
-				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Relate'})"
-				v-on:update_link_results="updateLinkResults"
+				v-bind:link-results="relatesTo"
+				v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Blocked By -->
 			<sub-object-links v-bind:title="'Is Blocked By'"
-				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Block' && row.parent_link !== destination})"
-				v-on:update_link_results="updateLinkResults"
+				v-bind:link-results="isBlockedBy"
+				v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Currently Blocking -->
 			<sub-object-links v-bind:title="'Is Currently Blocking'"
-				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Block' && row.parent_link === destination})"
-				v-on:update_link_results="updateLinkResults"
+				v-bind:link-results="isCurrentlyBlocking"
+				v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 			
 			<!-- Is Sub Object Of -->
 			<sub-object-links v-bind:title="'Is Subobject Of'"
-				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Subobject' && row.parent_link !== destination})"
-				v-on:update_link_results="updateLinkResults"
+				v-bind:link-results="isSubObjectOf"
+				v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Parent Object Of -->
 			<sub-object-links v-bind:title="'Is Parent Object Of'"
-				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Subobject' && row.parent_link === destination})"
-				v-on:update_link_results="updateLinkResults"
+				v-bind:link-results="isParentOf"
+				v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Has Duplicate Object Of -->
 			<sub-object-links v-bind:title="'Has Duplicate Object Of'"
-				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Duplicate' && row.parent_link === destination})"
-				v-on:update_link_results="updateLinkResults"
+				v-bind:link-results="hasDuplicateObjectOf"
+				v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Duplicate Object Of -->
 			<sub-object-links v-bind:title="'Is Duplicate Object Of'"
-				v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Duplicate' && row.parent_link !== destination})"
-				v-on:update_link_results="updateLinkResults"
+				v-bind:link-results="isDuplicateObjectOf"
+				v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 		</div>
 
@@ -108,7 +108,14 @@
 		mixins: [iconMixin],
 		data() {
 			return {
+				hasDuplicateObjectOf: [],
+				isBlockedBy: [],
+				isCurrentlyBlocking: [],
+				isDuplicateObjectOf: [],
+				isParentOf: [],
+				isSubObjectOf: [],
 				linkResults: [],
+				relatesTo: [],
 			};
 		},
 		computed: {
@@ -140,6 +147,51 @@
 					)
 					.then((response) => {
 						this.linkResults = response.data
+
+						//Filter out the data for relates to
+						this.relatesTo = response.data.filter(row => {
+							//We only have one condition - if there is a relate
+							return row.link_relationship === 'Relate'
+						});
+
+						//Filter out the data for is blocked by
+						this.isBlockedBy = response.data.filter(row => {
+							var condition_1 = row.link_relationship === 'Block' && row.parent_link !== this.destination && row.reverse_relation === false;
+							var condition_2 = row.link_relationship === 'Block' && row.parent_link === this.destination && row.reverse_relation === true; //reverse
+							return condition_1 || condition_2;
+						})
+
+						//Filter out the data for is currently blocking
+						this.isCurrentlyBlocking = response.data.filter(row => {
+							var condition_1 = row.link_relationship === 'Block' && row.parent_link === this.destination && row.reverse_relation === false;
+							var condition_2 = row.link_relationship === 'Block' && row.parent_link !== this.destination && row.reverse_relation === true; //reverse
+							return condition_1 || condition_2;
+						})
+
+						//Filter out the dat for is subobject of
+						this.isSubObjectOf = response.data.filter(row => {
+							var condition_1 = row.link_relationship === 'Subobject' && row.parent_link !== this.destination && row.reverse_relation === false;
+							var condition_2 = row.link_relationship === 'Subobject' && row.parent_link === this.destination && row.reverse_relation === true;
+							return condition_1 || condition_2;
+						})
+
+						this.isParentOf = response.data.filter(row => {
+							var condition_1 = row.link_relationship === 'Subobject' && row.parent_link === this.destination && row.reverse_relation === false;
+							var condition_2 = row.link_relationship === 'Subobject' && row.parent_link !== this.destination && row.reverse_relation === true;
+							return condition_1 || condition_2;
+						})
+
+						this.hasDuplicateObjectOf = response.data.filter(row => {
+							var condition_1 = row.link_relationship === 'Duplicate' && row.parent_link === this.destination && row.reverse_relation === false;
+							var condition_2 = row.link_relationship === 'Duplicate' && row.parent_link !== this.destination && row.reverse_relation === true;
+							return condition_1 || condition_2;
+						})
+
+						this.isDuplicateObjectOf = response.data.filter(row => {
+							var condition_1 = row.link_relationship === 'Duplicate' && row.parent_link !== this.destination && row.reverse_relation === false;
+							var condition_2 = row.link_relationship === 'Duplicate' && row.parent_link === this.destination && row.reverse_relation === true;
+							return condition_1 || condition_2;
+						})
 					});
 			},
 		},
