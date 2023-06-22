@@ -579,12 +579,14 @@ urlpatterns = [
         name="get_requirement_items",
     ),
     path(
-        "requirement_information/<int:requirement_id>/data/item_status/",
+        #"requirement_information/<int:requirement_id>/data/item_status/",
+        "requirement_information/data/list_of_item_status_values/",
         requirement_views.get_requirement_item_status_list,
         name="get_requirement_item_status_list",
     ),
     path(
-        "requirement_information/<int:requirement_id>/data/item_type/",
+        #"requirement_information/<int:requirement_id>/data/item_type/",
+        "requirement_information/data/list_of_item_type_values/",
         requirement_views.get_requirement_item_type_list,
         name="get_requirement_item_type_list",
     ),

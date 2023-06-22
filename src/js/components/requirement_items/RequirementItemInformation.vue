@@ -271,6 +271,9 @@
 			requirementItemTitleModel: {
 				required,
 			},
+			statusFixList: {
+				required,
+			},
 			statusModel: {
 				required,
 			},

@@ -171,7 +171,7 @@
 				});
 			},
 			updateStatusList() {
-				axios.post("data/item_status/").then((response) => {
+				axios.post(`${this.rootUrl}requirement_information/data/list_of_item_status_values/`).then((response) => {
 					//Clear the current list
 					this.itemStatusList = [];
 
@@ -182,7 +182,7 @@
 				});
 			},
 			updateTypeList() {
-				axios.post("data/item_type/").then((response) => {
+				axios.post(`${this.rootUrl}requirement_information/data/list_of_item_type_values/`).then((response) => {
 					//Clear the current list
 					this.itemTypeList = [];
 

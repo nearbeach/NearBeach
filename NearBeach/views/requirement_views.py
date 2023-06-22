@@ -102,7 +102,7 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
-def get_requirement_item_status_list(request, requirement_id, *args, **kwargs):
+def get_requirement_item_status_list(request, *args, **kwargs):
     """Get all status - even deleted ones."""
     status_list = ListOfRequirementItemStatus.objects.all()
 
@@ -115,7 +115,7 @@ def get_requirement_item_status_list(request, requirement_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
-def get_requirement_item_type_list(request, requirement_id, *args, **kwargs):
+def get_requirement_item_type_list(request, *args, **kwargs):
     """Get all status - even deleted ones."""
     type_list = ListOfRequirementItemType.objects.all()
 
