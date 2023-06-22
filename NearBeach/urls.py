@@ -468,7 +468,7 @@ urlpatterns = [
         "object_data/<destination>/<location_id>/object_link_list/",
         object_data_views.object_link_list,
         name="object_link_list",
-    ),  # WTF - Please check to make sure we need this function?
+    ), 
     path(
         "object_data/<destination>/<location_id>/query_bug_client/",
         object_data_views.query_bug_client,
