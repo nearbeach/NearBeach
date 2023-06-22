@@ -82,7 +82,7 @@
 				>
 					<Icon
 						v-bind:icon="icons.trashCan"
-						v-on:click="removeDocument(document.document_key_id)"
+						v-on:click="confirmFileDelete(document.document_key_id)"
 					/>
 				</div>
 			</div>
@@ -150,6 +150,12 @@
 			v-on:update_document_list="updateDocumentList($event)"
 		></add-link-wizard>
 
+		<!-- CONFIRM DOCUMENT DELETE -->
+		<confirm-file-delete-vue
+			v-bind:document-key="removeDocumentKey"
+			v-on:remove_document="removeDocument($event)"
+		></confirm-file-delete-vue>
+
 		<!-- UPLOAD DOCUMENT WIZARD -->
 		<upload-document-wizard
 			v-bind:destination="getDestination()"
@@ -167,6 +173,7 @@
 	import { Icon } from "@iconify/vue";
 	import AddFolderWizard from "../wizards/AddFolderWizard.vue";
 	import AddLinkWizard from "../wizards/AddLinkWizard.vue";
+	import ConfirmFileDeleteVue from "../wizards/ConfirmFileDelete.vue";
 	import UploadDocumentWizard from "../wizards/UploadDocumentWizard.vue";
 
 	//Mixins
@@ -180,6 +187,7 @@
 		components: {
 			AddFolderWizard,
 			AddLinkWizard,
+			ConfirmFileDeleteVue,
 			Icon,
 			UploadDocumentWizard,
 		},
@@ -200,6 +208,7 @@
 				documentFilteredList: [],
 				folderList: [],
 				folderFilteredList: [],
+				removeDocumentKey: "",
 			};
 		},
 		mixins: [iconMixin],
@@ -230,6 +239,17 @@
 					document.getElementById("addLinkModal")
 				);
 				addLinkModal.show();
+			},
+			confirmFileDelete(document_key) {
+				//Send data downstream
+				this.removeDocumentKey = document_key;
+
+				//Open the modal
+				var confirmFileDeleteModal = new Modal(
+					document.getElementById("confirmFileDeleteModal")
+				);
+				confirmFileDeleteModal.show();
+
 			},
 			getDestination() {
 				return this.overrideDestination !== "" ? this.overrideDestination : this.destination;
@@ -310,21 +330,12 @@
 				//Update the current directory to the parent folder
 				this.updateCurrentFolder(filtered_data.fields.parent_folder);
 			},
-			removeDocument(document_key) {
-				//Create data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("document_key", document_key);
-
-				axios.post(
-					`${this.rootUrl}documentation/${this.destination}/${this.locationId}/remove/`,
-					data_to_send,
-				).then(() => {
-					this.documentList = this.documentList.filter((row) => {
-						return row.document_key_id !== document_key;
-					});
-
-					this.updateDocumentFilteredList();
+			removeDocument(event) {
+				this.documentList = this.documentList.filter((row) => {
+					return row.document_key_id !== event.document_key;
 				});
+
+				this.updateDocumentFilteredList();
 			},
 			shortName(input_string) {
 				//The following method will determine if we need an ellipsis (...) at the end of the file/folder name
