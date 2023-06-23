@@ -1,24 +1,24 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+
 from NearBeach.decorators.check_user_permissions import check_user_customer_permissions
-from NearBeach.models import Customer, Document, DocumentPermission, ListOfTitle, Organisation
 from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
+from NearBeach.models import Customer, ListOfTitle, Organisation
 from NearBeach.views.document_views import handle_document_permissions
 
-import boto3
 
 @login_required(login_url="login", redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=1)
 def customer_information(request, customer_id, *args, **kwargs):
     """
+    Render the customer information page
     :param request:
-    :param customer_id:
-    :return:
+    :param customer_id: the customer information we want to render
+    :return: Customer Information page
     """
     # Find out if the user is read only - if they are send them to the read only
 
@@ -51,9 +51,10 @@ def customer_information(request, customer_id, *args, **kwargs):
 @check_user_customer_permissions(min_permission_level=2)
 def customer_information_save(request, customer_id, *args, **kwargs):
     """
+    Save the customer information
     :param request:
-    :param customer_id:
-    :return:
+    :param customer_id: The id of the customer we want to save
+    :return: Success 200
     """
     # ADD IN USER PERMISSION CHECKS
 
@@ -82,6 +83,11 @@ def customer_information_save(request, customer_id, *args, **kwargs):
 @login_required(login_url="login", redirect_field_name="")
 @check_user_customer_permissions(min_permission_level=2)
 def customer_update_profile(request, customer_id, *args, **kwargs):
+    """
+    The node which will update a customer's profile picture
+    :param: customer_id: The customer's id who we are updating the picture for
+    :return: Success 200
+    """
     form = ProfilePictureForm(request.POST, request.FILES)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -91,12 +97,12 @@ def customer_update_profile(request, customer_id, *args, **kwargs):
 
     # Upload the document
     document_submit, _ = handle_document_permissions(
-        request, 
+        request,
         request.FILES["file"],
         file,
         document_description,
         "customer",
-        customer_id
+        customer_id,
     )
 
     # Update the customer
@@ -111,8 +117,10 @@ def customer_update_profile(request, customer_id, *args, **kwargs):
 @login_required(login_url="login", redirect_field_name="")
 def get_profile_picture(request, customer_id):
     """
+    Wrapper for the profile picture - profile pictures are hidden through the private
+    document method
     :param request:
-    :param customer_id:
+    :param customer_id: The customer id who's profile we want to view
     :return:
     """
     customer_results = Customer.objects.get(customer_id=customer_id)
@@ -127,6 +135,7 @@ def get_profile_picture(request, customer_id):
 @check_user_customer_permissions(min_permission_level=3)
 def new_customer(request, *args, **kwargs):
     """
+    Loads up the new customer page
     :param request:
     :return:
     """
@@ -154,6 +163,7 @@ def new_customer(request, *args, **kwargs):
 @check_user_customer_permissions(min_permission_level=2)
 def new_customer_save(request, *args, **kwargs):
     """
+    Saves the new customer
     :param reqeust:
     :return:
     """

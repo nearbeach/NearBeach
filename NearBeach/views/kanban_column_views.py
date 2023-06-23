@@ -16,7 +16,10 @@ from NearBeach.views.tools.internal_functions import KanbanCard
 @require_http_methods(["POST"])
 # @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def edit_column(request, kanban_column_id, *args, **kwargs):
-    """ """
+    """
+    Edit the column data for a kanban board
+    :param: kanban_column_id is the column id we want to edit
+    """
     # Get form data
     form = NewColumnForm(request.POST)
     if not form.is_valid():
@@ -27,6 +30,9 @@ def edit_column(request, kanban_column_id, *args, **kwargs):
 
     # Update data
     kanban_column_update.kanban_column_name = form.cleaned_data["kanban_column_name"]
+    kanban_column_update.kanban_column_property = form.cleaned_data[
+        "kanban_column_property"
+    ]
     kanban_column_update.kanban_column_sort_number = form.cleaned_data[
         "kanban_column_sort_number"
     ]
@@ -45,7 +51,10 @@ def edit_column(request, kanban_column_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @check_user_permissions(min_permission_level=4, object_lookup="kanban_board_id")
 def delete_column(request, kanban_board_id, *args, **kwargs):
-    """ """
+    """
+    Deletes the column
+    :param: kanban_board_id: The board we are deleting
+    """
     # Get the form data
     form = DeleteColumnForm(request.POST)
     if not form.is_valid():
@@ -55,11 +64,13 @@ def delete_column(request, kanban_board_id, *args, **kwargs):
     KanbanCard.objects.filter(
         is_deleted=False,
         kanban_column_id=form.cleaned_data["delete_item_id"],
+        kanban_board_id=kanban_board_id,
     ).update(kanban_column_id=form.cleaned_data["destination_item_id"])
 
     # Soft delete the old column
     deleted_column = KanbanColumn.objects.get(
         kanban_column_id=form.cleaned_data["delete_item_id"].kanban_column_id,
+        kanban_board_id=kanban_board_id,
     )
     deleted_column.is_deleted = True
     deleted_column.save()
@@ -71,7 +82,10 @@ def delete_column(request, kanban_board_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
 def new_column(request, kanban_board_id, *args, **kwargs):
-    """ """
+    """
+    Adding a new column to a kanban board
+    :param: kanban_board_id: the board we are manipulating
+    """
     # Get data from form
     form = NewColumnForm(request.POST)
     if not form.is_valid():
@@ -80,6 +94,7 @@ def new_column(request, kanban_board_id, *args, **kwargs):
     # Create a new column
     kanban_column_submit = KanbanColumn(
         kanban_column_name=form.cleaned_data["kanban_column_name"],
+        kanban_column_property=form.cleaned_data["kanban_column_property"],
         kanban_board_id=kanban_board_id,
         kanban_column_sort_number=form.cleaned_data["kanban_column_sort_number"],
         change_user=request.user,
@@ -101,7 +116,9 @@ def new_column(request, kanban_board_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @check_user_permissions(min_permission_level=2, object_lookup="kanban_board_id")
 def resort_column(request, kanban_board_id, *args, **kwargs):
-    """ """
+    """
+    The functionality that resorts the columns in the database. So when reloading the columns are correct
+    """
     # Get data from form
     form = ResortColumnForm(request.POST)
     if not form.is_valid():
@@ -112,7 +129,10 @@ def resort_column(request, kanban_board_id, *args, **kwargs):
 
     # Look through the item list and re-index the order
     for index, item in enumerate(items, start=0):
-        kanban_column_update = KanbanColumn.objects.get(kanban_column_id=item)
+        kanban_column_update = KanbanColumn.objects.get(
+            kanban_column_id=item,
+            kanban_board_id=kanban_board_id
+        )
         kanban_column_update.kanban_column_sort_number = index
         kanban_column_update.save()
 

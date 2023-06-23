@@ -14,6 +14,9 @@ import json
 
 # Import NearBeach Models
 from NearBeach.models import (
+    KanbanBoard,
+    KanbanCard,
+    KanbanColumn,
     ObjectAssignment,
     UserGroup,
     Task,
@@ -47,6 +50,7 @@ def dashboard(request):
 @require_http_methods(["POST"])
 def get_bug_list(request):
     """
+    Gets a list of all the bugs
     :param request:
     :return:
     """
@@ -67,8 +71,35 @@ def get_bug_list(request):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
+def get_kanban_list(request):
+    """
+    Gets a list of all kanban's the users assigned to
+    """
+    object_assignment_results = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        kanban_board_id__isnull=False,
+        group_id__in=UserGroup.objects.filter(
+            is_deleted=False, username=request.user
+        ).values("group_id"),
+    )
+
+    kanban_results = KanbanBoard.objects.filter(
+        is_deleted=False,
+        kanban_board_status="Open",
+        kanban_board_id__in=object_assignment_results.values("kanban_board_id"),
+    )
+
+    # Send back json data
+    return HttpResponse(
+        serializers.serialize("json", kanban_results), content_type="application/json"
+    )
+
+
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 def get_my_objects(request):
     """
+    Get any objects the user is assigned too
     :param request:
     :return:
     """
@@ -132,6 +163,35 @@ def get_my_objects(request):
         )
     )
 
+    card_results = (
+        KanbanCard.objects.filter(
+            is_deleted=False,
+            kanban_card_id__in=ObjectAssignment.objects.filter(
+                is_deleted=False,
+                kanban_card_id__isnull=False,
+                assigned_user=request.user,
+            ).values("kanban_card_id"),
+        )
+        .exclude(
+            Q(
+                # Exclude cards that are archived
+                is_archived=True,
+            )
+            | Q(
+                # Exclude cards that are inside columns that are closed
+                kanban_column_id__in=KanbanColumn.objects.filter(
+                    is_deleted=False,
+                    kanban_column_property="Closed",
+                )
+            )
+        )
+        .values(
+            "kanban_card_id",
+            "kanban_card_text",
+            "kanban_column__kanban_column_name",  # Check this field
+        )
+    )
+
     # Only have 25 results and order by alphabetical order
     # requirement_results.order_by('requirement_title')[:25]
     # project_results.order_by('project_name')[:25]
@@ -150,6 +210,7 @@ def get_my_objects(request):
     requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
+    card_results = json.dumps(list(card_results), cls=DjangoJSONEncoder)
 
     # Send back a JSON array with JSON arrays inside
     return JsonResponse(
@@ -157,6 +218,7 @@ def get_my_objects(request):
             "requirement": json.loads(requirement_results),
             "project": json.loads(project_results),
             "task": json.loads(task_results),
+            "card": json.loads(card_results),
         }
     )
 
@@ -312,6 +374,7 @@ def get_unassigned_objects(request):
 @require_http_methods(["POST"])
 def rfc_approvals(request):
     """
+    Will get the rfc approvals that the user will need to approve
     :param request:
     :return:
     """
@@ -320,8 +383,6 @@ def rfc_approvals(request):
         is_deleted=False,
         rfc_status=2,  # Waiting for approval
     )
-
-    print(f"\n\nRFC_RESULTS: {rfc_results}")
 
     """
     Filter the rfc_results, with any object assignment that the user is currently;

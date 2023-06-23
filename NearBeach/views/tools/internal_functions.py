@@ -1,4 +1,5 @@
 from NearBeach.models import (
+    ChangeTask,
     Customer,
     KanbanBoard,
     KanbanCard,
@@ -8,10 +9,12 @@ from NearBeach.models import (
     Requirement,
     RequirementItem,
     Task,
+    User,
     UserGroup,
 )
 
 OBJECT_DICT = {
+    "change_task": ChangeTask.objects,
     "customer": Customer.objects,
     "project": Project.objects,
     "task": Task.objects,
@@ -21,6 +24,7 @@ OBJECT_DICT = {
     "kanban_card": KanbanCard.objects,
     "organisation": Organisation.objects,
     "request_for_change": RequestForChange.objects,
+    "user": User.objects,
 }
 
 
@@ -34,9 +38,7 @@ def get_object_from_destination(input_object, destination, location_id):
     :param location_id: The location_id
     :return:
     """
-    input_object = input_object.filter(
-        **{destination: location_id}
-    )
+    input_object = input_object.filter(**{destination: location_id})
 
     # Just send back the array
     return input_object

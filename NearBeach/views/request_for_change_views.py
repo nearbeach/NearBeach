@@ -17,7 +17,8 @@ from NearBeach.models import (
     RequestForChangeGroupApproval,
     ListOfRFCStatus,
 )
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.db.models import Q
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.template import loader
 from django.core.serializers.json import DjangoJSONEncoder
@@ -25,6 +26,37 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 
+
+# Internal function
+def get_rfc_change_task(rfc_id):
+    """ 
+    Obtains a list of change tasks for this particular RFC, along with any blocked information.
+    """
+    change_task_results = ChangeTask.objects.filter(
+        is_deleted=False,
+        request_for_change=rfc_id,
+    ).order_by("change_task_start_date", "change_task_end_date").values()
+
+    blocked_list = ObjectAssignment.objects.filter(
+        Q(
+            is_deleted=False,
+            change_task_id__in=change_task_results.values('change_task_id'),
+        )
+        | Q(
+            is_deleted=False,
+            meta_object__in=change_task_results.values('change_task_id'),
+        )
+    ).values()
+
+    # Convert data into json format
+    change_task_results = json.dumps(list(change_task_results), cls=DjangoJSONEncoder)
+    blocked_list = json.dumps(list(blocked_list), cls=DjangoJSONEncoder)
+
+    # # Send back JSON response
+    return JsonResponse({
+        "change_tasks": json.loads(change_task_results),
+        "blocked_list": json.loads(blocked_list),
+    })
 
 # Internal function
 def get_rfc_context(rfc_id):
@@ -183,17 +215,8 @@ def new_request_for_change_save(request, *args, **kwargs):
 @login_required(login_url="login", redirect_field_name="")
 @check_rfc_permissions(min_permission_level=1)
 def rfc_change_task_list(request, rfc_id, *args, **kwargs):
-    """ """
-    change_task_results = ChangeTask.objects.filter(
-        is_deleted=False,
-        request_for_change=rfc_id,
-    ).order_by("change_task_start_date", "change_task_end_date")
-
-    # Send back JSON response
-    return HttpResponse(
-        serializers.serialize("json", change_task_results),
-        content_type="application/json",
-    )
+    # Return data from function get_rfc_change_task
+    return get_rfc_change_task(rfc_id)
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -239,37 +262,19 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     submit_change_task = ChangeTask(
         request_for_change=form.cleaned_data["request_for_change"],
         change_task_title=form.cleaned_data["change_task_title"],
-        change_task_description=form.cleaned_data["change_task_description"],
         change_task_start_date=form.cleaned_data["change_task_start_date"],
         change_task_end_date=form.cleaned_data["change_task_end_date"],
         change_task_seconds=form.cleaned_data["change_task_seconds"],
         change_task_assigned_user=form.cleaned_data["change_task_assigned_user"],
         change_task_qa_user=form.cleaned_data["change_task_qa_user"],
-        change_task_required_by=form.cleaned_data["change_task_required_by"],
-        is_downtime=form.cleaned_data["is_downtime"],
         change_task_status=1,
         change_user=request.user,
         creation_user=request.user,
     )
     submit_change_task.save()
 
-    # Send back all the RFC change items
-    # change_item_results = change_task.objects.filter(
-    #     is_deleted=False,
-    #     request_for_change_id=rfc_id,
-    # )
-
-    # Get all the change task results and send it back
-    change_task_results = ChangeTask.objects.filter(
-        is_deleted=False,
-        request_for_change=rfc_id,
-    ).order_by("change_task_start_date", "change_task_end_date")
-
-    # Send back JSON response
-    return HttpResponse(
-        serializers.serialize("json", change_task_results),
-        content_type="application/json",
-    )
+    # # Get all the change task results and send it back
+    return get_rfc_change_task(rfc_id)
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -527,7 +532,6 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
         ChangeTask.objects.filter(
             is_deleted=False,
             request_for_change_id=rfc_id,
-            # change_task_status=2,
         ).update(change_task_status=3)
 
 
@@ -584,7 +588,6 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
     ChangeTask.objects.filter(
         is_deleted=False,
         request_for_change_id=rfc_id,
-        # change_task_status=1,
     ).update(change_task_status=2)
 
     # Loop through the groups, create the group approval,

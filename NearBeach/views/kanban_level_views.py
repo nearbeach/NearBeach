@@ -11,8 +11,10 @@ from NearBeach.views.tools.internal_functions import KanbanCard
 @require_http_methods(["POST"])
 # @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def edit_level(request, kanban_level_id, *args, **kwargs):
-    """ """
-    # Get form data
+    """
+    Edits/Updates a kanban level
+    :param: kanban_level_id: The level id we are editing
+    """
     form = NewLevelForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -42,8 +44,10 @@ def edit_level(request, kanban_level_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @check_user_permissions(min_permission_level=4, object_lookup="kanban_board_id")
 def delete_level(request, kanban_board_id, *args, **kwargs):
-    """ """
-    # Get form data
+    """
+    Deletes a level
+    :param: kanban_board_id: The board we are focusing on
+    """
     form = DeleteLevelForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -52,11 +56,13 @@ def delete_level(request, kanban_board_id, *args, **kwargs):
     KanbanCard.objects.filter(
         is_deleted=False,
         kanban_level_id=form.cleaned_data["delete_item_id"],
+        kanban_board_id=kanban_board_id,
     ).update(kanban_level_id=form.cleaned_data["destination_item_id"])
 
     # Soft delete the old column
     deleted_level = KanbanLevel.objects.get(
         kanban_level_id=form.cleaned_data["delete_item_id"].kanban_level_id,
+        kanban_board_id=kanban_board_id,
     )
     deleted_level.is_deleted = True
     deleted_level.save()
@@ -68,8 +74,10 @@ def delete_level(request, kanban_board_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
 def new_level(request, kanban_board_id, *args, **kwargs):
-    """ """
-    # Get data from form
+    """
+    Creates a new level for a kanban board
+    :param: kanban_board_id: is the baord we are focusing on
+    """
     form = NewLevelForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -98,8 +106,10 @@ def new_level(request, kanban_board_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @check_user_permissions(min_permission_level=2, object_lookup="kanban_board_id")
 def resort_level(request, kanban_board_id, *args, **kwargs):
-    """ """
-    # Get data from form
+    """
+    Resorts the levels when updated
+    :param: kanban_board_id: Focusing on this board
+    """
     form = ResortLevelForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -109,7 +119,10 @@ def resort_level(request, kanban_board_id, *args, **kwargs):
 
     # Look through the item list and re-index the order
     for index, item in enumerate(items, start=0):
-        kanban_level_update = KanbanLevel.objects.get(kanban_level_id=item)
+        kanban_level_update = KanbanLevel.objects.get(
+            kanban_level_id=item,
+            kanban_board_id=kanban_board_id
+        )
         kanban_level_update.kanban_level_sort_number = index
         kanban_level_update.save()
 

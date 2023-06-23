@@ -5,12 +5,14 @@ from django.http import (
     HttpResponse,
     HttpResponseRedirect,
     HttpResponseBadRequest,
+    Http404,
     FileResponse,
     JsonResponse,
 )
 from django.db.models import Q
 from django.views.decorators.http import require_http_methods
 from django.core.serializers.json import DjangoJSONEncoder
+from django.shortcuts import get_object_or_404
 
 from NearBeach.views.tools.internal_functions import (
     set_object_from_destination,
@@ -21,6 +23,7 @@ from ..forms import (
     Folder,
     AddLinkForm,
     Document,
+    DocumentRemoveForm,
     DocumentUploadForm,
     RequirementItem,
 )
@@ -69,6 +72,7 @@ def document_add_folder(request, destination, location_id):
 @login_required(login_url="login", redirect_field_name="")
 def document_add_link(request, destination, location_id):
     """
+    Will add a link to the document
     :param request:
     :param destination:
     :param location_id:
@@ -79,7 +83,6 @@ def document_add_link(request, destination, location_id):
     # Get the form data
     form = AddLinkForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Save the document link
@@ -106,6 +109,7 @@ def document_add_link(request, destination, location_id):
         is_deleted=False,
         document_key=document_submit,
     ).values(
+        "document_key_id",
         "document_key__document_description",
         "document_key__document_url_location",
         "document_key__document",
@@ -193,6 +197,26 @@ def document_list_folders(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
+def document_remove(request, destination, location_id):
+    # Get form data
+    form = DocumentRemoveForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+    
+    # Get document from the form
+    document_update = form.cleaned_data["document_key"]
+    document_update.is_deleted = True
+    document_update.save()
+
+    document_permission_update = DocumentPermission.objects.get(document_key = document_update.document_key)
+    document_permission_update.is_deleted = True
+    document_permission_update.save()
+
+    return HttpResponse("")
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
 def document_upload(request, destination, location_id):
     """
     The following function will deal with the uploaded document. It will first;
@@ -207,7 +231,6 @@ def document_upload(request, destination, location_id):
     :param folder_id: Which folder we will associate this with
     :return:
     """
-
     form = DocumentUploadForm(request.POST, request.FILES)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -221,12 +244,13 @@ def document_upload(request, destination, location_id):
 
     # Upload the document
     _, document_results = handle_document_permissions(
-        request, 
+        request,
         request.FILES["document"],
         file,
         document_description,
         destination,
-        location_id
+        location_id,
+        form.cleaned_data["parent_folder"],
     )
 
     # Send back json data
@@ -331,18 +355,22 @@ def private_download_file(request, document_key):
     )
 
     profile_picture_permission = document_permission_results.filter(
-        Q(customer__isnull=False,)
+        Q(
+            customer__isnull=False,
+        )
         | Q(organisation__isnull=False)
     )
 
     # If the object_assignment_results.count() == 0, then user does not have permissions
-    if object_assignment_results.count() == 0 and profile_picture_permission.count() == 0 and request.user.is_superuser == False:
-        return HttpResponseBadRequest("Sorry - there is no document")
+    if (
+        object_assignment_results.count() == 0
+        and profile_picture_permission.count() == 0
+        and request.user.is_superuser is False
+    ):
+        raise Http404
 
     # Get Document information
-    document_results = Document.objects.get(
-        document_key=document_key
-    )  # Need to change this to a 404
+    document_results = get_object_or_404(Document, document_key=document_key)
 
     # If not a document but a URL
     if document_results.document_url_location:
@@ -377,8 +405,16 @@ def private_download_file(request, document_key):
     # Send file to user
     return FileResponse(open(path, "rb"))
 
+
 # Internal Function
-def handle_document_permissions(request, upload, file, document_description, destination, location_id):
+def handle_document_permissions(
+    request, upload, file, document_description, destination, location_id, parent_folder = 0
+):
+    """
+    The function that handles the document permission - i.e. if user has access to the 
+    document then it'll send it to the user. Otherwise it will send a 404 not found.
+    Please note - we don't use permission denied here to hopefully trip people up
+    """
     document_submit = Document(
         change_user=request.user,
         document_description=document_description,
@@ -397,6 +433,12 @@ def handle_document_permissions(request, upload, file, document_description, des
     document_permission_submit = set_object_from_destination(
         document_permission_submit, destination, location_id
     )
+
+    # Apply the parent folder if required
+    if parent_folder is not 0:
+        document_permission_submit.folder = parent_folder
+    
+    # Save document permission
     document_permission_submit.save()
 
     # Get current document results to send back
@@ -427,9 +469,7 @@ def handle_document_permissions(request, upload, file, document_description, des
             f"private/{document_submit.document_key}/{file}",
         )
     else:
-        print("Before Handle file upload")
         handle_file_upload(upload, document_results, file)
-        print("After Handle File Upload")
 
     return document_submit, document_results
 

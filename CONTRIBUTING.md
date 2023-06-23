@@ -1,4 +1,4 @@
-# Contributing to NearBeach 
+# Contributing to NearBeach
 
 <!---
 ##  Hacktoberfest 2021
@@ -16,30 +16,28 @@ Welcome to NearBeach, we are super glad you are here. In the following month of 
 
 This seems a lot to cover within such a short time frame, but we are hoping you are willing to help us. We greatly appreciate all the help we can get no matter how small the contribution.
 --->
-If you would like to join our community, please join our [fun and exciting discord](https://discord.gg/64uhRztS6n).
 
+If you would like to join our community, please join our [fun and exciting discord](https://discord.gg/64uhRztS6n).
 
 ## Contributing to NearBeach
 
 We are always looking for new contributors. There are many different ways to contribute to NearBeach, for example;
 
-- Donating via [github sponsorships](https://github.com/sponsors/robotichead) or [our patreon](https://www.patreon.com/NearBeach)
-- Bug testing
-- Bug fixing
-- Writing Documentation
-- Writing new components or functionality for NearBeach
-- Refactoring Code, i.e. making it more efficient
-- Updating Code, i.e. updating libraries
-- Marketing NearBeach
-- Supplying feedback on NearBeach, i.e. improvements and feature requests
+-   Donating via [github sponsorships](https://github.com/sponsors/robotichead) or [our patreon](https://www.patreon.com/NearBeach)
+-   Bug testing
+-   Bug fixing
+-   Writing Documentation
+-   Writing new components or functionality for NearBeach
+-   Refactoring Code, i.e. making it more efficient
+-   Updating Code, i.e. updating libraries
+-   Marketing NearBeach
+-   Supplying feedback on NearBeach, i.e. improvements and feature requests
 
 and many many more. Join our [community on discord to see what you can do](https://discord.gg/64uhRztS6n)
-
 
 ## Code of Conduct
 
 Please read our [code of conduct here](https://github.com/robotichead/NearBeach/blob/main/CODE_OF_CONDUCT.md).
-
 
 ## NearBeach Overview
 
@@ -49,58 +47,51 @@ NearBeach is an open source project management system, that has been built using
 
 Each different module/componet in NearBeach are called Objects. The following objects currently exist;
 
-- Organisations
-- Customers
-- Requirements
-- Requirement Items
-- Projects
-- Tasks
-- Request for Changes
-- Kanban Boards
+-   Organisations
+-   Customers
+-   Requirements
+-   Requirement Items
+-   Projects
+-   Tasks
+-   Request for Changes
+-   Kanban Boards
 
 Each object shall have it's own folder structure within the respected location, i.e. `/views/projects`.
-
 
 ## Setting up local dev environment
 
 Please follow the instructions in our documentation: [Setting up local dev environment](https://nearbeach.readthedocs.io/en/documentation/setup-dev-environment/easy_development_environment.html)
 
-
 ## Donating
 
 Like most projects, there are some overhead costs. Every single dollar that we get will go towards;
 
-- Cloud hosting costs
-- Software costs
-- Administration costs
-- Freelance costs (i.e. hiring help like designers)
+-   Cloud hosting costs
+-   Software costs
+-   Administration costs
+-   Freelance costs (i.e. hiring help like designers)
 
 We are being transparent with all our costs and will try and provide a yearly cost breakdown every 6 months.
-
 
 ## Bug Reporting
 
 Bug reporting is a very important role for NearBeach. During Hacktoberfest, you are more than welcome to submit issues.
 
-
 ## Deepsource Issues
 
 NearBeach currently has a number of easy tasks/issues located on our [Deepsource - https://deepsource.io/gh/robotichead/NearBeach/issues](https://deepsource.io/gh/robotichead/NearBeach/issues).
-
 
 ## CodeClimate Issues
 
 NearBeach currently has a number of easy tasks/issues located on our [CodeClimte - https://codeclimate.com/github/robotichead/NearBeach/issues](https://codeclimate.com/github/robotichead/NearBeach/issues)
 
-
 ## Pull Requests
 
-Please fork NearBeach, git your changes in and then submit a simple pull request. 
+Please fork NearBeach, git your changes in and then submit a simple pull request.
 
 When submitting a pull request, please fill out the template appropriately. We have flagged NearBeach's repository with Hacktoberfest, so any accepted pull requests WILL count towards Hacktoberfest.
 
 Not all pull requests will be accepted.
-
 
 ## Documentation
 

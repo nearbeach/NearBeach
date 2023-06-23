@@ -6,10 +6,10 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
+from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
 from NearBeach.forms import NewPermissionSetForm, PermissionSetForm
 from NearBeach.models import (
     PermissionSet,
-    UserGroup,
     PERMISSION_BOOLEAN,
     PERMISSION_LEVEL,
 )
@@ -19,7 +19,8 @@ import json
 
 
 @login_required(login_url="login", redirect_field_name="")
-def new_permission_set(request):
+@check_user_admin_permissions(3, "administration_create_permission_set")
+def new_permission_set(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -39,7 +40,8 @@ def new_permission_set(request):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def new_permission_set_save(request):
+@check_user_admin_permissions(3, "administration_create_permission_set")
+def new_permission_set_save(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -68,7 +70,8 @@ def new_permission_set_save(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def permission_set_information(request, permission_set_id):
+@check_user_admin_permissions(1, "administration_create_permission_set")
+def permission_set_information(request, permission_set_id, *args, **kwargs):
     """
     :param request:
     :param permission_set_id:
@@ -104,14 +107,13 @@ def permission_set_information(request, permission_set_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def permission_set_information_save(request, permission_set_id):
+@check_user_admin_permissions(2, "administration_create_permission_set")
+def permission_set_information_save(request, permission_set_id, *args, **kwargs):
     """
     :param request:
     :param permission_set_id:
     :return:
     """
-    # ADD IN USER PERMISSIONS LATER
-
     # Check to make sure nothing changes for the administration permissions
     if permission_set_id == 1:
         return HttpResponseBadRequest("Error - can not edit administration")
@@ -119,7 +121,6 @@ def permission_set_information_save(request, permission_set_id):
     # Get form data
     form = PermissionSetForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Get the object
@@ -150,6 +151,7 @@ def permission_set_information_save(request, permission_set_id):
     update_permission_set.requirement = form.cleaned_data["requirement"]
     update_permission_set.request_for_change = form.cleaned_data["request_for_change"]
     update_permission_set.task = form.cleaned_data["task"]
+    update_permission_set.tag = form.cleaned_data["tag"]
     update_permission_set.document = form.cleaned_data["document"]
     update_permission_set.kanban_comment = form.cleaned_data["kanban_comment"]
     update_permission_set.project_history = form.cleaned_data["project_history"]

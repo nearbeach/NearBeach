@@ -17,6 +17,10 @@ OBJECT_ARRAY = [
 
 
 def check_destination():
+    """
+    Does a quick check to make sure the destination variable is inside the OBJECT_ARRAY
+    If not - it will return a Permission Denied. i.e. object does not exist do nothing.
+    """
     def decorator(func):
         @wraps(func)
         def inner(request, destination, *args, **kwargs):

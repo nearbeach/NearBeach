@@ -1,9 +1,20 @@
+from collections import namedtuple
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
+from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Q, CharField, Value as V, F
+from django.db.models.functions import Concat
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.views.decorators.http import require_http_methods
+
 import urllib3
 import urllib
 import json
 from NearBeach.models import (
     Bug,
     BugClient,
+    ChangeTask,
     Customer,
     Group,
     KanbanCard,
@@ -34,6 +45,7 @@ from NearBeach.forms import (
     AddNoteForm,
     AddTagsForm,
     AddUserForm,
+    RemoveCustomerForm,
     RemoveGroupForm,
     User,
     DeleteBugForm,
@@ -44,22 +56,17 @@ from NearBeach.forms import (
     QueryBugClientForm,
     RemoveLinkForm,
 )
-from django.contrib.auth.decorators import login_required
-from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q, CharField, Value as V
-from django.db.models.functions import Concat
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.views.decorators.http import require_http_methods
 
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
 def add_bug(request, destination, location_id):
-    # ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
-
-    # Get data from form
+    """
+    Function to add a bug to an object
+    :param: destination: Defines what object the bug is getting added too
+    :param: location_id: Defines the object ID that the bug is getting added too
+    """
     form = AddBugForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -92,9 +99,11 @@ def add_bug(request, destination, location_id):
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
 def add_customer(request, destination, location_id):
-    # ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
-
-    # Get data from form
+    """
+    Add customer to an object
+    :param: destination: the type of object we are adding the customer too
+    :param: location_id: the object id we are adding the customer too
+    """
     form = AddCustomerForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -165,32 +174,36 @@ def add_link(request, destination, location_id):
     :param location_id:
     :return:
     """
-    # ADD IN CHECKER FOR USER PERMISSIONS
-
+    
     # Get the data
     form = AddObjectLinkForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # Start saving the data
-    object_assignment_submit = ObjectAssignment(
-        change_user=request.user,
-    )
-
-    # Add the destination/location_id to the object
-    object_assignment_submit = link_object(
-        object_assignment_submit, destination, location_id
-    )
+    # Get the parent object of
+    object_relation = form.cleaned_data['object_relation']
 
     # Declaring the dict used in the for loop below
     object_dict = {
+        "change_task": ChangeTask.objects,
         "project": Project.objects,
         "task": Task.objects,
         "requirement": Requirement.objects,
         "requirement_item": RequirementItem.objects,
     }
 
+    relation_dict = {
+        "relates": "Relate",
+        "blocked_by": "Block",
+        "blocking": "Block",
+        "sub_object_of": "Subobject",
+        "parent_object_of": "Subobject",
+        "has_duplicate": "Duplicate",
+        "duplicate_object": "Duplicate",
+    }
+
     object_title = {
+        "change_task": "change_task_title",
         "project": "project_name",
         "task": "task_short_description",
         "requirement": "requirement_title",
@@ -198,6 +211,7 @@ def add_link(request, destination, location_id):
     }
 
     object_status = {
+        "change_task": "change_task_status",
         "project": "project_status",
         "task": "task_status",
         "requirement": "requirement_status",
@@ -206,13 +220,13 @@ def add_link(request, destination, location_id):
 
     # Loop through the results and add them in.
     # We will loop through each object type, and add them in accordinly
-    for object_type in ["project", "task", "requirement", "requirement_item"]:
+    for object_type in ["change_task", "project", "task", "requirement", "requirement_item"]:
         # Get the results of each object type and add them
         for row in request.POST.getlist(object_type):
             single_object = object_dict[object_type].get(pk=row)
 
             submit_object_assignment = ObjectAssignment(
-                change_user=request.user,
+                change_user=request.user, 
                 **{object_type: single_object}
             )
 
@@ -220,6 +234,19 @@ def add_link(request, destination, location_id):
             set_object_from_destination(
                 submit_object_assignment, destination, location_id
             )
+
+            # Set the parent object if it relates. Depending on the wording - depends if the current
+            # Object is the parent object, or not.
+            if object_relation in ['relates', 'blocking', 'parent_object_of', 'has_duplicate']:
+                submit_object_assignment.parent_link = destination
+            else:
+                if destination == object_type: 
+                    submit_object_assignment.parent_link = "meta_object"
+                else:
+                    submit_object_assignment.parent_link = object_type
+            
+            # Add the link relationship from the dictionary
+            submit_object_assignment.link_relationship = relation_dict[object_relation]
 
             # If object destination is the same as the object type, add the meta_object value
             if destination == object_type:
@@ -738,26 +765,23 @@ def get_user_list_all(destination, location_id):
         object_results = get_object_from_destination(
             object_results, destination, location_id
         )
-    
-        group_results = get_object_from_destination(group_results, destination, location_id)
+
+        group_results = get_object_from_destination(
+            group_results, destination, location_id
+        )
     else:
         # Get the kanban board information from the card
-        kanban_card_results = kanban_card.objects.get(
-            kanban_card_id=location_id
-        )
+        kanban_card_results = KanbanCard.objects.get(kanban_card_id=location_id)
 
         object_results = get_object_from_destination(
-            object_results, 
-            "kanban_board", 
+            object_results,
+            "kanban_board",
             kanban_card_results.kanban_board_id,
         )
 
         group_results = get_object_from_destination(
-            group_results, 
-            "kanban_board", 
-            kanban_card_results.kanban_board_id
+            group_results, "kanban_board", kanban_card_results.kanban_board_id
         )
-
 
     # Get a list of users who are associated with these groups & not in the excluded list
     user_results = (
@@ -865,9 +889,23 @@ def lead_user_list(request):
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
 def link_list(request, destination, location_id, object_lookup):
+    # Get user groups
+    user_group_results = UserGroup.objects.filter(
+        is_deleted=False,
+        username=request.user,
+        group_id__isnull=False,
+    ).values("group_id")
+
     # Get the data dependent on the object lookup
     if object_lookup == "project":
-        data_results = Project.objects.filter(is_deleted=False,).exclude(
+        data_results = Project.objects.filter(
+            is_deleted=False,
+            project_id__in=ObjectAssignment.objects.filter(
+                is_deleted=False,
+                project_id__isnull=False,
+                group_id__in=user_group_results,
+            ).values("project_id"),
+        ).exclude(
             Q(
                 project_status="Closed",
             )
@@ -880,7 +918,16 @@ def link_list(request, destination, location_id, object_lookup):
             )
         )
     elif object_lookup == "task":
-        data_results = Task.objects.filter(is_deleted=False,).exclude(
+        data_results = Task.objects.filter(
+            is_deleted=False,
+            task_id__in=ObjectAssignment.objects.filter(
+                is_deleted=False,
+                task_id__isnull=False,
+                group_id__in=user_group_results,
+            ).values(
+                "task_id",
+            ),
+        ).exclude(
             Q(
                 task_status="Closed",
             )
@@ -906,9 +953,7 @@ def link_list(request, destination, location_id, object_lookup):
             requirement_item_status_id__in=ListOfRequirementItemStatus.objects.filter(
                 is_deleted=False,
                 status_is_closed=False,
-            ).values(
-                "requirement_item_status_id"
-            ),
+            ).values("requirement_item_status_id"),
             requirement_id__in=Requirement.objects.filter(
                 is_deleted=False,
                 requirement_status_id__in=ListOfRequirementStatus.objects.filter(
@@ -932,23 +977,22 @@ def link_object(object_assignment_submit, destination, location_id):
     """
     This is an internal function - depending on the destination, depends on what we are linking in the
     object_association_submit
-    :param object_assignment_submit:
-    :param destination:
-    :param location_id:
-    :return:
     """
-    if destination == "project":
-        object_assignment_submit.project = Project.objects.get(project_id=location_id)
-    elif destination == "requirement":
-        object_assignment_submit.requirement = Requirement.objects.get(
-            requirement_id=location_id
-        )
-    elif destination == "requirement_item":
-        object_assignment_submit.requirement_item = RequirementItem.objects.get(
-            requirement_item_id=location_id
-        )
-    elif destination == "task":
-        object_assignment_submit.task = Task.objects.get(task_id=location_id)
+    allowed_destinations = [
+        "project",
+        "request_for_change",
+        "requirement",
+        "requirement_item",
+        "task",
+    ]
+
+    # Double checking that the specified destinations are allowed
+    if destination not in allowed_destinations:
+        raise PermissionDenied
+
+    object_assignment_submit = object_assignment_submit.filter(
+        is_deleted=False, **{destination: location_id}
+    )
 
     # Return the results
     return object_assignment_submit
@@ -994,40 +1038,82 @@ def object_link_list(request, destination, location_id):
         Q(
             # Where destination and location id match
             **{destination: location_id},
-        ) |
-        Q(
-            **{destination + '__isnull': False},
+        )
+        | Q(
+            **{destination + "__isnull": False},
             meta_object=location_id,
         )
-    ).values(
-        "project_id",
-        "project_id__project_name",
-        "project_id__project_status",
-        "task_id",
-        "task_id__task_short_description",
-        "task_id__task_status",
-        "requirement_id",
-        "requirement_id__requirement_title",
-        "requirement_id__requirement_status__requirement_status",
-        "requirement_item_id",
-        "requirement_item_id__requirement_item_title",
-        "requirement_item_id__requirement_item_status__requirement_item_status",
-        "meta_object",
-        "meta_object_title",
-        "meta_object_status",
     )
 
-    """
-    As explained on stack overflow here -
-    https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard
-    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
-    """
+    # Separate each section into;
+    # - projects
+    # - tasks
+    # - requirements
+    # - requirement items
+    # - meta
+    ObjectStructure = namedtuple(
+        "ObjectStructure",
+        ["object_id", "object_title", "object_status", "object_type","non_null_field"]    
+    )
 
-    # Send back json data
-    json_results = json.dumps(list(object_assignment_results), cls=DjangoJSONEncoder)
+    data_point_list = [
+        ObjectStructure("project_id","project_id__project_name","project_id__project_status","project","project"),
+        ObjectStructure("task_id","task_id__task_short_description","task_id__task_status","task","task"),
+        ObjectStructure("requirement_id","requirement_id__requirement_title","requirement_id__requirement_status__requirement_status","requirement","requirement"),
+        ObjectStructure("requirement_item_id","requirement_item_id__requirement_item_title","requirement_item_id__requirement_item_status__requirement_item_status","requirement_item","requirement_item"),
+        ObjectStructure("meta_object","meta_object_title","meta_object_status",destination,"meta_object"),
+    ]
 
-    return HttpResponse(json_results, content_type="application/json")
+    data_results = []
+    for data_point in data_point_list:
+        # When the destination == non_null_field, we specifically want to check out all meta_objects 
+        # that equal the location id. We want to make sure;
+        # 1. the destination column is not null
+        # 2. the meta_object == location_id
+        # These will be all meta_object assigned to the current object
+        if destination == data_point.non_null_field:
+            data_results.extend(object_assignment_results.filter(
+                meta_object=location_id,
+                **{destination + "__isnull": False},
+            ).annotate(
+                object_id=F(data_point.object_id),
+                object_title=F(data_point.object_title),
+                object_status=F(data_point.object_status),
+                object_type=V(data_point.object_type),
+                reverse_relation=V(True),
+            ).values(
+                "object_id",
+                "object_title",
+                "object_status",
+                "object_type", 
+                "link_relationship",
+                "parent_link",
+                "reverse_relation",
+            ))
+        else:
+            # The following looks at the other fields, where the object is assigned to it's associated
+            # object field (and not meta). i.e. project is in project column.
+            data_results.extend(object_assignment_results.filter(
+                    **{data_point.non_null_field + "__isnull": False},
+            ).exclude(
+                meta_object=location_id,
+            ).annotate(
+                object_id=F(data_point.object_id),
+                object_title=F(data_point.object_title),
+                object_status=F(data_point.object_status),
+                object_type=V(data_point.object_type),
+                reverse_relation=V(False),
+            ).values(
+                "object_id",
+                "object_title",
+                "object_status",
+                "object_type", 
+                "link_relationship",
+                "parent_link",
+                "reverse_relation",
+            ))
+
+    return JsonResponse(data_results, safe=False)
 
 
 @require_http_methods(["POST"])
@@ -1102,6 +1188,32 @@ def query_bug_client(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
+def remove_customer(request, destination, location_id):
+    # Get the form data
+    form = RemoveCustomerForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+    
+    update_object_assignment = ObjectAssignment.objects.filter(
+        customer_id=form.cleaned_data["customer_id"],
+    )
+
+    # Using internal functions - get the relevant data
+    update_object_assignment = link_object(
+        update_object_assignment, destination, location_id
+    )
+
+    # Update and save data
+    update_object_assignment.update(
+        is_deleted=True,
+    )
+
+    return HttpResponse("") 
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_destination()
 def remove_group(request, destination, location_id):
     # Get the form data
     form = RemoveGroupForm(request.POST)
@@ -1134,12 +1246,11 @@ def remove_link(request, destination, location_id):
         return HttpResponseBadRequest(form.errors)
 
     # Now we limit the data to what we want, and then soft delete it
-    update_object_assignment = ObjectAssignment.objects.filter(
+    ObjectAssignment.objects.filter(
         is_deleted=False,
         **{destination: location_id},
         **{form.cleaned_data["link_connection"]: form.cleaned_data["link_id"]},
     ).update(is_deleted=True)
-    update_object_assignment.save()
 
     return HttpResponse("")
 

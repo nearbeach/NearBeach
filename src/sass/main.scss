@@ -1,31 +1,31 @@
 //Import variables
-@import './common/variables';
+@import "./common/variables";
 
 // Import Bootstrap
 @import "~bootstrap/scss/bootstrap";
 
 //Import components
-@import 'components/body';
-@import 'components/buttons';
-@import 'components/cards';
-@import 'components/documents';
-@import 'components/errors';
-@import 'components/modals';
-@import 'components/nav';
-@import 'components/tables';
-@import 'components/tags';
-@import 'components/tinymce';
-@import 'components/vselect';
-@import 'components/drag_and_drop';
-@import 'components/users_and_groups';
-@import 'components/kanban';
-
+@import "components/body";
+@import "components/buttons";
+@import "components/cards";
+@import "components/customer_list";
+@import "components/documents";
+@import "components/errors";
+@import "components/modals";
+@import "components/nav";
+@import "components/object_links";
+@import "components/runsheet";
+@import "components/tables";
+@import "components/tags";
+@import "components/tinymce";
+@import "components/vselect";
+@import "components/drag_and_drop";
+@import "components/users_and_groups";
+@import "components/kanban";
 
 //Import layouts'
-@import 'layouts/footer';
-@import 'layouts/header';
-
+@import "layouts/footer";
+@import "layouts/header";
 
 //Import vue-form-wizard components
 //@import "~vue-form-wizard/dist/vue-form-wizard.min.css";
-

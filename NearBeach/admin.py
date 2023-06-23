@@ -2,20 +2,13 @@ from django.contrib import admin
 
 # Register your models here.
 from .models import (
-    AboutUser,
     Bug,
     BugClient,
-    Campus,
     ChangeTask,
     ChangeTaskBlock,
-    ContactHistory,
-    Cost,
     Customer,
-    CustomerCampus,
     Document,
     DocumentPermission,
-    EmailContent,
-    EmailContact,
     Folder,
     GroupPermission,
     Group,
@@ -23,59 +16,35 @@ from .models import (
     KanbanCard,
     KanbanColumn,
     KanbanLevel,
-    Kudos,
-    ListOfAmountType,
     ListOfBugClient,
-    ListOfCurrency,
-    ListOfContactType,
-    ListOfCountryRegion,
-    ListOfCountry,
     ListOfRequirementItemStatus,
     ListOfRequirementItemType,
     ListOfRequirementStatus,
     ListOfRequirementType,
     ListOfRFCStatus,
-    ListOfTax,
     ListOfTitle,
-    NearbeachOption,
     Notification,
     ObjectAssignment,
-    ObjectNote,
     Organisation,
     PermissionSet,
     Project,
     RequestForChange,
     RequestForChangeGroupApproval,
-    RequestForChangeStakeholder,
     Requirement,
-    RequirementCustomer,
     RequirementItem,
     Tag,
     TagAssignment,
-    TaskAction,
-    TaskCustomer,
     Task,
-    Timesheet,
-    ToDo,
     UserGroup,
-    UserWant,
-    UserWeblink,
 )
 
-admin.site.register(AboutUser)
 admin.site.register(Bug)
 admin.site.register(BugClient)
-admin.site.register(Campus)
 admin.site.register(ChangeTask)
 admin.site.register(ChangeTaskBlock)
-admin.site.register(ContactHistory)
-admin.site.register(Cost)
 admin.site.register(Customer)
-admin.site.register(CustomerCampus)
 admin.site.register(Document)
 admin.site.register(DocumentPermission)
-admin.site.register(EmailContent)
-admin.site.register(EmailContact)
 admin.site.register(Folder)
 admin.site.register(GroupPermission)
 admin.site.register(Group)
@@ -83,40 +52,23 @@ admin.site.register(KanbanBoard)
 admin.site.register(KanbanCard)
 admin.site.register(KanbanColumn)
 admin.site.register(KanbanLevel)
-admin.site.register(Kudos)
-admin.site.register(ListOfAmountType)
 admin.site.register(ListOfBugClient)
-admin.site.register(ListOfCurrency)
-admin.site.register(ListOfContactType)
-admin.site.register(ListOfCountryRegion)
-admin.site.register(ListOfCountry)
 admin.site.register(ListOfRequirementItemStatus)
 admin.site.register(ListOfRequirementItemType)
 admin.site.register(ListOfRequirementStatus)
 admin.site.register(ListOfRequirementType)
 admin.site.register(ListOfRFCStatus)
-admin.site.register(ListOfTax)
 admin.site.register(ListOfTitle)
-admin.site.register(NearbeachOption)
 admin.site.register(Notification)
 admin.site.register(ObjectAssignment)
-admin.site.register(ObjectNote)
 admin.site.register(Organisation)
 admin.site.register(PermissionSet)
 admin.site.register(Project)
 admin.site.register(RequestForChange)
 admin.site.register(RequestForChangeGroupApproval)
-admin.site.register(RequestForChangeStakeholder)
 admin.site.register(Requirement)
-admin.site.register(RequirementCustomer)
 admin.site.register(RequirementItem)
 admin.site.register(Tag)
 admin.site.register(TagAssignment)
-admin.site.register(TaskAction)
-admin.site.register(TaskCustomer)
 admin.site.register(Task)
-admin.site.register(Timesheet)
-admin.site.register(ToDo)
 admin.site.register(UserGroup)
-admin.site.register(UserWant)
-admin.site.register(UserWeblink)

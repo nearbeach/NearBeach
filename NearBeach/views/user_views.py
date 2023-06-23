@@ -8,15 +8,16 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 from django.contrib.auth import update_session_auth_hash
 
+from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
 from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm
-from NearBeach.models import UserGroup
 from NearBeach.views.tools.internal_functions import get_user_permissions
 
 import json
 
 
 @login_required(login_url="login", redirect_field_name="")
-def new_user(request):
+@check_user_admin_permissions(3, "administration_create_user")
+def new_user(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -36,7 +37,8 @@ def new_user(request):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def new_user_save(request):
+@check_user_admin_permissions(3, "administration_create_user")
+def new_user_save(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -68,7 +70,8 @@ def new_user_save(request):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def update_password(request):
+@check_user_admin_permissions(2, "administration_create_user")
+def update_password(request, *args, **kwargs):
     """ """
     # Get form data
     form = PasswordResetForm(request.POST)
@@ -91,7 +94,8 @@ def update_password(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def user_information(request, username):
+@check_user_admin_permissions(1, "administration_create_user")
+def user_information(request, username, *args, **kwargs):
     """
     :param request:
     :param permission_set_id:
@@ -121,7 +125,8 @@ def user_information(request, username):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def user_information_save(request, username):
+@check_user_admin_permissions(2, "administration_create_user")
+def user_information_save(request, username, *args, **kwargs):
     """
     :param request:
     :param username:

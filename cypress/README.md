@@ -2,9 +2,8 @@
 
 The following tests will test the following user permissions;
 
-- Administration
-- Team Leader
-- Basic User
-- Intern
-- Read Only
-
+-   Administration
+-   Team Leader
+-   Basic User
+-   Intern
+-   Read Only

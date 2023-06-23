@@ -126,6 +126,10 @@ class AddNoteForm(forms.Form):
 
 
 class AddObjectLinkForm(forms.Form):
+    change_task = forms.ModelMultipleChoiceField(
+        queryset=ChangeTask.objects.all(),
+        required=False,
+    )
     project = forms.ModelMultipleChoiceField(
         queryset=Project.objects.all(),
         required=False,
@@ -141,6 +145,9 @@ class AddObjectLinkForm(forms.Form):
     task = forms.ModelMultipleChoiceField(
         queryset=Task.objects.all(),
         required=False,
+    )
+    object_relation = forms.CharField(
+        max_length=20,
     )
 
 
@@ -192,6 +199,30 @@ class ChangeTaskForm(forms.ModelForm):
             "change_task_required_by",
             "change_task_qa_user",
             "is_downtime",
+        ]
+
+
+class ChangeTaskDescriptionForm(forms.ModelForm):
+    class Meta:
+        model = ChangeTask
+        fields = [
+            'change_task_description',
+        ]
+
+
+class ChangeTaskIsDowntimeForm(forms.ModelForm):
+    class Meta:
+        model = ChangeTask
+        fields = [
+            'is_downtime',
+        ]
+
+
+class ChangeTaskRequiredByForm(forms.ModelForm):
+    class Meta:
+        model = ChangeTask
+        fields = [
+            'change_task_required_by',
         ]
 
 
@@ -266,6 +297,13 @@ class DeleteTagForm(forms.ModelForm):
         }
 
 
+class DocumentRemoveForm(forms.Form):
+    document_key = forms.ModelChoiceField(
+        queryset=Document.objects.all(),
+        required=True,
+    )
+
+
 class DocumentUploadForm(forms.ModelForm):
     document = forms.FileField(
         required=True,
@@ -305,6 +343,7 @@ class KanbanCardForm(forms.ModelForm):
             "kanban_card_id",
             "kanban_card_text",
             "kanban_card_description",
+            "kanban_card_priority",
             "kanban_column",
             "kanban_level",
         }
@@ -381,14 +420,14 @@ class NewChangeTaskForm(forms.ModelForm):
         fields = [
             "request_for_change",
             "change_task_title",
-            "change_task_description",
+            # "change_task_description",
             "change_task_start_date",
             "change_task_end_date",
             "change_task_seconds",
             "change_task_assigned_user",
             "change_task_qa_user",
-            "change_task_required_by",
-            "is_downtime",
+            # "change_task_required_by",
+            # "is_downtime",
         ]
 
 
@@ -398,6 +437,7 @@ class NewColumnForm(forms.ModelForm):
         model = KanbanColumn
         fields = [
             "kanban_column_name",
+            "kanban_column_property",
             "kanban_column_sort_number",
         ]
 
@@ -446,6 +486,7 @@ class NewKanbanCardForm(forms.ModelForm):
         fields = [
             "kanban_card_text",
             "kanban_card_description",
+            "kanban_card_priority",
             "kanban_level",
             "kanban_column",
         ]
@@ -453,6 +494,7 @@ class NewKanbanCardForm(forms.ModelForm):
 
 class NewKanbanForm(forms.ModelForm):
     column_title = forms.SelectMultiple()
+    column_property = forms.SelectMultiple()
     level_title = forms.SelectMultiple()
 
     # Basic Meta Data
@@ -711,6 +753,13 @@ class QueryBugClientForm(forms.Form):
     )
     search = forms.CharField(
         max_length=50,
+    )
+
+
+class RemoveCustomerForm(forms.Form):
+    customer_id = forms.ModelChoiceField(
+        required=True,
+        queryset=Customer.objects.all()
     )
 
 

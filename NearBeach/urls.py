@@ -6,6 +6,7 @@ from .views import (
     admin_views,
     authentication_views,
     change_task_views,
+    card_views,
     customer_views,
     dashboard_views,
     document_views,
@@ -40,28 +41,81 @@ urlpatterns = [
         admin_views.update_user_password,
         name="update_user_password",
     ),
+    # Card Information
+    path(
+        "card_information/<int:card_id>/",
+        card_views.card_information,
+        name="card_information",
+    ),
     # Change Task
-    path('change_task_information/<int:change_task_id>/', change_task_views.change_task_information,
-         name='change_task_information'),
-    path('change_task_information/<int:change_task_id>/delete/', change_task_views.change_task_delete,
-         name='change_task_delete'),
-    path('change_task_information/<int:change_task_id>/save/', change_task_views.change_task_save,
-         name='change_task_save'),
-    path('change_task_update_status/<int:change_task_id>/', change_task_views.update_status,
-         name='change_task_update_status'),
-
+    path(
+        "change_task_information/<int:change_task_id>/",
+        change_task_views.change_task_information,
+        name="change_task_information",
+    ),
+    path(
+        "change_task_information/<int:change_task_id>/delete/",
+        change_task_views.change_task_delete,
+        name="change_task_delete",
+    ),
+    path(
+        "change_task_information/<int:change_task_id>/get_change_task_list/",
+        change_task_views.get_change_task_list,
+        name="change_task_get_change_task_list",
+    ),
+    path(
+        "change_task_information/<int:change_task_id>/save/",
+        change_task_views.change_task_save,
+        name="change_task_save",
+    ),
+    path(
+        "change_task_information/<int:change_task_id>/update/description/",
+        change_task_views.update_description,
+        name="change_task_update_description",
+    ),
+    path(
+        "change_task_information/<int:change_task_id>/update/is_downtime/",
+        change_task_views.update_is_downtime,
+        name="change_task_update_is_downtime",
+    ),
+    path(
+        "change_task_information/<int:change_task_id>/update/required_by/",
+        change_task_views.update_required_by,
+        name="change_task_update_required_by",
+    ),
+    path(
+        "change_task_update_status/<int:change_task_id>/",
+        change_task_views.update_status,
+        name="change_task_update_status",
+    ),
     # Customer
-    path('customer_information/<int:customer_id>/',
-         customer_views.customer_information, name='customer_information'),
-    path('customer_information/<int:customer_id>/get_profile_picture/',
-         customer_views.get_profile_picture, name='customer_get_profile_image'),
-    path('customer_information/<int:customer_id>/update_profile/',
-         customer_views.customer_update_profile, name='customer_update_profile'),
-    path('customer_information/<int:customer_id>/save/', customer_views.customer_information_save,
-         name='customer_information_save'),
-
+    path(
+        "customer_information/<int:customer_id>/",
+        customer_views.customer_information,
+        name="customer_information",
+    ),
+    path(
+        "customer_information/<int:customer_id>/get_profile_picture/",
+        customer_views.get_profile_picture,
+        name="customer_get_profile_image",
+    ),
+    path(
+        "customer_information/<int:customer_id>/update_profile/",
+        customer_views.customer_update_profile,
+        name="customer_update_profile",
+    ),
+    path(
+        "customer_information/<int:customer_id>/save/",
+        customer_views.customer_information_save,
+        name="customer_information_save",
+    ),
     # Dashboard
     path("dashboard/get/bug_list/", dashboard_views.get_bug_list, name="get_bug_list"),
+    path(
+        "dashboard/get/kanban_list/",
+        dashboard_views.get_kanban_list,
+        name="get_kanban_list",
+    ),
     path(
         "dashboard/get/my_objects/",
         dashboard_views.get_my_objects,
@@ -102,6 +156,11 @@ urlpatterns = [
         "documentation/<destination>/<location_id>/list/folders/",
         document_views.document_list_folders,
         name="document_list_folders",
+    ),
+    path(
+        "documentation/<destination>/<location_id>/remove/",
+        document_views.document_remove,
+        name="document_remove",
     ),
     path(
         "documentation/<destination>/<location_id>/upload/",
@@ -183,6 +242,11 @@ urlpatterns = [
         name="kanban_information",
     ),
     path(
+        "kanban_information/<int:kanban_board_id>/card/<int:open_card_on_load>/",
+        kanban_views.kanban_information,
+        name="kanban_information",
+    ),
+    path(
         "kanban_information/<int:kanban_board_id>/close_board/",
         kanban_views.kanban_close_board,
         name="kanban_close_board",
@@ -252,6 +316,11 @@ urlpatterns = [
         "profile_information/update_data/",
         profile_views.update_data,
         name="profile_update_data",
+    ),
+    path(
+        "profile_information/update_profile/",
+        profile_views.update_profile,
+        name="profile_update_profile",
     ),
     # New Objects
     path("new_customer/", customer_views.new_customer, name="new_customer"),
@@ -399,11 +468,16 @@ urlpatterns = [
         "object_data/<destination>/<location_id>/object_link_list/",
         object_data_views.object_link_list,
         name="object_link_list",
-    ),  # WTF - Please check to make sure we need this function?
+    ), 
     path(
         "object_data/<destination>/<location_id>/query_bug_client/",
         object_data_views.query_bug_client,
         name="query_bug_client",
+    ),
+    path(
+        "object_data/<destination>/<location_id>/remove_customer/",
+        object_data_views.remove_customer,
+        name="remove_customer",
     ),
     path(
         "object_data/<destination>/<location_id>/remove_group/",
@@ -447,17 +521,31 @@ urlpatterns = [
         name="lead_user_list",
     ),
     # Organisation
-    path('organisation_duplicates/', organisation_views.organisation_duplicates,
-         name='organisation_duplicates'),
-    path('organisation_information/<int:organisation_id>/', organisation_views.organisation_information,
-         name='organisation_information'),
-    path('organisation_information/<int:organisation_id>/get_profile_picture/',
-         organisation_views.get_profile_picture, name='organisation_get_profile_picture'),
-    path('organisation_information/<int:organisation_id>/save/', organisation_views.organisation_information_save,
-         name='organisation_information_save'),
-    path('organisation_information/<int:organisation_id>/update_profile/',
-         organisation_views.organisation_update_profile, name='organisation_update_profile'),
-
+    path(
+        "organisation_duplicates/",
+        organisation_views.organisation_duplicates,
+        name="organisation_duplicates",
+    ),
+    path(
+        "organisation_information/<int:organisation_id>/",
+        organisation_views.organisation_information,
+        name="organisation_information",
+    ),
+    path(
+        "organisation_information/<int:organisation_id>/get_profile_picture/",
+        organisation_views.get_profile_picture,
+        name="organisation_get_profile_picture",
+    ),
+    path(
+        "organisation_information/<int:organisation_id>/save/",
+        organisation_views.organisation_information_save,
+        name="organisation_information_save",
+    ),
+    path(
+        "organisation_information/<int:organisation_id>/update_profile/",
+        organisation_views.organisation_update_profile,
+        name="organisation_update_profile",
+    ),
     # Projects
     path(
         "project_information/<int:project_id>/",
@@ -491,12 +579,14 @@ urlpatterns = [
         name="get_requirement_items",
     ),
     path(
-        "requirement_information/<int:requirement_id>/data/item_status/",
+        #"requirement_information/<int:requirement_id>/data/item_status/",
+        "requirement_information/data/list_of_item_status_values/",
         requirement_views.get_requirement_item_status_list,
         name="get_requirement_item_status_list",
     ),
     path(
-        "requirement_information/<int:requirement_id>/data/item_type/",
+        #"requirement_information/<int:requirement_id>/data/item_type/",
+        "requirement_information/data/list_of_item_type_values/",
         requirement_views.get_requirement_item_type_list,
         name="get_requirement_item_type_list",
     ),

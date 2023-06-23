@@ -1,15 +1,18 @@
-{% extends 'NearBeach/template.html' %}
+{% extends "NearBeach/partials/template.html" %}
 {% load static %}
 {% block content %}
     <kanban-edit-board v-bind:kanban-board-results="{{kanban_board_results}}"
                        v-bind:column-results="{{column_results}}"
                        v-bind:group-results="{{group_results}}"
                        v-bind:level-results="{{level_results}}"
+                       v-bind:location-id="{{kanban_board_id}}"
                        v-bind:user-level="{{user_level}}"
                        v-bind:root-url="`{% url 'dashboard' %}`"
                        v-bind:static-url="`{% static '/' %}`"
     ></kanban-edit-board>
 
-    <kanban-group-permissions v-bind:location-id="{{kanban_board_id}}"
+    <kanban-group-permissions 
     ></kanban-group-permissions>
+
+	<confirm-kanban-board-closure></confirm-kanban-board-closure>
 {% endblock %}

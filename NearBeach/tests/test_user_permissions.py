@@ -109,7 +109,7 @@ class TeamLeaderPermissionTest(TestCase):
         login_user(c, self)
 
         # Make sure the admin user can open up the project
-        response = c.get(reverse("project_information", args=["1"]))
+        response = c.get(reverse("project_information", args=["2"]))
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
@@ -123,7 +123,7 @@ class TeamLeaderPermissionTest(TestCase):
         login_user(c, self)
 
         # Make sure the admin user can open up the project
-        response = c.get(reverse("task_information", args=["1"]))
+        response = c.get(reverse("task_information", args=["2"]))
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
@@ -137,7 +137,7 @@ class TeamLeaderPermissionTest(TestCase):
         login_user(c, self)
 
         # Make sure the admin user can open the kanban
-        response = c.get(reverse("kanban_information", args=[1]))
+        response = c.get(reverse("kanban_information", args=["2"]))
         self.assertEqual(response.status_code, 200)
 
         # TEMP CODE - CHECK USER PERMISSIONS LOGIC
@@ -158,10 +158,8 @@ class TeamLeaderPermissionTest(TestCase):
             & Q(group_id__in=user_group_results.values("group_id"))
         )
 
-        print(f"Group Results Length: {len(group_results)}")
-
         # Make sure the admin user can open the kanban
-        response_2 = c.get(reverse("kanban_information", args=[2]))
+        response_2 = c.get(reverse("kanban_information", args=[1]))
         self.assertEqual(response_2.status_code, 403)
 
     def test_new_organisation_permissions(self):
@@ -204,7 +202,7 @@ class TeamMemberPermissionTest(TestCase):
         login_user(c, self)
 
         # Make sure the admin user can open up the project
-        response = c.get(reverse("project_information", args=["1"]))
+        response = c.get(reverse("project_information", args=["2"]))
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
@@ -218,7 +216,7 @@ class TeamMemberPermissionTest(TestCase):
         login_user(c, self)
 
         # Make sure the admin user can open up the project
-        response = c.get(reverse("task_information", args=["1"]))
+        response = c.get(reverse("task_information", args=["2"]))
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the task
@@ -245,7 +243,7 @@ class TeamInternPermissionTest(TestCase):
         login_user(c, self)
 
         # Make sure the admin user can open up the project
-        response = c.get(reverse("project_information", args=["1"]))
+        response = c.get(reverse("project_information", args=["2"]))
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the project
@@ -259,7 +257,7 @@ class TeamInternPermissionTest(TestCase):
         login_user(c, self)
 
         # Make sure the admin user can open up the project
-        response = c.get(reverse("task_information", args=["1"]))
+        response = c.get(reverse("task_information", args=["2"]))
         self.assertEqual(response.status_code, 200)
 
         # # Make sure the admin user can open up the task
