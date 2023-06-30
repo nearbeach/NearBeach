@@ -97,7 +97,12 @@
 				//Construct data to send
 				const data_to_send = new FormData();
 				data_to_send.set("group_name", this.groupNameModel);
-				data_to_send.set("parent_group", this.parentGroupModel);
+
+				//Send parent group if not null
+				if (this.parentGroupModel !== null && this.parentGroupModel !== "")
+				{
+					data_to_send.set("parent_group", this.parentGroupModel);
+				}
 
 				//Show the loading mixin
 				this.showLoadingModal("Group Information");
