@@ -181,8 +181,6 @@
 		mixins: [iconMixin],
 		data() {
 			return {
-				destination: "getDestination",
-				locationId: "getLocationId",
 				projectResults: [],
 				requirementResults: [],
 				taskResults: [],
@@ -190,6 +188,8 @@
 		},
 		computed: {
 			...mapGetters({
+				destination: "getDestination",
+				locationId: "getLocationId",
 				rootUrl: "getRootUrl",
 			}),
 		},
@@ -221,6 +221,7 @@
 		mounted() {
 			//Wait 200ms
 			setTimeout(() => {
+				console.log("Destination: ", this.destination);
 				this.getAssociatedObjectResults();
 			}, 200);
 		},

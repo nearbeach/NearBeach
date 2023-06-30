@@ -159,8 +159,6 @@
 					aria-labelledby="profile-tab"
 				>
 					<associated-objects
-						v-bind:destination="destination"
-						v-bind:location-id="locationId"
 					></associated-objects>
 				</div>
 				<div
@@ -169,10 +167,7 @@
 					role="tabpanel"
 					aria-labelledby="profile-tab"
 				>
-					<misc-module
-						v-bind:destination="destination"
-						v-bind:location-id="locationId"
-					></misc-module>
+					<list-tags-module></list-tags-module>
 				</div>
 				<div
 					class="tab-pane fade"
@@ -200,9 +195,9 @@
 	import { Modal } from "bootstrap";
 	import { Icon } from "@iconify/vue";
 	import CustomersListModule from "../modules/sub_modules/CustomersListModule.vue";
+	import ListTagsModule from "../modules/sub_modules/ListTagsModule.vue";
 	import NewCustomerModal from "../customers/NewCustomerModal.vue";
 	import NotesModule from "../modules/sub_modules/NotesModule.vue";
-	import MiscModule from "../modules/sub_modules/MiscModule.vue";
 	import AssociatedObjects from "../modules/sub_modules/AssociatedObjects.vue";
 	import DocumentsModule from "../modules/sub_modules/DocumentsModule.vue";
 
@@ -219,7 +214,7 @@
 			CustomersListModule,
 			DocumentsModule,
 			Icon,
-			MiscModule,
+			ListTagsModule,
 			NewCustomerModal,
 			NotesModule,
 		},
@@ -284,6 +279,13 @@
 				type: "updateUserLevel",
 				userLevel: this.userLevel,
 			});
+
+			//Send the destination and location to VUEX
+			this.$store.commit({
+				type: "updateDestination",
+				destination: this.destination,
+				locationId: this.locationId,
+			})
 		},
 	};
 </script>

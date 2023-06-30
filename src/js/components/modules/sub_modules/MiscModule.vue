@@ -1,9 +1,6 @@
 <template>
 	<div>
-		<list-tags-module
-			v-bind:destination="destination"
-			v-bind:location-id="locationId"
-		></list-tags-module>
+		<list-tags-module></list-tags-module>
 	</div>
 </template>
 
@@ -16,23 +13,10 @@
 		components: {
 			ListTagsModule,
 		},
-		props: {
-			destination: {
-				type: String,
-				default: "",
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
-		},
+		props: {},
 		mixins: [],
 		computed: {},
-		data() {
-			return {
-				noteHistoryResults: [],
-			};
-		},
+		data() {},
 		methods: {},
 		mounted() {},
 	};

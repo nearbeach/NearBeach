@@ -292,10 +292,7 @@
 					role="tabpanel"
 					aria-labelledby="contact-tab"
 				>
-					<misc-module
-						v-bind:location-id="locationId"
-						v-bind:destination="destination"
-					></misc-module>
+					<list-tags-module></list-tags-module>
 				</div>
 				<div
 					class="tab-pane fade"
@@ -318,8 +315,8 @@
 	import DocumentsModule from "./sub_modules/DocumentsModule.vue";
 	import ObjectLinks from "./sub_modules/ObjectLinks.vue";
 	import CustomersModule from "./sub_modules/CustomersModule.vue";
+	import ListTagsModule from "./sub_modules/ListTagsModule.vue";
 	import BugsModule from "./sub_modules/BugsModule.vue";
-	import MiscModule from "./sub_modules/MiscModule.vue";
 	import NotesModule from "./sub_modules/NotesModule.vue";
 
 	export default {
@@ -329,7 +326,7 @@
 			CustomersModule,
 			DocumentsModule,
 			GroupsAndUsersModule,
-			MiscModule,
+			ListTagsModule,
 			NotesModule,
 			ObjectLinks,
 			RequirementItemLinksModule,
