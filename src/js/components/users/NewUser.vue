@@ -139,7 +139,7 @@
 
 	//Validation
 	import useVuelidate from "@vuelidate/core";
-	import { alphaNum, email, required } from "@vuelidate/validators";
+	import { email, required } from "@vuelidate/validators";
 	import ValidationRendering from "../validation/ValidationRendering.vue";
 
 	export default {
@@ -184,7 +184,6 @@
 				required,
 			},
 			usernameModel: {
-				alphaNum,
 				required,
 			},
 		},
