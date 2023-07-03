@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.files.base import ContentFile
 from django.core import serializers
 from django.conf import settings
 from django.http import (
@@ -28,6 +29,9 @@ from ..forms import (
     RequirementItem,
 )
 from ..models import DocumentPermission, UserGroup, ObjectAssignment
+
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 
 import boto3
 import json
@@ -395,10 +399,30 @@ def private_download_file(request, document_key):
             as_attachment=True,
             filename=document_results.document_description,
         )
-
-    # if hasattr(settings, "AZURE_STORAGE_CONNECTION_STRING"):
+    elif hasattr(settings, "AZURE_STORAGE_CONNECTION_STRING"):
         # Use Azure to download
-        # blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            settings.AZURE_STORAGE_CONNECTION_STRING
+        )
+
+        # Get container
+        container_client = blob_service_client.get_container_client(
+            container=settings.AZURE_STORAGE_CONTAINER_NAME
+        )
+
+        # Setup the file to send
+        file_to_send = ContentFile(
+            container_client.download_blob(
+                f"{document_results.document}"
+            ).readall()
+        )
+
+        # Return file
+        return FileResponse(
+            file_to_send,
+            as_attachment=True,
+            filename=document_results.document_description,
+        )
 
     # Normal setup - find document on server and serve
     # Get the Document path information
@@ -470,6 +494,20 @@ def handle_document_permissions(
             settings.AWS_STORAGE_BUCKET_NAME,
             f"private/{document_submit.document_key}/{file}",
         )
+    elif hasattr(settings, "AZURE_STORAGE_CONNECTION_STRING"):
+        # Create the BlobServiceClient object
+        blob_service_client = BlobServiceClient.from_connection_string(
+            settings.AZURE_STORAGE_CONNECTION_STRING
+        )
+
+        # Create the blob client using the private file path name as the name for the blob
+        blob_client = blob_service_client.get_blob_client(
+            container=settings.AZURE_STORAGE_CONTAINER_NAME, 
+            blob=f"private/{document_submit.document_key}/{file}",
+        )
+
+        # Upload the created file
+        blob_client.upload_blob(file)
     else:
         handle_file_upload(upload, document_results, file)
 

@@ -4,6 +4,8 @@ simplejson
 pillow>=7.1.0
 urllib3
 boto3
+azure-storage-blob
+azure-identity
 # geolocation-python
 # django-tinymce4-lite
 # weasyprint
