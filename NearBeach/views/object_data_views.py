@@ -979,6 +979,7 @@ def link_object(object_assignment_submit, destination, location_id):
     object_association_submit
     """
     allowed_destinations = [
+        "kanban_card",
         "project",
         "request_for_change",
         "requirement",
