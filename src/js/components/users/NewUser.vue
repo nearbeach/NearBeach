@@ -142,6 +142,9 @@
 	import { email, required } from "@vuelidate/validators";
 	import ValidationRendering from "../validation/ValidationRendering.vue";
 
+	//Mixins
+	import errorModalMixin from "../../mixins/errorModalMixin";
+
 	export default {
 		name: "NewUser",
 		setup() {
@@ -150,6 +153,9 @@
 		components: {
 			ValidationRendering,
 		},
+		mixins: [
+			errorModalMixin,
+		],
 		props: {
 			rootUrl: {
 				type: String,
