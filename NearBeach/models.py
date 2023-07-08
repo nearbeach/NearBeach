@@ -1513,27 +1513,6 @@ class Task(models.Model):
         return str(self.task_short_description)
 
 
-class TaskAction(models.Model):
-    task_action_id = models.BigAutoField(primary_key=True)
-    task = models.ForeignKey(
-        "task",
-        on_delete=models.CASCADE,
-    )
-    task_action = models.TextField()
-    submitted_by = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-
 class UserGroup(models.Model):
     user_group_id = models.BigAutoField(primary_key=True)
     username = models.ForeignKey(

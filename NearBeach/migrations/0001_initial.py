@@ -929,40 +929,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name="TaskAction",
-            fields=[
-                (
-                    "task_action_id",
-                    models.BigAutoField(primary_key=True, serialize=False),
-                ),
-                ("task_action", models.TextField()),
-                ("date_created", models.DateTimeField(auto_now_add=True)),
-                ("date_modified", models.DateTimeField(auto_now=True)),
-                ("is_deleted", models.BooleanField(default=False)),
-                (
-                    "change_user",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="%(class)s_change_user",
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-                (
-                    "submitted_by",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-                (
-                    "task",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="NearBeach.task"
-                    ),
-                ),
-            ],
-        ),
-        migrations.CreateModel(
             name="TagAssignment",
             fields=[
                 (
