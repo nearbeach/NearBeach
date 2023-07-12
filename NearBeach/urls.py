@@ -750,6 +750,11 @@ urlpatterns = [
         name="update_password",
     ),
     path(
+        "user_information/remove_permission/",
+        user_views.user_remove_permission,
+        name="user_remove_permission"
+    ),
+    path(
         "test/permission_denied/",
         authentication_views.test_permission_denied,
         name="test_permission_denied",

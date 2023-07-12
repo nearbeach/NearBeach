@@ -9,7 +9,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import update_session_auth_hash
 
 from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
-from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm
+from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm, UserRemovePermissionForm
+from NearBeach.models import UserGroup
 from NearBeach.views.tools.internal_functions import get_user_permissions
 
 import json
@@ -154,3 +155,25 @@ def user_information_save(request, username, *args, **kwargs):
 
     # Send back blank 200
     return HttpResponse("")
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(4, "administration_create_user")
+def user_remove_permission(request, *args, **kwargs):
+    # Get the form data
+    form = UserRemovePermissionForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+    
+    user_group_id = form.cleaned_data['user_group_id']
+    
+    user_group_update = UserGroup.objects.get(
+        user_group_id = user_group_id.user_group_id,
+    )
+
+    user_group_update.is_deleted = True
+    user_group_update.save()
+
+    # Send back success
+    return HttpResponse()

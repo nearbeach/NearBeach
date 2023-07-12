@@ -25,6 +25,7 @@ from .models import (
     BugClient,
     Document,
     ObjectAssignment,
+    UserGroup,
 )
 
 
@@ -931,3 +932,10 @@ class UpdateUserForm(forms.ModelForm):
             "is_active",
             "is_superuser",
         ]
+
+
+class UserRemovePermissionForm(forms.Form):
+    user_group_id = forms.ModelChoiceField(
+        queryset=UserGroup.objects.all(),
+        required=True,
+    )

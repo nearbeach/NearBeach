@@ -20,6 +20,7 @@
 								<td>Group List</td>
 								<td>Permission List</td>
 								<td>Team Leader</td>
+								<td></td>
 							</tr>
 						</thead>
 						<tbody>
@@ -51,6 +52,16 @@
 										v-bind:data-user="user.username"
 										v-on:change="updateGroupLeader"
 									/>
+								</td>
+								<td>
+									<span
+										class="remove-link"
+									>
+										<Icon
+											v-bind:icon="icons.trashCan"
+											v-on:click="removePermission(user.user_group_id)"
+										/>
+									</span>
 								</td>
 							</tr>
 						</tbody>
@@ -89,10 +100,15 @@
 	//Vue Components
 	import AdminAddUser from "./AdminAddUser.vue";
 
+	//Icon
+	import { Icon } from "@iconify/vue";
+	import iconMixin from "../../mixins/iconMixin";
+
 	export default {
 		name: "UserList",
 		components: {
 			AdminAddUser,
+			Icon,
 		},
 		props: {
 			destination: {
@@ -115,7 +131,7 @@
 				localListResults: [],
 			};
 		},
-		mixins: [errorModalMixin],
+		mixins: [errorModalMixin, iconMixin],
 		methods: {
 			addUser() {
 				//Show the user's modal
@@ -132,6 +148,23 @@
 
 				//If length > 0, return true
 				return count > 0;
+			},
+			removePermission(user_group_id) {
+				//Create data to send
+				const data_to_send = new FormData();
+				data_to_send.set("user_group_id", user_group_id);
+
+				axios.post(
+					`/user_information/remove_permission/`,
+					data_to_send
+				).then(() => {
+					//Remove the user group id
+					this.localListResults = this.localListResults.filter((row) => {
+						return row.user_group_id != user_group_id;
+					});
+				}).catch((error) => {
+					this.showErrorModal(error, this.destination);
+				});
 			},
 			updateGroupLeader(event) {
 				//Setup modal telling user of update

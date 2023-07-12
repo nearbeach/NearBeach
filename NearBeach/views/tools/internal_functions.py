@@ -52,6 +52,7 @@ def get_user_permissions(field, value):
             **{field: value},
         )
         .values(
+            "user_group_id",
             "username",
             "username__first_name",
             "username__last_name",
