@@ -126,7 +126,6 @@
 	export default {
 		name: "CardDetails",
 		components: {
-			// mapGetters,
 			NSelect,
 		},
 		data() {
@@ -159,9 +158,9 @@
 		computed: {
 			...mapGetters({
 				cardId: "getCardId",
-				cardLevel: "getCardLevel",
+				//cardLevel: "getCardLevel",
 				cardLink: "getCardLink",
-				cardTitle: "getCardTitle",
+				//cardTitle: "getCardTitle",
 				kanbanStatus: "getKanbanStatus",
 				listColumns: "getListColumns",
 				listLevels: "getListLevels",
@@ -179,6 +178,18 @@
 					});
 				},
 			},
+			cardLevel: {
+				get() {
+					return this.$store.state.card.cardLevel;
+				},
+				set(value) {
+					this.$store.commit({
+						type: "updateValue",
+						field: "cardLevel",
+						value: value,
+					});
+				},
+			},
 			cardPriority: {
 				get() {
 					return this.$store.state.card.cardPriority;
@@ -191,6 +202,18 @@
 					});
 				},
 			},
+			cardTitle: {
+				get() {
+					return this.$store.state.card.cardTitle;
+				},
+				set(value) {
+					this.$store.commit({
+						type: "updateValue",
+						field: "cardTitle",
+						value: value,
+					});
+				},
+			}
 		},
 		methods: {
 			archiveCard() {
