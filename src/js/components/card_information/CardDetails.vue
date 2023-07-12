@@ -158,9 +158,7 @@
 		computed: {
 			...mapGetters({
 				cardId: "getCardId",
-				//cardLevel: "getCardLevel",
 				cardLink: "getCardLink",
-				//cardTitle: "getCardTitle",
 				kanbanStatus: "getKanbanStatus",
 				listColumns: "getListColumns",
 				listLevels: "getListLevels",
