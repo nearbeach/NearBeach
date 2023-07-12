@@ -331,7 +331,7 @@ def get_unassigned_objects(request):
                     is_deleted=False,
                     task_id__isnull=False,
                     assigned_user__isnull=False,
-                )
+                ).values("task_id")
             )
         )
         .values(
