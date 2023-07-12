@@ -1,5 +1,11 @@
-thead {
-	background-color: #cecece;
+table {
+	margin-bottom: 2rem !important;
+}
+
+thead > tr > td {
+	background-color: rgb(78, 78, 78) !important;
+	color: rgb(255, 255, 255) !important;
+	font-weight: bold;
 }
 
 .requirement-link-type,
