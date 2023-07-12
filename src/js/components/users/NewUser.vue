@@ -217,7 +217,11 @@
 						window.location.href = response.data;
 					})
 					.catch((error) => {
-						this.showErrorModal(error, "New User", "");
+						this.showErrorModal(
+							"Please choose a suitable username",
+							"New User",
+							"Username issues"
+						);
 					});
 			},
 		},
