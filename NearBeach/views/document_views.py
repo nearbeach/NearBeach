@@ -381,7 +381,7 @@ def private_download_file(request, document_key):
         return HttpResponseRedirect(document_results.document_url_location)
 
     # If S3 has been setup - download file from S3 bucket
-    if hasattr(settings, "AWS_ACCESS_KEY_ID"):
+    if getattr(settings, "AWS_ACCESS_KEY_ID", None):
         # Use boto3 to download
         s3 = boto3.client(
             "s3",
@@ -399,7 +399,7 @@ def private_download_file(request, document_key):
             as_attachment=True,
             filename=document_results.document_description,
         )
-    elif hasattr(settings, "AZURE_STORAGE_CONNECTION_STRING"):
+    elif getattr(settings, "AZURE_STORAGE_CONNECTION_STRING", None):
         # Use Azure to download
         blob_service_client = BlobServiceClient.from_connection_string(
             settings.AZURE_STORAGE_CONNECTION_STRING
@@ -480,7 +480,7 @@ def handle_document_permissions(
     )
 
     # Handle the document upload
-    if hasattr(settings, "AWS_ACCESS_KEY_ID"):
+    if getattr(settings, "AWS_ACCESS_KEY_ID", None):
         # Use boto to upload the file
         s3 = boto3.client(
             "s3",
@@ -494,7 +494,7 @@ def handle_document_permissions(
             settings.AWS_STORAGE_BUCKET_NAME,
             f"private/{document_submit.document_key}/{file}",
         )
-    elif hasattr(settings, "AZURE_STORAGE_CONNECTION_STRING"):
+    elif getattr(settings, "AZURE_STORAGE_CONNECTION_STRING", None):
         # Create the BlobServiceClient object
         blob_service_client = BlobServiceClient.from_connection_string(
             settings.AZURE_STORAGE_CONNECTION_STRING

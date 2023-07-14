@@ -736,12 +736,15 @@ def get_user_list(destination, location_id):
     # Get the user details
     user_results = User.objects.filter(
         id__in=object_results.values("assigned_user_id")
+    ).annotate(
+        profile_picture=F('userprofilepicture__document_id__document_key')
     ).values(
         "id",
         "username",
         "first_name",
         "last_name",
         "email",
+        "profile_picture",
     )
 
     return json.dumps(list(user_results), cls=DjangoJSONEncoder)

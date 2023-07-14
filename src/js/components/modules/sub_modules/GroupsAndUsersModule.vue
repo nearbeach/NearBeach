@@ -73,7 +73,7 @@
 				class="user-card"
 			>
 				<img
-					v-bind:src="`${staticUrl}/NearBeach/images/placeholder/people_tax.svg`"
+					v-bind:src="profilePicture(user.profile_picture)"
 					alt="default profile"
 					class="default-user-profile"
 				/>
@@ -203,6 +203,13 @@
 					.catch((error) => {
 						this.showErrorModal(error, this.destination);
 					});
+			},
+			profilePicture(picture_uuid) {
+				if (picture_uuid !== null && picture_uuid !== "") {
+					return `${this.rootUrl}private/${picture_uuid}/`;
+				}
+
+				return `${this.staticUrl}/NearBeach/images/placeholder/people_tax.svg`;
 			},
 			removeGroup(group_id) {
 				//Setup data to send
