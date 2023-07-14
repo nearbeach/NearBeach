@@ -158,7 +158,10 @@
 		},
 		mounted() {
 			//Check the resize procedure
-			this.resizeProcedure();
+			// this.resizeProcedure();
+			setTimeout(() => {
+				this.resizeProcedure();
+			}, 10);
 
 			this.$store.commit({
 				type: "updateKanbanStatus",

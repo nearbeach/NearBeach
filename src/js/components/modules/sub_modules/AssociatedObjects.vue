@@ -221,7 +221,6 @@
 		mounted() {
 			//Wait 200ms
 			setTimeout(() => {
-				console.log("Destination: ", this.destination);
 				this.getAssociatedObjectResults();
 			}, 200);
 		},

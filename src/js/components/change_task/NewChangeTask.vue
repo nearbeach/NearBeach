@@ -298,7 +298,6 @@
 				
 				//Check validation
 				const isFormCorrect = await this.v$.$validate();
-				console.log("VALIDATION: ", this.v$);
 				if (!isFormCorrect) {
 					return;
 				}
