@@ -64,6 +64,9 @@ import { nextTick } from 'vue';
 		components: {
 			KanbanRow,
 		},
+		inject: [
+			'nextTick',
+		],
 		props: {
 			kanbanBoardResults: {
 				type: Array,
@@ -159,7 +162,7 @@ import { nextTick } from 'vue';
 		},
 		mounted() {
 			//Check the resize procedure
-			nextTick(() => {
+			this.nextTick(() => {
 				this.resizeProcedure();
 			});
 

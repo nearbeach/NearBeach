@@ -58,6 +58,9 @@
 		setup() {
 			return { v$: useVuelidate() };
 		},
+		inject: [
+			'nextTick',
+		],
 		components: {
 			NSelect,
 			ValidationRendering,
@@ -150,11 +153,10 @@
 			},
 		},
 		mounted() {
-			//Wait 200ms
-			setTimeout(() => {
+			this.nextTick(() => {
 				//Get a default list when mounted
 				this.getOrganisationData("", "");
-			}, 200);
+			});
 		},
 	};
 </script>

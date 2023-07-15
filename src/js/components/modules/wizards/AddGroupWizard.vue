@@ -111,6 +111,9 @@
 			Icon,
 			NSelect,
 		},
+		inject: [
+			'nextTick',
+		],
 		computed: {
 			...mapGetters({
 				destination: "getDestination",
@@ -178,9 +181,9 @@
 		},
 		mounted() {
 			//Wait 200ms
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.getGroupList();
-			}, 200);
+			});
 		},
 	};
 </script>

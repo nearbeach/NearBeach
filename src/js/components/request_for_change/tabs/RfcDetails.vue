@@ -176,6 +176,9 @@
 			NSelect,
 			ValidationRendering,
 		},
+		inject: [
+			'nextTick',
+		],
 		props: {
 			groupResults: {
 				type: Array,
@@ -452,9 +455,9 @@
 		},
 		mounted() {
 			//Get the lead user data
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.getChangeLeadData();
-			}, 200);
+			});
 
 			//Send the default date time up stream
 			this.updateValues(

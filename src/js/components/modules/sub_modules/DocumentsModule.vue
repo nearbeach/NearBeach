@@ -191,6 +191,9 @@
 			Icon,
 			UploadDocumentWizard,
 		},
+		inject: [
+			'nextTick',
+		],
 		props: {
 			overrideDestination: {
 				type: String,
@@ -401,11 +404,10 @@
 			},
 		},
 		mounted() {
-			//Wait 200ms
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.getDocumentList();
 				this.getFolderList();
-			}, 200);
+			});
 		},
 	};
 </script>

@@ -178,6 +178,9 @@
 		components: {
 			Icon,
 		},
+		inject: [
+			'nextTick',
+		],
 		mixins: [iconMixin],
 		data() {
 			return {
@@ -220,9 +223,9 @@
 		},
 		mounted() {
 			//Wait 200ms
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.getAssociatedObjectResults();
-			}, 200);
+			});
 		},
 	};
 </script>

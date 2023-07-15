@@ -67,6 +67,9 @@
 			CustomersListModule,
 			Icon,
 		},
+		inject: [
+			'nextTick',
+		],
 		mixins: [errorModalMixin, iconMixin],
 		data() {
 			return {
@@ -115,9 +118,9 @@
 			if (escape_array.indexOf(this.destination) >= 0) return;
 
 			//Wait 200ms before getting data
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.loadCustomerResults();
-			}, 200);
+			});
 		},
 	};
 </script>

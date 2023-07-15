@@ -148,6 +148,9 @@
 			AddUserWizard,
 			Icon,
 		},
+		inject: [
+			'nextTick',
+		],
 		computed: {
 			...mapGetters({
 				destination: "getDestination",
@@ -276,10 +279,10 @@
 		},
 		mounted() {
 			//Wait 200ms
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.getGroupList();
 				this.getUserList();
-			}, 200);
+			});
 		},
 	};
 </script>

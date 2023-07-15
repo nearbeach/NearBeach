@@ -20,6 +20,9 @@ const axios = require("axios");
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
+//nextTick
+import { nextTick } from 'vue';
+
 //Lazy Load Parent Components
 import {
 	//BugsModule,
@@ -136,4 +139,5 @@ const app = createApp({
 });
 app.config.devtools = true;
 app.use(store);
+app.provide('nextTick', nextTick) //Do the same thing with axios, modal etc.
 app.mount("#app");

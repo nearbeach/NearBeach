@@ -64,6 +64,9 @@
 			AddTagWizard,
 			Icon,
 		},
+		inject: [
+			'nextTick',
+		],
 		data() {
 			return {
 				tagList: [],
@@ -127,9 +130,9 @@
 			if (escape_array.indexOf(this.destination) >= 0) return;
 
 			//Wait 200ms before getting the data
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.getAssignedTags();
-			}, 200);
+			});
 		},
 	};
 </script>

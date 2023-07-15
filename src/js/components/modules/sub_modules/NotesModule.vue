@@ -55,6 +55,9 @@
 			ListNotes,
 			NewHistoryNoteWizard,
 		},
+		inject: [
+			'nextTick',
+		],
 		mixins: [errorModalMixin, iconMixin],
 		data() {
 			return {
@@ -94,9 +97,9 @@
 			},
 		},
 		mounted() {
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.getNoteHistoryResults();
-			}, 200);
+			});
 		},
 	};
 </script>

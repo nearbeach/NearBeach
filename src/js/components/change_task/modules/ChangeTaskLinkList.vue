@@ -73,6 +73,9 @@
 			Icon,
 			SubObjectLinks,
 		},
+		inject: [
+			'nextTick',
+		],
 		mixins: [iconMixin],
 		data() {
 			return {
@@ -130,10 +133,9 @@
 			},
 		},
 		mounted() {
-			//Wait 200ms before getting data
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.updateLinkResults();
-			}, 200);
+			});
 		},
 	};
 </script>
