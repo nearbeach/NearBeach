@@ -162,6 +162,9 @@
 			Icon,
 			NSelect,
 		},
+		inject: [
+			'nextTick',
+		],
 		props: {
 			destination: {
 				type: String,
@@ -291,9 +294,9 @@
 			if (escape_array.indexOf(this.destination) >= 0) return;
 
 			//Wait 200ms before getting data
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.loadBugClientList();
-			}, 200);
+			});
 		},
 	};
 </script>

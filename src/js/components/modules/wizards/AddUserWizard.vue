@@ -115,6 +115,9 @@
 			Icon,
 			NSelect,
 		},
+		inject: [
+			'nextTick',
+		],
 		props: {
 			destination: {
 				type: String,
@@ -228,10 +231,9 @@
 			},
 		},
 		mounted() {
-			//Wait 200ms
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.getUserList();
-			}, 200);
+			});
 		},
 	};
 </script>

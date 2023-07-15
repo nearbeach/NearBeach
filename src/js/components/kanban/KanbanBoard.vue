@@ -57,12 +57,16 @@
 
 	//VueX
 	import { mapGetters } from "vuex";
+import { nextTick } from 'vue';
 
 	export default {
 		name: "KanbanBoard",
 		components: {
 			KanbanRow,
 		},
+		inject: [
+			'nextTick',
+		],
 		props: {
 			kanbanBoardResults: {
 				type: Array,
@@ -158,7 +162,9 @@
 		},
 		mounted() {
 			//Check the resize procedure
-			this.resizeProcedure();
+			this.nextTick(() => {
+				this.resizeProcedure();
+			});
 
 			this.$store.commit({
 				type: "updateKanbanStatus",

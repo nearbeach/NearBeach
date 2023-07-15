@@ -105,6 +105,9 @@
 			AddBugWizard,
 			Icon,
 		},
+		inject: [
+			'nextTick',
+		],
 		mixins: [errorModalMixin, iconMixin],
 		data() {
 			return {
@@ -193,10 +196,9 @@
 			var escape_array = ["requirement_item"];
 			if (escape_array.indexOf(this.destination) >= 0) return;
 
-			//Wait 200ms before getting data
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.getBugList();
-			}, 200);
+			});
 		},
 	};
 </script>

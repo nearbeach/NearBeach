@@ -182,6 +182,9 @@
 		components: {
 			Icon,
 		},
+		inject: [
+			'nextTick',
+		],
 		props: {
 			acceptedDocuments: {
 				type: String,
@@ -353,7 +356,7 @@
 		},
 		mounted() {
 			//Wait a few seconds before getting the max file upload size
-			setTimeout(() => {
+			this.nextTick(() => {
 				//Get the max file upload size
 				axios
 					.post(`${this.rootUrl}documentation/get/max_upload/`)
@@ -364,7 +367,7 @@
 					.catch((error) => {
 						this.showErrorModal(error, this.destination);
 					});
-			}, 200);
+			});
 		},
 	};
 </script>

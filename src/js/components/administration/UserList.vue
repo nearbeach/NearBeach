@@ -59,7 +59,7 @@
 									>
 										<Icon
 											v-bind:icon="icons.trashCan"
-											v-on:click="removePermission(user.user_group_id)"
+											v-on:click="deletePermission(user.user_group_id)"
 										/>
 									</span>
 								</td>
@@ -87,6 +87,11 @@
 			v-bind:destination="destination"
 			v-bind:location-id="locationId"
 		></admin-add-user>
+
+		<confirm-permission-delete
+			v-bind:permission-delete-id="permissionDeleteId"
+			v-on:remove_permission="removePermission"
+		></confirm-permission-delete>
 	</div>
 </template>
 
@@ -99,6 +104,7 @@
 
 	//Vue Components
 	import AdminAddUser from "./AdminAddUser.vue";
+	import ConfirmPermissionDelete from "./ConfirmPermissionDelete.vue"
 
 	//Icon
 	import { Icon } from "@iconify/vue";
@@ -108,6 +114,7 @@
 		name: "UserList",
 		components: {
 			AdminAddUser,
+			ConfirmPermissionDelete,
 			Icon,
 		},
 		props: {
@@ -129,6 +136,7 @@
 		data() {
 			return {
 				localListResults: [],
+				permissionDeleteId: 0,
 			};
 		},
 		mixins: [errorModalMixin, iconMixin],
@@ -140,6 +148,16 @@
 				);
 				addUserModal.show();
 			},
+			deletePermission(user_group_id) {
+				//Update variable
+				this.permissionDeleteId = user_group_id;
+
+				//Open Modal
+				const permissionDeleteModal = new Modal(
+					document.getElementById('confirmPermissionDeleteModal')
+				)
+				permissionDeleteModal.show();
+			},
 			isTeamLeader(username /* As an ID*/) {
 				//Get count of the data from userListResults, where username and group_leader == true
 				const count = this.userListResults.filter((row) => {
@@ -150,20 +168,8 @@
 				return count > 0;
 			},
 			removePermission(user_group_id) {
-				//Create data to send
-				const data_to_send = new FormData();
-				data_to_send.set("user_group_id", user_group_id);
-
-				axios.post(
-					`/user_information/remove_permission/`,
-					data_to_send
-				).then(() => {
-					//Remove the user group id
-					this.localListResults = this.localListResults.filter((row) => {
-						return row.user_group_id != user_group_id;
-					});
-				}).catch((error) => {
-					this.showErrorModal(error, this.destination);
+				this.localListResults = this.localListResults.filter((row) => {
+					return row.user_group_id != user_group_id;
 				});
 			},
 			updateGroupLeader(event) {

@@ -82,6 +82,9 @@
 			NewCustomerForm,
 			NSelect,
 		},
+		inject: [
+			'nextTick',
+		],
 		props: {
 			organisationName: {
 				type: String,
@@ -255,9 +258,9 @@
 		},
 		mounted() {
 			//Get a default list when mounted
-			setTimeout(() => {
+			this.nextTick(() => {
 				this.getOrganisationData("", "");
-			}, 200);
+			});
 		},
 	};
 </script>
