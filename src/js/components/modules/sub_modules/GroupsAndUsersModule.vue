@@ -209,7 +209,7 @@
 					return `${this.rootUrl}private/${picture_uuid}/`;
 				}
 
-				return `${this.staticUrl}/NearBeach/images/placeholder/people_tax.svg`;
+				return `${this.staticUrl}NearBeach/images/placeholder/people_tax.svg`;
 			},
 			removeGroup(group_id) {
 				//Setup data to send

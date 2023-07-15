@@ -57,6 +57,7 @@
 
 	//VueX
 	import { mapGetters } from "vuex";
+import { nextTick } from 'vue';
 
 	export default {
 		name: "KanbanBoard",
@@ -158,10 +159,9 @@
 		},
 		mounted() {
 			//Check the resize procedure
-			// this.resizeProcedure();
-			setTimeout(() => {
+			nextTick(() => {
 				this.resizeProcedure();
-			}, 10);
+			});
 
 			this.$store.commit({
 				type: "updateKanbanStatus",

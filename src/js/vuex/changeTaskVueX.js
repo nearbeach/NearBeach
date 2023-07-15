@@ -27,7 +27,6 @@ export const moduleChangeTask = {
 	actions: {},
 	getters: {
         getChangeTaskDescription: (state) => {
-			console.log("STATE: ", state);
             return state.description;
         },
         getChangeTaskEndDate: (state) => {
