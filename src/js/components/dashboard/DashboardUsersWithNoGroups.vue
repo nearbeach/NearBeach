@@ -23,7 +23,7 @@
 						v-on:click="goToUser(user.id)"
 					>
 						<img
-							v-bind:src="`${staticUrl}NearBeach/images/placeholder/people_tax.svg`"
+							v-bind:src="profilePicture(user.profile_picture)"
 							alt="default profile"
 							class="default-user-profile"
 						/>
@@ -77,6 +77,13 @@
 			},
 			goToUser(user_id) {
 				window.location.href = `${this.rootUrl}user_information/${user_id}/`;
+			},
+			profilePicture(picture_uuid) {
+				if (picture_uuid !== null && picture_uuid !== "") {
+					return `${this.rootUrl}private/${picture_uuid}/`;
+				}
+
+				return `${this.staticUrl}NearBeach/images/placeholder/people_tax.svg`;
 			},
 		},
 		mounted() {
