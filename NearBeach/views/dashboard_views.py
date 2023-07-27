@@ -6,7 +6,7 @@ from django.template import loader
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 from django.contrib.auth.models import User
 
 # Import Python Libraries
@@ -425,6 +425,8 @@ def users_with_no_groups(request):
             id__in=UserGroup.objects.filter(
                 is_deleted=False,
             ).values("username_id")
+        ).annotate(
+            profile_picture=F('userprofilepicture__document_id__document_key')
         )
         .values(
             "id",
@@ -432,6 +434,7 @@ def users_with_no_groups(request):
             "first_name",
             "last_name",
             "email",
+            "profile_picture",
         )
     )
 

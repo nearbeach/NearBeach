@@ -15,26 +15,26 @@
 						log in.
 					</p>
 				</div>
-				<div class="col-md-8 user-card-layouts">
+				<div class="col-md-8 user-card-list">
 					<div
 						v-for="user in userList"
 						:key="user.id"
-						class="user-card"
+						class="user-card-big"
 						v-on:click="goToUser(user.id)"
 					>
 						<img
 							v-bind:src="profilePicture(user.profile_picture)"
 							alt="default profile"
-							class="default-user-profile"
+							class="user-card--profile"
 						/>
-						<div class="user-details">
-							<strong
-								>{{ user.first_name }}
-								{{ user.last_name }}</strong
-							><br />
-							{{ user.username }}
-							<div class="spacer"></div>
-							{{ user.email }}
+						<div class="user-card--details">
+							<div class="user-card--name">
+								{{ user.first_name }}
+								{{ user.last_name }}
+							</div>
+							<div class="user-card--email">
+								{{ user.email }}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -79,7 +79,7 @@
 				window.location.href = `${this.rootUrl}user_information/${user_id}/`;
 			},
 			profilePicture(picture_uuid) {
-				if (picture_uuid !== null && picture_uuid !== "") {
+				if (picture_uuid !== null && picture_uuid !== "" && picture_uuid !== undefined) {
 					return `${this.rootUrl}private/${picture_uuid}/`;
 				}
 
