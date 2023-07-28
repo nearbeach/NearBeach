@@ -8,12 +8,11 @@
 			<hr />
 
 			<!-- List all kanban boards -->
-			<render-object-table
+			<render-object-card
 				v-bind:search-results="kanbanList"
 				v-bind:import-variables="kanbanVariables"
 				v-bind:destination="'kanban'"
-				v-bind:root-url="rootUrl"
-			></render-object-table>
+			></render-object-card>
 		</div>
 	</div>
 </template>
@@ -25,12 +24,12 @@
 	import errorModalMixin from "../../mixins/errorModalMixin";
 
 	//Components
-	import RenderObjectTable from "../render/RenderObjectTable.vue";
+	import RenderObjectCard from "../render/RenderObjectCard.vue";
 
 	export default {
 		name: "DashboardKanbanList",
 		components: {
-			RenderObjectTable,
+			RenderObjectCard,
 		},
 		props: {
 			rootUrl: {

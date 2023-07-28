@@ -12,40 +12,36 @@
 			</div>
 
 			<!-- Requirements -->
-			<render-object-table
+			<render-object-card
 				v-if="objectResults.requirement.length > 0"
 				v-bind:search-results="objectResults.requirement"
 				v-bind:import-variables="requirementVariables"
 				v-bind:destination="'requirement'"
-				v-bind:root-url="rootUrl"
-			></render-object-table>
+			></render-object-card>
 
 			<!-- Projects -->
-			<render-object-table
+			<render-object-card
 				v-if="objectResults.project.length > 0"
 				v-bind:search-results="objectResults.project"
 				v-bind:import-variables="projectVariables"
 				v-bind:destination="'project'"
-				v-bind:root-url="rootUrl"
-			></render-object-table>
+			></render-object-card>
 
 			<!-- Tasks -->
-			<render-object-table
+			<render-object-card
 				v-if="objectResults.task.length > 0"
 				v-bind:search-results="objectResults.task"
 				v-bind:import-variables="taskVariables"
 				v-bind:destination="'task'"
-				v-bind:root-url="rootUrl"
-			></render-object-table>
+			></render-object-card>
 
 			<!-- Kanban Cards -->
-			<render-object-table
+			<render-object-card
 				v-if="objectResults.card.length > 0"
 				v-bind:search-results="objectResults.card"
 				v-bind:import-variables="cardVariables"
 				v-bind:destination="'card'"
-				v-bind:root-url="rootUrl"
-			></render-object-table>
+			></render-object-card>
 
 			<!-- If there are no objects -->
 			<div
@@ -65,12 +61,12 @@
 	import errorModalMixin from "../../mixins/errorModalMixin";
 
 	//Components
-	import RenderObjectTable from "../render/RenderObjectTable.vue";
+	import RenderObjectCard from "../render/RenderObjectCard.vue";
 
 	export default {
 		name: "DashboardMyObjects",
 		components: {
-			RenderObjectTable,
+			RenderObjectCard,
 		},
 		props: {
 			rootUrl: {
