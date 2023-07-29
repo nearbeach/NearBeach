@@ -37,6 +37,8 @@
 	import { mapGetters } from "vuex";
 	import getToken from "../../mixins/getTokenMixin";
 
+	const axios = require('axios');
+
 	export default {
 		name: "UpdateProfilePicture",
 		components: {
@@ -79,6 +81,20 @@
 					//There is a profile image
 					this.profilePicture = `${this.rootUrl}private/${profile_picture}`;
 				}
+			},
+			updateProfilePicture() {
+				//Contact the API to get the location of the new image
+				axios
+					.get(
+						`get_profile_picture/`,
+						{}
+					)
+					.then((response) => {
+						this.profilePicture = `${this.rootUrl}private/${response.data.profile_picture}`;
+					})
+					.catch(() => {
+						this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
+					});
 			},
 		},
 		mounted() {

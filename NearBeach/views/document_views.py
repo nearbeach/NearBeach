@@ -28,7 +28,7 @@ from ..forms import (
     DocumentUploadForm,
     RequirementItem,
 )
-from ..models import DocumentPermission, UserGroup, ObjectAssignment
+from ..models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
 
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
@@ -365,10 +365,16 @@ def private_download_file(request, document_key):
         | Q(organisation__isnull=False)
     )
 
+    user_profile_picture = UserProfilePicture.objects.filter(
+        document=document_key,
+        is_deleted=False,
+    )
+
     # If the object_assignment_results.count() == 0, then user does not have permissions
     if (
         object_assignment_results.count() == 0
         and profile_picture_permission.count() == 0
+        and user_profile_picture.count() == 0
         and request.user.is_superuser is False
     ):
         raise Http404

@@ -313,6 +313,11 @@ urlpatterns = [
         name="profile_information",
     ),
     path(
+        "profile_information/get_profile_picture/",
+        profile_views.get_profile_picture,
+        name="get_profile_picture",
+    ),
+    path(
         "profile_information/update_data/",
         profile_views.update_data,
         name="profile_update_data",

@@ -1,5 +1,5 @@
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
@@ -11,6 +11,19 @@ from NearBeach.models import UserProfilePicture
 import json
 
 from NearBeach.views.document_views import handle_document_permissions
+
+
+@login_required(login_url="login", redirect_field_name="")
+def get_profile_picture(request):
+    # Get the user profile
+    user_profile = UserProfilePicture.objects.get(username=request.user)
+
+    # Return the JSON
+    return JsonResponse(
+        {
+            "profile_picture": user_profile.document_id,
+        }
+    )
 
 
 @login_required(login_url="login", redirect_field_name="")

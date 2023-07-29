@@ -88,46 +88,6 @@
 		min-height: 240px;
 	}
 
-	//Customer Module
-	// .customer-modules {
-	// 	display: flex;
-	// 	flex-wrap: wrap;
-	// 	min-width: 420px;
-	// 	margin: 0 40px;
-
-	// 	.card-customer {
-	// 		display: block;
-	// 		margin: 14px 35px;
-
-	// 		.single-customer-card {
-	// 			margin-left: 110px;
-	// 			min-height: 75px;
-
-	// 			.customer-card-name {
-	// 				margin-bottom: 6px;
-	// 				font-weight: bold;
-	// 				font-size: 20px;
-	// 			}
-
-	// 			.customer-card-email {
-	// 				font-weight: lighter;
-	// 				colour: #737373;
-	// 				font-size: 15px;
-	// 				margin-bottom: 2px;
-	// 			}
-
-	// 			img {
-	// 				width: 100px;
-	// 				height: 100px;
-	// 				position: absolute;
-	// 				border-radius: 50%;
-	// 				transform: translateX(-110px) translateY(-13px);
-	// 				object-fit: contain;
-	// 			}
-	// 		}
-	// 	}
-	// }
-
 	.group-and-user-table {
 		max-width: 350px;
 	}
@@ -172,32 +132,32 @@
 	margin-top: 50px;
 }
 
-.user-card-layouts {
-	display: flex;
-	justify-content: flex-start;
-	flex-wrap: wrap;
-	overflow: hidden;
-}
+// .user-card-list {
+// 	display: flex;
+// 	justify-content: flex-start;
+// 	flex-wrap: wrap;
+// 	overflow: hidden;
+// }
 
-.user-card {
-	display: flex;
-	border: solid 2px #e8f0ea;
-	margin: 5px;
-	width: 300px;
-	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+// .user-card {
+// 	display: flex;
+// 	border: solid 2px #e8f0ea;
+// 	margin: 5px;
+// 	width: 300px;
+// 	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 
-	> img {
-		width: 80px;
-	}
+// 	> img {
+// 		width: 80px;
+// 	}
 
-	&:hover {
-		background-color: #d3ddff;
-	}
-}
+// 	&:hover {
+// 		background-color: #d3ddff;
+// 	}
+// }
 
-.user-details {
-	padding: 20px 15px;
-}
+// .user-details {
+// 	padding: 20px 15px;
+// }
 
 .card-priority-line {
 	width: 93%;

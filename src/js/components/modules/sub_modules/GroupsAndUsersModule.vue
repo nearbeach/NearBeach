@@ -7,33 +7,33 @@
 			{{ destination }}. Users will have to be included in these groups to
 			be added to this {{ destination }}
 		</p>
-		<table class="table group-and-user-table">
-			<thead>
-				<tr>
-					<td colspan="2">Group Name</td>
-				</tr>
-			</thead>
-			<tbody>
-				<tr
-					v-for="group in groupList"
-					v-bind:key="group.pk"
+		<div v-if="groupList.length == 0"
+			class="alert alert-dark"
+		>
+			Sorry - there are no groups active.
+		</div>
+		<div v-else
+			class="group-card-list"
+		>
+			<div v-for="group in groupList"
+				v-bind:key="group.pk"
+				class="group-card"
+			>
+				<div class="group-card--details">
+					{{ group.fields.group_name }}
+				</div>
+				<div class="group-card--remove"
+					v-if="userLevel >= 3"
 				>
-					<td>{{ group.fields.group_name }}</td>
-					<td>
-						<span
-							class="remove-link"
-							v-if="userLevel >= 2"
-						>
-							<Icon
-								v-bind:icon="icons.trashCan"
-								v-on:click="removeGroup(group.pk)"
-								v-if="groupList.length > 1"
-							/>
-						</span>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+					<Icon
+						v-bind:icon="icons.trashCan"
+						v-on:click="removeGroup(group.pk)"
+					/>	
+				</div>
+			</div>
+		</div>
+
+		<div class="spacer"></div>
 
 		<!-- ADD GROUP -->
 		<!-- TO DO - limit it to certain users -->
@@ -65,7 +65,7 @@
 		</div>
 		<div
 			v-else
-			class="user-card-layouts"
+			class="user-card-list"
 		>
 			<div
 				v-for="user in userList"
@@ -75,17 +75,18 @@
 				<img
 					v-bind:src="profilePicture(user.profile_picture)"
 					alt="default profile"
-					class="default-user-profile"
+					class="user-card--profile"
 				/>
-				<div class="user-details">
-					<strong>{{ user.first_name }} {{ user.last_name }}</strong
-					><br />
-					{{ user.username }}
-					<div class="spacer"></div>
-					{{ user.email }}
+				<div class="user-card--details">
+					<div class="user-card--name">
+						{{ user.first_name }} {{ user.last_name }}
+					</div>
+					<div class="user-card--email">
+						{{ user.email }}
+					</div>
 				</div>
 				<div
-					class="remove-user"
+					class="user-card--remove"
 					v-if="userLevel >= 3"
 				>
 					<Icon
@@ -95,6 +96,8 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="spacer"></div>
 
 		<!-- TO DO - limit it to certain users -->
 		<div class="row submit-row">
