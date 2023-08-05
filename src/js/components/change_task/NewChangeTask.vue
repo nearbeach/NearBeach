@@ -25,7 +25,17 @@
 						<span aria-hidden="true"></span>
 					</button>
 				</div>
-				<div class="modal-body">
+				<div v-if="currentStatus === 'uploading'"
+					class="modal-body"
+				>
+					<div class="row">
+						Currently Uploading Data...
+					</div>
+				</div>
+				<div 
+					v-else
+					class="modal-body"
+				>
 					<!-- CHANGE TASK TITLE -->
 					<div class="row">
 						<div class="col-md-4">
@@ -235,6 +245,7 @@
 			changeEndDateModel: 0,
 			changeStartDateModel: 0,
 			changeTitleModel: "",
+			currentStatus: "ready", //Has values; ready, saving
 			qaUserModel: null,
 			userListFixed: [],
 		}),
@@ -293,6 +304,9 @@
 					.click();
 			},
 			async submitChangeTask(event) {
+				//Tell modal current object is saving
+				this.currentStatus = 'uploading';
+
 				//Stop the usual stuff
 				event.preventDefault();
 				
@@ -344,6 +358,9 @@
 						this.changeTitleModel = "";
 						this.assignedUserModel = "";
 						this.qaUserModel = "";
+
+						//Set the current status back to ready
+						this.currentStatus = 'ready';
 					})
 					.catch((error) => {
 						this.showErrorModal(error, "Change Task");
