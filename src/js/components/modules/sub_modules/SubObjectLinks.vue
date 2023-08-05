@@ -32,7 +32,7 @@
         >
             <Icon
                 v-bind:icon="icons.trashCan"
-                v-on:click="removeLink(link)"
+                v-on:click="confirmRemoveLink(link)"
             />
         </div>
     </div>
@@ -45,6 +45,7 @@
     import { mapGetters } from "vuex";
 	import { Icon } from "@iconify/vue";
     const axios = require("axios");
+    import { Modal } from "bootstrap";
 
 	//Mixins
 	import iconMixin from "../../../mixins/iconMixin";
@@ -77,26 +78,18 @@
             }),
         },
         methods: {
-            removeLink(link) {
-				//Get the data to send into the backend
-				let data_to_send = new FormData();
-				data_to_send.set("link_id", link.object_id);
-				data_to_send.set(
-					"link_connection",
-					link.object_type === this.destination ? "meta_object" : link.object_type
-				);
+            confirmRemoveLink(objectLink) {
+                //Send link information up to VueX
+                this.$store.commit("updateObjectLink", {
+                    objectLink: objectLink,
+                });
 
-				//Send the data to the backend
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_link/`,
-						data_to_send
-					)
-					.then(() => {
-						//Update the data
-                        this.$emit("update_link_results", {});
-					});
-			},
+                //Open the modal
+                const modal = new Modal(
+                    document.getElementById("confirmLinkDeleteModal")
+                );
+                modal.show();
+            },
         }
     }
 </script>

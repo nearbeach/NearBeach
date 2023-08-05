@@ -6,6 +6,7 @@ import { moduleCard } from "./vuex/cardVueX";
 import { moduleChangeTask } from "./vuex/changeTaskVueX";
 import { moduleDestination } from "./vuex/destinationVueX";
 import { moduleKanban } from "./vuex/kanbanVueX";
+import { moduleObjectLink } from "./vuex/objectLinkVueX";
 import { moduleRfc } from "./vuex/rfcVueX";
 import { moduleUrl } from "./vuex/urlVueX";
 import { moduleUserLevel } from "./vuex/userLevelVueX";
@@ -17,6 +18,7 @@ export const store = createStore({
 		changeTask: moduleChangeTask,
 		destination: moduleDestination,
 		kanban: moduleKanban,
+		objectLink: moduleObjectLink,
 		rfc: moduleRfc,
 		url: moduleUrl,
 		userLevel: moduleUserLevel,
