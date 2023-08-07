@@ -118,23 +118,12 @@
 		inject: [
 			'nextTick',
 		],
-		props: {
-			destination: {
-				type: String,
-				default: "",
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
-			refreshUserList: {
-				type: Boolean,
-				default: false,
-			},
-		},
 		mixins: [errorModalMixin, iconMixin],
 		computed: {
 			...mapGetters({
+				destination: "getDestination",
+				locationId: "getLocationId",
+				potentialUserList: "getPotentialUserList",
 				rootUrl: "getRootUrl",
 				staticURL: "getStaticUrl",
 				userLevel: "getUserLevel",
@@ -145,6 +134,18 @@
 				userFixList: [],
 				userModel: [],
 			};
+		},
+		watch: {
+			potentialUserList(new_value) {
+				if (new_value === undefined) return;
+
+				this.userFixList = new_value.map(row => {
+					return {
+						value: row.id,
+						label: `${row.username}: ${row.first_name} ${row.last_name}`,
+					}
+				})
+			}
 		},
 		methods: {
 			addUser() {
@@ -163,17 +164,19 @@
 						data_to_send
 					)
 					.then((response) => {
-						//Emit the data up
-						this.$emit("update_user_list", response.data);
-
 						//Close the modal
 						document.getElementById("addUserCloseButton").click();
 
 						//Clear the models
 						this.userModel = [];
 
-						//Update the list of users
-						this.getUserList();
+						//Update VueX with the required data
+						this.$store.commit("updateGroupsAndUsers", {
+							objectGroupList: response.data.object_group_list,
+							objectUserList: response.data.object_user_list,
+							potentialGroupList: response.data.potential_group_list,
+							potentialUserList: response.data.potential_user_list,
+						})
 
 						//If kanban card - bring up card information again
 						if (this.destination === "kanban_card") {
@@ -194,46 +197,6 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			getUserList() {
-				//If destination is '' or locationId = 0, there will be no information to get. Escape
-				if (
-					this.destination === "" ||
-					this.locationId === 0 ||
-					this.userLevel <= 1
-				) {
-					return;
-				}
-
-				//Setup the url
-				let url = `${this.rootUrl}object_data/${this.destination}/${this.locationId}/user_list_all/`;
-
-				//Use axios to obtain user lists
-				axios.post(url).then((response) => {
-					//Clear the user fix list
-					this.userFixList = response.data.map((row) => {
-						return {
-							value: row.id,
-							label: `${row.username}: ${row.first_name} ${row.last_name}`,
-						};
-					});
-				});
-			},
-		},
-		watch: {
-			refreshUserList() {
-				//Looks like the system has send the call function to reset the user list.
-				if (this.refreshUserList) {
-					this.getUserList();
-				}
-
-				//Turn it false again
-				this.$emit("reset_refresh_user_list");
-			},
-		},
-		mounted() {
-			this.nextTick(() => {
-				this.getUserList();
-			});
 		},
 	};
 </script>

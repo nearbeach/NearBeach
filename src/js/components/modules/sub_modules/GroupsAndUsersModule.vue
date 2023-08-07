@@ -7,7 +7,7 @@
 			{{ destination }}. Users will have to be included in these groups to
 			be added to this {{ destination }}
 		</p>
-		<div v-if="groupList.length == 0"
+		<div v-if="objectGroupList.length == 0"
 			class="alert alert-dark"
 		>
 			Sorry - there are no groups active.
@@ -15,19 +15,19 @@
 		<div v-else
 			class="group-card-list"
 		>
-			<div v-for="group in groupList"
-				v-bind:key="group.pk"
+			<div v-for="group in objectGroupList"
+				v-bind:key="group.group_id"
 				class="group-card"
 			>
 				<div class="group-card--details">
-					{{ group.fields.group_name }}
+					{{ group.group_name }}
 				</div>
 				<div class="group-card--remove"
 					v-if="userLevel >= 3"
 				>
 					<Icon
 						v-bind:icon="icons.trashCan"
-						v-on:click="removeGroup(group.pk)"
+						v-on:click="removeGroup(group.group_id)"
 					/>	
 				</div>
 			</div>
@@ -58,7 +58,7 @@
 			groups list above.
 		</p>
 		<div
-			v-if="userList.length == 0"
+			v-if="objectUserList.length == 0"
 			class="alert alert-dark"
 		>
 			Sorry - there are no current users active.
@@ -68,7 +68,7 @@
 			class="user-card-list"
 		>
 			<div
-				v-for="user in userList"
+				v-for="user in objectUserList"
 				v-bind:key="user.username"
 				class="user-card"
 			>
@@ -113,21 +113,8 @@
 		</div>
 
 		<!-- MODALS -->
-		<!-- ADD GROUPS WIZARD -->
-		<add-group-wizard
-			v-bind:destination="destination"
-			v-bind:location-id="locationId"
-			v-on:update_group_list="updateGroupList($event)"
-		></add-group-wizard>
-
-		<!-- ADD USER WIZARD -->
-		<add-user-wizard
-			v-bind:destination="destination"
-			v-bind:location-id="locationId"
-			v-bind:refresh-user-list="refreshUserListBoolean"
-			v-on:update_user_list="updateUserList($event)"
-			v-on:reset_refresh_user_list="resetRefreshUserList($event)"
-		></add-user-wizard>
+		<add-group-wizard></add-group-wizard>
+		<add-user-wizard></add-user-wizard>
 	</div>
 </template>
 
@@ -158,19 +145,14 @@
 			...mapGetters({
 				destination: "getDestination",
 				locationId: "getLocationId",
+				objectGroupList: "getObjectGroupList",
+				objectUserList: "getObjectUserList",
 				rootUrl: "getRootUrl",
 				staticUrl: "getStaticUrl",
 				userLevel: "getUserLevel",
 			}),
 		},
 		mixins: [errorModalMixin, iconMixin],
-		data() {
-			return {
-				groupList: [],
-				refreshUserListBoolean: false,
-				userList: [],
-			};
-		},
 		methods: {
 			addNewGroup() {
 				var addGroupModal = new Modal(
@@ -184,31 +166,21 @@
 				);
 				addUserModal.show();
 			},
-			getGroupList() {
+			getGroupAndUserData() {
 				//Get the data from the database
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_list/`
-					)
-					.then((response) => {
-						this.groupList = response.data;
+				axios.post(
+					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_and_user_data/`
+				).then((response) => {
+					//Update VueX with the required data
+					this.$store.commit("updateGroupsAndUsers", {
+						objectGroupList: response.data.object_group_list,
+						objectUserList: response.data.object_user_list,
+						potentialGroupList: response.data.potential_group_list,
+						potentialUserList: response.data.potential_user_list,
 					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
-			getUserList() {
-				//Get the data from the database
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/user_list/`
-					)
-					.then((response) => {
-						this.userList = response.data;
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
+				}).catch((error) => {
+					this.showErrorModal(error, "Fetching Group and Users data");
+				})
 			},
 			profilePicture(picture_uuid) {
 				if (picture_uuid !== null && picture_uuid !== "") {
@@ -218,6 +190,14 @@
 				return `${this.staticUrl}NearBeach/images/placeholder/people_tax.svg`;
 			},
 			removeGroup(group_id) {
+				//Optimistic Update - we assume everything is going to be ok
+				//Remove the group from the list
+				this.$store.commit("updateGroupsAndUsers", {
+					objectGroupList: this.objectGroupList.filter(row => {
+						return row.group_id !== group_id;
+					}),
+				});
+
 				//Setup data to send
 				const data_to_send = new FormData();
 				data_to_send.set("group_id", group_id);
@@ -228,14 +208,14 @@
 						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_group/`,
 						data_to_send
 					)
-					.then(() => {
-						//HACK - for some strange reason, the groupList is behind a proxy. This is a hack around that BS
-						let group_list = JSON.parse(
-							JSON.stringify(this.groupList)
-						);
-						this.groupList = group_list.filter((row) => {
-							return row.pk !== group_id;
-						});
+					.then((response) => {
+						//Update VueX with the required data
+						this.$store.commit("updateGroupsAndUsers", {
+							objectGroupList: response.data.object_group_list,
+							objectUserList: response.data.object_user_list,
+							potentialGroupList: response.data.potential_group_list,
+							potentialUserList: response.data.potential_user_list,
+						})
 					})
 					.catch((error) => {
 						this.showErrorModal(error, this.destination);
@@ -244,8 +224,10 @@
 			removeUser(username) {
 				//Optimistic Update - we assume everything is going to be ok
 				//Remove the user from the list
-				this.userList = this.userList.filter((row) => {
-					return row.username !== username;
+				this.$store.commit("updateGroupsAndUsers", {
+					objectUserList: this.objectUserList.filter(row => {
+						return row.username !== username;
+					}),
 				});
 
 				//Setup data to send
@@ -258,33 +240,24 @@
 						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_user/`,
 						data_to_send
 					)
+					.then(response => {
+						//Update VueX with the required data
+						this.$store.commit("updateGroupsAndUsers", {
+							objectGroupList: response.data.object_group_list,
+							objectUserList: response.data.object_user_list,
+							potentialGroupList: response.data.potential_group_list,
+							potentialUserList: response.data.potential_user_list,
+						})
+					})
 					.catch((error) => {
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			resetRefreshUserList() {
-				this.refreshUserListBoolean = false;
-			},
-			updateGroupList(data) {
-				//Clear the group list
-				this.groupList = data;
-
-				//Now update the list of potential users
-				this.refreshUserListBoolean = true;
-			},
-			updateUserList(data) {
-				//Loop throught the data array and add each line item
-				// data.forEach(row => {
-				//     this.userList.push(row);
-				// });
-				this.userList = data;
-			},
 		},
 		mounted() {
-			//Wait 200ms
+			//Waits until the next tick to get data
 			this.nextTick(() => {
-				this.getGroupList();
-				this.getUserList();
+				this.getGroupAndUserData();
 			});
 		},
 	};
