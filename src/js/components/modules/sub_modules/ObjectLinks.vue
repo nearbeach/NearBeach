@@ -82,6 +82,11 @@
 			v-bind:location-id="locationId"
 			v-on:update_link_results="updateLinkResults"
 		></new-link-wizard>
+
+		<!-- MODAL FOR CONFIRM DELETE LINK -->
+		<confirm-link-delete
+			v-on:update_link_results="updateLinkResults"
+		></confirm-link-delete>
 	</div>
 </template>
 
@@ -91,6 +96,7 @@
 	const axios = require("axios");
 	import NewLinkWizard from "../wizards/NewLinkWizard.vue";
 	import SubObjectLinks from "./SubObjectLinks.vue";
+	import ConfirmLinkDelete from "../wizards/ConfirmLinkDelete.vue";
 
 	//Mixins
 	import iconMixin from "../../../mixins/iconMixin";
@@ -101,6 +107,7 @@
 	export default {
 		name: "ObjectLinks",
 		components: {
+			ConfirmLinkDelete,
 			Icon,
 			NewLinkWizard,
 			SubObjectLinks,

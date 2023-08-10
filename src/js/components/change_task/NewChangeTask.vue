@@ -25,7 +25,17 @@
 						<span aria-hidden="true"></span>
 					</button>
 				</div>
-				<div class="modal-body">
+				<div v-if="currentStatus === 'uploading'"
+					class="modal-body"
+				>
+					<div class="row">
+						Currently Uploading Data...
+					</div>
+				</div>
+				<div 
+					v-else
+					class="modal-body"
+				>
 					<!-- CHANGE TASK TITLE -->
 					<div class="row">
 						<div class="col-md-4">
@@ -139,7 +149,7 @@
 											></validation-rendering>
 										</label>
 										<n-select
-											v-bind:options="userListFixed"
+											v-bind:options="userList"
 											v-model:value="assignedUserModel"
 										></n-select>
 									</div>
@@ -154,7 +164,7 @@
 										</label>
 										<n-select
 											v-model:value="qaUserModel"
-											v-bind:options="userListFixed"
+											v-bind:options="userList"
 										/>
 									</div>
 								</div>
@@ -222,21 +232,19 @@
 				type: Number,
 				default: 0,
 			},
-			userList: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
 		},
+		inject: [
+			'nextTick',
+		],
 		mixins: [errorModalMixin],
 		data: () => ({
 			assignedUserModel: null,
 			changeEndDateModel: 0,
 			changeStartDateModel: 0,
 			changeTitleModel: "",
+			currentStatus: "ready", //Has values; ready, saving
 			qaUserModel: null,
-			userListFixed: [],
+			userList: [],
 		}),
 		validations: {
 			assignedUserModel: {
@@ -259,10 +267,20 @@
 		},
 		computed: {
 			...mapGetters({
+				objectUserList: "getObjectUserList",
+				potentialUserList: "getPotentialUserList",
 				rfcEndDate: "getEndDate",
 				rfcStartDate: "getStartDate",
 				rootUrl: "getRootUrl",
 			}),
+		},
+		watch: {
+			potentialUserList() {
+				this.updateUserList();
+			},
+			groupUserList() {
+				this.updateUserList();
+			},
 		},
 		methods: {
 			formatDate(date) {
@@ -293,6 +311,9 @@
 					.click();
 			},
 			async submitChangeTask(event) {
+				//Tell modal current object is saving
+				this.currentStatus = 'uploading';
+
 				//Stop the usual stuff
 				event.preventDefault();
 				
@@ -344,19 +365,38 @@
 						this.changeTitleModel = "";
 						this.assignedUserModel = "";
 						this.qaUserModel = "";
+
+						//Set the current status back to ready
+						this.currentStatus = 'ready';
 					})
 					.catch((error) => {
 						this.showErrorModal(error, "Change Task");
 					});
 			},
+			updateUserList() {
+				//Grab a map of the potential and current users
+				const a = this.objectUserList.map((row) => {
+					return {
+						label: `${row.username}: ${row.first_name} ${row.last_name}`,
+						value: row.id,
+					}
+				});
+
+				const b = this.potentialUserList.map((row) => {
+					return {
+						label: `${row.username}: ${row.first_name} ${row.last_name}`,
+						value: row.id,
+					}
+				});
+
+				//Concatenate the lists
+				this.userList = a.concat(b);
+			},
 		},
 		mounted() {
 			//Update the user fixed list
-			this.userListFixed = this.userList.map((row) => {
-				return {
-					label: `${row.username}: ${row.first_name} ${row.last_name}`,
-					value: row.id,
-				};
+			this.nextTick(() => {
+				this.updateUserList();
 			});
 
 			//Update Times

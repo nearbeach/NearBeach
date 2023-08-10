@@ -130,8 +130,6 @@ def add_customer(request, destination, location_id):
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
 def add_group(request, destination, location_id):
-    # ADD IN CHECK PERMISSIONS THAT USES THE DESTINATION AND LOCATION!
-
     # Get data from form
     form = AddGroupForm(request.POST)
     if not form.is_valid():
@@ -156,11 +154,12 @@ def add_group(request, destination, location_id):
         # Save the data
         submit_object_assignment.save()
 
-    # Get the new group list data
-    group_results = get_group_list(destination, location_id)
-
-    return HttpResponse(
-        serializers.serialize("json", group_results), content_type="application/json"
+    # Return the updated groups and user back to front end
+    return JsonResponse(
+        get_group_and_user_list(
+            destination,
+            location_id,
+        )
     )
 
 
@@ -346,8 +345,6 @@ def add_tags(request, destination, location_id):
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
 def add_user(request, destination, location_id):
-    # ADD IN A CHECK TO CHECK USER'S PERMISSION!
-
     # Check the data against the form
     form = AddUserForm(request.POST)
     if not form.is_valid():
@@ -373,11 +370,13 @@ def add_user(request, destination, location_id):
         # Save
         submit_object_assignment.save()
 
-    # Get the data to return to the user
-    user_results = get_user_list(destination, location_id)
-
-    return HttpResponse(user_results, content_type="application/json")
-
+    # Return the updated groups and user back to front end
+    return JsonResponse(
+        get_group_and_user_list(
+            destination,
+            location_id,
+        )
+    )
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
@@ -706,6 +705,34 @@ def get_customer_list(destination, location_id):
 
 
 # Internal function
+def get_group_and_user_list(destination, location_id):
+    # Get the data dependant on the objects lookup
+    object_group_results = get_group_list(destination, location_id)
+    object_user_results = get_user_list(destination, location_id)
+    potential_user_results = get_user_list_all(destination, location_id)
+
+    # potential groups are all groups except those in object_group_results
+    potential_group_results = Group.objects.filter(
+        is_deleted=False,
+    ).exclude(
+        group_id__in=object_group_results.values('group_id')
+    )
+
+    # Convert data to json format
+    object_group_results = json.dumps(list(object_group_results.values()), cls=DjangoJSONEncoder)
+    potential_group_results = json.dumps(list(potential_group_results.values()), cls=DjangoJSONEncoder)
+
+    return_data = {
+        "object_group_list": json.loads(object_group_results),
+        "object_user_list": json.loads(object_user_results),
+        "potential_group_list": json.loads(potential_group_results),
+        "potential_user_list": json.loads(potential_user_results),
+    }
+
+    return return_data
+
+
+# Internal function
 def get_group_list(destination, location_id):
     object_results = ObjectAssignment.objects.filter(
         is_deleted=False,
@@ -787,64 +814,76 @@ def get_user_list_all(destination, location_id):
         )
 
     # Get a list of users who are associated with these groups & not in the excluded list
-    user_results = (
-        User.objects.filter(
-            id__in=UserGroup.objects.filter(
-                is_deleted=False,
-                group_id__in=group_results.values("group_id"),
-            ).values("username_id"),
-            is_active=True,
-        )
-        .values(
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "email",
-        )
-        .exclude(id__in=object_results.values("assigned_user_id"))
+    user_results = User.objects.filter(
+        id__in=UserGroup.objects.filter(
+            is_deleted=False,
+            group_id__in=group_results.values("group_id"),
+        ).values("username_id"),
+        is_active=True,
+    ).exclude(
+        id__in=object_results.values("assigned_user_id")
+    ).annotate(
+        profile_picture=F('userprofilepicture__document_id__document_key')
+    ).values(
+        "id",
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "profile_picture",
     )
 
-    # Send the results back
-    return user_results
+    return json.dumps(list(user_results), cls=DjangoJSONEncoder)
 
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def group_list(request, destination, location_id):
-    # Get the data dependant on the object lookup
-    group_results = get_group_list(destination, location_id)
-
-    # Return the data
-    return HttpResponse(
-        serializers.serialize("json", group_results), content_type="application/json"
+def group_and_user_data(request, destination, location_id, *args, **kwargs):
+    return JsonResponse(
+        get_group_and_user_list(
+            destination, 
+            location_id
+        )
     )
 
 
-@require_http_methods(["POST"])
-@login_required(login_url="login", redirect_field_name="")
-@check_destination()
-def group_list_all(request, destination, location_id):
-    # ADD CHECKS FOR USER PERMISSIONS!
+# @require_http_methods(["POST"])
+# @login_required(login_url="login", redirect_field_name="")
+# @check_destination()
+# def group_list(request, destination, location_id):
+#     # Get the data dependant on the object lookup
+#     group_results = get_group_list(destination, location_id)
 
-    # Obtain data
-    group_existing_results = ObjectAssignment.objects.filter(
-        is_deleted=False,
-        group_id__isnull=False,
-    )
-    group_existing_results = get_object_from_destination(
-        group_existing_results, destination, location_id
-    )
+#     # Return the data
+#     return HttpResponse(
+#         serializers.serialize("json", group_results), content_type="application/json"
+#     )
 
-    group_results = Group.objects.filter(
-        is_deleted=False,
-    ).exclude(group_id__in=group_existing_results.values("group_id"))
 
-    # Return data as json
-    return HttpResponse(
-        serializers.serialize("json", group_results), content_type="application/json"
-    )
+# @require_http_methods(["POST"])
+# @login_required(login_url="login", redirect_field_name="")
+# @check_destination()
+# def group_list_all(request, destination, location_id):
+#     # ADD CHECKS FOR USER PERMISSIONS!
+
+#     # Obtain data
+#     group_existing_results = ObjectAssignment.objects.filter(
+#         is_deleted=False,
+#         group_id__isnull=False,
+#     )
+#     group_existing_results = get_object_from_destination(
+#         group_existing_results, destination, location_id
+#     )
+
+#     group_results = Group.objects.filter(
+#         is_deleted=False,
+#     ).exclude(group_id__in=group_existing_results.values("group_id"))
+
+#     # Return data as json
+#     return HttpResponse(
+#         serializers.serialize("json", group_results), content_type="application/json"
+#     )
 
 
 @require_http_methods(["POST"])
@@ -1238,7 +1277,13 @@ def remove_group(request, destination, location_id):
         is_deleted=True,
     )
 
-    return HttpResponse("")
+    # Return the updated groups and user back to front end
+    return JsonResponse(
+        get_group_and_user_list(
+            destination,
+            location_id,
+        )
+    )
 
 
 @require_http_methods(["POST"])
@@ -1286,7 +1331,13 @@ def remove_user(request, destination, location_id):
         is_deleted=True,
     )
 
-    return HttpResponse("")
+    # Return the updated groups and user back to front end
+    return JsonResponse(
+        get_group_and_user_list(
+            destination,
+            location_id,
+        )
+    )
 
 
 @require_http_methods(["POST"])
@@ -1333,16 +1384,16 @@ def user_list(request, destination, location_id):
     return HttpResponse(user_results, content_type="application/json")
 
 
-@require_http_methods(["POST"])
-@login_required(login_url="login", redirect_field_name="")
-@check_destination()
-def user_list_all(request, destination, location_id):
-    # ADD IN PERMISSIONS LATER
+# @require_http_methods(["POST"])
+# @login_required(login_url="login", redirect_field_name="")
+# @check_destination()
+# def user_list_all(request, destination, location_id):
+#     # ADD IN PERMISSIONS LATER
 
-    # Get Data we want
-    user_results = get_user_list_all(destination, location_id)
+#     # Get Data we want
+#     user_results = get_user_list_all(destination, location_id)
 
-    # Send back json data
-    json_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
+#     # Send back json data
+#     json_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
 
-    return HttpResponse(json_results, content_type="application/json")
+#     return HttpResponse(json_results, content_type="application/json")

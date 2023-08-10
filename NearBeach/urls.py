@@ -450,15 +450,20 @@ urlpatterns = [
         name="customer_list_all",
     ),
     path(
-        "object_data/<destination>/<location_id>/group_list/",
-        object_data_views.group_list,
-        name="group_list",
+        "object_data/<destination>/<location_id>/group_and_user_data/",
+        object_data_views.group_and_user_data,
+        name="group_and_user_data",
     ),
-    path(
-        "object_data/<destination>/<location_id>/group_list_all/",
-        object_data_views.group_list_all,
-        name="group_list_all",
-    ),
+    # path(
+    #     "object_data/<destination>/<location_id>/group_list/",
+    #     object_data_views.group_list,
+    #     name="group_list",
+    # ),
+    # path(
+    #     "object_data/<destination>/<location_id>/group_list_all/",
+    #     object_data_views.group_list_all,
+    #     name="group_list_all",
+    # ),
     path(
         "object_data/<destination>/<location_id>/<object_lookup>/link_list/",
         object_data_views.link_list,
@@ -512,11 +517,11 @@ urlpatterns = [
         object_data_views.user_list,
         name="user_list",
     ),
-    path(
-        "object_data/<destination>/<location_id>/user_list_all/",
-        object_data_views.user_list_all,
-        name="user_list_all",
-    ),
+    # path(
+    #     "object_data/<destination>/<location_id>/user_list_all/",
+    #     object_data_views.user_list_all,
+    #     name="user_list_all",
+    # ),
     path("object_data/delete_bug/", object_data_views.delete_bug, name="delete_bug"),
     path("object_data/delete_link/", object_data_views.delete_link, name="delete_link"),
     path("object_data/delete_tag/", object_data_views.delete_tag, name="delete_tag"),

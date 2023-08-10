@@ -118,9 +118,22 @@
 			...mapGetters({
 				destination: "getDestination",
 				locationId: "getLocationId",
+				potentialGroupList: "getPotentialGroupList",
 				rootUrl: "getRootUrl",
 				staticUrl: "getStaticUrl",
 			}),
+		},
+		watch: {
+			potentialGroupList(new_value) {
+				if (new_value === undefined) return;
+
+				this.groupFixList = new_value.map(row => {
+					return {
+						value: row.group_id,
+						label: row.group_name,
+					}
+				})
+			}	
 		},
 		mixins: [errorModalMixin, iconMixin],
 		data() {
@@ -132,7 +145,6 @@
 		methods: {
 			addGroup() {
 				//Send the database the new groups to add
-				//Get the data_to_send ready
 				const data_to_send = new FormData();
 
 				//Loop through the model and append the results
@@ -147,43 +159,21 @@
 						data_to_send
 					)
 					.then((response) => {
-						//Send the data upstream
-						this.$emit("update_group_list", response.data);
+						//Update VueX with the required data
+						this.$store.commit("updateGroupsAndUsers", {
+							objectGroupList: response.data.object_group_list,
+							objectUserList: response.data.object_user_list,
+							potentialGroupList: response.data.potential_group_list,
+							potentialUserList: response.data.potential_user_list,
+						})
 
 						//Close this modal
 						document.getElementById("addGroupCloseButton").click();
-
-						//Get a new group list
-						this.getGroupList();
 					})
 					.catch((error) => {
 						this.showErrorModal(error, this.destination);
 					});
 			},
-			getGroupList() {
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_list_all/`
-					)
-					.then((response) => {
-						//Clear the groupFixList
-						this.groupFixList = response.data.map((row) => {
-							return {
-								value: row.pk,
-								label: row.fields.group_name,
-							};
-						});
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
-		},
-		mounted() {
-			//Wait 200ms
-			this.nextTick(() => {
-				this.getGroupList();
-			});
 		},
 	};
 </script>
