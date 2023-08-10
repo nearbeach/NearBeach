@@ -127,7 +127,7 @@
 							<tr>
 								<td>
 									<img
-										v-bind:src="`${staticUrl}/NearBeach/images/placeholder/people_tax.svg`"
+										v-bind:src="getProfilePicture(rfcChangeLead[0].profile_picture)"
 										alt="default profile"
 										class="default-user-profile"
 									/>
@@ -430,6 +430,14 @@
 
 				//Send data
 				this.sendUpdate(data_to_send);
+			},
+			getProfilePicture(profile_picture) {
+				//If customer profile is blank - return default picture
+				if (profile_picture === "" || profile_picture === null || profile_picture === undefined) {
+					return `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
+				}
+
+				return `${this.rootUrl}private/${profile_picture}`;
 			},
 			getStatus() {
 				return this.rfcStatusDict[this.rfcResults[0].fields.rfc_status];
