@@ -17,7 +17,7 @@ from NearBeach.models import (
     RequestForChangeGroupApproval,
     ListOfRFCStatus,
 )
-from django.db.models import Q
+from django.db.models import Q, F
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.template import loader
@@ -67,12 +67,17 @@ def get_rfc_context(rfc_id):
     """
     # Get data
     rfc_results = RequestForChange.objects.get(rfc_id=rfc_id)
-    rfc_change_lead = User.objects.filter(id=rfc_results.rfc_lead.id).values(
+    rfc_change_lead = User.objects.filter(
+        id=rfc_results.rfc_lead.id
+    ).annotate(
+        profile_picture=F('userprofilepicture__document_id__document_key')
+    ).values(
         "id",
         "email",
         "first_name",
         "last_name",
         "username",
+        "profile_picture",
     )
     user_list = User.objects.filter(
         is_active=True,
