@@ -255,10 +255,19 @@
 			},
 		},
 		mounted() {
-			//Waits until the next tick to get data
+			//Get the data with the 0'th count
 			this.nextTick(() => {
+				// If location Id = 0, we have a problem
+				if (this.locationId === 0) {
+					setTimeout(() => {
+						this.getGroupAndUserData();
+					}, 100);
+					return;
+				}
+
+				//All is good - get the data
 				this.getGroupAndUserData();
-			});
+			});	
 		},
 	};
 </script>
