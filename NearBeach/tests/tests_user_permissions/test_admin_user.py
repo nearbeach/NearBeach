@@ -80,13 +80,14 @@ class AdminPermissionTests(TestCase):
             URLTest("bug_list", ["project", 1], {}, 200, "POST"),
             URLTest("customer_list", ["project", 1], {}, 200, "POST"),
             URLTest("customer_list_all", ["project", 1], {}, 200, "POST"),
-            URLTest("group_list", ["project", 1], {}, 200, "POST"),
-            URLTest("group_list_all", ["project", 1], {}, 200, "POST"),
+            # URLTest("group_list", ["project", 1], {}, 200, "POST"),
+            # URLTest("group_list_all", ["project", 1], {}, 200, "POST"),
             URLTest("note_list", ["project", 1], {}, 200, "POST"),
             URLTest("object_link_list", ["project", 1], {}, 200, "POST"),
             URLTest("tag_list", ["project", 1], {}, 200, "POST"),
             URLTest("user_list", ["project", 1], {}, 200, "POST"),
-            URLTest("user_list_all", ["project", 1], {}, 200, "POST"),
+            # URLTest("user_list_all", ["project", 1], {}, 200, "POST"),
+            URLTest("group_and_user_data", ["project", 1], {}, 200, "POST"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied

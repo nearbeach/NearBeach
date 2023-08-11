@@ -51,8 +51,8 @@ class TestObjectData(TestCase):
             "bug_list",
             "customer_list",
             "customer_list_all",
-            "group_list",
-            "group_list_all",
+            # "group_list",
+            # "group_list_all",
             "note_list",
             "object_link_list",
             "query_bug_client",
@@ -61,7 +61,7 @@ class TestObjectData(TestCase):
             "remove_user",
             "tag_list",
             "user_list",
-            "user_list_all",
+            # "user_list_all",
         ]
 
         # Loop through each url to test to make sure the decorator is applied
@@ -120,13 +120,13 @@ class TestObjectData(TestCase):
             "bug_list",
             "customer_list",
             "customer_list_all",
-            "group_list",
-            "group_list_all",
+            # "group_list",
+            # "group_list_all",
             "note_list",
             "object_link_list",
             "tag_list",
             "user_list",
-            "user_list_all",
+            # "user_list_all",
         ]
 
         # Loop through each url to test to make sure the decorator is applied
