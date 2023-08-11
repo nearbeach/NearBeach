@@ -6,6 +6,7 @@ from NearBeach.models import (
     Group,
     UserGroup,
 )
+from NearBeach.views.object_data_views import get_user_list
 from NearBeach.views.tools.internal_functions import (
     KanbanCard,
     KanbanBoard,
@@ -239,7 +240,7 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
         is_archived=False,
         is_deleted=False,
         kanban_board_id=kanban_board_id,
-    ).order_by("kanban_card_sort_number")
+    ).order_by("kanban_card_sort_number")    
 
     # Get context
     c = get_context(kanban_board_id)

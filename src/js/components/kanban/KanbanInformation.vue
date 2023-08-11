@@ -21,12 +21,12 @@
 		></kanban-board>
 
 		<!-- MODALS -->
-		<add-user-wizard
+		<add-user-to-card
 			v-bind:destination="'kanban_card'"
 			v-bind:location-id="cardId"
 			v-bind:refresh-user-list="refreshUserList"
 			v-on:reset_refresh_user_list="resetRefreshUserList"
-		></add-user-wizard>
+		></add-user-to-card>
 
 		<archive-cards></archive-cards>
 
@@ -60,7 +60,8 @@
 
 <script>
 	import { Modal } from "bootstrap";
-	import AddUserWizard from "../modules/wizards/AddUserWizard.vue";
+	// import AddUserWizard from "../modules/wizards/AddUserWizard.vue";
+	import AddUserToCard from "../card_information/AddUserToCard.vue";
 	import ArchiveCards from "./ArchiveCards.vue";
 	import BlockedNotesModal from "./BlockedNotesModal.vue";
 	import KanbanBoard from "./KanbanBoard.vue";
@@ -75,7 +76,8 @@
 	export default {
 		name: "KanbanInformation",
 		components: {
-			AddUserWizard,
+			// AddUserWizard,
+			AddUserToCard,
 			ArchiveCards,
 			BlockedNotesModal,
 			CardInformation,
@@ -116,6 +118,12 @@
 			openCardOnLoad: {
 				type: Number,
 				default: 0,
+			},
+			potentialUserList: {
+				type: Array,
+				default: () => {
+					return [];
+				},
 			},
 			rootUrl: {
 				type: String,
@@ -222,6 +230,12 @@
 				type: "updateUserLevel",
 				userLevel: this.userLevel,
 			});
+
+			//Update groups and users
+			this.$store.commit({
+				type: "updateGroupsAndUsers",
+				potentialUserList: this.potentialUserList,
+			})
 		},
 	};
 </script>

@@ -206,8 +206,8 @@
 					};
 				}
 
-				// Update VueX
-				this.$store.commit({
+				// Update VueX ACTION
+				this.$store.dispatch({
 					type: "updateCard",
 					cardId: filtered_data.pk,
 					cardTitle: filtered_data.fields.kanban_card_text,

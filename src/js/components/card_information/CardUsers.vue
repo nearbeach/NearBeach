@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="alert alert-secondary"
-		v-if="userList.length === 0"
+		v-if="objectUserList.length === 0"
 	>
 		Sorry, there are no users currently assigned to this card.
 	</div>
@@ -21,7 +21,7 @@
 			</thead>
 			<tbody>
 				<tr
-					v-for="user in userList"
+					v-for="user in objectUserList"
 					v-bind:key="user.id"
 				>
 					<td>{{ user.id }} - {{ user.username }}</td>
@@ -73,7 +73,7 @@
 				locationId: "getLocationId",
 				rootUrl: "getRootUrl",
 				userLevel: "getUserLevel",
-				userList: "getUserList",
+				objectUserList: "getObjectUserList",
 			}),
 		},
 		mixins: [iconMixin],
@@ -99,17 +99,14 @@
 						`${this.rootUrl}object_data/kanban_card/${this.locationId}/remove_user/`,
 						data_to_send
 					)
-					.then(() => {
-						//Remove any user where username matches
-						const user_list = this.userList.filter((row) => {
-							return row.username !== username;
-						});
-
-						//update user list
-						this.$store.commit({
-							type: "updateUserList",
-							userList: user_list,
-						});
+					.then((response) => {
+						//Update VueX with the required data
+						this.$store.commit("updateGroupsAndUsers", {
+							objectGroupList: response.data.object_group_list,
+							objectUserList: response.data.object_user_list,
+							potentialGroupList: response.data.potential_group_list,
+							potentialUserList: response.data.potential_user_list,
+						})
 					});
 			},
 		},

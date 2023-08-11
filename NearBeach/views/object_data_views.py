@@ -737,9 +737,20 @@ def get_group_list(destination, location_id):
     object_results = ObjectAssignment.objects.filter(
         is_deleted=False,
     )
-    object_results = get_object_from_destination(
-        object_results, destination, location_id
-    )
+    # If destination is kanban card - use kanban board
+    if destination == "kanban_card":
+        # Get the card object to obtain the kanban board data
+        card_results = KanbanCard.objects.get(kanban_card_id=location_id)
+
+        object_results = get_object_from_destination(
+            object_results,
+            "kanban_board",
+            card_results.kanban_board.kanban_board_id
+        )
+    else:
+        object_results = get_object_from_destination(
+            object_results, destination, location_id
+        )
 
     # Now return the groups
     return Group.objects.filter(
@@ -805,8 +816,8 @@ def get_user_list_all(destination, location_id):
 
         object_results = get_object_from_destination(
             object_results,
-            "kanban_board",
-            kanban_card_results.kanban_board_id,
+            destination,
+            location_id
         )
 
         group_results = get_object_from_destination(
@@ -1021,6 +1032,7 @@ def link_object(object_assignment_submit, destination, location_id):
     object_association_submit
     """
     allowed_destinations = [
+        "kanban_board",
         "kanban_card",
         "project",
         "request_for_change",
