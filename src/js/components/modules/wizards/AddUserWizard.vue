@@ -177,21 +177,6 @@
 							potentialGroupList: response.data.potential_group_list,
 							potentialUserList: response.data.potential_user_list,
 						})
-
-						//If kanban card - bring up card information again
-						if (this.destination === "kanban_card") {
-							//Send the data upstream
-							this.$store.commit({
-								type: "updateUserList",
-								userList: response.data,
-							});
-
-							//Reshow the card information modal
-							const cardModal = new Modal(
-								document.getElementById("cardInformationModal")
-							);
-							cardModal.show();
-						}
 					})
 					.catch((error) => {
 						this.showErrorModal(error, this.destination);
