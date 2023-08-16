@@ -34,10 +34,10 @@
 			:key="level.pk"
 		>
 			<!-- CREATE THE LEVEL HEADER -->
-			<div class="kanban-level-header">
-				<div class="kanban-level-div">
+			<div class="kanban-level-div">
+				<span>
 					{{ level.fields.kanban_level_name }}
-				</div>
+				</span>
 			</div>
 
 			<!-- RENDER THE CELLS -->
@@ -107,29 +107,30 @@ import { nextTick } from 'vue';
 			resizeProcedure() {
 				// Get the screen size and the columns width
 				const columns_width = this.columnResults.length * 400;
-				let kanban_container_width =
-					document.getElementsByClassName("kanban-container");
-				kanban_container_width = kanban_container_width[0].clientWidth;
-
+				const container_element = document.getElementsByClassName("kanban-container")[0];
+				const kanban_container_width = container_element.clientWidth;
+				
 				//If the columns width is smaller than the screen size
-				// - we will need to adjust the kanban-level-div
+				// - we will need to adjust the kanban-level-div to match
+				// that smaller size
 				if (columns_width < kanban_container_width) {
 					//Add in the width restrictions
-					var elements =
-						document.getElementsByClassName("kanban-level-div");
+					var elements = document.getElementsByClassName("kanban-level-div");
 
 					//Loop through each element
 					Array.from(elements).forEach((element) => {
 						element.style = `max-width: ${columns_width}px;`;
 					});
 				} else {
-					//Remove the old CSS Styling
-					let elements =
-						document.getElementsByClassName("kanban-level-div");
+					//The columns width is greater than the container width. 
+					//So we need to use the scroll width of the container
+					const scroll_width = container_element.scrollWidth;
+					let elements = document.getElementsByClassName("kanban-level-div");
 
 					//Loop through each element
 					Array.from(elements).forEach((element) => {
-						element.style = `max-width: null;`;
+						console.log("Element: ", element, " | Width: ", scroll_width);
+						element.style = `width: ${scroll_width}px;`;
 					});
 				}
 			},
