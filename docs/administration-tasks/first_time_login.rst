@@ -1,9 +1,6 @@
 First Time Setup for NearBeach
 ==============================
 
-.. warning::
-    This functionality described on this page has temporarily been removed, as it is being re-written.
-
 .. note::
     The first login for NearBeach will setup the administration group and permission set. Please log into NearBeach normally and not through the administration portal
 
@@ -15,11 +12,8 @@ First Login
 -----------
 
 1. Use the login page to log into NearBeach
-    .. image:: images/first-time-setup-001.jpg
 
-2. The NearBeach dashboard will load - the following alerts will notify you which tasks are required to be completed.
-    .. image:: images/first-time-setup-002.jpg
-
+2. The NearBeach dashboard will load.
 
 ^^^^^^^^^^^^^^^^^^^^^
 Complete your profile

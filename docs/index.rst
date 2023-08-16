@@ -8,39 +8,19 @@ Welcome to NearBeach
 .. image:: https://img.shields.io/codeclimate/maintainability/robotichead/NearBeach
 
 
-NearBeach is an Open Source Project Management system built on the Django
+NearBeach is an Open Source Project Management system built using VueJS and the Django
 framework. `NearBeach.org <https://nearbeach.org/>`_
 
 .. note:: NearBeach is licensed under the MIT license
 
 .. note:: If you want to setup a local development environment, please view our :ref:`easy_development_environment`.
 
-====================
-Minimum requirements
-====================
 
-^^^^^^^^
-Hardware
-^^^^^^^^
-
-* 1GB RAM
-* 1+ Core CPU (for small user base)
-* 5+ GB Space (more for uploading documents)
-
-^^^^^^^^
-Software
-^^^^^^^^
-
-* Ubuntu 20.04
-* Python 3.6+
-* Django 3.1+
-* Nginx
-* Gunicorn
-* MySQL
+ Welcome to NearBeach. We are a small community of developers trying to make tools to help you manage your projects. Why not join our community and we can build the tools that you require. 
 
 .. toctree::
   :maxdepth: 1
-  :caption: Local Development Environment setup
+  :caption: Local Dev Environment Setup
   :name: sec-setup-dev-environment
 
   setup-dev-environment/easy_development_environment
@@ -51,12 +31,7 @@ Software
   :caption: Installation of NearBeach
   :name: sec-installation
 
-  installation/installation_of_server
-  installation/installation_of_django
-  installation/installation_of_mysql_server
-  installation/installation_of_nearbeach
-  installation/installation_of_optional_steps
-  installation/trouble_shooting_issues
+  installation/basic_docker_installation
 
 
   ------------------
