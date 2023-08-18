@@ -1,16 +1,17 @@
 <template>
 	<div
 		class="modal fade"
-		id="addUserModal"
+		id="updateChangeLeadModal"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
+		v-if="userLevel > 1"
 	>
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon> Add User
+						<Icon v-bind:icon="icons.userIcon"></Icon> Change Lead
 						Wizard
 					</h2>
 					<button
@@ -18,59 +19,25 @@
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="addUserCloseButton"
+						id="updateChangeLeadCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
 				</div>
 				<div class="modal-body">
-					<div
-						v-if="userFixList.length > 0"
-						class="row"
-					>
+					<div class="row">
 						<div class="col-md-4">
-							<strong>Add Users</strong>
+							<strong>Change User</strong>
 							<p class="text-instructions">
-								Use the following multiple select to select
-								which users you want to add to this
-								{{ destination }}.
-							</p>
-							<p class="text-instructions">
-								Please note: A user's group has to be added to
-								the {{ destination }} before the user can be
-								added.
+								Please use the dropdown to select the new
+								Change User
 							</p>
 						</div>
 						<div class="col-md-8">
 							<n-select
 								:options="userFixList"
 								v-model:value="userModel"
-								multiple
 							></n-select>
-						</div>
-					</div>
-					<div
-						v-else
-						class="row"
-					>
-						<div class="col-md-6">
-							<strong>Sorry - no results</strong>
-							<p class="text-instructions">
-								This could be because
-							</p>
-							<ul class="text-instructions">
-								<li>There are no more users left to add</li>
-								<li>
-									The user you are after is in a group not
-									current added to this {{ destination }}
-								</li>
-							</ul>
-						</div>
-						<div class="col-md-6 no-search">
-							<img
-								v-bind:src="`${staticURL}NearBeach/images/placeholder/questions.svg`"
-								alt="Sorry - there are no results"
-							/>
 						</div>
 					</div>
 				</div>
@@ -86,9 +53,9 @@
 						type="button"
 						class="btn btn-primary"
 						v-bind:disabled="userModel.length === 0"
-						v-on:click="addUser"
+						v-on:click="changeLead"
 					>
-						Add User(s)
+						Change Lead
 					</button>
 				</div>
 			</div>
@@ -100,7 +67,6 @@
 	import axios from "axios";
 	import { Icon } from "@iconify/vue";
 	import { NSelect } from "naive-ui";
-	import { Modal } from "bootstrap";
 
 	//VueX
 	import { mapGetters } from "vuex";
@@ -110,14 +76,11 @@
 	import iconMixin from "../../../mixins/iconMixin";
 
 	export default {
-		name: "AddUserWizard",
+		name: "UpdateChangeLeadWizard",
 		components: {
 			Icon,
 			NSelect,
 		},
-		inject: [
-			'nextTick',
-		],
 		mixins: [errorModalMixin, iconMixin],
 		computed: {
 			...mapGetters({
@@ -148,39 +111,26 @@
 			}
 		},
 		methods: {
-			addUser() {
+			changeLead() {
 				//Construct the data_to_send array
 				const data_to_send = new FormData();
-
-				//Look through all of the results in user model and append
-				this.userModel.forEach((row) => {
-					data_to_send.append("user_list", row);
-				});
+				data_to_send.set("username", this.userModel);
 
 				//User axios to send the data to the backend
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_user/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Close the modal
-						document.getElementById("addUserCloseButton").click();
+				axios.post(
+					`${this.rootUrl}rfc_information/${this.locationId}/update_change_lead/`,
+					data_to_send
+				)
+				.then((response) => {
+					//Update the data
+					this.$emit("update_change_lead", response.data.change_lead_results);
 
-						//Clear the models
-						this.userModel = [];
-
-						//Update VueX with the required data
-						this.$store.commit("updateGroupsAndUsers", {
-							objectGroupList: response.data.object_group_list,
-							objectUserList: response.data.object_user_list,
-							potentialGroupList: response.data.potential_group_list,
-							potentialUserList: response.data.potential_user_list,
-						})
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
+					//Close the modal
+					document.getElementById("updateChangeLeadCloseButton").click();
+				})
+				.catch((error) => {
+					this.showErrorModal(error, this.destination);
+				});
 			},
 		},
 	};

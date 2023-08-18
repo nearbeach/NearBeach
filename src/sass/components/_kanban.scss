@@ -4,7 +4,7 @@
 }
 
 .kanban-cell {
-	min-height: 300px;
+	min-height: 80px;
 	background-color: #e0e0e0;
 	margin: 1px;
 	max-width: 350px;
@@ -24,25 +24,31 @@
 	text-align: center;
 	padding: 4px;
 	font-weight: bold;
-	width: calc(100vw - 72px);
-	position: absolute;
 	left: 36px;
+	display: flex;
+	justify-content: flex-start;
+
+	span {
+		position: sticky;
+		left: 4px;
+	}
 }
 
 .kanban-container {
 	overflow: auto;
 	margin: 5px 35px;
+	max-height: calc(100vh - 155px);
+	scrollbar-color: orange lightyellow;
 }
 
 .kanban-row,
-.kanban-level-header,
 .kanban-header-row {
 	display: flex;
 }
 
-.kanban-row {
-	margin: 37px 0;
-}
+// .kanban-row {
+// 	margin: 37px 0;
+// }
 
 .kanban-card {
 	background-color: #f2994a;
