@@ -857,6 +857,13 @@ class TaskInformationForm(forms.ModelForm):
         ]
 
 
+class UpdateChangeLeadForm(forms.Form):
+    username = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        required=True,
+    )
+
+
 class UpdateGroupLeaderStatusForm(forms.Form):
     username = forms.ModelChoiceField(
         queryset=User.objects.all(),
