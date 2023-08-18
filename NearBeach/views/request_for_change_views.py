@@ -4,6 +4,7 @@ from NearBeach.forms import (
     RfcModuleForm,
     RfcInformationSaveForm,
     NewChangeTaskForm,
+    UpdateChangeLeadForm,
     UpdateRFCStatus,
 )
 from NearBeach.decorators.check_user_permissions import check_rfc_permissions
@@ -621,6 +622,44 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
         submit_group_approval.save()
 
     rfc_status_check_approval_status(rfc_id, rfc_results, group_results)
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_rfc_permissions(min_permission_level=2)
+def rfc_update_change_lead(request, rfc_id, *args, **kwargs):
+    # Get the form data
+    form = UpdateChangeLeadForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Update the rfc
+    rfc_update = RequestForChange.objects.get(rfc_id=rfc_id)
+    rfc_update.rfc_lead = form.cleaned_data['username']
+    rfc_update.save()
+
+    # Get the change lead information
+    change_lead_results = User.objects.filter(
+        username = form.cleaned_data['username']
+    ).annotate(
+        profile_picture=F('userprofilepicture__document_id__document_key')
+    ).values(
+        "id",
+        "email",
+        "first_name",
+        "last_name",
+        "username",
+        "profile_picture",
+    )
+
+    # Setup the data to send back
+    change_lead_results = json.dumps(list(change_lead_results), cls=DjangoJSONEncoder)
+
+    return_data = {
+        "change_lead_results": json.loads(change_lead_results),
+    }
+
+    return JsonResponse(return_data)
 
 
 @require_http_methods(["POST"])

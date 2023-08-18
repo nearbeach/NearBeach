@@ -118,7 +118,8 @@
 					<h2>Change LEAD:</h2>
 					<p class="text-instructions">
 						Please supply the LEAD who will be leading this Request
-						for Change.
+						for Change.<br />
+						<strong><a v-on:click="openChangeLeadModal">Update Change Lead</a></strong>
 					</p>
 				</div>
 				<div class="col-md-4">
@@ -127,7 +128,7 @@
 							<tr>
 								<td>
 									<img
-										v-bind:src="getProfilePicture(rfcChangeLead[0].profile_picture)"
+										v-bind:src="getProfilePicture(localChangeLead[0].profile_picture)"
 										alt="default profile"
 										class="default-user-profile"
 									/>
@@ -135,13 +136,13 @@
 								<td>
 									<strong
 										>{{
-											rfcChangeLead[0].username
+											localChangeLead[0].username
 										}}: </strong
-									>{{ rfcChangeLead[0].first_name }}
-									{{ rfcChangeLead[0].last_name }}
+									>{{ localChangeLead[0].first_name }}
+									{{ localChangeLead[0].last_name }}
 									<div class="spacer"></div>
 									<p class="user-card-email">
-										{{ rfcChangeLead[0].email }}
+										{{ localChangeLead[0].email }}
 									</p>
 								</td>
 							</tr>
@@ -240,13 +241,18 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- RFC MODALS -->
+	<update-change-lead v-on:update_change_lead="updateChangeLead"></update-change-lead>
 </template>
 
 <script>
 	const axios = require("axios");
 	import RfcDescription from "./tabs/RfcDescription.vue";
+	import UpdateChangeLead from "../modules/wizards/UpdateChangeLead.vue"
 	import { NSelect, NDatePicker } from "naive-ui";
 	import { mapGetters } from "vuex";
+	import { Modal } from "bootstrap";
 
 	//Import mixins
 	import datetimeMixin from "../../mixins/datetimeMixin";
@@ -267,6 +273,7 @@
 			NDatePicker,
 			NSelect,
 			RfcDescription,
+			UpdateChangeLead,
 			ValidationRendering,
 		},
 		props: {
@@ -363,6 +370,7 @@
 		mixins: [datetimeMixin, errorModalMixin, loadingModalMixin],
 		data() {
 			return {
+				localChangeLead: this.rfcChangeLead,
 				localEndDate: 0,
 				localReleaseDate: 0,
 				localStartDate: 0,
@@ -442,6 +450,12 @@
 			getStatus() {
 				return this.rfcStatusDict[this.rfcResults[0].fields.rfc_status];
 			},
+			openChangeLeadModal() {
+				const modal = new Modal(
+					document.getElementById("updateChangeLeadModal")
+				);
+				modal.show();
+			},
 			pauseRFCStatus() {
 				const data_to_send = new FormData();
 				data_to_send.set("rfc_status", "7"); //Value 7: Paused
@@ -481,6 +495,9 @@
 
 				//Send data
 				this.sendUpdate(data_to_send);
+			},
+			updateChangeLead(new_change_lead) {
+				this.localChangeLead = new_change_lead;
 			},
 			updateRFC: async function () {
 				//Check form validation

@@ -683,6 +683,11 @@ urlpatterns = [
         name="rfc_save_test",
     ),
     path(
+        "rfc_information/<int:rfc_id>/update_change_lead/",
+        request_for_change_views.rfc_update_change_lead,
+        name="rfc_update_change_lead",
+    ),
+    path(
         "rfc_information/<int:rfc_id>/update_status/",
         request_for_change_views.rfc_update_status,
         name="rfc_update_status",
