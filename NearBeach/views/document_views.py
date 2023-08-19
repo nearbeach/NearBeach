@@ -442,9 +442,6 @@ def handle_document_permissions(
     return document_submit, document_results
 
 
-# Internal Function
-
-
 class FileHandler:
 
     def upload(self, upload_document, document_results, file):
@@ -489,6 +486,20 @@ class S3FileHandler(FileHandler):
             "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
             "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
         }
+        if getattr(settings, "AWS_S3_ENDPOINT_URL", None):
+            # Assume the person is using minio  so defualts are the values
+            # which will allow for connection to minio
+            botoInitValues.update(
+                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                aws_session_token=getattr(settings, "AWS_S3_SESSION_TOKEN", None),
+                config=getattr(
+                    settings, 
+                    "AWS_CONFIG", 
+                    boto3.session.Config(signature_version='s3v4'),
+                ),
+                verify=getattr(settings, "AWS_VERIFY_TLS", True),
+                **getattr(settings, "AWS_INIT_VALUES", {})
+            )
         self._s3 = boto3.client("s3",   **botoInitValues)
         self._bucket = settings.AWS_STORAGE_BUCKET_NAME
 

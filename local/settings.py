@@ -139,6 +139,14 @@ if "AWS_ACCESS_KEY_ID" in os.environ:
     AWS_LOCATION = F"{VERSION}"
     AWS_S3_ENDPOINT_URL = F"https://{CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
 
+    # To use a selfsigned cert you can put the path to the cert bundle
+    # here e.g. AWS_VERIFY_TLS = path/to/cert/bundle.pem
+    # AWS_VERIFY_TLS = False
+
+    # AWS_CONFIG can be used to set configure the botocore config
+    # see https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html
+
+
     # Defining STORAGES
     STORAGES = {"staticfiles": {"BACKEND": "storages.backends.s3boto3.S3StaticStorage"}}
 
