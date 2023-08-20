@@ -44,12 +44,5 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
    :hidden:
    :caption: 💡 Installation
 
-   /001-installation/quick-install
-
-   .. toctree::
-       :maxdepth: 2
-       :hidden:
-       :caption: 🪃 Different Databases
-
-       Maria DB </001-installation/different-databases/maria-db>
-       MySQL DB </001-installation/different-databases/mysql>
+   Quick Install </001-installation/quick-install>
+   Different Databases </001-installation/different-databases/index>
