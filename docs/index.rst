@@ -32,17 +32,48 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
 [join our community](https://discord.gg/64uhRztS6n) and we can build the tools that you require.
 
 .. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: 🚀 About
+    :maxdepth: 2
+    :hidden:
+    :caption: 🚀 About
 
-   /000-about/introduction
-   /000-about/features
+    Introduction </000-about/introduction>
+    Features </000-about/features>
 
 .. toctree::
-   :maxdepth: 3
-   :hidden:
-   :caption: 💡 Installation
+    :maxdepth: 3
+    :hidden:
+    :caption: 💡 Installation
 
-   Quick Install </001-installation/quick-install>
-   Different Databases </001-installation/different-databases/index>
+    Quick Install </001-installation/quick-install>
+    Different Databases </001-installation/different-databases/index>
+    Different Blob Storage </001-installation/different-blob-storage/index>
+    Old Installation Process </001-installation/old-installation-process/index>
+
+.. toctree:
+    :maxdepth: 3
+    :hidden:
+    :caption: 🏸 Local Development Environment Setup
+
+    Local Development Environment </002-local-development-environment-setup/local-development-environment>
+
+.. toctree:
+    :maxdepth: 3
+    :hidden:
+    :caption: 🎣 Administration Tasks
+
+    First Time Setup </003-administration-tasks/first-time-setup>
+
+.. toctree:
+    :maxdepth: 3
+    :hidden:
+    :caption: 🪀 Basic Setup
+
+.. toctree:
+    :maxdepth: 3
+    :hidden:
+    :caption: 🛝 Procedures
+
+.. toctree:
+    :maxdepth: 3
+    :hidden:
+    :caption: 🥋 Misc

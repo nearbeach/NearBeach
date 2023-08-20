@@ -1,8 +1,8 @@
-.. _easy_development_environment:
+.. _local-development-environment:
 
-==============================
-Simple Development Environment
-==============================
+=============================
+Local Development Environment
+=============================
 
   .. warning:: DO NOT use this method for ANY UAT/DEV/PROD environments that are NOT on your local. The settings.py file contains a secret_key that is published.
 

@@ -16,7 +16,7 @@ NearBeach's currently supported databases;
 .. toctree::
    :maxdepth: 3
    :hidden:
-   :caption: 💡 Different Databases
+   :caption: Use Different Databases
 
    Maria DB </001-installation/different-databases/maria-db>
    MySQL </001-installation/different-databases/mysql>
