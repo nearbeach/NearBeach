@@ -1,4 +1,3 @@
-====================
 Welcome to NearBeach
 ====================
 
@@ -31,3 +30,26 @@ Who are we?
 
 Welcome to NearBeach. We are a small community of developers trying to make tools to help you manage your projects. Why not 
 [join our community](https://discord.gg/64uhRztS6n) and we can build the tools that you require.
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: 🚀 About
+
+   /000-about/introduction
+   /000-about/features
+
+.. toctree::
+   :maxdepth: 3
+   :hidden:
+   :caption: 💡 Installation
+
+   /001-installation/quick-install
+
+   .. toctree::
+       :maxdepth: 2
+       :hidden:
+       :caption: 🪃 Different Databases
+
+       Maria DB </001-installation/different-databases/maria-db>
+       MySQL DB </001-installation/different-databases/mysql>
