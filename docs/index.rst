@@ -66,4 +66,20 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
 
     First Time Setup </003-administration-tasks/index>
 
+.. toctree::
+    :maxdepth: 3
+    :hidden:
+    :caption: 🪀 Basic Usage
+
+.. toctree::
+    :maxdepth: 3
+    :hidden:
+    :caption: 🛝 Procedure
+
+.. toctree::
+    :maxdepth: 3
+    :hidden:
+    :caption: 🥋 Misc
+
+
 

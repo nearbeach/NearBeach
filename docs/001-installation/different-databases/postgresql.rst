@@ -1,0 +1,5 @@
+.. _postgresql:
+
+==============
+Use PostgreSQL
+==============
