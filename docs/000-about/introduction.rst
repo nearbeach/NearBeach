@@ -1,11 +1,8 @@
-====================
-Welcome to NearBeach
-====================
+.. _introduction:
 
-.. image:: https://img.shields.io/github/license/robotichead/NearBeach
-.. image:: https://img.shields.io/pypi/v/NearBeach
-.. image:: https://img.shields.io/circleci/build/github/robotichead/NearBeach/master
-.. image:: https://img.shields.io/codeclimate/maintainability/robotichead/NearBeach
+============
+Introduction
+============
 
 ------------------
 What is NearBeach?
@@ -29,5 +26,5 @@ NearBeach is an Open Source Project Management system built using VueJS and the 
 Who are we?
 -----------
 
-Welcome to NearBeach. We are a small community of developers trying to make tools to help you manage your projects. Why not 
+Welcome to NearBeach. We are a small community of developers trying to make tools to help you manage your projects. Why not
 [join our community](https://discord.gg/64uhRztS6n) and we can build the tools that you require.
