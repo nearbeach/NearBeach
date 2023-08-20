@@ -39,6 +39,7 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
     Introduction </000-about/introduction>
     Features </000-about/features>
 
+
 .. toctree::
     :maxdepth: 3
     :hidden:
@@ -49,31 +50,20 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
     Different Blob Storage </001-installation/different-blob-storage/index>
     Old Installation Process </001-installation/old-installation-process/index>
 
-.. toctree:
+
+.. toctree::
     :maxdepth: 3
     :hidden:
     :caption: 🏸 Local Development Environment Setup
 
-    Local Development Environment </002-local-development-environment-setup/local-development-environment>
+    Local Development Environment </002-local-development-environment-setup/index>
 
-.. toctree:
+
+.. toctree::
     :maxdepth: 3
     :hidden:
     :caption: 🎣 Administration Tasks
 
-    First Time Setup </003-administration-tasks/first-time-setup>
+    First Time Setup </003-administration-tasks/index>
 
-.. toctree:
-    :maxdepth: 3
-    :hidden:
-    :caption: 🪀 Basic Setup
 
-.. toctree:
-    :maxdepth: 3
-    :hidden:
-    :caption: 🛝 Procedures
-
-.. toctree:
-    :maxdepth: 3
-    :hidden:
-    :caption: 🥋 Misc
