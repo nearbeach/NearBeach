@@ -41,7 +41,7 @@
 					Define what the priority of the card is.
 				</p>
 			</div>
-			<div class="col-md-8">
+			<div class="col-md-4">
 				<label>Card Priority</label>
 				<n-select
 					v-bind:options="listPriority"
@@ -63,7 +63,7 @@
 
 			<div class="col-md-8">
 				<div class="row">
-					<div class="col-md-12 mt-4">
+					<div class="col-md-6 mt-4">
 						<label>Card Column</label>
 						<n-select
 							v-bind:options="listColumns"
@@ -73,7 +73,7 @@
 						></n-select>
 					</div>
 
-					<div class="col-md-12 mt-4">
+					<div class="col-md-6 mt-4">
 						<label>Card Level</label>
 						<n-select
 							v-bind:options="listLevels"
