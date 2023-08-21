@@ -1,31 +1,25 @@
 <template>
-	<div>
-		<div
-			v-for="customer in customerResults"
-			class="row"
-			:key="customer.pk"
-		>
-			<div class="organisation-details">
-				<img
-					v-bind:src="getProfilePicture(customer)"
-					alt="Stakeholder Logo"
-					class="organisation-image"
-				/>
-				<div class="organisation-name">
-					<a
-						v-bind:href="`${rootUrl}customer_information/${customer.pk}/`"
-					>
-						{{ customer.fields.customer_first_name }}
-						{{ customer.fields.customer_last_name }}
-					</a>
-				</div>
-				<div class="organisation-email">
-					<Icon v-bind:icon="icons.mailIcon"></Icon> Email:
-					<a v-bind:href="`mailto:${customer.fields.customer_email}`">
-						{{ customer.fields.customer_email }}
-					</a>
-				</div>
-			</div>
+	<div
+		v-for="customer in customerResults"
+		class="organisation-details">
+		<img
+			v-bind:src="getProfilePicture(customer)"
+			alt="Stakeholder Logo"
+			class="organisation-image"
+		/>
+		<div class="organisation-name">
+			<a
+				v-bind:href="`${rootUrl}customer_information/${customer.pk}/`"
+			>
+				{{ customer.fields.customer_first_name }}
+				{{ customer.fields.customer_last_name }}
+			</a>
+		</div>
+		<div class="organisation-email">
+			<Icon v-bind:icon="icons.mailIcon"></Icon> Email:
+			<a v-bind:href="`mailto:${customer.fields.customer_email}`">
+				{{ customer.fields.customer_email }}
+			</a>
 		</div>
 	</div>
 </template>
@@ -64,7 +58,7 @@
 
 				//If customer profile is blank - return default picture
 				if (image === "" || image === null) {
-					return `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
+					return `${this.staticUrl}NearBeach/images/placeholder/product_tour.svg`;
 				}
 
 				return `${this.rootUrl}private/${image}`;
