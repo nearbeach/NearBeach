@@ -1,5 +1,6 @@
 export const moduleKanban = {
 	state: () => ({
+		canDragCards: true,
 		kanbanCardResults: [],
 		columnResults: [],
 		levelResults: [],
@@ -35,6 +36,10 @@ export const moduleKanban = {
 				return !(boolean_column && boolean_level);
 			});
 		},
+		updateCanDragCards(state, payload) {
+			//Updating canDragCards
+			state.canDragCards = payload.canDragCards;
+		},
 		updateKanbanCard(state, payload) {
 			//Get the index location
 			const index_location = state.kanbanCardResults.findIndex((row) => {
@@ -64,6 +69,9 @@ export const moduleKanban = {
 	},
 	actions: {},
 	getters: {
+		getCanDragCards: (state) => {
+			return state.canDragCards;
+		},
 		getCards: (state) => {
 			return state.kanbanCardResults;
 		},

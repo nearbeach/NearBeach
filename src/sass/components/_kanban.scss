@@ -36,9 +36,13 @@
 
 .kanban-container {
 	overflow: auto;
-	margin: 5px 35px;
-	max-height: calc(100vh - 155px);
+	margin: 5px 35px 0 35px;
+	max-height: calc(100vh - 150px);
 	scrollbar-color: orange lightyellow;
+
+	@media screen and (max-width: 767px) {
+		max-height: calc(100vh - 155px);
+	}
 }
 
 .kanban-row,
@@ -105,6 +109,8 @@
 
 .kanban-edit-text {
 	margin: 5px 35px;
+	display: flex;
+	justify-content: space-between;
 }
 
 .kanban-group-permissions {
