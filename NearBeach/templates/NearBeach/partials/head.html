@@ -1,0 +1,14 @@
+{% load static %}
+<title>{{ nearbeach_title }}</title>
+
+<!-- load the loader CSS -->
+<script async type="text/javascript" src="{% static 'NearBeach/loader.min.js' %}"></script>
+
+<!-- tinymce -->
+<link rel="preload" href="{% static 'NearBeach/tinymce/skins/ui/oxide/skin.min.css' %}" as="style">
+<script defer type="text/javascript" src="{% static 'NearBeach/tinymce/tinymce.min.js' %}"></script>
+<script defer type="text/javascript" src="{% static 'NearBeach/tinymce/plugins/lists/plugin.min.js' %}"></script>
+<script defer type="text/javascript" src="{% static 'NearBeach/tinymce/plugins/paste/plugin.min.js' %}"></script>
+
+<!-- fav icon -->
+<link async rel="shortcut icon" type="image/png" href="{% static 'NearBeach/NearBeach_Small.png' %}"/>   

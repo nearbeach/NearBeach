@@ -1,6 +1,6 @@
 # Import Forms
-from ..forms import permission_set, group, LoginForm, User
-from ..models import user_group
+from ..forms import PermissionSet, Group, LoginForm, User
+from ..models import UserGroup, Notification
 
 # Import Django Libraries
 from django.contrib import auth
@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required, settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
+from django.db.models import Q
 from random import SystemRandom
 from NearBeach.decorators.check_user_permissions import check_permission_denied
 
@@ -31,9 +32,9 @@ def check_first_time_login(request):
     ~~~~~~~~~~~
     If permission_set with id of 1 does not exist, go through first stage setup.
     """
-    if not permission_set.objects.all():
+    if not PermissionSet.objects.all():
         # Create administration permission_set
-        submit_permission_set = permission_set(
+        submit_permission_set = PermissionSet(
             permission_set_name="Administration Permission Set",
             administration_assign_user_to_group=4,
             administration_create_group=4,
@@ -46,6 +47,7 @@ def check_first_time_login(request):
             project=4,
             requirement=4,
             task=4,
+            tag=4,
             document=1,
             kanban_comment=1,
             project_history=1,
@@ -55,14 +57,14 @@ def check_first_time_login(request):
         submit_permission_set.save()
 
         # Create admin group
-        submit_group = group(
+        submit_group = Group(
             group_name="Administration",
             change_user=request.user,
         )
         submit_group.save()
 
         # Add user to admin group
-        submit_user_group = user_group(
+        submit_user_group = UserGroup(
             username=request.user,
             group=submit_group,
             permission_set=submit_permission_set,
@@ -70,16 +72,18 @@ def check_first_time_login(request):
         )
         submit_user_group.save()
 
-    request.session['is_superuser'] = request.user.is_superuser
+    request.session["is_superuser"] = request.user.is_superuser
 
 
 def check_recaptcha(post_data):
     """
     Determine if the user has setup the recaptcha in the settings.py file, and then check the result against google.
-    :param post_data:
+    :param post_data: data from user's POST
     :return:
     """
-    if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY') and hasattr(settings, 'RECAPTCHA_PRIVATE_KEY'):
+    if hasattr(settings, "RECAPTCHA_PUBLIC_KEY") and hasattr(
+        settings, "RECAPTCHA_PRIVATE_KEY"
+    ):
         RECAPTCHA_PRIVATE_KEY = settings.RECAPTCHA_PRIVATE_KEY
     else:
         # User has not setup recaptcha - return true
@@ -98,12 +102,9 @@ def check_recaptcha(post_data):
     4.) The response will open and store the response from GOOGLE
     5.) The results will contain the JSON Object
     """
-    recaptcha_response = post_data.get('g-recaptcha-response')
-    url = 'https://www.google.com/recaptcha/api/siteverify'
-    values = {
-        'secret': RECAPTCHA_PRIVATE_KEY,
-        'response': recaptcha_response
-    }
+    recaptcha_response = post_data.get("g-recaptcha-response")
+    url = "https://www.google.com/recaptcha/api/siteverify"
+    values = {"secret": RECAPTCHA_PRIVATE_KEY, "response": recaptcha_response}
 
     """
     SECURITY ISSUE
@@ -114,24 +115,25 @@ def check_recaptcha(post_data):
     We place the  at the end of the json_data because we have checked the field. This should be just a json
     response. If it is not at this point then it will produce a server issue.
     """
-    if url.lower().startswith('http'):
+    if url.lower().startswith("http"):
         req = urllib.request.Request(url)
     else:
         raise ValueError from None
 
-    with urllib.request.urlopen(req, urllib.parse.urlencode(values).encode('utf8')) as response:  # nosec
+    with urllib.request.urlopen(
+        req, urllib.parse.urlencode(values).encode("utf8")
+    ) as response:  # nosec
         result = json.load(response)
 
-        # Check to see if the user is a robot. Success = human
-    if result['success']:
+    # Check to see if the user is a robot. Success = human
+    if result["success"]:
         return True
     return False
 
 
 def login(request):
     """
-    For some reason I can not use the varable "LoginForm" here as it is already being used.
-    Instead I will use the work form.
+    Will either log user in (if POST is submitted) or take the user to the login screen.
 
     The form is declared at the start and filled with either the POST data OR nothing. If this
     process is called in POST, then the form will be checked and if it passes the checks, the
@@ -145,7 +147,7 @@ def login(request):
     form = LoginForm(request.POST or None)
 
     # POST
-    if request.method == 'POST' and form.is_valid():
+    if request.method == "POST" and form.is_valid():
         # Check if user passes recaptcha
         if check_recaptcha(request.POST) is True:
             # Looks like we can authenticate the user
@@ -163,15 +165,17 @@ def login(request):
             check_first_time_login(request)
 
             # Check how many groups user is in
-            user_group_count = len(user_group.objects.filter(
-                is_deleted=False,
-                username_id=User.objects.get(username=username).id,
-            ))
+            user_group_count = len(
+                UserGroup.objects.filter(
+                    is_deleted=False,
+                    username_id=User.objects.get(username=username).id,
+                )
+            )
 
             # if user_group_count == 0:
             #     return HttpResponseRedirect(reverse('logout'))
             if user_group_count > 0:
-                return HttpResponseRedirect(reverse('dashboard'))
+                return HttpResponseRedirect(reverse("dashboard"))
 
             # User has actually failed to log in. We will purposly log them out
             # And make sure we tell them why
@@ -182,24 +186,36 @@ def login(request):
             error_message = "Username or Password is incorrect. Please try again"
 
     # Get recaptcha public key
-    if hasattr(settings, 'RECAPTCHA_PUBLIC_KEY') and hasattr(settings, 'RECAPTCHA_PRIVATE_KEY'):
+    if hasattr(settings, "RECAPTCHA_PUBLIC_KEY") and hasattr(
+        settings, "RECAPTCHA_PRIVATE_KEY"
+    ):
         RECAPTCHA_PUBLIC_KEY = settings.RECAPTCHA_PUBLIC_KEY
     else:
-        RECAPTCHA_PUBLIC_KEY = ''
+        RECAPTCHA_PUBLIC_KEY = ""
 
     # load template
-    t = loader.get_template('NearBeach/authentication/login.html')
+    t = loader.get_template("NearBeach/authentication/login.html")
+
+    # Get notification results
+    notification_results = Notification.objects.filter(
+        Q(
+            # is_deleted=False,
+            # ADD IN DATES LOGIC HERE
+        )
+        & Q(Q(notification_location="All") | Q(notification_location="Login"))
+    )
 
     # Get random number
     cryptogen = SystemRandom()
 
     # context
     c = {
-        'error_message': error_message,
-        'LoginForm': form,
-        'nearbeach_title': 'NearBeach Login',
-        'RECAPTCHA_PUBLIC_KEY': RECAPTCHA_PUBLIC_KEY,
-        'image_number': f"{1 + cryptogen.randrange(1, 19):03.0f}"
+        "error_message": error_message,
+        "LoginForm": form,
+        "nearbeach_title": "NearBeach Login",
+        "notification_results": notification_results,
+        "RECAPTCHA_PUBLIC_KEY": RECAPTCHA_PUBLIC_KEY,
+        "image_number": f"{1 + cryptogen.randrange(1, 19):03.0f}",
     }
 
     return HttpResponse(t.render(c, request))
@@ -208,17 +224,17 @@ def login(request):
 def logout(request):
     # log the user out and go to login page
     auth.logout(request)
-    return HttpResponseRedirect(reverse('login'))
+    return HttpResponseRedirect(reverse("login"))
 
 
-@login_required(login_url='login', redirect_field_name="")
+@login_required(login_url="login", redirect_field_name="")
 def permission_denied(request):
-    # Load the template
-    t = loader.get_template('NearBeach/authentication/permission_denied.html')
+    # Load up the permission denied template and show user
+    t = loader.get_template("NearBeach/authentication/permission_denied.html")
 
     # context
     c = {
-        'nearbeach_title': 'NearBeach Permission Denied',
+        "nearbeach_title": "NearBeach Permission Denied",
     }
 
     return HttpResponse(t.render(c, request))
@@ -226,6 +242,8 @@ def permission_denied(request):
 
 @check_permission_denied()
 def test_permission_denied(request):
-    """A simple test - ALWAYS respond with permission denied"""
-    print("Got here.")
+    """
+    A simple test - ALWAYS respond with permission denied.
+    This function will never return HttpResponse - because the decorator will raise PermissionDenied ALWAYS!!!
+    """
     return HttpResponse("Hello World")

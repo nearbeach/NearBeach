@@ -117,3 +117,9 @@ node_modules/
 
 # browser stack config
 /tests/browserstatck/config.py
+
+.vscode/
+
+.idea/
+# Ignore any documents uploaded to the private folders
+/local/private/

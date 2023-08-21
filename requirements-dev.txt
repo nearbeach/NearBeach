@@ -1,0 +1,6 @@
+# requirements-dev.txt
+black
+bandit
+python-dotenv
+django-storages
+-r ./requirements.txt

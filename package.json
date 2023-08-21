@@ -1,73 +1,74 @@
 {
-  "name": "nearbeach",
-  "version": "0.29.5",
-  "description": "NearBeach - an Open Source project management system built with Django web framework",
-  "main": "/src/js/app.js",
-  "directories": {
-    "doc": "docs",
-    "test": "tests"
-  },
-  "scripts": {
-    "dev": "webpack-dev-server --open --config webpack.dev.js",
-    "prod": "webpack --config webpack.prod.js",
-    "watch": "webpack --config webpack.watch.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/robotichead/NearBeach.git"
-  },
-  "keywords": [
-    "Django",
-    "open source",
-    "project management"
-  ],
-  "author": "Luke Christopher Clarke",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/robotichead/NearBeach/issues"
-  },
-  "homepage": "https://github.com/robotichead/NearBeach#readme",
-  "devDependencies": {
-    "@iconify-icons/akar-icons": "^1.1.17",
-    "@iconify-icons/bi": "^1.1.2",
-    "@iconify-icons/bx": "^1.1.0",
-    "@iconify-icons/carbon": "^1.1.4",
-    "@iconify-icons/fe": "^1.1.0",
-    "@iconify-icons/feather": "^1.1.0",
-    "@iconify-icons/mdi": "^1.1.16",
-    "@iconify-icons/typcn": "^1.1.0",
-    "@iconify/icons-akar-icons": "^1.1.27",
-    "@iconify/icons-bi": "^1.1.2",
-    "@iconify/icons-bx": "^1.1.2",
-    "@iconify/icons-carbon": "^1.1.4",
-    "@iconify/icons-cil": "^1.1.0",
-    "@iconify/icons-feather": "^1.1.0",
-    "@iconify/vue": "^3.1.1",
-    "@popperjs/core": "^2.11.0",
-    "@tinymce/tinymce-vue": "^4.0.5",
-    "@vue/compiler-sfc": "^3.2.26",
-    "@vuelidate/core": "^2.0.0-alpha.33",
-    "@vuelidate/validators": "^2.0.0-alpha.26",
-    "axios": "^0.24.0",
-    "bootstrap": "^5.1.3",
-    "compression-webpack-plugin": "^9.2.0",
-    "copy-webpack-plugin": "^10.2.0",
-    "css-loader": "^6.5.1",
-    "luxon": "^2.3.0",
-    "mini-css-extract-plugin": "^2.4.5",
-    "naive-ui": "^2.23.2",
-    "postcss-loader": "^6.2.1",
-    "sass": "^1.45.2",
-    "sass-loader": "^12.4.0",
-    "style-loader": "^3.3.1",
-    "vue": "^3.2.26",
-    "vue-form-wizard": "^0.8.4",
-    "vue-loader": "^17.0.0",
-    "vuedraggable": "^4.1.0",
-    "vuex": "^4.0.2",
-    "webpack": "^5.65.0",
-    "webpack-bundle-analyzer": "^4.5.0",
-    "webpack-cli": "^4.9.1",
-    "webpack-merge": "^5.8.0"
-  }
+	"name": "nearbeach",
+	"version": "0.30.7",
+	"description": "NearBeach - an Open Source project management system built with Django web framework",
+	"main": "/src/js/app.js",
+	"directories": {
+		"doc": "docs",
+		"test": "tests"
+	},
+	"scripts": {
+		"dev": "webpack-dev-server --open --config webpack.dev.js",
+		"prod": "webpack --config webpack.prod.js",
+		"watch": "webpack --config webpack.watch.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/robotichead/NearBeach.git"
+	},
+	"keywords": [
+		"Django",
+		"open source",
+		"project management"
+	],
+	"author": "Luke Christopher Clarke",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/robotichead/NearBeach/issues"
+	},
+	"homepage": "https://github.com/robotichead/NearBeach#readme",
+	"devDependencies": {
+		"@iconify-icons/akar-icons": "^1.1.17",
+		"@iconify-icons/bi": "^1.1.2",
+		"@iconify-icons/bx": "^1.1.0",
+		"@iconify-icons/carbon": "^1.1.4",
+		"@iconify-icons/fe": "^1.1.0",
+		"@iconify-icons/feather": "^1.1.0",
+		"@iconify-icons/mdi": "^1.1.16",
+		"@iconify-icons/typcn": "^1.1.0",
+		"@iconify/icons-akar-icons": "^1.1.27",
+		"@iconify/icons-bi": "^1.1.2",
+		"@iconify/icons-bx": "^1.1.2",
+		"@iconify/icons-carbon": "^1.1.4",
+		"@iconify/icons-cil": "^1.1.0",
+		"@iconify/icons-feather": "^1.1.0",
+		"@iconify/vue": "^3.1.1",
+		"@popperjs/core": "^2.11.0",
+		"@tinymce/tinymce-vue": "^5.1.0",
+		"@vue/compiler-sfc": "^3.2.26",
+		"@vuelidate/core": "^2.0.0",
+		"@vuelidate/validators": "^2.0.0",
+		"axios": "^0.24.0",
+		"bootstrap": "^5.3.0",
+		"compression-webpack-plugin": "^9.2.0",
+		"copy-webpack-plugin": "^10.2.0",
+		"css-loader": "^6.5.1",
+		"luxon": "^2.5.2",
+		"mini-css-extract-plugin": "^2.4.5",
+		"naive-ui": "^2.23.2",
+		"postcss-loader": "^7.2.4",
+		"prettier": "2.8.4",
+		"sass": "^1.45.2",
+		"sass-loader": "^12.4.0",
+		"style-loader": "^3.3.1",
+		"vue": "^3.2.26",
+		"vue-form-wizard": "^0.8.4",
+		"vue-loader": "^17.0.0",
+		"vuedraggable": "^4.1.0",
+		"vuex": "^4.0.2",
+		"webpack": "^5.76.0",
+		"webpack-bundle-analyzer": "^4.5.0",
+		"webpack-cli": "^4.9.1",
+		"webpack-merge": "^5.8.0"
+	}
 }

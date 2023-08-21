@@ -1,0 +1,25 @@
+{% extends "NearBeach/partials/template.html" %}
+{% load static %}
+{% block content %}
+    {% if user_level == 1%}
+        <fieldset disabled="true">
+    {% endif %}
+
+    <change-task-information v-bind:change-task-results="{{change_task_results}}"
+                             v-bind:rfc-status="`{{rfc_status}}`"
+                             v-bind:root-url="`{% url 'dashboard' %}`"
+                             v-bind:user-level="{{user_level}}"
+                             v-bind:user-list="{{user_list}}"
+                             v-bind:destination="'change_task'"
+                             v-bind:location-id="{{change_task_id}}"
+                             v-bind:static-url="`{% static '/' %}`"
+    ></change-task-information>
+
+    <br/>
+
+    <change-task-modules></change-task-modules>
+    
+    {% if user_level == 1%}
+        </fieldset>
+    {% endif %}
+{% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'NearBeach/template.html' %}
+{% extends "NearBeach/partials/template.html" %}
 {% load static %}
 {% block content %}
     {% if user.is_superuser %}
@@ -18,6 +18,10 @@
     <!-- Dashboard -- Unassigned Objects -->
     <dashboard-unassigned-objects v-bind:root-url="`{% url 'dashboard' %}`"></dashboard-unassigned-objects>
     <!--<dashboard-bug-list></dashboard-bug-list>-->
+
+    <br/>
+    <!-- Dashboard -- Kanban Boards -->
+    <dashboard-kanban-list v-bind:root-url="`{% url 'dashboard' %}`"></dashboard-kanban-list>
 
 
 {% endblock %}

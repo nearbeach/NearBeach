@@ -1,180 +1,164 @@
 <template>
-    <div class="row">
-        <div class="col-md-4">
-            <h2>Stakeholder Organisation</h2>
-            <p class="text-instructions">
-                Please search for your stakeholder's organisation in the dropdown box. Once found, please select.
-            </p>
-            <p class="text-instructions">
-              If you can not find your organisation, please
-              <a href="javascript:void(0)"
-                 v-on:click="openNewOrganisationModal"
-              >
-                click here to create it.
-              </a>
-            </p>
-        </div>
-        <div class="col-md-8">
-            <div class="form-group">
-                <label>Stakeholder Organisation
-                    <span class="error" v-if="!v$.stakeholderModel.required && isDirty"> Please search for a Stakeholder.</span>
-                </label>
-                <n-select :options="stakeholderFixList"
-                          filterable
-                          placeholder="Search Stakeholders"
-                          @search="fetchOptions"
-                          v-model:value="stakeholderModel"
-                          label="organisation_name"
-                          class="get-stakeholders"
-                />
-            </div>
-        </div>
-
-        <!-- MODAL -->
-        <new-organisation-modal v-on:created_new_organisation="createdNewOrganisation($event)"
-        ></new-organisation-modal>
-    </div>
+	<div class="row">
+		<div class="col-md-4">
+			<h2>Stakeholder Organisation</h2>
+			<p class="text-instructions">
+				Please search for your stakeholder's organisation in the
+				dropdown box. Once found, please select.
+			</p>
+			<p class="text-instructions">
+				If you can not find your organisation, please
+				<a v-bind:href="`${rootUrl}new_organisation/`" target="_blank">
+					click here to create it.
+				</a>
+				Then search for it again
+			</p>
+		</div>
+		<div class="col-md-8">
+			<div class="form-group">
+				<label
+					>Stakeholder Organisation
+					<validation-rendering
+						v-bind:error-list="v$.stakeholderModel.$errors"
+					></validation-rendering>
+				</label>
+				<n-select
+					:options="stakeholderFixList"
+					filterable
+					placeholder="Search Stakeholders"
+					@search="fetchOptions"
+					v-model:value="stakeholderModel"
+					label="organisation_name"
+					class="get-stakeholders"
+				/>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
-    //JavaScript Libraries
-    const axios = require('axios');
-    import { Modal } from 'bootstrap';
-    import { NSelect } from 'naive-ui';
-    import NewOrganisationModal from "./NewOrganisationModal.vue";
+	//JavaScript Libraries
+	const axios = require("axios");
+	import { Modal } from "bootstrap";
+	import { NSelect } from "naive-ui";
 
-    //VueX
-    import { mapGetters} from 'vuex';
+	//VueX
+	import { mapGetters } from "vuex";
 
-    //Validation
-    import useVuelidate from '@vuelidate/core'
-    import { required } from '@vuelidate/validators'
+	//Validation
+	import useVuelidate from "@vuelidate/core";
+	import { required } from "@vuelidate/validators";
+	import ValidationRendering from "../validation/ValidationRendering.vue";
 
-    //Mixins
-    import searchMixin from "../../mixins/searchMixin";
+	//Mixins
+	import searchMixin from "../../mixins/searchMixin";
 
-    export default {
-        name: "GetStakeholders",
-        setup() {
-            return { v$: useVuelidate(), }
-        },
-        components: {
-            NewOrganisationModal,
-            NSelect,
-        },
-        mixins: [
-            searchMixin
-        ],
-        props: {
-            isDirty: { //Passes the value from the template above where the checking is done
-                type: Boolean,
-                default: false,
-            }
-        },
-        data() {
-            return {
-                searchTimeout: '',
-                stakeholderFixList: [],
-                stakeholderModel: '',
-            }
-        },
-        validations: {
-            stakeholderModel: {
-                required
-            },
-        },
-        computed: {
-            ...mapGetters({
-                rootUrl: "getRootUrl",
-            }),
-        },
-        methods: {
-            createdNewOrganisation: function(data) {
-                //We have recieved a new organisation that the user has created.
-                //Place them into the model
-                this.stakeholderModel = data;
+	export default {
+		name: "GetStakeholders",
+		setup() {
+			return { v$: useVuelidate() };
+		},
+		inject: [
+			'nextTick',
+		],
+		components: {
+			NSelect,
+			ValidationRendering,
+		},
+		mixins: [searchMixin],
+		props: {
+			isDirty: {
+				//Passes the value from the template above where the checking is done
+				type: Boolean,
+				default: false,
+			},
+		},
+		data() {
+			return {
+				searchTimeout: "",
+				stakeholderFixList: [],
+				stakeholderModel: "",
+			};
+		},
+		validations: {
+			stakeholderModel: {
+				required,
+			},
+		},
+		computed: {
+			...mapGetters({
+				rootUrl: "getRootUrl",
+			}),
+		},
+		methods: {
+			fetchOptions(search, loading) {
+				this.searchTrigger({
+					return_function: this.getOrganisationData,
+					searchTimeout: this.searchTimeout,
+					search: search,
+					loading: loading,
+				});
+			},
+			getOrganisationData(search, loading) {
+				// Save the seach data in FormData
+				const data_to_send = new FormData();
+				data_to_send.set("search", search);
 
-                //Close the modal
-                document.getElementById("newOrganisationModalCloseButton").click();
-            },
-            fetchOptions: function(search, loading) {
-                this.searchTrigger({
-                   'return_function': this.getOrganisationData,
-                   'searchTimeout': this.searchTimeout,
-                   'search': search,
-                   'loading': loading,
-                });
-            },
-            getOrganisationData: function(search,loading) {
-                // Save the seach data in FormData
-                const data_to_send = new FormData();
-                data_to_send.set('search',search);
+				// Now that the timer has run out, lets use AJAX to get the organisations.
+				axios
+					.post(
+						`${this.rootUrl}search/organisation/data/`,
+						data_to_send
+					)
+					.then((response) => {
+						//Extract the required JSON data
+						var extracted_data = response.data;
 
-                // Now that the timer has run out, lets use AJAX to get the organisations.
-                axios.post(
-                    `${this.rootUrl}search/organisation/data/`,
-                    data_to_send
-                ).then(response => {
-                    //Extract the required JSON data
-                    var extracted_data = response['data'];
+						//Look through the extracted data - and map the required fields into stakeholder fix list
+						this.stakeholderFixList = extracted_data.map((row) => {
+							//Create the creation object
+							return {
+								value: row.pk,
+								label: row.fields.organisation_name,
+							};
+						});
+					})
+					.catch(function (error) {
+						// Get the error modal
+						var elem_cont =
+							document.getElementById("errorModalContent");
 
-                    //Look through the extracted data - and map the required fields into stakeholder fix list
-                    this.stakeholderFixList = extracted_data.map((row) => {
-                        //Create the creation object
-                        return {
-                            value: row['pk'],
-                            label: row['fields']['organisation_name'],
-                            // 'organisation_name': row['fields']['organisation_name'],
-                            // 'organisation_website': row['fields']['organisation_website'],
-                            // 'organisation_email': row['fields']['organisation_email'],
-                            // 'organisation_profile_picture': row['fields']['organisation_profile_picture'],
-                        };
-                    });
-                }).catch(function (error) {
-                    // Get the error modal
-                    var elem_cont = document.getElementById("errorModalContent");
+						// Update the content
+						elem_cont.innerHTML = `<strong>Search Organisation Issue:</strong><br/>${error}`;
 
-                    // Update the content
-                    elem_cont.innerHTML = `<strong>Search Organisation Issue:</strong><br/>${error}`;
+						// Show the modal
+						var errorModal = new bootstrap.Modal(
+							document.getElementById("errorModal"),
+							{
+								keyboard: false,
+							}
+						);
+						errorModal.show();
 
-                    // Show the modal
-                    var errorModal = new bootstrap.Modal(document.getElementById('errorModal'), {
-                      keyboard: false
-                    })
-                    errorModal.show();
-
-                    // Hide the loader
-                    var loader_element = document.getElementById("loader");
-                    loader_element.style.display = "none";
-                });
-            },
-            openNewOrganisationModal: function() {
-                var newModal = new Modal(document.getElementById('newOrganisationModal'));
-
-                newModal.show();
-                // var newModal = new bootstrap.Modal(
-                //     document.getElementById("newOrganisationModal"), {
-                //         keyboard: false
-                //     })
-                // newModal.show();
-            },
-        },
-        watch: {
-            stakeholderModel: function() {
-                //Send the changes upstream
-                this.$emit('update_stakeholder_model',this.stakeholderModel);
-            }
-        },
-        mounted() {
-            //Wait 200ms
-            setTimeout(() => {
-                //Get a default list when mounted
-                this.getOrganisationData('','');
-            }, 200);
-        }
-    }
+						// Hide the loader
+						var loader_element = document.getElementById("loader");
+						loader_element.style.display = "none";
+					});
+			},
+		},
+		watch: {
+			stakeholderModel() {
+				//Send the changes upstream
+				this.$emit("update_stakeholder_model", this.stakeholderModel);
+			},
+		},
+		mounted() {
+			this.nextTick(() => {
+				//Get a default list when mounted
+				this.getOrganisationData("", "");
+			});
+		},
+	};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -9,7 +9,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
     module: {
         rules: [{
-                test: /\.(scss)$/,
+                test: /\.s[ac]ss$/i,
                 use: [{
                     loader: 'style-loader', // inject CSS to page
                 }, {
@@ -33,7 +33,7 @@ module.exports = {
                 test: /\.vue$/,
                 loader: 'vue-loader'
             }, {
-                test: /\.(png|jpe?g|gif)$/i,
+                test: /\.(?:png|jpe?g|gif)$/i,
                 use: [
                     {
                         loader: 'file-loader',
@@ -54,7 +54,6 @@ module.exports = {
         new CompressionPlugin(),
         new CopyPlugin({
             patterns: [
-                // { from: './src/resources/whiteboard/', to: './whiteboard' },
                 { from: './src/resources/NearBeach.png', to: '' },
                 { from: './src/resources/NearBeach_Small.png', to: '' },
                 { from: './src/resources/images/', to: './images' },
@@ -67,6 +66,7 @@ module.exports = {
                 { from: './node_modules/tinymce/themes/silver/theme.min.js', to: './tinymce/themes/silver/theme.min.js' },
                 { from: './node_modules/tinymce/icons/default/icons.min.js', to: './tinymce/icons/default/icons.min.js' },
                 { from: './node_modules/tinymce/plugins/lists/', to: './tinymce/plugins/lists/' },
+                // { from: './node_modules/tinymce/plugins/paste/', to: './tinymce/plugins/paste/' },
                 { from: './node_modules/tinymce/plugins/table/', to: './tinymce/plugins/table/' },
             ],
         }),

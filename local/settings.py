@@ -8,6 +8,10 @@ This file is only for the automatic testing and is not build for server use.
 """
 
 import os
+from NearBeach import __version__ as VERSION
+
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,7 +27,7 @@ SECRET_KEY = 'jz0k8%ecl#k!z+(9+5(^do1w!11ysus21m41m@i9c#u)*vk($o'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '0.0.0.0', '192.168.1.105']
 
 
 # Application definition
@@ -61,12 +65,12 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'NearBeach.context_processors.django_version',
+                'NearBeach.context_processors.nearbeach_version',
             ],
         },
     },
 ]
-
-
 
 
 # Database
@@ -112,14 +116,37 @@ USE_L10N = True
 
 USE_TZ = True
 
+AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+AZURE_STORAGE_CONTAINER_NAME = os.getenv("AZURE_STORAGE_CONTAINER_NAME")
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 PRIVATE_MEDIA_ROOT = os.path.join(PROJECT_PATH, 'private')
 PRIVATE_MEDIA_SERVER = 'DefaultServer'
 PRIVATE_MEDIA_URL = '/private/'
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+# Static files setup
+# Check to see if we are importing Azure Credentials
+if "AWS_ACCESS_KEY_ID" in os.environ:
+    # Get the cloudflare account id
+    CLOUDFLARE_ACCOUNT_ID = os.getenv("CLOUDFLARE_ACCOUNT_ID")
+
+    # Setup the variables for the django-storages
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_REGION_NAME = 'auto'
+    AWS_LOCATION = F"{VERSION}"
+    AWS_S3_ENDPOINT_URL = F"https://{CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
+
+    # Defining STORAGES
+    STORAGES = {"staticfiles": {"BACKEND": "storages.backends.s3boto3.S3StaticStorage"}}
+
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+else:
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

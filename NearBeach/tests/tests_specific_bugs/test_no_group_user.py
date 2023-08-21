@@ -2,8 +2,8 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 # Declaration of Username and Password
-username = 'no_group_user'
-password = 'Test1234$'
+username = "no_group_user"
+password = "Test1234$"
 
 """
 Method to replicate
@@ -18,21 +18,18 @@ User can not log in
 
 def login_user(c: object, self: object) -> object:
     response = c.post(
-        reverse('login'),
+        reverse("login"),
         self.credentials,
         follow=True,
     )
-    self.assertTrue(response.context['user'].is_active is False)
+    self.assertTrue(response.context["user"].is_active is False)
 
 
 class NewInstanceLoginTest(TestCase):
-    fixtures = ['NearBeach_no_setup.json']
+    fixtures = ["NearBeach_no_setup.json"]
 
     def setUp(self):
-        self.credentials = {
-            'username': username,
-            'password': password
-        }
+        self.credentials = {"username": username, "password": password}
 
     def test_admin_login(self):
         c = Client()

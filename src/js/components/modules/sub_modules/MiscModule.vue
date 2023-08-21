@@ -1,40 +1,25 @@
 <template>
-    <div>
-        <list-tags-module v-bind:destination="destination"
-                          v-bind:location-id="locationId"
-        ></list-tags-module>
-    </div>
+	<div>
+		<list-tags-module></list-tags-module>
+	</div>
 </template>
 
 <script>
-    // JavaScript Libraries
-    import ListTagsModule from "./ListTagsModule.vue";
+	// JavaScript Libraries
+	import ListTagsModule from "./ListTagsModule.vue";
 
-    export default {
-        name: "MiscModule",
-        components: {
-            ListTagsModule,
-        },
-        props: [
-            'destination',
-            'locationId',
-        ],
-        mixins: [
-        ],
-        computed: {
-        },
-        data() {
-            return {
-                noteHistoryResults: [],
-            };
-        },
-        methods: {
-        },
-        mounted() {
-        }
-    }
+	export default {
+		name: "MiscModule",
+		components: {
+			ListTagsModule,
+		},
+		props: {},
+		mixins: [],
+		computed: {},
+		data() {},
+		methods: {},
+		mounted() {},
+	};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

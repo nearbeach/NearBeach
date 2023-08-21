@@ -1,0 +1,50 @@
+.object-link {
+    border: 1px solid lightgray;
+    margin: 10px 5px;
+    padding: 10px 5px;
+    background-color: #fcfcfcf0;;
+}
+
+.object-link--details {
+    a {
+        text-decoration: none;
+    }
+
+    .object-link--link {
+        color: #4f4f4f;
+        font-weight: lighter;
+    }
+
+    .object-link--title {
+        @media screen and (min-width: 768px) {
+            white-space: nowrap;
+            overflow: clip;
+        }
+    }
+}
+
+.object-link--status {
+    color: #4f4f4f;
+    font-weight: lighter;
+
+    @media screen and (min-width: 768px) {
+        padding-right: 30px;
+        white-space: nowrap;
+
+        span {
+            display: block;
+            overflow: clip;
+        }
+
+        span:first-child {
+            display: none;
+        }
+    }
+}
+
+.object-link--remove {
+    position: absolute;
+    right: 13px;
+    width: 44px;
+    color: red;
+}

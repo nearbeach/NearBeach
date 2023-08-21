@@ -68,7 +68,7 @@ Download Git Repository
 
   .. code-block:: bash
 
-    pip install -r requirements.txt
+    pip install requirements-dev.txt
 
 #. Create the database
 

@@ -4,16 +4,7 @@ simplejson
 pillow>=7.1.0
 urllib3
 boto3
-# geolocation-python
-# django-tinymce4-lite
-# weasyprint
-# pyperclip
-# python-docx
-# BeautifulSoup4
-# pandoc
-# pypandoc
-# django_select2
-# django-phonenumber-field
-# phonenumbers
+azure-storage-blob
+azure-identity
 
 pip>=19.2

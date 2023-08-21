@@ -1,11 +1,17 @@
+// Import all of Bootstrap's CSS
+@import "~bootstrap/scss/bootstrap";
+
 //// Import Bootstrap
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
+// @import "~bootstrap/scss/functions";
+// @import "~bootstrap/scss/variables";
+// @import "~bootstrap/scss/variables-dark";
+// @import "~bootstrap/scss/mixins";
 
 //// Bootstrap extras
-@import "~bootstrap/scss/buttons";
-@import "~bootstrap/scss/forms";
+// @import "~bootstrap/scss/buttons";
+// @import "~bootstrap/scss/carousel";
+// @import "~bootstrap/scss/forms";
+// @import "~bootstrap/scss/grid";
 
 // Import login screen
-@import './components/_login.scss';
+@import "./components/_login.scss";

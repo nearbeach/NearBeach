@@ -1,0 +1,33 @@
+{% load static %}
+<!-- Load NearBeach Webpack File -->
+<script defer type="text/javascript" src="{% static 'NearBeach/NearBeach.min.js' %}"></script>
+
+<!-- ERROR MODAL -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="modal-body" id="errorModalContent">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LOADING/SAVING MODAL -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content loading-modal">
+            <div class="modal-body" id="loadingModalContent">
+            </div>
+        </div>
+    </div>
+</div>

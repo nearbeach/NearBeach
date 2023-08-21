@@ -3,12 +3,16 @@ import NearBeach
 
 
 def django_version(request):
+    """
+    Get's the django verion and returns it - used in template rendering.
+    """
     return {
-        'django_version': django.get_version(),
+        "django_version": django.get_version(),
     }
 
 
 def nearbeach_version(request):
-    return {
-        'nearbeach_version': NearBeach.__version__
-    }
+    """
+    Get's the NearBeach version and returns it - used in template rendering.
+    """
+    return {"nearbeach_version": NearBeach.__version__}

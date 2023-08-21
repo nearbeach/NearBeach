@@ -6,14 +6,21 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
+from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
 from NearBeach.forms import NewPermissionSetForm, PermissionSetForm
-from NearBeach.models import permission_set, user_group, PERMISSION_BOOLEAN, PERMISSION_LEVEL
+from NearBeach.models import (
+    PermissionSet,
+    PERMISSION_BOOLEAN,
+    PERMISSION_LEVEL,
+)
+from NearBeach.views.tools.internal_functions import get_user_permissions
 
 import json
 
 
-@login_required(login_url='login', redirect_field_name="")
-def new_permission_set(request):
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(3, "administration_create_permission_set")
+def new_permission_set(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -21,19 +28,20 @@ def new_permission_set(request):
     # Check user permissions
 
     # Get template
-    t = loader.get_template('NearBeach/permission_sets/new_permission_set.html')
+    t = loader.get_template("NearBeach/permission_sets/new_permission_set.html")
 
     # Get context
     c = {
-        'nearbeach_title': 'New Permission Set',
+        "nearbeach_title": "New Permission Set",
     }
 
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
-def new_permission_set_save(request):
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(3, "administration_create_permission_set")
+def new_permission_set_save(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -46,19 +54,24 @@ def new_permission_set_save(request):
         return HttpResponseBadRequest(form.errors)
 
     # Save the data
-    submit_permission_set = permission_set(
-        permission_set_name=form.cleaned_data['permission_set_name'],
+    submit_permission_set = PermissionSet(
+        permission_set_name=form.cleaned_data["permission_set_name"],
         change_user=request.user,
     )
 
     submit_permission_set.save()
 
     # Return back the permission set information URL
-    return HttpResponse(reverse('permission_set_information', args={submit_permission_set.permission_set_id}))
+    return HttpResponse(
+        reverse(
+            "permission_set_information", args={submit_permission_set.permission_set_id}
+        )
+    )
 
 
-@login_required(login_url='login', redirect_field_name="")
-def permission_set_information(request, permission_set_id):
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(1, "administration_create_permission_set")
+def permission_set_information(request, permission_set_id, *args, **kwargs):
     """
     :param request:
     :param permission_set_id:
@@ -67,53 +80,40 @@ def permission_set_information(request, permission_set_id):
     # Add in permission checks
 
     # Import template
-    t = loader.get_template('NearBeach/permission_sets/permission_set_information.html')
+    t = loader.get_template("NearBeach/permission_sets/permission_set_information.html")
 
     # Get data
-    permission_set_results = permission_set.objects.get(permission_set_id=permission_set_id)
-
-    user_list_results = user_group.objects.filter(
-        is_deleted=False,
-        permission_set_id=permission_set_id,
-    ).values(
-        'username',
-        'username__first_name',
-        'username__last_name',
-        'username__email',
-        'group',
-        'group__group_name',
-        'permission_set',
-        'permission_set__permission_set_name',
-    ).order_by(
-        'username__first_name',
-        'username__last_name',
-        'permission_set__permission_set_name',
+    permission_set_results = PermissionSet.objects.get(
+        permission_set_id=permission_set_id
     )
+
+    user_list_results = get_user_permissions("permission_set_id", permission_set_id)
     user_list_results = json.dumps(list(user_list_results), cls=DjangoJSONEncoder)
 
     # Create the context
     c = {
-        'nearbeach_title': f"Permission Set {permission_set_id}",
-        'permission_set_results': serializers.serialize('json', [permission_set_results]),
-        'permission_set_id': permission_set_id,
-        'permission_boolean': json.dumps(PERMISSION_BOOLEAN),
-        'permission_level': json.dumps(PERMISSION_LEVEL),
-        'user_list_results': user_list_results,
+        "nearbeach_title": f"Permission Set {permission_set_id}",
+        "permission_set_results": serializers.serialize(
+            "json", [permission_set_results]
+        ),
+        "permission_set_id": permission_set_id,
+        "permission_boolean": json.dumps(PERMISSION_BOOLEAN),
+        "permission_level": json.dumps(PERMISSION_LEVEL),
+        "user_list_results": user_list_results,
     }
 
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
-def permission_set_information_save(request, permission_set_id):
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(2, "administration_create_permission_set")
+def permission_set_information_save(request, permission_set_id, *args, **kwargs):
     """
     :param request:
     :param permission_set_id:
     :return:
     """
-    # ADD IN USER PERMISSIONS LATER
-
     # Check to make sure nothing changes for the administration permissions
     if permission_set_id == 1:
         return HttpResponseBadRequest("Error - can not edit administration")
@@ -121,32 +121,41 @@ def permission_set_information_save(request, permission_set_id):
     # Get form data
     form = PermissionSetForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Get the object
-    update_permission_set = permission_set.objects.get(permission_set_id=permission_set_id)
+    update_permission_set = PermissionSet.objects.get(
+        permission_set_id=permission_set_id
+    )
 
     # Update the object
-    update_permission_set.permission_set_name = form.cleaned_data['permission_set_name']
-    update_permission_set.administration_assign_user_to_group = form.cleaned_data['administration_assign_user_to_group']
-    update_permission_set.administration_create_group = form.cleaned_data['administration_create_group']
+    update_permission_set.permission_set_name = form.cleaned_data["permission_set_name"]
+    update_permission_set.administration_assign_user_to_group = form.cleaned_data[
+        "administration_assign_user_to_group"
+    ]
+    update_permission_set.administration_create_group = form.cleaned_data[
+        "administration_create_group"
+    ]
     update_permission_set.administration_create_permission_set = form.cleaned_data[
-        'administration_create_permission_set']
-    update_permission_set.administration_create_user = form.cleaned_data['administration_create_user']
-    update_permission_set.bug_client = form.cleaned_data['bug_client']
-    update_permission_set.customer = form.cleaned_data['customer']
-    update_permission_set.kanban_board = form.cleaned_data['kanban_board']
-    update_permission_set.kanban_card = form.cleaned_data['kanban_card']
-    update_permission_set.organisation = form.cleaned_data['organisation']
-    update_permission_set.project = form.cleaned_data['project']
-    update_permission_set.requirement = form.cleaned_data['requirement']
-    update_permission_set.request_for_change = form.cleaned_data['request_for_change']
-    update_permission_set.task = form.cleaned_data['task']
-    update_permission_set.document = form.cleaned_data['document']
-    update_permission_set.kanban_comment = form.cleaned_data['kanban_comment']
-    update_permission_set.project_history = form.cleaned_data['project_history']
-    update_permission_set.task_history = form.cleaned_data['task_history']
+        "administration_create_permission_set"
+    ]
+    update_permission_set.administration_create_user = form.cleaned_data[
+        "administration_create_user"
+    ]
+    update_permission_set.bug_client = form.cleaned_data["bug_client"]
+    update_permission_set.customer = form.cleaned_data["customer"]
+    update_permission_set.kanban_board = form.cleaned_data["kanban_board"]
+    update_permission_set.kanban_card = form.cleaned_data["kanban_card"]
+    update_permission_set.organisation = form.cleaned_data["organisation"]
+    update_permission_set.project = form.cleaned_data["project"]
+    update_permission_set.requirement = form.cleaned_data["requirement"]
+    update_permission_set.request_for_change = form.cleaned_data["request_for_change"]
+    update_permission_set.task = form.cleaned_data["task"]
+    update_permission_set.tag = form.cleaned_data["tag"]
+    update_permission_set.document = form.cleaned_data["document"]
+    update_permission_set.kanban_comment = form.cleaned_data["kanban_comment"]
+    update_permission_set.project_history = form.cleaned_data["project_history"]
+    update_permission_set.task_history = form.cleaned_data["task_history"]
 
     update_permission_set.save()
 

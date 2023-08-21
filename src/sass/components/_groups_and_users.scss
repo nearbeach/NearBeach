@@ -1,0 +1,67 @@
+.group-card-list,
+.user-card-list {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    .group-card,
+    .user-card-big,
+    .user-card {
+        width: calc(100% - 10px);
+        height: 75px;
+        border: 1px solid lightgray;
+        padding: 10px 5px;
+        background-color: #fcfcfcf0;
+        display: flex;
+        flex-direction: row;
+        margin: 10px 5px 0 5px;
+
+        @media screen and (min-width: 767px) {
+            width: calc(33% - 10px);
+        }
+
+        .group-card--details,
+        .user-card--details {
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 92px);
+            white-space: nowrap;
+            overflow: clip;
+            margin-right: 10px;
+
+            .user-card--email {
+                flex-wrap: nowrap;
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+                font-size: 12px;
+                font-weight: lighter;
+            }
+        }
+
+        .group-card--details {
+            width: calc(100% - 25px);
+        }
+
+        img {
+            width: 55px;
+            height: 55px;
+            object-fit: contain;
+            margin-right: 7px;
+        }
+
+        .group-card--remove,
+        .user-card--remove {
+            width: 20px;
+            color: red;
+        }
+    }
+
+    .user-card-big {
+        @media screen and (min-width: 767px) {
+            width: calc(50% - 10px);
+        }
+    }
+}

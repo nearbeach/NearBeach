@@ -43,6 +43,8 @@ setuptools.setup(
         'pillow',
         'urllib3',
         'boto3',
+        'azure-storage-blob',
+        'azure-identity',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

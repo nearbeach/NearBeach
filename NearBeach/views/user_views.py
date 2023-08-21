@@ -8,14 +8,17 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 from django.contrib.auth import update_session_auth_hash
 
-from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm
-from NearBeach.models import user_group
+from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
+from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm, UserRemovePermissionForm
+from NearBeach.models import UserGroup
+from NearBeach.views.tools.internal_functions import get_user_permissions
 
 import json
 
 
-@login_required(login_url='login', redirect_field_name="")
-def new_user(request):
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(3, "administration_create_user")
+def new_user(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -23,19 +26,20 @@ def new_user(request):
     # Add in user permissions
 
     # Get template
-    t = loader.get_template('NearBeach/users/new_user.html')
+    t = loader.get_template("NearBeach/users/new_user.html")
 
     # Get context
     c = {
-        'nearbeach_title': 'New User',
+        "nearbeach_title": "New User",
     }
 
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
-def new_user_save(request):
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(3, "administration_create_user")
+def new_user_save(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -49,49 +53,50 @@ def new_user_save(request):
 
     # Create the new user
     submit_user = User(
-        username=form.cleaned_data['username'],
-        email=form.cleaned_data['email'],
-        first_name=form.cleaned_data['first_name'],
-        last_name=form.cleaned_data['last_name'],
+        username=form.cleaned_data["username"],
+        email=form.cleaned_data["email"],
+        first_name=form.cleaned_data["first_name"],
+        last_name=form.cleaned_data["last_name"],
         is_active=True,
     )
 
     # Set the user password
-    submit_user.set_password(form.cleaned_data['password1'])
+    submit_user.set_password(form.cleaned_data["password1"])
 
     # Save
     submit_user.save()
 
-    return HttpResponse(reverse('user_information', args={submit_user.id}))
+    return HttpResponse(reverse("user_information", args={submit_user.id}))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
-def update_password(request):
-    """
-    """
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(2, "administration_create_user")
+def update_password(request, *args, **kwargs):
+    """ """
     # Get form data
     form = PasswordResetForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
     # Check to make sure we are updating ONLY the current user
-    if not form.cleaned_data['username'] == request.user:
+    if not form.cleaned_data["username"] == request.user:
         return HttpResponseBadRequest("Unknown Error")
 
     # Get the User object
-    user_update = form.cleaned_data['username']
-    user_update.set_password(form.cleaned_data['password'])
+    user_update = form.cleaned_data["username"]
+    user_update.set_password(form.cleaned_data["password"])
     user_update.save()
 
     # Refresh user's hash
-    update_session_auth_hash(request, form.cleaned_data['username'])
+    update_session_auth_hash(request, form.cleaned_data["username"])
 
     return HttpResponse("")
 
 
-@login_required(login_url='login', redirect_field_name="")
-def user_information(request, username):
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(1, "administration_create_user")
+def user_information(request, username, *args, **kwargs):
     """
     :param request:
     :param permission_set_id:
@@ -100,44 +105,29 @@ def user_information(request, username):
     # check user permissions
 
     # Import template
-    t = loader.get_template('NearBeach/users/user_information.html')
+    t = loader.get_template("NearBeach/users/user_information.html")
 
     # Get user data
     user_results = User.objects.get(id=username)
 
-    user_list_results = user_group.objects.filter(
-        is_deleted=False,
-        username=username,
-    ).values(
-        'username',
-        'username__first_name',
-        'username__last_name',
-        'username__email',
-        'group',
-        'group__group_name',
-        'permission_set',
-        'permission_set__permission_set_name',
-    ).order_by(
-        'username__first_name',
-        'username__last_name',
-        'permission_set__permission_set_name',
-    )
+    user_list_results = get_user_permissions("username", username)
     user_list_results = json.dumps(list(user_list_results), cls=DjangoJSONEncoder)
 
     # Create the context
     c = {
-        'nearbeach_title': f"User Information {username}",
-        'user_list_results': user_list_results,
-        'user_results': serializers.serialize('json', [user_results]),
-        'username': username,
+        "nearbeach_title": f"User Information {username}",
+        "user_list_results": user_list_results,
+        "user_results": serializers.serialize("json", [user_results]),
+        "username": username,
     }
 
     return HttpResponse(t.render(c, request))
 
 
-@require_http_methods(['POST'])
-@login_required(login_url='login', redirect_field_name="")
-def user_information_save(request, username):
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(2, "administration_create_user")
+def user_information_save(request, username, *args, **kwargs):
     """
     :param request:
     :param username:
@@ -154,14 +144,36 @@ def user_information_save(request, username):
     update_user = User.objects.get(id=username)
 
     # Update the user
-    update_user.first_name = form.cleaned_data['first_name']
-    update_user.last_name = form.cleaned_data['last_name']
-    update_user.email = form.cleaned_data['email']
-    update_user.is_active = form.cleaned_data['is_active']
-    update_user.is_superuser = form.cleaned_data['is_superuser']
+    update_user.first_name = form.cleaned_data["first_name"]
+    update_user.last_name = form.cleaned_data["last_name"]
+    update_user.email = form.cleaned_data["email"]
+    update_user.is_active = form.cleaned_data["is_active"]
+    update_user.is_superuser = form.cleaned_data["is_superuser"]
 
     # Save
     update_user.save()
 
     # Send back blank 200
     return HttpResponse("")
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(4, "administration_create_user")
+def user_remove_permission(request, *args, **kwargs):
+    # Get the form data
+    form = UserRemovePermissionForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+    
+    user_group_id = form.cleaned_data['user_group_id']
+    
+    user_group_update = UserGroup.objects.get(
+        user_group_id = user_group_id.user_group_id,
+    )
+
+    user_group_update.is_deleted = True
+    user_group_update.save()
+
+    # Send back success
+    return HttpResponse()

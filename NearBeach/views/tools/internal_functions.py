@@ -1,16 +1,30 @@
-from NearBeach.models import kanban_board, kanban_card, organisation, project,\
-    request_for_change, requirement, requirement_item, task, whiteboard
+from NearBeach.models import (
+    ChangeTask,
+    Customer,
+    KanbanBoard,
+    KanbanCard,
+    Organisation,
+    Project,
+    RequestForChange,
+    Requirement,
+    RequirementItem,
+    Task,
+    User,
+    UserGroup,
+)
 
 OBJECT_DICT = {
-    'project': project.objects,
-    'task': task.objects,
-    'requirement': requirement.objects,
-    'requirement_item': requirement_item.objects,
-    'kanban_board': kanban_board.objects,
-    'kanban_card': kanban_card.objects,
-    'organisation': organisation.objects,
-    'request_for_change': request_for_change.objects,
-    'whiteboard': whiteboard.objects,
+    "change_task": ChangeTask.objects,
+    "customer": Customer.objects,
+    "project": Project.objects,
+    "task": Task.objects,
+    "requirement": Requirement.objects,
+    "requirement_item": RequirementItem.objects,
+    "kanban_board": KanbanBoard.objects,
+    "kanban_card": KanbanCard.objects,
+    "organisation": Organisation.objects,
+    "request_for_change": RequestForChange.objects,
+    "user": User.objects,
 }
 
 
@@ -24,12 +38,38 @@ def get_object_from_destination(input_object, destination, location_id):
     :param location_id: The location_id
     :return:
     """
-    input_object = input_object.filter(
-        **{ destination: location_id }
-    )
+    input_object = input_object.filter(**{destination: location_id})
 
     # Just send back the array
     return input_object
+
+
+# Internal Function
+def get_user_permissions(field, value):
+    return (
+        UserGroup.objects.filter(
+            is_deleted=False,
+            **{field: value},
+        )
+        .values(
+            "user_group_id",
+            "username",
+            "username__first_name",
+            "username__last_name",
+            "username__email",
+            "group",
+            "group__group_name",
+            "group_leader",
+            "permission_set",
+            "permission_set__permission_set_name",
+        )
+        .order_by(
+            "username__first_name",
+            "username__last_name",
+            "group__group_name",
+            "permission_set__permission_set_name",
+        )
+    )
 
 
 # Internal function
@@ -41,6 +81,6 @@ def set_object_from_destination(input_object, destination, location_id):
     :param location_id: The location we are interested in
     :return:
     """
-    setattr(input_object, destination, OBJECT_DICT[destination].get(pk=location_id) )
+    setattr(input_object, destination, OBJECT_DICT[destination].get(pk=location_id))
 
     return input_object

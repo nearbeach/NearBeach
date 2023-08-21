@@ -1,78 +1,89 @@
 // CSS For the login screen -> Move into it's own file soon
 body {
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 }
 
 h1 {
-  font-size: 30px;
+	font-size: 37px;
+
+	@media (min-width: 576px) {
+		font-size: 45px;
+	}
 }
 
 input {
-    width: 100%;
+	width: 100%;
 }
 
 label {
-    color: #fff;
-    text-shadow: #000;
+	color: #fff;
+	text-shadow: #000;
+	font-size: 25px;
+	line-height: 30px;
+}
+
+a,
+a:visited {
+	color: white;
 }
 
 .background {
-    background-size: cover;
-    background-position: center;
-    min-height: 100vh;
+	background-size: cover;
+	background-position: center;
+	min-height: 100vh;
 
-    //Fonts
-    color: #ffffff;
-    text-shadow: 1px 1px 2px black;
-    font-family: fa5-proxima-nova,"Helvetica Neue",Helvetica,Arial,sans-serif;
+	//Fonts
+	color: #ffffff;
+	text-shadow: 1px 1px 2px black;
+	font-family: fa5-proxima-nova, "Helvetica Neue", Helvetica, Arial,
+		sans-serif;
+
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	flex-direction: column-reverse;
+
+	@media screen and (min-width: 992px) {
+		flex-direction: row;
+	}
 }
 
+// Breakpoint 	Class infix 	Dimensions
+// Extra small 	None 	<576px
+// Small 	sm 	≥576px
+// Medium 	md 	≥768px
+// Large 	lg 	≥992px
+// Extra large 	xl 	≥1200px
+// Extra extra large 	xxl 	≥1400px
+
 .login-dialog {
+	input {
+		box-sizing: border-box;
+		// margin-bottom: 15px;
+	}
 
-    input {
-        box-sizing: border-box;
-        margin-bottom: 15px;
-    }
-
-    .row.columns {
-        margin-bottom: 15px;
-    }
-
-    position: absolute;
-    left: 0%;
-    right: 0%;
-    top: 25%;
-
-    max-width: 300px;
-    margin: auto;
-
-    @media screen and (min-width: 1000px) {
-        position: absolute;
-        left: 75%;
-        top: 50%;
-
-        max-width: 300px;
-
-        transform: translate(-50%, -50%);
-        -webkit-transform: translate(-50%, -50%);
-        -o-transform: translate(-50%, -50%);
-        -ms-transform: translate(-50%, -50%);
-    }
-    @media screen and (min-width: 1000px) {
-        max-width: 400px;
-    }
-    @media screen and (max-width: 495px) {
-        h1 {
-            font-size: 22px;
-        }
-    }
+	// .row.columns {
+	//     margin-bottom: 15px;
+	// }
+	.form-group {
+		margin-bottom: 15px;
+	}
 }
 
 .login-alert {
-    background-color: rgba(100,0,0,0.5);
-    border: 2px solid rgb(100,0,0);
-    padding: 10px;
-    margin-bottom: 15px;
+	background-color: rgba(100, 0, 0, 0.5);
+	border: 2px solid rgb(100, 0, 0);
+	padding: 10px;
+	margin-bottom: 15px;
 }
 
+.login-notifications {
+	// background-color: rgba(138, 128, 252, 0.45);
+	background-color: rgba(148, 163, 184, 0.65);
+}
+
+.carousel-inner {
+	width: 80%;
+	margin: 30px auto;
+}

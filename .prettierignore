@@ -1,0 +1,19 @@
+# Ignore artifacts:
+build
+coverage
+NearBeach
+NearBeach/**
+.circleci
+.github
+.pytest_cache
+.vscode
+browserstack
+docs
+local
+locust_tests
+node_modules
+webpack.common.js
+webpack.dev.js
+webpack.prod.js
+webpack.watch.js
+cypress.json
