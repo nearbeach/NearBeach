@@ -28,7 +28,7 @@
         <!-- Object Delete -->
         <div
             class="object-link--remove"
-            v-if="userLevel >= 2"
+            v-if="userLevel >= 2 && canDelete === true"
         >
             <Icon
                 v-bind:icon="icons.trashCan"
@@ -58,6 +58,10 @@
         emits: ["update_link_results"],
         mixins: [iconMixin],
         props: {
+            canDelete: {
+                type: Boolean,
+                default: true,
+            },
             linkResults: {
                 type: Array,
                 default: () => {

@@ -3,13 +3,27 @@
 		<h1 class="kanban-header">
 			{{ kanbanBoardResults[0].fields.kanban_board_name }}
 		</h1>
-		<a
-			class="kanban-edit-text"
-			v-if="userLevel >= 3"
-			v-bind:href="`${rootUrl}kanban_information/${kanbanBoardResults[0].pk}/edit_board/`"
+		<div class="kanban-edit-text"
+		     v-if="userLevel >= 3"
 		>
-			Edit Kanban
-		</a>
+			<a v-bind:href="`${rootUrl}kanban_information/${kanbanBoardResults[0].pk}/edit_board/`">
+				Edit Kanban
+			</a>
+
+			<n-switch v-model:value="canDragCards"
+			          @update:value="updateCanDragCards"
+			>
+				<template #checked>
+					Can Drag Cards
+				</template>
+				<template #unchecked>
+					Card Position Locked
+				</template>
+			</n-switch>
+		</div>
+		<div class="kanban-edit-text">
+		</div>
+
 		<!-- Rendering the Kanban Container -->
 		<kanban-board
 			v-bind:column-results="columnResults"
@@ -59,8 +73,6 @@
 </template>
 
 <script>
-	import { Modal } from "bootstrap";
-	// import AddUserWizard from "../modules/wizards/AddUserWizard.vue";
 	import AddUserToCard from "../card_information/AddUserToCard.vue";
 	import ArchiveCards from "./ArchiveCards.vue";
 	import BlockedNotesModal from "./BlockedNotesModal.vue";
@@ -73,10 +85,12 @@
 	//VueX
 	import { mapGetters } from "vuex";
 
+	//Naive UI
+	import { NSwitch } from "naive-ui";
+
 	export default {
 		name: "KanbanInformation",
 		components: {
-			// AddUserWizard,
 			AddUserToCard,
 			ArchiveCards,
 			BlockedNotesModal,
@@ -85,6 +99,7 @@
 			KanbanBoard,
 			NewKanbanCard,
 			NewKanbanLinkWizard,
+			NSwitch,
 		},
 		props: {
 			columnResults: {
@@ -150,6 +165,7 @@
 		},
 		data() {
 			return {
+				canDragCards: true,
 				cardInformation: {},
 				localKanbanCardResults: this.kanbanCardResults,
 				refreshUserList: false,
@@ -171,6 +187,12 @@
 			},
 			resetRefreshUserList() {
 				this.refreshUserList = false;
+			},
+			updateCanDragCards(value) {
+				this.$store.commit({
+					type: "updateCanDragCards",
+					canDragCards: value,
+				})
 			},
 			updateCard(data) {
 				//Loop through the results - when the id's match. Update the data.

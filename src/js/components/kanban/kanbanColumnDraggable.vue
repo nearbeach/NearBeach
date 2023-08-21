@@ -5,7 +5,7 @@
 		v-bind:data-level="levelId"
 		v-bind:data-column="columnId"
 		v-bind:data-column-property="columnProperty"
-		:disabled="kanbanStatus === 'Closed'"
+		:disabled="kanbanStatus === 'Closed' || !canDragCards"
 		group="tasks"
 		@end="onEnd($event)"
 		v-model="masterList"
@@ -120,6 +120,7 @@
 		computed: {
 			...mapGetters({
 				allCards: "getCards",
+				canDragCards: "getCanDragCards",
 				kanbanStatus: "getKanbanStatus",
 				openCardOnLoad: "getOpenCardOnLoad",
 				rootUrl: "getRootUrl",

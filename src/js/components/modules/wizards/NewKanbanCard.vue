@@ -2,13 +2,15 @@
 	<div
 		class="modal fade"
 		id="addKanbanCardModal"
+		data-bs-backdrop="static"
+		data-bs-keyboard="false"
 		tabindex="-1"
 		aria-labelledby="addKanbanCardModalLabel"
 		aria-hidden="true"
 		v-bind:data-kanban-level="levelResults[0].pk"
 		v-bind:data-kanban-column="columnResults[0].pk"
 	>
-		<div class="modal-dialog modal-lg modal-fullscreen-lg-down">
+		<div class="modal-dialog modal-xl modal-fullscreen-xl-down">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
