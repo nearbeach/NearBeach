@@ -1,8 +1,8 @@
 .. _quick-install:
 
-=============
-Quick Install
-=============
+=========================
+Quick Install with Docker
+=========================
 
 Copy the following code and paste it into a file called `docker-compose.yaml`
 
@@ -89,3 +89,5 @@ Copy the following code and paste it into a file called `docker-compose.yaml`
 4. Use your Azure Blob storage to store uploaded files from NearBeach. If you don't require Azure Blob storage, please delete these two lines.
 
 5. Using a terminal, change directory to the location that you stored the docker-compose file. Run the following command: "docker-compose up -D"
+
+You are now up and running NearBeach on your local environment. Visiting `http://localhost:8000` in your browser will take you to NearBeach

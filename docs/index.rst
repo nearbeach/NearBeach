@@ -36,7 +36,6 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
     :hidden:
     :caption: 🚀 About
 
-    Introduction </000-about/introduction>
     Features </000-about/features>
 
 
@@ -45,7 +44,7 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
     :hidden:
     :caption: 💡 Installation
 
-    Quick Install </001-installation/quick-install>
+    Quick Install with Docker </001-installation/quick-install-with-docker>
     Different Databases </001-installation/different-databases/index>
     Different Blob Storage </001-installation/different-blob-storage/index>
     Old Installation Process </001-installation/old-installation-process/index>
