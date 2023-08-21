@@ -11,7 +11,7 @@
 
 		<!-- OBJECT LINKS -->
 		<div
-			v-if="linkResults.length == 0"
+			v-if="linkResults.length === 0"
 			class="requirement-item-spacer"
 		>
 			<div class="alert alert-dark">
@@ -24,6 +24,12 @@
 				v-bind:link-results="relatesTo"
 				v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
+
+      <!-- Kanban Cards -->
+      <sub-object-links v-bind:title="'Kanban Cards'"
+                        v-bind:link-results="kanbanCard"
+                        v-bind:can-delete="false"
+      ></sub-object-links>
 
 			<!-- Is Blocked By -->
 			<sub-object-links v-bind:title="'Is Blocked By'"
@@ -124,6 +130,7 @@
 				isDuplicateObjectOf: [],
 				isParentOf: [],
 				isSubObjectOf: [],
+				kanbanCard: [],
 				linkResults: [],
 				relatesTo: [],
 			};
@@ -169,6 +176,12 @@
 							var condition_1 = row.link_relationship === 'Block' && row.parent_link !== this.destination && row.reverse_relation === false;
 							var condition_2 = row.link_relationship === 'Block' && row.parent_link === this.destination && row.reverse_relation === true; //reverse
 							return condition_1 || condition_2;
+						})
+
+						//Filter out the data for kanban cards
+						this.kanbanCard = response.data.filter(row => {
+							//We only have one condition - if there is a kanban card
+							return row.link_relationship === 'Card'
 						})
 
 						//Filter out the data for is currently blocking

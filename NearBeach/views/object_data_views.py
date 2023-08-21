@@ -1168,6 +1168,29 @@ def object_link_list(request, destination, location_id):
                 "reverse_relation",
             ))
 
+    # If the destination is either a project, task, or requirement - add on kanban cards
+    if destination in ["project", "task", "requirement"]:
+        data_results.extend(KanbanCard.objects.filter(
+            # **{data_point.non_null_field + "__isnull": False},
+            **{destination + "_id": location_id}
+        ).annotate(
+            object_id=F("kanban_card_id"),
+            object_title=F("kanban_card_text"),
+            object_status=F("kanban_column_id__kanban_column_name"),
+            object_type=V("card"),
+            reverse_relation=V(False),
+            link_relationship=V("Card"),
+            parent_link=V("card"),
+        ).values(
+            "object_id",
+            "object_title",
+            "object_status",
+            "object_type",
+            "link_relationship",
+            "parent_link",
+            "reverse_relation",
+        ))
+
     return JsonResponse(data_results, safe=False)
 
 
