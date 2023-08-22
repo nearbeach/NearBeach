@@ -144,6 +144,15 @@
 			}),
 		},
 		methods: {
+			isLinkedObject(object) {
+				let results = false;
+
+				if (object.fields.project !== null) results = true;
+				if (object.fields.task !== null) results = true;
+				if (object.fields.requirement !== null) results = true;
+
+				return results;
+			},
 			newLink() {
 				//Open up the modal
 

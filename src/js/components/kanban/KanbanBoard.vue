@@ -129,7 +129,6 @@ import { nextTick } from 'vue';
 
 					//Loop through each element
 					Array.from(elements).forEach((element) => {
-						console.log("Element: ", element, " | Width: ", scroll_width);
 						element.style = `width: ${scroll_width}px;`;
 					});
 				}

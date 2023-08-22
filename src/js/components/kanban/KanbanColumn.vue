@@ -14,6 +14,13 @@
 			v-bind:data-card-id="element.pk"
 			v-on:dblclick="doubleClickCard($event)"
 		>
+			<div v-bind:class="`card-priority-line priority-${priorityList[element.fields.kanban_card_priority]}`"></div>
+			<Icon v-if="isLinkedObject(element)"
+			      v-bind:icon="icons.linkOut"
+			      v-bind:data-sort-number="element.fields.kanban_card_sort_number"
+			      v-bind:data-card-id="element.pk"
+			      class="card-external-link"
+			></Icon>
 			<b>#{{ element.pk }}</b
 			><br />
 			{{ element.fields.kanban_card_text }}
@@ -63,6 +70,13 @@
 			return {
 				//masterList: [],
 				drag: false,
+				priorityList: [
+					'highest',
+					'high',
+					'normal',
+					'low',
+					'lowest',
+				],
 			};
 		},
 		computed: {
@@ -183,27 +197,29 @@
 				//Setup data to send upstream
 				this.sendDataUpstream(filtered_data);
 			},
+			isLinkedObject(object) {
+				let results = "";
+
+				if (object.fields.project !== null) results = "project";
+				if (object.fields.requirement !== null) results = "requirement";
+				if (object.fields.task !== null) results = "task";
+
+				return results;
+			},
 			sendDataUpstream(filtered_data) {
-				// Determine if the card has a link
-				let card_link = {};
-				if (filtered_data.fields.project !== undefined) {
-					card_link = {
-						id: filtered_data.fields.project,
-						hyperlink: `${this.rootUrl}project_information/${filtered_data.fields.project}/`,
-						type: "Project",
-					};
-				} else if (filtered_data.fields.task !== undefined) {
-					card_link = {
-						id: filtered_data.fields.task,
-						hyperlink: `${this.rootUrl}task_information/${filtered_data.fields.task}/`,
-						type: "Task",
-					};
-				} else if (filtered_data.fields.requirement) {
-					card_link = {
-						id: filtered_data.fields.requirement,
-						hyperlink: `${this.rootUrl}requirement_information/${filtered_data.fields.requirement}/`,
-						type: "Requirement",
-					};
+				// Check to make sure this is a linked object
+				const is_link = this.isLinkedObject(filtered_data);
+				if (is_link.length > 0) {
+					//Open a new tab with that linked object
+					const url = `${this.rootUrl}${is_link}_information/${filtered_data.fields[is_link]}/`;
+
+					window.open(
+						url,
+						'_blank'
+					).focus();
+
+					//Just return - nothing else to do
+					return;
 				}
 
 				// Update VueX ACTION
@@ -215,7 +231,7 @@
 						filtered_data.fields.kanban_card_description,
 					cardColumn: filtered_data.fields.kanban_column,
 					cardLevel: filtered_data.fields.kanban_level,
-					cardLink: card_link,
+					cardLink: {},
 					cardPriority: filtered_data.fields.kanban_card_priority,
 				});
 
@@ -248,7 +264,7 @@
 			},
 		},
 		mounted() {
-			this.checkCardOrder();
+			// this.checkCardOrder();
 
 			//Check to see if the "openCardOnLoad" card ID exists on in this section
 			const count = this.masterList.filter((row) => {
