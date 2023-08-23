@@ -60,12 +60,23 @@ def delete_column(request, kanban_board_id, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    destination_item_id = form.cleaned_data["destination_item_id"]
+
     # Update the variables
-    KanbanCard.objects.filter(
-        is_deleted=False,
-        kanban_column_id=form.cleaned_data["delete_item_id"],
-        kanban_board_id=kanban_board_id,
-    ).update(kanban_column_id=form.cleaned_data["destination_item_id"])
+    if destination_item_id is None:
+        # There is no destination for the cards - flag deleted
+        KanbanCard.objects.filter(
+            is_deleted=False,
+            kanban_column_id=form.cleaned_data["delete_item_id"],
+            kanban_board_id=kanban_board_id,
+        ).update(is_deleted=True)
+    else:
+        # There is a destination - update to that destination
+        KanbanCard.objects.filter(
+            is_deleted=False,
+            kanban_column_id=form.cleaned_data["delete_item_id"],
+            kanban_board_id=kanban_board_id,
+        ).update(kanban_column_id=form.cleaned_data["destination_item_id"])
 
     # Soft delete the old column
     deleted_column = KanbanColumn.objects.get(

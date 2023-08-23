@@ -259,7 +259,7 @@ class DeleteColumnForm(forms.Form):
     )
     destination_item_id = forms.ModelChoiceField(
         queryset=KanbanColumn.objects.all(),
-        required=True,
+        required=False,
     )
 
 
@@ -270,7 +270,7 @@ class DeleteLevelForm(forms.Form):
     )
     destination_item_id = forms.ModelChoiceField(
         queryset=KanbanLevel.objects.all(),
-        required=True,
+        required=False,
     )
 
 
