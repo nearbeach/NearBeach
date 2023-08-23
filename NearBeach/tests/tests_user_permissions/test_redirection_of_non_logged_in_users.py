@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .function_tests import assertRedirectsToLogin, assertEqual405
+from NearBeach.tests.function_tests import assertRedirectsToLogin, assertEqual405
 
 """
 The following test will;
