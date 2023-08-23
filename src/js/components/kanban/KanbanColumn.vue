@@ -268,7 +268,13 @@
 
 			//Check to see if the "openCardOnLoad" card ID exists on in this section
 			const count = this.masterList.filter((row) => {
-				return row.pk == this.openCardOnLoad;
+				//Conditions
+				// 1 row primary key is the same as openCardOnLoad value
+				// 2 row is not a linked object, i.e. not value under project, task, or requirement field
+				const condition_1 = row.pk == this.openCardOnLoad;
+				const condition_2 = this.isLinkedObject(row).length === 0;
+
+				return condition_1 && condition_2;
 			}).length;
 
 			if (count > 0) {

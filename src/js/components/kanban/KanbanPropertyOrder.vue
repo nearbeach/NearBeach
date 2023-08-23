@@ -144,8 +144,43 @@
 						></button>
 					</div>
 					<div class="modal-body">
-						<!-- CARD DESTINATIONS -->
+						<!-- WARNING -->
+						<div class="alert alert-warning">
+							<h4>WARNING</h4>
+							<p>
+								This process can not be reversed. Deleting a
+								{{propertyName}} will remove it.
+							</p>
+
+							<p>
+								All existing cards will be moved to the stated
+								location you have provided. Any cards that have
+								been archived or deleted, will still be
+								associated with the removed card.
+							</p>
+						</div>
+
+						<!-- ASK USER ABOUT CARDS -->
 						<div class="row">
+							<p>Would you like to remove the cards within the {{propertyName}}?</p>
+							<n-radio-group v-model:value="removeCardsModel" name="radiogroup">
+								<n-space>
+									<n-radio v-bind:value="true"
+									         v-bind:label="'Yes - please remove cards'"
+									/>
+									<n-radio v-bind:value="false"
+									         v-bind:label="'No - please MOVE cards'"
+									/>
+								</n-space>
+							</n-radio-group>
+						</div>
+
+						<!-- CARD DESTINATIONS -->
+						<div class="spacer"></div>
+						<div v-if="!removeCardsModel"
+							 class="row"
+						>
+							<p>Please select an appropriate destination for the current cards.</p>
 							<label
 								><strong>Destination for Cards</strong></label
 							>
@@ -158,21 +193,7 @@
 						</div>
 						<br />
 
-						<!-- WARNING -->
-						<div class="alert alert-warning">
-							<h4>WARNING</h4>
-							<p>
-								This process can not be reversed. Deleting a
-								{propertyName} will remove it.
-							</p>
 
-							<p>
-								All existing cards will be moved to the stated
-								location you have provided. Any cards that have
-								been archived or deleted, will still be
-								associated with the removed card.
-							</p>
-						</div>
 					</div>
 					<div class="modal-footer">
 						<button
@@ -201,7 +222,7 @@
 	import axios from "axios";
 	import { Modal } from "bootstrap";
 	import { Icon } from "@iconify/vue";
-	import { NSelect } from "naive-ui";
+	import { NSelect, NRadioGroup, NRadio, NSpace } from "naive-ui";
 	import draggable from "vuedraggable";
 	import { mapGetters } from "vuex";
 
@@ -221,7 +242,10 @@
 		components: {
 			draggable,
 			Icon,
+			NRadio,
+			NRadioGroup,
 			NSelect,
+			NSpace,
 		},
 		props: {
 			isDirty: {
@@ -273,6 +297,7 @@
 				localPropertyList: this.propertyList,
 				newCardDestinationList: [],
 				newPropertyItem: "",
+				removeCardsModel: false,
 				singleItemId: "",
 			};
 		},
@@ -318,14 +343,15 @@
 				//Construct the data_to_send
 				const data_to_send = new FormData();
 				data_to_send.set("delete_item_id", this.deleteItemId);
-				data_to_send.set("destination_item_id", this.destinationItemId);
+
+				//Only have the destination if remove cards model is false
+				if (!this.removeCardsModel)
+				{
+					data_to_send.set("destination_item_id", this.destinationItemId);
+				}
 
 				// URL
-				const url = `${
-					this.rootUrl
-				}kanban_${this.propertyName.toLowerCase()}/${
-					this.kanbanBoardId
-				}/delete/`;
+				const url = `${this.rootUrl}kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/delete/`;
 
 				//Use axios to send data to backend
 				axios
