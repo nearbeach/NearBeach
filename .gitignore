@@ -123,3 +123,6 @@ node_modules/
 .idea/
 # Ignore any documents uploaded to the private folders
 /local/private/
+/test-results/
+/playwright-report/
+/playwright/.cache/
