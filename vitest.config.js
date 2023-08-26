@@ -6,11 +6,14 @@ export default defineConfig({
     plugins: [
         vue()
     ],
-  test: {
-    // ...
-      include: [
-          `./tests/unit/**/*.unit.js`,
-          //`./src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}`
-      ]
-  },
+    test: {
+        coverage: {
+            enabled: true,
+            provider: "v8",
+            reporter: ['text','html','json']
+        },
+        include: [
+            `./tests/unit/**/*.unit.js`,
+        ]
+    },
 })
