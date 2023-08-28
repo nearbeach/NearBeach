@@ -54,6 +54,12 @@ page_array.forEach((row) => {
         page.on(
             "console",
             message => {
+                if (message.type() === "error") {
+                    test.info().annotations.push({
+                        type: 'Console Errors',
+                        description: message.text()
+                    });
+                }
                 expect(message.type()).not.toBe("error");
             }
         );
@@ -62,6 +68,12 @@ page_array.forEach((row) => {
         page.on(
             "console",
             message => {
+                if (message.type() === "warning") {
+                    test.info().annotations.push({
+                        type: 'Console Warnings',
+                        description: message.text()
+                    });
+                }
                 expect(message.type()).not.toBe("warning");
             }
         );
