@@ -129,6 +129,9 @@
 
 						//Close the modal
 						document.getElementById("newNoteCloseButton").click();
+
+						//Clear the notes
+						this.newNoteModel = "";
 					})
 					.catch((error) => {
 						this.showErrorModal(error, this.destination);
