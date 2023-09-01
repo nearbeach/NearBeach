@@ -53,6 +53,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     c = {
         "change_task_id": change_task_id,
         "change_task_results": serializers.serialize("json", [change_task_results]),
+        "nearbeach_title": f"Change Task {change_task_id}",
         "rfc_status": rfc_results.rfc_status,
         "user_level": kwargs["user_level"],
         "user_list": user_list,
