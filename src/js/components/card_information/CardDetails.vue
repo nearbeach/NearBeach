@@ -93,10 +93,10 @@
 		>
 			<div class="col-md-12">
 				<button
-					class="btn btn-secondary"
+					class="btn btn-warning"
 					v-on:click="closeModal"
 				>
-					Close
+					Close & Discard Changes
 				</button>
 				<button
 					class="btn btn-danger archive-card"
@@ -107,10 +107,17 @@
 				</button>
 				<button
 					class="btn btn-primary save-changes"
-					v-on:click="updateCard"
+					v-on:click="updateCard(true)"
 					v-if="kanbanStatus !== 'Closed'"
 				>
-					Update Card
+					Save & Close
+				</button>
+				<button
+					class="btn btn-success save-changes"
+					v-on:click="updateCard(false)"
+					v-if="kanbanStatus !== 'Closed'"
+				>
+					Save & Continue
 				</button>
 			</div>
 		</div>
@@ -231,7 +238,7 @@
 					.getElementById("cardInformationModalCloseButton")
 					.click();
 			},
-			updateCard() {
+			updateCard(close_modal) {
 				this.$store.commit({
 					type: "updateKanbanCard",
 					card_id: this.cardId,
@@ -241,7 +248,9 @@
 				});
 
 				//TEMP - need to replace with a close functionality
-				this.$emit("update_card");
+				this.$emit("update_card", {
+					close_modal: close_modal,
+				});
 			},
 		},
 	};
