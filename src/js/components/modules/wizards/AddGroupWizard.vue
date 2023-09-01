@@ -144,6 +144,11 @@
 		},
 		methods: {
 			addGroup() {
+				//Tell user we are adding groups
+				this.$store.commit("updateAddingGroupStatus", {
+					addingGroupStatus: true,
+				});
+
 				//Send the database the new groups to add
 				const data_to_send = new FormData();
 
@@ -166,6 +171,11 @@
 							potentialGroupList: response.data.potential_group_list,
 							potentialUserList: response.data.potential_user_list,
 						})
+
+						//Update the user
+						this.$store.commit("updateAddingGroupStatus", {
+							addingGroupStatus: false,
+						});
 
 						//Close this modal
 						document.getElementById("addGroupCloseButton").click();
