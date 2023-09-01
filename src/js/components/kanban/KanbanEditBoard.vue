@@ -12,6 +12,16 @@
 						Drag the cards around to sort out the columns how you
 						want them.
 					</p>
+          <n-switch v-model:value="canDragCards"
+                    @update:value="updateCanDragCards"
+          >
+            <template #checked>
+              Can Drag Cards
+            </template>
+            <template #unchecked>
+              Card Position Locked
+            </template>
+          </n-switch>
 				</div>
 				<div class="col-md-4">
 					<kanban-property-order
@@ -61,6 +71,7 @@
 
 <script>
 	import { Modal } from "bootstrap";
+  import { NSwitch } from "naive-ui";
 
 	// Components
 	import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
@@ -80,6 +91,7 @@
 		},
 		components: {
 			KanbanPropertyOrder,
+      NSwitch,
 		},
 		props: {
 			columnResults: {
@@ -120,6 +132,7 @@
 		mixins: [errorModalMixin, searchMixin],
 		data() {
 			return {
+        canDragCards: true,
 				columnModel: [],
 				levelModel: [],
 			};
@@ -140,6 +153,12 @@
 				const modal = new Modal("#confirmKanbanBoardClosure");
 				modal.show();
 			},
+      updateCanDragCards(value) {
+        this.$store.commit({
+          type: "updateCanDragCards",
+          canDragCards: value,
+        })
+      },
 			updatePropertyList(data) {
 				this[data.source] = data.data;
 			},

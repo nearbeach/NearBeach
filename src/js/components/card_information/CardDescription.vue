@@ -38,17 +38,24 @@
 		>
 			<div class="col-md-12">
 				<button
-					class="btn btn-secondary"
+					class="btn btn-warning"
 					v-on:click="closeModal"
 				>
-					Close
+					Close & Discard Changes
 				</button>
+       			<button
+       			    class="btn btn-primary save-changes"
+       			    v-on:click="updateCard(true)"
+       			    v-if="kanbanStatus !== 'Closed'"
+       			>
+       			  Save & Close
+       			</button>
 				<button
-					class="btn btn-primary save-changes"
-					v-on:click="updateCard"
+					class="btn btn-success save-changes"
+					v-on:click="updateCard(false)"
 					v-if="kanbanStatus !== 'Closed'"
 				>
-					Update Card
+					Save & Continue
 				</button>
 			</div>
 		</div>
@@ -101,8 +108,10 @@
 					.getElementById("cardInformationModalCloseButton")
 					.click();
 			},
-			updateCard() {
-				this.$emit("update_card");
+			updateCard(close_modal) {
+				this.$emit("update_card", {
+					close_modal: close_modal,
+				});
 			},
 		},
 	};

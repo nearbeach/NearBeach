@@ -7,7 +7,7 @@
 			{{ destination }}. Users will have to be included in these groups to
 			be added to this {{ destination }}
 		</p>
-		<div v-if="objectGroupList.length == 0"
+		<div v-if="objectGroupList.length == 0 && !addingGroupStatus"
 			class="alert alert-dark"
 		>
 			Sorry - there are no groups active.
@@ -30,6 +30,11 @@
 						v-on:click="removeGroup(group.group_id)"
 					/>	
 				</div>
+			</div>
+			<div v-if="addingGroupStatus"
+				class="group-card"
+			>
+				<div class="group-card--details">++ Adding New Group ++</div>
 			</div>
 		</div>
 
@@ -58,7 +63,7 @@
 			groups list above.
 		</p>
 		<div
-			v-if="objectUserList.length == 0"
+			v-if="objectUserList.length === 0 && !addingUserStatus"
 			class="alert alert-dark"
 		>
 			Sorry - there are no current users active.
@@ -94,6 +99,11 @@
 						v-on:click="removeUser(user.username)"
 					/>
 				</div>
+			</div>
+			<div v-if="addingUserStatus"
+				 class="user-card"
+			>
+				<div class="user-card--details">++ Adding User(s) ++</div>
 			</div>
 		</div>
 
@@ -143,6 +153,8 @@
 		],
 		computed: {
 			...mapGetters({
+				addingGroupStatus: "getAddingGroupStatus",
+				addingUserStatus: "getAddingUserStatus",
 				destination: "getDestination",
 				locationId: "getLocationId",
 				objectGroupList: "getObjectGroupList",

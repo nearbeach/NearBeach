@@ -133,7 +133,7 @@
 							aria-labelledby="details-tab"
 						>
 							<card-details
-								v-on:update_card="updateCard"
+								v-on:update_card="updateCard($event)"
 							></card-details>
 						</div>
 
@@ -144,7 +144,7 @@
 							aria-labelledby="description-tab"
 						>
 							<card-description
-								v-on:update_card="updateCard"
+								v-on:update_card="updateCard($event)"
 							></card-description>
 						</div>
 
@@ -224,7 +224,7 @@
 			}),
 		},
 		methods: {
-			updateCard() {
+			updateCard(data) {
 				//Get all data from VueX
 				const all_data = this.$store.getters.getAllCardData;
 
@@ -258,9 +258,12 @@
 							kanban_card_priority: all_data.cardPriority,
 						});
 
-						document
-							.getElementById("cardInformationModalCloseButton")
-							.click();
+						//Only close if data.close_modal is true
+						if (data.close_modal) {
+							document
+								.getElementById("cardInformationModalCloseButton")
+								.click();
+						}
 					})
 					.catch((error) => {});
 			},

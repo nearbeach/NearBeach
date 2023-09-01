@@ -12,6 +12,7 @@
 		<!-- The column of data where you can sort the properties -->
 		<draggable
 			v-model="localPropertyList"
+      :disabled="!canDragCards"
 			item-key="pk"
 			ghost-class="ghost"
 			@change="sendPropertyListUp"
@@ -314,6 +315,7 @@
 		},
 		computed: {
 			...mapGetters({
+        canDragCards: "getCanDragCards",
 				rootUrl: "getRootUrl",
 			}),
 		},

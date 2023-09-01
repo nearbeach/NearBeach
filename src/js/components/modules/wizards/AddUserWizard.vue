@@ -149,6 +149,11 @@
 		},
 		methods: {
 			addUser() {
+				//Update user about adding user
+				this.$store.commit("updateAddingUserStatus", {
+					addingUserStatus: true
+				});
+
 				//Construct the data_to_send array
 				const data_to_send = new FormData();
 
@@ -176,7 +181,12 @@
 							objectUserList: response.data.object_user_list,
 							potentialGroupList: response.data.potential_group_list,
 							potentialUserList: response.data.potential_user_list,
-						})
+						});
+
+						//User has been added - return to false
+						this.$store.commit("updateAddingUserStatus", {
+							addingUserStatus: false,
+						});
 					})
 					.catch((error) => {
 						this.showErrorModal(error, this.destination);
