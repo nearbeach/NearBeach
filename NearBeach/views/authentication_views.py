@@ -1,6 +1,6 @@
 # Import Forms
 from ..forms import PermissionSet, Group, LoginForm, User
-from ..models import UserGroup, Notification, Organisation
+from ..models import UserGroup, Notification, Organisation, User
 
 # Import Django Libraries
 from django.contrib import auth
@@ -243,7 +243,7 @@ def login(request):
             user_group_count = len(
                 UserGroup.objects.filter(
                     is_deleted=False,
-                    username_id=User.objects.get(username=username).id,
+                    username_id__in=User.objects.filter(username=username).values('id'),
                 )
             )
 
