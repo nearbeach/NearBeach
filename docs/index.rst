@@ -70,10 +70,14 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
     :hidden:
     :caption: 🪀 Basic Usage
 
+    Basic Usage </004-basic-usage/index>
+
 .. toctree::
     :maxdepth: 3
     :hidden:
     :caption: 🛝 Procedure
+
+    Procedures </005-procedures/index>
 
 .. toctree::
     :maxdepth: 3
