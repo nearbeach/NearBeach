@@ -946,3 +946,11 @@ class UserRemovePermissionForm(forms.Form):
         queryset=UserGroup.objects.all(),
         required=True,
     )
+
+
+class UserSettingsForm(forms.ModelForm):
+    class Meta:
+        fields = [
+            "setting_type",
+            "setting_data",
+        ]

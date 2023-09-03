@@ -1569,3 +1569,24 @@ class UserProfilePicture(models.Model):
     def __str__(self):
         # Return the document key
         return self.document.document_key
+
+
+class UserSetting(models.Model):
+    class SettingType(models.TextChoices):
+        DASHBOARD = "DASHBOARD", _("Dashboard")
+        EDIT_KANBAN_BOARD = "EDIT_KANBAN_BOARD", _("Edit Kanban Board")
+        KANBAN_BOARD = "KANBAN_BOARD", _("Kanban Board")
+        SEARCH = "SEARCH", _("Search")
+        THEME = "THEME", _("NearBeach Theme")
+
+    user_setting_id = models.BigAutoField(primary_key=True)
+    username = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+    setting_type = models.CharField(
+        max_length=30,
+        choices=SettingType.choices,
+        default=SettingType.THEME
+    )
+    setting_data = models.JSONField()

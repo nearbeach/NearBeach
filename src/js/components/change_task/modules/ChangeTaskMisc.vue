@@ -6,7 +6,7 @@
 </template>
 
 <script>
-    import IsDowntime from './isDowntime.vue'
+    import IsDowntime from './IsDowntime.vue'
     import RequiredBy from './RequiredBy.vue'
 
     export default {
