@@ -117,9 +117,12 @@ node_modules/
 
 # browser stack config
 /tests/browserstatck/config.py
+/tests/.auth/
 
 .vscode/
 
 .idea/
 # Ignore any documents uploaded to the private folders
 /local/private/
+/playwright-report/
+/test-results/
