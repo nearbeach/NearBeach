@@ -37,16 +37,13 @@ def delete_user_settings(request):
 
 
 # Internal function
-def get_user_settings(request):
+def get_user_settings(request, setting_type):
     # Get form data
-    form = UserSettingsForm(request.POST)
-    if not form.is_valid():
-        return HttpResponseBadRequest(form.errors)
 
     # Get user settings data
     return UserSetting.objects.filter(
         username=request.user,
-        setting_type=form.cleaned_data['setting_type'],
+        setting_type=setting_type,
     )
 
 

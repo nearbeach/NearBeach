@@ -12,6 +12,7 @@ from NearBeach.decorators.check_user_permissions import check_user_admin_permiss
 from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm, UserRemovePermissionForm
 from NearBeach.models import UserGroup
 from NearBeach.views.tools.internal_functions import get_user_permissions
+from NearBeach.views.theme_views import get_theme
 
 import json
 
@@ -31,6 +32,8 @@ def new_user(request, *args, **kwargs):
     # Get context
     c = {
         "nearbeach_title": "New User",
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

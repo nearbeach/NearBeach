@@ -74,6 +74,10 @@
 							v-model:value="themeModel"
 							:options="themeList"
 						/>
+						<p class="error"
+						   v-if="showMessage">
+							Please update user details to save.
+						</p>
 					</div>
 				</div>
 			</div>
@@ -138,6 +142,7 @@
 				emailModel: this.userResults[0].email,
 				firstNameModel: this.userResults[0].first_name,
 				lastNameModel: this.userResults[0].last_name,
+				showMessage: false,
 				themeList: [
 					{
 						label: "Light Theme",
@@ -152,8 +157,8 @@
 			};
 		},
 		watch: {
-			themeModel(new_value) {
-				document.documentElement.dataset["bs-theme"] = new_value;
+			themeModel() {
+				this.showMessage = true;
 			},
 		},
 		mixins: [errorModalMixin, loadingModalMixin],
@@ -189,9 +194,15 @@
 				data_to_send.set("username", this.userResults[0].id);
 				data_to_send.set("first_name", this.firstNameModel);
 				data_to_send.set("last_name", this.lastNameModel);
+				data_to_send.set("theme", this.themeModel);
 
 				//Open up the loading modal
 				this.showLoadingModal("Project");
+				this.showMessage = false;
+
+				//Updating the theme
+				document.documentElement.setAttribute("data-bs-theme", this.themeModel);
+				console.log("Document Element: ", document.documentElement);
 
 				//Send data via axios
 				axios

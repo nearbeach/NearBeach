@@ -19,16 +19,28 @@ def get_theme(request):
 
 # Internal function
 def update_theme(request, theme):
-    # Handles both creation and update
-    # Create the form we require
-    form = UserSettingsForm(
-        initial={
-            "setting_type": "theme",
-            "setting_data": F"{{ 'theme': '{theme}' }}",
-        }
+    # Grab data we are going to update
+    user_settings_update = UserSetting.objects.filter(
+        username=request.user,
+        setting_type="theme",
     )
 
-    # Send the data to update_user_settings
-    # If we need to create a new setting - it is handled in the function
-    return update_user_settings(request, form)
+    # If there is no data - create the data instead of update
+    if len(user_settings_update) == 0:
+        create_user_settings = UserSetting(
+            username=request.user,
+            setting_type="theme",
+            setting_data={"theme": theme}
+        )
+        create_user_settings.save()
 
+        # Nothing else to do - return
+        return
+
+    # Update the theme
+    user_settings_update.update(
+        setting_data={"theme": theme},
+    )
+
+    # Nothing else to do
+    return

@@ -9,6 +9,7 @@ from NearBeach.decorators.check_user_permissions import check_user_customer_perm
 from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
 from NearBeach.models import Customer, ListOfTitle, Organisation
 from NearBeach.views.document_views import handle_document_permissions
+from NearBeach.views.theme_views import get_theme
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -38,7 +39,9 @@ def customer_information(request, customer_id, *args, **kwargs):
     c = {
         "customer_results": serializers.serialize("json", [customer_results]),
         "nearbeach_title": f"Customer Information {customer_id}",
+        "need_tinymce": False,
         "organisation_results": serializers.serialize("json", organisation_results),
+        "theme": get_theme(request),
         "title_list": serializers.serialize("json", title_list),
         "user_level": kwargs["user_level"],
     }

@@ -26,6 +26,7 @@ from .models import (
     Document,
     ObjectAssignment,
     UserGroup,
+    UserSetting,
 )
 
 
@@ -928,6 +929,10 @@ class UpdateUserForm(forms.ModelForm):
         max_length=255,
         required=False,
     )
+    theme = forms.CharField(
+        max_length=255,
+        required=False,
+    )
     # Basic Meta Data
 
     class Meta:
@@ -950,6 +955,7 @@ class UserRemovePermissionForm(forms.Form):
 
 class UserSettingsForm(forms.ModelForm):
     class Meta:
+        model = UserSetting
         fields = [
             "setting_type",
             "setting_data",

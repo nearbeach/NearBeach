@@ -1,6 +1,7 @@
 from django.http import HttpResponseForbidden, Http404, HttpResponseServerError
 from django.template import loader
 from django.contrib.auth.decorators import login_required
+from NearBeach.views.theme_views import get_theme
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -16,7 +17,9 @@ def error_403(request, exception):
 
     c = {
         "nearbeach_title": "NearBeach Forbidden",
+        "need_tinymce": False,
         "exception": exception,
+        "theme": get_theme(request),
     }
 
     return HttpResponseForbidden(t.render(c, request))

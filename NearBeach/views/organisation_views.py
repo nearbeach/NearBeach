@@ -10,6 +10,7 @@ from NearBeach.decorators.check_user_permissions import (
 from NearBeach.forms import OrganisationForm, ProfilePictureForm
 from NearBeach.models import Organisation, Customer, ListOfTitle
 from NearBeach.views.document_views import handle_document_permissions
+from NearBeach.views.theme_views import get_theme
 
 
 @require_http_methods(["POST"])
@@ -41,6 +42,8 @@ def new_organisation(request, *args, **kwargs):
     # Get Context
     c = {
         "nearbeach_title": "New Organisation",
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -142,6 +145,8 @@ def organisation_information(request, organisation_id, *args, **kwargs):
         "organisation_id": organisation_id,
         "organisation_results": serializers.serialize("json", [organisation_results]),
         "nearbeach_title": f"Organisation Information {organisation_id}",
+        "need_tinymce": False,
+        "theme": get_theme(request),
         "title_list": serializers.serialize("json", title_list),
         "user_level": user_level,
     }

@@ -214,6 +214,7 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
     # Get context
     c = get_context(kanban_board_id)
     c["theme"] = get_theme(request)
+    c["need_tinymce"] = False
     c["user_level"] = user_level
     c["group_results"] = serializers.serialize("json", group_results)
 
@@ -247,6 +248,7 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
     # Get context
     c = get_context(kanban_board_id)
     c["theme"] = get_theme(request)
+    c["need_tinymce"] = True
     c["user_level"] = user_level
     c["kanban_card_results"] = serializers.serialize("json", kanban_card_results)
     c["open_card_on_load"] = open_card_on_load

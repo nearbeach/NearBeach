@@ -9,6 +9,7 @@ from NearBeach.forms import NewProjectForm, ProjectForm
 from NearBeach.models import Group, UserGroup, ObjectAssignment
 from NearBeach.views.tools.internal_functions import Project, Organisation
 from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.views.theme_views import get_theme
 
 import json
 
@@ -46,7 +47,9 @@ def new_project(request, *args, **kwargs):
     # Context
     c = {
         "group_results": serializers.serialize("json", group_results),
+        "need_tinymce": True,
         "nearbeach_title": "New Project",
+        "theme": get_theme(request),
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
@@ -131,11 +134,13 @@ def project_information(request, project_id, *args, **kwargs):
     # Context
     c = {
         "nearbeach_title": f"Project Information {project_id}",
+        "need_tinymce": True,
         "organisation_results": serializers.serialize("json", organisation_results),
         "project_id": project_id,
         "project_results": serializers.serialize("json", [project_results]),
         "project_status": project_status,
         "user_level": user_level,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
