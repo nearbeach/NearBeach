@@ -61,6 +61,24 @@
 			</div>
 			<hr />
 
+			<!-- THEME SETTINGS -->
+			<div class="row">
+				<div class="col-md-4">
+					<strong>Theme Preference</strong>
+					<p class="text-instructions">Please choose an appropriate theme for NearBeach</p>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+						<label>Theme</label>
+						<n-select
+							v-model:value="themeModel"
+							:options="themeList"
+						/>
+					</div>
+				</div>
+			</div>
+			<hr />
+
 			<!-- UPDATE USER -->
 			<div class="row submit-row">
 				<div class="col-md-12">
@@ -79,6 +97,7 @@
 
 <script>
 	const axios = require("axios");
+	import { NSelect } from "naive-ui";
 
 	//Validations
 	import useVuelidate from "@vuelidate/core";
@@ -111,6 +130,7 @@
 			},
 		},
 		components: {
+			NSelect,
 			ValidationRendering,
 		},
 		data() {
@@ -118,7 +138,23 @@
 				emailModel: this.userResults[0].email,
 				firstNameModel: this.userResults[0].first_name,
 				lastNameModel: this.userResults[0].last_name,
+				themeList: [
+					{
+						label: "Light Theme",
+						value: "light",
+					},
+					{
+						label: "Dark Theme",
+						value: "dark",
+					},
+				],
+				themeModel: "light",
 			};
+		},
+		watch: {
+			themeModel(new_value) {
+				document.documentElement.dataset["bs-theme"] = new_value;
+			},
 		},
 		mixins: [errorModalMixin, loadingModalMixin],
 		validations() {
@@ -134,6 +170,9 @@
 			};
 		},
 		methods: {
+			updateTheme() {
+				//Get the body
+			},
 			updateUser() {
 				//Check form validation
 				this.v$.$touch();
