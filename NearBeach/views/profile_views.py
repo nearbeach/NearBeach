@@ -46,6 +46,7 @@ def profile_information(request):
 
     # Construct Context
     c = {
+        "nearbeach_title": F"Profile Information",
         "user_profile": serializers.serialize("json", user_profile),
         "user_results": json.dumps(list(user_results), cls=DjangoJSONEncoder),
         "need_tinymce": False,

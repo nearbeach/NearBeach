@@ -1,6 +1,6 @@
 # Import Forms
 from ..forms import PermissionSet, Group, LoginForm, User
-from ..models import UserGroup, Notification
+from ..models import UserGroup, Notification, Organisation, User
 
 # Import Django Libraries
 from django.contrib import auth
@@ -34,7 +34,7 @@ def check_first_time_login(request):
     """
     if not PermissionSet.objects.all():
         # Create administration permission_set
-        submit_permission_set = PermissionSet(
+        submit_permission_set_1 = PermissionSet(
             permission_set_name="Administration Permission Set",
             administration_assign_user_to_group=4,
             administration_create_group=4,
@@ -54,7 +54,73 @@ def check_first_time_login(request):
             task_history=1,
             change_user=request.user,
         )
-        submit_permission_set.save()
+        submit_permission_set_1.save()
+
+        submit_permission_set_2 = PermissionSet(
+            permission_set_name="Power Permission Set",
+            administration_assign_user_to_group=0,
+            administration_create_group=0,
+            administration_create_permission_set=0,
+            administration_create_user=0,
+            bug_client=4,
+            customer=4,
+            kanban_card=4,
+            organisation=4,
+            project=4,
+            requirement=4,
+            task=4,
+            tag=4,
+            document=1,
+            kanban_comment=1,
+            project_history=1,
+            task_history=1,
+            change_user=request.user,
+        )
+        submit_permission_set_2.save()
+
+        submit_permission_set_3 = PermissionSet(
+            permission_set_name="Normal Permission Set",
+            administration_assign_user_to_group=0,
+            administration_create_group=0,
+            administration_create_permission_set=0,
+            administration_create_user=0,
+            bug_client=3,
+            customer=3,
+            kanban_card=3,
+            organisation=3,
+            project=3,
+            requirement=3,
+            task=3,
+            tag=3,
+            document=1,
+            kanban_comment=1,
+            project_history=1,
+            task_history=1,
+            change_user=request.user,
+        )
+        submit_permission_set_3.save()
+
+        submit_permission_set_3 = PermissionSet(
+            permission_set_name="Read Only Permission Set",
+            administration_assign_user_to_group=0,
+            administration_create_group=0,
+            administration_create_permission_set=0,
+            administration_create_user=0,
+            bug_client=1,
+            customer=1,
+            kanban_card=1,
+            organisation=1,
+            project=1,
+            requirement=1,
+            task=1,
+            tag=1,
+            document=1,
+            kanban_comment=1,
+            project_history=1,
+            task_history=1,
+            change_user=request.user,
+        )
+        submit_permission_set_3.save()
 
         # Create admin group
         submit_group = Group(
@@ -67,10 +133,19 @@ def check_first_time_login(request):
         submit_user_group = UserGroup(
             username=request.user,
             group=submit_group,
-            permission_set=submit_permission_set,
+            permission_set=submit_permission_set_1,
             change_user=request.user,
         )
         submit_user_group.save()
+
+        # Create no organisation
+        submit_organisation = Organisation(
+            organisation_name="No Organisation",
+            organisation_website="https://nearbeach.org",
+            organisation_email="noreply@nearbeach.org",
+            change_user=request.user,
+        )
+        submit_organisation.save()
 
     request.session["is_superuser"] = request.user.is_superuser
 
@@ -168,7 +243,7 @@ def login(request):
             user_group_count = len(
                 UserGroup.objects.filter(
                     is_deleted=False,
-                    username_id=User.objects.get(username=username).id,
+                    username_id__in=User.objects.filter(username=username).values('id'),
                 )
             )
 

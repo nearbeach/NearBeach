@@ -163,8 +163,8 @@ def get_object_search_data(search_form, request):
     rfc_results = rfc_results.order_by("rfc_title")[:25]
     requirement_results = requirement_results.order_by("requirement_title")[:25]
     project_results = project_results.order_by("project_name")[:25]
-    task_results = task_results.order_by("task_short_description").values()[:25]
-    kanban_results = kanban_results.order_by("kanban_board_name").values()[:25]
+    task_results = task_results.order_by("task_short_description")[:25]
+    kanban_results = kanban_results.order_by("kanban_board_name")[:25]
 
     """
     The pain point

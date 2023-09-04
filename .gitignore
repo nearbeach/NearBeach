@@ -126,3 +126,4 @@ node_modules/
 /local/private/
 /playwright-report/
 /test-results/
+/playwright/.cache/

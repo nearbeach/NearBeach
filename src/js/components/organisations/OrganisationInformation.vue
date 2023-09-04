@@ -35,6 +35,7 @@
 						}"
 						:data="{}"
 						@finish="updateProfilePicture"
+						@error="showErrorModal('Profile Picture was not updated','Profile Picture','')"
 					>
 						<n-button>Update Profile Picture</n-button>
 					</n-upload>
