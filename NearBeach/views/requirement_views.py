@@ -27,6 +27,7 @@ from NearBeach.models import (
     Group,
     UserGroup,
 )
+from NearBeach.views.theme_views import get_theme
 
 
 @require_http_methods(["POST"])
@@ -219,6 +220,7 @@ def new_requirement(request, *args, **kwargs):
 
     # context
     c = {
+        "need_tinymce": True,
         "nearbeach_title": "New Requirements",
         "status_list": serializers.serialize("json", status_list),
         "type_list": serializers.serialize("json", type_list),
@@ -226,6 +228,7 @@ def new_requirement(request, *args, **kwargs):
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -339,6 +342,8 @@ def requirement_information(request, requirement_id, *args, **kwargs):
         "status_list": serializers.serialize("json", status_list),
         "type_list": serializers.serialize("json", type_list),
         "user_level": user_level,
+        "need_tinymce": True,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

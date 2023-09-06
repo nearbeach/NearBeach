@@ -154,8 +154,10 @@ def new_customer(request, *args, **kwargs):
 
     # Get Context
     c = {
+        "need_tinymce": False,
         "nearbeach_title": "New Customer",
         "title_list": serializers.serialize("json", title_list),
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

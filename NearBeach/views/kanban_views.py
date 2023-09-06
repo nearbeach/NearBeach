@@ -442,10 +442,12 @@ def new_kanban(request, *args, **kwargs):
     # Context
     c = {
         "group_results": serializers.serialize("json", group_results),
+        "need_tinymce": False,
         "nearbeach_title": f"New Kanban",
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

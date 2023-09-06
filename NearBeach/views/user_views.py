@@ -122,6 +122,8 @@ def user_information(request, username, *args, **kwargs):
         "user_list_results": user_list_results,
         "user_results": serializers.serialize("json", [user_results]),
         "username": username,
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

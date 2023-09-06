@@ -24,6 +24,7 @@ from NearBeach.models import (
     Tag,
     UserGroup,
 )
+from NearBeach.views.theme_views import get_theme
 
 
 # Internal Function
@@ -214,9 +215,11 @@ def search(request):
     # Context
     c = {
         "include_closed": include_closed,
+        "need_tinymce": False,
         "nearbeach_title": "Search",
         "search_input": form.cleaned_data["search"],
         "search_results": get_object_search_data(form, request),
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -252,8 +255,10 @@ def search_customer(request):
     )[:50]
 
     c = {
+        "need_tinymce": False,
         "customer_results": serializers.serialize("json", customer_results),
         "nearbeach_title": "Search Customers",
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -313,6 +318,8 @@ def search_group(request):
     c = {
         "group_results": serializers.serialize("json", group_results),
         "nearbeach_title": "Search Groups",
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -363,8 +370,10 @@ def search_organisation(request):
     )[:25]
 
     c = {
+        "need_tinymce": True,
         "nearbeach_title": "Search Organisations",
         "organisation_results": serializers.serialize("json", organisation_results),
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -419,6 +428,8 @@ def search_permission_set(request):
     c = {
         "nearbeach_title": "Search Permission Sets",
         "permission_set_results": serializers.serialize("json", permission_set_results),
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -470,7 +481,9 @@ def search_tag(request, *args, **kwargs):
 
     # Context
     c = {
+        "need_tinymce": False,
         "tag_results": serializers.serialize("json", tag_results),
+        "theme": get_theme(request),
     }
 
     # Send back json data
@@ -505,6 +518,8 @@ def search_user(request):
     c = {
         "nearbeach_title": "Search User",
         "user_results": json.dumps(list(user_results), cls=DjangoJSONEncoder),
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

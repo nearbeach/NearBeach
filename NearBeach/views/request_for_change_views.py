@@ -26,6 +26,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
+from NearBeach.views.theme_views import get_theme
 
 
 # Internal function
@@ -108,6 +109,7 @@ def get_rfc_context(rfc_id):
         "rfc_results": serializers.serialize("json", [rfc_results]),
         "rfc_change_lead": rfc_change_lead,
         "user_list": user_list,
+        "need_tinymce": True,
     }
 
     return c
@@ -146,9 +148,11 @@ def new_request_for_change(request, *args, **kwargs):
 
     # Context
     c = {
+        "need_tinymce": True,
         "group_results": serializers.serialize("json", group_results),
         "nearbeach_title": "New RFC",
         "user_group_results": user_group_results,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -302,6 +306,7 @@ def rfc_information(request, rfc_id, *args, **kwargs):
     # Get context
     c = get_rfc_context(rfc_id)
     c["user_level"] = kwargs["user_level"]
+    c["theme"] = get_theme(request)
 
     return HttpResponse(t.render(c, request))
 
@@ -375,6 +380,7 @@ def rfc_readonly(request, rfc_id, *args, **kwargs):
     # Add the group_leader_count to c dict
     c.update({"group_leader_count": group_leader_count})
     c["user_level"] = kwargs["user_level"]
+    c["theme"] = get_theme(request)
 
     return HttpResponse(t.render(c, request))
 
