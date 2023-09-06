@@ -145,7 +145,7 @@ def organisation_information(request, organisation_id, *args, **kwargs):
         "organisation_id": organisation_id,
         "organisation_results": serializers.serialize("json", [organisation_results]),
         "nearbeach_title": f"Organisation Information {organisation_id}",
-        "need_tinymce": False,
+        "need_tinymce": True,
         "theme": get_theme(request),
         "title_list": serializers.serialize("json", title_list),
         "user_level": user_level,
