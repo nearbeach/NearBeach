@@ -4,6 +4,10 @@
 // Import Bootstrap
 @import "~bootstrap/scss/bootstrap";
 
+// Import Themes
+@import "./themes/light_theme";
+@import "./themes/dark_theme";
+
 //Import components
 @import "components/body";
 @import "components/buttons";
