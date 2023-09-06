@@ -126,6 +126,10 @@
 				type: String,
 				default: "/",
 			},
+			theme: {
+				type: String,
+				default: "light",
+			},
 			userResults: {
 				type: Array,
 				default: () => {
@@ -153,7 +157,7 @@
 						value: "dark",
 					},
 				],
-				themeModel: "light",
+				themeModel: this.theme,
 			};
 		},
 		watch: {
