@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>{{ kanbanBoardResults[0].fields.kanban_board_name }}</h1>
@@ -67,6 +68,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -82,6 +84,7 @@
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import searchMixin from "../../mixins/searchMixin";
 
 	export default {
@@ -124,12 +127,16 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			userLevel: {
 				type: Number,
 				default: 0,
 			},
 		},
-		mixins: [errorModalMixin, searchMixin],
+		mixins: [errorModalMixin, getThemeMixin, searchMixin],
 		data() {
 			return {
         canDragCards: true,

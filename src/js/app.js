@@ -23,6 +23,9 @@ axios.defaults.xsrfCookieName = "csrftoken";
 //nextTick
 import { nextTick } from 'vue';
 
+//Naive-ui
+import { NConfigProvider } from "naive-ui";
+
 //Lazy Load Parent Components
 import {
 	//BugsModule,
@@ -140,4 +143,5 @@ const app = createApp({
 app.config.devtools = true;
 app.use(store);
 app.provide('nextTick', nextTick) //Do the same thing with axios, modal etc.
+app.component("NConfigProvider", NConfigProvider);
 app.mount("#app");

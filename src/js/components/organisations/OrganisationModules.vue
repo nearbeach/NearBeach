@@ -1,5 +1,6 @@
 <template>
-	<div class="card">
+  <n-config-provider :theme="getTheme(theme)">
+  <div class="card">
 		<div class="card-body">
 			<!-- The MENU Items -->
 			<ul
@@ -189,6 +190,7 @@
 			v-bind:title-list="titleList"
 		></new-customer-modal>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -205,6 +207,7 @@
 	// import { mapGetters } from 'vuex';
 
 	//Mixins
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import iconMixin from "../../mixins/iconMixin";
 
 	export default {
@@ -241,6 +244,10 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			titleList: {
 				type: Array,
 				default: () => {
@@ -257,7 +264,7 @@
 			//     userLevel: 'getUserLevel',
 			// }),
 		},
-		mixins: [iconMixin],
+		mixins: [getThemeMixin, iconMixin],
 		methods: {
 			addNewContact() {
 				var new_customer_modal = new Modal(

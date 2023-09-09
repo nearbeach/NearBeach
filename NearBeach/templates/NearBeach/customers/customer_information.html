@@ -13,6 +13,7 @@
                           v-bind:root-url="`{% url 'dashboard' %}`"
                           v-bind:static-url="`{% static '/' %}`"
                           v-bind:user-level="{{user_level}}"
+                          v-bind:theme="'{{ theme }}'"
     ></customer-information>
 
     {% if user_level == 1 %}

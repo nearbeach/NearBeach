@@ -9,10 +9,14 @@
                        v-bind:user-level="{{user_level}}"
                        v-bind:root-url="`{% url 'dashboard' %}`"
                        v-bind:static-url="`{% static '/' %}`"
+                       v-bind:theme="`{{ theme }}`"
     ></kanban-edit-board>
 
-    <kanban-group-permissions 
+    <kanban-group-permissions
+            v-bind:theme="`{{ theme }}`"
     ></kanban-group-permissions>
 
-	<confirm-kanban-board-closure></confirm-kanban-board-closure>
+	 <confirm-kanban-board-closure
+             v-bind:theme="`{{ theme }}`"
+    ></confirm-kanban-board-closure>
 {% endblock %}

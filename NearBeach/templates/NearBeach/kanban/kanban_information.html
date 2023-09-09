@@ -9,6 +9,7 @@
                         v-bind:location-id="{{kanban_board_id}}"
                         v-bind:root-url="`{% url 'dashboard' %}`"
                         v-bind:static-url="`{% static '' %}`"
+                        v-bind:theme="`{{ theme }}`"
                         v-bind:user-level="{{user_level}}"
     ></kanban-information>
 

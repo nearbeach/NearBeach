@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<ul
@@ -305,6 +306,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -318,6 +320,9 @@
 	import ListTagsModule from "./sub_modules/ListTagsModule.vue";
 	import BugsModule from "./sub_modules/BugsModule.vue";
 	import NotesModule from "./sub_modules/NotesModule.vue";
+
+  //Mixins
+  import getThemeMixin from "../../mixins/getThemeMixin";
 
 	export default {
 		name: "ParentModules",
@@ -333,6 +338,9 @@
 			RequirementItemsModule,
 			RequirementLinksModule,
 		},
+    mixins: [
+        getThemeMixin
+    ],
 		props: {
 			destination: {
 				type: String,
@@ -350,6 +358,10 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			userLevel: {
 				type: Number,
 				default: 0,

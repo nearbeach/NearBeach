@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<!-- HEADER -->
@@ -55,6 +56,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -67,6 +69,7 @@
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import searchMixin from "../../mixins/searchMixin";
 
 	//Components
@@ -94,6 +97,10 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			titleList: {
 				type: Array,
 				default() {
@@ -101,7 +108,7 @@
 				},
 			},
 		},
-		mixins: [errorModalMixin, searchMixin],
+		mixins: [errorModalMixin, getThemeMixin, searchMixin],
 		data() {
 			return {
 				customerEmailModel: "",

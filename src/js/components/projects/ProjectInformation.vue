@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>Project Information</h1>
@@ -159,6 +160,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -178,6 +180,7 @@
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import loadingModalMixin from "../../mixins/loadingModalMixin";
 	import uploadMixin from "../../mixins/uploadMixin";
 
@@ -210,6 +213,10 @@
 					return [];
 				},
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			userLevel: {
 				type: Number,
 				default: 1,
@@ -221,7 +228,7 @@
 				staticUrl: "getStaticUrl",
 			}),
 		},
-		mixins: [errorModalMixin, loadingModalMixin, uploadMixin],
+		mixins: [errorModalMixin, getThemeMixin, loadingModalMixin, uploadMixin],
 		data() {
 			return {
 				isReadOnly: false,
