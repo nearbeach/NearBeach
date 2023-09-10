@@ -29,6 +29,18 @@
 				There are no customers with the search parameters used. Please
 				try again.
 			</div>
+
+			<hr>
+			<div class="row submit-row">
+				<div class="col-md-12">
+					<a
+						v-bind:href="`${rootUrl}new_customer/`"
+						class="btn btn-primary save-changes"
+					>
+						Add new Customer
+					</a>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
