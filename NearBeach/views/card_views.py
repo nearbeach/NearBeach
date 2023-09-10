@@ -4,7 +4,6 @@ from django.views.decorators.http import require_http_methods
 
 from NearBeach.models import KanbanCard
 
-
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["GET"])
 def card_information(request, card_id):

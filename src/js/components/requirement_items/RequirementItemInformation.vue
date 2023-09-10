@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>Requirement Item Information</h1>
@@ -171,6 +172,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -185,6 +187,7 @@
 	import { mapGetters } from "vuex";
 
 	//Mixins
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import iconMixin from "../../mixins/iconMixin";
 	import uploadMixin from "../../mixins/uploadMixin";
 
@@ -227,6 +230,10 @@
 					return [];
 				},
 			},
+      theme: {
+        type: String,
+        default: ""
+      },
 			typeList: {
 				type: Array,
 				default: () => {
@@ -250,7 +257,7 @@
 				return `${this.rootUrl}private/${this.stakeholderModel.organisation_profile_picture}`;
 			},
 		},
-		mixins: [iconMixin, uploadMixin],
+		mixins: [getThemeMixin, iconMixin, uploadMixin],
 		data() {
 			return {
 				requirementItemScopeModel: "",

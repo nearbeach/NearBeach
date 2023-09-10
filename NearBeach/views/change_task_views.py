@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from NearBeach.forms import ChangeTaskIsDowntimeForm, ChangeTaskStatusForm, ChangeTaskForm, ChangeTaskDescriptionForm, ChangeTaskRequiredByForm
 from NearBeach.models import ChangeTask, RequestForChange, User
+from NearBeach.views.theme_views import get_theme
 
 from NearBeach.decorators.check_user_permissions import check_change_task_permissions
 
@@ -53,10 +54,12 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     c = {
         "change_task_id": change_task_id,
         "change_task_results": serializers.serialize("json", [change_task_results]),
+        "need_tinymce": True,
         "nearbeach_title": f"Change Task {change_task_id}",
         "rfc_status": rfc_results.rfc_status,
         "user_level": kwargs["user_level"],
         "user_list": user_list,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

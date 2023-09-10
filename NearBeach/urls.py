@@ -26,6 +26,7 @@ from .views import (
     search_views,
     tag_views,
     task_views,
+    user_setting_views,
     user_views,
 )
 
@@ -779,8 +780,18 @@ urlpatterns = [
         admin_views.update_group_leader_status,
         name="update_group_leader_status",
     ),
+    # DELETE IS CURRENTLY NOT USED!!! PLACE INTO THE SYSTEM JUST IN CASE :)
+    # path(
+    #     "user_settings/delete/",
+    #     user_setting_views.delete_user_settings,
+    #     name="user_settings_delete",
+    # ),
+    path(
+        "user_settings/update/",
+        user_setting_views.update_user_settings,
+        name="user_settings_update",
+    ),
     # Changing and Resetting Passwords
-    # path('change-password/', auth_views.PasswordChangeView.as_view()),
     path(
         "password_reset/",
         auth_views.PasswordResetView.as_view(

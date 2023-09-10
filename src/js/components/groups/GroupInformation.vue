@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>Group Information</h1>
@@ -51,6 +52,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -59,6 +61,7 @@
 
 	//Load mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 	export default {
@@ -83,6 +86,10 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 		},
 		data() {
 			return {
@@ -91,7 +98,7 @@
 				parentGroupModel: this.groupResults[0].fields.parent_group,
 			};
 		},
-		mixins: [errorModalMixin, loadingModalMixin],
+		mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
 		methods: {
 			updateGroup() {
 				//Construct data to send

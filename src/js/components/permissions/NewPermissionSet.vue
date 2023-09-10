@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>New Permission Set</h1>
@@ -36,6 +37,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -43,6 +45,7 @@
 
 	//Import mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 
 	export default {
 		name: "NewPermissionSet",
@@ -51,13 +54,17 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 		},
 		data() {
 			return {
 				permissionSetNameModel: "",
 			};
 		},
-		mixins: [errorModalMixin],
+		mixins: [errorModalMixin, getThemeMixin],
 		methods: {
 			addNewPermissionSet() {
 				//Data to send

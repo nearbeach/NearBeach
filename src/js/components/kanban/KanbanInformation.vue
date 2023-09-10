@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div>
 		<h1 class="kanban-header">
 			{{ kanbanBoardResults[0].fields.kanban_board_name }}
@@ -70,6 +71,7 @@
 			v-on:new_card="newCard($event)"
 		></new-kanban-link-wizard>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -87,6 +89,9 @@
 
 	//Naive UI
 	import { NSwitch } from "naive-ui";
+
+  //Mixins
+  import getThemeMixin from "../../mixins/getThemeMixin";
 
 	export default {
 		name: "KanbanInformation",
@@ -148,6 +153,10 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			userLevel: {
 				type: Number,
 				default: 0,
@@ -163,6 +172,9 @@
 				this.refreshUserList = true;
 			},
 		},
+    mixins: [
+        getThemeMixin,
+    ],
 		data() {
 			return {
 				canDragCards: true,

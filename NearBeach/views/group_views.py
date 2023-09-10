@@ -9,6 +9,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from NearBeach.forms import SearchForm, NewGroupForm
 from NearBeach.models import Group
 from NearBeach.views.tools.internal_functions import get_user_permissions
+from NearBeach.views.theme_views import get_theme
 
 import json
 
@@ -66,7 +67,9 @@ def group_information(request, group_id):
         "group_id": group_id,
         "group_results": serializers.serialize("json", [group_results]),
         "nearbeach_title": f"Group Information {group_id}",
+        "need_tinymce": False,
         "parent_group_results": serializers.serialize("json", parent_group_results),
+        "theme": get_theme(request),
         "user_list_results": user_list_results,
     }
 
@@ -120,6 +123,7 @@ def new_group(request):
     c = {
         "group_results": serializers.serialize("json", group_results),
         "nearbeach_title": "New Group",
+        "theme": get_theme(request),
     }
 
     # Return

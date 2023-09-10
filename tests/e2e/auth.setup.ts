@@ -4,7 +4,7 @@ import { test as setup, expect } from '@playwright/test';
 const authFile : string = "tests/.auth/user.json";
 
 // User credentials
-const username : string = 'admin';
+const username : string = 'dark_admin';
 const password: string = 'Test1234$';
 
 setup('authenticate', async ({ page }) : Promise<void> => {

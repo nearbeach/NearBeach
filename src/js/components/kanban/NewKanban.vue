@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>New Kanban</h1>
@@ -95,6 +96,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -109,7 +111,7 @@
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
-	// import searchMixin from "../../mixins/searchMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 
 	export default {
 		name: "NewKanban",
@@ -132,6 +134,10 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			userGroupResults: {
 				type: Array,
 				default: () => {
@@ -141,6 +147,7 @@
 		},
 		mixins: [
 			errorModalMixin,
+      getThemeMixin,
 			// searchMixin,
 		],
 		data() {

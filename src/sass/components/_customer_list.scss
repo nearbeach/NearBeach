@@ -8,9 +8,9 @@
     .customer-card {
         width: calc(100% - 10px);
         height: 75px;
-        border: 1px solid lightgray;
+        border: var(--nb-object-card--border);
         padding: 10px 5px;
-        background-color: #fcfcfcf0;
+        background-color: var(--nb-object-card--background-color);
         display: flex;
         flex-direction: row;
         margin: 10px 5px 0 5px;

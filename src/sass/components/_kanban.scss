@@ -5,13 +5,13 @@
 
 .kanban-cell {
 	min-height: 80px;
-	background-color: #e0e0e0;
+	background-color: var(--nb-kanban-cell-background-color);
 	margin: 1px;
 	max-width: 350px;
 }
 
 .kanban-column-header {
-	background-color: #6fcf97;
+	background-color: var(--nb-kanban-column-header-background-color);
 	margin: 1px;
 	text-align: center;
 	font-weight: bold;
@@ -19,7 +19,7 @@
 }
 
 .kanban-level-div {
-	background-color: #56ccf2;
+	background-color: var(--nb-kanban-level-div-background-color);
 	margin: 2px 1px;
 	text-align: center;
 	padding: 4px;
@@ -85,6 +85,7 @@
 	height: 100%;
 	display: flex;
 	justify-content: space-between;
+	background-color: var(--nb-background-color);
 
 	a {
 		align-self: flex-end;

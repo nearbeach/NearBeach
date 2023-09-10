@@ -14,6 +14,7 @@ from NearBeach.models import (
     PERMISSION_LEVEL,
 )
 from NearBeach.views.tools.internal_functions import get_user_permissions
+from NearBeach.views.theme_views import get_theme
 
 import json
 
@@ -33,6 +34,8 @@ def new_permission_set(request, *args, **kwargs):
     # Get context
     c = {
         "nearbeach_title": "New Permission Set",
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -93,12 +96,14 @@ def permission_set_information(request, permission_set_id, *args, **kwargs):
     # Create the context
     c = {
         "nearbeach_title": f"Permission Set {permission_set_id}",
+        "need_tinymce": False,
         "permission_set_results": serializers.serialize(
             "json", [permission_set_results]
         ),
         "permission_set_id": permission_set_id,
         "permission_boolean": json.dumps(PERMISSION_BOOLEAN),
         "permission_level": json.dumps(PERMISSION_LEVEL),
+        "theme": get_theme(request),
         "user_list_results": user_list_results,
     }
 

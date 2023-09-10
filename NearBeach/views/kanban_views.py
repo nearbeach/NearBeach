@@ -6,6 +6,7 @@ from NearBeach.models import (
     Group,
     UserGroup,
 )
+from NearBeach.views.theme_views import get_theme
 from NearBeach.views.tools.internal_functions import (
     KanbanCard,
     KanbanBoard,
@@ -212,6 +213,8 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
 
     # Get context
     c = get_context(kanban_board_id)
+    c["theme"] = get_theme(request)
+    c["need_tinymce"] = False
     c["user_level"] = user_level
     c["group_results"] = serializers.serialize("json", group_results)
 
@@ -230,6 +233,7 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
     Renders out the kanban board information
     :param request:
     :param kanban_board_id: The board id we wish to render out
+    :param open_card_on_load: Will open a card if value is placed in here. Zero is default
     :return:
     """
     user_level = kwargs["user_level"]
@@ -243,6 +247,8 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
 
     # Get context
     c = get_context(kanban_board_id)
+    c["theme"] = get_theme(request)
+    c["need_tinymce"] = True
     c["user_level"] = user_level
     c["kanban_card_results"] = serializers.serialize("json", kanban_card_results)
     c["open_card_on_load"] = open_card_on_load
@@ -436,10 +442,12 @@ def new_kanban(request, *args, **kwargs):
     # Context
     c = {
         "group_results": serializers.serialize("json", group_results),
+        "need_tinymce": False,
         "nearbeach_title": f"New Kanban",
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

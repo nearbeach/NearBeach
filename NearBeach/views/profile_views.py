@@ -7,6 +7,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import ProfilePictureForm, User, UpdateUserForm
 from NearBeach.models import UserProfilePicture
+from NearBeach.views.theme_views import get_theme, update_theme
 
 import json
 
@@ -48,6 +49,8 @@ def profile_information(request):
         "nearbeach_title": F"Profile Information",
         "user_profile": serializers.serialize("json", user_profile),
         "user_results": json.dumps(list(user_results), cls=DjangoJSONEncoder),
+        "need_tinymce": False,
+        "theme": get_theme(request),
         "username": request.user.id,
     }
 
@@ -62,6 +65,10 @@ def update_data(request):
     form = UpdateUserForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
+
+    # Get the theme
+    theme = form.cleaned_data["theme"]
+    update_theme(request, theme)
 
     # Extract out the user results
     user_update = request.user

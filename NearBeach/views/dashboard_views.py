@@ -25,6 +25,7 @@ from NearBeach.models import (
     Bug,
     Requirement,
 )
+from NearBeach.views.theme_views import get_theme
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -41,6 +42,8 @@ def dashboard(request):
     # context
     c = {
         "nearbeach_title": "NearBeach Dashboard",
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

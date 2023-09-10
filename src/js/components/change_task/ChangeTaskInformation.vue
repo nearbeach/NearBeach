@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>Change Task - {{ changeTaskResults[0].pk }}</h1>
@@ -165,6 +166,7 @@
 			>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -177,6 +179,9 @@
 
 	//Vuex
 	import { mapGetters } from "vuex";
+
+  //Mixins
+  import getThemeMixin from "../../mixins/getThemeMixin";
 
 	export default {
 		name: "ChangeTaskInformation",
@@ -211,6 +216,10 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			userLevel: {
 				type: Number,
 				default: 0,
@@ -244,6 +253,9 @@
 				}),
 			};
 		},
+    mixins: [
+        getThemeMixin,
+    ],
 		computed: {
 			...mapGetters({
 				rfcEndDate: "getEndDate",

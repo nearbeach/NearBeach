@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>My Profile</h1>
@@ -61,6 +62,28 @@
 			</div>
 			<hr />
 
+			<!-- THEME SETTINGS -->
+			<div class="row">
+				<div class="col-md-4">
+					<strong>Theme Preference</strong>
+					<p class="text-instructions">Please choose an appropriate theme for NearBeach</p>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+						<label>Theme</label>
+						<n-select
+							v-model:value="themeModel"
+							:options="themeList"
+						/>
+						<p class="error"
+						   v-if="showMessage">
+							Please update user details to save.
+						</p>
+					</div>
+				</div>
+			</div>
+			<hr />
+
 			<!-- UPDATE USER -->
 			<div class="row submit-row">
 				<div class="col-md-12">
@@ -75,10 +98,12 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
 	const axios = require("axios");
+	import { NSelect } from "naive-ui";
 
 	//Validations
 	import useVuelidate from "@vuelidate/core";
@@ -87,6 +112,7 @@
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 	export default {
@@ -103,6 +129,10 @@
 				type: String,
 				default: "/",
 			},
+			theme: {
+				type: String,
+				default: "light",
+			},
 			userResults: {
 				type: Array,
 				default: () => {
@@ -111,6 +141,7 @@
 			},
 		},
 		components: {
+			NSelect,
 			ValidationRendering,
 		},
 		data() {
@@ -118,9 +149,26 @@
 				emailModel: this.userResults[0].email,
 				firstNameModel: this.userResults[0].first_name,
 				lastNameModel: this.userResults[0].last_name,
+				showMessage: false,
+				themeList: [
+					{
+						label: "Light Theme",
+						value: "light",
+					},
+					{
+						label: "Dark Theme",
+						value: "dark",
+					},
+				],
+				themeModel: this.theme,
 			};
 		},
-		mixins: [errorModalMixin, loadingModalMixin],
+		watch: {
+			themeModel() {
+				this.showMessage = true;
+			},
+		},
+		mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
 		validations() {
 			return {
 				lastNameModel: {
@@ -134,6 +182,9 @@
 			};
 		},
 		methods: {
+			updateTheme() {
+				//Get the body
+			},
 			updateUser() {
 				//Check form validation
 				this.v$.$touch();
@@ -150,9 +201,14 @@
 				data_to_send.set("username", this.userResults[0].id);
 				data_to_send.set("first_name", this.firstNameModel);
 				data_to_send.set("last_name", this.lastNameModel);
+				data_to_send.set("theme", this.themeModel);
 
 				//Open up the loading modal
 				this.showLoadingModal("Project");
+				this.showMessage = false;
+
+				//Updating the theme
+				document.documentElement.setAttribute("data-bs-theme", this.themeModel);
 
 				//Send data via axios
 				axios

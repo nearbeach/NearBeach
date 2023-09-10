@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>New Requirement</h1>
@@ -140,6 +141,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -150,6 +152,9 @@
 	import GetStakeholders from "../organisations/GetStakeholders.vue";
 	import GroupPermissions from "../permissions/GroupPermissions.vue";
 	import { NSelect } from "naive-ui";
+
+  //Mixins
+  import getThemeMixin from "../../mixins/getThemeMixin";
 
 	//Validation
 	import useVuelidate from "@vuelidate/core";
@@ -189,6 +194,10 @@
 					return [];
 				},
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			typeList: {
 				type: Array,
 				default: () => {
@@ -214,6 +223,7 @@
 				typeModel: "",
 			};
 		},
+    mixins: [ getThemeMixin ],
 		validations: {
 			groupModel: {
 				required,

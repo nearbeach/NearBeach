@@ -1,15 +1,15 @@
 .change-task--detail {
     display: flex;
     flex-direction: column;
-    border: 1px solid lightgray;
+    border: var(--nb-object-card--border);
     margin: 10px 5px;
     padding: 10px 5px;
-    background-color: #fcfcfcf0;
+    background-color: var(--nb-object-card--background-color);
 
     .change-task--dates,
     .change-task--responsibility
     {
-        color: #4f4f4f;
+        color: var(--nb-change-task-subtext);
         font-weight: lighter;
     }
 

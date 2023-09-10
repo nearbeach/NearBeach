@@ -6,10 +6,10 @@
     .object-card {
         display: flex;
         flex-direction: column;
-        border: 1px solid lightgray;
+        border: var(--nb-object-card--border);
+        background-color: var(--nb-object-card--background-color);
         margin: 10px 5px;
         padding: 10px;
-        background-color: rgba(252, 252, 252, 0.9411764706);
 
         @media screen and (min-width: 767px) {
             flex-direction: row;
@@ -26,7 +26,8 @@
                 text-decoration: none;
     
                 .object-card--detail--link {
-                    color: #4f4f4f;
+                    //color: #4f4f4f;
+                    color: var(--bs-body-color);
                     font-weight: lighter;
                 }
     

@@ -77,6 +77,8 @@ page_array.forEach((row) => {
                 expect(message.type()).not.toBe("warning");
             }
         );
+        //await expect(locator).not.toContainText('error');
+        await expect(page.locator("#loader")).toHaveCount(0);
 
         //Take screenshot
         await page.screenshot({

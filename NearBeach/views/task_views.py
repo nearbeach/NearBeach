@@ -9,6 +9,7 @@ from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import NewTaskForm, TaskInformationForm
 from NearBeach.models import Group, UserGroup, ObjectAssignment
 from NearBeach.views.tools.internal_functions import Task, Organisation
+from NearBeach.views.theme_views import get_theme
 
 import json
 
@@ -50,6 +51,8 @@ def new_task(request, *args, **kwargs):
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "need_tinymce": True,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -133,6 +136,8 @@ def task_information(request, task_id, *args, **kwargs):
         "task_id": task_id,
         "task_results": serializers.serialize("json", [task_results]),
         "task_status": task_status,
+        "need_tinymce": True,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

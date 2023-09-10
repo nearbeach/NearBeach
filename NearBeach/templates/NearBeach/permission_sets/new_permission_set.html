@@ -2,5 +2,6 @@
 {% load static %}
 {% block content %}
     <new-permission-set v-bind:root-url="`{% url 'dashboard' %}`"
+                        v-bind:theme="`{{ theme }}`"
     ></new-permission-set>
 {% endblock %}

@@ -28,6 +28,7 @@ from NearBeach.models import (
     ListOfRequirementItemType,
     Group,
 )
+from NearBeach.views.theme_views import get_theme
 
 
 @require_http_methods(["POST"])
@@ -194,6 +195,8 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
         "status_list": serializers.serialize("json", status_list),
         "type_list": serializers.serialize("json", type_list),
         "user_level": user_level,
+        "need_tinymce": True,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
