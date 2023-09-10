@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>Request for Change</h1>
@@ -244,6 +245,7 @@
 
 	<!-- RFC MODALS -->
 	<update-change-lead v-on:update_change_lead="updateChangeLead"></update-change-lead>
+  </n-config-provider>
 </template>
 
 <script>
@@ -257,6 +259,7 @@
 	//Import mixins
 	import datetimeMixin from "../../mixins/datetimeMixin";
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 	//Validation
@@ -305,6 +308,10 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			userLevel: {
 				type: Number,
 				default: 0,
@@ -367,7 +374,7 @@
 				return start_date || end_date || release_date;
 			},
 		},
-		mixins: [datetimeMixin, errorModalMixin, loadingModalMixin],
+		mixins: [datetimeMixin, errorModalMixin, getThemeMixin, loadingModalMixin],
 		data() {
 			return {
 				localChangeLead: this.rfcChangeLead,

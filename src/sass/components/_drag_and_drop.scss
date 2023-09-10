@@ -3,7 +3,7 @@
 
 .sortable {
 	width: 100%;
-	background: #74b5fc;
+	background: var(--nb-sortable-background-color);
 	padding: 1em;
 	cursor: move;
 	margin-bottom: 2px;

@@ -8,6 +8,7 @@
                              v-bind:organisation-results="{{organisation_results}}"
                              v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
                              v-bind:status-list="{{status_list}}"
+                             v-bind:theme="`{{ theme }}`"
                              v-bind:type-list="{{type_list}}"
                              v-bind:user-level="{{user_level}}"
     ></requirement-information>
@@ -24,5 +25,6 @@
                     v-bind:user-level="{{ user_level }}"
                     v-bind:root-url="`{% url 'dashboard' %}`"
                     v-bind:static-url="`{% static '/' %}`"
+                    v-bind:theme="`{{ theme }}`"
     ></parent-modules>
 {% endblock %}

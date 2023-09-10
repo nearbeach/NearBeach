@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>Permission Information</h1>
@@ -256,6 +257,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -264,6 +266,7 @@
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 	export default {
@@ -294,6 +297,10 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 		},
 		data() {
 			return {
@@ -334,7 +341,7 @@
 					this.permissionSetResults[0].fields.task_history,
 			};
 		},
-		mixins: [errorModalMixin, loadingModalMixin],
+		mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
 		methods: {
 			saveChanges() {
 				//Setup the data we want to send to the backend

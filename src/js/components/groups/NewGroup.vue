@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>New Group</h1>
@@ -64,6 +65,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -77,6 +79,7 @@
 
 	// Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import searchMixin from "../../mixins/searchMixin";
 
 	export default {
@@ -99,6 +102,10 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 		},
 		data() {
 			return {
@@ -109,7 +116,7 @@
 				uniqueGroupName: true,
 			};
 		},
-		mixins: [errorModalMixin, searchMixin],
+		mixins: [errorModalMixin, getThemeMixin, searchMixin],
 		validations: {
 			groupNameModel: {
 				required,

@@ -123,6 +123,7 @@ def new_group(request):
     c = {
         "group_results": serializers.serialize("json", group_results),
         "nearbeach_title": "New Group",
+        "theme": get_theme(request),
     }
 
     # Return

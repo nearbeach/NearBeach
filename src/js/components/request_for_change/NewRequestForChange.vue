@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>New Request for Change</h1>
@@ -62,6 +63,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -78,6 +80,7 @@
 
 	// Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 
 	export default {
 		name: "NewRequestForChange",
@@ -106,6 +109,10 @@
 				type: String,
 				default: "/",
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			userGroupResults: {
 				type: Array,
 				default: () => {
@@ -114,7 +121,7 @@
 			},
 		},
 		emits: ["onComplete"],
-		mixins: [errorModalMixin],
+		mixins: [errorModalMixin, getThemeMixin],
 		data: () => ({
 			currentTab: 0,
 			rfcData: {

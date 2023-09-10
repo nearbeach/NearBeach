@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h2>User List</h2>
@@ -93,6 +94,7 @@
 			v-on:remove_permission="removePermission"
 		></confirm-permission-delete>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -101,6 +103,7 @@
 
 	//Import mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 
 	//Vue Components
 	import AdminAddUser from "./AdminAddUser.vue";
@@ -126,6 +129,10 @@
 				type: Number,
 				default: 0,
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			userListResults: {
 				type: Array,
 				default() {
@@ -139,7 +146,7 @@
 				permissionDeleteId: 0,
 			};
 		},
-		mixins: [errorModalMixin, iconMixin],
+		mixins: [errorModalMixin, getThemeMixin, iconMixin],
 		methods: {
 			addUser() {
 				//Show the user's modal

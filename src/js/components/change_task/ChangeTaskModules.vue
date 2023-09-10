@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<ul
@@ -97,6 +98,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -104,9 +106,17 @@
 	import ChangeTaskDesctiption from "./modules/ChangeTaskDescription.vue";
 	import ChangeTaskLinkListVue from "./modules/ChangeTaskLinkList.vue";
 	import ChangeTaskMisc from "./modules/ChangeTaskMisc.vue"
+  import getThemeMixin from "../../mixins/getThemeMixin";
 
 	export default {
 		name: "ChangeTaskModules",
+    props: {
+      theme: {
+        type: String,
+        default: "",
+      }
+    },
+    mixins: [getThemeMixin],
 		components: {
 			ChangeTaskDesctiption,
 			ChangeTaskLinkListVue,

@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<ul
@@ -278,6 +279,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -295,6 +297,7 @@
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 	export default {
@@ -325,6 +328,10 @@
 				type: Array,
 				default: [],
 			},
+      theme: {
+        type: String,
+        default: "",
+      },
 			userList: {
 				type: Array,
 				default: () => {
@@ -332,7 +339,7 @@
 				},
 			},
 		},
-		mixins: [errorModalMixin, loadingModalMixin],
+		mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
 		data: () => ({
 			rfcData: {
 				rfcBackoutPlan: "",

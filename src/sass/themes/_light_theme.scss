@@ -119,10 +119,13 @@
     //NearBeach Variables
     --nb-background-color: #f4f2f2;
     --nb-text-instructions: #181818;
-  --nb-object-card--border: 1px solid #d3d3d3;
-  --nb-object-card--background-color: rgba(252,252,252,0.9411764706);
-  --nb-change-task-subtext: #4f4f4f;
+    --nb-object-card--border: 1px solid #d3d3d3;
+    --nb-object-card--background-color: rgba(252,252,252,0.9411764706);
+    --nb-change-task-subtext: #4f4f4f;
+    --nb-sortable-background-color: #74b5fc;
+    --nb-kanban-column-header-background-color: #6fcf97;
+    --nb-kanban-level-div-background-color: #56ccf2;
+    --nb-kanban-cell-background-color: #e0e0e0;
+    --nb-loader-background-color: #51ceff;
 
-    //Naive-ui Variables
-    --n-text-color: #333639;
 }

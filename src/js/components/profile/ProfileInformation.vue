@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<h1>My Profile</h1>
@@ -97,6 +98,7 @@
 			</div>
 		</div>
 	</div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -110,6 +112,7 @@
 
 	//Mixins
 	import errorModalMixin from "../../mixins/errorModalMixin";
+  import getThemeMixin from "../../mixins/getThemeMixin";
 	import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 	export default {
@@ -165,7 +168,7 @@
 				this.showMessage = true;
 			},
 		},
-		mixins: [errorModalMixin, loadingModalMixin],
+		mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
 		validations() {
 			return {
 				lastNameModel: {
@@ -206,7 +209,6 @@
 
 				//Updating the theme
 				document.documentElement.setAttribute("data-bs-theme", this.themeModel);
-				console.log("Document Element: ", document.documentElement);
 
 				//Send data via axios
 				axios

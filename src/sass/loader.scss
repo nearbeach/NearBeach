@@ -1,7 +1,7 @@
 /* This is kept in it's own location to keep the file size small. Also to be the first thing that loads when user
  first loads up NearBeach*/
 .loader {
-	background-color: #51ceff;
+	background-color: var(--nb-loader-background-color);
 	position: fixed;
 	top: 0;
 	left: 0;

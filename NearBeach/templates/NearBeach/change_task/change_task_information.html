@@ -18,7 +18,9 @@
 
     <br/>
 
-    <change-task-modules></change-task-modules>
+    <change-task-modules
+        v-bind:theme="`{{ theme }}`"
+    ></change-task-modules>
     
     {% if user_level == 1%}
         </fieldset>
