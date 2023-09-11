@@ -17,33 +17,9 @@
 			</div>
 		</div>
 		<div v-else>
-			<table class="table">
-				<thead>
-					<tr>
-						<td width="75%">Object Description</td>
-						<td width="25%">Status</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-						v-for="link in linkResults"
-						:key="link.object_assignment_id"
-					>
-						<td v-html="extractObjectDescription(link)"></td>
-						<td>
-							{{ extractObjectStatus(link) }}
-							<span class="remove-link">
-								<Icon
-									v-bind:icon="icons.trashCan"
-									v-on:click="
-										removeLink(link.object_assignment_id)
-									"
-								/>
-							</span>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+			<render-object-card></render-object-card>
+
+			<render-object-card></render-object-card>
 		</div>
 
 		<!-- Submit Button -->
@@ -111,7 +87,10 @@
 	import { Modal } from "bootstrap";
 	import axios from "axios";
 	import { Icon } from "@iconify/vue";
+
+	//Components
 	import NewRequirementLinkWizard from "../wizards/NewRequirementLinkWizard.vue";
+	import RenderObjectCard from "../../render/RenderObjectCard.vue";
 
 	//VueX
 	import { mapGetters } from "vuex";
@@ -123,13 +102,8 @@
 		name: "RequirementLinksModule",
 		components: {
 			Icon,
+			RenderObjectCard,
 			NewRequirementLinkWizard,
-		},
-		props: {
-			activateLazyLoading: {
-				type: Boolean,
-				default: false,
-			},
 		},
 		mixins: [iconMixin],
 		data() {
