@@ -2,7 +2,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
+from django.db.models import Q, F
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
@@ -134,10 +134,17 @@ def get_requirement_items(request, requirement_id, *args, **kwargs):
     requirement_item_results = RequirementItem.objects.filter(
         is_deleted=False,
         requirement_id=requirement_id,
+    ).annotate(
+        requirement_item_status_text=F('requirement_item_status__requirement_item_status')
+        # profile_picture = F('userprofilepicture__document_id__document_key')
+    ).values(
+        'requirement_item_id',
+        'requirement_item_title',
+        'requirement_item_status_text',
     )
 
     # Send back json data
-    json_results = serializers.serialize("json", requirement_item_results)
+    json_results = json.dumps(list(requirement_item_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type="application/json")
 
