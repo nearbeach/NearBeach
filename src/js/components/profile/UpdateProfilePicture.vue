@@ -1,4 +1,5 @@
 <template>
+	<n-config-provider :theme="getTheme(theme)">
 	<div class="card">
 		<div class="card-body">
 			<div class="row">
@@ -30,12 +31,16 @@
 			</div>
 		</div>
 	</div>
+	</n-config-provider>
 </template>
 
 <script>
 	import { NUpload, NButton } from "naive-ui";
 	import { mapGetters } from "vuex";
+
+	//Mixins
 	import getToken from "../../mixins/getTokenMixin";
+	import getThemeMixin from "../../mixins/getThemeMixin";
 
 	const axios = require('axios');
 
@@ -46,6 +51,10 @@
 			NUpload,
 		},
 		props: {
+			theme: {
+				type: String,
+				default: "",
+			},
 			userProfile: {
 				type: Array,
 				default: () => {
@@ -62,7 +71,7 @@
 				rootUrl: "getRootUrl",
 			}),
 		},
-		mixins: [getToken],
+		mixins: [getToken, getThemeMixin],
 		methods: {
 			setProfilePicture() {
 				//Set the default
