@@ -13,10 +13,7 @@
 </template>
 
 <script>
-	//VueX
-	import { mapGetters } from "vuex";
-
-	//Compoents
+	//Components
 	import RenderObjectCard from "../render/RenderObjectCard.vue";
 
 	export default {
