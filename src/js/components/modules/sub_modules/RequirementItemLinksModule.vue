@@ -35,7 +35,6 @@
 		</div>
 
 		<!-- Submit Button -->
-		<!-- TO DO - limit it to certain users -->
 		<hr v-if="userLevel > 1" />
 		<div
 			v-if="userLevel > 1"

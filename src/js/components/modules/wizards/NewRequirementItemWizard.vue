@@ -163,29 +163,14 @@
 		setup() {
 			return { v$: useVuelidate() };
 		},
+		inject: [
+			"nextTick",
+		],
 		components: {
 			editor: Editor,
 			Icon,
 			NSelect,
 			ValidationRendering,
-		},
-		props: {
-			itemStatusList: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			itemTypeList: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
 		},
 		mixins: [errorModalMixin, iconMixin],
 		data() {
@@ -200,6 +185,7 @@
 		},
 		computed: {
 			...mapGetters({
+				locationId: "getLocationId",
 				rootUrl: "getRootUrl",
 			}),
 		},
@@ -267,26 +253,37 @@
 						this.showErrorModal(error, this.destination);
 					});
 			},
-		},
-		watch: {
-			itemStatusList() {
-				//We need to transform the data from the JSON array given to one vue-select can read
-				this.statusItemFixList = this.itemStatusList.map((row) => {
-					return {
-						value: row.pk,
-						label: row.fields.requirement_item_status,
-					};
+			updateStatusList() {
+				axios.post(
+					`${this.rootUrl}requirement_information/data/list_of_item_status_values/`
+				).then((response) => {
+					this.statusItemFixList = response.data.map((row) => {
+						return {
+							value: row.pk,
+							label: row.fields.requirement_item_status,
+						}
+					})
 				});
 			},
-			itemTypeList() {
-				this.typeItemFixList = this.itemTypeList.map((row) => {
-					return {
-						value: row.pk,
-						label: row.fields.requirement_item_type,
-					};
+			updateTypeList() {
+				axios.post(
+					`${this.rootUrl}requirement_information/data/list_of_item_type_values/`
+				).then((response) => {
+					this.typeItemFixList = response.data.map((row) => {
+						return {
+							value: row.pk,
+							label: row.fields.requirement_item_type,
+						}
+					});
 				});
 			},
 		},
+		mounted() {
+			this.nextTick(() => {
+				this.updateStatusList();
+				this.updateTypeList();
+			})
+		}
 	};
 </script>
 

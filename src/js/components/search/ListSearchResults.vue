@@ -4,51 +4,23 @@
 			<h2>{{ importVariables.header }} Search Results</h2>
 			<hr />
 
-			<!-- TABLE OF DATA -->
-			<table class="table">
-				<thead>
-					<tr>
-						<td width="75%">{{ importVariables.header }}</td>
-						<td width="25%">Status</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-						v-for="result in searchResults"
-						:key="result[importVariables.id]"
-					>
-						<td>
-							<!-- LINK -->
-							<a
-								v-bind:href="`${rootUrl}${destination}_information/${
-									result[importVariables.id]
-								}/`"
-							>
-								<p>{{ result[importVariables.title] }}</p>
-								<div class="spacer"></div>
-								<p class="small-text">
-									{{ importVariables.prefix
-									}}{{ result[importVariables.id] }}
-								</p>
-							</a>
-						</td>
-						<td>
-							<!-- STATUS -->
-							{{ result[importVariables.status] }}
-						</td>
-					</tr>
-				</tbody>
-			</table>
+			<render-object-card v-bind:search-results="searchResults"
+								v-bind:import-variables="importVariables"
+								v-bind:destination="destination"
+			></render-object-card>
 		</div>
 	</div>
 </template>
 
 <script>
-	//VueX
-	import { mapGetters } from "vuex";
+	//Components
+	import RenderObjectCard from "../render/RenderObjectCard.vue";
 
 	export default {
 		name: "ListSearchResults",
+		components: {
+			RenderObjectCard,
+		},
 		props: {
 			destination: {
 				type: String,
@@ -72,11 +44,6 @@
 					return [];
 				},
 			},
-		},
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-			}),
 		},
 	};
 </script>
