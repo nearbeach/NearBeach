@@ -999,6 +999,11 @@ def link_list(request, destination, location_id, object_lookup):
                 is_deleted=False,
                 requirement_status_is_closed=False,
             ).values("requirement_status_id"),
+            requirement_id__in=ObjectAssignment.objects.filter(
+                is_deleted=False,
+                requirement_id__isnull=False,
+                group_id__in=user_group_results,
+            ).values('requirement_id'),
         )
     elif object_lookup == "requirement_item":
         data_results = RequirementItem.objects.filter(
@@ -1013,6 +1018,11 @@ def link_list(request, destination, location_id, object_lookup):
                     is_deleted=False,
                     requirement_status_is_closed=False,
                 ).values("requirement_status_id"),
+                requirement_id__in=ObjectAssignment.objects.filter(
+                    is_deleted=False,
+                    requirement_id__isnull=False,
+                    group_id__in=user_group_results,
+                ).values('requirement_id'),
             ).values("requirement_id"),
         )
     else:
