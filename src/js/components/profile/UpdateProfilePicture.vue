@@ -16,13 +16,14 @@
 						class="organisation-profile-image"
 					/>
 					<br />
-					<!--<button class="btn btn-primary">Update Profile...</button>-->
 					<n-upload
 						:action="`${rootUrl}profile_information/update_profile/`"
 						:headers="{
 							'X-CSRFTOKEN': getToken('csrftoken'),
 						}"
 						:data="{}"
+						:max="1"
+						@error="showErrorModal('Profile Picture was not updated','Profile Picture','')"
 						@finish="updateProfilePicture"
 					>
 						<n-button>Update Profile Picture</n-button>
@@ -39,6 +40,7 @@
 	import { mapGetters } from "vuex";
 
 	//Mixins
+	import errorModalMixin from "../../mixins/errorModalMixin";
 	import getToken from "../../mixins/getTokenMixin";
 	import getThemeMixin from "../../mixins/getThemeMixin";
 
@@ -71,7 +73,7 @@
 				rootUrl: "getRootUrl",
 			}),
 		},
-		mixins: [getToken, getThemeMixin],
+		mixins: [errorModalMixin, getToken, getThemeMixin],
 		methods: {
 			setProfilePicture() {
 				//Set the default

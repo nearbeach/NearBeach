@@ -106,7 +106,8 @@ import { nextTick } from 'vue';
 			},
 			resizeProcedure() {
 				// Get the screen size and the columns width
-				const columns_width = this.columnResults.length * 400;
+				const little_adjustment = 2 * (this.columnResults.length - 1)
+				const columns_width = this.columnResults.length * 400 + little_adjustment;
 				const container_element = document.getElementsByClassName("kanban-container")[0];
 				const kanban_container_width = container_element.clientWidth;
 				
@@ -115,22 +116,30 @@ import { nextTick } from 'vue';
 				// that smaller size
 				if (columns_width < kanban_container_width) {
 					//Add in the width restrictions
+					var header_element = document.getElementsByClassName("kanban-edit-text")[0];
 					var elements = document.getElementsByClassName("kanban-level-div");
 
 					//Loop through each element
 					Array.from(elements).forEach((element) => {
 						element.style = `max-width: ${columns_width}px;`;
 					});
+
+					//Adjust the size of the header element
+					header_element.style = `max-width: ${columns_width}px`;
 				} else {
 					//The columns width is greater than the container width. 
 					//So we need to use the scroll width of the container
 					const scroll_width = container_element.scrollWidth;
+					var header_element = document.getElementsByClassName("kanban-edit-text")[0];
 					let elements = document.getElementsByClassName("kanban-level-div");
 
 					//Loop through each element
 					Array.from(elements).forEach((element) => {
 						element.style = `width: ${scroll_width}px;`;
 					});
+
+					//Adjust the size of the header element
+					header_element.style = `max-width: ${scroll_width}px`;
 				}
 			},
 			scrollProcedure() {

@@ -197,6 +197,10 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
     file = form.cleaned_data["file"]
     document_description = str(file)
 
+    # Check the file size
+    if file.size > 250 * 1024:
+        return HttpResponseBadRequest("File size too large")
+
     # Upload the document
     document_submit, _ = handle_document_permissions(
         request,

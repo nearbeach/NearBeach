@@ -35,6 +35,7 @@
 								'X-CSRFTOKEN': getToken('csrftoken'),
 							}"
 							:data="{}"
+							@error="showErrorModal('Profile Picture was not updated','Profile Picture','')"
 							@finish="updateProfilePicture"
 						>
 							<n-button>Update Profile Picture</n-button>

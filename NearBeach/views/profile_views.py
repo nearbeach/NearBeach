@@ -90,6 +90,10 @@ def update_profile(request):
     file = form.cleaned_data["file"]
     document_description = str(file)
 
+    # Check file size
+    if file.size > 250 * 1024:
+        return HttpResponseBadRequest("Profile Picture too large. Please use 250Kb")
+
     # Upload the document
     document_submit, _ = handle_document_permissions(
         request,
