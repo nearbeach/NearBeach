@@ -35,9 +35,13 @@
 		>
 			<!-- CREATE THE LEVEL HEADER -->
 			<div class="kanban-level-div">
+        <span v-bind:class="getExpandClass(level.pk)"></span>
 				<span>
 					{{ level.fields.kanban_level_name }}
 				</span>
+        <span>
+          ADD IN CARD COUNT :)
+        </span>
 			</div>
 
 			<!-- RENDER THE CELLS -->
@@ -104,6 +108,10 @@ import { nextTick } from 'vue';
 				//Send data upstream
 				this.$emit("double_clicked_card", data);
 			},
+      getExpandClass(level_id) {
+        return "kanban-expand expand";
+        //return "kanban-expand collapsed";
+      },
 			resizeProcedure() {
 				// Get the screen size and the columns width
 				const little_adjustment = 2 * (this.columnResults.length - 1)

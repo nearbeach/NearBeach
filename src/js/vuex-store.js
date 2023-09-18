@@ -12,6 +12,10 @@ import { moduleRfc } from "./vuex/rfcVueX";
 import { moduleUrl } from "./vuex/urlVueX";
 import { moduleUserLevel } from "./vuex/userLevelVueX";
 
+
+// User settings
+import { kanbanSettings } from "./vuex/usersettings/kanbanSettingsVueX";
+
 export const store = createStore({
 	modules: {
 		archiveCards: moduleArchiveCards,
@@ -24,5 +28,8 @@ export const store = createStore({
 		rfc: moduleRfc,
 		url: moduleUrl,
 		userLevel: moduleUserLevel,
+
+		//User Settings
+		kanbanSettings: kanbanSettings,
 	},
 });

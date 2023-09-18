@@ -161,10 +161,14 @@
 				modal.show();
 			},
       updateCanDragCards(value) {
-        this.$store.commit({
+        // this.$store.commit({
+        //   type: "updateCanDragCards",
+        //   canDragCards: value,
+        // })
+        this.$store.dispatch({
           type: "updateCanDragCards",
           canDragCards: value,
-        })
+        });
       },
 			updatePropertyList(data) {
 				this[data.source] = data.data;

@@ -125,6 +125,15 @@
 					return [];
 				},
 			},
+      kanbanSettings: {
+        type: Object,
+        default: () => {
+          return {
+            canDrag: true,
+            levels: [],
+          };
+        },
+      },
 			levelResults: {
 				type: Array,
 				default: () => {
@@ -201,10 +210,14 @@
 				this.refreshUserList = false;
 			},
 			updateCanDragCards(value) {
-				this.$store.commit({
-					type: "updateCanDragCards",
-					canDragCards: value,
-				})
+				// this.$store.commit({
+				// 	type: "updateCanDragCards",
+				// 	canDragCards: value,
+				// })
+        this.$store.dispatch({
+          type: "updateCanDragCards",
+          canDragCards: value,
+        });
 			},
 			updateCard(data) {
 				//Loop through the results - when the id's match. Update the data.
@@ -228,8 +241,42 @@
 					}
 				});
 			},
+      updateKanbanSettings() {
+        //Setup the canDrag
+        let can_drag = this.kanbanSettings.canDrag;
+        if (can_drag === undefined) can_drag = true;
+
+        //Setup the kanban levels collapse
+        let levels = this.kanbanSettings.levels;
+        if (levels === undefined) levels = [];
+
+        //Check to see if we are missing any levels
+        const level_id_array = levels.map(row => { return row.level_id });
+        const missing_levels = this.levelResults.filter((row) => {
+          //Find those that don't exist in level results
+          return level_id_array.indexOf(row.pk) === -1;
+        })
+
+        //Loop through the missing levels and add them to levels
+        missing_levels.forEach((row) => {
+          levels.push({
+            level_id: row.pk,
+            is_collapsed: false,
+          });
+        });
+
+        //Data is ready to upload
+        this.$store.commit({
+          type: "initKanbanSettings",
+          canDragCards: can_drag,
+          levels: levels,
+        })
+      }
 		},
 		mounted() {
+      //Send the settings up stream
+      this.updateKanbanSettings();
+
 			//Send data to VueX
 			this.$store.commit({
 				type: "initPayload",
