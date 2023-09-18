@@ -56,7 +56,7 @@
 					/>
 				</div>
 			</div>
-			<br />
+			<br/>
 
 			<!-- Customer Email -->
 			<div class="form-group col-sm-8">
@@ -72,119 +72,119 @@
 					v-model="customerEmailModel"
 				/>
 			</div>
-			<br />
+			<br/>
 		</div>
 	</div>
 </template>
 
 <script>
-	import { NSelect } from "naive-ui";
+import {NSelect} from "naive-ui";
 
-	//Validation
-	import useVuelidate from "@vuelidate/core";
-	import { required, email } from "@vuelidate/validators";
-	import ValidationRendering from "../validation/ValidationRendering.vue";
+//Validation
+import useVuelidate from "@vuelidate/core";
+import {required, email} from "@vuelidate/validators";
+import ValidationRendering from "../validation/ValidationRendering.vue";
 
-	export default {
-		name: "NewCustomerForm",
-		setup() {
-			return { v$: useVuelidate() };
+export default {
+	name: "NewCustomerForm",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	components: {
+		NSelect,
+		ValidationRendering,
+	},
+	props: {
+		flagValidationCheck: {
+			type: Boolean,
+			default: false,
 		},
-		components: {
-			NSelect,
-			ValidationRendering,
+		organisationName: {
+			type: String,
+			default: "",
 		},
-		props: {
-			flagValidationCheck: {
-				type: Boolean,
-				default: false,
-			},
-			organisationName: {
-				type: String,
-				default: "",
-			},
-			titleList: {
-				type: Array,
-				default() {
-					return [];
-				},
-			},
-		},
-		data() {
-			return {
-				customerEmailModel: "",
-				customerFirstNameModel: "",
-				customerLastNameModel: "",
-				organisationModel: {},
-				searchTimeout: "",
-				titleFixList: [],
-				titleModel: [],
-			};
-		},
-		validations: {
-			customerEmailModel: {
-				required,
-				email,
-			},
-			customerFirstNameModel: {
-				required,
-			},
-			customerLastNameModel: {
-				required,
-			},
-			titleModel: {
-				required,
+		titleList: {
+			type: Array,
+			default() {
+				return [];
 			},
 		},
-		methods: {},
-		watch: {
-			customerEmailModel() {
-				//Emit up this function's data
-				this.$emit("update_customer_data", {
-					field: "customerEmailModel",
-					value: this.customerEmailModel,
-				});
-			},
-			customerFirstNameModel() {
-				//Emit up this function's data
-				this.$emit("update_customer_data", {
-					field: "customerFirstNameModel",
-					value: this.customerFirstNameModel,
-				});
-			},
-			customerLastNameModel() {
-				//Emit up this function's data
-				this.$emit("update_customer_data", {
-					field: "customerLastNameModel",
-					value: this.customerLastNameModel,
-				});
-			},
-			flagValidationCheck() {
-				//Don't worry if it is false
-				if (!this.flagValidationCheck) return;
-
-				//Touch the validation
-
-				this.v$.$touch();
-			},
-			titleModel() {
-				//Emit up this function's data
-				this.$emit("update_customer_data", {
-					field: "titleModel",
-					value: this.titleModel,
-				});
-			},
+	},
+	data() {
+		return {
+			customerEmailModel: "",
+			customerFirstNameModel: "",
+			customerLastNameModel: "",
+			organisationModel: {},
+			searchTimeout: "",
+			titleFixList: [],
+			titleModel: [],
+		};
+	},
+	validations: {
+		customerEmailModel: {
+			required,
+			email,
 		},
-		mounted() {
-			//Get the data formatted how the NSelect wants
-			this.titleFixList = this.titleList.map((row) => {
-				return {
-					value: row.pk,
-					label: row.fields.title,
-				};
+		customerFirstNameModel: {
+			required,
+		},
+		customerLastNameModel: {
+			required,
+		},
+		titleModel: {
+			required,
+		},
+	},
+	methods: {},
+	watch: {
+		customerEmailModel() {
+			//Emit up this function's data
+			this.$emit("update_customer_data", {
+				field: "customerEmailModel",
+				value: this.customerEmailModel,
 			});
 		},
-	};
+		customerFirstNameModel() {
+			//Emit up this function's data
+			this.$emit("update_customer_data", {
+				field: "customerFirstNameModel",
+				value: this.customerFirstNameModel,
+			});
+		},
+		customerLastNameModel() {
+			//Emit up this function's data
+			this.$emit("update_customer_data", {
+				field: "customerLastNameModel",
+				value: this.customerLastNameModel,
+			});
+		},
+		flagValidationCheck() {
+			//Don't worry if it is false
+			if (!this.flagValidationCheck) return;
+
+			//Touch the validation
+
+			this.v$.$touch();
+		},
+		titleModel() {
+			//Emit up this function's data
+			this.$emit("update_customer_data", {
+				field: "titleModel",
+				value: this.titleModel,
+			});
+		},
+	},
+	mounted() {
+		//Get the data formatted how the NSelect wants
+		this.titleFixList = this.titleList.map((row) => {
+			return {
+				value: row.pk,
+				label: row.fields.title,
+			};
+		});
+	},
+};
 </script>
 
 <style scoped></style>

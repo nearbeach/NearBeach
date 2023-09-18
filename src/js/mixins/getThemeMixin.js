@@ -1,4 +1,4 @@
-import { darkTheme } from "naive-ui";
+import {darkTheme} from "naive-ui";
 
 export default {
     data() {
@@ -9,7 +9,7 @@ export default {
     methods: {
         getTheme(theme) {
             //Depending on the theme depends what we send back
-            switch(theme) {
+            switch (theme) {
                 case "dark":
                     return darkTheme;
                 default:

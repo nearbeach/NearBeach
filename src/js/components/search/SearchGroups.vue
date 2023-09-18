@@ -3,7 +3,7 @@
 		<div class="card-body">
 			<!-- Search bar and heading -->
 			<h1>Search Groups</h1>
-			<br />
+			<br/>
 			<div class="form-group">
 				<label>Search:</label>
 				<input
@@ -11,7 +11,7 @@
 					v-model="searchModel"
 				/>
 			</div>
-			<hr />
+			<hr/>
 
 			<!-- Search Results -->
 			<div
@@ -25,7 +25,7 @@
 					v-bind:href="`/group_information/${group.pk}/`"
 				>
 					<strong>{{ group.fields.group_name }}</strong>
-					<br />
+					<br/>
 					<p class="small-text">
 						Parent Group: {{ group.fields.parent_group }}
 					</p>
@@ -39,7 +39,7 @@
 				Sorry, there are no groups.
 			</div>
 
-			<hr />
+			<hr/>
 			<div class="row submit-row">
 				<div class="col-md-12">
 					<a
@@ -55,61 +55,61 @@
 </template>
 
 <script>
-	const axios = require("axios");
+const axios = require("axios");
 
-	// Import mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
-	import searchMixin from "../../mixins/searchMixin";
+// Import mixins
+import errorModalMixin from "../../mixins/errorModalMixin";
+import searchMixin from "../../mixins/searchMixin";
 
-	export default {
-		name: "SearchGroups",
-		props: {
-			groupResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			rootUrl: {
-				type: String,
-				default: "/",
+export default {
+	name: "SearchGroups",
+	props: {
+		groupResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		mixins: [errorModalMixin, searchMixin],
-		data() {
-			return {
-				groupList: this.groupResults,
-				searchModel: "",
-				searchTimeout: "",
-			};
+		rootUrl: {
+			type: String,
+			default: "/",
 		},
-		methods: {
-			getSearchResults() {
-				//Setup data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("search", this.searchModel);
+	},
+	mixins: [errorModalMixin, searchMixin],
+	data() {
+		return {
+			groupList: this.groupResults,
+			searchModel: "",
+			searchTimeout: "",
+		};
+	},
+	methods: {
+		getSearchResults() {
+			//Setup data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("search", this.searchModel);
 
-				//Use Axios to send data
-				axios
-					.post(`${this.rootUrl}search/group/data/`, data_to_send)
-					.then((response) => {
-						this.groupList = response.data;
-					})
-					.catch((error) => {
-						//Show error
-						this.showErrorModal(error, "Search Groups", "");
-					});
-			},
-		},
-		watch: {
-			searchModel() {
-				this.searchTrigger({
-					return_function: this.getSearchResults,
-					searchTimeout: this.searchTimeout,
+			//Use Axios to send data
+			axios
+				.post(`${this.rootUrl}search/group/data/`, data_to_send)
+				.then((response) => {
+					this.groupList = response.data;
+				})
+				.catch((error) => {
+					//Show error
+					this.showErrorModal(error, "Search Groups", "");
 				});
-			},
 		},
-	};
+	},
+	watch: {
+		searchModel() {
+			this.searchTrigger({
+				return_function: this.getSearchResults,
+				searchTimeout: this.searchTimeout,
+			});
+		},
+	},
+};
 </script>
 
 <style scoped></style>

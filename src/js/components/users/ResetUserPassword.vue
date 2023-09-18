@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-body">
 				<h2>Reset Password</h2>
-				<hr />
+				<hr/>
 
 				<!-- PASSWORD -->
 				<div class="row">
@@ -40,7 +40,8 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h2>
-							<Icon v-bind:icon="icons.passwordIcon"></Icon> Reset
+							<Icon v-bind:icon="icons.passwordIcon"></Icon>
+							Reset
 							User Password
 						</h2>
 						<button
@@ -97,92 +98,92 @@
 </template>
 
 <script>
-	//JavaScript components
-	import axios from "axios";
-	import { Modal } from "bootstrap";
-	import { Icon } from "@iconify/vue";
+//JavaScript components
+import axios from "axios";
+import {Modal} from "bootstrap";
+import {Icon} from "@iconify/vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
-	import iconMixin from "../../mixins/iconMixin";
+//Mixins
+import errorModalMixin from "../../mixins/errorModalMixin";
+import iconMixin from "../../mixins/iconMixin";
 
-	export default {
-		name: "ResetUserPassword",
-		components: {
-			Icon,
+export default {
+	name: "ResetUserPassword",
+	components: {
+		Icon,
+	},
+	props: {
+		location: {
+			type: String,
+			default: "/",
 		},
-		props: {
-			location: {
-				type: String,
-				default: "/",
-			},
-			username: {
-				type: Number,
-				default: 0,
-			},
+		username: {
+			type: Number,
+			default: 0,
 		},
-		mixins: [errorModalMixin, iconMixin],
-		data() {
-			return {
-				password1Model: "",
-				password2Model: "",
-			};
+	},
+	mixins: [errorModalMixin, iconMixin],
+	data() {
+		return {
+			password1Model: "",
+			password2Model: "",
+		};
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+		}),
+		disableButton() {
+			//Both passwords have to be the same
+			let condition_1 = this.password1Model === this.password2Model;
+
+			//Passwords can not be less than 8 character
+			let condition_2 = this.password1Model.length >= 8;
+
+			//If all conditions are true, send back false (to enable the button)
+			return !(condition_1 && condition_2 === true);
 		},
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-			}),
-			disableButton() {
-				//Both passwords have to be the same
-				let condition_1 = this.password1Model === this.password2Model;
+	},
+	methods: {
+		closeModal() {
+			//Clear both passwords
+			this.password1Model = "";
+			this.password2Model = "";
 
-				//Passwords can not be less than 8 character
-				let condition_2 = this.password1Model.length >= 8;
-
-				//If all conditions are true, send back false (to enable the button)
-				return !(condition_1 && condition_2 === true);
-			},
+			//Close modal
+			document.getElementById("passwordResetCloseButton").click();
 		},
-		methods: {
-			closeModal() {
-				//Clear both passwords
-				this.password1Model = "";
-				this.password2Model = "";
-
-				//Close modal
-				document.getElementById("passwordResetCloseButton").click();
-			},
-			passwordResetClicked() {
-				//Opens the password reset modal
-				let passwordResetModal = new Modal(
-					document.getElementById("passwordResetModal")
-				);
-				passwordResetModal.show();
-			},
-			updatePassword() {
-				//Create data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("password", this.password1Model);
-				data_to_send.set("username", this.username);
-
-				//Setup Axios to send data
-				axios
-					.post(
-						`${this.rootUrl}${this.location}update_user_password/`,
-						data_to_send
-					)
-					.then((response) => {
-						this.closeModal();
-					})
-					.catch((error) => {
-						this.showErrorModal(error, "Saving Password Issue", "");
-					});
-			},
+		passwordResetClicked() {
+			//Opens the password reset modal
+			let passwordResetModal = new Modal(
+				document.getElementById("passwordResetModal")
+			);
+			passwordResetModal.show();
 		},
-	};
+		updatePassword() {
+			//Create data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("password", this.password1Model);
+			data_to_send.set("username", this.username);
+
+			//Setup Axios to send data
+			axios
+				.post(
+					`${this.rootUrl}${this.location}update_user_password/`,
+					data_to_send
+				)
+				.then((response) => {
+					this.closeModal();
+				})
+				.catch((error) => {
+					this.showErrorModal(error, "Saving Password Issue", "");
+				});
+		},
+	},
+};
 </script>
 
 <style scoped></style>

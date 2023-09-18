@@ -10,7 +10,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.clipboardIcon"></Icon> New
+						<Icon v-bind:icon="icons.clipboardIcon"></Icon>
+						New
 						Requirement Item Wizard
 					</h2>
 					<button
@@ -35,7 +36,7 @@
 						</div>
 						<div class="col-md-8">
 							<label for="id_requirement_item_title"
-								>Requirement Item Title:
+							>Requirement Item Title:
 								<validation-rendering
 									v-bind:error-list="v$.requirementItemTitleModel.$errors"
 								></validation-rendering>
@@ -50,14 +51,14 @@
 								v-model="requirementItemTitleModel"
 							/>
 
-							<br />
+							<br/>
 							<label>
 								Requirement Item Scope:
 								<validation-rendering
 									v-bind:error-list="v$.requirementItemTitleModel.$errors"
 								></validation-rendering>
 							</label>
-							<br />
+							<br/>
 							<editor
 								:init="{
 									height: 500,
@@ -77,7 +78,7 @@
 					</div>
 
 					<!-- Status -->
-					<hr />
+					<hr/>
 					<div class="row">
 						<div class="col-md-4">
 							<h2>Status</h2>
@@ -88,7 +89,7 @@
 						<div class="col-md-4">
 							<div class="form-group">
 								<label
-									>Requirement Status
+								>Requirement Status
 									<validation-rendering
 										v-bind:error-list="v$.requirementItemTitleModel.$errors"
 									></validation-rendering>
@@ -103,7 +104,7 @@
 						<div class="col-md-4">
 							<div class="form-group">
 								<label
-									>Requirement Type
+								>Requirement Type
 									<validation-rendering
 										v-bind:error-list="v$.typeItemModel.$errors"
 									></validation-rendering>
@@ -141,150 +142,150 @@
 </template>
 
 <script>
-	import axios from "axios";
-	import { Icon } from "@iconify/vue";
-	import { NSelect } from "naive-ui";
-	import Editor from "@tinymce/tinymce-vue";
+import axios from "axios";
+import {Icon} from "@iconify/vue";
+import {NSelect} from "naive-ui";
+import Editor from "@tinymce/tinymce-vue";
 
-	//Mixins
-	import errorModalMixin from "../../../mixins/errorModalMixin";
-	import iconMixin from "../../../mixins/iconMixin";
+//Mixins
+import errorModalMixin from "../../../mixins/errorModalMixin";
+import iconMixin from "../../../mixins/iconMixin";
 
-	//Validation
-	import useVuelidate from "@vuelidate/core";
-	import { required, maxLength } from "@vuelidate/validators";
-	import ValidationRendering from "../../validation/ValidationRendering.vue";
+//Validation
+import useVuelidate from "@vuelidate/core";
+import {required, maxLength} from "@vuelidate/validators";
+import ValidationRendering from "../../validation/ValidationRendering.vue";
 
-	//Vuex
-	import { mapGetters } from "vuex";
+//Vuex
+import {mapGetters} from "vuex";
 
-	export default {
-		name: "NewRequirementItemWizard",
-		setup() {
-			return { v$: useVuelidate() };
+export default {
+	name: "NewRequirementItemWizard",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	inject: [
+		"nextTick",
+	],
+	components: {
+		editor: Editor,
+		Icon,
+		NSelect,
+		ValidationRendering,
+	},
+	mixins: [errorModalMixin, iconMixin],
+	data() {
+		return {
+			requirementItemScopeModel: "",
+			requirementItemTitleModel: "",
+			statusItemFixList: [],
+			statusItemModel: "",
+			typeItemFixList: [],
+			typeItemModel: "",
+		};
+	},
+	computed: {
+		...mapGetters({
+			locationId: "getLocationId",
+			rootUrl: "getRootUrl",
+		}),
+	},
+	validations: {
+		requirementItemScopeModel: {
+			required,
+			maxLength: maxLength(630000),
 		},
-		inject: [
-			"nextTick",
-		],
-		components: {
-			editor: Editor,
-			Icon,
-			NSelect,
-			ValidationRendering,
+		requirementItemTitleModel: {
+			required,
 		},
-		mixins: [errorModalMixin, iconMixin],
-		data() {
-			return {
-				requirementItemScopeModel: "",
-				requirementItemTitleModel: "",
-				statusItemFixList: [],
-				statusItemModel: "",
-				typeItemFixList: [],
-				typeItemModel: "",
-			};
+		statusItemModel: {
+			required,
 		},
-		computed: {
-			...mapGetters({
-				locationId: "getLocationId",
-				rootUrl: "getRootUrl",
-			}),
+		typeItemModel: {
+			required,
 		},
-		validations: {
-			requirementItemScopeModel: {
-				required,
-				maxLength: maxLength(630000),
-			},
-			requirementItemTitleModel: {
-				required,
-			},
-			statusItemModel: {
-				required,
-			},
-			typeItemModel: {
-				required,
-			},
-		},
-		methods: {
-			saveItem() {
-				// Check the validation first
-				this.v$.$touch();
+	},
+	methods: {
+		saveItem() {
+			// Check the validation first
+			this.v$.$touch();
 
-				if (this.v$.$invalid) {
-					//Just return - as we do not need to do the rest of this function
-					return;
-				}
+			if (this.v$.$invalid) {
+				//Just return - as we do not need to do the rest of this function
+				return;
+			}
 
-				const data_to_send = new FormData();
-				data_to_send.set(
-					"requirement_item_title",
-					this.requirementItemTitleModel
-				);
-				data_to_send.set(
-					"requirement_item_scope",
-					this.requirementItemScopeModel
-				);
-				data_to_send.set(
-					"requirement_item_status",
-					this.statusItemModel
-				);
-				data_to_send.set("requirement_item_type", this.typeItemModel);
+			const data_to_send = new FormData();
+			data_to_send.set(
+				"requirement_item_title",
+				this.requirementItemTitleModel
+			);
+			data_to_send.set(
+				"requirement_item_scope",
+				this.requirementItemScopeModel
+			);
+			data_to_send.set(
+				"requirement_item_status",
+				this.statusItemModel
+			);
+			data_to_send.set("requirement_item_type", this.typeItemModel);
 
-				axios
-					.post(
-						`${this.rootUrl}new_requirement_item/save/${this.locationId}/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Data saved successfully - clear all models
-						this.requirementItemScopeModel = "";
-						this.requirementItemTitleModel = "";
-						this.statusItemModel = "";
-						this.typeItemModel = "";
+			axios
+				.post(
+					`${this.rootUrl}new_requirement_item/save/${this.locationId}/`,
+					data_to_send
+				)
+				.then((response) => {
+					//Data saved successfully - clear all models
+					this.requirementItemScopeModel = "";
+					this.requirementItemTitleModel = "";
+					this.statusItemModel = "";
+					this.typeItemModel = "";
 
-						//EMIT THE NEW DATA UPSTREAM
-						this.$emit("new_item_added", response.data);
+					//EMIT THE NEW DATA UPSTREAM
+					this.$emit("new_item_added", response.data);
 
-						//SHOULD CLOSE MODAL HERE!
-						document
-							.getElementById("requirementItemCloseButton")
-							.click();
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
-			updateStatusList() {
-				axios.post(
-					`${this.rootUrl}requirement_information/data/list_of_item_status_values/`
-				).then((response) => {
-					this.statusItemFixList = response.data.map((row) => {
-						return {
-							value: row.pk,
-							label: row.fields.requirement_item_status,
-						}
-					})
+					//SHOULD CLOSE MODAL HERE!
+					document
+						.getElementById("requirementItemCloseButton")
+						.click();
+				})
+				.catch((error) => {
+					this.showErrorModal(error, this.destination);
 				});
-			},
-			updateTypeList() {
-				axios.post(
-					`${this.rootUrl}requirement_information/data/list_of_item_type_values/`
-				).then((response) => {
-					this.typeItemFixList = response.data.map((row) => {
-						return {
-							value: row.pk,
-							label: row.fields.requirement_item_type,
-						}
-					});
-				});
-			},
 		},
-		mounted() {
-			this.nextTick(() => {
-				this.updateStatusList();
-				this.updateTypeList();
-			})
-		}
-	};
+		updateStatusList() {
+			axios.post(
+				`${this.rootUrl}requirement_information/data/list_of_item_status_values/`
+			).then((response) => {
+				this.statusItemFixList = response.data.map((row) => {
+					return {
+						value: row.pk,
+						label: row.fields.requirement_item_status,
+					}
+				})
+			});
+		},
+		updateTypeList() {
+			axios.post(
+				`${this.rootUrl}requirement_information/data/list_of_item_type_values/`
+			).then((response) => {
+				this.typeItemFixList = response.data.map((row) => {
+					return {
+						value: row.pk,
+						label: row.fields.requirement_item_type,
+					}
+				});
+			});
+		},
+	},
+	mounted() {
+		this.nextTick(() => {
+			this.updateStatusList();
+			this.updateTypeList();
+		})
+	}
+};
 </script>
 
 <style scoped></style>

@@ -13,7 +13,7 @@
 				{{ cardLink.type }} - {{ cardLink.id }}
 			</a>
 		</div>
-		<hr v-if="cardLink.id !== undefined && cardLink.id !== null" />
+		<hr v-if="cardLink.id !== undefined && cardLink.id !== null"/>
 
 		<!-- Card Text -->
 		<div class="row">
@@ -33,7 +33,7 @@
 			</div>
 		</div>
 
-		<hr />
+		<hr/>
 		<div class="row">
 			<div class="col-md-4">
 				<strong>Card Priority</strong>
@@ -50,7 +50,7 @@
 				></n-select>
 			</div>
 		</div>
-		<hr />
+		<hr/>
 
 		<!-- CARD LOCATION -->
 		<div class="row">
@@ -86,7 +86,7 @@
 			</div>
 		</div>
 
-		<hr v-if="userLevel > 1" />
+		<hr v-if="userLevel > 1"/>
 		<div
 			class="row"
 			v-if="userLevel > 1"
@@ -125,133 +125,133 @@
 </template>
 
 <script>
-	const axios = require("axios");
-	import { NSelect } from "naive-ui";
-	import { mapGetters } from "vuex";
-	import { Modal } from "bootstrap";
+const axios = require("axios");
+import {NSelect} from "naive-ui";
+import {mapGetters} from "vuex";
+import {Modal} from "bootstrap";
 
-	export default {
-		name: "CardDetails",
-		components: {
-			NSelect,
-		},
-		data() {
-			return {
-				listPriority: [
-					{
-						label: "Highest",
-						value: 0,
-					},
-					{
-						label: "High",
-						value: 1,
-					},
-					{
-						label: "Normal",
-						value: 2,
-					},
-					{
-						label: "Low",
-						value: 3,
-					},
-					{
-						label: "Lowest",
-						value: 4,
-					},
-				],
-				tempModel: "",
-			};
-		},
-		computed: {
-			...mapGetters({
-				cardId: "getCardId",
-				cardLink: "getCardLink",
-				kanbanStatus: "getKanbanStatus",
-				listColumns: "getListColumns",
-				listLevels: "getListLevels",
-				userLevel: "getUserLevel",
-			}),
-			cardColumn: {
-				get() {
-					return this.$store.state.card.cardColumn;
+export default {
+	name: "CardDetails",
+	components: {
+		NSelect,
+	},
+	data() {
+		return {
+			listPriority: [
+				{
+					label: "Highest",
+					value: 0,
 				},
-				set(value) {
-					this.$store.commit({
-						type: "updateValue",
-						field: "cardColumn",
-						value: value,
-					});
+				{
+					label: "High",
+					value: 1,
 				},
+				{
+					label: "Normal",
+					value: 2,
+				},
+				{
+					label: "Low",
+					value: 3,
+				},
+				{
+					label: "Lowest",
+					value: 4,
+				},
+			],
+			tempModel: "",
+		};
+	},
+	computed: {
+		...mapGetters({
+			cardId: "getCardId",
+			cardLink: "getCardLink",
+			kanbanStatus: "getKanbanStatus",
+			listColumns: "getListColumns",
+			listLevels: "getListLevels",
+			userLevel: "getUserLevel",
+		}),
+		cardColumn: {
+			get() {
+				return this.$store.state.card.cardColumn;
 			},
-			cardLevel: {
-				get() {
-					return this.$store.state.card.cardLevel;
-				},
-				set(value) {
-					this.$store.commit({
-						type: "updateValue",
-						field: "cardLevel",
-						value: value,
-					});
-				},
-			},
-			cardPriority: {
-				get() {
-					return this.$store.state.card.cardPriority;
-				},
-				set(value) {
-					this.$store.commit({
-						type: "updateValue",
-						field: "cardPriority",
-						value: value,
-					});
-				},
-			},
-			cardTitle: {
-				get() {
-					return this.$store.state.card.cardTitle;
-				},
-				set(value) {
-					this.$store.commit({
-						type: "updateValue",
-						field: "cardTitle",
-						value: value,
-					});
-				},
-			}
-		},
-		methods: {
-			archiveCard() {
-				//Close the current modal
-				document
-					.getElementById("cardInformationModalCloseButton")
-					.click();
-
-				//Open up the archive card modal
-				const confirmCardArchive = new Modal(
-					"#confirmCardArchiveModal"
-				);
-				confirmCardArchive.show();
-			},
-			closeModal() {
-				document
-					.getElementById("cardInformationModalCloseButton")
-					.click();
-			},
-			updateCard(close_modal) {
+			set(value) {
 				this.$store.commit({
-					type: "updateKanbanCard",
-					card_id: this.cardId,
-					kanban_card_text: this.cardTitle,
-					kanban_column: this.cardColumn,
-					kanban_level: this.cardLevel,
-				});
-
-				//TEMP - need to replace with a close functionality
-				this.$emit("update_card", {
-					close_modal: close_modal,
+					type: "updateValue",
+					field: "cardColumn",
+					value: value,
 				});
 			},
 		},
-	};
+		cardLevel: {
+			get() {
+				return this.$store.state.card.cardLevel;
+			},
+			set(value) {
+				this.$store.commit({
+					type: "updateValue",
+					field: "cardLevel",
+					value: value,
+				});
+			},
+		},
+		cardPriority: {
+			get() {
+				return this.$store.state.card.cardPriority;
+			},
+			set(value) {
+				this.$store.commit({
+					type: "updateValue",
+					field: "cardPriority",
+					value: value,
+				});
+			},
+		},
+		cardTitle: {
+			get() {
+				return this.$store.state.card.cardTitle;
+			},
+			set(value) {
+				this.$store.commit({
+					type: "updateValue",
+					field: "cardTitle",
+					value: value,
+				});
+			},
+		}
+	},
+	methods: {
+		archiveCard() {
+			//Close the current modal
+			document
+				.getElementById("cardInformationModalCloseButton")
+				.click();
+
+			//Open up the archive card modal
+			const confirmCardArchive = new Modal(
+				"#confirmCardArchiveModal"
+			);
+			confirmCardArchive.show();
+		},
+		closeModal() {
+			document
+				.getElementById("cardInformationModalCloseButton")
+				.click();
+		},
+		updateCard(close_modal) {
+			this.$store.commit({
+				type: "updateKanbanCard",
+				card_id: this.cardId,
+				kanban_card_text: this.cardTitle,
+				kanban_column: this.cardColumn,
+				kanban_level: this.cardLevel,
+			});
+
+			//TEMP - need to replace with a close functionality
+			this.$emit("update_card", {
+				close_modal: close_modal,
+			});
+		},
+	},
+};
 </script>

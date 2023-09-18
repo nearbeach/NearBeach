@@ -26,7 +26,7 @@
 					v-model="rfcTitleModel"
 				/>
 			</div>
-			<br />
+			<br/>
 
 			<!-- RFC SUMMARY -->
 			<label>
@@ -35,7 +35,7 @@
 					v-bind:error-list="v$.rfcTitleModel.$errors"
 				></validation-rendering>
 			</label
-			><br />
+			><br/>
 			<img
 				v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 				class="loader-image"
@@ -65,96 +65,96 @@
 </template>
 
 <script>
-	//Validations
-	import useVuelidate from "@vuelidate/core";
-	import { required, maxLength } from "@vuelidate/validators";
-	import ValidationRendering from "../../validation/ValidationRendering.vue";
+//Validations
+import useVuelidate from "@vuelidate/core";
+import {required, maxLength} from "@vuelidate/validators";
+import ValidationRendering from "../../validation/ValidationRendering.vue";
 
-	//TinyMce
-	import Editor from "@tinymce/tinymce-vue";
+//TinyMce
+import Editor from "@tinymce/tinymce-vue";
 
-	//Mixins
-	import uploadMixin from "../../../mixins/uploadMixin";
+//Mixins
+import uploadMixin from "../../../mixins/uploadMixin";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	export default {
-		name: "RfcDescription",
-		setup() {
-			return { v$: useVuelidate() };
+export default {
+	name: "RfcDescription",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	components: {
+		editor: Editor,
+		ValidationRendering,
+	},
+	props: {
+		isReadOnly: {
+			type: Boolean,
+			default: false,
 		},
-		components: {
-			editor: Editor,
-			ValidationRendering,
-		},
-		props: {
-			isReadOnly: {
-				type: Boolean,
-				default: false,
+		rfcResults: {
+			type: Array,
+			default() {
+				return [];
 			},
-			rfcResults: {
-				type: Array,
-				default() {
-					return [];
-				},
-			},
 		},
-		mixins: [uploadMixin],
-		data: () => ({
-			rfcSummaryModel: "",
-			rfcTitleModel: "",
+	},
+	mixins: [uploadMixin],
+	data: () => ({
+		rfcSummaryModel: "",
+		rfcTitleModel: "",
+	}),
+	computed: {
+		...mapGetters({
+			staticUrl: "getStaticUrl",
 		}),
-		computed: {
-			...mapGetters({
-				staticUrl: "getStaticUrl",
-			}),
+	},
+	validations: {
+		rfcSummaryModel: {
+			required,
+			maxLength: maxLength(630000),
 		},
-		validations: {
-			rfcSummaryModel: {
-				required,
-				maxLength: maxLength(630000),
-			},
-			rfcTitleModel: {
-				required,
-				maxLength: maxLength(250),
-			},
+		rfcTitleModel: {
+			required,
+			maxLength: maxLength(250),
 		},
-		methods: {
-			updateValues(modelName, modelValue) {
-				this.$emit("update_values", {
-					modelName: modelName,
-					modelValue: modelValue,
-				});
-			},
-		},
-		watch: {
-			rfcSummaryModel() {
-				this.updateValues("rfcSummaryModel", this.rfcSummaryModel);
-			},
-			rfcTitleModel() {
-				this.updateValues("rfcTitleModel", this.rfcTitleModel);
-			},
-		},
-		updated() {
-			this.v$.$touch();
-
-			this.$emit("update_validation", {
-				tab: "tab_0",
-				value: !this.v$.$invalid,
+	},
+	methods: {
+		updateValues(modelName, modelValue) {
+			this.$emit("update_values", {
+				modelName: modelName,
+				modelValue: modelValue,
 			});
 		},
-		mounted() {
-			//If there is data in the rfcResults - we will update the rfcSummary and rfcTitle
-			if (this.rfcResults.length > 0) {
-				this.rfcSummaryModel = this.rfcResults[0].fields.rfc_summary;
-				this.rfcTitleModel = this.rfcResults[0].fields.rfc_title;
-			}
-
-			//Just run the validations to show the error messages
-			this.v$.$touch();
+	},
+	watch: {
+		rfcSummaryModel() {
+			this.updateValues("rfcSummaryModel", this.rfcSummaryModel);
 		},
-	};
+		rfcTitleModel() {
+			this.updateValues("rfcTitleModel", this.rfcTitleModel);
+		},
+	},
+	updated() {
+		this.v$.$touch();
+
+		this.$emit("update_validation", {
+			tab: "tab_0",
+			value: !this.v$.$invalid,
+		});
+	},
+	mounted() {
+		//If there is data in the rfcResults - we will update the rfcSummary and rfcTitle
+		if (this.rfcResults.length > 0) {
+			this.rfcSummaryModel = this.rfcResults[0].fields.rfc_summary;
+			this.rfcTitleModel = this.rfcResults[0].fields.rfc_title;
+		}
+
+		//Just run the validations to show the error messages
+		this.v$.$touch();
+	},
+};
 </script>
 
 <style scoped></style>

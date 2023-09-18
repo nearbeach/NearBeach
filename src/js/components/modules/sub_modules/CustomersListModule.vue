@@ -27,7 +27,7 @@
 				</div>
 			</div>
 
-			 <div
+			<div
 				class="customer-card--remove"
 				v-if="userLevel >= 2"
 			>
@@ -41,69 +41,70 @@
 </template>
 
 <script>
-	import { Icon } from "@iconify/vue";
-	const axios = require("axios");
+import {Icon} from "@iconify/vue";
 
-	//Mixins
-	import iconMixin from "../../../mixins/iconMixin";
+const axios = require("axios");
 
-	//VueX
-	import { mapGetters } from "vuex";
+//Mixins
+import iconMixin from "../../../mixins/iconMixin";
 
-	export default {
-		name: "CustomersListModule",
-		components: {
-			Icon,
-		},
-		props: {
-			customerResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
+//VueX
+import {mapGetters} from "vuex";
+
+export default {
+	name: "CustomersListModule",
+	components: {
+		Icon,
+	},
+	props: {
+		customerResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				rootUrl: "getRootUrl",
-				staticUrl: "getStaticUrl",
-				userLevel: "getUserLevel",
-			}),
-			defaultCustomerImage() {
-				return `${this.staticUrl}/NearBeach/images/placeholder/people_tax.svg`;
-			},
+	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+			userLevel: "getUserLevel",
+		}),
+		defaultCustomerImage() {
+			return `${this.staticUrl}/NearBeach/images/placeholder/people_tax.svg`;
 		},
-		mixins: [iconMixin],
-		data() {
-			return {};
-		},
-		methods: {
-			getCustomerImage(customer) {
-				const image = customer.fields.customer_profile_picture;
+	},
+	mixins: [iconMixin],
+	data() {
+		return {};
+	},
+	methods: {
+		getCustomerImage(customer) {
+			const image = customer.fields.customer_profile_picture;
 
-				if (image === "" || image === null) {
-					//There is no image - return the default image
-					return this.defaultCustomerImage;
-				}
-				return `${this.rootUrl}private/${image}`;
-			},
-			removeCustomer(customer_id) {
-				//Setup data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("customer_id", customer_id);
-
-				axios.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_customer/`,
-					data_to_send,
-				).then(() => {
-					//Filter out the delete customer
-					this.$emit("remove_customer", customer_id);
-				})
-			},
+			if (image === "" || image === null) {
+				//There is no image - return the default image
+				return this.defaultCustomerImage;
+			}
+			return `${this.rootUrl}private/${image}`;
 		},
-	};
+		removeCustomer(customer_id) {
+			//Setup data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("customer_id", customer_id);
+
+			axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_customer/`,
+				data_to_send,
+			).then(() => {
+				//Filter out the delete customer
+				this.$emit("remove_customer", customer_id);
+			})
+		},
+	},
+};
 </script>
 
 <style scoped></style>

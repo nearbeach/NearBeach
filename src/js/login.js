@@ -16,8 +16,8 @@ const static_elem = document.getElementById("login_script").dataset.static;
 
 //Apply WebP image
 elem.style[
-	"background-image"
-] = `url('${static_elem}NearBeach/images/NearBeach_Background_${image_number.toLocaleString(
-	"en",
-	{ minimumIntegerDigits: 3, useGrouping: false }
+    "background-image"
+    ] = `url('${static_elem}NearBeach/images/NearBeach_Background_${image_number.toLocaleString(
+    "en",
+    {minimumIntegerDigits: 3, useGrouping: false}
 )}.webp')`;

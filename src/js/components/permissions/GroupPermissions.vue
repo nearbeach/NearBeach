@@ -14,7 +14,7 @@
 		</div>
 		<div class="col-md-8">
 			<label
-				>Group List
+			>Group List
 				<validation-rendering
 					v-bind:error-list="v$.groupModel.$errors"
 				></validation-rendering>
@@ -30,76 +30,76 @@
 </template>
 
 <script>
-	import { NSelect } from "naive-ui";
-	
-	//Validation
-	import useVuelidate from "@vuelidate/core";
-	import { required } from "@vuelidate/validators";
-	import ValidationRendering from "../validation/ValidationRendering.vue";
+import {NSelect} from "naive-ui";
 
-	export default {
-		name: "GroupPermissions",
-		setup() {
-			return { v$: useVuelidate() };
+//Validation
+import useVuelidate from "@vuelidate/core";
+import {required} from "@vuelidate/validators";
+import ValidationRendering from "../validation/ValidationRendering.vue";
+
+export default {
+	name: "GroupPermissions",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	components: {
+		NSelect,
+		ValidationRendering,
+	},
+	props: {
+		destination: {
+			type: String,
+			default: "",
 		},
-		components: {
-			NSelect,
-			ValidationRendering,
-		},
-		props: {
-			destination: {
-				type: String,
-				default: "",
-			},
-			groupResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			isDirty: {
-				type: Boolean,
-				default: true,
-			}, //Passes the value from the template above where the checking is done
-			userGroupResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
+		groupResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		watch: {
-			groupModel() {
-				//Send the data upstream
-				this.$emit("update_group_model", this.groupModel);
+		isDirty: {
+			type: Boolean,
+			default: true,
+		}, //Passes the value from the template above where the checking is done
+		userGroupResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		data() {
+	},
+	watch: {
+		groupModel() {
+			//Send the data upstream
+			this.$emit("update_group_model", this.groupModel);
+		},
+	},
+	data() {
+		return {
+			groupFixResults: [],
+			groupModel: [],
+		};
+	},
+	validations: {
+		groupModel: {
+			required,
+		},
+	},
+	mounted() {
+		//Fix up the list to remove any django nested loops
+		this.groupFixResults = this.groupResults.map((row) => {
 			return {
-				groupFixResults: [],
-				groupModel: [],
+				value: row.pk,
+				label: row.fields.group_name,
 			};
-		},
-		validations: {
-			groupModel: {
-				required,
-			},
-		},
-		mounted() {
-			//Fix up the list to remove any django nested loops
-			this.groupFixResults = this.groupResults.map((row) => {
-				return {
-					value: row.pk,
-					label: row.fields.group_name,
-				};
-			});
+		});
 
-			//Any User groups are added to the group Model
-			this.groupModel = this.userGroupResults.map((row) => {
-				return row.group_id;
-			});
-		},
-	};
+		//Any User groups are added to the group Model
+		this.groupModel = this.userGroupResults.map((row) => {
+			return row.group_id;
+		});
+	},
+};
 </script>
 
 <style scoped></style>

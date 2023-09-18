@@ -5,7 +5,7 @@
 	>
 		<div class="card-body">
 			<h1>Open Kanban Boards</h1>
-			<hr />
+			<hr/>
 
 			<!-- List all kanban boards -->
 			<render-object-card
@@ -18,63 +18,63 @@
 </template>
 
 <script>
-	const axios = require("axios");
+const axios = require("axios");
 
-	//Mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
+//Mixins
+import errorModalMixin from "../../mixins/errorModalMixin";
 
-	//Components
-	import RenderObjectCard from "../render/RenderObjectCard.vue";
+//Components
+import RenderObjectCard from "../render/RenderObjectCard.vue";
 
-	export default {
-		name: "DashboardKanbanList",
-		components: {
-			RenderObjectCard,
+export default {
+	name: "DashboardKanbanList",
+	components: {
+		RenderObjectCard,
+	},
+	props: {
+		rootUrl: {
+			type: String,
+			default: "/",
 		},
-		props: {
-			rootUrl: {
-				type: String,
-				default: "/",
-			},
+	},
+	data: () => ({
+		kanbanList: [],
+		kanbanVariables: {
+			header: "Kanban Boards",
+			prefix: "Kan",
+			id: "id",
+			title: "title",
+			status: "status",
+			end_date: "end_date",
 		},
-		data: () => ({
-			kanbanList: [],
-			kanbanVariables: {
-				header: "Kanban Boards",
-				prefix: "Kan",
-				id: "id",
-				title: "title",
-				status: "status",
-				end_date: "end_date",
-			},
-		}),
-		mixins: [errorModalMixin],
-		methods: {
-			getMyKanbanList() {
-				//Use axios to get data
-				axios
-					.post(`${this.rootUrl}dashboard/get/kanban_list/`)
-					.then((response) => {
-						//Map out the data to a flatted table for rendering purposes.
-						this.kanbanList = response.data.map((row) => {
-							return {
-								id: row.pk,
-								title: row.fields.kanban_board_name,
-								status: "Open",
-								end_date: "",
-							};
-						});
-					})
-					.catch((error) => {
-						this.showErrorModal(error, "Kanban List", 0);
+	}),
+	mixins: [errorModalMixin],
+	methods: {
+		getMyKanbanList() {
+			//Use axios to get data
+			axios
+				.post(`${this.rootUrl}dashboard/get/kanban_list/`)
+				.then((response) => {
+					//Map out the data to a flatted table for rendering purposes.
+					this.kanbanList = response.data.map((row) => {
+						return {
+							id: row.pk,
+							title: row.fields.kanban_board_name,
+							status: "Open",
+							end_date: "",
+						};
 					});
-			},
+				})
+				.catch((error) => {
+					this.showErrorModal(error, "Kanban List", 0);
+				});
 		},
-		mounted() {
-			//Get list of kanban items
-			this.getMyKanbanList();
-		},
-	};
+	},
+	mounted() {
+		//Get list of kanban items
+		this.getMyKanbanList();
+	},
+};
 </script>
 
 <style scoped></style>

@@ -2,7 +2,7 @@
 	<div class="card search-card">
 		<div class="card-body">
 			<h2>{{ importVariables.header }} Search Results</h2>
-			<hr />
+			<hr/>
 
 			<render-object-card v-bind:search-results="searchResults"
 								v-bind:import-variables="importVariables"
@@ -13,39 +13,39 @@
 </template>
 
 <script>
-	//Components
-	import RenderObjectCard from "../render/RenderObjectCard.vue";
+//Components
+import RenderObjectCard from "../render/RenderObjectCard.vue";
 
-	export default {
-		name: "ListSearchResults",
-		components: {
-			RenderObjectCard,
+export default {
+	name: "ListSearchResults",
+	components: {
+		RenderObjectCard,
+	},
+	props: {
+		destination: {
+			type: String,
+			default: "",
 		},
-		props: {
-			destination: {
-				type: String,
-				default: "",
+		importVariables: {
+			type: Object,
+			default: () => {
+				return {
+					header: "",
+					prefix: "",
+					id: 0,
+					title: "",
+					status: "",
+				};
 			},
-			importVariables: {
-				type: Object,
-				default: () => {
-					return {
-						header: "",
-						prefix: "",
-						id: 0,
-						title: "",
-						status: "",
-					};
-				},
-			}, // {header, prefix,id, title, status}
-			searchResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
+		}, // {header, prefix,id, title, status}
+		searchResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-	};
+	},
+};
 </script>
 
 <style scoped></style>

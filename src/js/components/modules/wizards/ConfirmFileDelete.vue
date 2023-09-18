@@ -1,5 +1,5 @@
 <template>
-    <div
+	<div
 		class="modal fade"
 		id="confirmFileDeleteModal"
 		tabindex="-1"
@@ -17,7 +17,7 @@
 					>
 						Please confirm File Deletion
 					</h5>
-                    <!-- TASK INFORMATION -->
+					<!-- TASK INFORMATION -->
 					<button
 						type="button"
 						class="btn-close"
@@ -51,46 +51,46 @@
 </template>
 
 <script>
-	const axios = require("axios");
-    import { mapGetters } from "vuex";
+const axios = require("axios");
+import {mapGetters} from "vuex";
 
-    export default {
-        name: "ConfirmFileDelete",
-        props: {
-            documentKey: {
-                type: String,
-                default: "",
-            }
-        },
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				rootUrl: "getRootUrl",
-			})
+export default {
+	name: "ConfirmFileDelete",
+	props: {
+		documentKey: {
+			type: String,
+			default: "",
+		}
+	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			rootUrl: "getRootUrl",
+		})
+	},
+	methods: {
+		deleteFile() {
+			//Create data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("document_key", this.documentKey);
+
+			axios.post(
+				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/remove/`,
+				data_to_send,
+			).then(() => {
+				this.$emit("remove_document", {
+					document_key: this.documentKey,
+				});
+			}).catch((error) => {
+				// this.showErrorModal(error, this.destination);
+			});
+
+			this.closeModal();
 		},
-        methods: {
-			deleteFile() {
-				//Create data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("document_key", this.documentKey);
-                
-                axios.post(
-					`${this.rootUrl}documentation/${this.destination}/${this.locationId}/remove/`,
-					data_to_send,
-				).then(() => {
-                    this.$emit("remove_document", {
-                        document_key: this.documentKey,
-                    });
-				}).catch((error) => {
-                    // this.showErrorModal(error, this.destination);
-                });
-
-                this.closeModal();
-			},
-			closeModal() {
-				document.getElementById("confirmFileDeleteButton").click();
-			}
-        },
-    }
+		closeModal() {
+			document.getElementById("confirmFileDeleteButton").click();
+		}
+	},
+}
 </script>

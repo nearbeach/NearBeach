@@ -18,7 +18,8 @@
 				</a>
 			</div>
 			<div class="organisation-link">
-				<Icon v-bind:icon="icons.linkOut"></Icon> Website:
+				<Icon v-bind:icon="icons.linkOut"></Icon>
+				Website:
 				<a
 					v-bind:href="stakeholderModel.organisation_website"
 					target="_blank"
@@ -28,7 +29,8 @@
 				</a>
 			</div>
 			<div class="organisation-email">
-				<Icon v-bind:icon="icons.mailIcon"></Icon> Email:
+				<Icon v-bind:icon="icons.mailIcon"></Icon>
+				Email:
 				<a
 					v-bind:href="`mailto:${stakeholderModel.organisation_email}`"
 				>
@@ -40,53 +42,53 @@
 </template>
 
 <script>
-	import { Icon } from "@iconify/vue";
+import {Icon} from "@iconify/vue";
 
-	//Mixins
-	import iconMixin from "../../mixins/iconMixin";
+//Mixins
+import iconMixin from "../../mixins/iconMixin";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	export default {
-		name: "StakeholderInformation",
-		components: {
-			Icon,
+export default {
+	name: "StakeholderInformation",
+	components: {
+		Icon,
+	},
+	props: {
+		defaultStakeholderImage: {
+			type: String,
+			default: "",
 		},
-		props: {
-			defaultStakeholderImage: {
-				type: String,
-				default: "",
-			},
-			organisationResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-		},
-		data() {
-			return {
-				stakeholderModel: this.organisationResults[0].fields,
-			};
-		},
-		mixins: [iconMixin],
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-				staticUrl: "getStaticUrl",
-			}),
-			getStakeholderImage() {
-				const image =
-					this.stakeholderModel.organisation_profile_picture;
-				if (image === "" || image === null) {
-					//There is no image - return the default image
-					return this.defaultStakeholderImage;
-				}
-				return `${this.rootUrl}private/${image}`;
+		organisationResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-	};
+	},
+	data() {
+		return {
+			stakeholderModel: this.organisationResults[0].fields,
+		};
+	},
+	mixins: [iconMixin],
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+		}),
+		getStakeholderImage() {
+			const image =
+				this.stakeholderModel.organisation_profile_picture;
+			if (image === "" || image === null) {
+				//There is no image - return the default image
+				return this.defaultStakeholderImage;
+			}
+			return `${this.rootUrl}private/${image}`;
+		},
+	},
+};
 </script>
 
 <style scoped></style>
