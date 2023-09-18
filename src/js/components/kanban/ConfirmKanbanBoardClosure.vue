@@ -1,5 +1,5 @@
 <template>
-    <div
+	<div
 		class="modal fade"
 		id="confirmKanbanBoardClosure"
 		tabindex="-1"
@@ -17,7 +17,7 @@
 					>
 						Please confirm Kanban Board Closure
 					</h5>
-                    <!-- TASK INFORMATION -->
+					<!-- TASK INFORMATION -->
 					<button
 						type="button"
 						class="btn-close"
@@ -51,34 +51,34 @@
 </template>
 
 <script>
-	const axios = require("axios");
-    import { mapGetters } from "vuex";
+const axios = require("axios");
+import {mapGetters} from "vuex";
 
-    export default {
-        name: "confirmKanbanBoardClosure",
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				rootUrl: "getRootUrl",
-			})
+export default {
+	name: "confirmKanbanBoardClosure",
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			rootUrl: "getRootUrl",
+		})
+	},
+	methods: {
+		closeKanbanBoard() {
+			axios
+				.post(
+					`${this.rootUrl}kanban_information/${this.locationId}/close_board/`
+				)
+				.then((response) => {
+					window.location.href = `${this.rootUrl}`;
+				})
+				.catch((error) => {
+					// this.showErrorModal(error, this.destination);
+				});
 		},
-        methods: {
-			closeKanbanBoard() {
-				axios
-					.post(
-						`${this.rootUrl}kanban_information/${this.locationId}/close_board/`
-					)
-					.then((response) => {
-						window.location.href = `${this.rootUrl}`;
-					})
-					.catch((error) => {
-						// this.showErrorModal(error, this.destination);
-					});
-			},
-			closeModal() {
-				document.getElementById("confirmKanbanCloseButton").click();
-			}
-        },
-    }
+		closeModal() {
+			document.getElementById("confirmKanbanCloseButton").click();
+		}
+	},
+}
 </script>

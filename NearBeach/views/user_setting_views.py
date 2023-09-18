@@ -70,7 +70,7 @@ def update_user_settings(request):
     update_user_setting.update(
         setting_data=form.cleaned_data['setting_data']
     )
-    update_user_setting.save()
+    # update_user_setting.save()
 
     return HttpResponse("")
 

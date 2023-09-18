@@ -70,54 +70,54 @@
 </template>
 
 <script>
-	import axios from "axios";
-	import Editor from "@tinymce/tinymce-vue";
+import axios from "axios";
+import Editor from "@tinymce/tinymce-vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	export default {
-		name: "BlockedNotesModal",
-		components: {
-			editor: Editor,
-		},
-		props: {},
-		data() {
-			return {
-				noteModal: "",
-			};
-		},
-		computed: {
-			...mapGetters({
-				cardId: "getCardId",
-				rootUrl: "getRootUrl",
-			}),
-		},
-		methods: {
-			addNote() {
-				//Setup data to send
-				const data_to_send = new FormData();
-				data_to_send.set("note", this.noteModal);
+export default {
+	name: "BlockedNotesModal",
+	components: {
+		editor: Editor,
+	},
+	props: {},
+	data() {
+		return {
+			noteModal: "",
+		};
+	},
+	computed: {
+		...mapGetters({
+			cardId: "getCardId",
+			rootUrl: "getRootUrl",
+		}),
+	},
+	methods: {
+		addNote() {
+			//Setup data to send
+			const data_to_send = new FormData();
+			data_to_send.set("note", this.noteModal);
 
-				//Use axios to send the data
-				axios
-					.post(
-						`${this.rootUrl}object_data/kanban_card/${this.cardId}/add_notes/`,
-						data_to_send
-					)
-					.then(() => {
-						this.closeModal();
-					});
-			},
-			closeModal() {
-				//Clear the data
-				this.noteModal = "";
-
-				//Close the modal
-				document.getElementById("blockedNotesModalButton").click();
-			},
+			//Use axios to send the data
+			axios
+				.post(
+					`${this.rootUrl}object_data/kanban_card/${this.cardId}/add_notes/`,
+					data_to_send
+				)
+				.then(() => {
+					this.closeModal();
+				});
 		},
-	};
+		closeModal() {
+			//Clear the data
+			this.noteModal = "";
+
+			//Close the modal
+			document.getElementById("blockedNotesModalButton").click();
+		},
+	},
+};
 </script>
 
 <style scoped></style>
