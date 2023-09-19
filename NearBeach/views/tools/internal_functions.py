@@ -3,6 +3,9 @@ from NearBeach.models import (
     Customer,
     KanbanBoard,
     KanbanCard,
+    ListOfRequirementItemStatus,
+    ListOfRequirementStatus,
+    ObjectAssignment,
     Organisation,
     Project,
     RequestForChange,
@@ -12,6 +15,8 @@ from NearBeach.models import (
     User,
     UserGroup,
 )
+
+from django.db.models import Q
 
 OBJECT_DICT = {
     "change_task": ChangeTask.objects,
@@ -84,3 +89,5 @@ def set_object_from_destination(input_object, destination, location_id):
     setattr(input_object, destination, OBJECT_DICT[destination].get(pk=location_id))
 
     return input_object
+
+
