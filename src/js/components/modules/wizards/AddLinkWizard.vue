@@ -10,7 +10,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon> Add Link
+						<Icon v-bind:icon="icons.userIcon"></Icon>
+						Add Link
 						Wizard
 					</h2>
 					<button
@@ -60,7 +61,7 @@
 									Document URL
 									<validation-rendering
 										v-bind:error-list="v$.documentUrlLocationModel.$errors"
-									></validation-rendering>	
+									></validation-rendering>
 								</label>
 								<input
 									id="document_url_location"
@@ -95,137 +96,137 @@
 </template>
 
 <script>
-	import axios from "axios";
-	import { Icon } from "@iconify/vue";
+import axios from "axios";
+import {Icon} from "@iconify/vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Mixins
-	import errorModalMixin from "../../../mixins/errorModalMixin";
-	import iconMixin from "../../../mixins/iconMixin";
+//Mixins
+import errorModalMixin from "../../../mixins/errorModalMixin";
+import iconMixin from "../../../mixins/iconMixin";
 
-	//Validation
-	import useVuelidate from "@vuelidate/core";
-	import { required, url } from "@vuelidate/validators";
-	import ValidationRendering from "../../validation/ValidationRendering.vue";
+//Validation
+import useVuelidate from "@vuelidate/core";
+import {required, url} from "@vuelidate/validators";
+import ValidationRendering from "../../validation/ValidationRendering.vue";
 
-	export default {
-		name: "AddLinkWizard",
-		setup() {
-			return { v$: useVuelidate() };
+export default {
+	name: "AddLinkWizard",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	components: {
+		Icon,
+		ValidationRendering,
+	},
+	props: {
+		currentFolder: {
+			type: String,
+			default: "/",
 		},
-		components: {
-			Icon,
-			ValidationRendering,
+		destination: {
+			type: String,
+			default: "/",
 		},
-		props: {
-			currentFolder: {
-				type: String,
-				default: "/",
-			},
-			destination: {
-				type: String,
-				default: "/",
-			},
-			excludeDocuments: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			existingFolders: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			locationId: {
-				type: Number,
-				default: 0,
+		excludeDocuments: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		mixins: [errorModalMixin, iconMixin],
-		data() {
-			return {
-				linkModel: "",
-				disableAddButton: true,
-				documentDescriptionModel: "",
-				documentUrlLocationModel: "",
-				duplicateDescription: false,
-			};
-		},
-		validations: {
-			documentDescriptionModel: {
-				required,
-			},
-			documentUrlLocationModel: {
-				required,
-				url,
+		existingFolders: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-			}),
+		locationId: {
+			type: Number,
+			default: 0,
 		},
-		methods: {
-			addLink() {
-				const data_to_send = new FormData();
-				data_to_send.set(
-					"document_description",
-					this.documentDescriptionModel
-				);
-				data_to_send.set(
-					"document_url_location",
-					this.documentUrlLocationModel
-				);
-
-				//Only set the parent folder variable if there exists a variable in current folder
-				if (this.currentFolder !== null && this.currentFolder !== "") {
-					data_to_send.set("parent_folder", this.currentFolder);
-				}
-
-				axios
-					.post(
-						`${this.rootUrl}documentation/${this.destination}/${this.locationId}/add_link/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Emit the results up stream
-						this.$emit("update_document_list", response.data);
-
-						//Clear the data
-						this.documentDescriptionModel = "";
-						this.documentUrlLocationModel = "";
-
-						//Close the modal
-						document.getElementById("addLinkCloseButton").click();
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
+	},
+	mixins: [errorModalMixin, iconMixin],
+	data() {
+		return {
+			linkModel: "",
+			disableAddButton: true,
+			documentDescriptionModel: "",
+			documentUrlLocationModel: "",
+			duplicateDescription: false,
+		};
+	},
+	validations: {
+		documentDescriptionModel: {
+			required,
 		},
-		updated() {
-			//We need to make sure both fields are not blank & to make sure the description is not duplicated
-			const match = this.excludeDocuments.filter((row) => {
-				return (
-					row.document_key__document_description ===
-					this.documentDescriptionModel
-				);
-			});
-
-			//Notify the user of duplicate descriptions (if there is any)
-			this.duplicateDescription = match.length > 0;
-
-			// Check the validation
-			this.v$.$touch();
-
-			//Disable the button (if it does not meet our standards)
-			this.disableAddButton = this.v$.$invalid || match.length > 0;
+		documentUrlLocationModel: {
+			required,
+			url,
 		},
-	};
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+		}),
+	},
+	methods: {
+		addLink() {
+			const data_to_send = new FormData();
+			data_to_send.set(
+				"document_description",
+				this.documentDescriptionModel
+			);
+			data_to_send.set(
+				"document_url_location",
+				this.documentUrlLocationModel
+			);
+
+			//Only set the parent folder variable if there exists a variable in current folder
+			if (this.currentFolder !== null && this.currentFolder !== "") {
+				data_to_send.set("parent_folder", this.currentFolder);
+			}
+
+			axios
+				.post(
+					`${this.rootUrl}documentation/${this.destination}/${this.locationId}/add_link/`,
+					data_to_send
+				)
+				.then((response) => {
+					//Emit the results up stream
+					this.$emit("update_document_list", response.data);
+
+					//Clear the data
+					this.documentDescriptionModel = "";
+					this.documentUrlLocationModel = "";
+
+					//Close the modal
+					document.getElementById("addLinkCloseButton").click();
+				})
+				.catch((error) => {
+					this.showErrorModal(error, this.destination);
+				});
+		},
+	},
+	updated() {
+		//We need to make sure both fields are not blank & to make sure the description is not duplicated
+		const match = this.excludeDocuments.filter((row) => {
+			return (
+				row.document_key__document_description ===
+				this.documentDescriptionModel
+			);
+		});
+
+		//Notify the user of duplicate descriptions (if there is any)
+		this.duplicateDescription = match.length > 0;
+
+		// Check the validation
+		this.v$.$touch();
+
+		//Disable the button (if it does not meet our standards)
+		this.disableAddButton = this.v$.$invalid || match.length > 0;
+	},
+};
 </script>
 
 <style scoped></style>

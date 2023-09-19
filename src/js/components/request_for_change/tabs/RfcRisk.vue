@@ -53,7 +53,7 @@
 					></n-select>
 				</div>
 			</div>
-			<br />
+			<br/>
 
 			<!-- RFC SUMMARY -->
 			<label>
@@ -62,7 +62,7 @@
 					v-bind:error-list="v$.rfcRiskSummaryModel.$errors"
 				></validation-rendering>
 			</label>
-			<br />
+			<br/>
 			<editor
 				:init="{
 					file_picker_types: 'image',
@@ -87,149 +87,149 @@
 </template>
 
 <script>
-	//Validations
-	import useVuelidate from "@vuelidate/core";
-	import { required, maxLength } from "@vuelidate/validators";
-	import ValidationRendering from "../../validation/ValidationRendering.vue";
+//Validations
+import useVuelidate from "@vuelidate/core";
+import {required, maxLength} from "@vuelidate/validators";
+import ValidationRendering from "../../validation/ValidationRendering.vue";
 
-	//Widgets
-	import { NSelect } from "naive-ui";
-	import Editor from "@tinymce/tinymce-vue";
+//Widgets
+import {NSelect} from "naive-ui";
+import Editor from "@tinymce/tinymce-vue";
 
-	//Mixins
-	import uploadMixin from "../../../mixins/uploadMixin";
+//Mixins
+import uploadMixin from "../../../mixins/uploadMixin";
 
-	export default {
-		name: "RfcRisk",
-		setup() {
-			return { v$: useVuelidate() };
+export default {
+	name: "RfcRisk",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	components: {
+		editor: Editor,
+		NSelect,
+		ValidationRendering,
+	},
+	props: {
+		isReadOnly: {
+			type: Boolean,
+			default: false,
 		},
-		components: {
-			editor: Editor,
-			NSelect,
-			ValidationRendering,
-		},
-		props: {
-			isReadOnly: {
-				type: Boolean,
-				default: false,
-			},
-			rfcResults: {
-				type: Array,
-				default() {
-					return [];
-				},
-			},
-		},
-		mixins: [uploadMixin],
-		data: () => ({
-			rfcPriority: [
-				{ label: "Critical", value: 4 },
-				{ label: "High", value: 3 },
-				{ label: "Medium", value: 2 },
-				{ label: "Low", value: 1 },
-			],
-			rfcPriorityModel: "",
-			rfcRisk: [
-				{ label: "Very High", value: 5 },
-				{ label: "High", value: 4 },
-				{ label: "Moderate", value: 3 },
-				{ label: "Low", value: 2 },
-				{ label: "None", value: 1 },
-			],
-			rfcRiskModel: "",
-			rfcRiskSummaryModel: "",
-			rfcImpact: [
-				{ label: "High", value: 3 },
-				{ label: "Medium", value: 2 },
-				{ label: "Low", value: 1 },
-			],
-			rfcImpactModel: "",
-		}),
-		validations: {
-			rfcPriorityModel: {
-				required,
-			},
-			rfcRiskModel: {
-				required,
-			},
-			rfcRiskSummaryModel: {
-				required,
-				maxLength: maxLength(630000),
-			},
-			rfcImpactModel: {
-				required,
+		rfcResults: {
+			type: Array,
+			default() {
+				return [];
 			},
 		},
-		methods: {
-			updateValidation() {
-				this.v$.$touch();
-
-				this.$emit("update_validation", {
-					tab: "tab_2",
-					value: !this.v$.$invalid,
-				});
-			},
-			updateValues(modelName, modelValue) {
-				this.$emit("update_values", {
-					modelName: modelName,
-					modelValue: modelValue,
-				});
-			},
+	},
+	mixins: [uploadMixin],
+	data: () => ({
+		rfcPriority: [
+			{label: "Critical", value: 4},
+			{label: "High", value: 3},
+			{label: "Medium", value: 2},
+			{label: "Low", value: 1},
+		],
+		rfcPriorityModel: "",
+		rfcRisk: [
+			{label: "Very High", value: 5},
+			{label: "High", value: 4},
+			{label: "Moderate", value: 3},
+			{label: "Low", value: 2},
+			{label: "None", value: 1},
+		],
+		rfcRiskModel: "",
+		rfcRiskSummaryModel: "",
+		rfcImpact: [
+			{label: "High", value: 3},
+			{label: "Medium", value: 2},
+			{label: "Low", value: 1},
+		],
+		rfcImpactModel: "",
+	}),
+	validations: {
+		rfcPriorityModel: {
+			required,
 		},
-		watch: {
-			rfcPriority() {
-				this.updateValues("rfcPriority", this.rfcPriority);
-				this.updateValidation();
-			},
-			rfcPriorityModel() {
-				this.updateValues("rfcPriorityModel", this.rfcPriorityModel);
-				this.updateValidation();
-			},
-			rfcRisk() {
-				this.updateValues("rfcRisk", this.rfcRisk);
-				this.updateValidation();
-			},
-			rfcRiskModel() {
-				this.updateValues("rfcRiskModel", this.rfcRiskModel);
-				this.updateValidation();
-			},
-			rfcRiskSummaryModel() {
-				this.updateValues(
-					"rfcRiskSummaryModel",
-					this.rfcRiskSummaryModel
-				);
-				this.updateValidation();
-			},
-			rfcImpact() {
-				this.updateValues("rfcImpact", this.rfcImpact);
-				this.updateValidation();
-			},
-			rfcImpactModel() {
-				this.updateValues("rfcImpactModel", this.rfcImpactModel);
-				this.updateValidation();
-			},
+		rfcRiskModel: {
+			required,
 		},
-		mounted() {
-			//When template loads - check to see if there is any data within the rfcResults. If so -> update all models
-			if (this.rfcResults.length > 0) {
-				// Filter for the correct rfcPriority
-				this.rfcPriorityModel = this.rfcResults[0].fields.rfc_priority;
-
-				//Filter for the correct rfcRisk
-				this.rfcRiskModel = this.rfcResults[0].fields.rfc_risk;
-
-				this.rfcRiskSummaryModel =
-					this.rfcResults[0].fields.rfc_risk_and_impact_analysis;
-
-				//Filter for the correct rfc Impact
-				this.rfcImpactModel = this.rfcResults[0].fields.rfc_impact;
-			}
-
-			//Just run the validations to show the error messages
+		rfcRiskSummaryModel: {
+			required,
+			maxLength: maxLength(630000),
+		},
+		rfcImpactModel: {
+			required,
+		},
+	},
+	methods: {
+		updateValidation() {
 			this.v$.$touch();
+
+			this.$emit("update_validation", {
+				tab: "tab_2",
+				value: !this.v$.$invalid,
+			});
 		},
-	};
+		updateValues(modelName, modelValue) {
+			this.$emit("update_values", {
+				modelName: modelName,
+				modelValue: modelValue,
+			});
+		},
+	},
+	watch: {
+		rfcPriority() {
+			this.updateValues("rfcPriority", this.rfcPriority);
+			this.updateValidation();
+		},
+		rfcPriorityModel() {
+			this.updateValues("rfcPriorityModel", this.rfcPriorityModel);
+			this.updateValidation();
+		},
+		rfcRisk() {
+			this.updateValues("rfcRisk", this.rfcRisk);
+			this.updateValidation();
+		},
+		rfcRiskModel() {
+			this.updateValues("rfcRiskModel", this.rfcRiskModel);
+			this.updateValidation();
+		},
+		rfcRiskSummaryModel() {
+			this.updateValues(
+				"rfcRiskSummaryModel",
+				this.rfcRiskSummaryModel
+			);
+			this.updateValidation();
+		},
+		rfcImpact() {
+			this.updateValues("rfcImpact", this.rfcImpact);
+			this.updateValidation();
+		},
+		rfcImpactModel() {
+			this.updateValues("rfcImpactModel", this.rfcImpactModel);
+			this.updateValidation();
+		},
+	},
+	mounted() {
+		//When template loads - check to see if there is any data within the rfcResults. If so -> update all models
+		if (this.rfcResults.length > 0) {
+			// Filter for the correct rfcPriority
+			this.rfcPriorityModel = this.rfcResults[0].fields.rfc_priority;
+
+			//Filter for the correct rfcRisk
+			this.rfcRiskModel = this.rfcResults[0].fields.rfc_risk;
+
+			this.rfcRiskSummaryModel =
+				this.rfcResults[0].fields.rfc_risk_and_impact_analysis;
+
+			//Filter for the correct rfc Impact
+			this.rfcImpactModel = this.rfcResults[0].fields.rfc_impact;
+		}
+
+		//Just run the validations to show the error messages
+		this.v$.$touch();
+	},
+};
 </script>
 
 <style scoped></style>

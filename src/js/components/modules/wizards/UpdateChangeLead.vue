@@ -11,7 +11,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon> Change Lead
+						<Icon v-bind:icon="icons.userIcon"></Icon>
+						Change Lead
 						Wizard
 					</h2>
 					<button
@@ -64,63 +65,63 @@
 </template>
 
 <script>
-	import axios from "axios";
-	import { Icon } from "@iconify/vue";
-	import { NSelect } from "naive-ui";
+import axios from "axios";
+import {Icon} from "@iconify/vue";
+import {NSelect} from "naive-ui";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Mixins
-	import errorModalMixin from "../../../mixins/errorModalMixin";
-	import iconMixin from "../../../mixins/iconMixin";
+//Mixins
+import errorModalMixin from "../../../mixins/errorModalMixin";
+import iconMixin from "../../../mixins/iconMixin";
 
-	export default {
-		name: "UpdateChangeLeadWizard",
-		components: {
-			Icon,
-			NSelect,
-		},
-		mixins: [errorModalMixin, iconMixin],
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				potentialUserList: "getPotentialUserList",
-				rootUrl: "getRootUrl",
-				staticURL: "getStaticUrl",
-				userLevel: "getUserLevel",
-			}),
-		},
-		data() {
-			return {
-				userFixList: [],
-				userModel: [],
-			};
-		},
-		watch: {
-			potentialUserList(new_value) {
-				if (new_value === undefined) return;
+export default {
+	name: "UpdateChangeLeadWizard",
+	components: {
+		Icon,
+		NSelect,
+	},
+	mixins: [errorModalMixin, iconMixin],
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			potentialUserList: "getPotentialUserList",
+			rootUrl: "getRootUrl",
+			staticURL: "getStaticUrl",
+			userLevel: "getUserLevel",
+		}),
+	},
+	data() {
+		return {
+			userFixList: [],
+			userModel: [],
+		};
+	},
+	watch: {
+		potentialUserList(new_value) {
+			if (new_value === undefined) return;
 
-				this.userFixList = new_value.map(row => {
-					return {
-						value: row.id,
-						label: `${row.username}: ${row.first_name} ${row.last_name}`,
-					}
-				})
-			}
-		},
-		methods: {
-			changeLead() {
-				//Construct the data_to_send array
-				const data_to_send = new FormData();
-				data_to_send.set("username", this.userModel);
+			this.userFixList = new_value.map(row => {
+				return {
+					value: row.id,
+					label: `${row.username}: ${row.first_name} ${row.last_name}`,
+				}
+			})
+		}
+	},
+	methods: {
+		changeLead() {
+			//Construct the data_to_send array
+			const data_to_send = new FormData();
+			data_to_send.set("username", this.userModel);
 
-				//User axios to send the data to the backend
-				axios.post(
-					`${this.rootUrl}rfc_information/${this.locationId}/update_change_lead/`,
-					data_to_send
-				)
+			//User axios to send the data to the backend
+			axios.post(
+				`${this.rootUrl}rfc_information/${this.locationId}/update_change_lead/`,
+				data_to_send
+			)
 				.then((response) => {
 					//Update the data
 					this.$emit("update_change_lead", response.data.change_lead_results);
@@ -131,9 +132,9 @@
 				.catch((error) => {
 					this.showErrorModal(error, this.destination);
 				});
-			},
 		},
-	};
+	},
+};
 </script>
 
 <style scoped></style>

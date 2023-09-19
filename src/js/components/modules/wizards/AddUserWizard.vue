@@ -10,7 +10,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon> Add User
+						<Icon v-bind:icon="icons.userIcon"></Icon>
+						Add User
 						Wizard
 					</h2>
 					<button
@@ -97,103 +98,103 @@
 </template>
 
 <script>
-	import axios from "axios";
-	import { Icon } from "@iconify/vue";
-	import { NSelect } from "naive-ui";
-	import { Modal } from "bootstrap";
+import axios from "axios";
+import {Icon} from "@iconify/vue";
+import {NSelect} from "naive-ui";
+import {Modal} from "bootstrap";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Mixins
-	import errorModalMixin from "../../../mixins/errorModalMixin";
-	import iconMixin from "../../../mixins/iconMixin";
+//Mixins
+import errorModalMixin from "../../../mixins/errorModalMixin";
+import iconMixin from "../../../mixins/iconMixin";
 
-	export default {
-		name: "AddUserWizard",
-		components: {
-			Icon,
-			NSelect,
-		},
-		inject: [
-			'nextTick',
-		],
-		mixins: [errorModalMixin, iconMixin],
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				potentialUserList: "getPotentialUserList",
-				rootUrl: "getRootUrl",
-				staticURL: "getStaticUrl",
-				userLevel: "getUserLevel",
-			}),
-		},
-		data() {
-			return {
-				userFixList: [],
-				userModel: [],
-			};
-		},
-		watch: {
-			potentialUserList(new_value) {
-				if (new_value === undefined) return;
+export default {
+	name: "AddUserWizard",
+	components: {
+		Icon,
+		NSelect,
+	},
+	inject: [
+		'nextTick',
+	],
+	mixins: [errorModalMixin, iconMixin],
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			potentialUserList: "getPotentialUserList",
+			rootUrl: "getRootUrl",
+			staticURL: "getStaticUrl",
+			userLevel: "getUserLevel",
+		}),
+	},
+	data() {
+		return {
+			userFixList: [],
+			userModel: [],
+		};
+	},
+	watch: {
+		potentialUserList(new_value) {
+			if (new_value === undefined) return;
 
-				this.userFixList = new_value.map(row => {
-					return {
-						value: row.id,
-						label: `${row.username}: ${row.first_name} ${row.last_name}`,
-					}
-				})
-			}
-		},
-		methods: {
-			addUser() {
-				//Update user about adding user
-				this.$store.commit("updateAddingUserStatus", {
-					addingUserStatus: true
-				});
+			this.userFixList = new_value.map(row => {
+				return {
+					value: row.id,
+					label: `${row.username}: ${row.first_name} ${row.last_name}`,
+				}
+			})
+		}
+	},
+	methods: {
+		addUser() {
+			//Update user about adding user
+			this.$store.commit("updateAddingUserStatus", {
+				addingUserStatus: true
+			});
 
-				//Construct the data_to_send array
-				const data_to_send = new FormData();
+			//Construct the data_to_send array
+			const data_to_send = new FormData();
 
-				//Look through all of the results in user model and append
-				this.userModel.forEach((row) => {
-					data_to_send.append("user_list", row);
-				});
+			//Look through all of the results in user model and append
+			this.userModel.forEach((row) => {
+				data_to_send.append("user_list", row);
+			});
 
-				//User axios to send the data to the backend
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_user/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Close the modal
-						document.getElementById("addUserCloseButton").click();
+			//User axios to send the data to the backend
+			axios
+				.post(
+					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_user/`,
+					data_to_send
+				)
+				.then((response) => {
+					//Close the modal
+					document.getElementById("addUserCloseButton").click();
 
-						//Clear the models
-						this.userModel = [];
+					//Clear the models
+					this.userModel = [];
 
-						//Update VueX with the required data
-						this.$store.commit("updateGroupsAndUsers", {
-							objectGroupList: response.data.object_group_list,
-							objectUserList: response.data.object_user_list,
-							potentialGroupList: response.data.potential_group_list,
-							potentialUserList: response.data.potential_user_list,
-						});
-
-						//User has been added - return to false
-						this.$store.commit("updateAddingUserStatus", {
-							addingUserStatus: false,
-						});
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
+					//Update VueX with the required data
+					this.$store.commit("updateGroupsAndUsers", {
+						objectGroupList: response.data.object_group_list,
+						objectUserList: response.data.object_user_list,
+						potentialGroupList: response.data.potential_group_list,
+						potentialUserList: response.data.potential_user_list,
 					});
-			},
+
+					//User has been added - return to false
+					this.$store.commit("updateAddingUserStatus", {
+						addingUserStatus: false,
+					});
+				})
+				.catch((error) => {
+					this.showErrorModal(error, this.destination);
+				});
 		},
-	};
+	},
+};
 </script>
 
 <style scoped></style>

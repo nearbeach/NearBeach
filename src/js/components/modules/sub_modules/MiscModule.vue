@@ -5,21 +5,23 @@
 </template>
 
 <script>
-	// JavaScript Libraries
-	import ListTagsModule from "./ListTagsModule.vue";
+// JavaScript Libraries
+import ListTagsModule from "./ListTagsModule.vue";
 
-	export default {
-		name: "MiscModule",
-		components: {
-			ListTagsModule,
-		},
-		props: {},
-		mixins: [],
-		computed: {},
-		data() {},
-		methods: {},
-		mounted() {},
-	};
+export default {
+	name: "MiscModule",
+	components: {
+		ListTagsModule,
+	},
+	props: {},
+	mixins: [],
+	computed: {},
+	data() {
+	},
+	methods: {},
+	mounted() {
+	},
+};
 </script>
 
 <style scoped></style>

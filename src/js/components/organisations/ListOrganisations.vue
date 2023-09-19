@@ -1,7 +1,7 @@
 <template>
 	<div v-for="organisation in organisationResults"
-		:key="organisation.id"
-		class="organisation-details">
+		 :key="organisation.id"
+		 class="organisation-details">
 		<img
 			v-bind:src="getProfilePicture(organisation)"
 			alt="Stakeholder Logo"
@@ -15,7 +15,8 @@
 			</a>
 		</div>
 		<div class="organisation-link">
-			<Icon v-bind:icon="icons.linkOut"></Icon> Website:
+			<Icon v-bind:icon="icons.linkOut"></Icon>
+			Website:
 			<a
 				v-bind:href="organisation.fields.organisation_website"
 				target="_blank"
@@ -25,7 +26,8 @@
 			</a>
 		</div>
 		<div class="organisation-email">
-			<Icon v-bind:icon="icons.mailIcon"></Icon> Email:
+			<Icon v-bind:icon="icons.mailIcon"></Icon>
+			Email:
 			<a
 				v-bind:href="`mailto:${organisation.fields.organisation_email}`"
 			>
@@ -36,46 +38,46 @@
 </template>
 
 <script>
-	//VueX
-	import { mapGetters } from "vuex";
-	import { Icon } from "@iconify/vue";
+//VueX
+import {mapGetters} from "vuex";
+import {Icon} from "@iconify/vue";
 
-	//Mixins
-	import iconMixin from "../../mixins/iconMixin";
+//Mixins
+import iconMixin from "../../mixins/iconMixin";
 
-	export default {
-		name: "ListOrganisations",
-		components: {
-			Icon,
-		},
-		props: {
-			organisationResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
+export default {
+	name: "ListOrganisations",
+	components: {
+		Icon,
+	},
+	props: {
+		organisationResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-				staticUrl: "getStaticUrl",
-			}),
-		},
-		mixins: [iconMixin],
-		methods: {
-			getProfilePicture(organisation) {
-				const image = organisation.fields.organisation_profile_picture;
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+		}),
+	},
+	mixins: [iconMixin],
+	methods: {
+		getProfilePicture(organisation) {
+			const image = organisation.fields.organisation_profile_picture;
 
-				//If customer profile is blank - return default picture
-				if (image === "" || image === null) {
-					return `${this.staticUrl}NearBeach/images/placeholder/product_tour.svg`;
-				}
+			//If customer profile is blank - return default picture
+			if (image === "" || image === null) {
+				return `${this.staticUrl}NearBeach/images/placeholder/product_tour.svg`;
+			}
 
-				return `${this.rootUrl}private/${image}`;
-			},
+			return `${this.rootUrl}private/${image}`;
 		},
-	};
+	},
+};
 </script>
 
 <style scoped></style>

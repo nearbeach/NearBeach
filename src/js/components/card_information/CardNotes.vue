@@ -31,7 +31,7 @@
 				/>
 			</div>
 		</div>
-		<hr v-if="userLevel > 1" />
+		<hr v-if="userLevel > 1"/>
 		<div
 			class="row"
 			v-if="userLevel > 1"
@@ -52,7 +52,7 @@
 				</button>
 			</div>
 		</div>
-		<hr />
+		<hr/>
 
 		<!-- NOTE HISTORY -->
 		<list-notes
@@ -63,62 +63,63 @@
 </template>
 
 <script>
-	const axios = require("axios");
-	import Editor from "@tinymce/tinymce-vue";
-	import ListNotes from "../modules/sub_modules/ListNotes.vue";
+const axios = require("axios");
+import Editor from "@tinymce/tinymce-vue";
+import ListNotes from "../modules/sub_modules/ListNotes.vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	export default {
-		name: "CardNotes",
-		components: {
-			editor: Editor,
-			ListNotes,
-		},
-		props: {},
-		data() {
-			return {
-				cardNoteModel: "",
-			};
-		},
-		computed: {
-			...mapGetters({
-				cardNotes: "getCardNotes",
-				kanbanStatus: "getKanbanStatus",
-				rootUrl: "getRootUrl",
-				userLevel: "getUserLevel",
-			}),
-		},
-		methods: {
-			addNote() {
-				//Create the data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("note", this.cardNoteModel);
+export default {
+	name: "CardNotes",
+	components: {
+		editor: Editor,
+		ListNotes,
+	},
+	props: {},
+	data() {
+		return {
+			cardNoteModel: "",
+		};
+	},
+	computed: {
+		...mapGetters({
+			cardNotes: "getCardNotes",
+			kanbanStatus: "getKanbanStatus",
+			rootUrl: "getRootUrl",
+			userLevel: "getUserLevel",
+		}),
+	},
+	methods: {
+		addNote() {
+			//Create the data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("note", this.cardNoteModel);
 
-				//Use axios to send the data
-				axios
-					.post(
-						`${this.rootUrl}object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Add the response to the end of the noteHistoryResults
-						this.$store.commit({
-							type: "appendNote",
-							newNote: response.data[0],
-						});
+			//Use axios to send the data
+			axios
+				.post(
+					`${this.rootUrl}object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
+					data_to_send
+				)
+				.then((response) => {
+					//Add the response to the end of the noteHistoryResults
+					this.$store.commit({
+						type: "appendNote",
+						newNote: response.data[0],
+					});
 
-						//Clear the card note model
-						this.cardNoteModel = "";
-					})
-					.catch((error) => {});
-			},
-			closeModal() {
-				document
-					.getElementById("cardInformationModalCloseButton")
-					.click();
-			},
+					//Clear the card note model
+					this.cardNoteModel = "";
+				})
+				.catch((error) => {
+				});
 		},
-	};
+		closeModal() {
+			document
+				.getElementById("cardInformationModalCloseButton")
+				.click();
+		},
+	},
+};
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div
+	<div
 		class="modal fade"
 		id="confirmChangeTaskClosure"
 		tabindex="-1"
@@ -15,9 +15,9 @@
 						class="modal-title"
 						id="confirmChangeTaskClosure"
 					>
-						Set Task to {{closureStatus}}
+						Set Task to {{ closureStatus }}
 					</h5>
-                    <!-- TASK INFORMATION -->
+					<!-- TASK INFORMATION -->
 					<button
 						type="button"
 						class="btn-close"
@@ -27,7 +27,8 @@
 					></button>
 				</div>
 				<div class="modal-body">
-					Are you sure you want to close the Change Task {{closureId}} - with the status of {{closureStatus}}?
+					Are you sure you want to close the Change Task {{ closureId }} - with the status of
+					{{ closureStatus }}?
 				</div>
 				<div class="modal-footer">
 					<button
@@ -51,38 +52,38 @@
 </template>
 
 <script>
-    import { mapGetters } from "vuex";
+import {mapGetters} from "vuex";
 
-    export default {
-        name: "ConfirmChangeTaskClosure",
-        props: {
-            closureId: {
-                type: Number,
-                default: 0,
-            },
-            closureStatus: {
-                type: String,
-                default: "",
-            },
-            closureStatusId: {
-                type: Number,
-                default: 0,
-            },
-        },
-        methods: {
-			closeChangeTask() {
-				//Emit the data upstream
-				this.$emit("close_change_task", {
-					closureId: this.closureId,
-					closureStatusId: this.closureStatusId,
-				});
+export default {
+	name: "ConfirmChangeTaskClosure",
+	props: {
+		closureId: {
+			type: Number,
+			default: 0,
+		},
+		closureStatus: {
+			type: String,
+			default: "",
+		},
+		closureStatusId: {
+			type: Number,
+			default: 0,
+		},
+	},
+	methods: {
+		closeChangeTask() {
+			//Emit the data upstream
+			this.$emit("close_change_task", {
+				closureId: this.closureId,
+				closureStatusId: this.closureStatusId,
+			});
 
-				//Close the modal
-				this.closeModal();
-			},
-			closeModal() {
-				document.getElementById("confirmChangeTaskCloseButton").click();
-			}
-        },
-    }
+			//Close the modal
+			this.closeModal();
+		},
+		closeModal() {
+			document.getElementById("confirmChangeTaskCloseButton").click();
+		}
+	},
+}
 </script>

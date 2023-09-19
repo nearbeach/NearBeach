@@ -1,32 +1,32 @@
 /* This is kept in it's own location to keep the file size small. Also to be the first thing that loads when user
  first loads up NearBeach*/
 .loader {
-	background-color: var(--nb-loader-background-color);
-	position: fixed;
-	top: 0;
-	left: 0;
-	display: flex;
-	height: 100%;
-	width: 100%;
-	z-index: 100;
-	transform-origin: top;
-	transition-duration: 0.5s;
+    background-color: var(--nb-loader-background-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+    transform-origin: top;
+    transition-duration: 0.5s;
 
-	& .loader-text {
-		text-align: center;
-		margin: auto;
-		z-index: 101;
+    & .loader-text {
+        text-align: center;
+        margin: auto;
+        z-index: 101;
 
-		strong {
-			font-size: 35px;
-		}
-	}
+        strong {
+            font-size: 35px;
+        }
+    }
 
-	img {
-		width: 400px;
-		position: absolute;
-		left: calc(50vw - 300px);
-		top: calc(25vh + -40px);
-		opacity: 0.5;
-	}
+    img {
+        width: 400px;
+        position: absolute;
+        left: calc(50vw - 300px);
+        top: calc(25vh + -40px);
+        opacity: 0.5;
+    }
 }

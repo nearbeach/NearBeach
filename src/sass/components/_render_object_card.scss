@@ -1,4 +1,4 @@
-.object-card-list {    
+.object-card-list {
     display: flex;
     flex-direction: column;
     margin-bottom: 2rem;
@@ -14,7 +14,7 @@
         @media screen and (min-width: 767px) {
             flex-direction: row;
         }
-        
+
         .object-card--detail {
             width: 100%;
 
@@ -24,13 +24,13 @@
 
             a {
                 text-decoration: none;
-    
+
                 .object-card--detail--link {
                     //color: #4f4f4f;
                     color: var(--bs-body-color);
                     font-weight: lighter;
                 }
-    
+
                 .object-card--detail--description {
                     white-space: nowrap;
                     overflow: clip;
@@ -41,12 +41,12 @@
         .object-card--status {
             width: 100%;
             margin-top: 5px;
-            
+
             @media screen and (min-width: 767px) {
                 width: 18%;
             }
         }
-        
+
 
     }
 }

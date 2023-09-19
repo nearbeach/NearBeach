@@ -23,7 +23,7 @@
 		</div>
 
 		<!-- ADD TAG BUTTON -->
-		<hr />
+		<hr/>
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<a
@@ -31,7 +31,7 @@
 					class="btn btn-primary save-changes"
 					v-on:click="createNewTag"
 					v-if="userLevel > 1"
-					>Add Tag to {{ destination }}</a
+				>Add Tag to {{ destination }}</a
 				>
 			</div>
 		</div>
@@ -47,92 +47,94 @@
 </template>
 
 <script>
-	const axios = require("axios");
-	import { Modal } from "bootstrap";
-	import { Icon } from "@iconify/vue";
+const axios = require("axios");
+import {Modal} from "bootstrap";
+import {Icon} from "@iconify/vue";
 
-	//Mixin
-	import iconMixin from "../../../mixins/iconMixin";
-	import AddTagWizard from "../wizards/AddTagWizard.vue";
+//Mixin
+import iconMixin from "../../../mixins/iconMixin";
+import AddTagWizard from "../wizards/AddTagWizard.vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	export default {
-		name: "ListTagsModule",
-		components: {
-			AddTagWizard,
-			Icon,
+export default {
+	name: "ListTagsModule",
+	components: {
+		AddTagWizard,
+		Icon,
+	},
+	inject: [
+		'nextTick',
+	],
+	data() {
+		return {
+			tagList: [],
+		};
+	},
+	mixins: [iconMixin],
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			rootUrl: "getRootUrl",
+			userLevel: "getUserLevel",
+		}),
+	},
+	methods: {
+		addTags(data) {
+			this.tagList = data;
 		},
-		inject: [
-			'nextTick',
-		],
-		data() {
-			return {
-				tagList: [],
-			};
+		createNewTag() {
+			//Open up modal
+			var newTagModal = new Modal(
+				document.getElementById("addTagModal")
+			);
+			newTagModal.show();
 		},
-		mixins: [iconMixin],
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				rootUrl: "getRootUrl",
-				userLevel: "getUserLevel",
-			}),
+		getAssignedTags() {
+			axios
+				.post(
+					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/tag_list/`
+				)
+				.then((response) => {
+					this.tagList = response.data;
+				})
+				.catch((error) => {
+				});
 		},
-		methods: {
-			addTags(data) {
-				this.tagList = data;
-			},
-			createNewTag() {
-				//Open up modal
-				var newTagModal = new Modal(
-					document.getElementById("addTagModal")
-				);
-				newTagModal.show();
-			},
-			getAssignedTags() {
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/tag_list/`
-					)
-					.then((response) => {
-						this.tagList = response.data;
-					})
-					.catch((error) => {});
-			},
-			removeTag(tag_id) {
-				//Create data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("tag", tag_id);
-				data_to_send.set("object_enum", this.destination);
-				data_to_send.set("object_id", this.locationId);
+		removeTag(tag_id) {
+			//Create data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("tag", tag_id);
+			data_to_send.set("object_enum", this.destination);
+			data_to_send.set("object_id", this.locationId);
 
-				//Send data using axios
-				axios
-					.post(
-						`${this.rootUrl}object_data/delete_tag/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Remove data from tagList
-						this.tagList = this.tagList.filter((row) => {
-							return row.pk !== tag_id;
-						});
-					})
-					.catch((error) => {});
-			},
+			//Send data using axios
+			axios
+				.post(
+					`${this.rootUrl}object_data/delete_tag/`,
+					data_to_send
+				)
+				.then((response) => {
+					//Remove data from tagList
+					this.tagList = this.tagList.filter((row) => {
+						return row.pk !== tag_id;
+					});
+				})
+				.catch((error) => {
+				});
 		},
-		mounted() {
-			//If the location is inside the array - don't bother getting the data
-			var escape_array = ["requirement_item"];
-			if (escape_array.indexOf(this.destination) >= 0) return;
+	},
+	mounted() {
+		//If the location is inside the array - don't bother getting the data
+		var escape_array = ["requirement_item"];
+		if (escape_array.indexOf(this.destination) >= 0) return;
 
-			//Wait 200ms before getting the data
-			this.nextTick(() => {
-				this.getAssignedTags();
-			});
-		},
-	};
+		//Wait 200ms before getting the data
+		this.nextTick(() => {
+			this.getAssignedTags();
+		});
+	},
+};
 </script>
