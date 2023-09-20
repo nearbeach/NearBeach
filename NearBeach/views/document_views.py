@@ -507,7 +507,7 @@ class S3FileHandler(FileHandler):
         # Use boto3 to download
         response = self._s3.get_object(
             Bucket=self._bucket,
-            Key=document_results.document,
+            Key=str(document_results.document),
         )
         return FileResponse(
             response["Body"],
@@ -521,7 +521,7 @@ class S3FileHandler(FileHandler):
         self._s3.upload_fileobj(
             file,
             self._bucket,
-            document_results.document,
+            str(document_results.document),
         )
 
 class AzureFileHanlder(FileHandler):
