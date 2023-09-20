@@ -535,12 +535,12 @@ class AzureFileHanlder(FileHandler):
     def fetch(self, document_results):
         # Get container
         container_client = self._sevice_client.get_container_client(
-            container=self._client_nam
+            container=self._client_name
         )
         # Setup the file to send
         file_to_send = ContentFile(
             container_client.download_blob(
-                document_results.document
+                str(document_results.document)
             ).readall()
         )
         # Return file
