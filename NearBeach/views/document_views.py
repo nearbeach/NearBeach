@@ -36,6 +36,7 @@ from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 import boto3
 import json
 import os
+from pathlib import Path
 
 
 @require_http_methods(["POST"])
@@ -386,56 +387,7 @@ def private_download_file(request, document_key):
     if document_results.document_url_location:
         return HttpResponseRedirect(document_results.document_url_location)
 
-    # If S3 has been setup - download file from S3 bucket
-    if getattr(settings, "AWS_ACCESS_KEY_ID", None):
-        # Use boto3 to download
-        s3 = boto3.client(
-            "s3",
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
-
-        response = s3.get_object(
-            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-            Key=f"{document_results.document}",
-        )
-
-        return FileResponse(
-            response["Body"],
-            as_attachment=True,
-            filename=document_results.document_description,
-        )
-    elif getattr(settings, "AZURE_STORAGE_CONNECTION_STRING", None):
-        # Use Azure to download
-        blob_service_client = BlobServiceClient.from_connection_string(
-            settings.AZURE_STORAGE_CONNECTION_STRING
-        )
-
-        # Get container
-        container_client = blob_service_client.get_container_client(
-            container=settings.AZURE_STORAGE_CONTAINER_NAME
-        )
-
-        # Setup the file to send
-        file_to_send = ContentFile(
-            container_client.download_blob(
-                f"{document_results.document}"
-            ).readall()
-        )
-
-        # Return file
-        return FileResponse(
-            file_to_send,
-            as_attachment=True,
-            filename=document_results.document_description,
-        )
-
-    # Normal setup - find document on server and serve
-    # Get the Document path information
-    path = f"{settings.PRIVATE_MEDIA_ROOT}/{document_results.document}"
-
-    # Send file to user
-    return FileResponse(open(path, "rb"))
+    return FILE_HANDLER.fetch(document_results)
 
 
 # Internal Function
@@ -485,61 +437,134 @@ def handle_document_permissions(
         "folder",
     )
 
-    # Handle the document upload
-    if getattr(settings, "AWS_ACCESS_KEY_ID", None):
-        # Use boto to upload the file
-        s3 = boto3.client(
-            "s3",
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
-
-        # Upload a new file
-        s3.upload_fileobj(
-            file,
-            settings.AWS_STORAGE_BUCKET_NAME,
-            f"private/{document_submit.document_key}/{file}",
-        )
-    elif getattr(settings, "AZURE_STORAGE_CONNECTION_STRING", None):
-        # Create the BlobServiceClient object
-        blob_service_client = BlobServiceClient.from_connection_string(
-            settings.AZURE_STORAGE_CONNECTION_STRING
-        )
-
-        # Create the blob client using the private file path name as the name for the blob
-        blob_client = blob_service_client.get_blob_client(
-            container=settings.AZURE_STORAGE_CONTAINER_NAME, 
-            blob=f"private/{document_submit.document_key}/{file}",
-        )
-
-        # Upload the created file
-        blob_client.upload_blob(file)
-    else:
-        handle_file_upload(upload, document_results, file)
+    FILE_HANDLER.upload(upload, document_submit, file)
 
     return document_submit, document_results
 
 
-# Internal Function
-def handle_file_upload(upload_document, document_results, file):
-    """
-    This function will upload the file and store it in the private folder destination under a subfolder that contains
-    the same document_key value.
-    :param upload_document: The FILE itself - to be uploaded
-    :param document_results: The document_results - with variables we require
-    :return:
-    """
-    # Make the directory we want to save the file in. The directory will have the document_key
-    file_permissions = 0o755  # Look at these permissions later
-    path = os.path.join(
-        settings.PRIVATE_MEDIA_ROOT,
-        f"private/{document_results[0]['document_key_id']}",
-    )
-    os.mkdir(path, file_permissions)
+class FileHandler:
 
-    storage_location = f"{settings.PRIVATE_MEDIA_ROOT}/private/{document_results[0]['document_key_id']}/{file}"
+    def upload(self, upload_document, document_results, file):
+        return NotImplemented
 
-    # Save the upload document in the location
-    with open(storage_location, "wb+") as destination:
-        for chunk in upload_document.chunks():
-            destination.write(chunk)
+    def fetch(self, document_results):
+        return NotImplemented
+
+class LocalFileHandler(FileHandler):
+    def __init__(self, settings):
+        self.root = Path(settings.PRIVATE_MEDIA_ROOT)
+
+    def fetch(self, document_results):
+        # Normal setup - find document on server and serve
+        # Get the Document path information
+        with (self.root / document_results.document).open("rb") as file:
+            # Send file to user
+            return FileResponse(file)
+
+    def upload(self, upload_document, document_results, file):
+        """
+        This function will upload the file and store it in the private folder destination under a subfolder that contains
+        the same document_key value.
+        :param upload_document: The FILE itself - to be uploaded
+        :param document_results: The document_results - with variables we require
+        :return:
+        """
+        # Make the directory we want to save the file in. The directory will have the document_key
+        file_permissions = 0o755  # Look at these permissions later
+        storage_location = self.root / document_results.document
+        storage_location.parent.mkdir(mode=file_permissions, exist_ok=True)
+
+        # Save the upload document in the location
+        with open(storage_location, "wb+") as destination:
+            for chunk in upload_document.chunks():
+                destination.write(chunk)
+
+
+class S3FileHandler(FileHandler):
+    def  __init__(self, settings):
+        botoInitValues = {
+            "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
+            "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
+        }
+        if getattr(settings, "AWS_S3_ENDPOINT_URL", None):
+            # Assume the person is using minio  so defualts are the values
+            # which will allow for connection to minio
+            botoInitValues.update(
+                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                aws_session_token=getattr(settings, "AWS_S3_SESSION_TOKEN", None),
+                config=getattr(
+                    settings, 
+                    "AWS_CONFIG", 
+                    boto3.session.Config(signature_version='s3v4'),
+                ),
+                verify=getattr(settings, "AWS_VERIFY_TLS", True),
+                **getattr(settings, "AWS_INIT_VALUES", {})
+            )
+        self._s3 = boto3.client("s3",   **botoInitValues)
+        self._bucket = settings.AWS_STORAGE_BUCKET_NAME
+
+    def fetch(self, document_results):
+        # Use boto3 to download
+        response = self._s3.get_object(
+            Bucket=self._bucket,
+            Key=str(document_results.document),
+        )
+        return FileResponse(
+            response["Body"],
+            as_attachment=True,
+            filename=document_results.document_description,
+        )
+
+    def upload(self, upload_document, document_results, file):
+        # Use boto to upload the file
+        # Upload a new file
+        self._s3.upload_fileobj(
+            file,
+            self._bucket,
+            str(document_results.document),
+        )
+
+class AzureFileHanlder(FileHandler):
+    def __init__(self, settings):
+        # Create the BlobServiceClient object
+        self._sevice_client = BlobServiceClient.from_connection_string(
+            settings.AZURE_STORAGE_CONNECTION_STRING
+        )
+        self._client_name = settings.AZURE_STORAGE_CONTAINER_NAME
+    
+    def fetch(self, document_results):
+        # Get container
+        container_client = self._sevice_client.get_container_client(
+            container=self._client_name
+        )
+        # Setup the file to send
+        file_to_send = ContentFile(
+            container_client.download_blob(
+                str(document_results.document)
+            ).readall()
+        )
+        # Return file
+        return FileResponse(
+            file_to_send,
+            as_attachment=True,
+            filename=document_results.document_description,
+        )
+
+    def upload(self, upload_document, document_results, file):
+        # Create the blob client using the private file path name as the name for the blob
+        blob_client = self._sevice_client.get_blob_client(
+            container=self._client_name, 
+            blob=document_results.document,
+        )
+        # Upload the created file
+        blob_client.upload_blob(file)
+
+def get_file_handler(settings):
+    # Handle the document upload
+    if getattr(settings, "AWS_ACCESS_KEY_ID", None):
+        return S3FileHandler(settings)
+    if getattr(settings, "AZURE_STORAGE_CONNECTION_STRING", None):
+        return AzureFileHanlder(settings)
+    return LocalFileHandler(settings)
+
+FILE_HANDLER = get_file_handler(settings)
