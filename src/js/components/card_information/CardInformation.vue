@@ -12,7 +12,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.usersIcon"></Icon> Card
+						<Icon v-bind:icon="icons.usersIcon"></Icon>
+						Card
 						Information - {{ cardId }}
 					</h2>
 					<button
@@ -24,7 +25,7 @@
 					>
 						<span aria-hidden="true"></span>
 					</button>
-					<br />
+					<br/>
 				</div>
 				<div class="modal-body">
 					<!-- TAB MENU -->
@@ -119,7 +120,7 @@
 							</button>
 						</li>
 					</ul>
-					<hr />
+					<hr/>
 
 					<!-- CONTENT OF TABS -->
 					<div
@@ -184,91 +185,92 @@
 </template>
 
 <script>
-	import axios from "axios";
-	import { Icon } from "@iconify/vue";
-	import CardDetails from "./CardDetails.vue";
-	import CardNotes from "./CardNotes.vue";
-	import CardDescription from "./CardDescription.vue";
-	import CardUsers from "./CardUsers.vue";
-	import DocumentsModule from '../modules/sub_modules/DocumentsModule.vue';
+import axios from "axios";
+import {Icon} from "@iconify/vue";
+import CardDetails from "./CardDetails.vue";
+import CardNotes from "./CardNotes.vue";
+import CardDescription from "./CardDescription.vue";
+import CardUsers from "./CardUsers.vue";
+import DocumentsModule from '../modules/sub_modules/DocumentsModule.vue';
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Mixins
-	import iconMixin from "../../mixins/iconMixin";
+//Mixins
+import iconMixin from "../../mixins/iconMixin";
 
-	export default {
-		name: "CardInformation",
-		components: {
-			CardDescription,
-			CardDetails,
-			CardNotes,
-			CardUsers,
-			DocumentsModule,
-			Icon,
+export default {
+	name: "CardInformation",
+	components: {
+		CardDescription,
+		CardDetails,
+		CardNotes,
+		CardUsers,
+		DocumentsModule,
+		Icon,
+	},
+	mixins: [iconMixin],
+	data() {
+		return {
+			cardDescriptionModel: "",
+			cardNoteModel: "",
+			cardTitleModel: "",
+			noteHistoryResults: [],
+		};
+	},
+	computed: {
+		...mapGetters({
+			cardId: "getCardId",
+			rootUrl: "getRootUrl",
+		}),
+	},
+	methods: {
+		updateCard(data) {
+			//Get all data from VueX
+			const all_data = this.$store.getters.getAllCardData;
+
+			//Setup data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("kanban_card_text", all_data.cardTitle);
+			data_to_send.set(
+				"kanban_card_description",
+				all_data.cardDescription
+			);
+			data_to_send.set("kanban_level", all_data.cardLevel);
+			data_to_send.set("kanban_column", all_data.cardColumn);
+			data_to_send.set("kanban_card_id", all_data.cardId);
+			data_to_send.set("kanban_card_priority", all_data.cardPriority);
+
+			//Use Axios to send data to backend
+			axios
+				.post(
+					`${this.rootUrl}kanban_information/update_card/`,
+					data_to_send
+				)
+				.then(() => {
+					//Send the new data upstream
+					this.$emit("update_card", {
+						kanban_card_id: all_data.cardId,
+						kanban_card_text: all_data.cardTitle,
+						kanban_card_description:
+						all_data.cardDescriptionModel,
+						kanban_column: all_data.cardColumn,
+						kanban_level: all_data.cardLevel,
+						kanban_card_priority: all_data.cardPriority,
+					});
+
+					//Only close if data.close_modal is true
+					if (data.close_modal) {
+						document
+							.getElementById("cardInformationModalCloseButton")
+							.click();
+					}
+				})
+				.catch((error) => {
+				});
 		},
-		mixins: [iconMixin],
-		data() {
-			return {
-				cardDescriptionModel: "",
-				cardNoteModel: "",
-				cardTitleModel: "",
-				noteHistoryResults: [],
-			};
-		},
-		computed: {
-			...mapGetters({
-				cardId: "getCardId",
-				rootUrl: "getRootUrl",
-			}),
-		},
-		methods: {
-			updateCard(data) {
-				//Get all data from VueX
-				const all_data = this.$store.getters.getAllCardData;
-
-				//Setup data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("kanban_card_text", all_data.cardTitle);
-				data_to_send.set(
-					"kanban_card_description",
-					all_data.cardDescription
-				);
-				data_to_send.set("kanban_level", all_data.cardLevel);
-				data_to_send.set("kanban_column", all_data.cardColumn);
-				data_to_send.set("kanban_card_id", all_data.cardId);
-				data_to_send.set("kanban_card_priority", all_data.cardPriority);
-
-				//Use Axios to send data to backend
-				axios
-					.post(
-						`${this.rootUrl}kanban_information/update_card/`,
-						data_to_send
-					)
-					.then(() => {
-						//Send the new data upstream
-						this.$emit("update_card", {
-							kanban_card_id: all_data.cardId,
-							kanban_card_text: all_data.cardTitle,
-							kanban_card_description:
-								all_data.cardDescriptionModel,
-							kanban_column: all_data.cardColumn,
-							kanban_level: all_data.cardLevel,
-							kanban_card_priority: all_data.cardPriority,
-						});
-
-						//Only close if data.close_modal is true
-						if (data.close_modal) {
-							document
-								.getElementById("cardInformationModalCloseButton")
-								.click();
-						}
-					})
-					.catch((error) => {});
-			},
-		},
-	};
+	},
+};
 </script>
 
 <style scoped></style>

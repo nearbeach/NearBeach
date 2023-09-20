@@ -5,6 +5,7 @@ from NearBeach.models import (
     ObjectAssignment,
     Group,
     UserGroup,
+    UserSetting,
 )
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.tools.internal_functions import (
@@ -245,12 +246,23 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
         kanban_board_id=kanban_board_id,
     ).order_by("kanban_card_sort_number")
 
+    # Get kanban user settings
+    kanban_settings = UserSetting.objects.filter(
+        username=request.user,
+        setting_type="KANBAN_BOARD"
+    ).values(
+        "setting_data"
+    ).first()
+    if kanban_settings is None:
+        kanban_settings = {}
+
     # Get context
     c = get_context(kanban_board_id)
     c["theme"] = get_theme(request)
     c["need_tinymce"] = True
     c["user_level"] = user_level
     c["kanban_card_results"] = serializers.serialize("json", kanban_card_results)
+    c["kanban_settings"] = json.dumps(kanban_settings)
     c["open_card_on_load"] = open_card_on_load
 
     # Get the template

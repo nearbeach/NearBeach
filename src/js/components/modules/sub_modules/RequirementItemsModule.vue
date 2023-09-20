@@ -1,7 +1,8 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.clipboardIcon"></Icon> Requirement Items
+			<Icon v-bind:icon="icons.clipboardIcon"></Icon>
+			Requirement Items
 		</h2>
 		<p class="text-instructions">
 			Requirements should be broken down into smaller components called
@@ -26,7 +27,7 @@
 
 		<!-- Submit Button -->
 		<!-- TO DO - limit it to certain users -->
-		<hr v-if="userLevel > 1" />
+		<hr v-if="userLevel > 1"/>
 		<div
 			v-if="userLevel > 1"
 			class="row submit-row"
@@ -52,74 +53,74 @@
 </template>
 
 <script>
-	//JavaScript Libraries
-	import { Modal } from "bootstrap";
-	import { Icon } from "@iconify/vue";
-	import axios from "axios";
+//JavaScript Libraries
+import {Modal} from "bootstrap";
+import {Icon} from "@iconify/vue";
+import axios from "axios";
 
-	//Components
-	import NewRequirementItemWizard from "../wizards/NewRequirementItemWizard.vue";
-	import RenderObjectCard from "../../render/RenderObjectCard.vue";
+//Components
+import NewRequirementItemWizard from "../wizards/NewRequirementItemWizard.vue";
+import RenderObjectCard from "../../render/RenderObjectCard.vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Mixins
-	import iconMixin from "../../../mixins/iconMixin";
+//Mixins
+import iconMixin from "../../../mixins/iconMixin";
 
-	export default {
-		name: "RequirementItemsModule",
-		components: {
-			RenderObjectCard,
-			Icon,
-			NewRequirementItemWizard,
-		},
-		mixins: [iconMixin],
-		data() {
-			return {
-				requirementItemVariables: {
-					header:"Requirement Items",
-					prefix:"RI-",
-					id:"requirement_item_id",
-					title:"requirement_item_title",
-					status:"requirement_item_status_text",
-					end_date:"",
-				},
-				itemResults: [],
-				itemStatusList: [],
-				itemTypeList: [],
-			};
-		},
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				rootUrl: "getRootUrl",
-				userLevel: "getUserLevel",
-			}),
-		},
-		methods: {
-			createNewItem() {
-				var new_item_modal = new Modal(
-					document.getElementById("newItemModal")
-				);
-				new_item_modal.show();
+export default {
+	name: "RequirementItemsModule",
+	components: {
+		RenderObjectCard,
+		Icon,
+		NewRequirementItemWizard,
+	},
+	mixins: [iconMixin],
+	data() {
+		return {
+			requirementItemVariables: {
+				header: "Requirement Items",
+				prefix: "RI-",
+				id: "requirement_item_id",
+				title: "requirement_item_title",
+				status: "requirement_item_status_text",
+				end_date: "",
 			},
-			newItemAdded(data) {
-				//A new item has been added in the wizard. We use the new data that has passed through to update
-				//the item results array.
-				this.itemResults = data;
-			},
-			updateItemResults() {
-				axios.post("data/items/").then((response) => {
-					this.itemResults = response.data;
-				});
-			},
+			itemResults: [],
+			itemStatusList: [],
+			itemTypeList: [],
+		};
+	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			rootUrl: "getRootUrl",
+			userLevel: "getUserLevel",
+		}),
+	},
+	methods: {
+		createNewItem() {
+			var new_item_modal = new Modal(
+				document.getElementById("newItemModal")
+			);
+			new_item_modal.show();
 		},
-		mounted() {
-			this.updateItemResults();
+		newItemAdded(data) {
+			//A new item has been added in the wizard. We use the new data that has passed through to update
+			//the item results array.
+			this.itemResults = data;
 		},
-	};
+		updateItemResults() {
+			axios.post("data/items/").then((response) => {
+				this.itemResults = response.data;
+			});
+		},
+	},
+	mounted() {
+		this.updateItemResults();
+	},
+};
 </script>
 
 <style scoped></style>

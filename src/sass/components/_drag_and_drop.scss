@@ -2,13 +2,13 @@
 }
 
 .sortable {
-	width: 100%;
-	background: var(--nb-sortable-background-color);
-	padding: 1em;
-	cursor: move;
-	margin-bottom: 2px;
+    width: 100%;
+    background: var(--nb-sortable-background-color);
+    padding: 1em;
+    cursor: move;
+    margin-bottom: 2px;
 
-	span {
-		float: right;
-	}
+    span {
+        float: right;
+    }
 }

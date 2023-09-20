@@ -2,7 +2,7 @@
 	<div class="card">
 		<div class="card-body">
 			<h1>New User</h1>
-			<hr />
+			<hr/>
 
 			<!-- Username -->
 			<div class="row">
@@ -15,7 +15,7 @@
 				</div>
 				<div class="col-md-8">
 					<label
-						>Username:
+					>Username:
 						<validation-rendering v-bind:error-list="v$.usernameModel.$errors"
 						></validation-rendering>
 					</label>
@@ -26,7 +26,7 @@
 					/>
 				</div>
 			</div>
-			<hr />
+			<hr/>
 
 			<!-- User Details -->
 			<div class="row">
@@ -40,9 +40,9 @@
 					<div class="row">
 						<div class="col-md-6">
 							<label
-								>First Name:
+							>First Name:
 								<validation-rendering v-bind:error-list="v$.firstNameModel.$errors"
-								></validation-rendering>	
+								></validation-rendering>
 							</label>
 							<input
 								type="text"
@@ -52,9 +52,9 @@
 						</div>
 						<div class="col-md-6">
 							<label
-								>Last Name:
+							>Last Name:
 								<validation-rendering v-bind:error-list="v$.lastNameModel.$errors"
-								></validation-rendering>	
+								></validation-rendering>
 							</label>
 							<input
 								type="text"
@@ -64,9 +64,9 @@
 						</div>
 						<div class="col-md-6">
 							<label
-								>Email:
+							>Email:
 								<validation-rendering v-bind:error-list="v$.emailModel.$errors"
-								></validation-rendering>	
+								></validation-rendering>
 							</label>
 							<input
 								type="email"
@@ -77,7 +77,7 @@
 					</div>
 				</div>
 			</div>
-			<hr />
+			<hr/>
 
 			<!-- User Password -->
 			<div class="row">
@@ -118,7 +118,7 @@
 				</div>
 			</div>
 
-			<hr />
+			<hr/>
 			<div class="row submit-row">
 				<div class="col-md-12">
 					<a
@@ -135,97 +135,97 @@
 </template>
 
 <script>
-	const axios = require("axios");
+const axios = require("axios");
 
-	//Validation
-	import useVuelidate from "@vuelidate/core";
-	import { email, required } from "@vuelidate/validators";
-	import ValidationRendering from "../validation/ValidationRendering.vue";
+//Validation
+import useVuelidate from "@vuelidate/core";
+import {email, required} from "@vuelidate/validators";
+import ValidationRendering from "../validation/ValidationRendering.vue";
 
-	//Mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
+//Mixins
+import errorModalMixin from "../../mixins/errorModalMixin";
 
-	export default {
-		name: "NewUser",
-		setup() {
-			return { v$: useVuelidate() };
+export default {
+	name: "NewUser",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	components: {
+		ValidationRendering,
+	},
+	mixins: [
+		errorModalMixin,
+	],
+	props: {
+		rootUrl: {
+			type: String,
+			default: "/",
 		},
-		components: {
-			ValidationRendering,
+	},
+	data() {
+		return {
+			emailModel: "",
+			firstNameModel: "",
+			lastNameModel: "",
+			password1Model: "",
+			password2Model: "",
+			usernameModel: "",
+		};
+	},
+	validations: {
+		emailModel: {
+			required,
+			email,
 		},
-		mixins: [
-			errorModalMixin,
-		],
-		props: {
-			rootUrl: {
-				type: String,
-				default: "/",
-			},
+		firstNameModel: {
+			required,
 		},
-		data() {
-			return {
-				emailModel: "",
-				firstNameModel: "",
-				lastNameModel: "",
-				password1Model: "",
-				password2Model: "",
-				usernameModel: "",
-			};
+		lastNameModel: {
+			required,
 		},
-		validations: {
-			emailModel: {
-				required,
-				email,
-			},
-			firstNameModel: {
-				required,
-			},
-			lastNameModel: {
-				required,
-			},
-			password1Model: {
-				required,
-			},
-			password2Model: {
-				required,
-			},
-			usernameModel: {
-				required,
-			},
+		password1Model: {
+			required,
 		},
-		methods: {
-			addUser: async function () {
-				//Check validation
-				const isFormCorrect = await this.v$.$validate();
-				if (!isFormCorrect) {
-					return;
-				}
+		password2Model: {
+			required,
+		},
+		usernameModel: {
+			required,
+		},
+	},
+	methods: {
+		addUser: async function () {
+			//Check validation
+			const isFormCorrect = await this.v$.$validate();
+			if (!isFormCorrect) {
+				return;
+			}
 
-				//Setup data to send
-				const data_to_send = new FormData();
-				data_to_send.set("username", this.usernameModel);
-				data_to_send.set("email", this.emailModel);
-				data_to_send.set("first_name", this.firstNameModel);
-				data_to_send.set("last_name", this.lastNameModel);
-				data_to_send.set("password1", this.password1Model);
-				data_to_send.set("password2", this.password2Model);
+			//Setup data to send
+			const data_to_send = new FormData();
+			data_to_send.set("username", this.usernameModel);
+			data_to_send.set("email", this.emailModel);
+			data_to_send.set("first_name", this.firstNameModel);
+			data_to_send.set("last_name", this.lastNameModel);
+			data_to_send.set("password1", this.password1Model);
+			data_to_send.set("password2", this.password2Model);
 
-				axios
-					.post(`${this.rootUrl}new_user/save/`, data_to_send)
-					.then((response) => {
-						//Send user to the user information page
-						window.location.href = response.data;
-					})
-					.catch((error) => {
-						this.showErrorModal(
-							"Please choose a suitable username",
-							"New User",
-							"Username issues"
-						);
-					});
-			},
+			axios
+				.post(`${this.rootUrl}new_user/save/`, data_to_send)
+				.then((response) => {
+					//Send user to the user information page
+					window.location.href = response.data;
+				})
+				.catch((error) => {
+					this.showErrorModal(
+						"Please choose a suitable username",
+						"New User",
+						"Username issues"
+					);
+				});
 		},
-	};
+	},
+};
 </script>
 
 <style scoped></style>

@@ -4,7 +4,7 @@
 			<div class="card-body">
 				<!-- HEADING -->
 				<h1>Search</h1>
-				<hr />
+				<hr/>
 
 				<!-- SEARCH FIELD -->
 				<div class="form-row">
@@ -30,7 +30,7 @@
 				</div>
 			</div>
 		</div>
-		<br />
+		<br/>
 
 		<!-- REQUEST FOR CHANGE RESULTS -->
 		<list-search-results
@@ -90,137 +90,138 @@
 </template>
 
 <script>
-	const axios = require("axios");
+const axios = require("axios");
 
-	//Import mixins
-	import searchMixin from "../../mixins/searchMixin";
+//Import mixins
+import searchMixin from "../../mixins/searchMixin";
 
-	//Vue Components
-	import ListSearchResults from "./ListSearchResults.vue";
+//Vue Components
+import ListSearchResults from "./ListSearchResults.vue";
 
-	export default {
-		name: "SearchObjects",
-		components: {
-			ListSearchResults,
+export default {
+	name: "SearchObjects",
+	components: {
+		ListSearchResults,
+	},
+	props: {
+		includeClosed: {
+			type: Boolean,
+			default: false,
 		},
-		props: {
-			includeClosed: {
-				type: Boolean,
-				default: false,
-			},
-			rootUrl: {
-				type: String,
-				default: "/",
-			},
-			searchInput: {
-				type: String,
-				required: false,
-				default: "",
-			},
-			searchResults: {
-				type: Object,
-				required: true,
-				default: () => {
-					return {};
-				},
-			},
+		rootUrl: {
+			type: String,
+			default: "/",
 		},
-		mixins: [searchMixin],
-		data() {
-			return {
-				includeClosedObjectsModel: this.includeClosed,
-				kanbanVariables: {
-					header: "Kanban",
-					prefix: "Kb",
-					id: "kanban_board_id",
-					title: "kanban_board_name",
-					status: "kanban_board_status",
-				},
-				localSearchResults: this.searchResults,
-				projectVariables: {
-					header: "Projects",
-					prefix: "Pro",
-					id: "project_id",
-					title: "project_name",
-					status: "project_status",
-				},
-				requestForChangeVariables: {
-					header: "Request for Change",
-					prefix: "Rfc",
-					id: "rfc_id",
-					title: "rfc_title",
-					status: "rfc_status__rfc_status",
-				},
-				requirementVariables: {
-					header: "Requirements",
-					prefix: "Req",
-					id: "requirement_id",
-					title: "requirement_title",
-					status: "requirement_status__requirement_status",
-				},
-				searchModel: this.searchInput,
-				searchTimeout: "",
-				taskVariables: {
-					header: "Tasks",
-					prefix: "Task",
-					id: "task_id",
-					title: "task_short_description",
-					status: "task_status",
-				},
-			};
+		searchInput: {
+			type: String,
+			required: false,
+			default: "",
 		},
-		methods: {
-			getSearchResults() {
-				// Setup the data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("search", this.searchModel);
-				data_to_send.set(
-					"include_closed",
-					this.includeClosedObjectsModel
-				);
-
-				//Use axios to request data
-				axios
-					.post(`${this.rootUrl}search/data/`, data_to_send)
-					.then((response) => {
-						//Update the localSearchResults with the data
-						this.localSearchResults = response.data;
-					})
-					.catch((error) => {});
+		searchResults: {
+			type: Object,
+			required: true,
+			default: () => {
+				return {};
 			},
 		},
-		watch: {
-			includeClosedObjectsModel() {
-				//Stop the clock
-				if (this.searchTimeout != "") {
-					//Stop the clock!
-					clearTimeout(this.searchTimeout);
-				}
-
-				//Get the search results - we don't need to wait for this case
-				this.getSearchResults();
+	},
+	mixins: [searchMixin],
+	data() {
+		return {
+			includeClosedObjectsModel: this.includeClosed,
+			kanbanVariables: {
+				header: "Kanban",
+				prefix: "Kb",
+				id: "kanban_board_id",
+				title: "kanban_board_name",
+				status: "kanban_board_status",
 			},
-			searchModel() {
-				this.searchTrigger({
-					return_function: this.getSearchResults,
-					searchTimeout: this.searchTimeout,
+			localSearchResults: this.searchResults,
+			projectVariables: {
+				header: "Projects",
+				prefix: "Pro",
+				id: "project_id",
+				title: "project_name",
+				status: "project_status",
+			},
+			requestForChangeVariables: {
+				header: "Request for Change",
+				prefix: "Rfc",
+				id: "rfc_id",
+				title: "rfc_title",
+				status: "rfc_status__rfc_status",
+			},
+			requirementVariables: {
+				header: "Requirements",
+				prefix: "Req",
+				id: "requirement_id",
+				title: "requirement_title",
+				status: "requirement_status__requirement_status",
+			},
+			searchModel: this.searchInput,
+			searchTimeout: "",
+			taskVariables: {
+				header: "Tasks",
+				prefix: "Task",
+				id: "task_id",
+				title: "task_short_description",
+				status: "task_status",
+			},
+		};
+	},
+	methods: {
+		getSearchResults() {
+			// Setup the data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("search", this.searchModel);
+			data_to_send.set(
+				"include_closed",
+				this.includeClosedObjectsModel
+			);
+
+			//Use axios to request data
+			axios
+				.post(`${this.rootUrl}search/data/`, data_to_send)
+				.then((response) => {
+					//Update the localSearchResults with the data
+					this.localSearchResults = response.data;
+				})
+				.catch((error) => {
 				});
-			},
 		},
-		mounted() {
-			//Send RootURL upstream
-			this.$store.commit({
-				type: "updateUrl",
-				rootUrl: this.rootUrl,
-				staticUrl: this.staticUrl,
-			});
-
-			//If the include closed is undefined - then we want to define it
-			if (this.includeClosed == undefined) {
-				this.includeClosedObjectsModel = false;
+	},
+	watch: {
+		includeClosedObjectsModel() {
+			//Stop the clock
+			if (this.searchTimeout != "") {
+				//Stop the clock!
+				clearTimeout(this.searchTimeout);
 			}
+
+			//Get the search results - we don't need to wait for this case
+			this.getSearchResults();
 		},
-	};
+		searchModel() {
+			this.searchTrigger({
+				return_function: this.getSearchResults,
+				searchTimeout: this.searchTimeout,
+			});
+		},
+	},
+	mounted() {
+		//Send RootURL upstream
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		//If the include closed is undefined - then we want to define it
+		if (this.includeClosed == undefined) {
+			this.includeClosedObjectsModel = false;
+		}
+	},
+};
 </script>
 
 <style scoped></style>

@@ -30,7 +30,7 @@
 				/>
 			</div>
 		</div>
-		<hr />
+		<hr/>
 
 		<div
 			class="row"
@@ -43,13 +43,13 @@
 				>
 					Close & Discard Changes
 				</button>
-       			<button
-       			    class="btn btn-primary save-changes"
-       			    v-on:click="updateCard(true)"
-       			    v-if="kanbanStatus !== 'Closed'"
-       			>
-       			  Save & Close
-       			</button>
+				<button
+					class="btn btn-primary save-changes"
+					v-on:click="updateCard(true)"
+					v-if="kanbanStatus !== 'Closed'"
+				>
+					Save & Close
+				</button>
 				<button
 					class="btn btn-success save-changes"
 					v-on:click="updateCard(false)"
@@ -63,56 +63,56 @@
 </template>
 
 <script>
-	//Axios
-	const axios = require("axios");
+//Axios
+const axios = require("axios");
 
-	//TinyMce
-	import Editor from "@tinymce/tinymce-vue";
+//TinyMce
+import Editor from "@tinymce/tinymce-vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Mixins
-	import uploadMixin from "../../mixins/uploadMixin";
+//Mixins
+import uploadMixin from "../../mixins/uploadMixin";
 
-	export default {
-		name: "CardDescription",
-		components: {
-			editor: Editor,
-		},
-		props: {},
-		data() {
-			return {};
-		},
-		computed: {
-			...mapGetters({
-				kanbanStatus: "getKanbanStatus",
-				userLevel: "getUserLevel",
-			}),
-			cardDescription: {
-				get() {
-					return this.$store.state.card.cardDescription;
-				},
-				set(value) {
-					this.$store.commit("updateValue", {
-						field: "cardDescription",
-						value: value,
-					});
-				},
+export default {
+	name: "CardDescription",
+	components: {
+		editor: Editor,
+	},
+	props: {},
+	data() {
+		return {};
+	},
+	computed: {
+		...mapGetters({
+			kanbanStatus: "getKanbanStatus",
+			userLevel: "getUserLevel",
+		}),
+		cardDescription: {
+			get() {
+				return this.$store.state.card.cardDescription;
 			},
-		},
-		mixins: [uploadMixin],
-		methods: {
-			closeModal() {
-				document
-					.getElementById("cardInformationModalCloseButton")
-					.click();
-			},
-			updateCard(close_modal) {
-				this.$emit("update_card", {
-					close_modal: close_modal,
+			set(value) {
+				this.$store.commit("updateValue", {
+					field: "cardDescription",
+					value: value,
 				});
 			},
 		},
-	};
+	},
+	mixins: [uploadMixin],
+	methods: {
+		closeModal() {
+			document
+				.getElementById("cardInformationModalCloseButton")
+				.click();
+		},
+		updateCard(close_modal) {
+			this.$emit("update_card", {
+				close_modal: close_modal,
+			});
+		},
+	},
+};
 </script>
