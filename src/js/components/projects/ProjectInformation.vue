@@ -327,6 +327,11 @@ export default {
 				});
 		},
 	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
 	mounted() {
 		//If users have enough permissions add in the "Closed" functionaly
 		if (this.userLevel >= 3) {

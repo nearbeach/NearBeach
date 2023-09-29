@@ -48,6 +48,7 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
             requirement=requirement_instance,
             project=Project.objects.get(project_id=row),
             change_user=request.user,
+            link_relationship="Relate"
         )
         submit_object_assignment.save()
 
