@@ -122,6 +122,11 @@ export default {
 		ChangeTaskLinkListVue,
 		ChangeTaskMisc,
 	},
+	beforeMount() {
+		this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	}
 };
 </script>
 

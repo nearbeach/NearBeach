@@ -65,10 +65,10 @@
 								'bold italic strikethrough underline backcolor | table | ' +
 									'bullist numlist outdent indent | removeformat | image codesample',
 							],
+							skin: `${this.skin}`,
+							content_css: `${this.contentCss}`,
 						}"
-							v-bind:content_css="false"
 							v-bind:disabled="isReadOnly"
-							v-bind:skin="false"
 							v-model="requirementScopeModel"
 						/>
 					</div>
@@ -245,7 +245,9 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			contentCss: "getContentCss",
 			rootUrl: "getRootUrl",
+			skin: "getSkin",
 			staticUrl: "getStaticUrl",
 		}),
 	},
@@ -319,6 +321,11 @@ export default {
 					this.showErrorModal(error, this.destination);
 				});
 		},
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
 	},
 	mounted() {
 		//Get data from the requirementResults and delegate to the Models

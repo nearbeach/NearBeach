@@ -178,7 +178,6 @@ export default {
 						reverse_relation:false
 					};
 				});
-				console.log("Item Link Project: ", this.itemLinkProject);
 
 				this.itemLinkTask = response.data.filter((row) => {
 					return row.object_type === "task";
