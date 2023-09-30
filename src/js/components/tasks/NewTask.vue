@@ -64,9 +64,9 @@
 								'bold italic strikethrough underline backcolor | table | ' +
 									'bullist numlist outdent indent | removeformat | codesample',
 							],
+							skin: `${this.skin}`,
+							content_css: `${this.contentCss}`,
 						}"
-							v-bind:content_css="false"
-							v-bind:skin="false"
 							v-model="taskDescriptionModel"
 						/>
 					</div>
@@ -127,6 +127,9 @@ import GetStakeholders from "../organisations/GetStakeholders.vue";
 import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 
+//VueX
+import { mapGetters } from "vuex";
+
 export default {
 	name: "NewTask",
 	setup() {
@@ -174,6 +177,12 @@ export default {
 			taskShortDescriptionModel: "",
 			taskStartDateModel: "",
 		};
+	},
+	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			skin: "getSkin",
+		}),
 	},
 	mixins: [errorModalMixin, getThemeMixin],
 	validations: {
@@ -251,6 +260,11 @@ export default {
 		updateStakeholderModel(data) {
 			this.stakeholderModel = data;
 		},
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
 	},
 	mounted() {
 		this.$store.commit({

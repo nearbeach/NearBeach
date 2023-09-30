@@ -225,6 +225,11 @@ export default {
 			this.rfcData[data.modelName] = data.modelValue;
 		},
 	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
 	mounted() {
 		//Send the Root and Static URL to VueX
 		this.$store.commit({

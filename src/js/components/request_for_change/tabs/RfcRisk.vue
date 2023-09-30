@@ -76,9 +76,9 @@
 						'bold italic strikethrough underline backcolor | table | ' +
 							'bullist numlist outdent indent | removeformat | image codesample',
 					],
+					skin: `${this.skin}`,
+					content_css: `${this.contentCss}`,
 				}"
-				v-bind:content_css="false"
-				v-bind:skin="false"
 				v-bind:disabled="isReadOnly"
 				v-model="rfcRiskSummaryModel"
 			/>
@@ -98,6 +98,9 @@ import Editor from "@tinymce/tinymce-vue";
 
 //Mixins
 import uploadMixin from "../../../mixins/uploadMixin";
+
+//VueX
+import { mapGetters } from "vuex";
 
 export default {
 	name: "RfcRisk",
@@ -120,6 +123,12 @@ export default {
 				return [];
 			},
 		},
+	},
+	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			skin: "getSkin",
+		}),
 	},
 	mixins: [uploadMixin],
 	data: () => ({

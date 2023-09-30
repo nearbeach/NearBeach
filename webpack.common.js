@@ -51,7 +51,11 @@ module.exports = {
     plugins: [
         new VueLoaderPlugin(),
         new MiniCssExtractplugin(),
-        new CompressionPlugin(),
+        new CompressionPlugin({
+            exclude: [
+                "tinymce",
+            ]
+        }),
         new CopyPlugin({
             patterns: [
                 { from: './src/resources/NearBeach.png', to: '' },
@@ -59,15 +63,19 @@ module.exports = {
                 { from: './src/resources/images/', to: './images' },
 
                 //TinyMce Files
-                { from: './node_modules/tinymce/tinymce.min.js', to: './tinymce/tinymce.min.js' },
-                { from: './node_modules/tinymce/skins/ui/oxide/skin.min.css', to: './tinymce/skins/ui/oxide/skin.min.css' },
-                { from: './node_modules/tinymce/skins/content/default/content.min.css', to: './tinymce/skins/content/default/content.min.css' },
-                { from: './node_modules/tinymce/skins/ui/oxide/content.min.css', to: './tinymce/skins/ui/oxide/content.min.css' },
-                { from: './node_modules/tinymce/themes/silver/theme.min.js', to: './tinymce/themes/silver/theme.min.js' },
-                { from: './node_modules/tinymce/icons/default/icons.min.js', to: './tinymce/icons/default/icons.min.js' },
-                { from: './node_modules/tinymce/plugins/lists/', to: './tinymce/plugins/lists/' },
+                { from: './node_modules/tinymce/', to: './tinymce/' },
+                // { from: './node_modules/tinymce/tinymce.min.js', to: './tinymce/tinymce.min.js' },
+                // { from: './node_modules/tinymce/skins/ui/oxide/skin.min.css', to: './tinymce/skins/ui/oxide/skin.min.css' },
+                // { from: './node_modules/tinymce/skins/ui/oxide-dark/skin.min.css', to: './tinymce/skins/ui/oxide-dark/skin.min.css' },
+                // { from: './node_modules/tinymce/skins/content/default/content.min.css', to: './tinymce/skins/content/default/content.min.css' },
+                // { from: './node_modules/tinymce/skins/content/dark/content.min.css', to: './tinymce/skins/content/dark/content.min.css' },
+                // { from: './node_modules/tinymce/skins/ui/oxide/content.min.css', to: './tinymce/skins/ui/oxide/content.min.css' },
+                // { from: './node_modules/tinymce/skins/ui/oxide-dark/content.min.css', to: './tinymce/skins/ui/oxide-dark/content.min.css' },
+                // { from: './node_modules/tinymce/themes/silver/theme.min.js', to: './tinymce/themes/silver/theme.min.js' },
+                // { from: './node_modules/tinymce/icons/default/icons.min.js', to: './tinymce/icons/default/icons.min.js' },
+                // { from: './node_modules/tinymce/plugins/lists/', to: './tinymce/plugins/lists/' },
                 // { from: './node_modules/tinymce/plugins/paste/', to: './tinymce/plugins/paste/' },
-                { from: './node_modules/tinymce/plugins/table/', to: './tinymce/plugins/table/' },
+                // { from: './node_modules/tinymce/plugins/table/', to: './tinymce/plugins/table/' },
             ],
         }),
         new webpack.DefinePlugin({

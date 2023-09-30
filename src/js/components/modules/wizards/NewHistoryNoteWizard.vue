@@ -43,9 +43,9 @@
 								'bold italic strikethrough underline backcolor | table | ' +
 									'bullist numlist outdent indent | removeformat | codesample',
 							],
+            				skin: `${this.skin}`,
+			            	content_css: `${this.contentCss}`
 						}"
-						v-bind:content_css="false"
-						v-bind:skin="false"
 						v-model="newNoteModel"
 					/>
 				</div>
@@ -106,7 +106,9 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			contentCss: "getContentCss",
 			rootUrl: "getRootUrl",
+			skin: "getSkin",
 		}),
 	},
 	methods: {

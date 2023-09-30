@@ -69,9 +69,9 @@
 										'bold italic strikethrough underline backcolor | table | ' +
 											'bullist numlist outdent indent | removeformat | codesample',
 									],
+            						skin: `${this.skin}`,
+						            content_css: `${this.contentCss}`
 								}"
-								v-bind:content_css="false"
-								v-bind:skin="false"
 								v-model="requirementItemScopeModel"
 							/>
 						</div>
@@ -186,8 +186,10 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			contentCss: "getContentCss",
 			locationId: "getLocationId",
 			rootUrl: "getRootUrl",
+			skin: "getSkin",
 		}),
 	},
 	validations: {

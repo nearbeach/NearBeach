@@ -17,9 +17,9 @@
                 'bold italic strikethrough underline backcolor | table | ' +
                     'bullist numlist outdent indent | removeformat | image codesample',
             ],
+            skin: `${this.skin}`,
+            content_css: `${this.contentCss}`
         }"
-		v-bind:content_css="false"
-		v-bind:skin="false"
 		v-model="changeDescriptionModel"
 	/>
 
@@ -40,12 +40,19 @@
 import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 
+//VueX
+import { mapGetters } from "vuex";
+
 export default {
 	name: "ChangeTaskDescription",
 	components: {
 		Editor,
 	},
 	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			skin: "getSkin",
+		}),
 		changeDescriptionModel: {
 			get() {
 				return this.$store.state.changeTask.description;

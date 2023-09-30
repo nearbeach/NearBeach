@@ -572,6 +572,11 @@ export default {
 			this[data.modelName] = data.modelValue;
 		},
 	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
 	mounted() {
 		//Set the type model
 		this.rfcTypeModel = this.rfcResults[0].fields.rfc_type;
