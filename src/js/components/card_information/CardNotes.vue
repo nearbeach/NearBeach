@@ -23,9 +23,9 @@
 							'bold italic strikethrough underline backcolor | table | ' +
 								'bullist numlist outdent indent | removeformat | image codesample',
 						],
+            			skin: `${this.skin}`,
+			            content_css: `${this.contentCss}`
 					}"
-					v-bind:content_css="false"
-					v-bind:skin="false"
 					v-model="cardNoteModel"
 					v-bind:disabled="kanbanStatus === 'Closed'"
 				/>
@@ -85,8 +85,10 @@ export default {
 	computed: {
 		...mapGetters({
 			cardNotes: "getCardNotes",
+			contentCss: "getContentCss",
 			kanbanStatus: "getKanbanStatus",
 			rootUrl: "getRootUrl",
+			skin: "getSkin",
 			userLevel: "getUserLevel",
 		}),
 	},

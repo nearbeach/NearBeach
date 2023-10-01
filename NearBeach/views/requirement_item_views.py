@@ -90,22 +90,22 @@ def get_requirement_item_links(requirement_item_id):
     )
 
 
-@require_http_methods(["POST"])
-@login_required(login_url="login", redirect_field_name="")
-@check_user_requirement_item_permissions(min_permission_level=1)
-def get_requirement_item_links_list(request, requirement_item_id, *args, **kwargs):
-    """
-    :param request:
-    :param requirement_item_id:
-    :return:
-    """
-    # Use object_assignment to get the requirments
-    link_results = get_requirement_item_links(requirement_item_id)
-
-    # Send back json data
-    json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
-
-    return HttpResponse(json_results, content_type="application/json")
+# @require_http_methods(["POST"])
+# @login_required(login_url="login", redirect_field_name="")
+# @check_user_requirement_item_permissions(min_permission_level=1)
+# def get_requirement_item_links_list(request, requirement_item_id, *args, **kwargs):
+#     """
+#     :param request:
+#     :param requirement_item_id:
+#     :return:
+#     """
+#     # Use object_assignment to get the requirments
+#     link_results = get_requirement_item_links(requirement_item_id)
+#
+#     # Send back json data
+#     json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
+#
+#     return HttpResponse(json_results, content_type="application/json")
 
 
 @login_required(login_url="login", redirect_field_name="")

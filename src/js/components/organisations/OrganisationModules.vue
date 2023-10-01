@@ -276,6 +276,11 @@ export default {
 			new_customer_modal.show();
 		},
 	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
 	mounted() {
 		//Send the ROOT URL and STATIC URL upstream
 		this.$store.commit({

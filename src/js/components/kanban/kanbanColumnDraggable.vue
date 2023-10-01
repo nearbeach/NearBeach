@@ -268,8 +268,6 @@ export default {
 			document.getElementById("sort_error").style.display = "";
 		},
 		doubleClickCard(data) {
-			console.log("Data: ", data);
-
 			//Filter out the data we want to send up stream
 			const filtered_data = this.masterList.filter((row) => {
 				return row.pk == data.target.dataset.cardId;

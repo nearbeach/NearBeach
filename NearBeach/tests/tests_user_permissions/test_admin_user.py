@@ -88,6 +88,8 @@ class AdminPermissionTests(TestCase):
             URLTest("user_list", ["project", 1], {}, 200, "POST"),
             # URLTest("user_list_all", ["project", 1], {}, 200, "POST"),
             URLTest("group_and_user_data", ["project", 1], {}, 200, "POST"),
+            URLTest("private_download_file", ["2fc398ee-d12b-4f60-9ecb-40199ac74f13"], {}, 400, "GET"),
+            URLTest("private_download_file", ["80a7bd50-eba9-49f8-a55c-d1febd052ab9"], {}, 400, "GET"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied

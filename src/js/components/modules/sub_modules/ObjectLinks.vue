@@ -179,7 +179,7 @@ export default {
 					//Filter out the data for relates to
 					this.relatesTo = response.data.filter(row => {
 						//We only have one condition - if there is a relate
-						return row.link_relationship === 'Relate'
+						return row.link_relationship === 'Relate' || row.link_relationship === null;
 					});
 
 					//Filter out the data for is blocked by

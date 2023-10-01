@@ -232,7 +232,7 @@
 						id="requirement-items"
 						role="tabpanel"
 						aria-labelledby="home-tab"
-						v-if="destination == 'requirement'"
+						v-if="destination === 'requirement'"
 					>
 						<requirement-items-module></requirement-items-module>
 					</div>
@@ -241,7 +241,7 @@
 						id="requirement-links"
 						role="tabpanel"
 						aria-labelledby="profile-tab"
-						v-if="destination == 'requirement'"
+						v-if="destination === 'requirement'"
 					>
 						<requirement-links-module></requirement-links-module>
 					</div>
@@ -250,7 +250,7 @@
 						id="requirement-item-links"
 						role="tabpanel"
 						aria-labelledby="profile-tab"
-						v-else-if="destination == 'requirement_item'"
+						v-else-if="destination === 'requirement_item'"
 					>
 						<requirement-item-links-module></requirement-item-links-module>
 					</div>
@@ -371,6 +371,11 @@ export default {
 		return {};
 	},
 	methods: {},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
 	mounted() {
 		//Send data to required VueX states
 		this.$store.commit({

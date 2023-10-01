@@ -65,6 +65,7 @@ Checklist and Method
 
 #. Update any virtualenv packages using the following commands
     `pip list --outdated`
+
     `pip install --upgrade <<package_name>>`
 
 #. Run the following command to setup the dists file

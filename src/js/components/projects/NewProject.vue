@@ -65,9 +65,9 @@
 								'bold italic strikethrough underline backcolor | table | ' +
 									'bullist numlist outdent indent | removeformat | codesample',
 							],
+							skin: `${this.skin}`,
+							content_css: `${this.contentCss}`,
 						}"
-							v-bind:content_css="false"
-							v-bind:skin="false"
 							v-model="projectDescriptionModel"
 						/>
 					</div>
@@ -132,6 +132,9 @@ import ValidationRendering from "../validation/ValidationRendering.vue";
 import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 
+//VueX
+import { mapGetters } from "vuex";
+
 export default {
 	name: "NewProject",
 	setup() {
@@ -169,6 +172,12 @@ export default {
 				return [];
 			},
 		},
+	},
+	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			skin: "getSkin",
+		})
 	},
 	mixins: [errorModalMixin, getThemeMixin],
 	data() {
@@ -255,6 +264,11 @@ export default {
 		updateStakeholderModel(data) {
 			this.stakeholderModel = data;
 		},
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
 	},
 	mounted() {
 		this.$store.commit({
