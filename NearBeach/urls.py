@@ -601,11 +601,11 @@ urlpatterns = [
         requirement_views.get_requirement_item_type_list,
         name="get_requirement_item_type_list",
     ),
-    path(
-        "requirement_information/<int:requirement_id>/data/links/",
-        requirement_views.get_requirement_links_list,
-        name="get_requirement_links_list",
-    ),
+    # path(
+    #     "requirement_information/<int:requirement_id>/data/links/",
+    #     requirement_views.get_requirement_links_list,
+    #     name="get_requirement_links_list",
+    # ),
     path(
         "requirement_information/<int:requirement_id>/save/",
         requirement_views.requirement_information_save,
@@ -627,11 +627,11 @@ urlpatterns = [
         requirement_item_views.requirement_item_information,
         name="requirement_item_information",
     ),
-    path(
-        "requirement_item_information/<int:requirement_item_id>/data/links/",
-        requirement_item_views.get_requirement_item_links_list,
-        name="get_requirement_item_links_list",
-    ),
+    # path(
+    #     "requirement_item_information/<int:requirement_item_id>/data/links/",
+    #     requirement_item_views.get_requirement_item_links_list,
+    #     name="get_requirement_item_links_list",
+    # ),
     path(
         "requirement_item_information/<int:requirement_item_id>/save/",
         requirement_item_views.requirement_information_save,

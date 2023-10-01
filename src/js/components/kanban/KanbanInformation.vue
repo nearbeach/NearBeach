@@ -127,7 +127,7 @@ export default {
 			default: () => {
 				return {
 					setting_data: {
-						canDrag: true,
+						canDragCards: true,
 						levels: [],
 					},
 				};
@@ -241,6 +241,9 @@ export default {
 			});
 		},
 		updateKanbanSettings() {
+			//If there are no settings - just return
+			if (this.kanbanSettings.setting_data === undefined) return;
+
 			//Setup the canDrag
 			let can_drag_cards = this.kanbanSettings.setting_data.canDragCards;
 			if (can_drag_cards === undefined) can_drag_cards = true;
@@ -285,6 +288,11 @@ export default {
 				levels: levels,
 			})
 		}
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
 	},
 	mounted() {
 		//Send the settings up stream

@@ -15,6 +15,7 @@ import {moduleUserLevel} from "./vuex/userLevelVueX";
 
 // User settings
 import {kanbanSettings} from "./vuex/usersettings/kanbanSettingsVueX";
+import {themeSettings} from "./vuex/usersettings/themeSettingsVueX";
 
 export const store = createStore({
     modules: {
@@ -31,5 +32,6 @@ export const store = createStore({
 
         //User Settings
         kanbanSettings: kanbanSettings,
+        themeSettings: themeSettings,
     },
 });

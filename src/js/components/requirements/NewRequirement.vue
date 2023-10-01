@@ -61,9 +61,9 @@
 								'bold italic strikethrough underline backcolor | table | ' +
 									'bullist numlist outdent indent | removeformat | codesample',
 							],
+							skin: `${this.skin}`,
+							content_css: `${this.contentCss}`,
 						}"
-							v-bind:content_css="false"
-							v-bind:skin="false"
 							v-model="requirementScopeModel"
 						/>
 					</div>
@@ -161,6 +161,9 @@ import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
+//VueX
+import { mapGetters } from "vuex";
+
 export default {
 	name: "NewRequirement",
 	setup() {
@@ -222,6 +225,12 @@ export default {
 			typeFixList: [],
 			typeModel: "",
 		};
+	},
+	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			skin: "getSkin",
+		}),
 	},
 	mixins: [getThemeMixin],
 	validations: {
@@ -302,6 +311,11 @@ export default {
 		updateStakeholderModel(newStakeholderModel) {
 			this.stakeholderModel = newStakeholderModel;
 		},
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
 	},
 	mounted() {
 		//VueX

@@ -11,7 +11,7 @@ def get_theme(request):
     ).first()
 
     if user_setting_results is None:
-        return ""
+        return "light"
 
     # Data structure should be { theme: <string> "" }
     return user_setting_results.setting_data['theme']
