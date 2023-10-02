@@ -1,4 +1,3 @@
-# Password reset
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
@@ -455,16 +454,6 @@ urlpatterns = [
         object_data_views.group_and_user_data,
         name="group_and_user_data",
     ),
-    # path(
-    #     "object_data/<destination>/<location_id>/group_list/",
-    #     object_data_views.group_list,
-    #     name="group_list",
-    # ),
-    # path(
-    #     "object_data/<destination>/<location_id>/group_list_all/",
-    #     object_data_views.group_list_all,
-    #     name="group_list_all",
-    # ),
     path(
         "object_data/<destination>/<location_id>/<object_lookup>/link_list/",
         object_data_views.link_list,
@@ -518,11 +507,6 @@ urlpatterns = [
         object_data_views.user_list,
         name="user_list",
     ),
-    # path(
-    #     "object_data/<destination>/<location_id>/user_list_all/",
-    #     object_data_views.user_list_all,
-    #     name="user_list_all",
-    # ),
     path("object_data/delete_bug/", object_data_views.delete_bug, name="delete_bug"),
     path("object_data/delete_link/", object_data_views.delete_link, name="delete_link"),
     path("object_data/delete_tag/", object_data_views.delete_tag, name="delete_tag"),
@@ -601,11 +585,6 @@ urlpatterns = [
         requirement_views.get_requirement_item_type_list,
         name="get_requirement_item_type_list",
     ),
-    # path(
-    #     "requirement_information/<int:requirement_id>/data/links/",
-    #     requirement_views.get_requirement_links_list,
-    #     name="get_requirement_links_list",
-    # ),
     path(
         "requirement_information/<int:requirement_id>/save/",
         requirement_views.requirement_information_save,
@@ -627,11 +606,6 @@ urlpatterns = [
         requirement_item_views.requirement_item_information,
         name="requirement_item_information",
     ),
-    # path(
-    #     "requirement_item_information/<int:requirement_item_id>/data/links/",
-    #     requirement_item_views.get_requirement_item_links_list,
-    #     name="get_requirement_item_links_list",
-    # ),
     path(
         "requirement_item_information/<int:requirement_item_id>/save/",
         requirement_item_views.requirement_information_save,

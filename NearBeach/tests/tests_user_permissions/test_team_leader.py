@@ -81,7 +81,6 @@ class TeamLeaderPermissionTests(TestCase):
             URLTest("task_information", [1], {}, 403),
             URLTest("user_information", [1], {}, 403),
             URLTest("add_customer", ["project", 2], {"customer": 1}, 200, "POST"),
-            # URLTest("private_download_file", ["2fc398ee-d12b-4f60-9ecb-40199ac74f13"], {}, 500),
             URLTest("private_download_file", ["80a7bd50-eba9-49f8-a55c-d1febd052ab9"], {}, 400),
         ]
 
