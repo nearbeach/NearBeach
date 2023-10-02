@@ -267,7 +267,7 @@ export default {
 	},
 	methods: {
 		defaultStartDate: () => {
-			let start_date = new Date();
+			const start_date = new Date();
 			start_date.setHours(9);
 			start_date.setMinutes(0);
 			start_date.setSeconds(0);
@@ -276,7 +276,7 @@ export default {
 			return start_date.getTime();
 		},
 		defaultEndDate: () => {
-			let end_date = new Date();
+			const end_date = new Date();
 			end_date.setHours(16);
 			end_date.setMinutes(0);
 			end_date.setSeconds(0);
@@ -287,7 +287,7 @@ export default {
 			return end_date.getTime();
 		},
 		defaultReleaseDate: () => {
-			let end_date = new Date();
+			const end_date = new Date();
 			end_date.setHours(17);
 			end_date.setMinutes(0);
 			end_date.setSeconds(0);
