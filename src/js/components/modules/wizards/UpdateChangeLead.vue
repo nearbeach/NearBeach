@@ -37,7 +37,7 @@
 						<div class="col-md-8">
 							<n-select
 								:options="userFixList"
-								v-model:value="userModel"
+								v-model="userModel"
 							></n-select>
 						</div>
 					</div>
