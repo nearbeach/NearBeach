@@ -82,8 +82,8 @@ export default {
 	methods: {
 		archiveCards() {
 			//Simplify the variables
-			let column = this.archiveDestination.column;
-			let level = this.archiveDestination.level;
+			const column = this.archiveDestination.column;
+			const level = this.archiveDestination.level;
 
 			// Create data_to_send
 			const data_to_send = new FormData();
