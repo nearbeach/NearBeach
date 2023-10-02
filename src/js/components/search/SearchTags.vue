@@ -112,7 +112,7 @@ export default {
 			this.singleTagColour = "#37cbd2";
 
 			//Open up modal
-			let edit_tag_modal = new Modal(
+			const edit_tag_modal = new Modal(
 				document.getElementById("editTagModal")
 			);
 			edit_tag_modal.show();
@@ -125,7 +125,7 @@ export default {
 		},
 		editTag(tag_id) {
 			//Filter for the tag information
-			let single_tag = this.localTagResults.filter((row) => {
+			const single_tag = this.localTagResults.filter((row) => {
 				return row.pk == tag_id;
 			})[0];
 
@@ -135,7 +135,7 @@ export default {
 			this.singleTagColour = single_tag.fields.tag_colour;
 
 			//Open up modal
-			let edit_tag_modal = new Modal(
+			const edit_tag_modal = new Modal(
 				document.getElementById("editTagModal")
 			);
 			edit_tag_modal.show();
@@ -145,7 +145,7 @@ export default {
 		},
 		updateTags(data) {
 			//Get the index location of the object we are updating
-			let index = this.localTagResults.findIndex((row) => {
+			const index = this.localTagResults.findIndex((row) => {
 				return row.pk === data.tag_id;
 			});
 
