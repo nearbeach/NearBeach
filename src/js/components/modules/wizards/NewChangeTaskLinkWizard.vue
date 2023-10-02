@@ -38,7 +38,7 @@
 							Current change task <br/>
 							<n-select
 								:options="changeTaskRelation"
-								v-model:value="changeTaskRelationModel"
+								v-model="changeTaskRelationModel"
 								class="object-selection"
 							></n-select>
 						</div>
