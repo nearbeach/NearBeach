@@ -55,12 +55,12 @@ export default {
 				height = 400 - margin.top - margin.bottom;
 
 			//Clear the destination
-			let outward_location =
+			const outward_location =
 				document.getElementById("active_bug_graph");
 			outward_location.innerHTML = "";
 
 			//Start Rendering SVG
-			let svg = d3
+			const svg = d3
 				.select(outward_location)
 				.append("svg")
 				.attr("width", width + margin.left + margin.right)
