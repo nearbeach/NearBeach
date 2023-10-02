@@ -34,7 +34,7 @@ LINK_RELATIONSHIP = (
     ("block", "Block"),
     ("duplicate", "Duplicate"),
     ("relate", "Relate"),
-    ("subobject","Subobject"),
+    ("subobject", "Subobject"),
 )
 
 NOTIFICATION_LOCATION = (
