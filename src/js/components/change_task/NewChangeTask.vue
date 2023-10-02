@@ -86,7 +86,7 @@
 										</label>
 										<n-date-picker
 											type="datetime"
-											v-model:value="changeStartDateModel"
+											v-model="changeStartDateModel"
 											class="form-control"
 										></n-date-picker>
 									</div>
@@ -101,7 +101,7 @@
 										</label>
 										<n-date-picker
 											type="datetime"
-											v-model:value="changeEndDateModel"
+											v-model="changeEndDateModel"
 											class="form-control"
 										></n-date-picker>
 									</div>
@@ -150,7 +150,7 @@
 										</label>
 										<n-select
 											v-bind:options="userList"
-											v-model:value="assignedUserModel"
+											v-model="assignedUserModel"
 										></n-select>
 									</div>
 								</div>
@@ -163,7 +163,7 @@
 											></validation-rendering>
 										</label>
 										<n-select
-											v-model:value="qaUserModel"
+											v-model="qaUserModel"
 											v-bind:options="userList"
 										/>
 									</div>
