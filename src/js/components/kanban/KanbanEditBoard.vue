@@ -13,7 +13,7 @@
 							Drag the cards around to sort out the columns how you
 							want them.
 						</p>
-						<n-switch v-model:value="canDragCards"
+						<n-switch v-model="canDragCards"
 								  @update:value="updateCanDragCards"
 						>
 							<template #checked>
