@@ -19,8 +19,6 @@ from NearBeach.models import (
     Customer,
     Group,
     KanbanCard,
-    ListOfRequirementItemStatus,
-    ListOfRequirementStatus,
     ObjectAssignment,
     ObjectNote,
     Organisation,

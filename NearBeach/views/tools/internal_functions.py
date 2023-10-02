@@ -3,9 +3,6 @@ from NearBeach.models import (
     Customer,
     KanbanBoard,
     KanbanCard,
-    ListOfRequirementItemStatus,
-    ListOfRequirementStatus,
-    ObjectAssignment,
     Organisation,
     Project,
     RequestForChange,
@@ -15,8 +12,6 @@ from NearBeach.models import (
     User,
     UserGroup,
 )
-
-from django.db.models import Q
 
 OBJECT_DICT = {
     "change_task": ChangeTask.objects,
