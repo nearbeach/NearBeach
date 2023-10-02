@@ -219,7 +219,7 @@ export default {
 	methods: {
 		setProfilePicture() {
 			//If there is a profile picture/image, update. Otherwise use default
-			let profile_picture =
+			const profile_picture =
 				this.customerResults[0].fields.customer_profile_picture;
 			if (
 				profile_picture !== undefined &&
