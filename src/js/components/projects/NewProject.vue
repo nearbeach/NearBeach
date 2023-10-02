@@ -57,13 +57,14 @@
 							:init="{
 							file_picker_types: 'image',
 							height: 500,
+							images_upload_handler: newObjectUploadImage,
 							menubar: false,
-							paste_data_images: false,
-							plugins: ['lists', 'codesample', 'table'],
+							paste_data_images: true,
+							plugins: ['lists', 'image', 'codesample', 'table'],
 							toolbar: [
 								'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
 								'bold italic strikethrough underline backcolor | table | ' +
-									'bullist numlist outdent indent | removeformat | codesample',
+									'bullist numlist outdent indent | removeformat | image codesample',
 							],
 							skin: `${this.skin}`,
 							content_css: `${this.contentCss}`,
@@ -131,6 +132,7 @@ import ValidationRendering from "../validation/ValidationRendering.vue";
 //Mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
+import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
 
 //VueX
 import { mapGetters } from "vuex";
@@ -172,6 +174,10 @@ export default {
 				return [];
 			},
 		},
+		uuid: {
+			type: String,
+			default: "",
+		}
 	},
 	computed: {
 		...mapGetters({
@@ -179,7 +185,7 @@ export default {
 			skin: "getSkin",
 		})
 	},
-	mixins: [errorModalMixin, getThemeMixin],
+	mixins: [errorModalMixin, getThemeMixin, newObjectUploadMixin],
 	data() {
 		return {
 			groupModel: {},
@@ -235,6 +241,10 @@ export default {
 			data_to_send.set(
 				"project_end_date",
 				this.projectEndDateModel.toISOString()
+			);
+			data_to_send.set(
+				"uuid",
+				this.uuid,
 			);
 
 			// Insert a new row for each group list item

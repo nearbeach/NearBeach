@@ -11,7 +11,7 @@ from NearBeach.views.tools.internal_functions import Project, Organisation
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.views.theme_views import get_theme
 
-import json
+import json, uuid
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -21,9 +21,6 @@ def new_project(request, *args, **kwargs):
     :param request:
     :return:
     """
-    # ADD IN PERMISSIONS CHECKER
-
-    # Template
     t = loader.get_template("NearBeach/projects/new_project.html")
 
     # Get data we require
@@ -53,6 +50,7 @@ def new_project(request, *args, **kwargs):
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "uuid": str(uuid.uuid4()),
     }
 
     return HttpResponse(t.render(c, request))
