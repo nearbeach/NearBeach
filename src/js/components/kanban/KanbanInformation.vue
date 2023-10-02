@@ -11,7 +11,7 @@
 					Edit Kanban
 				</a>
 
-				<n-switch v-model:value="canDragCards"
+				<n-switch v-model="canDragCards"
 						  @update:value="updateCanDragCards"
 				>
 					<template #checked>
