@@ -189,7 +189,7 @@ def add_link(request, destination, location_id):
     :param location_id:
     :return:
     """
-    
+
     # Get the data
     form = AddObjectLinkForm(request.POST)
     if not form.is_valid():
@@ -259,7 +259,7 @@ def add_link(request, destination, location_id):
                     submit_object_assignment.parent_link = "meta_object"
                 else:
                     submit_object_assignment.parent_link = object_type
-            
+
             # Add the link relationship from the dictionary
             submit_object_assignment.link_relationship = relation_dict[object_relation]
 
@@ -1223,7 +1223,7 @@ def remove_customer(request, destination, location_id):
     form = RemoveCustomerForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     update_object_assignment = ObjectAssignment.objects.filter(
         customer_id=form.cleaned_data["customer_id"],
     )

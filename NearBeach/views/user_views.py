@@ -170,9 +170,9 @@ def user_remove_permission(request, *args, **kwargs):
     form = UserRemovePermissionForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     user_group_id = form.cleaned_data['user_group_id']
-    
+
     user_group_update = UserGroup.objects.get(
         user_group_id = user_group_id.user_group_id,
     )
