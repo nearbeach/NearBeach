@@ -463,8 +463,8 @@ class LocalFileHandler(FileHandler):
 
     def upload(self, upload_document, document_results, file):
         """
-        This function will upload the file and store it in the private folder destination under a subfolder that contains
-        the same document_key value.
+        This function will upload the file and store it in the private folder destination under a subfolder that
+        contains the same document_key value.
         :param upload_document: The FILE itself - to be uploaded
         :param document_results: The document_results - with variables we require
         :return:
