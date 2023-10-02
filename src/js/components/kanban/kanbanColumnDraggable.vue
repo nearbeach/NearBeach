@@ -291,11 +291,11 @@ export default {
 				card_id = data.get("card_id");
 
 			//Create return array
-			let return_array = [];
+			const return_array = [];
 
 			//Move new column first
 			//Filter for all data effected in the new column
-			let filter_new_column = this.allCards.filter((row) => {
+			const filter_new_column = this.allCards.filter((row) => {
 				//return where column = new_card_column, and sort level >= new sort level
 				return (
 					row.fields.kanban_column == new_card_column &&
@@ -318,7 +318,7 @@ export default {
 			});
 
 			//Filter for all data effected in old column
-			let filter_old_column = this.allCards.filter((row) => {
+			const filter_old_column = this.allCards.filter((row) => {
 				//Return where column = old_card_column, and the sort level >= old sort level
 				return (
 					row.fields.kanban_column == old_card_column &&
@@ -354,7 +354,7 @@ export default {
 		},
 		dragSameColumn(data) {
 			//Short hand - making it easy to read code later
-			let new_sort = parseInt(data.get("new_card_sort_number")),
+			const new_sort = parseInt(data.get("new_card_sort_number")),
 				old_sort = parseInt(data.get("old_card_sort_number")),
 				column = parseInt(data.get("new_card_column")),
 				level = parseInt(data.get("new_card_level")),
@@ -363,10 +363,10 @@ export default {
 			//Determine the delta - -1 or 1.
 			//Negative number if old_sort is less than new sort, i.e. move
 			//everything back one
-			let delta = 1 - 2 * (old_sort < new_sort);
+			const delta = 1 - 2 * (old_sort < new_sort);
 
 			//Get the largest and smallest values
-			let largest =
+			const largest =
 					(new_sort >= old_sort) * new_sort +
 					(new_sort < old_sort) * old_sort,
 				smallest =
@@ -379,7 +379,7 @@ export default {
 			}
 
 			//Filter for the data we need
-			let filtered_data = this.allCards.filter((row) => {
+			const filtered_data = this.allCards.filter((row) => {
 				//Return when same column and level, whilst also in range of smallest and largest
 				return (
 					parseInt(row.fields.kanban_column) === column &&
@@ -390,7 +390,7 @@ export default {
 			});
 
 			//Create the return array
-			let return_array = [];
+			const return_array = [];
 
 			//Loop through the filtered data, and apply the changes required
 			filtered_data.forEach((row) => {
@@ -437,7 +437,7 @@ export default {
 				card_id = event.item.dataset.cardId;
 
 			//Setup variables (for shorthand)
-			let new_card_column = new_elem.dataset.column,
+			const new_card_column = new_elem.dataset.column,
 				new_card_level = new_elem.dataset.level,
 				new_card_sort_number = event.newIndex,
 				old_card_column = old_elem.dataset.column,
