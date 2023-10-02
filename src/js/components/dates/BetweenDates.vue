@@ -74,7 +74,7 @@ export default {
 		endDateModel: {
 			type: Number,
 			default: () => {
-				let temp_date = new Date();
+				const temp_date = new Date();
 				temp_date.setHours(16);
 				temp_date.setMinutes(0);
 				temp_date.setSeconds(0);
