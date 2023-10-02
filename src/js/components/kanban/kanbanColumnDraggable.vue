@@ -278,7 +278,7 @@ export default {
 		},
 		dragDifferentColumn(data) {
 			//Short hand - making it easy to read code later
-			let new_card_column = data.get("new_card_column"),
+			const new_card_column = data.get("new_card_column"),
 				new_card_level = data.get("new_card_level"),
 				new_card_sort_number = parseInt(
 					data.get("new_card_sort_number")
