@@ -71,7 +71,7 @@ export const kanbanSettings = {
         },
         getLevelCollapseStatus: (state) => (level_id) => {
             //Filter for the level
-            const level_results = state.levels.filter(row => {
+            let level_results = state.levels.filter(row => {
                 return row.level_id === level_id;
             });
 
