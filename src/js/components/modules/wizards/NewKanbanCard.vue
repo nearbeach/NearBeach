@@ -56,7 +56,7 @@
 							<label>Card Priority</label>
 							<n-select
 								v-bind:options="listPriority"
-								v-model:value="kanbanCardPriorityModal"
+								v-model="kanbanCardPriorityModal"
 							></n-select>
 						</div>
 					</div>
