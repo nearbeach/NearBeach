@@ -83,7 +83,7 @@ export default {
 			if (this.userProfile.length === 0) return;
 
 			//Run through the conditions of not using the default profile
-			let profile_picture = this.userProfile[0].fields.document;
+			const profile_picture = this.userProfile[0].fields.document;
 			if (
 				profile_picture !== undefined &&
 				profile_picture !== null &&
