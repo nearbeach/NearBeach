@@ -1,11 +1,11 @@
 import { test as setup } from '@playwright/test';
 
 // Auth File location
-const authFile : string = "tests/.auth/user.json";
+const authFile = "tests/.auth/user.json";
 
 // User credentials
-const username : string = 'dark_admin';
-const password: string = 'Test1234$';
+const username = 'dark_admin';
+const password = 'Test1234$';
 
 setup('authenticate', async ({ page }) : Promise<void> => {
 	// Perform authentication steps. Replace these actions with your own.
