@@ -72,7 +72,7 @@
 						<div class="form-group">
 							<label>Theme</label>
 							<n-select
-								v-model:value="themeModel"
+								v-model="themeModel"
 								:options="themeList"
 							/>
 							<p class="error"
