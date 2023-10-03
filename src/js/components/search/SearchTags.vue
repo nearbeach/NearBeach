@@ -126,7 +126,7 @@ export default {
 		editTag(tag_id) {
 			//Filter for the tag information
 			let single_tag = this.localTagResults.filter((row) => {
-				return row.pk == tag_id;
+				return row.pk === tag_id;
 			})[0];
 
 			//Send data down to the modal
