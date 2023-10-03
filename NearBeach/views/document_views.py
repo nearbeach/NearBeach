@@ -443,11 +443,12 @@ def handle_document_permissions(
 
 
 class FileHandler:
-
-    def upload(self, upload_document, document_results, file):
+    @staticmethod
+    def upload(upload_document, document_results, file):
         return NotImplemented
 
-    def fetch(self, document_results):
+    @staticmethod
+    def fetch(document_results):
         return NotImplemented
 
 class LocalFileHandler(FileHandler):
