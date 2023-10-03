@@ -188,7 +188,7 @@ export default {
 		getClasses(colour) {
 			let return_class = "single-colour";
 
-			if (colour == this.tagColourModel) {
+			if (colour === this.tagColourModel) {
 				return_class = return_class + " selected-colour";
 			}
 

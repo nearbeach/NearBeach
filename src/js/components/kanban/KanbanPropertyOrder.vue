@@ -322,7 +322,7 @@ export default {
 	methods: {
 		addItem() {
 			//Check to make sure it isn't blank
-			if (this.newPropertyItem == "") {
+			if (this.newPropertyItem === "") {
 				return;
 			}
 
@@ -362,7 +362,7 @@ export default {
 					this.localPropertyList = this.localPropertyList.filter(
 						(row) => {
 							//Filter out the id we don't want
-							return row.id != this.deleteItemId;
+							return row.id !== this.deleteItemId;
 						}
 					);
 
@@ -416,7 +416,7 @@ export default {
 			}
 
 			// Check to see if we are editing an existing item, or adding
-			if (single_item_id == "") {
+			if (single_item_id === "") {
 				//Get the url
 				var url = `/kanban_${this.propertyName.toLowerCase()}/${
 					this.kanbanBoardId
@@ -436,7 +436,7 @@ export default {
 					const data = response.data[0];
 
 					//Add as a new item
-					if (single_item_id == "") {
+					if (single_item_id === "") {
 						//Add as a new item
 						this.localPropertyList.push({
 							id: data.pk,
@@ -447,7 +447,7 @@ export default {
 						//Item already exists - edit the item.
 						this.localPropertyList.forEach((row) => {
 							//If the id is the same - update the values
-							if (row.id == this.singleItemId) {
+							if (row.id === this.singleItemId) {
 								row.title = this.newPropertyItem;
 								row.property = this.columnPropertyModel;
 							}
@@ -482,7 +482,7 @@ export default {
 			//NEW MODE -> we are creating a NEW kanban board
 			//Depending if there is an ID associated with this depends if we are actually adding an extra item or
 			//editing an already existing one.
-			if (this.singleItemId == "") {
+			if (this.singleItemId === "") {
 				//Add as a new item
 				this.localPropertyList.push({
 					id: this.getMaxId() + 1,
@@ -493,7 +493,7 @@ export default {
 				//Item already exists - edit the item.
 				this.localPropertyList.forEach((row) => {
 					//If the id is the same - update the values
-					if (row.id == this.singleItemId) {
+					if (row.id === this.singleItemId) {
 						row.title = this.newPropertyItem;
 						row.property = this.columnPropertyModel;
 					}
@@ -516,7 +516,7 @@ export default {
 				this.localPropertyList = this.localPropertyList.filter(
 					(row) => {
 						//Filter out the id we don't want
-						return row.id != id;
+						return row.id !== id;
 					}
 				);
 
@@ -529,7 +529,7 @@ export default {
 				//Create an array of potential destinations for the cards
 				this.newCardDestinationList = this.localPropertyList
 					.filter((row) => {
-						return row.id != this.deleteItemId;
+						return row.id !== this.deleteItemId;
 					})
 					.map((row) => {
 						return {

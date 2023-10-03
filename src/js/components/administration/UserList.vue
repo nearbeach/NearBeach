@@ -177,7 +177,7 @@ export default {
 		},
 		removePermission(user_group_id) {
 			this.localListResults = this.localListResults.filter((row) => {
-				return row.user_group_id != user_group_id;
+				return row.user_group_id !== user_group_id;
 			});
 		},
 		updateGroupLeader(event) {

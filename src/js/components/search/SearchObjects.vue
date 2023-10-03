@@ -193,7 +193,7 @@ export default {
 	watch: {
 		includeClosedObjectsModel() {
 			//Stop the clock
-			if (this.searchTimeout != "") {
+			if (this.searchTimeout !== "") {
 				//Stop the clock!
 				clearTimeout(this.searchTimeout);
 			}
@@ -217,7 +217,7 @@ export default {
 		});
 
 		//If the include closed is undefined - then we want to define it
-		if (this.includeClosed == undefined) {
+		if (this.includeClosed === undefined) {
 			this.includeClosedObjectsModel = false;
 		}
 	},
