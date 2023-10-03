@@ -1060,15 +1060,15 @@ def object_link_list(request, destination, location_id):
     # - meta
     ObjectStructure = namedtuple(
         "ObjectStructure",
-        ["object_id", "object_title", "object_status", "object_type","non_null_field"]    
+        ["object_id", "object_title", "object_status", "object_type", "non_null_field"]    
     )
 
     data_point_list = [
-        ObjectStructure("project_id","project_id__project_name","project_id__project_status","project","project"),
-        ObjectStructure("task_id","task_id__task_short_description","task_id__task_status","task","task"),
-        ObjectStructure("requirement_id","requirement_id__requirement_title","requirement_id__requirement_status__requirement_status","requirement","requirement"),
-        ObjectStructure("requirement_item_id","requirement_item_id__requirement_item_title","requirement_item_id__requirement_item_status__requirement_item_status","requirement_item","requirement_item"),
-        ObjectStructure("meta_object","meta_object_title","meta_object_status",destination,"meta_object"),
+        ObjectStructure("project_id", "project_id__project_name", "project_id__project_status", "project","project"),
+        ObjectStructure("task_id", "task_id__task_short_description", "task_id__task_status", "task", "task"),
+        ObjectStructure("requirement_id", "requirement_id__requirement_title", "requirement_id__requirement_status__requirement_status", "requirement", "requirement"),
+        ObjectStructure("requirement_item_id", "requirement_item_id__requirement_item_title", "requirement_item_id__requirement_item_status__requirement_item_status", "requirement_item", "requirement_item"),
+        ObjectStructure("meta_object", "meta_object_title", "meta_object_status", destination, "meta_object"),
     ]
 
     data_results = []
