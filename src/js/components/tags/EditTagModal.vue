@@ -189,7 +189,7 @@ export default {
 			let return_class = "single-colour";
 
 			if (colour == this.tagColourModel) {
-				return_class = return_class + " selected-colour";
+				return_class = `${return_class} selected-colour`;
 			}
 
 			return return_class;
