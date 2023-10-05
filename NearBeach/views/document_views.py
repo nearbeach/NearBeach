@@ -419,7 +419,7 @@ def handle_document_permissions(
     )
 
     # Apply the parent folder if required
-    if parent_folder is not 0:
+    if parent_folder != 0:
         document_permission_submit.folder = parent_folder
     
     # Save document permission
