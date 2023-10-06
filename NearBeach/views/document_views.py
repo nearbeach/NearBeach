@@ -481,7 +481,7 @@ class LocalFileHandler(FileHandler):
 
 
 class S3FileHandler(FileHandler):
-    def  __init__(self, settings):
+    def __init__(self, settings):
         botoInitValues = {
             "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
             "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
