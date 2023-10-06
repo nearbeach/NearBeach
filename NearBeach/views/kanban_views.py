@@ -455,7 +455,7 @@ def new_kanban(request, *args, **kwargs):
     c = {
         "group_results": serializers.serialize("json", group_results),
         "need_tinymce": False,
-        "nearbeach_title": f"New Kanban",
+        "nearbeach_title": "New Kanban",
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),

@@ -426,7 +426,7 @@ def handle_document_permissions(
         )
 
     # Apply the parent folder if required
-    if parent_folder is not 0:
+    if parent_folder != 0:
         document_permission_submit.folder = parent_folder
     
     # Save document permission
@@ -576,9 +576,6 @@ def get_file_handler(settings):
     return LocalFileHandler(settings)
 
 
-FILE_HANDLER = get_file_handler(settings)
-
-
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 def new_object_upload(request):
@@ -625,3 +622,6 @@ def transfer_new_object_uploads(destination, location_id, uuid):
     )
 
     return
+
+
+FILE_HANDLER = get_file_handler(settings)

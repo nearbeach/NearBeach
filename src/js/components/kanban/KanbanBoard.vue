@@ -102,7 +102,7 @@ export default {
 		window.addEventListener("resize", this.resizeProcedure);
 		window.addEventListener("scroll", this.scrollProcedure);
 	},
-	destroyed() {
+	unmounted() {
 		window.removeEventListener("resize", this.resizeProcedure);
 		window.removeEventListener("scroll", this.scrollProcedure);
 	},
