@@ -10,6 +10,7 @@ from NearBeach.models import Group, UserGroup, ObjectAssignment
 from NearBeach.views.tools.internal_functions import Project, Organisation
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.views.theme_views import get_theme
+from NearBeach.views.document_views import transfer_new_object_uploads
 
 import json, uuid
 
@@ -97,6 +98,9 @@ def new_project_save(request, *args, **kwargs):
 
         # Save
         submit_object_assignment.save()
+
+    # Transfer any images to the new project id
+    transfer_new_object_uploads("project", project_submit.project_id, form.cleaned_data['uuid'])
 
     # Send back requirement_information URL
     return HttpResponse(

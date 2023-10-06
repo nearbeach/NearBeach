@@ -231,7 +231,8 @@ export default {
 			data_to_send.set("project_name", this.projectNameModel);
 			data_to_send.set(
 				"project_description",
-				this.projectDescriptionModel
+				this.replaceIncorrectImageUrl(this.projectDescriptionModel)
+				//this.projectDescriptionModel
 			);
 			data_to_send.set("organisation", this.stakeholderModel);
 			data_to_send.set(

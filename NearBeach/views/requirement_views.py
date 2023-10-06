@@ -29,6 +29,8 @@ from NearBeach.models import (
 )
 from NearBeach.views.theme_views import get_theme
 
+import uuid
+
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
@@ -219,6 +221,7 @@ def new_requirement(request, *args, **kwargs):
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "uuid": str(uuid.uuid4()),
         "theme": get_theme(request),
     }
 

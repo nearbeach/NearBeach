@@ -172,6 +172,11 @@ urlpatterns = [
         document_views.get_max_upload,
         name="document_get_max_upload",
     ),
+    path(
+        "documentation/new_object_upload/",
+        document_views.new_object_upload,
+        name="document_new_object_upload",
+    ),
     # Groups
     path(
         "group_information/<int:group_id>/",

@@ -1,4 +1,4 @@
-import json
+import json, uuid
 from NearBeach.forms import (
     NewRequestForChangeForm,
     RfcModuleForm,
@@ -153,6 +153,7 @@ def new_request_for_change(request, *args, **kwargs):
         "nearbeach_title": "New RFC",
         "user_group_results": user_group_results,
         "theme": get_theme(request),
+        "uuid": uuid.uuid4,
     }
 
     return HttpResponse(t.render(c, request))

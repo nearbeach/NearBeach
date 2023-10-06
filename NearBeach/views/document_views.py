@@ -233,7 +233,6 @@ def document_upload(request, destination, location_id):
     :param request:
     :param destination: the object in question
     :param location_id: The location of the object
-    :param folder_id: Which folder we will associate this with
     :return:
     """
     form = DocumentUploadForm(request.POST, request.FILES)
@@ -414,9 +413,17 @@ def handle_document_permissions(
         change_user=request.user,
         document_key=document_submit,
     )
-    document_permission_submit = set_object_from_destination(
-        document_permission_submit, destination, location_id
-    )
+
+    """
+    If the destination value is "new_object", we'll add the location_id (which contains the UUID) to the "new_object" 
+    field. Otherwise we'll add the foreign key of the destination/location_id to the appropriate field.
+    """
+    if destination == "new_object":
+        document_permission_submit.new_object = location_id
+    else:
+        document_permission_submit = set_object_from_destination(
+            document_permission_submit, destination, location_id
+        )
 
     # Apply the parent folder if required
     if parent_folder is not 0:
@@ -481,7 +488,7 @@ class LocalFileHandler(FileHandler):
 
 
 class S3FileHandler(FileHandler):
-    def  __init__(self, settings):
+    def __init__(self, settings):
         botoInitValues = {
             "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
             "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
@@ -559,6 +566,7 @@ class AzureFileHanlder(FileHandler):
         # Upload the created file
         blob_client.upload_blob(file)
 
+
 def get_file_handler(settings):
     # Handle the document upload
     if getattr(settings, "AWS_ACCESS_KEY_ID", None):
@@ -567,4 +575,53 @@ def get_file_handler(settings):
         return AzureFileHanlder(settings)
     return LocalFileHandler(settings)
 
+
 FILE_HANDLER = get_file_handler(settings)
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+def new_object_upload(request):
+    """
+    Handles file uploads from new objects. New objects do not have a destination or location. So we pass through a uuid
+    to track the document we are uploading.
+    """
+    form = DocumentUploadForm(request.POST, request.FILES)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # There will be no document description, as the user is uploading the file into the TinyMce WYSIWYG
+    file = form.cleaned_data["document"]
+    document_description = str(file)
+
+    # Upload the document
+    _, document_results = handle_document_permissions(
+        request,
+        request.FILES["document"],
+        file,
+        document_description,
+        "new_object",
+        form.cleaned_data["uuid"],
+        form.cleaned_data["parent_folder"],
+    )
+
+    # Send back json data
+    json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type="application/json")
+
+
+# Internal function
+def transfer_new_object_uploads(destination, location_id, uuid):
+    """
+    An Internal function that will add the new destination/location_id to an already uploaded document(s) which match
+    the supplied UUID. Thus removing the lack of permissions around the document.
+    """
+    document_permission_results = DocumentPermission.objects.filter(
+        is_deleted=False,
+        new_object=uuid,
+    ).update(
+        **{destination: location_id},
+    )
+
+    return

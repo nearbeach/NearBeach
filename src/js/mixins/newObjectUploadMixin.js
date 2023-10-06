@@ -8,8 +8,6 @@ export default {
     mixins: [errorModalMixin],
     methods: {
         newObjectUploadImage(blobInfo, progress) {
-            console.log("UUID: ", this.uuid);
-
             //Create the form
             const data_to_send = new FormData();
             data_to_send.set("document", blobInfo.blob(), blobInfo.filename());
@@ -46,6 +44,17 @@ export default {
 
 
                 });
-        }
+        },
+        replaceIncorrectImageUrl(input_string) {
+            //Using regex - we are finding the img src and removing the ../
+            return input_string.replace(
+                new RegExp("<img src=\"..\\/private\\/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\">"),
+                (match) => {
+                    return match.replace(
+                        "../",
+                        "/"
+                    );
+            })
+        },
     },
 };
