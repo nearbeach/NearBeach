@@ -75,9 +75,7 @@ def get_bug_list(request):
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
 def get_kanban_list(request):
-    """
-    Gets a list of all kanban's the users assigned to
-    """
+    """Gets a list of all kanban's the users assigned to"""
     object_assignment_results = ObjectAssignment.objects.filter(
         is_deleted=False,
         kanban_board_id__isnull=False,

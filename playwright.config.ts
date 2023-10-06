@@ -37,7 +37,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'tests/.auth/user.json',
+        // storageState: 'tests/.auth/user.json',
       },
       dependencies: ['setup'],
     },
@@ -46,7 +46,7 @@ export default defineConfig({
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
-        storageState: 'tests/.auth/user.json',
+        // storageState: 'tests/.auth/user.json',
       },
       dependencies: ['setup'],
     },
@@ -55,7 +55,7 @@ export default defineConfig({
       name: 'webkit',
       use: {
         ...devices['Desktop Safari'],
-        storageState: 'tests/.auth/user.json',
+        // storageState: 'tests/.auth/user.json',
       },
       dependencies: ['setup'],
     },

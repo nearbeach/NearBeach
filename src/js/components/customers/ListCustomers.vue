@@ -1,6 +1,7 @@
 <template>
 	<div
 		v-for="customer in customerResults"
+		v-bind:key="customer.pk"
 		class="organisation-details">
 		<img
 			v-bind:src="getProfilePicture(customer)"

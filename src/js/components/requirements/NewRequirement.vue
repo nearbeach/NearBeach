@@ -53,9 +53,12 @@
 						/>
 						<editor
 							:init="{
+							file_picker_types: 'image',
 							height: 500,
+							images_upload_handler: newObjectUploadImage,
 							menubar: false,
-							plugins: ['lists', 'codesample', 'table'],
+							paste_data_images: true,
+							plugins: ['lists', 'image', 'codesample', 'table'],
 							toolbar: [
 								'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
 								'bold italic strikethrough underline backcolor | table | ' +
@@ -155,6 +158,7 @@ import {NSelect} from "naive-ui";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
+import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
@@ -213,6 +217,10 @@ export default {
 				return [];
 			},
 		},
+		uuid: {
+			type: String,
+			default: "",
+		},
 	},
 	data() {
 		return {
@@ -232,7 +240,7 @@ export default {
 			skin: "getSkin",
 		}),
 	},
-	mixins: [getThemeMixin],
+	mixins: [getThemeMixin, newObjectUploadMixin],
 	validations: {
 		groupModel: {
 			required,
@@ -270,11 +278,12 @@ export default {
 			);
 			data_to_send.set(
 				"requirement_scope",
-				this.requirementScopeModel
+				this.replaceIncorrectImageUrl(this.requirementScopeModel)
 			);
 			data_to_send.set("organisation", this.stakeholderModel);
 			data_to_send.set("requirement_status", this.statusModel);
 			data_to_send.set("requirement_type", this.typeModel);
+			data_to_send.set("uuid", this.uuid);
 
 			// Insert a new row for each group list item
 			this.groupModel.forEach((row, index) => {

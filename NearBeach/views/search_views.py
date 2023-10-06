@@ -325,7 +325,6 @@ def search_group(request):
     return HttpResponse(t.render(c, request))
 
 
-# @require_http_methods(['POST'])
 @login_required(login_url="login", redirect_field_name="")
 def search_group_data(request):
     """

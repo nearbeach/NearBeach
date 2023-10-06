@@ -29,6 +29,8 @@ from NearBeach.models import (
 )
 from NearBeach.views.theme_views import get_theme
 
+import uuid
+
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
@@ -97,7 +99,6 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
         project_id__isnull=False,
     ).annotate(
         object_id=F("project_id"),
-        # object_title=V(V("Item ") + F("requirement_item_id") + V(" : ") + F("project_id__project_name")),
         object_title=V("My pain"),
         object_status=F("project_id__project_status"),
         object_type=V("project"),
@@ -157,7 +158,6 @@ def get_requirement_items(request, requirement_id, *args, **kwargs):
         requirement_id=requirement_id,
     ).annotate(
         requirement_item_status_text=F('requirement_item_status__requirement_item_status')
-        # profile_picture = F('userprofilepicture__document_id__document_key')
     ).values(
         'requirement_item_id',
         'requirement_item_title',
@@ -170,41 +170,6 @@ def get_requirement_items(request, requirement_id, *args, **kwargs):
     return HttpResponse(json_results, content_type="application/json")
 
 
-# @require_http_methods(["POST"])
-# @login_required(login_url="login", redirect_field_name="")
-# @check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
-# def get_requirement_links_list(request, requirement_id, *args, **kwargs):
-#     """Get the requirement information"""
-#     link_results = ObjectAssignment.objects.filter(
-#         Q(
-#             is_deleted=False,
-#             requirement_id=requirement_id,
-#         )
-#         & Q(Q(project_id__isnull=False) | Q(task_id__isnull=False))
-#     ).values(
-#         "object_assignment_id",
-#         "project_id",
-#         "project_id__project_name",
-#         "project_id__project_status",
-#         "task_id",
-#         "task_id__task_short_description",
-#         "task_id__task_status",
-#         "requirement_item_id",
-#         "requirement_item_id__requirement_item_title",
-#         "requirement_id",
-#     )
-#
-#     """
-#     As explained on stack overflow here -
-#     https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-#     We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard
-#     json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
-#     """
-#
-#     # Send back json data
-#     json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
-#
-#     return HttpResponse(json_results, content_type="application/json")
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -256,6 +221,7 @@ def new_requirement(request, *args, **kwargs):
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "uuid": str(uuid.uuid4()),
         "theme": get_theme(request),
     }
 
