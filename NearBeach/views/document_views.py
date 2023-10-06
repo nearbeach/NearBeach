@@ -567,4 +567,5 @@ def get_file_handler(settings):
         return AzureFileHanlder(settings)
     return LocalFileHandler(settings)
 
+
 FILE_HANDLER = get_file_handler(settings)
