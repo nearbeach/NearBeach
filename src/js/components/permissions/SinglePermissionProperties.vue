@@ -27,7 +27,7 @@ export default {
 			default: "",
 		},
 		propertyValue: {
-			Type: Number,
+			type: Number,
 			default: 0,
 		},
 		listOfChoices: {

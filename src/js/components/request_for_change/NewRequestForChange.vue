@@ -7,6 +7,7 @@
 
 				<!-- DESCRIPTION -->
 				<rfc-description
+					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
 					v-bind:static-url="staticUrl"
@@ -15,6 +16,7 @@
 
 				<!-- Details -->
 				<rfc-details
+					v-bind:uuid="uuid"
 					v-bind:group-results="groupResults"
 					v-bind:user-group-results="userGroupResults"
 					v-on:update_validation="updateValidation($event)"
@@ -24,6 +26,7 @@
 
 				<!-- Risk -->
 				<rfc-risk
+					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
 				></rfc-risk>
@@ -31,6 +34,7 @@
 
 				<!-- Implementation Plan -->
 				<rfc-implementation-plan
+					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
 				></rfc-implementation-plan>
@@ -38,6 +42,7 @@
 
 				<!-- Backout Plan -->
 				<rfc-backout-plan
+					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
 				></rfc-backout-plan>
@@ -45,6 +50,7 @@
 
 				<!-- Test Plan -->
 				<rfc-test-plan
+					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
 				></rfc-test-plan>
@@ -81,6 +87,7 @@ import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
 // Mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
+import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
 
 export default {
 	name: "NewRequestForChange",
@@ -119,9 +126,13 @@ export default {
 				return [];
 			},
 		},
+		uuid: {
+			type: String,
+			default: "",
+		},
 	},
 	emits: ["onComplete"],
-	mixins: [errorModalMixin, getThemeMixin],
+	mixins: [errorModalMixin, getThemeMixin, newObjectUploadMixin],
 	data: () => ({
 		currentTab: 0,
 		rfcData: {
@@ -168,7 +179,10 @@ export default {
 			const data = this.rfcData;
 
 			data_to_send.set("rfc_title", data.rfcTitleModel);
-			data_to_send.set("rfc_summary", data.rfcSummaryModel);
+			data_to_send.set(
+				"rfc_summary",
+				this.replaceIncorrectImageUrl(data.rfcSummaryModel)
+			);
 			data_to_send.set("rfc_type", data.rfcTypeModel);
 			data_to_send.set(
 				"rfc_implementation_start_date",
@@ -189,14 +203,14 @@ export default {
 			data_to_send.set("rfc_impact", data.rfcImpactModel);
 			data_to_send.set(
 				"rfc_risk_and_impact_analysis",
-				data.rfcRiskSummaryModel
+				this.replaceIncorrectImageUrl(data.rfcRiskSummaryModel)
 			);
 			data_to_send.set(
 				"rfc_implementation_plan",
-				data.rfcImplementationPlanModel
+				this.replaceIncorrectImageUrl(data.rfcImplementationPlanModel)
 			);
-			data_to_send.set("rfc_backout_plan", data.rfcBackoutPlan);
-			data_to_send.set("rfc_test_plan", data.rfcTestPlanModel);
+			data_to_send.set("rfc_backout_plan", this.replaceIncorrectImageUrl(data.rfcBackoutPlan));
+			data_to_send.set("rfc_test_plan", this.replaceIncorrectImageUrl(data.rfcTestPlanModel));
 
 			// Insert a new row for each group list item
 			data.groupModel.forEach((row, index) => {

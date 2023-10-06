@@ -314,6 +314,9 @@ class DocumentUploadForm(forms.ModelForm):
         required=False,
         queryset=Folder.objects.all(),
     )
+    uuid = forms.UUIDField(
+        required=False,
+    )
 
     class Meta:
         model = Document
@@ -538,6 +541,9 @@ class NewProjectForm(forms.ModelForm):
         queryset=Group.objects.filter(
             is_deleted=False,
         ),
+    )
+    uuid = forms.UUIDField(
+        required=False,
     )
 
     # Basic Meta Data

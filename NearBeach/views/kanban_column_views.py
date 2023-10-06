@@ -14,7 +14,6 @@ from NearBeach.views.tools.internal_functions import KanbanCard
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-# @check_user_permissions(min_permission_level=2, object_lookup='kanban_board_id')
 def edit_column(request, kanban_column_id, *args, **kwargs):
     """
     Edit the column data for a kanban board
@@ -127,9 +126,7 @@ def new_column(request, kanban_board_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @check_user_permissions(min_permission_level=2, object_lookup="kanban_board_id")
 def resort_column(request, kanban_board_id, *args, **kwargs):
-    """
-    The functionality that resorts the columns in the database. So when reloading the columns are correct
-    """
+    """The functionality that resorts the columns in the database. So when reloading the columns are correct"""
     # Get data from form
     form = ResortColumnForm(request.POST)
     if not form.is_valid():

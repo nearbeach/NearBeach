@@ -192,6 +192,10 @@ export default {
 				return [];
 			},
 		},
+		uuid: {
+			type: String,
+			default: "",
+		},
 	},
 	mixins: [datetimeMixin, searchMixin],
 	data() {

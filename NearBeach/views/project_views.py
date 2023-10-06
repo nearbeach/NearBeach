@@ -10,8 +10,9 @@ from NearBeach.models import Group, UserGroup, ObjectAssignment
 from NearBeach.views.tools.internal_functions import Project, Organisation
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.views.theme_views import get_theme
+from NearBeach.views.document_views import transfer_new_object_uploads
 
-import json
+import json, uuid
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -21,9 +22,6 @@ def new_project(request, *args, **kwargs):
     :param request:
     :return:
     """
-    # ADD IN PERMISSIONS CHECKER
-
-    # Template
     t = loader.get_template("NearBeach/projects/new_project.html")
 
     # Get data we require
@@ -53,6 +51,7 @@ def new_project(request, *args, **kwargs):
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "uuid": str(uuid.uuid4()),
     }
 
     return HttpResponse(t.render(c, request))
@@ -99,6 +98,9 @@ def new_project_save(request, *args, **kwargs):
 
         # Save
         submit_object_assignment.save()
+
+    # Transfer any images to the new project id
+    transfer_new_object_uploads("project", project_submit.project_id, form.cleaned_data['uuid'])
 
     # Send back requirement_information URL
     return HttpResponse(
