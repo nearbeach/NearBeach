@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
 
+//Log the user in
+test.use({
+    storageState: 'tests/.auth/admin.json',
+});
+
 //Check that the user is logged in
 test("Make sure user is logged in", async({ page }) : Promise<void> => {
     await page.goto("localhost:8000");
@@ -15,7 +20,7 @@ const page_array = [
     {test:'Group Information 1',url :'http://localhost:8000/group_information/1/', page_title:'Group Information 1',page_heading:'Group Information',screenshot_path:'./test-results/Group Information.jpg'},
     {test:'Kanban Information 1',url :'http://localhost:8000/kanban_information/1/', page_title:'Kanban Information 1',page_heading:'Kanban Admin Only',screenshot_path:'./test-results/Kanban Information.jpg'},
     {test:'Kanban Card Information 1',url :'http://localhost:8000/kanban_information/1/card/1/', page_title:'Kanban Information 1',page_heading:'Kanban Admin Only',screenshot_path:'./test-results/Kanban Admin Only.jpg'},
-    {test:'Kanban Information Edit Board 1',url :'http://localhost:8000/kanban_information/1/edit_board/', page_title:'Kanban Information 1',page_heading:'Kanban Admin Only',screenshot_path:'./test-results/Kanban Admin Only.jpg'},
+    {test:'Kanban Information Edit Board 1',url :'http://localhost:8000/kanban_information/1/edit_board/', page_title:'Kanban Information 1',page_heading:'Kanban Admin Only',screenshot_path:'./test-results/Kanban Edit Board.jpg'},
     {test:'New Group',url :'http://localhost:8000/new_group/', page_title:'New Group',page_heading:'New Group',screenshot_path:'./test-results/New Group.jpg'},
     {test:'New Kanban',url :'http://localhost:8000/new_kanban/', page_title:'New Kanban',page_heading:'New Kanban',screenshot_path:'./test-results/New Kanban.jpg'},
     {test:'New Organisation',url :'http://localhost:8000/new_organisation/', page_title:'New Organisation',page_heading:'New Organisation',screenshot_path:'./test-results/New Organisation.jpg'},
