@@ -31,9 +31,7 @@ from NearBeach.views.theme_views import get_theme
 
 # Internal function
 def get_rfc_change_task(rfc_id):
-    """ 
-    Obtains a list of change tasks for this particular RFC, along with any blocked information.
-    """
+    """Obtains a list of change tasks for this particular RFC, along with any blocked information."""
     change_task_results = ChangeTask.objects.filter(
         is_deleted=False,
         request_for_change=rfc_id,
