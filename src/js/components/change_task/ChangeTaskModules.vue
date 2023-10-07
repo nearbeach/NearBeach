@@ -108,12 +108,15 @@ import ChangeTaskLinkListVue from "./modules/ChangeTaskLinkList.vue";
 import ChangeTaskMisc from "./modules/ChangeTaskMisc.vue"
 import getThemeMixin from "../../mixins/getThemeMixin";
 
+//Naive UI
+import { NConfigProvider } from "naive-ui";
+
 export default {
 	name: "ChangeTaskModules",
 	props: {
 		theme: {
 			type: String,
-			default: "",
+			default: "light",
 		}
 	},
 	mixins: [getThemeMixin],
@@ -121,6 +124,7 @@ export default {
 		ChangeTaskDesctiption,
 		ChangeTaskLinkListVue,
 		ChangeTaskMisc,
+    NConfigProvider,
 	},
 	beforeMount() {
 		this.$store.dispatch("processThemeUpdate", {

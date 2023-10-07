@@ -195,7 +195,7 @@ export default {
 	},
 	mounted() {
 		//Check the resize procedure
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.resizeProcedure();
 		});
 

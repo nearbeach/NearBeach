@@ -216,7 +216,7 @@ export default {
 		if (!escape_array.indexOf(this.locationId) < 0) return;
 
 		//Wait 200ms before getting data
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.getCustomerList();
 		});
 	},

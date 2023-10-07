@@ -5,7 +5,7 @@ export default {
         showErrorModal(error, destination, location_id) {
             //Get the loading modal
             const loadingElement = document.getElementById("loadingModal");
-            if (loadingElement === undefined) return;
+            if (loadingElement === null) return;
 
             //Loading modal exists
             const loadingModal = new Modal(loadingElement);
@@ -22,11 +22,12 @@ export default {
 
             // Show the modal
             const errorElement = document.getElementById("errorModal");
-            if (errorElement !== undefined) {
-                //Error Element exists - open the modal
-                const errorModal = new Modal(errorModal);
-                errorModal.show();
-            }
+            if (errorElement === null) return;
+
+            //Error Element exists - open the modal
+            const errorModal = new Modal(errorModal);
+            errorModal.show();
+
         },
         showValidationErrorModal() {
             //Show the error dialog and notify to the user that there were field missing.

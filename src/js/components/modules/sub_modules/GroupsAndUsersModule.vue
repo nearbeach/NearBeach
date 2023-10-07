@@ -274,7 +274,7 @@ export default {
 	},
 	mounted() {
 		//Get the data with the 0'th count
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			// If location Id = 0, we have a problem
 			if (this.locationId === 0) {
 				setTimeout(() => {

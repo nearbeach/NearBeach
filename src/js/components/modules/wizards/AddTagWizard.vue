@@ -170,7 +170,7 @@ export default {
 		const escape_array = ["requirement_item"];
 		if (escape_array.indexOf(this.destination) >= 0) return;
 
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			//Get the tag list
 			this.getTagList();
 		});

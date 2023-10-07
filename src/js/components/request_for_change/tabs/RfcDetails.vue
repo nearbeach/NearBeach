@@ -459,7 +459,7 @@ export default {
 	},
 	mounted() {
 		//Get the lead user data
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.getChangeLeadData();
 		});
 

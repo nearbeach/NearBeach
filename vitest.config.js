@@ -15,6 +15,6 @@ export default defineConfig({
         environment: "jsdom",
         include: [
             `./tests/unit/**/*.unit.js`,
-        ]
+        ],
     },
 })
