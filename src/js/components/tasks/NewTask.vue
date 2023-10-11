@@ -215,7 +215,7 @@ export default {
 		submitNewTask: async function () {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
-			if (!isFormCorrect || this.displayGroupPermissionIssue) {
+			if (!isFormCorrect) {
 				return;
 			}
 
@@ -270,36 +270,6 @@ export default {
 			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
 				return this.groupModel.includes(row.group_id);
 			}).length === 0;
-		},
-		updateStakeholderModel(newStakeholderModel) {
-			this.stakeholderModel = newStakeholderModel;
-		},
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		//VueX
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-
-		//We need to map "fields" array from the statusList/typeList json data
-		this.statusFixList = this.statusList.map((row) => {
-			return {
-				value: row.pk,
-				label: row.fields.requirement_status,
-			};
-		});
-
-		this.typeFixList = this.typeList.map((row) => {
-				return {
-					value: row.pk,
-					label: row.fields.requirement_type,
 		},
 		updateStakeholderModel(data) {
 			this.stakeholderModel = data;
