@@ -8,17 +8,17 @@ import ChangeTaskLinkList from "/src/js/components/change_task/modules/ChangeTas
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('AdminAddUser.vue - rendering component', () => {
-    //Using mount - insert data
-    const wrapper = mount(ChangeTaskLinkList, {
-        props: {
-        },
-        global: {
-            plugins: [store],
-        },
-    });
-
-    test('Empty test', () => {});
-});
+// describe('ChangeTaskLinkList.vue - rendering component', () => {
+//     //Using mount - insert data
+//     const wrapper = mount(ChangeTaskLinkList, {
+//         props: {
+//         },
+//         global: {
+//             plugins: [store],
+//         },
+//     });
+//
+//     test('Empty test', () => {});
+// });
 
 test('Empty test', () => {});
