@@ -26,7 +26,7 @@
 					{{ group.group_name }}
 				</div>
 				<div class="group-card--remove"
-					 v-if="userLevel >= 3"
+					 v-if="userLevel >= 3 && objectGroupList.length > 1"
 				>
 					<Icon
 						v-bind:icon="icons.trashCan"
