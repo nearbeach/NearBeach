@@ -225,7 +225,7 @@ export default {
 	},
 	mounted() {
 		//Wait 200ms
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.getAssociatedObjectResults();
 		});
 	},

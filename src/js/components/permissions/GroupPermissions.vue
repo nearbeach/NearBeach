@@ -25,6 +25,14 @@
 				v-model:value="groupModel"
 				multiple
 			></n-select>
+
+			<!-- ALERT FOR WHEN USER GROUPS ARE NOT INCLUDED -->
+			<br/>
+			<div v-if="displayGroupPermissionIssue"
+				class="alert alert-warning"
+			>
+				No user groups were included. You will not have any permissions to this object once submitted.
+			</div>
 		</div>
 	</div>
 </template>
@@ -51,6 +59,10 @@ export default {
 			type: String,
 			default: "",
 		},
+		displayGroupPermissionIssue: {
+			type: Boolean,
+			default: false,
+		},
 		groupResults: {
 			type: Array,
 			default: () => {
@@ -74,6 +86,15 @@ export default {
 			this.$emit("update_group_model", this.groupModel);
 		},
 	},
+	// computed: {
+	// 	displayGroupPermissionIssue() {
+	// 		const length = this.userGroupResults.filter(row => {
+	// 			return this.groupModel.includes(row.group_id);
+	// 		}).length;
+	//
+	// 		return length === 0;
+	// 	},
+	// },
 	data() {
 		return {
 			groupFixResults: [],

@@ -42,6 +42,7 @@
 
     @media screen and (max-width: 767px) {
         max-height: calc(100vh - 155px);
+        margin: 5px 5px 0 5px;
     }
 }
 
@@ -123,10 +124,15 @@
 
 .kanban-sticky-row {
     position: fixed;
-    top: 58px;
+    top: 142px;
     z-index: 2;
-    width: calc(100vw - 70px);
+    width: calc(100vw - 11px);
     overflow: hidden;
+
+    @media (min-width: 576px) {
+        top: 149px;
+        width: calc(100vw - 70px);
+    }
 }
 
 .kanban-archive-button {

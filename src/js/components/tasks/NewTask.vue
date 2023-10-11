@@ -91,6 +91,7 @@
 				<!-- Group Permissions -->
 				<hr/>
 				<group-permissions
+					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
 					v-bind:destination="'task'"
 					v-bind:user-group-results="userGroupResults"
@@ -173,6 +174,7 @@ export default {
 	},
 	data() {
 		return {
+			displayGroupPermissionIssue: false,
 			groupModel: {},
 			stakeholderModel: "",
 			taskDescriptionModel: "",
@@ -263,6 +265,11 @@ export default {
 		},
 		updateGroupModel(data) {
 			this.groupModel = data;
+
+			//Calculate to see if the user's groups exist in the groupModel
+			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
+				return this.groupModel.includes(row.group_id);
+			}).length === 0;
 		},
 		updateStakeholderModel(data) {
 			this.stakeholderModel = data;

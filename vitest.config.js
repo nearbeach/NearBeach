@@ -12,8 +12,9 @@ export default defineConfig({
             provider: "v8",
             reporter: ['text','html','json']
         },
+        environment: "jsdom",
         include: [
             `./tests/unit/**/*.unit.js`,
-        ]
+        ],
     },
 })

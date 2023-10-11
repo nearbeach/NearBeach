@@ -119,151 +119,35 @@
 								</tr>
 								</thead>
 
-								<!-- PROJECTS -->
-								<tbody v-if="objectModel === 'Project'">
+								<!-- RENDER RESULTS -->
+								<tbody>
 								<tr
 									v-for="result in objectResults"
-									:key="result.pk"
+									:key="result.id"
 								>
 									<td>
 										<div class="form-check">
 											<input
 												class="form-check-input"
 												type="checkbox"
-												v-bind:value="result.pk"
-												v-bind:id="`checkbox_project_${result.pk}`"
+												v-bind:value="result.id"
+												v-bind:id="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
 												v-model="linkModel"
 											/>
 											<label
 												class="form-check-label"
-												v-bind:for="`checkbox_project_${result.pk}`"
+												v-bind:for="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
 											>
-												{{
-													result.fields
-														.project_name
-												}}
+												{{ result.description }}
 											</label>
 										</div>
 										<div class="spacer"></div>
 										<p class="small-text">
-											Project {{ result.pk }}
+											{{objectModel}} {{ result.id }}
 										</p>
 									</td>
 									<td>
-										{{ result.fields.project_status }}
-									</td>
-								</tr>
-								</tbody>
-
-								<!-- TASKS -->
-								<tbody v-if="objectModel === 'Task'">
-								<tr
-									v-for="result in objectResults"
-									:key="result.pk"
-								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="checkbox"
-												v-bind:value="result.pk"
-												v-bind:id="`checkbox_task_${result.pk}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`checkbox_task_${result.pk}`"
-											>
-												{{
-													result.fields
-														.task_short_description
-												}}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
-											Task {{ result.pk }}
-										</p>
-									</td>
-									<td>{{ result.fields.task_status }}</td>
-								</tr>
-								</tbody>
-
-								<!-- REQUIREMENTS -->
-								<tbody v-if="objectModel === 'Requirement'">
-								<tr
-									v-for="result in objectResults"
-									:key="result.pk"
-								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="checkbox"
-												v-bind:value="result.pk"
-												v-bind:id="`checkbox_requirement_${result.pk}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`checkbox_requirement_${result.pk}`"
-											>
-												{{
-													result.fields
-														.requirement_title
-												}}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
-											Requirement {{ result.pk }}
-										</p>
-									</td>
-									<td>
-										{{
-											result.fields.requirement_status
-										}}
-									</td>
-								</tr>
-								</tbody>
-
-								<!-- REQUIREMENT ITEMS -->
-								<tbody
-									v-if="objectModel === 'Requirement_Item'"
-								>
-								<tr
-									v-for="result in objectResults"
-									:key="result.pk"
-								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="checkbox"
-												v-bind:value="result.pk"
-												v-bind:id="`checkbox_requirement_item_${result.pk}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`checkbox_requirement_item_${result.pk}`"
-											>
-												{{
-													result.fields
-														.requirement_item_title
-												}}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
-											Requirement Item {{ result.pk }}
-										</p>
-									</td>
-									<td>
-										{{
-											result.fields
-												.requirement_item_status
-										}}
+										{{ result.status }}
 									</td>
 								</tr>
 								</tbody>
@@ -282,7 +166,7 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="linkModel.length == 0"
+						v-bind:disabled="linkModel.length === 0"
 						v-on:click="saveLinks"
 					>
 						Save changes

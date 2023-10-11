@@ -185,7 +185,7 @@ export default {
 	},
 	mounted() {
 		//Get the required data we need
-    this.nextTick(() => {
+    this.$nextTick(() => {
       this.updateLinkResults();
     })
 	},

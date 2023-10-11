@@ -132,7 +132,7 @@ export default {
 		if (escape_array.indexOf(this.destination) >= 0) return;
 
 		//Wait 200ms before getting the data
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.getAssignedTags();
 		});
 	},

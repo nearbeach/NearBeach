@@ -153,7 +153,7 @@ export default {
 		},
 	},
 	mounted() {
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			//Get a default list when mounted
 			this.getOrganisationData("", "");
 		});

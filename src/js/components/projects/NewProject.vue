@@ -91,6 +91,7 @@
 				<!-- Group Permissions -->
 				<hr/>
 				<group-permissions
+					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
 					v-bind:destination="'project'"
 					v-bind:user-group-results="userGroupResults"
@@ -183,11 +184,12 @@ export default {
 		...mapGetters({
 			contentCss: "getContentCss",
 			skin: "getSkin",
-		})
+		}),
 	},
 	mixins: [errorModalMixin, getThemeMixin, newObjectUploadMixin],
 	data() {
 		return {
+			displayGroupPermissionIssue: false,
 			groupModel: {},
 			projectDescriptionModel: "",
 			projectEndDateModel: "",
@@ -222,7 +224,7 @@ export default {
 		submitNewProject: async function () {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
-			if (!isFormCorrect) {
+			if (!isFormCorrect || this.displayGroupPermissionIssue) {
 				return;
 			}
 
@@ -271,6 +273,11 @@ export default {
 		},
 		updateGroupModel(data) {
 			this.groupModel = data;
+
+			//Calculate to see if the user's groups exist in the groupModel
+			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
+				return this.groupModel.includes(row.group_id);
+			}).length === 0;
 		},
 		updateStakeholderModel(data) {
 			this.stakeholderModel = data;

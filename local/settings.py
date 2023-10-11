@@ -116,9 +116,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-AZURE_STORAGE_CONTAINER_NAME = os.getenv("AZURE_STORAGE_CONTAINER_NAME")
-
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 PRIVATE_MEDIA_ROOT = os.path.join(PROJECT_PATH, 'private')
 PRIVATE_MEDIA_SERVER = 'DefaultServer'
@@ -126,7 +123,7 @@ PRIVATE_MEDIA_URL = '/private/'
 
 # Static files setup
 # Check to see if we are importing Azure Credentials
-if "AWS_ACCESS_KEY_ID" in os.environ:
+if "CLOUDFLARE_ACCOUNT_ID" in os.environ:
     # Get the cloudflare account id
     CLOUDFLARE_ACCOUNT_ID = os.getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -155,6 +152,20 @@ if "AWS_ACCESS_KEY_ID" in os.environ:
 else:
     STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+
+# Check to see if we are importing AWS credentials
+if "AWS_ACCESS_KEY_ID" in os.environ:
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+
+# Check to see if we are importing Azure Credentials
+if "AZURE_STORAGE_CONNECTION_STRING" in os.environ:
+    AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    AZURE_STORAGE_CONTAINER_NAME = os.getenv("AZURE_STORAGE_CONTAINER_NAME")
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

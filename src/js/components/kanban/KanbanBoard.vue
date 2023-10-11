@@ -1,5 +1,6 @@
 <template>
 	<div
+		id="kanban_container"
 		class="kanban-container"
 		v-on:scroll="scrollProcedure"
 	>
@@ -176,15 +177,17 @@ export default {
 			kanban_sticky.scrollLeft = kanban_container.scrollLeft;
 
 			//Get the distance to the top of the page
-			var scrollTop =
-				window.pageYOffset !== undefined
-					? window.pageYOffset
-					: (
-						document.documentElement ||
-						document.body.parentNode ||
-						document.body
-					).scrollTop;
+			var scrollTop = document.getElementById("kanban_container").scrollTop;
+			// var scrollTop =
+			// 	window.pageYOffset !== undefined
+			// 		? window.pageYOffset
+			// 		: (
+			// 			document.documentElement ||
+			// 			document.body.parentNode ||
+			// 			document.body
+			// 		).scrollTop;
 
+			console.log("ScrollTop: ", window.pageYOffset);
 			//Determine if we are hidding the element or not
 			if (scrollTop < 90) {
 				kanban_sticky.style.display = "none";
@@ -195,7 +198,7 @@ export default {
 	},
 	mounted() {
 		//Check the resize procedure
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.resizeProcedure();
 		});
 
