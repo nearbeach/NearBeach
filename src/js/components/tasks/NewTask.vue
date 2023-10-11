@@ -91,6 +91,7 @@
 				<!-- Group Permissions -->
 				<hr/>
 				<group-permissions
+					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
 					v-bind:destination="'task'"
 					v-bind:user-group-results="userGroupResults"
@@ -173,6 +174,7 @@ export default {
 	},
 	data() {
 		return {
+			displayGroupPermissionIssue: false,
 			groupModel: {},
 			stakeholderModel: "",
 			taskDescriptionModel: "",
@@ -213,7 +215,7 @@ export default {
 		submitNewTask: async function () {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
-			if (!isFormCorrect) {
+			if (!isFormCorrect || this.displayGroupPermissionIssue) {
 				return;
 			}
 
@@ -263,6 +265,41 @@ export default {
 		},
 		updateGroupModel(data) {
 			this.groupModel = data;
+
+			//Calculate to see if the user's groups exist in the groupModel
+			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
+				return this.groupModel.includes(row.group_id);
+			}).length === 0;
+		},
+		updateStakeholderModel(newStakeholderModel) {
+			this.stakeholderModel = newStakeholderModel;
+		},
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		//VueX
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		//We need to map "fields" array from the statusList/typeList json data
+		this.statusFixList = this.statusList.map((row) => {
+			return {
+				value: row.pk,
+				label: row.fields.requirement_status,
+			};
+		});
+
+		this.typeFixList = this.typeList.map((row) => {
+				return {
+					value: row.pk,
+					label: row.fields.requirement_type,
 		},
 		updateStakeholderModel(data) {
 			this.stakeholderModel = data;

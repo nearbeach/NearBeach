@@ -139,6 +139,7 @@
 		<!-- Group Permissions -->
 		<hr/>
 		<group-permissions
+			v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 			v-bind:group-results="groupResults"
 			v-bind:destination="'request_for_change'"
 			v-bind:is-dirty="v$.groupModel.$dirty"
@@ -200,6 +201,7 @@ export default {
 	mixins: [datetimeMixin, searchMixin],
 	data() {
 		return {
+			displayGroupPermissionIssue: false,
 			groupModel: [],
 			rfcChangeLeadFixList: [],
 			rfcChangeLeadModel: "",
@@ -363,6 +365,11 @@ export default {
 		},
 		updateGroupModel(data) {
 			this.groupModel = data;
+
+			//Calculate to see if the user's groups exist in the groupModel
+			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
+				return this.groupModel.includes(row.group_id);
+			}).length === 0;
 
 			//Update up stream
 			this.updateValues("groupModel", data);
