@@ -77,7 +77,7 @@ export default {
 	},
 	methods: {
 		createNewNote() {
-			var newNoteModal = new Modal(
+			const newNoteModal = new Modal(
 				document.getElementById("newNoteModal")
 			);
 			newNoteModal.show();

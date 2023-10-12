@@ -291,7 +291,7 @@ export default {
 			//Stop the usual stuff
 			event.preventDefault();
 
-			var change_task_seconds =
+			const change_task_seconds =
 				this.changeEndDateModel - this.changeStartDateModel;
 
 			// Create data_to_send

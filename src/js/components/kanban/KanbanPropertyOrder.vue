@@ -418,12 +418,12 @@ export default {
 			// Check to see if we are editing an existing item, or adding
 			if (single_item_id == "") {
 				//Get the url
-				var url = `/kanban_${this.propertyName.toLowerCase()}/${
+				const url = `/kanban_${this.propertyName.toLowerCase()}/${
 					this.kanbanBoardId
 				}/new/`;
 			} else {
 				//Get the url
-				var url = `/kanban_${this.propertyName.toLowerCase()}/${
+				const url = `/kanban_${this.propertyName.toLowerCase()}/${
 					this.singleItemId
 				}/edit/`;
 			}
@@ -505,7 +505,7 @@ export default {
 			this.newPropertyItem = "";
 		},
 		openModal() {
-			var newItemModal = new Modal(
+			const newItemModal = new Modal(
 				document.getElementById(`addItem${this.propertyName}`)
 			);
 			newItemModal.show();
@@ -543,7 +543,7 @@ export default {
 					this.newCardDestinationList[0].value;
 
 				//Show the delete modal
-				var deleteItemModal = new Modal(
+				const deleteItemModal = new Modal(
 					document.getElementById(
 						`deleteItem${this.propertyName}`
 					)

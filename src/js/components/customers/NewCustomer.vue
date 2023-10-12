@@ -159,7 +159,7 @@ export default {
 				)
 				.then((response) => {
 					//Extract the required JSON data
-					var extracted_data = response.data;
+					const extracted_data = response.data;
 
 					//Look through the extracted data - and map the required fields into stakeholder fix list
 					this.organisationFixList = extracted_data.map((row) => {
@@ -172,14 +172,14 @@ export default {
 				})
 				.catch(function (error) {
 					// Get the error modal
-					var elem_cont =
+					const elem_cont =
 						document.getElementById("errorModalContent");
 
 					// Update the content
 					elem_cont.innerHTML = `<strong>Search Organisation Issue:</strong><br/>${error}`;
 
 					// Show the modal
-					var errorModal = new Modal(
+					const errorModal = new Modal(
 						document.getElementById("errorModal"),
 						{
 							keyboard: false,
@@ -188,7 +188,7 @@ export default {
 					errorModal.show();
 
 					// Hide the loader
-					var loader_element = document.getElementById("loader");
+					const loader_element = document.getElementById("loader");
 					loader_element.style.display = "none";
 				});
 		},
@@ -210,14 +210,14 @@ export default {
 			//NEED TO USE MIXIN FOR THIS SECTION
 			if (!hasFormErrors) {
 				//Show the error dialog and notify to the user that there were field missing.
-				var elem_cont =
+				const elem_cont =
 					document.getElementById("errorModalContent");
 
 				// Update the content
 				elem_cont.innerHTML = `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
 
 				// Show the modal
-				var errorModal = new Modal(
+				const errorModal = new Modal(
 					document.getElementById("errorModal")
 				);
 				errorModal.show();

@@ -270,7 +270,7 @@ export default {
 	mixins: [getThemeMixin, iconMixin],
 	methods: {
 		addNewContact() {
-			var new_customer_modal = new Modal(
+			const new_customer_modal = new Modal(
 				document.getElementById("addCustomerModal")
 			);
 			new_customer_modal.show();

@@ -229,7 +229,7 @@ export default {
 			rootUrl: "getRootUrl",
 		}),
 		isCompleted() {
-			var count_of_uncompleted_tasks = this.changeTaskList.filter(
+			const count_of_uncompleted_tasks = this.changeTaskList.filter(
 				(changeTask) => {
 					const change_task_status =
 						changeTask.change_task_status;
@@ -248,7 +248,7 @@ export default {
 	},
 	methods: {
 		addNewChangeItem() {
-			var newChangeTaskModal = new Modal(
+			const newChangeTaskModal = new Modal(
 				document.getElementById("newRunItemModal")
 			);
 			newChangeTaskModal.show();
@@ -265,13 +265,13 @@ export default {
 
 			We ignore all change tasks that are currently completed. i.e. failed or success.
 			*/
-			var condition_1 = this.blockedTaskList.filter((row) => {
+			const condition_1 = this.blockedTaskList.filter((row) => {
 				return row.parent_link === "change_task" & row.meta_object === change_task_id;
 			}).map((row) => {
 				return row.change_task_id;
 			}) //Meta object is blocked by change task
 
-			var condition_2 = this.blockedTaskList.filter((row) => {
+			const condition_2 = this.blockedTaskList.filter((row) => {
 				return row.parent_link === "meta_object" & row.change_task_id === change_task_id;
 			}).map((row) => {
 				return row.meta_object;
@@ -376,7 +376,7 @@ export default {
 		},
 		getUserName(user_id) {
 			//Filter for the user by using the user_id
-			var single_user = this.userList.filter((row) => {
+			const single_user = this.userList.filter((row) => {
 				return row.id == user_id;
 			});
 

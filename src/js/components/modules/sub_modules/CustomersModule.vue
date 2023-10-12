@@ -89,7 +89,7 @@ export default {
 	},
 	methods: {
 		addNewCustomer() {
-			var addCustomerModal = new Modal(
+			const addCustomerModal = new Modal(
 				document.getElementById("addCustomerModal")
 			);
 			addCustomerModal.show();
@@ -117,7 +117,7 @@ export default {
 	},
 	mounted() {
 		//If the location is inside the array - don't bother getting the data
-		var escape_array = ["requirement_item"];
+		let escape_array = ["requirement_item"];
 		if (escape_array.indexOf(this.destination) >= 0) return;
 
 		//Wait 200ms before getting data

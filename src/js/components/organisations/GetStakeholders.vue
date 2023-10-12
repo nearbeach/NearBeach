@@ -112,7 +112,7 @@ export default {
 				)
 				.then((response) => {
 					//Extract the required JSON data
-					var extracted_data = response.data;
+					const extracted_data = response.data;
 
 					//Look through the extracted data - and map the required fields into stakeholder fix list
 					this.stakeholderFixList = extracted_data.map((row) => {
@@ -125,14 +125,14 @@ export default {
 				})
 				.catch(function (error) {
 					// Get the error modal
-					var elem_cont =
+					const elem_cont =
 						document.getElementById("errorModalContent");
 
 					// Update the content
 					elem_cont.innerHTML = `<strong>Search Organisation Issue:</strong><br/>${error}`;
 
 					// Show the modal
-					var errorModal = new bootstrap.Modal(
+					const errorModal = new bootstrap.Modal(
 						document.getElementById("errorModal"),
 						{
 							keyboard: false,
@@ -141,7 +141,7 @@ export default {
 					errorModal.show();
 
 					// Hide the loader
-					var loader_element = document.getElementById("loader");
+					const loader_element = document.getElementById("loader");
 					loader_element.style.display = "none";
 				});
 		},
