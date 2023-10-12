@@ -418,12 +418,12 @@ export default {
 			// Check to see if we are editing an existing item, or adding
 			if (single_item_id == "") {
 				//Get the url
-				const url = `/kanban_${this.propertyName.toLowerCase()}/${
+				var url = `/kanban_${this.propertyName.toLowerCase()}/${
 					this.kanbanBoardId
 				}/new/`;
 			} else {
 				//Get the url
-				const url = `/kanban_${this.propertyName.toLowerCase()}/${
+				var url = `/kanban_${this.propertyName.toLowerCase()}/${
 					this.singleItemId
 				}/edit/`;
 			}

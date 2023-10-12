@@ -432,7 +432,7 @@ export default {
 			two sort orders to both the old and the new*/
 
 			//Get the y=data
-			let new_elem = event.to,
+			const new_elem = event.to,
 				old_elem = event.from,
 				card_id = event.item.dataset.cardId;
 

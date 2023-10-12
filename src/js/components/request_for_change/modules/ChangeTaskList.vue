@@ -265,13 +265,13 @@ export default {
 
 			We ignore all change tasks that are currently completed. i.e. failed or success.
 			*/
-			const condition_1 = this.blockedTaskList.filter((row) => {
+			let condition_1 = this.blockedTaskList.filter((row) => {
 				return row.parent_link === "change_task" & row.meta_object === change_task_id;
 			}).map((row) => {
 				return row.change_task_id;
 			}) //Meta object is blocked by change task
 
-			const condition_2 = this.blockedTaskList.filter((row) => {
+			let condition_2 = this.blockedTaskList.filter((row) => {
 				return row.parent_link === "meta_object" & row.change_task_id === change_task_id;
 			}).map((row) => {
 				return row.meta_object;

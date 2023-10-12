@@ -117,7 +117,7 @@ export default {
 	},
 	mounted() {
 		//If the location is inside the array - don't bother getting the data
-		let escape_array = ["requirement_item"];
+		const escape_array = ["requirement_item"];
 		if (escape_array.indexOf(this.destination) >= 0) return;
 
 		//Wait 200ms before getting data
