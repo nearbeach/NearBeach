@@ -199,7 +199,7 @@ export default {
 		var escape_array = ["requirement_item"];
 		if (escape_array.indexOf(this.destination) >= 0) return;
 
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.getBugList();
 		});
 	},

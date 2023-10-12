@@ -357,7 +357,7 @@ export default {
 	},
 	mounted() {
 		//Wait a few seconds before getting the max file upload size
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			//Get the max file upload size
 			axios
 				.post(`${this.rootUrl}documentation/get/max_upload/`)

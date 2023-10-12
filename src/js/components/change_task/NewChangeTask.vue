@@ -395,7 +395,7 @@ export default {
 	},
 	mounted() {
 		//Update the user fixed list
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.updateUserList();
 		});
 

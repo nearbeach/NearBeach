@@ -951,9 +951,8 @@ def link_list(request, destination, location_id, object_lookup):
     data_results = LOOKUP_FUNCS[object_lookup](user_group_results, destination, location_id)
 
     # Send the data to the user
-    return HttpResponse(
-        serializers.serialize("json", data_results), content_type="application/json"
-    )
+    data_results = json.dumps(list(data_results), cls=DjangoJSONEncoder)
+    return JsonResponse(json.loads(data_results), safe=False)
 
 
 # Internal function

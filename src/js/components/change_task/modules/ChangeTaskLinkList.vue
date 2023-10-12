@@ -12,7 +12,7 @@
 
 		<!-- OBJECT LINKS -->
 		<div
-			v-if="linkResults.length == 0"
+			v-if="linkResults.length === 0"
 			class="requirement-item-spacer"
 		>
 			<div class="alert alert-dark">
@@ -74,9 +74,6 @@ export default {
 		Icon,
 		SubObjectLinks,
 	},
-	inject: [
-		'nextTick',
-	],
 	mixins: [iconMixin],
 	data() {
 		return {
@@ -115,10 +112,9 @@ export default {
 			this.linkResults = [];
 
 			//Get the data from the database
-			axios
-				.post(
+			axios.post(
 					`${this.rootUrl}object_data/change_task/${this.locationId}/object_link_list/`
-				)
+      )
 				.then((response) => {
 					this.linkResults = response.data.map((row) => {
 						//Get results
@@ -130,11 +126,11 @@ export default {
 						//Return results
 						return results;
 					})
-				});
+      }).catch((error) => {});
 		},
 	},
 	mounted() {
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.updateLinkResults();
 		});
 	},

@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, F
 
 from NearBeach.models import (
     ListOfRequirementItemStatus,
@@ -30,6 +30,14 @@ def lookup_project(user_group_results, destination, location_id):
                 **{destination: location_id},
             ).values("project_id")
         )
+    ).annotate(
+        id = F('project_id'),
+        description = F('project_name'),
+        status = F('project_status'),
+    ).values(
+        'id',
+        'description',
+        'status',
     )
 
 
@@ -52,6 +60,14 @@ def lookup_task(user_group_results, destination, location_id):
                 **{destination: location_id},
             ).values("task_id")
         )
+    ).annotate(
+        id = F('task_id'),
+        description = F('task_short_description'),
+        status = F('task_status'),
+    ).values(
+        'id',
+        'description',
+        'status',
     )
 
 
@@ -67,6 +83,14 @@ def lookup_requirement(user_group_results, *args, **kwargs):
             requirement_id__isnull=False,
             group_id__in=user_group_results,
         ).values('requirement_id'),
+    ).annotate(
+        id = F('requirement_id'),
+        description = F('requirement_title'),
+        status = F('requirement_status__requirement_status'),
+    ).values(
+        'id',
+        'description',
+        'status',
     )
 
 
@@ -89,4 +113,12 @@ def lookup_requirement_item(user_group_results, *args, **kwargs):
                 group_id__in=user_group_results,
             ).values('requirement_id'),
         ).values("requirement_id"),
+    ).annotate(
+        id = F('requirement_item_id'),
+        description = F('requirement_item_title'),
+        status = F('requirement_item_status__requirement_item_status'),
+    ).values(
+        'id',
+        'description',
+        'status',
     )

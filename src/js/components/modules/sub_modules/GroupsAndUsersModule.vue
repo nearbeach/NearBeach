@@ -26,7 +26,7 @@
 					{{ group.group_name }}
 				</div>
 				<div class="group-card--remove"
-					 v-if="userLevel >= 3"
+					 v-if="userLevel >= 3 && objectGroupList.length > 1"
 				>
 					<Icon
 						v-bind:icon="icons.trashCan"
@@ -274,7 +274,7 @@ export default {
 	},
 	mounted() {
 		//Get the data with the 0'th count
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			// If location Id = 0, we have a problem
 			if (this.locationId === 0) {
 				setTimeout(() => {

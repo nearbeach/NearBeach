@@ -265,7 +265,7 @@ export default {
 	},
 	mounted() {
 		//Get a default list when mounted
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.getOrganisationData("", "");
 		});
 	},
