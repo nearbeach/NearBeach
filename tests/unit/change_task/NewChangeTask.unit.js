@@ -8,7 +8,7 @@ import NewChangeTask from "/src/js/components/change_task/NewChangeTask.vue";
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('AdminAddUser.vue - rendering component', () => {
+describe('NewChangeTask.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(NewChangeTask, {
         props: {

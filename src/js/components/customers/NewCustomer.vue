@@ -170,26 +170,12 @@ export default {
 						};
 					});
 				})
-				.catch(function (error) {
-					// Get the error modal
-					var elem_cont =
-						document.getElementById("errorModalContent");
-
-					// Update the content
-					elem_cont.innerHTML = `<strong>Search Organisation Issue:</strong><br/>${error}`;
-
-					// Show the modal
-					var errorModal = new Modal(
-						document.getElementById("errorModal"),
-						{
-							keyboard: false,
-						}
+				.catch((error) => {
+					this.showErrorModal(
+						error,
+						"Search Organisation Issues: can not get list of existing organisations",
+						""
 					);
-					errorModal.show();
-
-					// Hide the loader
-					var loader_element = document.getElementById("loader");
-					loader_element.style.display = "none";
 				});
 		},
 		submitNewCustomer: async function () {
