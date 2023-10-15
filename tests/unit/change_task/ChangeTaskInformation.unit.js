@@ -1,4 +1,22 @@
 // Vitest
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
+import {mount, VueWrapper} from "@vue/test-utils";
 
-test('blank', () => {});
+// Import vue component
+import ChangeTaskInformation from "/src/js/components/change_task/ChangeTaskInformation.vue";
+
+// VueX
+import { store } from "/src/js/vuex-store";
+
+describe('AdminAddUser.vue - rendering component', () => {
+    //Using mount - insert data
+    const wrapper = mount(ChangeTaskInformation, {
+        props: {
+        },
+        global: {
+            plugins: [store],
+        },
+    });
+
+    test('Empty test', () => {});
+});

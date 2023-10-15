@@ -875,12 +875,6 @@ def group_and_user_data(request, destination, location_id, *args, **kwargs):
     )
 
 
-# @require_http_methods(["POST"])
-# @login_required(login_url="login", redirect_field_name="")
-# @check_destination()
-# def group_list(request, destination, location_id):
-#     # Get the data dependant on the object lookup
-#     group_results = get_group_list(destination, location_id)
 
 #     # Return the data
 #     return HttpResponse(
@@ -888,24 +882,9 @@ def group_and_user_data(request, destination, location_id, *args, **kwargs):
 #     )
 
 
-# @require_http_methods(["POST"])
-# @login_required(login_url="login", redirect_field_name="")
-# @check_destination()
-# def group_list_all(request, destination, location_id):
-#     # ADD CHECKS FOR USER PERMISSIONS!
 
 #     # Obtain data
-#     group_existing_results = ObjectAssignment.objects.filter(
-#         is_deleted=False,
-#         group_id__isnull=False,
-#     )
-#     group_existing_results = get_object_from_destination(
-#         group_existing_results, destination, location_id
-#     )
 
-#     group_results = Group.objects.filter(
-#         is_deleted=False,
-#     ).exclude(group_id__in=group_existing_results.values("group_id"))
 
 #     # Return data as json
 #     return HttpResponse(
@@ -972,9 +951,8 @@ def link_list(request, destination, location_id, object_lookup):
     data_results = LOOKUP_FUNCS[object_lookup](user_group_results, destination, location_id)
 
     # Send the data to the user
-    return HttpResponse(
-        serializers.serialize("json", data_results), content_type="application/json"
-    )
+    data_results = json.dumps(list(data_results), cls=DjangoJSONEncoder)
+    return JsonResponse(json.loads(data_results), safe=False)
 
 
 # Internal function
@@ -1371,16 +1349,9 @@ def user_list(request, destination, location_id):
     return HttpResponse(user_results, content_type="application/json")
 
 
-# @require_http_methods(["POST"])
-# @login_required(login_url="login", redirect_field_name="")
-# @check_destination()
-# def user_list_all(request, destination, location_id):
-#     # ADD IN PERMISSIONS LATER
 
 #     # Get Data we want
-#     user_results = get_user_list_all(destination, location_id)
 
 #     # Send back json data
-#     json_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
 
 #     return HttpResponse(json_results, content_type="application/json")

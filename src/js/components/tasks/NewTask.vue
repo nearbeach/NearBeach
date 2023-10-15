@@ -56,9 +56,11 @@
 						/>
 						<editor
 							:init="{
+							file_picker_types: 'image',
 							height: 500,
+							images_upload_handler: newObjectUploadImage,
 							menubar: false,
-							plugins: ['lists', 'codesample', 'table'],
+							plugins: ['lists', 'image', 'codesample', 'table'],
 							toolbar: [
 								'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
 								'bold italic strikethrough underline backcolor | table | ' +
@@ -89,6 +91,7 @@
 				<!-- Group Permissions -->
 				<hr/>
 				<group-permissions
+					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
 					v-bind:destination="'task'"
 					v-bind:user-group-results="userGroupResults"
@@ -126,6 +129,7 @@ import GetStakeholders from "../organisations/GetStakeholders.vue";
 //Mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
+import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
 
 //VueX
 import { mapGetters } from "vuex";
@@ -170,6 +174,7 @@ export default {
 	},
 	data() {
 		return {
+			displayGroupPermissionIssue: false,
 			groupModel: {},
 			stakeholderModel: "",
 			taskDescriptionModel: "",
@@ -184,7 +189,7 @@ export default {
 			skin: "getSkin",
 		}),
 	},
-	mixins: [errorModalMixin, getThemeMixin],
+	mixins: [errorModalMixin, getThemeMixin, newObjectUploadMixin],
 	validations: {
 		groupModel: {
 			required,
@@ -233,6 +238,10 @@ export default {
 				"task_start_date",
 				this.taskStartDateModel.toISOString()
 			);
+			data_to_send.set(
+				"uuid",
+				this.uuid,
+			)
 
 			// Insert a new row for each group list item
 			this.groupModel.forEach((row, index) => {
@@ -256,6 +265,11 @@ export default {
 		},
 		updateGroupModel(data) {
 			this.groupModel = data;
+
+			//Calculate to see if the user's groups exist in the groupModel
+			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
+				return this.groupModel.includes(row.group_id);
+			}).length === 0;
 		},
 		updateStakeholderModel(data) {
 			this.stakeholderModel = data;

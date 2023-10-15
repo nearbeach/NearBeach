@@ -372,6 +372,11 @@ export default {
 				});
 		},
 	},
+  async beforeMount() {
+    await this.$store.dispatch("processThemeUpdate", {
+      theme: this.theme,
+    });
+  },
 	mounted() {
 		//Get data from the requirementResults and delegate to the Models
 		var requirement_item_results =

@@ -439,6 +439,10 @@ class DocumentPermission(models.Model):
         on_delete=models.CASCADE,
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    new_object = models.UUIDField(
+        blank=True,
+        null=True,
+    )
     folder = models.ForeignKey(
         "folder",
         on_delete=models.CASCADE,

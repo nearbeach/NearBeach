@@ -57,13 +57,14 @@
 							:init="{
 							file_picker_types: 'image',
 							height: 500,
+							images_upload_handler: newObjectUploadImage,
 							menubar: false,
-							paste_data_images: false,
-							plugins: ['lists', 'codesample', 'table'],
+							paste_data_images: true,
+							plugins: ['lists', 'image', 'codesample', 'table'],
 							toolbar: [
 								'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
 								'bold italic strikethrough underline backcolor | table | ' +
-									'bullist numlist outdent indent | removeformat | codesample',
+									'bullist numlist outdent indent | removeformat | image codesample',
 							],
 							skin: `${this.skin}`,
 							content_css: `${this.contentCss}`,
@@ -90,6 +91,7 @@
 				<!-- Group Permissions -->
 				<hr/>
 				<group-permissions
+					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
 					v-bind:destination="'project'"
 					v-bind:user-group-results="userGroupResults"
@@ -131,6 +133,7 @@ import ValidationRendering from "../validation/ValidationRendering.vue";
 //Mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
+import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
 
 //VueX
 import { mapGetters } from "vuex";
@@ -172,16 +175,21 @@ export default {
 				return [];
 			},
 		},
+		uuid: {
+			type: String,
+			default: "",
+		}
 	},
 	computed: {
 		...mapGetters({
 			contentCss: "getContentCss",
 			skin: "getSkin",
-		})
+		}),
 	},
-	mixins: [errorModalMixin, getThemeMixin],
+	mixins: [errorModalMixin, getThemeMixin, newObjectUploadMixin],
 	data() {
 		return {
+			displayGroupPermissionIssue: false,
 			groupModel: {},
 			projectDescriptionModel: "",
 			projectEndDateModel: "",
@@ -216,7 +224,7 @@ export default {
 		submitNewProject: async function () {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
-			if (!isFormCorrect) {
+			if (!isFormCorrect || this.displayGroupPermissionIssue) {
 				return;
 			}
 
@@ -225,7 +233,8 @@ export default {
 			data_to_send.set("project_name", this.projectNameModel);
 			data_to_send.set(
 				"project_description",
-				this.projectDescriptionModel
+				this.replaceIncorrectImageUrl(this.projectDescriptionModel)
+				//this.projectDescriptionModel
 			);
 			data_to_send.set("organisation", this.stakeholderModel);
 			data_to_send.set(
@@ -235,6 +244,10 @@ export default {
 			data_to_send.set(
 				"project_end_date",
 				this.projectEndDateModel.toISOString()
+			);
+			data_to_send.set(
+				"uuid",
+				this.uuid,
 			);
 
 			// Insert a new row for each group list item
@@ -260,6 +273,11 @@ export default {
 		},
 		updateGroupModel(data) {
 			this.groupModel = data;
+
+			//Calculate to see if the user's groups exist in the groupModel
+			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
+				return this.groupModel.includes(row.group_id);
+			}).length === 0;
 		},
 		updateStakeholderModel(data) {
 			this.stakeholderModel = data;

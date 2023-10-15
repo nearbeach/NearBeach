@@ -11,7 +11,7 @@ from NearBeach.models import Group, UserGroup, ObjectAssignment
 from NearBeach.views.tools.internal_functions import Task, Organisation
 from NearBeach.views.theme_views import get_theme
 
-import json
+import json, uuid
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -52,6 +52,7 @@ def new_task(request, *args, **kwargs):
             list(user_group_results), cls=DjangoJSONEncoder
         ),
         "need_tinymce": True,
+        "uuid": str(uuid.uuid4()),
         "theme": get_theme(request),
     }
 

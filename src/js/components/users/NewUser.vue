@@ -139,8 +139,9 @@ const axios = require("axios");
 
 //Validation
 import useVuelidate from "@vuelidate/core";
-import {email, required} from "@vuelidate/validators";
+import {email, helpers, required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
+const usernameRegex = helpers.regex(/^[0-9a-zA-Z,_@+.\-]{1,150}$/);
 
 //Mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
@@ -191,6 +192,10 @@ export default {
 		},
 		usernameModel: {
 			required,
+			usernameRegex: helpers.withMessage(
+				"Required. 150 characters or fewer. Usernames may contain alphanumeric, _, @, +, . and - characters.",
+				usernameRegex
+			),
 		},
 	},
 	methods: {

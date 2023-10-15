@@ -237,7 +237,7 @@ def update_status(request, change_task_id, *args, **kwargs):
     if not rfc_results.rfc_status_id == 4:
         return HttpResponse(
             "RFC Currently Locked - not in start mode",
-            status = 423 # Locked
+            status = 423  # Locked
         )
 
     # Update the change task results

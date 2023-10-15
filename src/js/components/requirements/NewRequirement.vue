@@ -53,9 +53,12 @@
 						/>
 						<editor
 							:init="{
+							file_picker_types: 'image',
 							height: 500,
+							images_upload_handler: newObjectUploadImage,
 							menubar: false,
-							plugins: ['lists', 'codesample', 'table'],
+							paste_data_images: true,
+							plugins: ['lists', 'image', 'codesample', 'table'],
 							toolbar: [
 								'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
 								'bold italic strikethrough underline backcolor | table | ' +
@@ -120,6 +123,7 @@
 				<!-- Group Permissions -->
 				<hr/>
 				<group-permissions
+					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
 					v-bind:destination="'requirement'"
 					v-bind:user-group-results="userGroupResults"
@@ -155,6 +159,7 @@ import {NSelect} from "naive-ui";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
+import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
@@ -213,9 +218,14 @@ export default {
 				return [];
 			},
 		},
+		uuid: {
+			type: String,
+			default: "",
+		},
 	},
 	data() {
 		return {
+			displayGroupPermissionIssue: false,
 			groupModel: "",
 			requirementScopeModel: "",
 			requirementTitleModel: "",
@@ -232,7 +242,7 @@ export default {
 			skin: "getSkin",
 		}),
 	},
-	mixins: [getThemeMixin],
+	mixins: [getThemeMixin, newObjectUploadMixin],
 	validations: {
 		groupModel: {
 			required,
@@ -258,7 +268,7 @@ export default {
 		submitNewRequirement: async function () {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
-			if (!isFormCorrect) {
+			if (!isFormCorrect || this.displayGroupPermissionIssue) {
 				return;
 			}
 
@@ -270,11 +280,12 @@ export default {
 			);
 			data_to_send.set(
 				"requirement_scope",
-				this.requirementScopeModel
+				this.replaceIncorrectImageUrl(this.requirementScopeModel)
 			);
 			data_to_send.set("organisation", this.stakeholderModel);
 			data_to_send.set("requirement_status", this.statusModel);
 			data_to_send.set("requirement_type", this.typeModel);
+			data_to_send.set("uuid", this.uuid);
 
 			// Insert a new row for each group list item
 			this.groupModel.forEach((row, index) => {
@@ -307,6 +318,11 @@ export default {
 		updateGroupModel(newGroupModel) {
 			//Update the group model
 			this.groupModel = newGroupModel;
+
+			//Calculate to see if the user's groups exist in the groupModel
+			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
+				return this.groupModel.includes(row.group_id);
+			}).length === 0;
 		},
 		updateStakeholderModel(newStakeholderModel) {
 			this.stakeholderModel = newStakeholderModel;

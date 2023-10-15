@@ -100,7 +100,7 @@ export default {
 		},
 	},
 	mounted() {
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.getNoteHistoryResults();
 		});
 	},

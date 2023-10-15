@@ -408,7 +408,7 @@ export default {
 		},
 	},
 	mounted() {
-		this.nextTick(() => {
+		this.$nextTick(() => {
 			this.getDocumentList();
 			this.getFolderList();
 		});

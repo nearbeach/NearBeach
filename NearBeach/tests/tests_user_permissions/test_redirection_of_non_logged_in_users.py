@@ -196,14 +196,11 @@ class CheckObjects(TestCase):
             c.get(reverse("bug_list", args=["project", 1])),
             c.get(reverse("customer_list", args=["project", 1])),
             c.get(reverse("customer_list_all", args=["project", 1])),
-            # c.get(reverse("group_list", args=["project", 1])),
-            # c.get(reverse("group_list_all", args=["project", 1])),
             c.get(reverse("link_list", args=["project", 1, "task"])),
             c.get(reverse("note_list", args=["project", 1])),
             c.get(reverse("object_link_list", args=["project", 1])),
             c.get(reverse("query_bug_client", args=["project", 1])),
             c.get(reverse("user_list", args=["project", 1])),
-            # c.get(reverse("user_list_all", args=["project", 1])),
             c.get(reverse("lead_user_list")),
         ]
 
@@ -227,14 +224,11 @@ class CheckObjects(TestCase):
             c.post(reverse("bug_list", args=["project", 1])),
             c.post(reverse("customer_list", args=["project", 1])),
             c.post(reverse("customer_list_all", args=["project", 1])),
-            # c.post(reverse("group_list", args=["project", 1])),
-            # c.post(reverse("group_list_all", args=["project", 1])),
             c.post(reverse("link_list", args=["project", 1, "task"])),
             c.post(reverse("note_list", args=["project", 1])),
             c.post(reverse("object_link_list", args=["project", 1])),
             c.post(reverse("query_bug_client", args=["project", 1])),
             c.post(reverse("user_list", args=["project", 1])),
-            # c.post(reverse("user_list_all", args=["project", 1])),
             c.post(reverse("lead_user_list")),
         ]
 
