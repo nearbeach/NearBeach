@@ -209,7 +209,7 @@ export default {
 		},
 		startSearchTimer() {
 			//Destroy the first timer if it exists
-			if (this.searchTimer != "") {
+			if (this.searchTimer !== "") {
 				clearTimeout(this.searchTimer);
 			}
 
@@ -258,7 +258,7 @@ export default {
 
 			//Filter for the bug information out of the bugResults
 			var filted_bug_results = this.bugResults.filter((row) => {
-				return row.id == bug_id;
+				return row.id === bug_id;
 			});
 
 			//Setup data

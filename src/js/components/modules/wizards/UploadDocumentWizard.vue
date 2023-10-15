@@ -235,7 +235,7 @@ export default {
 			  The boolean (0!=this.maxUploadSize) will product a 0 result when maxUploadSize is 0. Thus negating
 			  the need for an extra if statement*/
 			if (
-				fileList[0].size * (this.maxUploadSize != 0) >
+				fileList[0].size * (this.maxUploadSize !== 0) >
 				this.maxUploadSize
 			) {
 				this.maxUploadWarning = true;
@@ -273,7 +273,7 @@ export default {
 			);
 
 			//If there is a current/partent folder - then add it to the data to send
-			if (this.currentFolder != "" && this.currentFolder !== null) {
+			if (this.currentFolder !== "" && this.currentFolder !== null) {
 				data_to_send.set("parent_folder", this.currentFolder);
 			}
 
@@ -345,14 +345,14 @@ export default {
 	updated() {
 		var match = this.excludeDocuments.filter((row) => {
 			return (
-				row.document_key__document_description ==
+				row.document_key__document_description ===
 				this.documentDescriptionModel
 			);
 		});
 
 		this.disableUploadButton =
-			this.documentModel == "" ||
-			this.documentDescriptionModel.length == 0 ||
+			this.documentModel === "" ||
+			this.documentDescriptionModel.length === 0 ||
 			match.length > 0;
 	},
 	mounted() {

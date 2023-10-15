@@ -144,7 +144,7 @@ export default {
 		},
 		getBugHyperLink(bug) {
 			if (
-				bug.bug_client__list_of_bug_client__bug_client_name ==
+				bug.bug_client__list_of_bug_client__bug_client_name ===
 				"Bugzilla"
 			) {
 				return `${bug.bug_client__bug_client_url}/show_bug.cgi?id=${bug.bug_code}`;
