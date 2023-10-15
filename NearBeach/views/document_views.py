@@ -618,7 +618,5 @@ def transfer_new_object_uploads(destination, location_id, uuid):
         **{destination: location_id},
     )
 
-    return
-
 
 FILE_HANDLER = get_file_handler(settings)
