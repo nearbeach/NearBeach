@@ -1,6 +1,6 @@
 # Import Forms
 from ..forms import PermissionSet, Group, LoginForm, User
-from ..models import UserGroup, Notification, Organisation, 
+from ..models import UserGroup, Notification, Organisation
 
 # Import Django Libraries
 from django.contrib import auth
