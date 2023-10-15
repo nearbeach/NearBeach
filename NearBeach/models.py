@@ -999,23 +999,23 @@ class ObjectAssignment(models.Model):
     meta_object_title = models.CharField(
         max_length=255,
         blank=True,
-        null=True,
+        default='',
     )
     meta_object_status = models.CharField(
         max_length=255,
         blank=True,
-        null=True,
+        default='',
     )
     link_relationship = models.CharField(
         max_length=10,
         choices=LINK_RELATIONSHIP,
         blank=True,
-        null=True,
+        default='',
     )
     parent_link = models.CharField(
         max_length=20,
         blank=True,
-        null=True,
+        default='',
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1268,7 +1268,7 @@ class RequestForChange(models.Model):
     rfc_version_number = models.CharField(
         max_length=25,
         blank=True,
-        null=True,
+        default='',
     )
     rfc_status = models.ForeignKey(
         "ListOfRfcStatus",
