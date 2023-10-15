@@ -18,6 +18,7 @@ from NearBeach.models import (
     RequestForChangeGroupApproval,
     ListOfRFCStatus,
 )
+from NearBeach.views.theme_views import get_theme
 from django.db.models import Q, F
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
@@ -26,7 +27,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
-from NearBeach.views.theme_views import get_theme
 
 
 # Internal function
