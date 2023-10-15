@@ -29,13 +29,10 @@ from ..forms import (
     RequirementItem,
 )
 from ..models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
-
-from azure.identity import DefaultAzureCredential
-from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+from azure.storage.blob import BlobServiceClient
 
 import boto3
 import json
-import os
 from pathlib import Path
 
 
