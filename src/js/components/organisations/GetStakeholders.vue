@@ -8,7 +8,7 @@
 			</p>
 			<p class="text-instructions">
 				If you can not find your organisation, please
-				<a v-bind:href="`${rootUrl}new_organisation/`" target="_blank">
+				<a v-bind:href="`${rootUrl}new_organisation/`" target="_blank" rel="noopener noreferrer" >
 					click here to create it.
 				</a>
 				Then search for it again
