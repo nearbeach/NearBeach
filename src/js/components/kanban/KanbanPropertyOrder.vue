@@ -505,7 +505,7 @@ export default {
 			this.newPropertyItem = "";
 		},
 		openModal() {
-			var newItemModal = new Modal(
+			const newItemModal = new Modal(
 				document.getElementById(`addItem${this.propertyName}`)
 			);
 			newItemModal.show();
@@ -543,7 +543,7 @@ export default {
 					this.newCardDestinationList[0].value;
 
 				//Show the delete modal
-				var deleteItemModal = new Modal(
+				const deleteItemModal = new Modal(
 					document.getElementById(
 						`deleteItem${this.propertyName}`
 					)

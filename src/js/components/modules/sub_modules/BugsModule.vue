@@ -127,7 +127,7 @@ export default {
 	},
 	methods: {
 		addNewBug() {
-			var addBugModal = new Modal(
+			const addBugModal = new Modal(
 				document.getElementById("addBugModal")
 			);
 			addBugModal.show();
@@ -196,7 +196,7 @@ export default {
 	},
 	mounted() {
 		//If the location is inside the array - don't bother getting the data
-		var escape_array = ["requirement_item"];
+		const escape_array = ["requirement_item"];
 		if (escape_array.indexOf(this.destination) >= 0) return;
 
 		this.$nextTick(() => {

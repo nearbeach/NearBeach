@@ -201,7 +201,7 @@ export default {
 	methods: {
 		addKanbanCard() {
 			//Get the modal to extract data from
-			var self_modal = document.getElementById("addKanbanCardModal");
+			const self_modal = document.getElementById("addKanbanCardModal");
 
 			//Create the data_to_send
 			const data_to_send = new FormData();
@@ -256,7 +256,7 @@ export default {
 			}
 
 			//Check to make sure it does not exist
-			var filtered_results = this.kanbanCardResults.filter((row) => {
+			const filtered_results = this.kanbanCardResults.filter((row) => {
 				return (
 					row.fields.kanban_card_text === this.kanbanCardTextModel
 				);

@@ -235,13 +235,13 @@ export default {
 	},
 	methods: {
 		addFolder() {
-			var addFolderModal = new Modal(
+			const addFolderModal = new Modal(
 				document.getElementById("addFolderModal")
 			);
 			addFolderModal.show();
 		},
 		addLink() {
-			var addLinkModal = new Modal(
+			const addLinkModal = new Modal(
 				document.getElementById("addLinkModal")
 			);
 			addLinkModal.show();
@@ -251,7 +251,7 @@ export default {
 			this.removeDocumentKey = document_key;
 
 			//Open the modal
-			var confirmFileDeleteModal = new Modal(
+			const confirmFileDeleteModal = new Modal(
 				document.getElementById("confirmFileDeleteModal")
 			);
 			confirmFileDeleteModal.show();
@@ -298,10 +298,10 @@ export default {
 			}
 
 			//We know the document is not a link - now we use the suffix to the document name to determine the icon
-			var split_document = document.document_key__document.split(".");
+			const split_document = document.document_key__document.split(".");
 
 			//Get the last result
-			var document_suffic = split_document[split_document.length - 1];
+			const document_suffic = split_document[split_document.length - 1];
 
 			switch (document_suffic) {
 				case "jpg":
@@ -329,8 +329,8 @@ export default {
 		},
 		goToParentDirectory() {
 			//Filter for the directory - then obtain it's parent directory variable.
-			var filtered_data = this.folderList.filter((row) => {
-				return row.pk === this.currentFolder;
+			const filtered_data = this.folderList.filter((row) => {
+				return row.pk == this.currentFolder;
 			})[0];
 
 			//Update the current directory to the parent folder
@@ -353,7 +353,7 @@ export default {
 			}
 
 			//Now we split the string by max_string_length - 3 (3 for the ...)
-			var new_string = `${input_string.substring(
+			const new_string = `${input_string.substring(
 				0,
 				max_string_length - 3
 			)}...`;
@@ -401,7 +401,7 @@ export default {
 			});
 		},
 		uploadDocument() {
-			var uploadDocumentModal = new Modal(
+			const uploadDocumentModal = new Modal(
 				document.getElementById("uploadDocumentModal")
 			);
 			uploadDocumentModal.show();

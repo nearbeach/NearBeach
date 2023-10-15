@@ -160,24 +160,24 @@ export default {
 	methods: {
 		addNewKanbanCard() {
 			//Update the modal's data-attributes to reflect the column ID and Level ID
-			var addKanbanCardModal =
+			const addKanbanCardModal =
 				document.getElementById("addKanbanCardModal");
 			addKanbanCardModal.dataset.kanbanLevel = this.levelId;
 			addKanbanCardModal.dataset.kanbanColumn = this.columnId;
 
 			//Get the Modal from the above modal
-			var addKanbanCardModal = new Modal(addKanbanCardModal);
-			addKanbanCardModal.show();
+			const modalInstance = new Modal(addKanbanCardModal);
+			modalInstance.show();
 		},
 		addNewLink() {
 			//Update the modal's data-attributes to reflect the column ID and Level ID
-			var newLinkModal = document.getElementById("newLinkModal");
+			const newLinkModal = document.getElementById("newLinkModal");
 			newLinkModal.dataset.kanbanLevel = this.levelId;
 			newLinkModal.dataset.kanbanColumn = this.columnId;
 
 			//Get the Modal from the above modal
-			var newLinkModal = new Modal(newLinkModal);
-			newLinkModal.show();
+			const modalInstance = new Modal(newLinkModal);
+			modalInstance.show();
 		},
 		archiveCards() {
 			//Send the archive destination to state - it will trigger the modal
@@ -432,7 +432,7 @@ export default {
 			two sort orders to both the old and the new*/
 
 			//Get the y=data
-			var new_elem = event.to,
+			const new_elem = event.to,
 				old_elem = event.from,
 				card_id = event.item.dataset.cardId;
 

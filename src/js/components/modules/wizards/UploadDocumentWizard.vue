@@ -343,7 +343,7 @@ export default {
 		},
 	},
 	updated() {
-		var match = this.excludeDocuments.filter((row) => {
+		const match = this.excludeDocuments.filter((row) => {
 			return (
 				row.document_key__document_description ===
 				this.documentDescriptionModel

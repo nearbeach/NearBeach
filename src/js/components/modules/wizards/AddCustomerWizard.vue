@@ -192,7 +192,7 @@ export default {
 			if (this.customerList.length === 0) return;
 
 			//Create an array of ids we should be excluding
-			var exclude_array = [];
+			const exclude_array = [];
 			this.excludeCustomers.forEach((row) => {
 				exclude_array.push(row.pk);
 			});
@@ -212,7 +212,7 @@ export default {
 	},
 	mounted() {
 		//If the location is inside the array - don't bother getting the data
-		var escape_array = ["requirement_item"];
+		const escape_array = ["requirement_item"];
 		if (!escape_array.indexOf(this.locationId) < 0) return;
 
 		//Wait 200ms before getting data

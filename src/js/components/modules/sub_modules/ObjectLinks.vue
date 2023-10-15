@@ -158,7 +158,7 @@ export default {
 		newLink() {
 			//Open up the modal
 
-			var elem_modal = new Modal(
+			const elem_modal = new Modal(
 				document.getElementById("newLinkModal")
 			);
 
@@ -184,8 +184,8 @@ export default {
 
 					//Filter out the data for is blocked by
 					this.isBlockedBy = response.data.filter(row => {
-						var condition_1 = row.link_relationship === 'Block' && row.parent_link !== this.destination && row.reverse_relation === false;
-						var condition_2 = row.link_relationship === 'Block' && row.parent_link === this.destination && row.reverse_relation === true; //reverse
+						const condition_1 = row.link_relationship === 'Block' && row.parent_link !== this.destination && row.reverse_relation === false;
+						const condition_2 = row.link_relationship === 'Block' && row.parent_link === this.destination && row.reverse_relation === true; //reverse
 						return condition_1 || condition_2;
 					})
 
@@ -197,33 +197,33 @@ export default {
 
 					//Filter out the data for is currently blocking
 					this.isCurrentlyBlocking = response.data.filter(row => {
-						var condition_1 = row.link_relationship === 'Block' && row.parent_link === this.destination && row.reverse_relation === false;
-						var condition_2 = row.link_relationship === 'Block' && row.parent_link !== this.destination && row.reverse_relation === true; //reverse
+						const condition_1 = row.link_relationship === 'Block' && row.parent_link === this.destination && row.reverse_relation === false;
+						const condition_2 = row.link_relationship === 'Block' && row.parent_link !== this.destination && row.reverse_relation === true; //reverse
 						return condition_1 || condition_2;
 					})
 
 					//Filter out the dat for is subobject of
 					this.isSubObjectOf = response.data.filter(row => {
-						var condition_1 = row.link_relationship === 'Subobject' && row.parent_link !== this.destination && row.reverse_relation === false;
-						var condition_2 = row.link_relationship === 'Subobject' && row.parent_link === this.destination && row.reverse_relation === true;
+						const condition_1 = row.link_relationship === 'Subobject' && row.parent_link !== this.destination && row.reverse_relation === false;
+						const condition_2 = row.link_relationship === 'Subobject' && row.parent_link === this.destination && row.reverse_relation === true;
 						return condition_1 || condition_2;
 					})
 
 					this.isParentOf = response.data.filter(row => {
-						var condition_1 = row.link_relationship === 'Subobject' && row.parent_link === this.destination && row.reverse_relation === false;
-						var condition_2 = row.link_relationship === 'Subobject' && row.parent_link !== this.destination && row.reverse_relation === true;
+						const condition_1 = row.link_relationship === 'Subobject' && row.parent_link === this.destination && row.reverse_relation === false;
+						const condition_2 = row.link_relationship === 'Subobject' && row.parent_link !== this.destination && row.reverse_relation === true;
 						return condition_1 || condition_2;
 					})
 
 					this.hasDuplicateObjectOf = response.data.filter(row => {
-						var condition_1 = row.link_relationship === 'Duplicate' && row.parent_link === this.destination && row.reverse_relation === false;
-						var condition_2 = row.link_relationship === 'Duplicate' && row.parent_link !== this.destination && row.reverse_relation === true;
+						const condition_1 = row.link_relationship === 'Duplicate' && row.parent_link === this.destination && row.reverse_relation === false;
+						const condition_2 = row.link_relationship === 'Duplicate' && row.parent_link !== this.destination && row.reverse_relation === true;
 						return condition_1 || condition_2;
 					})
 
 					this.isDuplicateObjectOf = response.data.filter(row => {
-						var condition_1 = row.link_relationship === 'Duplicate' && row.parent_link !== this.destination && row.reverse_relation === false;
-						var condition_2 = row.link_relationship === 'Duplicate' && row.parent_link === this.destination && row.reverse_relation === true;
+						const condition_1 = row.link_relationship === 'Duplicate' && row.parent_link !== this.destination && row.reverse_relation === false;
+						const condition_2 = row.link_relationship === 'Duplicate' && row.parent_link === this.destination && row.reverse_relation === true;
 						return condition_1 || condition_2;
 					})
 				});

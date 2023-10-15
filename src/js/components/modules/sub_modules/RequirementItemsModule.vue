@@ -101,7 +101,7 @@ export default {
 	},
 	methods: {
 		createNewItem() {
-			var new_item_modal = new Modal(
+			const new_item_modal = new Modal(
 				document.getElementById("newItemModal")
 			);
 			new_item_modal.show();

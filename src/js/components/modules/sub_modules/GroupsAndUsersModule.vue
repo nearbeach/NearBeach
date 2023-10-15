@@ -173,13 +173,13 @@ export default {
 	mixins: [errorModalMixin, iconMixin],
 	methods: {
 		addNewGroup() {
-			var addGroupModal = new Modal(
+			const addGroupModal = new Modal(
 				document.getElementById("addGroupModal")
 			);
 			addGroupModal.show();
 		},
 		addNewUser() {
-			var addUserModal = new Modal(
+			const addUserModal = new Modal(
 				document.getElementById("addUserModal")
 			);
 			addUserModal.show();
