@@ -329,7 +329,7 @@ export default {
 	},
 	mounted() {
 		//Get data from the requirementResults and delegate to the Models
-		var requirement_results = this.requirementResults[0].fields;
+		const requirement_results = this.requirementResults[0].fields;
 
 		this.requirementScopeModel = requirement_results.requirement_scope;
 		this.requirementTitleModel = requirement_results.requirement_title;

@@ -299,14 +299,14 @@ export default {
 
 			if (this.v$.$invalid) {
 				//Show the error dialog and notify to the user that there were field missing.
-				var elem_cont =
+				const elem_cont =
 					document.getElementById("errorModalContent");
 
 				// Update the content
 				elem_cont.innerHTML = `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
 
 				// Show the modal
-				var errorModal = new Modal(
+				const errorModal = new Modal(
 					document.getElementById("errorModal")
 				);
 				errorModal.show();
@@ -316,7 +316,7 @@ export default {
 			}
 
 			//Open up the loading modal
-			var loadingModal = new Modal(
+			const loadingModal = new Modal(
 				document.getElementById("loadingModal")
 			);
 			loadingModal.show();
@@ -358,14 +358,14 @@ export default {
 					loadingModal.hide();
 
 					// Get the error modal
-					var elem_cont =
+					const elem_cont =
 						document.getElementById("errorModalContent");
 
 					// Update the content
 					elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new requirement item<hr>${error}`;
 
 					// Show the modal
-					var errorModal = new Modal(
+					const errorModal = new Modal(
 						document.getElementById("errorModal")
 					);
 					errorModal.show();
@@ -379,7 +379,7 @@ export default {
   },
 	mounted() {
 		//Get data from the requirementResults and delegate to the Models
-		var requirement_item_results =
+		const requirement_item_results =
 			this.requirementItemResults[0].fields;
 
 		this.requirementItemScopeModel =

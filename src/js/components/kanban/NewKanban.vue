@@ -216,7 +216,7 @@ export default {
 			this.checkingKanbanBoardName = true;
 
 			//Reset the timer if it exists
-			if (this.searchTimeout != "") {
+			if (this.searchTimeout !== "") {
 				//Stop the clock!
 				clearTimeout(this.searchTimeout);
 			}
@@ -304,7 +304,7 @@ export default {
 				)
 				.then((response) => {
 					//If the data came back empty - then the kanban board name is unique
-					this.uniqueKanbanBoardName = response.data.length == 0;
+					this.uniqueKanbanBoardName = response.data.length === 0;
 
 					//Checking kanban board name is finished
 					this.checkingKanbanBoardName = false;

@@ -4,7 +4,7 @@ export default {
             //obj is an object passed through with references to the original sources. We will manipulate these sources
 
             //Reset the timer if it exists
-            if (obj.searchTimeout != "") {
+            if (obj.searchTimeout !== "") {
                 //Stop the clock!
                 clearTimeout(obj.searchTimeout);
             }

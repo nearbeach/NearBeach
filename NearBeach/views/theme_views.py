@@ -1,6 +1,4 @@
-from NearBeach.forms import UserSettingsForm
 from NearBeach.models import UserSetting
-from NearBeach.views.user_setting_views import update_user_settings
 
 
 # Internal function
