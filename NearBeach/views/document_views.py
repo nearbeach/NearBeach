@@ -204,7 +204,7 @@ def document_remove(request, destination, location_id):
     form = DocumentRemoveForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     # Get document from the form
     document_update = form.cleaned_data["document_key"]
     document_update.is_deleted = True
@@ -425,7 +425,7 @@ def handle_document_permissions(
     # Apply the parent folder if required
     if parent_folder != 0:
         document_permission_submit.folder = parent_folder
-    
+
     # Save document permission
     document_permission_submit.save()
 
@@ -535,7 +535,7 @@ class AzureFileHanlder(FileHandler):
             settings.AZURE_STORAGE_CONNECTION_STRING
         )
         self._client_name = settings.AZURE_STORAGE_CONTAINER_NAME
-    
+
     def fetch(self, document_results):
         # Get container
         container_client = self._sevice_client.get_container_client(
