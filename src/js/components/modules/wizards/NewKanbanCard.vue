@@ -251,14 +251,14 @@ export default {
 			// If the model is blank OR the text already exists - turn disableAddButton to true
 			this.disableAddButton = false; //People can click the "Add" button
 
-			if (this.kanbanCardTextModel.length == 0) {
+			if (this.kanbanCardTextModel.length === 0) {
 				this.disableAddButton = true;
 			}
 
 			//Check to make sure it does not exist
 			const filtered_results = this.kanbanCardResults.filter((row) => {
 				return (
-					row.fields.kanban_card_text == this.kanbanCardTextModel
+					row.fields.kanban_card_text === this.kanbanCardTextModel
 				);
 			});
 
@@ -268,8 +268,8 @@ export default {
 
 			//If there are no rows or levels - we don't want the user to submit a card
 			if (
-				this.columnResults.length == 0 ||
-				this.levelResults.length == 0
+				this.columnResults.length === 0 ||
+				this.levelResults.length === 0
 			) {
 				this.disableAddButton = true;
 			}

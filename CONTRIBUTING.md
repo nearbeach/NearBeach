@@ -60,7 +60,7 @@ Each object shall have it's own folder structure within the respected location, 
 
 ## Setting up local dev environment
 
-Please follow the instructions in our documentation: [Setting up local dev environment](https://nearbeach.readthedocs.io/en/documentation/setup-dev-environment/easy_development_environment.html)
+Please follow the instructions in our documentation: [Setting up local dev environment](https://nearbeach.readthedocs.io/en/documentation/002-local-development-environment-setup/index.html)
 
 ## Donating
 

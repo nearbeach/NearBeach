@@ -291,7 +291,7 @@ export default {
 		getIcon(document) {
 			//If the document is a weblink - just return the link image
 			if (
-				document.document_key__document_url_location != "" &&
+				document.document_key__document_url_location !== "" &&
 				document.document_key__document_url_location !== null
 			) {
 				return this.icons.linkOut;
@@ -379,7 +379,7 @@ export default {
 		updateDocumentFilteredList() {
 			//Filter the results to contain only the documents in the current folder
 			this.documentFilteredList = this.documentList.filter((row) => {
-				return row.folder == this.currentFolder;
+				return row.folder === this.currentFolder;
 			}).sort((a, b) => {
 				return a.document_key__document_description > b.document_key__document_description;
 			});
@@ -395,7 +395,7 @@ export default {
 		updateFolderFilteredList() {
 			//Filter the results to contain only the folders in the current folder
 			this.folderFilteredList = this.folderList.filter((row) => {
-				return row.fields.parent_folder == this.currentFolder;
+				return row.fields.parent_folder === this.currentFolder;
 			}).sort((a, b) => {
 				return a.fields.folder_description > b.fields.folder_description;
 			});

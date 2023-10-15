@@ -222,7 +222,7 @@ export default {
 			//Loop through the results - when the id's match. Update the data.
 			this.localKanbanCardResults.forEach((row, index) => {
 				//Check to see if the primary keys match - if they do update the data
-				if (row.pk == data.kanban_card_id) {
+				if (row.pk === data.kanban_card_id) {
 					this.localKanbanCardResults[
 						index
 						].fields.kanban_card_text = data.kanban_card_text;

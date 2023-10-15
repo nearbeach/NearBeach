@@ -195,7 +195,7 @@ export default {
 		doubleClickCard(data) {
 			//Filter out the data we want to send up stream
 			const filtered_data = this.masterList.filter((row) => {
-				return row.pk == data.target.dataset.cardId;
+				return row.pk === data.target.dataset.cardId;
 			})[0];
 
 			//Setup data to send upstream
@@ -248,7 +248,7 @@ export default {
 		singleClickCard(data) {
 			//Filter out the data we want to send up stream
 			const filtered_data = this.masterList.filter((row) => {
-				return row.pk == data;
+				return row.pk === data;
 			})[0];
 
 			//Setup data to send upstream
@@ -259,8 +259,8 @@ export default {
 		newCardInfo() {
 			//Only add the card if the column and the level match
 			if (
-				this.columnId == this.newCardInfo[0].fields.kanban_column &&
-				this.levelId == this.newCardInfo[0].fields.kanban_level
+				this.columnId === this.newCardInfo[0].fields.kanban_column &&
+				this.levelId === this.newCardInfo[0].fields.kanban_level
 			) {
 				//The new card is for this level and column. Add it to the masterList
 				this.masterList.push(this.newCardInfo[0]);
@@ -275,7 +275,7 @@ export default {
 			//Conditions
 			// 1 row primary key is the same as openCardOnLoad value
 			// 2 row is not a linked object, i.e. not value under project, task, or requirement field
-			const condition_1 = row.pk == this.openCardOnLoad;
+			const condition_1 = row.pk === this.openCardOnLoad;
 			const condition_2 = this.isLinkedObject(row).length === 0;
 
 			return condition_1 && condition_2;

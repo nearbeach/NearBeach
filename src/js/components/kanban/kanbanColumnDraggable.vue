@@ -270,7 +270,7 @@ export default {
 		doubleClickCard(data) {
 			//Filter out the data we want to send up stream
 			const filtered_data = this.masterList.filter((row) => {
-				return row.pk == data.target.dataset.cardId;
+				return row.pk === data.target.dataset.cardId;
 			})[0];
 
 			//Setup data to send upstream
@@ -298,8 +298,8 @@ export default {
 			let filter_new_column = this.allCards.filter((row) => {
 				//return where column = new_card_column, and sort level >= new sort level
 				return (
-					row.fields.kanban_column == new_card_column &&
-					row.fields.kanban_level == new_card_level &&
+					row.fields.kanban_column === new_card_column &&
+					row.fields.kanban_level === new_card_level &&
 					row.fields.kanban_card_sort_number >=
 					new_card_sort_number
 				);
@@ -321,8 +321,8 @@ export default {
 			let filter_old_column = this.allCards.filter((row) => {
 				//Return where column = old_card_column, and the sort level >= old sort level
 				return (
-					row.fields.kanban_column == old_card_column &&
-					row.fields.kanban_level == old_card_level &&
+					row.fields.kanban_column === old_card_column &&
+					row.fields.kanban_level === old_card_level &&
 					row.fields.kanban_card_sort_number >=
 					old_card_sort_number
 				);
@@ -330,7 +330,7 @@ export default {
 
 			//Loop through the filter old columns and add the required data to return array
 			filter_old_column.forEach((row) => {
-				if (row.pk == card_id) {
+				if (row.pk === card_id) {
 					//Move this to the new column
 					return_array.push({
 						card_id: row.pk,
@@ -394,7 +394,7 @@ export default {
 
 			//Loop through the filtered data, and apply the changes required
 			filtered_data.forEach((row) => {
-				if (row.pk == card_id) {
+				if (row.pk === card_id) {
 					//Make sure this card has the new sort number
 					return_array.push({
 						card_id: row.pk,
@@ -547,7 +547,7 @@ export default {
 		singleClickCard(data) {
 			//Filter out the data we want to send up stream
 			const filtered_data = this.masterList.filter((row) => {
-				return row.pk == data;
+				return row.pk === data;
 			})[0];
 
 			//Setup data to send upstream
@@ -558,8 +558,8 @@ export default {
 		newCardInfo() {
 			//Only add the card if the column and the level match
 			if (
-				this.columnId == this.newCardInfo[0].fields.kanban_column &&
-				this.levelId == this.newCardInfo[0].fields.kanban_level
+				this.columnId === this.newCardInfo[0].fields.kanban_column &&
+				this.levelId === this.newCardInfo[0].fields.kanban_level
 			) {
 				//The new card is for this level and column. Add it to the masterList
 				this.masterList.push(this.newCardInfo[0]);
@@ -574,7 +574,7 @@ export default {
 			//Conditions
 			// 1 row primary key is the same as openCardOnLoad value
 			// 2 row is not a linked object, i.e. not value under project, task, or requirement field
-			const condition_1 = row.pk == this.openCardOnLoad;
+			const condition_1 = row.pk === this.openCardOnLoad;
 			const condition_2 = this.isLinkedObject(row).length === 0;
 
 			return condition_1 && condition_2;

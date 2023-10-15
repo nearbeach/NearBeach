@@ -381,7 +381,7 @@ export default {
 			});
 
 			//If there are no results - default to ---
-			if (single_user.length == 0) {
+			if (single_user.length === 0) {
 				return "---";
 			}
 
@@ -433,7 +433,7 @@ export default {
 					this.changeTaskList = this.changeTaskList.map(
 						(changeTask) => {
 							//The change task that we have just updated :)
-							if (changeTask.change_task_id == change_task_id) {
+							if (changeTask.change_task_id === change_task_id) {
 								//Update the change Task Status
 								changeTask.change_task_status =
 									change_task_status;
