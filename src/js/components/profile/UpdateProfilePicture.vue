@@ -97,7 +97,7 @@ export default {
 			//Contact the API to get the location of the new image
 			axios
 				.get(
-					`get_profile_picture/`,
+					"get_profile_picture/",
 					{}
 				)
 				.then((response) => {

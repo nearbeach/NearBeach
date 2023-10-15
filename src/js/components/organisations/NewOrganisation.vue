@@ -246,7 +246,7 @@ export default {
 			//Use Axios to send the data
 			//Get the data to send
 			axios
-				.post(`save/`, this.dataToSend())
+				.post("save/", this.dataToSend())
 				.then((response) => {
 					//Go to the url sent back
 					window.location.href = `${this.rootUrl}organisation_information/${response.data[0].pk}/`;

@@ -60,7 +60,7 @@ export const kanbanSettings = {
 
 
             axios.post(
-                `/user_settings/update/`,
+                "/user_settings/update/",
                 data_to_send,
             );
         }
