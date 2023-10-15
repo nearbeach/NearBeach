@@ -61,7 +61,7 @@ export default {
 			data_to_send.set("change_task_required_by", requiredBy);
 
 			axios.post(
-				`update/required_by/`,
+				"update/required_by/",
 				data_to_send,
 			).then((response) => {
 				//Add code telling user data is updated

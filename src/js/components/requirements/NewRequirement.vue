@@ -289,7 +289,7 @@ export default {
 
 			// Insert a new row for each group list item
 			this.groupModel.forEach((row, index) => {
-				data_to_send.append(`group_list`, row);
+				data_to_send.append("group_list", row);
 			});
 
 			// Use Axion to send the data

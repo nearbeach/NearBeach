@@ -64,7 +64,7 @@ export default {
 			data_to_send.set("user_group_id", this.permissionDeleteId);
 
 			axios.post(
-				`/user_information/remove_permission/`,
+				"/user_information/remove_permission/",
 				data_to_send
 			).catch((error) => {
 				this.showErrorModal(error, this.destination);

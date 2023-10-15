@@ -569,7 +569,7 @@ export default {
 
 				// Insert a new row for each group list item
 				this.localPropertyList.forEach((row, index) => {
-					data_to_send.append(`item`, row.id);
+					data_to_send.append("item", row.id);
 				});
 
 				axios

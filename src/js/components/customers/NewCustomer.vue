@@ -214,7 +214,7 @@ export default {
 					document.getElementById("errorModalContent");
 
 				// Update the content
-				elem_cont.innerHTML = `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
+				elem_cont.innerHTML = "<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.";
 
 				// Show the modal
 				const errorModal = new Modal(
