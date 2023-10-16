@@ -335,87 +335,32 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     # Update the card data
     kanban_card_update.kanban_column = form.cleaned_data["new_card_column"]
     kanban_card_update.kanban_level = form.cleaned_data["new_card_level"]
-    kanban_card_update.kanban_card_sort_number = form.cleaned_data[
-        "new_card_sort_number"
-    ]
     kanban_card_update.save()
 
     """
     Update the sort order
     ~~~~~~~~~~~~~~~~~~~~~
-
-    If both the old and new level/column destination are the same, we take the difference between the two values
-    Otherwise we apply two sort orders to both the old and the new
+   
+    The front end will send the following data;
+    - new_destination
+    - old_destination
+    
+    This is a ()set of kanban cards that are in the correct order. We'll loop through these cards and update them.
+    
+    The old destination ()set is optional.
     """
-    if (
-        form.cleaned_data["new_card_column"] == form.cleaned_data["old_card_column"]
-        and form.cleaned_data["new_card_level"] == form.cleaned_data["old_card_level"]
-    ):
-        # The card has stayed in the same column/level
-        resort_array = KanbanCard.objects.filter(
-            Q(
-                Q(
-                    is_deleted=False,
-                    kanban_card_sort_number__range=[
-                        form.cleaned_data["old_card_sort_number"],
-                        form.cleaned_data["new_card_sort_number"],
-                    ],
-                )
-                | Q(
-                    is_deleted=False,
-                    kanban_card_sort_number__range=[
-                        form.cleaned_data["new_card_sort_number"],
-                        form.cleaned_data["old_card_sort_number"],
-                    ],
-                )
-            )
-            & ~Q(
-                kanban_card_id=kanban_card_id,
-            )
-        ).order_by("kanban_card_sort_number")
+    new_destination = form.cleaned_data['new_destination']
+    old_destination = form.cleaned_data['old_destination']
 
-        # Determine if we are using a positive or negative delta - using math
-        delta = (-1) * (
-            form.cleaned_data["new_card_sort_number"]
-            > form.cleaned_data["old_card_sort_number"]
-        ) + (
-            form.cleaned_data["new_card_sort_number"]
-            < form.cleaned_data["old_card_sort_number"]
-        )
+    for index, card in enumerate(new_destination):
+        kanban_card_update = KanbanCard.objects.get(kanban_card_id=kanban_card_id)
+        kanban_card_update.kanban_card_sort_number = index
+        kanban_card_update.save()
 
-        # Send the data away to get manipulated
-        update_sort_number(resort_array, delta)
-    else:
-        """
-        The cards have been moved outside the origianl column/level. We need to update both the old and new location's
-        sort orders.
-
-        The old location will have a delta -1, to move the higher cards into the place left by the card
-
-        The new location will have a delta +1, to move the higher cards away, to create a space for the card
-        """
-        old_resort_array = KanbanCard.objects.filter(
-            Q(
-                is_deleted=False,
-                kanban_card_sort_number__gte=form.cleaned_data["old_card_sort_number"],
-            )
-            & ~Q(
-                kanban_card_id=kanban_card_id,
-            )
-        ).order_by("kanban_card_sort_number")
-
-        new_resort_array = KanbanCard.objects.filter(
-            Q(
-                is_deleted=False,
-                kanban_card_sort_number__gte=form.cleaned_data["new_card_sort_number"],
-            )
-            & ~Q(
-                kanban_card_id=kanban_card_id,
-            )
-        ).order_by("kanban_card_sort_number")
-
-        update_sort_number(old_resort_array, -1)
-        update_sort_number(new_resort_array, 1)
+    for index, card in enumerate(old_destination):
+        kanban_card_update = KanbanCard.objects.get(kanban_card_id=kanban_card_id)
+        kanban_card_update.kanban_card_sort_number = index
+        kanban_card_update.save()
 
     return HttpResponse("")
 

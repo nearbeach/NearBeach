@@ -137,23 +137,7 @@ export default {
 			rootUrl: "getRootUrl",
 		}),
 		masterList() {
-			//Filter the data
-			let return_array = this.allCards.filter((card) => {
-				return (
-					parseInt(card.fields.kanban_column) === this.columnId &&
-					parseInt(card.fields.kanban_level) === this.levelId
-				);
-			});
-
-			//Make sure it is sorted
-			return_array = return_array.sort((a, b) => {
-				return (
-					a.fields.kanban_card_sort_number -
-					b.fields.kanban_card_sort_number
-				);
-			});
-
-			return return_array;
+			return this.filterCards(this.columnId, this.levelId);
 		},
 	},
 	mixins: [iconMixin],
@@ -188,84 +172,85 @@ export default {
 			});
 		},
 		checkCardOrder() {
-			/* Due to an issue - sometimes some of the cards will contain a -1 for the sort order. This sadly
-			throws a spanner into the dragging and dropping functionality. When the board boots up, we will check to
-			make sure the cards are in order. If they are not - we adjust them and upload the changes.
-
-			Checks
-			~~~~~~
-			1. Make sure there are no values under 0
-			2. Make sure the lowest value is 0
-			3. Make sure the highest value is length of the set minus 1.
-			 */
-
-			//Don't worry about it when masterList is empty
-			if (this.masterList.length === 0) {
-				//Escape
-				return;
-			}
-
-			//Get the list of values for sort array
-			const sort_array = this.masterList.map((row) => {
-				return row.fields.kanban_card_sort_number;
-			});
-
-			//Get the min and max
-			const min_value = Math.min.apply(null, sort_array),
-				max_value = Math.max.apply(null, sort_array);
-
-			if (
-				min_value === 0 &&
-				max_value === this.masterList.length - 1
-			) {
-				//Nothing to do :) YAY
-				return;
-			}
-
-			//Show error screen
-			document.getElementById("sort_error").style.display = "flex";
-
-			//There is an issue - we need to fix all the variables and send that information upstream to the
-			//backend AND the VueX
-			//Loop through the data
-			this.masterList.forEach((row, index) => {
-				//Setup data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set(
-					"new_card_column",
-					this.columnId.toString()
-				);
-				data_to_send.set("new_card_level", this.levelId.toString());
-				data_to_send.set("new_card_sort_number", index.toString());
-				data_to_send.set(
-					"old_card_column",
-					row.fields.kanban_column
-				);
-				data_to_send.set("old_card_level", row.fields.kanban_level);
-				data_to_send.set(
-					"old_card_sort_number",
-					row.fields.kanban_card_sort_number
-				);
-				data_to_send.set("card_id", row.pk);
-
-				//Update kanban card
-				this.$store.commit({
-					type: "updateKanbanCard",
-					card_id: row.pk,
-					kanban_column: this.columnId,
-					kanban_level: this.levelId,
-					kanban_card_sort_number: index,
-				});
-
-				//Use axios to send the data to the database
-				axios.post(
-					`${this.rootUrl}kanban_information/${row.pk}/move_card/`,
-					data_to_send
-				);
-			});
-
-			//Done - hide the error screen
-			document.getElementById("sort_error").style.display = "";
+			// /* Due to an issue - sometimes some of the cards will contain a -1 for the sort order. This sadly
+			// throws a spanner into the dragging and dropping functionality. When the board boots up, we will check to
+			// make sure the cards are in order. If they are not - we adjust them and upload the changes.
+			//
+			// Checks
+			// ~~~~~~
+			// 1. Make sure there are no values under 0
+			// 2. Make sure the lowest value is 0
+			// 3. Make sure the highest value is length of the set minus 1.
+			//  */
+			//
+			// //Don't worry about it when masterList is empty
+			// if (this.masterList.length === 0) {
+			// 	//Escape
+			// 	return;
+			// }
+			//
+			// //Get the list of values for sort array
+			// const sort_array = this.masterList.map((row) => {
+			// 	return row.fields.kanban_card_sort_number;
+			// });
+			//
+			// //Get the min and max
+			// const min_value = Math.min.apply(null, sort_array),
+			// 	max_value = Math.max.apply(null, sort_array);
+			//
+			// if (
+			// 	min_value === 0 &&
+			// 	max_value === this.masterList.length - 1
+			// ) {
+			// 	//Nothing to do :) YAY
+			// 	return;
+			// }
+			//
+			// //Show error screen
+			// document.getElementById("sort_error").style.display = "flex";
+			//
+			// //There is an issue - we need to fix all the variables and send that information upstream to the
+			// //backend AND the VueX
+			// //Loop through the data
+			// this.masterList.forEach((row, index) => {
+			// 	//Setup data_to_send
+			// 	const data_to_send = new FormData();
+			// 	data_to_send.set(
+			// 		"new_card_column",
+			// 		this.columnId.toString()
+			// 	);
+			// 	data_to_send.set("new_card_level", this.levelId.toString());
+			// 	data_to_send.set("new_card_sort_number", index.toString());
+			// 	data_to_send.set(
+			// 		"old_card_column",
+			// 		row.fields.kanban_column
+			// 	);
+			// 	data_to_send.set("old_card_level", row.fields.kanban_level);
+			// 	data_to_send.set(
+			// 		"old_card_sort_number",
+			// 		row.fields.kanban_card_sort_number
+			// 	);
+			// 	data_to_send.set("card_id", row.pk);
+			//
+			// 	//Update kanban card
+			// 	this.$store.commit({
+			// 		type: "updateKanbanCard",
+			// 		card_id: row.pk,
+			// 		kanban_column: this.columnId,
+			// 		kanban_level: this.levelId,
+			// 		kanban_card_sort_number: index,
+			// 	});
+			//
+			// 	//Use axios to send the data to the database
+			// 	console.log("Kanban Column Draggable - 2 | ", row);
+			// 	axios.post(
+			// 		`${this.rootUrl}kanban_information/${row.pk}/move_card/`,
+			// 		data_to_send
+			// 	);
+			// });
+			//
+			// //Done - hide the error screen
+			// document.getElementById("sort_error").style.display = "";
 		},
 		doubleClickCard(data) {
 			//Filter out the data we want to send up stream
@@ -416,6 +401,25 @@ export default {
 
 			return return_array;
 		},
+		filterCards(column_id, level_id) {
+			//Filter the data
+			let return_array = this.allCards.filter((card) => {
+				return (
+					parseInt(card.fields.kanban_column) === column_id &&
+					parseInt(card.fields.kanban_level) === level_id
+				);
+			});
+
+			//Make sure it is sorted
+			return_array = return_array.sort((a, b) => {
+				return (
+					a.fields.kanban_card_sort_number -
+					b.fields.kanban_card_sort_number
+				);
+			});
+
+			return return_array;
+		},
 		isLinkedObject(object) {
 			let results = "";
 
@@ -431,6 +435,13 @@ export default {
 			we take the difference between the two values. Otherwise we apply
 			two sort orders to both the old and the new*/
 
+			this.$store.dispatch("kanbanCardMoved", {
+				event: event,
+			});
+
+			return;
+
+
 			//Get the y=data
 			var new_elem = event.to,
 				old_elem = event.from,
@@ -444,6 +455,9 @@ export default {
 				old_card_level = old_elem.dataset.level,
 				old_card_sort_number = event.oldIndex,
 				column_property = new_elem.dataset.columnProperty;
+
+			//For the unlucky chance a sort number is less than 0.
+			if (new_card_sort_number < 0) new_card_sort_number = 0;
 
 			//Create data_to_send
 			const data_to_send = new FormData();
@@ -481,6 +495,18 @@ export default {
 					kanban_level: row.kanban_level,
 					kanban_card_sort_number: row.kanban_card_sort_number,
 				});
+			});
+
+			//Get the new sort orders for the new destination and the old destination
+			const new_destination = this.filterCards(new_card_column, new_card_level);
+			console.log("New Destination: ", new_destination);
+			new_destination.forEach(row => {
+				data_to_send.append('new_destination', row.pk);
+			});
+			const old_destination = this.filterCards(old_card_column, old_card_level);
+			console.log("Old Destination: ", old_destination);
+			old_destination.forEach(row => {
+				data_to_send.append('old_destination', row.pk);
 			});
 
 			//Use axios to send the data to the database

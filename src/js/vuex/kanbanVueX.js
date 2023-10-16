@@ -62,7 +62,102 @@ export const moduleKanban = {
             state.openCardOnLoad = payload.openCardOnLoad;
         },
     },
-    actions: {},
+    actions: {
+        async dragDifferentColumn({dispatch, commit, state}, payload) {
+            //Required Data
+            const event = payload.event;
+
+            var new_elem = event.to,
+                old_elem = event.from,
+                card_id = event.item.dataset.cardId;
+
+            //Setup variables (for shorthand)
+            let new_card_column = new_elem.dataset.column,
+                new_card_level = new_elem.dataset.level,
+                new_card_sort_number = event.newIndex - 1,
+                old_card_column = old_elem.dataset.column,
+                old_card_level = old_elem.dataset.level;
+
+            // 1. Grab all old column/level location cards - and reorder
+            const reorder_old_cards = state.kanbanCardResults.filter(row => {
+                //The columns, levels match. And the primary key is NOT the card id
+                const condition_1 = row.fields.column === old_card_column;
+                const condition_2 = row.fields.level === old_card_level;
+                const condition_3 = row.pk !== card_id;
+
+                return condition_1 && condition_2 && condition_3;
+            }).sort((a, b) => a.fields.kanban_card_sort_number - b.fields.kanban_card_sort_number);
+
+            // 2. Update the ordering
+            reorder_old_cards.forEach((row, index) => {
+                this.$store.commit({
+                    type: "updateKanbanCard",
+                    card_id: row.pk,
+                    kanban_card_sort_number: index,
+                });
+            });
+
+            // 3. Update the card's information
+            commit({
+                type: "updateKanbanCard",
+                card_id: card_id,
+                kanban_column: new_card_column,
+                kanban_level: new_card_level,
+                kanban_card_sort_number: new_card_sort_number,
+            });
+
+            // 4. Filter for the new column/level location cards
+            // For all cards that have a sort order >= new_card_sort_number
+            // We want to increase by 1
+            const reorder_new_cards = state.kanbanCardResults.filter(row => {
+                //The columns, levels match. And the primary key is NOT the card id
+                const condition_1 = row.fields.column === new_card_column;
+                const condition_2 = row.fields.level === new_card_level;
+                const condition_3 = row.pk !== card_id;
+
+                return condition_1 && condition_2 && condition_3;
+            }).sort((a, b) => a.fields.kanban_card_sort_number - b.fields.kanban_card_sort_number);
+
+            // 2. Update the ordering
+            reorder_new_cards.forEach((row, index) => {
+                // If the index is equal or greater than the card sort number - we'll have to add +1 to it.
+                let i = index;
+                if (index >= new_card_sort_number) i = i + 1;
+
+                commit({
+                    type: "updateKanbanCard",
+                    card_id: row.pk,
+                    kanban_card_sort_number: i,
+                });
+            });
+        },
+        async dragSameColumn({dispatch, commit}, payload) {},
+        async kanbanCardMoved({dispatch}, payload) {
+            const event = payload.event;
+
+            if (event === undefined) return;
+
+            //Determine if we are dragging to the same or different location
+            var new_elem = event.to,
+                old_elem = event.from;
+
+            //Setup variables (for shorthand)
+            let new_card_column = new_elem.dataset.column,
+                new_card_level = new_elem.dataset.level,
+                old_card_column = old_elem.dataset.column,
+                old_card_level = old_elem.dataset.level;
+
+            //Depending if the card moves columns depends what we do
+            if (
+                new_card_column === old_card_column &&
+                new_card_level === old_card_level
+            ) {
+                await dispatch("dragSameColumn", payload);
+            } else {
+                await dispatch("dragDifferentColumn", payload);
+            }
+        },
+    },
     getters: {
         getCards: (state) => {
             return state.kanbanCardResults;
