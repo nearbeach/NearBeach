@@ -327,7 +327,7 @@ export default {
 			const data_to_send = new FormData();
 
 			//Get the modal to extract data from
-			var self_modal = document.getElementById("newLinkModal");
+			const self_modal = document.getElementById("newLinkModal");
 
 			//Depending on what the object model is - depends what is sent
 			data_to_send.set(

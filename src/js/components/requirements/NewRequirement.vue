@@ -289,7 +289,7 @@ export default {
 
 			// Insert a new row for each group list item
 			this.groupModel.forEach((row, index) => {
-				data_to_send.append(`group_list`, row);
+				data_to_send.append("group_list", row);
 			});
 
 			// Use Axion to send the data
@@ -301,7 +301,7 @@ export default {
 				})
 				.catch((error) => {
 					// Get the error modal
-					var elem_cont =
+					const elem_cont =
 						document.getElementById("errorModalContent");
 
 					// Update the content
@@ -309,7 +309,7 @@ export default {
 
 					// Show the modal
 					//var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-					var errorModal = new Modal(
+					const errorModal = new Modal(
 						document.getElementById("errorModal")
 					);
 					errorModal.show();

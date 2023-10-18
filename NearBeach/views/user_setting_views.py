@@ -18,8 +18,6 @@ def create_user_settings(request, form):
 
     user_setting_create.save()
 
-    return
-
 
 def delete_user_settings(request):
     # Get form data

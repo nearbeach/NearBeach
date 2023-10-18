@@ -323,7 +323,7 @@ export default {
 				return;
 			}
 
-			var change_task_seconds =
+			const change_task_seconds =
 				parseInt(this.changeEndDateModel) -
 				parseInt(this.changeStartDateModel);
 

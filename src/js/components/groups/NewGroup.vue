@@ -179,7 +179,7 @@ export default {
 				)
 				.then((response) => {
 					// Update the uniqueGroupName
-					this.uniqueGroupName = response.data.length == 0;
+					this.uniqueGroupName = response.data.length === 0;
 
 					// Hide the checking group name
 					this.checkingGroupName = false;

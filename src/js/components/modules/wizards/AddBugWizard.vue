@@ -209,7 +209,7 @@ export default {
 		},
 		startSearchTimer() {
 			//Destroy the first timer if it exists
-			if (this.searchTimer != "") {
+			if (this.searchTimer !== "") {
 				clearTimeout(this.searchTimer);
 			}
 
@@ -251,14 +251,15 @@ export default {
 		},
 		submitBug(bug_id) {
 			//Tell user you are adding the bug
-			var add_bug_element = document.getElementById(
+			const add_bug_element = document.getElementById(
 				`bug_no_${bug_id}`
 			);
 			add_bug_element.innerHTML = "Adding Bug";
 
 			//Filter for the bug information out of the bugResults
-			var filted_bug_results = this.bugResults.filter((row) => {
+			const filted_bug_results = this.bugResults.filter((row) => {
 				return row.id == bug_id;
+
 			});
 
 			//Setup data
@@ -291,7 +292,7 @@ export default {
 	},
 	mounted() {
 		//If the location is inside the array - don't bother getting the data
-		var escape_array = ["requirement_item"];
+		const escape_array = ["requirement_item"];
 		if (escape_array.indexOf(this.destination) >= 0) return;
 
 		//Wait 200ms before getting data
