@@ -469,7 +469,7 @@ class LocalFileHandler(FileHandler):
             # Send file to user
             return FileResponse(file)
 
-    def upload(self, upload_document, document_results, file):
+    def upload(self, upload_document, document_results):
         """
         This function will upload the file and store it in the private folder destination under a subfolder that
         contains the same document_key value.
@@ -523,7 +523,7 @@ class S3FileHandler(FileHandler):
             filename=document_results.document_description,
         )
 
-    def upload(self, upload_document, document_results, file):
+    def upload(self, upload_document, document_results):
         # Use boto to upload the file
         # Upload a new file
         self._s3.upload_fileobj(
@@ -558,7 +558,7 @@ class AzureFileHanlder(FileHandler):
             filename=document_results.document_description,
         )
 
-    def upload(self, upload_document, document_results, file):
+    def upload(self, upload_document, document_results):
         # Create the blob client using the private file path name as the name for the blob
         blob_client = self._sevice_client.get_blob_client(
             container=self._client_name, 
