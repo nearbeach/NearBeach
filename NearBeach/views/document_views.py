@@ -449,12 +449,12 @@ def handle_document_permissions(
 class FileHandler:
 
     @staticmethod
-    def upload( upload_document, document_results, file):
+    def upload(_upload_document, _document_results, _file):
         """not implemented"""
         return NotImplemented
 
     @staticmethod
-    def fetch( document_results):
+    def fetch(_document_results):
         """not implemented"""
         return NotImplemented
 
