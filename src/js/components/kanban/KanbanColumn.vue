@@ -183,7 +183,6 @@ export default {
 				});
 
 				//Use axios to send the data to the database
-				console.log("Kanban Column");
 				axios.post(
 					`${this.rootUrl}kanban_information/${row.pk}/move_card/`,
 					data_to_send

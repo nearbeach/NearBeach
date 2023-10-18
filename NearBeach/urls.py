@@ -242,6 +242,11 @@ urlpatterns = [
         name="archive_kanban_cards",
     ),
     path(
+        "kanban_information/fix_card_ordering/",
+        kanban_views.fix_card_ordering,
+        name="fix_card_ordering",
+    ),
+    path(
         "kanban_information/<int:kanban_board_id>/",
         kanban_views.kanban_information,
         name="kanban_information",

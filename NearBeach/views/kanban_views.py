@@ -21,6 +21,7 @@ from NearBeach.decorators.check_user_permissions import (
 )
 from NearBeach.forms import (
     AddKanbanLinkForm,
+    FixCardOrderingForm,
     KanbanCardArchiveForm,
     CheckKanbanBoardName,
     MoveKanbanCardForm,
@@ -135,6 +136,25 @@ def check_kanban_board_name(request, *args, **kwargs):
         serializers.serialize("json", kanban_board_results),
         content_type="application/json",
     )
+
+
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
+@check_user_permissions(min_permission_level=1, object_lookup="kanban_board_id")
+def fix_card_ordering(request, *args, **kwargs):
+    form = FixCardOrderingForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the kanban cards data
+    kanban_cards = form.cleaned_data['kanban_cards']
+
+    # Loop through each card - and update it's order
+    for index, single_card in enumerate(kanban_cards):
+        single_card.kanban_card_sort_number = index
+        single_card.save()
+
+    return HttpResponse("")
 
 
 # Internal function
@@ -353,14 +373,12 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     old_destination = form.cleaned_data['old_destination']
 
     for index, card in enumerate(new_destination):
-        kanban_card_update = KanbanCard.objects.get(kanban_card_id=kanban_card_id)
-        kanban_card_update.kanban_card_sort_number = index
-        kanban_card_update.save()
+        card.kanban_card_sort_number = index
+        card.save()
 
     for index, card in enumerate(old_destination):
-        kanban_card_update = KanbanCard.objects.get(kanban_card_id=kanban_card_id)
-        kanban_card_update.kanban_card_sort_number = index
-        kanban_card_update.save()
+        card.kanban_card_sort_number = index
+        card.save()
 
     return HttpResponse("")
 

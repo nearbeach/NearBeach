@@ -326,6 +326,13 @@ class DocumentUploadForm(forms.ModelForm):
         }
 
 
+class FixCardOrderingForm(forms.Form):
+    kanban_cards = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=KanbanCard.objects.all(),
+    )
+
+
 class KanbanCardForm(forms.ModelForm):
     kanban_card_id = forms.ModelChoiceField(
         required=True,
