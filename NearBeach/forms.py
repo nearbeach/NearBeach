@@ -326,6 +326,13 @@ class DocumentUploadForm(forms.ModelForm):
         }
 
 
+class FixCardOrderingForm(forms.Form):
+    kanban_cards = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=KanbanCard.objects.all(),
+    )
+
+
 class KanbanCardForm(forms.ModelForm):
     kanban_card_id = forms.ModelChoiceField(
         required=True,
@@ -394,6 +401,7 @@ class MoveKanbanCardForm(forms.Form):
     # Get Query Sets
     kanban_column_results = KanbanColumn.objects.all()
     kanban_level_results = KanbanLevel.objects.all()
+    kanban_card_results = KanbanCard.objects.all()
 
     # New card information
     new_card_column = forms.ModelChoiceField(
@@ -404,18 +412,17 @@ class MoveKanbanCardForm(forms.Form):
         required=True,
         queryset=kanban_level_results,
     )
-    new_card_sort_number = forms.IntegerField()
 
-    # Old card information
-    old_card_column = forms.ModelChoiceField(
+    # Kanban new and old cells + order of cards within
+    new_destination = forms.ModelMultipleChoiceField(
         required=True,
-        queryset=kanban_column_results,
+        queryset=kanban_card_results,
     )
-    old_card_level = forms.ModelChoiceField(
-        required=True,
-        queryset=kanban_level_results,
+
+    old_destination = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=kanban_card_results,
     )
-    old_card_sort_number = forms.IntegerField()
 
 
 class NewChangeTaskForm(forms.ModelForm):
