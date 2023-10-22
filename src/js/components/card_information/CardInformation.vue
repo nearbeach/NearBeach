@@ -241,6 +241,19 @@ export default {
 			data_to_send.set("kanban_card_id", all_data.cardId);
 			data_to_send.set("kanban_card_priority", all_data.cardPriority);
 
+      //If there is new_destination or old_destination, we want to send that data into the backend too
+      if (data.new_destination !== undefined) {
+        data.new_destination.forEach((row) => {
+          data_to_send.append("new_destination", row.pk);
+        });
+      }
+
+      if (data.old_destination !== undefined) {
+        data.old_destination.forEach((row) => {
+          data_to_send.append("old_destination", row.pk);
+        });
+      }
+
 			//Use Axios to send data to backend
 			axios
 				.post(
@@ -254,9 +267,9 @@ export default {
 						kanban_card_text: all_data.cardTitle,
 						kanban_card_description:
 						all_data.cardDescriptionModel,
-						kanban_column: all_data.cardColumn,
-						kanban_level: all_data.cardLevel,
-						kanban_card_priority: all_data.cardPriority,
+						// kanban_column: all_data.cardColumn,
+						// kanban_level: all_data.cardLevel,
+						// kanban_card_priority: all_data.cardPriority,
 					});
 
 					//Only close if data.close_modal is true

@@ -348,6 +348,14 @@ class KanbanCardForm(forms.ModelForm):
         required=True,
         queryset=KanbanLevel.objects.all(),
     )
+    new_destination = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=KanbanCard.objects.all(),
+    )
+    old_destination = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=KanbanCard.objects.all(),
+    )
 
     class Meta:
         model = KanbanCard

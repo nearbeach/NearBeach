@@ -25,7 +25,7 @@
 					 v-bind:data-card-id="element.pk"
 					 v-bind:data-sort-number="element.fields.kanban_card_sort_number"
 				></div>
-				<Icon v-if="isLinkedObject(element).length > 0"Reimplementation of the kanban 
+				<Icon v-if="isLinkedObject(element).length > 0"
 					  v-bind:icon="icons.linkOut"
 					  v-bind:data-card-id="element.pk"
 					  v-bind:data-sort-number="element.fields.kanban_card_sort_number"
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import axios from "axios";Reimplementation of the kanban 
+import axios from "axios";
 import {Icon} from "@iconify/vue";
 import draggable from "vuedraggable";
 
