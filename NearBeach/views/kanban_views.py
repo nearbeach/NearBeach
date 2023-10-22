@@ -373,8 +373,12 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     old_destination = form.cleaned_data['old_destination']
 
     for index, card in enumerate(new_destination):
-        card.kanban_card_sort_number = index
-        card.save()
+        if card.kanban_card_id == kanban_card_update.kanban_card_id:
+            kanban_card_update.kanban_card_sort_number = index
+            kanban_card_update.save()
+        else:
+            card.kanban_card_sort_number = index
+            card.save()
 
     for index, card in enumerate(old_destination):
         card.kanban_card_sort_number = index
