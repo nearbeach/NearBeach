@@ -127,7 +127,7 @@ export default {
 	},
 	methods: {
 		addNewBug() {
-			var addBugModal = new Modal(
+			const addBugModal = new Modal(
 				document.getElementById("addBugModal")
 			);
 			addBugModal.show();
@@ -144,7 +144,7 @@ export default {
 		},
 		getBugHyperLink(bug) {
 			if (
-				bug.bug_client__list_of_bug_client__bug_client_name ==
+				bug.bug_client__list_of_bug_client__bug_client_name ===
 				"Bugzilla"
 			) {
 				return `${bug.bug_client__bug_client_url}/show_bug.cgi?id=${bug.bug_code}`;
@@ -196,7 +196,7 @@ export default {
 	},
 	mounted() {
 		//If the location is inside the array - don't bother getting the data
-		var escape_array = ["requirement_item"];
+		const escape_array = ["requirement_item"];
 		if (escape_array.indexOf(this.destination) >= 0) return;
 
 		this.$nextTick(() => {

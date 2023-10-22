@@ -101,7 +101,7 @@ export default {
 	methods: {
 		newLink() {
 			//Open up the modal
-			var elem_modal = new Modal(
+			const elem_modal = new Modal(
 				document.getElementById("newChangeTaskLinkModal")
 			);
 

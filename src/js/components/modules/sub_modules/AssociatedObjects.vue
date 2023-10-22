@@ -212,7 +212,7 @@ export default {
 				});
 		},
 		getFriendlyDate(input_date) {
-			var options = {
+			const options = {
 					weekday: "long",
 					year: "numeric",
 					month: "long",

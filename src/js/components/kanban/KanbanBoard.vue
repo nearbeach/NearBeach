@@ -141,8 +141,8 @@ export default {
 			// that smaller size
 			if (columns_width < kanban_container_width) {
 				//Add in the width restrictions
-				var header_element = document.getElementsByClassName("kanban-edit-text")[0];
-				var elements = document.getElementsByClassName("kanban-level-div");
+				const header_element = document.getElementsByClassName("kanban-edit-text")[0];
+				const elements = document.getElementsByClassName("kanban-level-div");
 
 				//Loop through each element
 				Array.from(elements).forEach((element) => {
@@ -155,7 +155,7 @@ export default {
 				//The columns width is greater than the container width.
 				//So we need to use the scroll width of the container
 				const scroll_width = container_element.scrollWidth;
-				var header_element = document.getElementsByClassName("kanban-edit-text")[0];
+				const header_element = document.getElementsByClassName("kanban-edit-text")[0];
 				let elements = document.getElementsByClassName("kanban-level-div");
 
 				//Loop through each element
@@ -169,7 +169,7 @@ export default {
 		},
 		scrollProcedure() {
 			//Make sure the kanban-sticky-row matches the scroll left for the kanban-container
-			var kanban_sticky =
+			const kanban_sticky =
 					document.getElementsByClassName("kanban-sticky-row")[0],
 				kanban_container =
 					document.getElementsByClassName("kanban-container")[0];
@@ -177,7 +177,7 @@ export default {
 			kanban_sticky.scrollLeft = kanban_container.scrollLeft;
 
 			//Get the distance to the top of the page
-			var scrollTop = document.getElementById("kanban_container").scrollTop;
+			const scrollTop = document.getElementById("kanban_container").scrollTop;
 			// var scrollTop =
 			// 	window.pageYOffset !== undefined
 			// 		? window.pageYOffset
