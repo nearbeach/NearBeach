@@ -104,7 +104,7 @@ export default {
 			data_to_send.set('change_task_description', this.changeDescriptionModel);
 
 			axios.post(
-				`update/description/`,
+				"update/description/",
 				data_to_send,
 			).then((response) => {
 

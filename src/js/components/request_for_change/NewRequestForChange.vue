@@ -214,7 +214,7 @@ export default {
 
 			// Insert a new row for each group list item
 			data.groupModel.forEach((row, index) => {
-				data_to_send.append(`group_list`, row);
+				data_to_send.append("group_list", row);
 			});
 
 			axios

@@ -56,9 +56,9 @@ export default {
 	methods: {
 		isDowntime() {
 			if (this.isDowntimeModel) {
-				return `Downtime Scheduled - click to remove`;
+				return "Downtime Scheduled - click to remove";
 			}
-			return `No Downtime - click to Schedule`;
+			return "No Downtime - click to Schedule";
 		},
 		updateIsDowntime(isDowntime) {
 			//Setup data to send
@@ -67,7 +67,7 @@ export default {
 
 			//Send to the backend
 			axios.post(
-				`update/is_downtime/`,
+				"update/is_downtime/",
 				data_to_send,
 			).then((response) => {
 				//ADD CODE

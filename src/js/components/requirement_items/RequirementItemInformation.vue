@@ -303,7 +303,7 @@ export default {
 					document.getElementById("errorModalContent");
 
 				// Update the content
-				elem_cont.innerHTML = `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
+				elem_cont.innerHTML = "<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.";
 
 				// Show the modal
 				const errorModal = new Modal(
@@ -324,7 +324,7 @@ export default {
 			//Update message in loading modal
 			document.getElementById(
 				"loadingModalContent"
-			).innerHTML = `Updating your Requirement Item details`;
+			).innerHTML = "Updating your Requirement Item details";
 
 			// Set up the data object to send
 			const data_to_send = new FormData();
@@ -346,7 +346,7 @@ export default {
 					//Update the message in the loading modal
 					document.getElementById(
 						"loadingModalContent"
-					).innerHTML = `UPDATED SUCCESSFULLY`;
+					).innerHTML = "UPDATED SUCCESSFULLY";
 
 					//Close after 1 second
 					setTimeout(() => {

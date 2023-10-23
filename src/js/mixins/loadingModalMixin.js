@@ -11,7 +11,7 @@ export default {
             //Update the message in the loading modal
             document.getElementById(
                 "loadingModalContent"
-            ).innerHTML = `UPDATED SUCCESSFULLY`;
+            ).innerHTML = "UPDATED SUCCESSFULLY";
 
             //Close after 1 second
             setTimeout(() => {
