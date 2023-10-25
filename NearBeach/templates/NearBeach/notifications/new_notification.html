@@ -2,5 +2,9 @@
 {% load static %}
 {% block content %}
 
+    <new-notification v-bind:root-url="`{% url 'dashboard' %}`"
+                      v-bind:static-url="`{% static '' %}`"
+                      v-bind:theme="`{{ theme }}`"
+    ></new-notification>
 
 {% endblock %}

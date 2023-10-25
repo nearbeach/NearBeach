@@ -709,9 +709,14 @@ urlpatterns = [
         name="search_customer_data",
     ),
     path(
-        "search/notifications/",
-        notification_views.search_notification,
-        name="search_notifications",
+        "search/notification/",
+        search_views.search_notification,
+        name="search_notification",
+    ),
+    path(
+        "search/notification/data/",
+        search_views.search_notification_data,
+        name="search_notification_data",
     ),
     path(
         "search/organisation/",

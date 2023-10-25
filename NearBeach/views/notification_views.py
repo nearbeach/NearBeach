@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.template import loader
 from NearBeach.views.theme_views import get_theme
+from NearBeach.models import Notification
 
 
 def new_notification(request):
@@ -32,5 +33,3 @@ def notification_information_save(request, notification_id):
     return HttpResponse("")
 
 
-def search_notification(request):
-    return HttpResponse("")

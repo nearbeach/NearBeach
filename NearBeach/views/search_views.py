@@ -9,6 +9,7 @@ from django.core import serializers
 from NearBeach.forms import SearchObjectsForm, SearchForm
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.models import (
+    Notification,
     ObjectAssignment,
     RequestForChange,
     Requirement,
@@ -351,6 +352,49 @@ def search_group_data(request):
 
     # Send back json data
     json_results = serializers.serialize("json", group_results)
+
+    return HttpResponse(json_results, content_type="application/json")
+
+
+def search_notification(request):
+    t = loader.get_template("NearBeach/search/search_notifications.html")
+
+    notification_results = Notification.objects.filter()
+
+    c = {
+        "need_tinymce": False,
+        "notification_results": serializers.serialize("json", notification_results),
+        "theme": get_theme(request),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+def search_notification_data(request):
+    """
+    :param request:
+    :return:
+    """
+    # Obtain form data
+    search_form = SearchForm(request.POST)
+    if not search_form.is_valid():
+        return HttpResponseBadRequest(search_form.errors)
+
+    # Get the base group results
+    notification_results = Notification.objects.filter()
+
+    # Loop through the search results
+    for split_row in search_form.cleaned_data["search"].split(" "):
+        notification_results = notification_results.filter(
+            Q(notification_header__icontains=split_row,) |
+            Q(notification_message__icontains=split_row)
+        )
+
+    notification_results = notification_results.order_by("notification_header")[:25]
+
+    # Send back json data
+    json_results = serializers.serialize("json", notification_results)
 
     return HttpResponse(json_results, content_type="application/json")
 

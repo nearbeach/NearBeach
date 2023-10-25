@@ -120,6 +120,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/kanban/NewKanban.vue"
             )
     ),
+    NewNotification = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "new-notification" */
+            "./components/notifications/NewNotification.vue"
+            )
+    ),
     NewPermissionSet = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "new-permission-set" */
@@ -238,6 +244,12 @@ export const // BugsModule = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "search-groups" */
             "./components/search/SearchGroups.vue"
+            )
+    ),
+    SearchNotifications = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "search-notifications" */
+            "./components/search/SearchNotifications.vue"
             )
     ),
     SearchObjects = defineAsyncComponent(() =>
