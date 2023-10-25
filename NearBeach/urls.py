@@ -14,6 +14,7 @@ from .views import (
     kanban_column_views,
     kanban_level_views,
     kanban_views,
+    notification_views,
     object_data_views,
     organisation_views,
     permission_set_views,
@@ -346,6 +347,8 @@ urlpatterns = [
     path("new_group/save/", group_views.new_group_save, name="new_group_save"),
     path("new_kanban/", kanban_views.new_kanban, name="new_kanban"),
     path("new_kanban_save/", kanban_views.new_kanban_save, name="new_kanban_save"),
+    path("new_notification/", notification_views.new_notification, name="new_notification"),
+    path("new_notification_save/", notification_views.new_notification_save, name="new_notification_save"),
     path(
         "new_organisation/",
         organisation_views.new_organisation,
@@ -393,6 +396,16 @@ urlpatterns = [
     path("new_task/save/", task_views.new_task_save, name="new_task_save"),
     path("new_user/", user_views.new_user, name="new_user"),
     path("new_user/save/", user_views.new_user_save, name="new_user_save"),
+    path(
+        "notification_information/<notification_id>/",
+        notification_views.notification_information,
+        name="notification_information"
+    ),
+    path(
+        "notification_information/<notification_id>/save/",
+        notification_views.notification_information_save,
+        name="notification_information_save"
+    ),
     # Object Data
     path(
         "object_data/admin_add_user/",
@@ -694,6 +707,11 @@ urlpatterns = [
         "search/customer/data/",
         search_views.search_customer_data,
         name="search_customer_data",
+    ),
+    path(
+        "search/notifications/",
+        notification_views.search_notification,
+        name="search_notifications",
     ),
     path(
         "search/organisation/",

@@ -16,6 +16,7 @@ from NearBeach.decorators.check_user_permissions import check_permission_denied
 # Import Python Libraries
 import json
 import urllib.parse
+import datetime
 
 
 def check_first_time_login(request):
@@ -277,6 +278,8 @@ def login(request):
         Q(
             # is_deleted=False,
             # ADD IN DATES LOGIC HERE
+            notification_start_date__lte=datetime.datetime.now(),
+            notification_end_date__gte=datetime.datetime.now(),
         )
         & Q(Q(notification_location="All") | Q(notification_location="Login"))
     )

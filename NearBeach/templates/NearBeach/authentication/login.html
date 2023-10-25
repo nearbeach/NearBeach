@@ -23,37 +23,14 @@
 </head>
 <body>
     <div class="background">
-        {% if notification_results %}
-            <div class="col-10 col-lg-4 login-notifications">
-                <div id="notification_carousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <!-- LOOP THROUGH MESSAGES -->
-                        {% for notification in notification_results %}
-                            {% if forloop.first %}
-                                <div class="carousel-item active">
-                                    <h2>{{ notification.notification_header }}</h2>
-                                    <p>{{ notification.notification_message }}</p>
-                                </div>
-                            {% else %}
-                                <div class="carousel-item">
-                                    <h2>{{ notification.notification_header }}</h2>
-                                    <p>{{ notification.notification_message }}</p>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                        <!-- END LOOP THROUGH MESSAGES -->
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#notification_carousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#notification_carousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        {% endif %}
-
         <div class="col-10 col-lg-3 login-dialog">
+            {% for notification in notification_results %}
+                <div class="alert alert-primary">
+                    <h4 class="alert-heading">{{ notification.notification_header }}</h4>
+                    {{ notification.notification_message }}
+                </div>
+            {% endfor %}
+
             <h1>NearBeach Login</h1>
             
             {% if error_message %}
