@@ -2,17 +2,13 @@
 	<n-config-provider :theme="getTheme(theme)">
 		<div class="card">
 			<div class="card-body">
-				<h1>New Notification</h1>
+				<h1>Notification Information</h1>
 				<hr/>
 
 				<div class="row">
 					<!-- DESCRIPTION -->
 					<div class="col-md-4">
 						<h2>Description</h2>
-						<p class="text-instructions">
-							To create a new notification, fill out the form and submit it at the
-							bottom of the page.
-						</p>
 						<p class="text-instructions">
 							Notifications will only show between their start and end date. So you
 							can prepare notifications for a release in the future.
@@ -31,7 +27,7 @@
 							<input type="text"
 								   v-model="headerModel"
 								   class="form-control"
-						    />
+							/>
 						</div>
 						<br/>
 						<div class="form-group">
@@ -72,10 +68,15 @@
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						<button class="btn btn-primary save-changes"
-								v-on:click="submitNewNotification"
+						<button class="btn btn-warning"
+								v-on:click="deleteNotification"
 						>
-							Create new Notification
+							Delete Notification
+						</button>
+						<button class="btn btn-primary save-changes"
+								v-on:click="updateNotification"
+						>
+							Update Notification
 						</button>
 					</div>
 				</div>
@@ -113,6 +114,12 @@ export default {
 		ValidationRendering,
 	},
 	props: {
+		notificationResults: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
 		rootUrl: {
 			type: String,
 			default: "/",
@@ -129,16 +136,16 @@ export default {
 	mixins: [errorModalMixin, getThemeMixin],
 	data() {
 		return {
-			endDateModel: "",
-			headerModel: "",
+			endDateModel: this.notificationResults[0].fields.notification_end_date,
+			headerModel: this.notificationResults[0].fields.notification_header,
 			locationList: [
 				{value: "all", label: "All Options"},
 				{value: "dashboard", label: "Dashboard Screen"},
 				{value: "login", label: "Login Screen"},
 			],
-			locationModel: "all",
-			messageModel: "",
-			startDateModel: "",
+			locationModel: this.notificationResults[0].fields.notification_location,
+			messageModel: this.notificationResults[0].fields.notification_message,
+			startDateModel: this.notificationResults[0].fields.notification_start_date,
 		};
 	},
 	validations: {
@@ -158,7 +165,24 @@ export default {
 		},
 	},
 	methods: {
-		submitNewNotification: async function() {
+		deleteNotification() {
+			const data_to_send = new FormData();
+			data_to_send.set("notification_id", this.notificationResults[0].pk);
+
+			axios.post(
+				`${this.rootUrl}notification_information/delete/`,
+				data_to_send,
+			).then(response => {
+				//Go back to search
+				window.location.href = `${this.rootUrl}search/notification/`;
+			}).catch((error) => {});
+		},
+		updateDates(data) {
+			//Update both the start and end dates
+			this.startDateModel = new Date(data.start_date);
+			this.endDateModel = new Date(data.end_date);
+		},
+		updateNotification: async function() {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect) {
@@ -180,17 +204,11 @@ export default {
 			);
 
 			axios.post(
-				`${this.rootUrl}new_notification_save/`,
+				`${this.rootUrl}notification_information/${this.notificationResults[0].pk}/save/`,
 				data_to_send,
 			).then((response) => {
-				//Go to the new notification
-				window.location.href = response.data;
+				//Tell user that this was successful
 			}).catch((error) => {});
-		},
-		updateDates(data) {
-			//Update both the start and end dates
-			this.startDateModel = new Date(data.start_date);
-			this.endDateModel = new Date(data.end_date);
 		},
 	},
 }

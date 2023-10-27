@@ -397,6 +397,11 @@ urlpatterns = [
     path("new_user/", user_views.new_user, name="new_user"),
     path("new_user/save/", user_views.new_user_save, name="new_user_save"),
     path(
+        "notification_information/delete/",
+        notification_views.notification_information_delete,
+        name="notification_delete",
+    ),
+    path(
         "notification_information/<notification_id>/",
         notification_views.notification_information,
         name="notification_information"

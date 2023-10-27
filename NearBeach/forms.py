@@ -15,6 +15,7 @@ from .models import (
     TagAssignment,
     KanbanCard,
     KanbanBoard,
+    Notification,
     PermissionSet,
     Project,
     RequestForChange,
@@ -689,6 +690,29 @@ class NewUserForm(forms.ModelForm):
             "first_name",
             "last_name",
             "email",
+        ]
+
+
+class NotificationDeleteForm(forms.Form):
+    notification_id = forms.ModelChoiceField(
+        required=True,
+        queryset=Notification.objects.all(),
+    )
+
+
+class NotificationForm(forms.ModelForm):
+    notification_location = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+    class Meta:
+        model = Notification
+        fields = [
+            "notification_header",
+            "notification_message",
+            "notification_location",
+            "notification_end_date",
+            "notification_start_date",
         ]
 
 

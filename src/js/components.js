@@ -168,6 +168,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/users/NewUser.vue"
             )
     ),
+    NotificationInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "notification-information" */
+            "./components/notifications/NotificationInformation.vue"
+            )
+    ),
     OrganisationInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "organisation-information" */

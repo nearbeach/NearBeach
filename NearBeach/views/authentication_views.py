@@ -281,7 +281,7 @@ def login(request):
             notification_start_date__lte=datetime.datetime.now(),
             notification_end_date__gte=datetime.datetime.now(),
         )
-        & Q(Q(notification_location="All") | Q(notification_location="Login"))
+        & Q(Q(notification_location="all") | Q(notification_location="login"))
     )
 
     # Get random number
