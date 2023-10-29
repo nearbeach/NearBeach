@@ -137,23 +137,7 @@ export default {
 			rootUrl: "getRootUrl",
 		}),
 		masterList() {
-			//Filter the data
-			let return_array = this.allCards.filter((card) => {
-				return (
-					parseInt(card.fields.kanban_column) === this.columnId &&
-					parseInt(card.fields.kanban_level) === this.levelId
-				);
-			});
-
-			//Make sure it is sorted
-			return_array = return_array.sort((a, b) => {
-				return (
-					a.fields.kanban_card_sort_number -
-					b.fields.kanban_card_sort_number
-				);
-			});
-
-			return return_array;
+			return this.$store.getters.getCardsOrder(this.columnId, this.levelId);
 		},
 	},
 	mixins: [iconMixin],
@@ -225,44 +209,25 @@ export default {
 			//Show error screen
 			document.getElementById("sort_error").style.display = "flex";
 
-			//There is an issue - we need to fix all the variables and send that information upstream to the
-			//backend AND the VueX
-			//Loop through the data
-			this.masterList.forEach((row, index) => {
-				//Setup data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set(
-					"new_card_column",
-					this.columnId.toString()
-				);
-				data_to_send.set("new_card_level", this.levelId.toString());
-				data_to_send.set("new_card_sort_number", index.toString());
-				data_to_send.set(
-					"old_card_column",
-					row.fields.kanban_column
-				);
-				data_to_send.set("old_card_level", row.fields.kanban_level);
-				data_to_send.set(
-					"old_card_sort_number",
-					row.fields.kanban_card_sort_number
-				);
-				data_to_send.set("card_id", row.pk);
+			//Send the new order to the backend
+			const data_to_send = new FormData();
 
-				//Update kanban card
+			this.masterList.forEach((row, index) => {
+				//Set the form data
+				data_to_send.append("kanban_cards", row.pk);
+
+				//Update the VueX with the new sort ordering
 				this.$store.commit({
 					type: "updateKanbanCard",
 					card_id: row.pk,
-					kanban_column: this.columnId,
-					kanban_level: this.levelId,
 					kanban_card_sort_number: index,
 				});
-
-				//Use axios to send the data to the database
-				axios.post(
-					`${this.rootUrl}kanban_information/${row.pk}/move_card/`,
-					data_to_send
-				);
 			});
+
+			axios.post(
+				`${this.rootUrl}kanban_information/fix_card_ordering/`,
+				data_to_send,
+			).catch((error) => {});
 
 			//Done - hide the error screen
 			document.getElementById("sort_error").style.display = "";
@@ -276,146 +241,6 @@ export default {
 			//Setup data to send upstream
 			this.sendDataUpstream(filtered_data);
 		},
-		dragDifferentColumn(data) {
-			//Short hand - making it easy to read code later
-			let new_card_column = data.get("new_card_column"),
-				new_card_level = data.get("new_card_level"),
-				new_card_sort_number = parseInt(
-					data.get("new_card_sort_number")
-				),
-				old_card_column = data.get("old_card_column"),
-				old_card_level = data.get("old_card_level"),
-				old_card_sort_number = parseInt(
-					data.get("old_card_sort_number")
-				),
-				card_id = data.get("card_id");
-
-			//Create return array
-			let return_array = [];
-
-			//Move new column first
-			//Filter for all data effected in the new column
-			let filter_new_column = this.allCards.filter((row) => {
-				//return where column = new_card_column, and sort level >= new sort level
-				return (
-					row.fields.kanban_column === new_card_column &&
-					row.fields.kanban_level === new_card_level &&
-					row.fields.kanban_card_sort_number >=
-					new_card_sort_number
-				);
-			});
-
-			//Loop through the filtered new columns and add the required data to the return array
-			filter_new_column.forEach((row) => {
-				//Move the cards up by one
-				return_array.push({
-					card_id: row.pk,
-					kanban_column: new_card_column,
-					kanban_level: new_card_level,
-					kanban_card_sort_number:
-						row.fields.kanban_card_sort_number + 1,
-				});
-			});
-
-			//Filter for all data effected in old column
-			let filter_old_column = this.allCards.filter((row) => {
-				//Return where column = old_card_column, and the sort level >= old sort level
-				return (
-					row.fields.kanban_column === old_card_column &&
-					row.fields.kanban_level === old_card_level &&
-					row.fields.kanban_card_sort_number >=
-					old_card_sort_number
-				);
-			});
-
-			//Loop through the filter old columns and add the required data to return array
-			filter_old_column.forEach((row) => {
-				if (row.pk === card_id) {
-					//Move this to the new column
-					return_array.push({
-						card_id: row.pk,
-						kanban_column: new_card_column,
-						kanban_level: new_card_level,
-						kanban_card_sort_number: new_card_sort_number,
-					});
-				} else {
-					//Move the cards down by 1
-					return_array.push({
-						card_id: row.pk,
-						kanban_column: old_card_column,
-						kanban_level: old_card_level,
-						kanban_card_sort_number:
-							row.fields.kanban_card_sort_number - 1,
-					});
-				}
-			});
-
-			return return_array;
-		},
-		dragSameColumn(data) {
-			//Short hand - making it easy to read code later
-			let new_sort = parseInt(data.get("new_card_sort_number")),
-				old_sort = parseInt(data.get("old_card_sort_number")),
-				column = parseInt(data.get("new_card_column")),
-				level = parseInt(data.get("new_card_level")),
-				card_id = parseInt(data.get("card_id"));
-
-			//Determine the delta - -1 or 1.
-			//Negative number if old_sort is less than new sort, i.e. move
-			//everything back one
-			let delta = 1 - 2 * (old_sort < new_sort);
-
-			//Get the largest and smallest values
-			let largest =
-					(new_sort >= old_sort) * new_sort +
-					(new_sort < old_sort) * old_sort,
-				smallest =
-					(new_sort >= old_sort) * old_sort +
-					(new_sort < old_sort) * new_sort;
-
-			//If they are the same (i.e. drag and dropped in same place) - return
-			if (largest === smallest) {
-				return [];
-			}
-
-			//Filter for the data we need
-			let filtered_data = this.allCards.filter((row) => {
-				//Return when same column and level, whilst also in range of smallest and largest
-				return (
-					parseInt(row.fields.kanban_column) === column &&
-					parseInt(row.fields.kanban_level) === level &&
-					row.fields.kanban_card_sort_number >= smallest &&
-					row.fields.kanban_card_sort_number <= largest
-				);
-			});
-
-			//Create the return array
-			let return_array = [];
-
-			//Loop through the filtered data, and apply the changes required
-			filtered_data.forEach((row) => {
-				if (row.pk === card_id) {
-					//Make sure this card has the new sort number
-					return_array.push({
-						card_id: row.pk,
-						kanban_column: column,
-						kanban_level: level,
-						kanban_card_sort_number: new_sort,
-					});
-				} else {
-					//Not the card we moved, apply the delta to move the sort order
-					return_array.push({
-						card_id: row.pk,
-						kanban_column: column,
-						kanban_level: level,
-						kanban_card_sort_number:
-							row.fields.kanban_card_sort_number + delta,
-					});
-				}
-			});
-
-			return return_array;
-		},
 		isLinkedObject(object) {
 			let results = "";
 
@@ -425,11 +250,11 @@ export default {
 
 			return results;
 		},
-		onEnd(event) {
-			/* Update the sort order
-			If both the old and new level/column destinations are the same,
-			we take the difference between the two values. Otherwise we apply
-			two sort orders to both the old and the new*/
+		async onEnd(event) {
+			//Tell VueX we have moved the card - VueX will handle the logistic. Wait for vuex
+			await this.$store.dispatch("kanbanCardMoved", {
+				event: event,
+			});
 
 			//Get the y=data
 			const new_elem = event.to,
@@ -445,68 +270,32 @@ export default {
 				old_card_sort_number = event.oldIndex,
 				column_property = new_elem.dataset.columnProperty;
 
-			//Create data_to_send
+			//Data to send
 			const data_to_send = new FormData();
 			data_to_send.set("new_card_column", new_card_column);
 			data_to_send.set("new_card_level", new_card_level);
-			data_to_send.set("new_card_sort_number", new_card_sort_number);
-			data_to_send.set("old_card_column", old_card_column);
-			data_to_send.set("old_card_level", old_card_level);
-			data_to_send.set("old_card_sort_number", old_card_sort_number);
-			data_to_send.set("card_id", card_id);
 
-			//Define cards_to_change
-			let cards_to_change = [];
+			//Set the new destination
+			this.$store.getters.getCardsOrder(
+				new_card_column,
+				new_card_level
+			).forEach((row) => {
+				data_to_send.append("new_destination", row.pk);
+			});
 
-			//Depending if the card moves columns depends what we do
-			if (
-				new_card_column === old_card_column &&
-				new_card_level === old_card_level
-			) {
-				//The card stayed in the same place.
-
-				cards_to_change = this.dragSameColumn(data_to_send);
-			} else {
-				//The card move to a different place
-
-				cards_to_change = this.dragDifferentColumn(data_to_send);
-			}
-
-			//ADD CODE - loop through the cards to change
-			cards_to_change.forEach((row) => {
-				this.$store.commit({
-					type: "updateKanbanCard",
-					card_id: row.card_id,
-					kanban_column: row.kanban_column,
-					kanban_level: row.kanban_level,
-					kanban_card_sort_number: row.kanban_card_sort_number,
-				});
+			//Set the old destination
+			this.$store.getters.getCardsOrder(
+				old_card_column,
+				old_card_level
+			).forEach((row) => {
+				data_to_send.append("old_destination", row.pk);
 			});
 
 			//Use axios to send the data to the database
-			axios
-				.post(
-					`${this.rootUrl}kanban_information/${card_id}/move_card/`,
-					data_to_send
-				)
-				.then(() => {
-					//We need to look at the DESTINATION's Column Properties
-					if (column_property !== "Blocked") {
-						//Nothing needs to be done if not blocked
-						return;
-					}
-
-					//Update the card id focus in the state management
-					this.$store.commit({
-						type: "updateValue",
-						field: "cardId",
-						value: parseInt(card_id),
-					});
-
-					//Open the BlockedCardModal
-					const blockedNotes = new Modal("#blockedNotesModal");
-					blockedNotes.show();
-				});
+			axios.post(
+				`${this.rootUrl}kanban_information/${card_id}/move_card/`,
+				data_to_send
+			).catch((error) => {});
 		},
 		sendDataUpstream(filtered_data) {
 			// Check to make sure this is a linked object

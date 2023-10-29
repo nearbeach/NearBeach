@@ -230,13 +230,13 @@ export default {
 						index
 						].fields.kanban_card_description =
 						data.kanban_card_description;
-					this.localKanbanCardResults[
-						index
-						].fields.kanban_column = data.kanban_column;
-					this.localKanbanCardResults[index].fields.kanban_level =
-						data.kanban_level;
-					this.localKanbanCardResults[index].fields.kanban_card_priority =
-						data.kanban_card_priority;
+					// this.localKanbanCardResults[
+					// 	index
+					// 	].fields.kanban_column = data.kanban_column;
+					// this.localKanbanCardResults[index].fields.kanban_level =
+					// 	data.kanban_level;
+					// this.localKanbanCardResults[index].fields.kanban_card_priority =
+					// 	data.kanban_card_priority;
 				}
 			});
 		},

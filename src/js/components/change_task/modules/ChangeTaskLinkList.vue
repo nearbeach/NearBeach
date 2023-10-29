@@ -114,19 +114,18 @@ export default {
 			//Get the data from the database
 			axios.post(
 					`${this.rootUrl}object_data/change_task/${this.locationId}/object_link_list/`
-      )
-				.then((response) => {
-					this.linkResults = response.data.map((row) => {
-						//Get results
-						let results = row;
+      		).then((response) => {
+				this.linkResults = response.data.map((row) => {
+					//Get results
+					let results = row;
 
-						//Mutate the object_status
-						results.object_status = this.translateStatus[row.object_status];
+					//Mutate the object_status
+					results.object_status = this.translateStatus[row.object_status];
 
-						//Return results
-						return results;
-					})
-      }).catch((error) => {});
+					//Return results
+					return results;
+				})
+      		}).catch((error) => {});
 		},
 	},
 	mounted() {

@@ -41,10 +41,6 @@ We would like to thank the following sponsors. Their contributions have made sur
 -   [Patreon](https://www.patreon.com/NearBeach)
 -   [Github](https://github.com/sponsors/robotichead)
 
-### Holy Moly Level
-
-[<img src="https://pbs.twimg.com/profile_images/1374447134297124866/7ZnzzC_X_200x200.jpg" width="30" height="30"> Blw_Average](https://twitter.com/Blw_Average)
-
 ## Software References (thank you)
 
 NearBeach will not be where it currently is without the help of other open sourced projects. Below are the references to all the different tools that are utilised within NearBeach. NearBeach would like to thank these projects as they have help construct a better and more stable product. Please consider visiting and donating.
@@ -80,40 +76,6 @@ License: GNU Lesser General Public License v2.1
 
 Note: TinyMCE is used for rich text within NearBeach
 
-### Geolocation - Python
-
-Creator(s): Sławomir Kabik
-
-Github: https://github.com/slawek87/geolocation-python
-
-License: BSD 3-Clause
-
-Note: Geolocation-Python is used to contact both Google Maps and Mapbox's API.
-
-### Weasy Print
-
-Creator(s): Kozea
-
-Website: https://weasyprint.org/
-
-Github: https://github.com/Kozea/WeasyPrint
-
-License: BSD 3-Clause
-
-Note: Weasy print is used to render PDF's in NearBeach
-
-### D3.js (Data-Driven Documents)
-
-Creator(s): Mike Bostock, Jason Davies, Jeffrey Heer, Vadim Ogievetsky
-
-Website: https://d3js.org/
-
-Github: https://github.com/d3/d3
-
-License: BSD 3-Clause
-
-Note: D3 is used for producing graphical representatives of data for NearBeach
-
 ### Bootstrap
 
 Creator(s): Mark Otto, Jacob Thornton
@@ -123,16 +85,6 @@ Github: https://github.com/twbs/bootstrap
 License: MIT
 
 Note: NearBeach's CSS is currently being migrated to Bootstrap. For easy development.
-
-### Feather Icons
-
-Creator(s): Carmelo Pullara, Cole Bemis, Oliver Dumoulin
-
-Github: https://github.com/feathericons/feather
-
-License: MIT
-
-Note: Feather icons are icons being utilised by NearBeach
 
 ### Vuelidate
 

@@ -1,4 +1,22 @@
 // Vitest
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
+import {mount, VueWrapper} from "@vue/test-utils";
 
-test('blank', () => {});
+// Import vue component
+import NewCustomerForm from "/src/js/components/customers/NewCustomerForm.vue";
+
+// VueX
+import { store } from "/src/js/vuex-store";
+
+describe('NewChangeTask.vue - rendering component', () => {
+    //Using mount - insert data
+    const wrapper = mount(NewCustomerForm, {
+        props: {
+        },
+        global: {
+            plugins: [store],
+        },
+    });
+
+    test('Empty test', () => {});
+});

@@ -76,7 +76,8 @@
 						role="tabpanel"
 						aria-labelledby="contact-tab"
 					>
-						<change-task-link-list-vue></change-task-link-list-vue>
+<!--						<change-task-link-list-vue></change-task-link-list-vue>-->
+						<change-task-link-list></change-task-link-list>
 					</div>
 					<div
 						class="tab-pane fade"
@@ -84,7 +85,7 @@
 						role="tabpanel"
 						aria-labelledby="home-tab"
 					>
-						<change-task-desctiption></change-task-desctiption>
+						<change-task-description></change-task-description>
 					</div>
 
 					<div
@@ -103,8 +104,8 @@
 
 <script>
 //Import components
-import ChangeTaskDesctiption from "./modules/ChangeTaskDescription.vue";
-import ChangeTaskLinkListVue from "./modules/ChangeTaskLinkList.vue";
+import ChangeTaskDescription from "./modules/ChangeTaskDescription.vue";
+import ChangeTaskLinkList from "./modules/ChangeTaskLinkList.vue";
 import ChangeTaskMisc from "./modules/ChangeTaskMisc.vue"
 import getThemeMixin from "../../mixins/getThemeMixin";
 
@@ -121,10 +122,10 @@ export default {
 	},
 	mixins: [getThemeMixin],
 	components: {
-		ChangeTaskDesctiption,
-		ChangeTaskLinkListVue,
+		ChangeTaskDescription,
+		ChangeTaskLinkList,
 		ChangeTaskMisc,
-    NConfigProvider,
+    	NConfigProvider,
 	},
 	beforeMount() {
 		this.$store.dispatch("processThemeUpdate", {

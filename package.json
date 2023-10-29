@@ -1,6 +1,6 @@
 {
   "name": "nearbeach",
-  "version": "0.30.17",
+  "version": "0.30.18",
   "description": "NearBeach - an Open Source project management system built with Django web framework",
   "main": "/src/js/app.js",
   "directories": {
@@ -14,7 +14,7 @@
     "e2e": "npx playwright test",
     "e2e-report": "npx playwright show-report",
     "e2e-ui": "npx playwright test --ui",
-    "unit-test": "npx vitest"
+    "unit-test": "npx vitest --coverage"
   },
   "repository": {
     "type": "git",

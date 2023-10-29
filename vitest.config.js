@@ -10,6 +10,7 @@ export default defineConfig({
         coverage: {
             enabled: true,
             provider: "v8",
+            // provider: "istanbul",
             reporter: ['text','html','json']
         },
         environment: "jsdom",

@@ -1,0 +1,10 @@
+{% extends "NearBeach/partials/template.html" %}
+{% load static %}
+{% block content %}
+    <notification-information v-bind:notification-results="{{ notification_results }}"
+                              v-bind:theme="'{{ theme }}'"
+                              v-bind:root-url="`{% url 'dashboard' %}`"
+                              v-bind:static-url="`{% static '/' %}`"
+    ></notification-information>
+
+{% endblock %}

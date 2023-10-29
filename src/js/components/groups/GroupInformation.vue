@@ -57,7 +57,7 @@
 
 <script>
 const axios = require("axios");
-import {NSelect} from "naive-ui";
+import { NSelect, NConfigProvider } from "naive-ui";
 
 //Load mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
@@ -67,6 +67,7 @@ import loadingModalMixin from "../../mixins/loadingModalMixin";
 export default {
 	name: "GroupInformation",
 	components: {
+		NConfigProvider,
 		NSelect,
 	},
 	props: {

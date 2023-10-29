@@ -194,9 +194,6 @@ export default {
 		Icon,
 		UploadDocumentWizard,
 	},
-	inject: [
-		'nextTick',
-	],
 	props: {
 		overrideDestination: {
 			type: String,

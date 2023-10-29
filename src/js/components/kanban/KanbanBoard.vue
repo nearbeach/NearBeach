@@ -187,7 +187,6 @@ export default {
 			// 			document.body
 			// 		).scrollTop;
 
-			console.log("ScrollTop: ", window.pageYOffset);
 			//Determine if we are hidding the element or not
 			if (scrollTop < 90) {
 				kanban_sticky.style.display = "none";

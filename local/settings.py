@@ -52,7 +52,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'NearBeach.urls'
+# ROOT_URLCONF = 'NearBeach.urls'
+ROOT_URLCONF = 'local.urls'
 
 TEMPLATES = [
     {

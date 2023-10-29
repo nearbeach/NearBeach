@@ -46,6 +46,10 @@
 <script>
 const axios = require("axios");
 
+
+//Mixins
+import ErrorModalMixin from "../../mixins/errorModalMixin";
+
 export default {
 	name: "DashboardUsersWithNoGroups",
 	props: {
@@ -63,6 +67,7 @@ export default {
 			userList: [],
 		};
 	},
+	mixins: [ErrorModalMixin],
 	methods: {
 		getUserList() {
 			//Get the data from the database

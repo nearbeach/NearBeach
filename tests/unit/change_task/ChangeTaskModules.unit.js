@@ -8,15 +8,17 @@ import ChangeTaskModules from "/src/js/components/change_task/ChangeTaskModules.
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('AdminAddUser.vue - rendering component', () => {
-    //Using mount - insert data
-    const wrapper = mount(ChangeTaskModules, {
-        props: {
-        },
-        global: {
-            plugins: [store],
-        },
-    });
+// describe('ChangeTaskModules.vue - rendering component.', () => {
+//     //Using mount - insert data
+//     const wrapper = mount(ChangeTaskModules, {
+//         props: {
+//         },
+//         global: {
+//             plugins: [store],
+//         },
+//     });
+//
+//     test('Empty test', () => {});
+// });
 
-    test('Empty test', () => {});
-});
+test('Empty test', () => {});

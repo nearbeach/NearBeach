@@ -47,6 +47,10 @@ a:visited {
     @media screen and (min-width: 992px) {
         flex-direction: row;
     }
+
+    .alert {
+        text-shadow: none;
+    }
 }
 
 // Breakpoint 	Class infix 	Dimensions

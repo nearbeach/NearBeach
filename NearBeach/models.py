@@ -38,9 +38,9 @@ LINK_RELATIONSHIP = (
 )
 
 NOTIFICATION_LOCATION = (
-    ("All", "All"),
-    ("Login", "Login"),
-    ("Dashboard", "Dashboard"),
+    ("all", "All Options"),
+    ("dashboard", "Dashboard Screen"),
+    ("login", "Login Screen"),
 )
 
 PAGE_LAYOUT = (
@@ -900,6 +900,9 @@ class Notification(models.Model):
         related_name="%(class)s_change_user",
         blank=True,
         null=True,
+    )
+    is_deleted = models.BooleanField(
+        default=False,
     )
 
 

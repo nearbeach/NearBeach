@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django import forms
+from django.db.models import Case, When
 
 # Import from Models
 from .models import (
@@ -15,6 +16,7 @@ from .models import (
     TagAssignment,
     KanbanCard,
     KanbanBoard,
+    Notification,
     PermissionSet,
     Project,
     RequestForChange,
@@ -28,6 +30,20 @@ from .models import (
     UserGroup,
     UserSetting,
 )
+
+
+# CUSTOM Fields
+# https://stackoverflow.com/questions/10296333/django-multiplechoicefield-does-not-preserve-order-of-selected-values
+# We want a custom field that retains the order for the multiple choice field
+class OrderedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def clean(self, value):
+        qs = super(OrderedModelMultipleChoiceField, self).clean(value)
+
+        # Create the preserved condition - where we order it in the same order the user has sent back
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(value)])
+
+        #Return the order
+        return qs.filter(pk__in=value).order_by(preserved)
 
 
 class AddBugForm(forms.Form):
@@ -326,6 +342,13 @@ class DocumentUploadForm(forms.ModelForm):
         }
 
 
+class FixCardOrderingForm(forms.Form):
+    kanban_cards = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=KanbanCard.objects.all(),
+    )
+
+
 class KanbanCardForm(forms.ModelForm):
     kanban_card_id = forms.ModelChoiceField(
         required=True,
@@ -340,6 +363,14 @@ class KanbanCardForm(forms.ModelForm):
     kanban_level = forms.ModelChoiceField(
         required=True,
         queryset=KanbanLevel.objects.all(),
+    )
+    new_destination = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=KanbanCard.objects.all(),
+    )
+    old_destination = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=KanbanCard.objects.all(),
     )
 
     class Meta:
@@ -394,6 +425,7 @@ class MoveKanbanCardForm(forms.Form):
     # Get Query Sets
     kanban_column_results = KanbanColumn.objects.all()
     kanban_level_results = KanbanLevel.objects.all()
+    kanban_card_results = KanbanCard.objects.all()
 
     # New card information
     new_card_column = forms.ModelChoiceField(
@@ -404,18 +436,17 @@ class MoveKanbanCardForm(forms.Form):
         required=True,
         queryset=kanban_level_results,
     )
-    new_card_sort_number = forms.IntegerField()
 
-    # Old card information
-    old_card_column = forms.ModelChoiceField(
+    # Kanban new and old cells + order of cards within
+    new_destination = OrderedModelMultipleChoiceField(
         required=True,
-        queryset=kanban_column_results,
+        queryset=kanban_card_results,
     )
-    old_card_level = forms.ModelChoiceField(
-        required=True,
-        queryset=kanban_level_results,
+
+    old_destination = OrderedModelMultipleChoiceField(
+        required=False,
+        queryset=kanban_card_results,
     )
-    old_card_sort_number = forms.IntegerField()
 
 
 class NewChangeTaskForm(forms.ModelForm):
@@ -674,6 +705,30 @@ class NewUserForm(forms.ModelForm):
             "first_name",
             "last_name",
             "email",
+        ]
+
+
+class NotificationDeleteForm(forms.Form):
+    notification_id = forms.ModelChoiceField(
+        required=True,
+        queryset=Notification.objects.all(),
+    )
+
+
+class NotificationForm(forms.ModelForm):
+    notification_location = forms.CharField(
+        max_length=255,
+        required=True,
+    )
+
+    class Meta:
+        model = Notification
+        fields = [
+            "notification_header",
+            "notification_message",
+            "notification_location",
+            "notification_end_date",
+            "notification_start_date",
         ]
 
 
@@ -939,6 +994,7 @@ class UpdateUserForm(forms.ModelForm):
         max_length=255,
         required=False,
     )
+
     # Basic Meta Data
 
     class Meta:
