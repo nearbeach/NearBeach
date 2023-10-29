@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django import forms
+from django.db.models import Case, When
 
 # Import from Models
 from .models import (
@@ -29,6 +30,20 @@ from .models import (
     UserGroup,
     UserSetting,
 )
+
+
+# CUSTOM Fields
+# https://stackoverflow.com/questions/10296333/django-multiplechoicefield-does-not-preserve-order-of-selected-values
+# We want a custom field that retains the order for the multiple choice field
+class OrderedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def clean(self, value):
+        qs = super(OrderedModelMultipleChoiceField, self).clean(value)
+
+        # Create the preserved condition - where we order it in the same order the user has sent back
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(value)])
+
+        #Return the order
+        return qs.filter(pk__in=value).order_by(preserved)
 
 
 class AddBugForm(forms.Form):
@@ -423,12 +438,12 @@ class MoveKanbanCardForm(forms.Form):
     )
 
     # Kanban new and old cells + order of cards within
-    new_destination = forms.ModelMultipleChoiceField(
+    new_destination = OrderedModelMultipleChoiceField(
         required=True,
         queryset=kanban_card_results,
     )
 
-    old_destination = forms.ModelMultipleChoiceField(
+    old_destination = OrderedModelMultipleChoiceField(
         required=False,
         queryset=kanban_card_results,
     )
@@ -705,6 +720,7 @@ class NotificationForm(forms.ModelForm):
         max_length=255,
         required=True,
     )
+
     class Meta:
         model = Notification
         fields = [
@@ -978,6 +994,7 @@ class UpdateUserForm(forms.ModelForm):
         max_length=255,
         required=False,
     )
+
     # Basic Meta Data
 
     class Meta:
