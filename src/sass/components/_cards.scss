@@ -52,11 +52,14 @@
         }
     }
 
+    .customer-details,
     .organisation-details {
         padding-left: 130px;
         min-height: 120px;
         margin-bottom: 15px;
 
+        .customer-email,
+        .customer-link,
         .organisation-email,
         .organisation-link {
             font-weight: lighter;
@@ -70,12 +73,14 @@
             }
         }
 
+        .customer-name,
         .organisation-name {
             margin-bottom: 6px;
             font-weight: bold;
             font-size: 20px;
         }
 
+        .customer-image,
         .organisation-image {
             position: absolute;
             transform: translateX(-130px);

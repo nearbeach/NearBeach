@@ -2,13 +2,13 @@
 	<div
 		v-for="customer in customerResults"
 		v-bind:key="customer.pk"
-		class="organisation-details">
+		class="customer-details">
 		<img
 			v-bind:src="getProfilePicture(customer)"
 			alt="Stakeholder Logo"
-			class="organisation-image"
+			class="customer-image"
 		/>
-		<div class="organisation-name">
+		<div class="customer-name">
 			<a
 				v-bind:href="`${rootUrl}customer_information/${customer.pk}/`"
 			>
@@ -16,7 +16,7 @@
 				{{ customer.fields.customer_last_name }}
 			</a>
 		</div>
-		<div class="organisation-email">
+		<div class="customer-email">
 			<Icon v-bind:icon="icons.mailIcon"></Icon>
 			Email:
 			<a v-bind:href="`mailto:${customer.fields.customer_email}`">
