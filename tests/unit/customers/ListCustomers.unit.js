@@ -53,25 +53,25 @@ describe('ListCustomers.vue - list two customers', () => {
     });
 
     //Gather the list of customers rendered onto the page
-    const customers = wrapper.findAll('.organisation-details');
+    const customers = wrapper.findAll('.customer-details');
 
     test('customer 1 will have a custom profile picture', () => {
-        const customer_1_profile = customers[0].find('.organisation-image');
+        const customer_1_profile = customers[0].find('.customer-image');
 
         //Check the image location
         expect(customer_1_profile.html()).toContain('<img src="/private/deb6dff2-74e6-4058-b30b-d7f4d015d2f0');
     });
 
     test('customer 2 will have the default profile picture', () => {
-        const customer_2_profile = customers[1].find('.organisation-image');
+        const customer_2_profile = customers[1].find('.customer-image');
 
         //Check the image location
         expect(customer_2_profile.html()).toContain('<img src="/static/NearBeach/images/placeholder/product_tour.svg"');
     });
 
     test('both customer\'s names, emails, and hyperlinks are rendered out correctly', () => {
-        const customer_1_name = customers[0].find('.organisation-name');
-        const customer_2_name = customers[1].find('.organisation-name');
+        const customer_1_name = customers[0].find('.customer-name');
+        const customer_2_name = customers[1].find('.customer-name');
 
         //Check names
         expect(customer_1_name.text()).toEqual('Socks Fluffy');
@@ -83,8 +83,8 @@ describe('ListCustomers.vue - list two customers', () => {
     });
 
     test('customer 1s email is rendered out correctly', () => {
-        const customer_1_email = customers[0].find('.organisation-email');
-        const customer_2_email = customers[1].find('.organisation-email');
+        const customer_1_email = customers[0].find('.customer-email');
+        const customer_2_email = customers[1].find('.customer-email');
 
         //Check email
         expect(customer_1_email.text()).toContain('socks@nearbeach.org');
