@@ -10,7 +10,7 @@ from django.db.models import Count, Q, F
 from django.contrib.auth.models import User
 
 # Import Python Libraries
-import json
+import json, datetime
 
 # Import NearBeach Models
 from NearBeach.models import (
@@ -39,10 +39,21 @@ def dashboard(request):
     # Load the template
     t = loader.get_template("NearBeach/dashboard/dashboard.html")
 
+    # Get notification results
+    notification_results = Notification.objects.filter(
+        Q(
+            is_deleted=False,
+            notification_start_date__lte=datetime.datetime.now(),
+            notification_end_date__gte=datetime.datetime.now(),
+        )
+        & Q(Q(notification_location="all") | Q(notification_location="dashboard"))
+    )
+
     # context
     c = {
         "nearbeach_title": "NearBeach Dashboard",
         "need_tinymce": False,
+        "notification_results": notification_results,
         "theme": get_theme(request),
     }
 

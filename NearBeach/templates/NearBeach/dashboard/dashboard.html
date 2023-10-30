@@ -1,6 +1,13 @@
 {% extends "NearBeach/partials/template.html" %}
 {% load static %}
 {% block content %}
+    {% for notification in notification_results %}
+        <div class="alert alert-warning">
+            <h4 class="alert-header">{{ notification.notification_header }}</h4>
+            {{ notification.notification_message }}
+        </div>
+    {% endfor %}
+
     {% if user.is_superuser %}
         <!-- Dashboard - Users with Groups -->
         <dashboard-users-with-no-groups v-bind:root-url="`{% url 'dashboard' %}`"
