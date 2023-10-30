@@ -30,6 +30,7 @@ from ..forms import (
 )
 from ..models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
 from azure.storage.blob import BlobServiceClient
+from django.conf import settings
 
 import boto3
 import json
@@ -239,6 +240,11 @@ def document_upload(request, destination, location_id):
     # Get the document description - if blank we use the file name
     document_description = form.cleaned_data["document_description"]
     file = form.cleaned_data["document"]
+
+    # Check file size upload
+    if file.size > settings.MAX_FILE_SIZE_UPLOAD:
+        return HttpResponseBadRequest("File size too large")
+
     if document_description == "":
         # Replace the document description with the file name
         document_description = str(file)

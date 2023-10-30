@@ -276,8 +276,7 @@ def login(request):
     # Get notification results
     notification_results = Notification.objects.filter(
         Q(
-            # is_deleted=False,
-            # ADD IN DATES LOGIC HERE
+            is_deleted=False,
             notification_start_date__lte=datetime.datetime.now(),
             notification_end_date__gte=datetime.datetime.now(),
         )

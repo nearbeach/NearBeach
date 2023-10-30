@@ -53,12 +53,6 @@
 				<div class="row submit-row">
 					<div class="col-md-12">
 						<button
-							class="btn btn-danger"
-							v-on:click="closeKanban"
-						>
-							Close Kanban Board
-						</button>
-						<button
 							class="btn btn-primary save-changes"
 							v-on:click="backToBoard"
 						>
@@ -155,10 +149,6 @@ export default {
 	methods: {
 		backToBoard() {
 			window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/`;
-		},
-		closeKanban() {
-			const modal = new Modal("#confirmKanbanBoardClosure");
-			modal.show();
 		},
 		updateCanDragCards(value) {
 			// this.$store.commit({

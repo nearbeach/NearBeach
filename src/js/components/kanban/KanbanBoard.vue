@@ -41,10 +41,8 @@
 				></span>
 				<span>
 					{{ level.fields.kanban_level_name }}
-				</span>
-				<span>
 					- [{{levelCardCount(level.pk)}}]
-        		</span>
+				</span>
 			</div>
 
 			<!-- RENDER THE CELLS -->

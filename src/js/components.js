@@ -66,6 +66,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/groups/GroupInformation.vue"
             )
     ),
+    KanbanDangerZone = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "kanban-danger-zone" */
+            "./components/kanban/KanbanDangerZone.vue"
+            )
+    ),
     KanbanEditBoard = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "kanban-edit-board" */

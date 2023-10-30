@@ -31,6 +31,10 @@
     span {
         position: sticky;
         left: 4px;
+
+        &:nth-child(2) {
+            left: 20px;
+        }
     }
 }
 
