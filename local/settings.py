@@ -170,3 +170,7 @@ if "AZURE_STORAGE_CONNECTION_STRING" in os.environ:
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+MAX_FILE_SIZE_UPLOAD = 104857600
+if "MAX_FILE_SIZE_UPLOAD" in os.environ:
+    MAX_FILE_SIZE_UPLOAD = os.getenv("MAX_FILE_SIZE_UPLOAD")
