@@ -38,7 +38,7 @@
 	</div>
 	<div
 		class="row"
-		v-if="userLevel > 1"
+		v-if="userLevel > 1 && kanbanBoardStatus !== 'Closed'"
 	>
 		<div class="col-md-12">
 			<button
@@ -70,6 +70,7 @@ export default {
 	computed: {
 		...mapGetters({
 			cardId: "getCardId",
+			kanbanBoardStatus: "getKanbanStatus",
 			locationId: "getLocationId",
 			rootUrl: "getRootUrl",
 			userLevel: "getUserLevel",

@@ -83,7 +83,7 @@
 									type="datetime"
 									v-model:value="localStartDate"
 									input-class="form-control"
-									:is-date-disabled="disableDate"
+									:is-date-disabled="checkDisableDate"
 								></n-date-picker>
 							</div>
 						</div>
@@ -94,7 +94,7 @@
 									type="datetime"
 									v-model:value="localEndDate"
 									input-class="form-control"
-									:is-date-disabled="disableDate"
+									:is-date-disabled="checkDisableDate"
 								></n-date-picker>
 							</div>
 						</div>
@@ -105,7 +105,7 @@
 									type="datetime"
 									v-model:value="localReleaseDate"
 									input-class="form-control"
-									:is-date-disabled="disableDate"
+									:is-date-disabled="checkDisableDate"
 								></n-date-picker>
 							</div>
 						</div>
@@ -445,6 +445,13 @@ export default {
 
 			//Send data
 			this.sendUpdate(data_to_send);
+		},
+		checkDisableDate(date) {
+			if (this.isReadOnly === true) {
+				return false;
+			}
+
+			return this.disableDate(date);
 		},
 		getProfilePicture(profile_picture) {
 			//If customer profile is blank - return default picture

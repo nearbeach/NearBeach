@@ -5,14 +5,16 @@
 				{{ kanbanBoardResults[0].fields.kanban_board_name }}
 			</h1>
 			<div class="kanban-edit-text"
-				 v-if="userLevel >= 3"
 			>
-				<a v-bind:href="`${rootUrl}kanban_information/${kanbanBoardResults[0].pk}/edit_board/`">
+				<a v-bind:href="`${rootUrl}kanban_information/${kanbanBoardResults[0].pk}/edit_board/`"
+				   v-if="userLevel >= 3"
+				>
 					Edit Kanban
 				</a>
 
 				<n-switch v-model:value="canDragCards"
 						  @update:value="updateCanDragCards"
+						  v-if="kanbanBoardResults[0].fields.kanban_board_status !== 'Closed' && userLevel >= 2"
 				>
 					<template #checked>
 						Can Drag Cards
