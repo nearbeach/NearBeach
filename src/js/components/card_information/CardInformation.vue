@@ -175,6 +175,7 @@
 							<documents-module
 								v-bind:override-destination="'kanban_card'"
 								v-bind:override-location-id="cardId"
+								v-bind:read-only="kanbanStatus === 'Closed'"
 							></documents-module>
 						</div>
 					</div>
@@ -221,6 +222,7 @@ export default {
 	computed: {
 		...mapGetters({
 			cardId: "getCardId",
+			kanbanStatus: "getKanbanStatus",
 			rootUrl: "getRootUrl",
 		}),
 	},

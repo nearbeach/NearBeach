@@ -93,7 +93,9 @@
 
 		<!-- ADD DOCUMENTS AND FOLDER BUTTON -->
 		<hr/>
-		<div class="btn-group save-changes">
+		<div class="btn-group save-changes"
+			 v-if="readOnly === false"
+		>
 			<button
 				class="btn btn-primary dropdown-toggle"
 				type="button"
@@ -202,6 +204,10 @@ export default {
 		overrideLocationId: {
 			type: Number,
 			default: 0,
+		},
+		readOnly: {
+			type: Boolean,
+			default: false,
 		},
 	},
 	data() {
