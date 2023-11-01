@@ -1,1 +1,438 @@
-!function(){"use strict";var t=tinymce.util.Tools.resolve("tinymce.PluginManager");const e=t=>e=>typeof e===t,o=("string",t=>"string"===(t=>{const e=typeof t;return null===t?"null":"object"===e&&Array.isArray(t)?"array":"object"===e&&(o=n=t,(r=String).prototype.isPrototypeOf(o)||(null===(i=n.constructor)||void 0===i?void 0:i.name)===r.name)?"string":e;var o,n,r,i})(t));const n=e("boolean"),r=e("function"),i=t=>e=>e.options.get(t),s=i("quickbars_selection_toolbar"),a=i("quickbars_insert_toolbar"),l=i("quickbars_image_toolbar");let c=0;var u=tinymce.util.Tools.resolve("tinymce.util.Delay");const d=t=>{t.ui.registry.addButton("quickimage",{icon:"image",tooltip:"Insert image",onAction:()=>{(t=>new Promise((e=>{let o=!1;const n=document.createElement("input");n.type="file",n.accept="image/*",n.style.position="fixed",n.style.left="0",n.style.top="0",n.style.opacity="0.001",document.body.appendChild(n);const r=t=>{var r;o||(null===(r=n.parentNode)||void 0===r||r.removeChild(n),o=!0,e(t))},i=t=>{r(Array.prototype.slice.call(t.target.files))};n.addEventListener("input",i),n.addEventListener("change",i);const s=e=>{const n=()=>{r([])};o||("focusin"===e.type?u.setEditorTimeout(t,n,1e3):n()),t.off("focusin remove",s)};t.on("focusin remove",s),n.click()})))(t).then((e=>{if(e.length>0){const o=e[0];(t=>new Promise((e=>{const o=new FileReader;o.onloadend=()=>{e(o.result.split(",")[1])},o.readAsDataURL(t)})))(o).then((e=>{((t,e,o)=>{const n=t.editorUpload.blobCache,r=n.create((t=>{const e=(new Date).getTime(),o=Math.floor(1e9*Math.random());return c++,"mceu_"+o+c+String(e)})(),o,e);n.add(r),t.insertContent(t.dom.createHTML("img",{src:r.blobUri()}))})(t,e,o)}))}}))}}),t.ui.registry.addButton("quicktable",{icon:"table",tooltip:"Insert table",onAction:()=>{((t,e,o)=>{t.execCommand("mceInsertTable",!1,{rows:2,columns:2})})(t)}})},m=(!1,()=>false);class h{constructor(t,e){this.tag=t,this.value=e}static some(t){return new h(!0,t)}static none(){return h.singletonNone}fold(t,e){return this.tag?e(this.value):t()}isSome(){return this.tag}isNone(){return!this.tag}map(t){return this.tag?h.some(t(this.value)):h.none()}bind(t){return this.tag?t(this.value):h.none()}exists(t){return this.tag&&t(this.value)}forall(t){return!this.tag||t(this.value)}filter(t){return!this.tag||t(this.value)?this:h.none()}getOr(t){return this.tag?this.value:t}or(t){return this.tag?this:t}getOrThunk(t){return this.tag?this.value:t()}orThunk(t){return this.tag?this:t()}getOrDie(t){if(this.tag)return this.value;throw new Error(null!=t?t:"Called getOrDie on None")}static from(t){return null==t?h.none():h.some(t)}getOrNull(){return this.tag?this.value:null}getOrUndefined(){return this.value}each(t){this.tag&&t(this.value)}toArray(){return this.tag?[this.value]:[]}toString(){return this.tag?`some(${this.value})`:"none()"}}h.singletonNone=new h(!1),"undefined"!=typeof window?window:Function("return this;")();var g=(t,e,o,n,i)=>t(o,n)?h.some(o):r(i)&&i(o)?h.none():e(o,n,i);const b=t=>{if(null==t)throw new Error("Node cannot be null or undefined");return{dom:t}},p=b,f=(t,e)=>{const o=t.dom;if(1!==o.nodeType)return!1;{const t=o;if(void 0!==t.matches)return t.matches(e);if(void 0!==t.msMatchesSelector)return t.msMatchesSelector(e);if(void 0!==t.webkitMatchesSelector)return t.webkitMatchesSelector(e);if(void 0!==t.mozMatchesSelector)return t.mozMatchesSelector(e);throw new Error("Browser lacks native selectors")}},v=(t,e,o)=>{let n=t.dom;const i=r(o)?o:m;for(;n.parentNode;){n=n.parentNode;const t=p(n);if(e(t))return h.some(t);if(i(t))break}return h.none()},y=(t,e,o)=>v(t,(t=>f(t,e)),o),k=t=>{const e=a(t);e.length>0&&t.ui.registry.addContextToolbar("quickblock",{predicate:e=>{const o=p(e),n=t.schema.getTextBlockElements(),r=e=>e.dom===t.getBody();return!((t,e)=>{const o=t.dom;return!(!o||!o.hasAttribute)&&o.hasAttribute("data-mce-bogus")})(o)&&((t,e,o)=>g(((t,e)=>f(t,e)),y,t,'table,[data-mce-bogus="all"]',o))(o,0,r).fold((()=>((t,e,o)=>((t,e,o)=>g(((t,e)=>e(t)),v,t,e,o))(t,e,o).isSome())(o,(e=>e.dom.nodeName.toLowerCase()in n&&t.dom.isEmpty(e.dom)),r)),m)},items:e,position:"line",scope:"editor"})};t.add("quickbars",(t=>{(t=>{const e=t.options.register,r=t=>e=>{const r=n(e)||o(e);return r?n(e)?{value:e?t:"",valid:r}:{value:e.trim(),valid:r}:{valid:!1,message:"Must be a boolean or string."}},i="bold italic | quicklink h2 h3 blockquote";e("quickbars_selection_toolbar",{processor:r(i),default:i});const s="quickimage quicktable";e("quickbars_insert_toolbar",{processor:r(s),default:s});const a="alignleft aligncenter alignright";e("quickbars_image_toolbar",{processor:r(a),default:a})})(t),d(t),k(t),(t=>{const e=e=>t.dom.isEditable(e),o=t=>"IMG"===t.nodeName||"FIGURE"===t.nodeName&&/image/i.test(t.className)&&e(t.parentElement),n=l(t);n.length>0&&t.ui.registry.addContextToolbar("imageselection",{predicate:o,items:n,position:"node"});const r=s(t);r.length>0&&t.ui.registry.addContextToolbar("textselection",{predicate:n=>!o(n)&&!t.selection.isCollapsed()&&e(n),items:r,position:"selection",scope:"editor"})})(t)}))}();
+/**
+ * TinyMCE version 6.5.1 (2023-06-19)
+ */
+
+(function () {
+    'use strict';
+
+    var global$1 = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
+    const hasProto = (v, constructor, predicate) => {
+      var _a;
+      if (predicate(v, constructor.prototype)) {
+        return true;
+      } else {
+        return ((_a = v.constructor) === null || _a === void 0 ? void 0 : _a.name) === constructor.name;
+      }
+    };
+    const typeOf = x => {
+      const t = typeof x;
+      if (x === null) {
+        return 'null';
+      } else if (t === 'object' && Array.isArray(x)) {
+        return 'array';
+      } else if (t === 'object' && hasProto(x, String, (o, proto) => proto.isPrototypeOf(o))) {
+        return 'string';
+      } else {
+        return t;
+      }
+    };
+    const isType = type => value => typeOf(value) === type;
+    const isSimpleType = type => value => typeof value === type;
+    const isString = isType('string');
+    const isBoolean = isSimpleType('boolean');
+    const isNullable = a => a === null || a === undefined;
+    const isNonNullable = a => !isNullable(a);
+    const isFunction = isSimpleType('function');
+
+    const option = name => editor => editor.options.get(name);
+    const register = editor => {
+      const registerOption = editor.options.register;
+      const toolbarProcessor = defaultValue => value => {
+        const valid = isBoolean(value) || isString(value);
+        if (valid) {
+          if (isBoolean(value)) {
+            return {
+              value: value ? defaultValue : '',
+              valid
+            };
+          } else {
+            return {
+              value: value.trim(),
+              valid
+            };
+          }
+        } else {
+          return {
+            valid: false,
+            message: 'Must be a boolean or string.'
+          };
+        }
+      };
+      const defaultSelectionToolbar = 'bold italic | quicklink h2 h3 blockquote';
+      registerOption('quickbars_selection_toolbar', {
+        processor: toolbarProcessor(defaultSelectionToolbar),
+        default: defaultSelectionToolbar
+      });
+      const defaultInsertToolbar = 'quickimage quicktable';
+      registerOption('quickbars_insert_toolbar', {
+        processor: toolbarProcessor(defaultInsertToolbar),
+        default: defaultInsertToolbar
+      });
+      const defaultImageToolbar = 'alignleft aligncenter alignright';
+      registerOption('quickbars_image_toolbar', {
+        processor: toolbarProcessor(defaultImageToolbar),
+        default: defaultImageToolbar
+      });
+    };
+    const getTextSelectionToolbarItems = option('quickbars_selection_toolbar');
+    const getInsertToolbarItems = option('quickbars_insert_toolbar');
+    const getImageToolbarItems = option('quickbars_image_toolbar');
+
+    let unique = 0;
+    const generate = prefix => {
+      const date = new Date();
+      const time = date.getTime();
+      const random = Math.floor(Math.random() * 1000000000);
+      unique++;
+      return prefix + '_' + random + unique + String(time);
+    };
+
+    const insertTable = (editor, columns, rows) => {
+      editor.execCommand('mceInsertTable', false, {
+        rows,
+        columns
+      });
+    };
+    const insertBlob = (editor, base64, blob) => {
+      const blobCache = editor.editorUpload.blobCache;
+      const blobInfo = blobCache.create(generate('mceu'), blob, base64);
+      blobCache.add(blobInfo);
+      editor.insertContent(editor.dom.createHTML('img', { src: blobInfo.blobUri() }));
+    };
+
+    const blobToBase64 = blob => {
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          resolve(reader.result.split(',')[1]);
+        };
+        reader.readAsDataURL(blob);
+      });
+    };
+
+    var global = tinymce.util.Tools.resolve('tinymce.util.Delay');
+
+    const pickFile = editor => new Promise(resolve => {
+      let resolved = false;
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.style.position = 'fixed';
+      fileInput.style.left = '0';
+      fileInput.style.top = '0';
+      fileInput.style.opacity = '0.001';
+      document.body.appendChild(fileInput);
+      const resolveFileInput = value => {
+        var _a;
+        if (!resolved) {
+          (_a = fileInput.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(fileInput);
+          resolved = true;
+          resolve(value);
+        }
+      };
+      const changeHandler = e => {
+        resolveFileInput(Array.prototype.slice.call(e.target.files));
+      };
+      fileInput.addEventListener('input', changeHandler);
+      fileInput.addEventListener('change', changeHandler);
+      const cancelHandler = e => {
+        const cleanup = () => {
+          resolveFileInput([]);
+        };
+        if (!resolved) {
+          if (e.type === 'focusin') {
+            global.setEditorTimeout(editor, cleanup, 1000);
+          } else {
+            cleanup();
+          }
+        }
+        editor.off('focusin remove', cancelHandler);
+      };
+      editor.on('focusin remove', cancelHandler);
+      fileInput.click();
+    });
+
+    const setupButtons = editor => {
+      editor.ui.registry.addButton('quickimage', {
+        icon: 'image',
+        tooltip: 'Insert image',
+        onAction: () => {
+          pickFile(editor).then(files => {
+            if (files.length > 0) {
+              const blob = files[0];
+              blobToBase64(blob).then(base64 => {
+                insertBlob(editor, base64, blob);
+              });
+            }
+          });
+        }
+      });
+      editor.ui.registry.addButton('quicktable', {
+        icon: 'table',
+        tooltip: 'Insert table',
+        onAction: () => {
+          insertTable(editor, 2, 2);
+        }
+      });
+    };
+
+    const constant = value => {
+      return () => {
+        return value;
+      };
+    };
+    const never = constant(false);
+
+    class Optional {
+      constructor(tag, value) {
+        this.tag = tag;
+        this.value = value;
+      }
+      static some(value) {
+        return new Optional(true, value);
+      }
+      static none() {
+        return Optional.singletonNone;
+      }
+      fold(onNone, onSome) {
+        if (this.tag) {
+          return onSome(this.value);
+        } else {
+          return onNone();
+        }
+      }
+      isSome() {
+        return this.tag;
+      }
+      isNone() {
+        return !this.tag;
+      }
+      map(mapper) {
+        if (this.tag) {
+          return Optional.some(mapper(this.value));
+        } else {
+          return Optional.none();
+        }
+      }
+      bind(binder) {
+        if (this.tag) {
+          return binder(this.value);
+        } else {
+          return Optional.none();
+        }
+      }
+      exists(predicate) {
+        return this.tag && predicate(this.value);
+      }
+      forall(predicate) {
+        return !this.tag || predicate(this.value);
+      }
+      filter(predicate) {
+        if (!this.tag || predicate(this.value)) {
+          return this;
+        } else {
+          return Optional.none();
+        }
+      }
+      getOr(replacement) {
+        return this.tag ? this.value : replacement;
+      }
+      or(replacement) {
+        return this.tag ? this : replacement;
+      }
+      getOrThunk(thunk) {
+        return this.tag ? this.value : thunk();
+      }
+      orThunk(thunk) {
+        return this.tag ? this : thunk();
+      }
+      getOrDie(message) {
+        if (!this.tag) {
+          throw new Error(message !== null && message !== void 0 ? message : 'Called getOrDie on None');
+        } else {
+          return this.value;
+        }
+      }
+      static from(value) {
+        return isNonNullable(value) ? Optional.some(value) : Optional.none();
+      }
+      getOrNull() {
+        return this.tag ? this.value : null;
+      }
+      getOrUndefined() {
+        return this.value;
+      }
+      each(worker) {
+        if (this.tag) {
+          worker(this.value);
+        }
+      }
+      toArray() {
+        return this.tag ? [this.value] : [];
+      }
+      toString() {
+        return this.tag ? `some(${ this.value })` : 'none()';
+      }
+    }
+    Optional.singletonNone = new Optional(false);
+
+    typeof window !== 'undefined' ? window : Function('return this;')();
+
+    const ELEMENT = 1;
+
+    const name = element => {
+      const r = element.dom.nodeName;
+      return r.toLowerCase();
+    };
+
+    const has = (element, key) => {
+      const dom = element.dom;
+      return dom && dom.hasAttribute ? dom.hasAttribute(key) : false;
+    };
+
+    var ClosestOrAncestor = (is, ancestor, scope, a, isRoot) => {
+      if (is(scope, a)) {
+        return Optional.some(scope);
+      } else if (isFunction(isRoot) && isRoot(scope)) {
+        return Optional.none();
+      } else {
+        return ancestor(scope, a, isRoot);
+      }
+    };
+
+    const fromHtml = (html, scope) => {
+      const doc = scope || document;
+      const div = doc.createElement('div');
+      div.innerHTML = html;
+      if (!div.hasChildNodes() || div.childNodes.length > 1) {
+        const message = 'HTML does not have a single root node';
+        console.error(message, html);
+        throw new Error(message);
+      }
+      return fromDom(div.childNodes[0]);
+    };
+    const fromTag = (tag, scope) => {
+      const doc = scope || document;
+      const node = doc.createElement(tag);
+      return fromDom(node);
+    };
+    const fromText = (text, scope) => {
+      const doc = scope || document;
+      const node = doc.createTextNode(text);
+      return fromDom(node);
+    };
+    const fromDom = node => {
+      if (node === null || node === undefined) {
+        throw new Error('Node cannot be null or undefined');
+      }
+      return { dom: node };
+    };
+    const fromPoint = (docElm, x, y) => Optional.from(docElm.dom.elementFromPoint(x, y)).map(fromDom);
+    const SugarElement = {
+      fromHtml,
+      fromTag,
+      fromText,
+      fromDom,
+      fromPoint
+    };
+
+    const is = (element, selector) => {
+      const dom = element.dom;
+      if (dom.nodeType !== ELEMENT) {
+        return false;
+      } else {
+        const elem = dom;
+        if (elem.matches !== undefined) {
+          return elem.matches(selector);
+        } else if (elem.msMatchesSelector !== undefined) {
+          return elem.msMatchesSelector(selector);
+        } else if (elem.webkitMatchesSelector !== undefined) {
+          return elem.webkitMatchesSelector(selector);
+        } else if (elem.mozMatchesSelector !== undefined) {
+          return elem.mozMatchesSelector(selector);
+        } else {
+          throw new Error('Browser lacks native selectors');
+        }
+      }
+    };
+
+    const ancestor$1 = (scope, predicate, isRoot) => {
+      let element = scope.dom;
+      const stop = isFunction(isRoot) ? isRoot : never;
+      while (element.parentNode) {
+        element = element.parentNode;
+        const el = SugarElement.fromDom(element);
+        if (predicate(el)) {
+          return Optional.some(el);
+        } else if (stop(el)) {
+          break;
+        }
+      }
+      return Optional.none();
+    };
+    const closest$2 = (scope, predicate, isRoot) => {
+      const is = (s, test) => test(s);
+      return ClosestOrAncestor(is, ancestor$1, scope, predicate, isRoot);
+    };
+
+    const closest$1 = (scope, predicate, isRoot) => closest$2(scope, predicate, isRoot).isSome();
+
+    const ancestor = (scope, selector, isRoot) => ancestor$1(scope, e => is(e, selector), isRoot);
+    const closest = (scope, selector, isRoot) => {
+      const is$1 = (element, selector) => is(element, selector);
+      return ClosestOrAncestor(is$1, ancestor, scope, selector, isRoot);
+    };
+
+    const addToEditor$1 = editor => {
+      const insertToolbarItems = getInsertToolbarItems(editor);
+      if (insertToolbarItems.length > 0) {
+        editor.ui.registry.addContextToolbar('quickblock', {
+          predicate: node => {
+            const sugarNode = SugarElement.fromDom(node);
+            const textBlockElementsMap = editor.schema.getTextBlockElements();
+            const isRoot = elem => elem.dom === editor.getBody();
+            return !has(sugarNode, 'data-mce-bogus') && closest(sugarNode, 'table,[data-mce-bogus="all"]', isRoot).fold(() => closest$1(sugarNode, elem => name(elem) in textBlockElementsMap && editor.dom.isEmpty(elem.dom), isRoot), never);
+          },
+          items: insertToolbarItems,
+          position: 'line',
+          scope: 'editor'
+        });
+      }
+    };
+
+    const addToEditor = editor => {
+      const isEditable = node => editor.dom.isEditable(node);
+      const isInEditableContext = el => isEditable(el.parentElement);
+      const isImage = node => node.nodeName === 'IMG' || node.nodeName === 'FIGURE' && /image/i.test(node.className) && isInEditableContext(node);
+      const imageToolbarItems = getImageToolbarItems(editor);
+      if (imageToolbarItems.length > 0) {
+        editor.ui.registry.addContextToolbar('imageselection', {
+          predicate: isImage,
+          items: imageToolbarItems,
+          position: 'node'
+        });
+      }
+      const textToolbarItems = getTextSelectionToolbarItems(editor);
+      if (textToolbarItems.length > 0) {
+        editor.ui.registry.addContextToolbar('textselection', {
+          predicate: node => !isImage(node) && !editor.selection.isCollapsed() && isEditable(node),
+          items: textToolbarItems,
+          position: 'selection',
+          scope: 'editor'
+        });
+      }
+    };
+
+    var Plugin = () => {
+      global$1.add('quickbars', editor => {
+        register(editor);
+        setupButtons(editor);
+        addToEditor$1(editor);
+        addToEditor(editor);
+      });
+    };
+
+    Plugin();
+
+})();

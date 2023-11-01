@@ -1,1 +1,1235 @@
-!function(){"use strict";var e=tinymce.util.Tools.resolve("tinymce.PluginManager");const t=e=>t=>(e=>{const t=typeof e;return null===e?"null":"object"===t&&Array.isArray(e)?"array":"object"===t&&(r=o=e,(a=String).prototype.isPrototypeOf(r)||(null===(s=o.constructor)||void 0===s?void 0:s.name)===a.name)?"string":t;var r,o,a,s})(t)===e,r=t("string"),o=t("object"),a=t("array"),s=e=>!(e=>null==e)(e);class i{constructor(e,t){this.tag=e,this.value=t}static some(e){return new i(!0,e)}static none(){return i.singletonNone}fold(e,t){return this.tag?t(this.value):e()}isSome(){return this.tag}isNone(){return!this.tag}map(e){return this.tag?i.some(e(this.value)):i.none()}bind(e){return this.tag?e(this.value):i.none()}exists(e){return this.tag&&e(this.value)}forall(e){return!this.tag||e(this.value)}filter(e){return!this.tag||e(this.value)?this:i.none()}getOr(e){return this.tag?this.value:e}or(e){return this.tag?this:e}getOrThunk(e){return this.tag?this.value:e()}orThunk(e){return this.tag?this:e()}getOrDie(e){if(this.tag)return this.value;throw new Error(null!=e?e:"Called getOrDie on None")}static from(e){return s(e)?i.some(e):i.none()}getOrNull(){return this.tag?this.value:null}getOrUndefined(){return this.value}each(e){this.tag&&e(this.value)}toArray(){return this.tag?[this.value]:[]}toString(){return this.tag?`some(${this.value})`:"none()"}}i.singletonNone=new i(!1);const n=Array.prototype.push,c=(e,t)=>{for(let r=0,o=e.length;r<o;r++)t(e[r],r)},l=e=>{const t=[];for(let r=0,o=e.length;r<o;++r){if(!a(e[r]))throw new Error("Arr.flatten item "+r+" was not an array, input: "+e);n.apply(t,e[r])}return t},m=Object.keys,u=Object.hasOwnProperty,d=(e,t)=>h(e,t)?i.from(e[t]):i.none(),h=(e,t)=>u.call(e,t),p=e=>t=>t.options.get(e),g=p("audio_template_callback"),b=p("video_template_callback"),w=p("iframe_template_callback"),v=p("media_live_embeds"),y=p("media_filter_html"),f=p("media_url_resolver"),x=p("media_alt_source"),_=p("media_poster"),j=p("media_dimensions");var k=tinymce.util.Tools.resolve("tinymce.util.Tools"),O=tinymce.util.Tools.resolve("tinymce.dom.DOMUtils"),A=tinymce.util.Tools.resolve("tinymce.html.DomParser");const S=O.DOM,$=e=>e.replace(/px$/,""),C=e=>{const t=e.attr("style"),r=t?S.parseStyle(t):{};return{type:"ephox-embed-iri",source:e.attr("data-ephox-embed-iri"),altsource:"",poster:"",width:d(r,"max-width").map($).getOr(""),height:d(r,"max-height").map($).getOr("")}},D=(e,t)=>{let r={};for(let o=A({validate:!1,forced_root_block:!1},t).parse(e);o;o=o.walk())if(1===o.type){const e=o.name;if(o.attr("data-ephox-embed-iri")){r=C(o);break}r.source||"param"!==e||(r.source=o.attr("movie")),"iframe"!==e&&"object"!==e&&"embed"!==e&&"video"!==e&&"audio"!==e||(r.type||(r.type=e),r=k.extend(o.attributes.map,r)),"script"===e&&(r={type:"script",source:o.attr("src")}),"source"===e&&(r.source?r.altsource||(r.altsource=o.attr("src")):r.source=o.attr("src")),"img"!==e||r.poster||(r.poster=o.attr("src"))}return r.source=r.source||r.src||"",r.altsource=r.altsource||"",r.poster=r.poster||"",r},T=e=>{var t;const r=null!==(t=e.toLowerCase().split(".").pop())&&void 0!==t?t:"";return d({mp3:"audio/mpeg",m4a:"audio/x-m4a",wav:"audio/wav",mp4:"video/mp4",webm:"video/webm",ogg:"video/ogg",swf:"application/x-shockwave-flash"},r).getOr("")};var z=tinymce.util.Tools.resolve("tinymce.html.Node"),F=tinymce.util.Tools.resolve("tinymce.html.Serializer");const M=(e,t={})=>A({forced_root_block:!1,validate:!1,allow_conditional_comments:!0,...t},e),N=O.DOM,R=e=>/^[0-9.]+$/.test(e)?e+"px":e,E=(e,t)=>{const r=t.attr("style"),o=r?N.parseStyle(r):{};s(e.width)&&(o["max-width"]=R(e.width)),s(e.height)&&(o["max-height"]=R(e.height)),t.attr("style",N.serializeStyle(o))},U=["source","altsource"],P=(e,t,r,o)=>{let a=0,s=0;const i=M(o);i.addNodeFilter("source",(e=>a=e.length));const n=i.parse(e);for(let e=n;e;e=e.walk())if(1===e.type){const o=e.name;if(e.attr("data-ephox-embed-iri")){E(t,e);break}switch(o){case"video":case"object":case"embed":case"img":case"iframe":void 0!==t.height&&void 0!==t.width&&(e.attr("width",t.width),e.attr("height",t.height))}if(r)switch(o){case"video":e.attr("poster",t.poster),e.attr("src",null);for(let r=a;r<2;r++)if(t[U[r]]){const o=new z("source",1);o.attr("src",t[U[r]]),o.attr("type",t[U[r]+"mime"]||null),e.append(o)}break;case"iframe":e.attr("src",t.source);break;case"object":const r=e.getAll("img").length>0;if(t.poster&&!r){e.attr("src",t.poster);const r=new z("img",1);r.attr("src",t.poster),r.attr("width",t.width),r.attr("height",t.height),e.append(r)}break;case"source":if(s<2&&(e.attr("src",t[U[s]]),e.attr("type",t[U[s]+"mime"]||null),!t[U[s]])){e.remove();continue}s++;break;case"img":t.poster||e.remove()}}return F({},o).serialize(n)},L=[{regex:/youtu\.be\/([\w\-_\?&=.]+)/i,type:"iframe",w:560,h:314,url:"www.youtube.com/embed/$1",allowFullscreen:!0},{regex:/youtube\.com(.+)v=([^&]+)(&([a-z0-9&=\-_]+))?/i,type:"iframe",w:560,h:314,url:"www.youtube.com/embed/$2?$4",allowFullscreen:!0},{regex:/youtube.com\/embed\/([a-z0-9\?&=\-_]+)/i,type:"iframe",w:560,h:314,url:"www.youtube.com/embed/$1",allowFullscreen:!0},{regex:/vimeo\.com\/([0-9]+)\?h=(\w+)/,type:"iframe",w:425,h:350,url:"player.vimeo.com/video/$1?h=$2&title=0&byline=0&portrait=0&color=8dc7dc",allowFullscreen:!0},{regex:/vimeo\.com\/(.*)\/([0-9]+)\?h=(\w+)/,type:"iframe",w:425,h:350,url:"player.vimeo.com/video/$2?h=$3&title=0&amp;byline=0",allowFullscreen:!0},{regex:/vimeo\.com\/([0-9]+)/,type:"iframe",w:425,h:350,url:"player.vimeo.com/video/$1?title=0&byline=0&portrait=0&color=8dc7dc",allowFullscreen:!0},{regex:/vimeo\.com\/(.*)\/([0-9]+)/,type:"iframe",w:425,h:350,url:"player.vimeo.com/video/$2?title=0&amp;byline=0",allowFullscreen:!0},{regex:/maps\.google\.([a-z]{2,3})\/maps\/(.+)msid=(.+)/,type:"iframe",w:425,h:350,url:'maps.google.com/maps/ms?msid=$2&output=embed"',allowFullscreen:!1},{regex:/dailymotion\.com\/video\/([^_]+)/,type:"iframe",w:480,h:270,url:"www.dailymotion.com/embed/video/$1",allowFullscreen:!0},{regex:/dai\.ly\/([^_]+)/,type:"iframe",w:480,h:270,url:"www.dailymotion.com/embed/video/$1",allowFullscreen:!0}],I=(e,t)=>{const r=(e=>{const t=e.match(/^(https?:\/\/|www\.)(.+)$/i);return t&&t.length>1?"www."===t[1]?"https://":t[1]:"https://"})(t),o=e.regex.exec(t);let a=r+e.url;if(s(o))for(let e=0;e<o.length;e++)a=a.replace("$"+e,(()=>o[e]?o[e]:""));return a.replace(/\?$/,"")},B=e=>{const t=L.filter((t=>t.regex.test(e)));return t.length>0?k.extend({},t[0],{url:I(t[0],e)}):null},G=(e,t)=>{var r;const o=k.extend({},t);if(!o.source&&(k.extend(o,D(null!==(r=o.embed)&&void 0!==r?r:"",e.schema)),!o.source))return"";o.altsource||(o.altsource=""),o.poster||(o.poster=""),o.source=e.convertURL(o.source,"source"),o.altsource=e.convertURL(o.altsource,"source"),o.sourcemime=T(o.source),o.altsourcemime=T(o.altsource),o.poster=e.convertURL(o.poster,"poster");const a=B(o.source);if(a&&(o.source=a.url,o.type=a.type,o.allowfullscreen=a.allowFullscreen,o.width=o.width||String(a.w),o.height=o.height||String(a.h)),o.embed)return P(o.embed,o,!0,e.schema);{const t=g(e),r=b(e),a=w(e);return o.width=o.width||"300",o.height=o.height||"150",k.each(o,((t,r)=>{o[r]=e.dom.encode(""+t)})),"iframe"===o.type?((e,t)=>{if(t)return t(e);{const t=e.allowfullscreen?' allowFullscreen="1"':"";return'<iframe src="'+e.source+'" width="'+e.width+'" height="'+e.height+'"'+t+"></iframe>"}})(o,a):"application/x-shockwave-flash"===o.sourcemime?(e=>{let t='<object data="'+e.source+'" width="'+e.width+'" height="'+e.height+'" type="application/x-shockwave-flash">';return e.poster&&(t+='<img src="'+e.poster+'" width="'+e.width+'" height="'+e.height+'" />'),t+="</object>",t})(o):-1!==o.sourcemime.indexOf("audio")?((e,t)=>t?t(e):'<audio controls="controls" src="'+e.source+'">'+(e.altsource?'\n<source src="'+e.altsource+'"'+(e.altsourcemime?' type="'+e.altsourcemime+'"':"")+" />\n":"")+"</audio>")(o,t):"script"===o.type?(e=>'<script src="'+e.source+'"><\/script>')(o):((e,t)=>t?t(e):'<video width="'+e.width+'" height="'+e.height+'"'+(e.poster?' poster="'+e.poster+'"':"")+' controls="controls">\n<source src="'+e.source+'"'+(e.sourcemime?' type="'+e.sourcemime+'"':"")+" />\n"+(e.altsource?'<source src="'+e.altsource+'"'+(e.altsourcemime?' type="'+e.altsourcemime+'"':"")+" />\n":"")+"</video>")(o,r)}},W=e=>e.hasAttribute("data-mce-object")||e.hasAttribute("data-ephox-embed-iri"),q={},H=e=>t=>G(e,t),J=(e,t)=>{const r=f(e);return r?((e,t,r)=>new Promise(((o,a)=>{const s=r=>(r.html&&(q[e.source]=r),o({url:e.source,html:r.html?r.html:t(e)}));q[e.source]?s(q[e.source]):r({url:e.source},s,a)})))(t,H(e),r):((e,t)=>Promise.resolve({html:t(e),url:e.source}))(t,H(e))},K=(e,t)=>{const r={};return d(e,"dimensions").each((e=>{c(["width","height"],(o=>{d(t,o).orThunk((()=>d(e,o))).each((e=>r[o]=e))}))})),r},Q=(e,t)=>{const r=t&&"dimensions"!==t?((e,t)=>d(t,e).bind((e=>d(e,"meta"))))(t,e).getOr({}):{},a=((e,t,r)=>a=>{const s=()=>d(e,a),n=()=>d(t,a),c=e=>d(e,"value").bind((e=>e.length>0?i.some(e):i.none()));return{[a]:(a===r?s().bind((e=>o(e)?c(e).orThunk(n):n().orThunk((()=>i.from(e))))):n().orThunk((()=>s().bind((e=>o(e)?c(e):i.from(e)))))).getOr("")}})(e,r,t);return{...a("source"),...a("altsource"),...a("poster"),...a("embed"),...K(e,r)}},V=e=>{const t={...e,source:{value:d(e,"source").getOr("")},altsource:{value:d(e,"altsource").getOr("")},poster:{value:d(e,"poster").getOr("")}};return c(["width","height"],(r=>{d(e,r).each((e=>{const o=t.dimensions||{};o[r]=e,t.dimensions=o}))})),t},X=e=>t=>{const r=t&&t.msg?"Media embed handler error: "+t.msg:"Media embed handler threw unknown error.";e.notificationManager.open({type:"error",text:r})},Y=(e,t)=>o=>{if(r(o.url)&&o.url.trim().length>0){const r=o.html,a={...D(r,t.schema),source:o.url,embed:r};e.setData(V(a))}},Z=(e,t)=>{const r=e.dom.select("*[data-mce-object]");e.insertContent(t),((e,t)=>{const r=e.dom.select("*[data-mce-object]");for(let e=0;e<t.length;e++)for(let o=r.length-1;o>=0;o--)t[e]===r[o]&&r.splice(o,1);e.selection.select(r[0])})(e,r),e.nodeChanged()},ee=(e,t)=>s(t)&&"ephox-embed-iri"===t&&s(B(e)),te=(e,t)=>((e,t)=>e.width!==t.width||e.height!==t.height)(e,t)&&ee(t.source,e.type),re=e=>{const t=(e=>{const t=e.selection.getNode(),r=W(t)?e.serializer.serialize(t,{selection:!0}):"",o=D(r,e.schema),a=(()=>{if(ee(o.source,o.type)){const r=e.dom.getRect(t);return{width:r.w.toString().replace(/px$/,""),height:r.h.toString().replace(/px$/,"")}}return{}})();return{embed:r,...o,...a}})(e),r=(e=>{let t=e;return{get:()=>t,set:e=>{t=e}}})(t),o=V(t),a=j(e)?[{type:"sizeinput",name:"dimensions",label:"Constrain proportions",constrain:!0}]:[],s={title:"General",name:"general",items:l([[{name:"source",type:"urlinput",filetype:"media",label:"Source"}],a])},i=[];x(e)&&i.push({name:"altsource",type:"urlinput",filetype:"media",label:"Alternative source URL"}),_(e)&&i.push({name:"poster",type:"urlinput",filetype:"image",label:"Media poster (Image URL)"});const n={title:"Advanced",name:"advanced",items:i},c=[s,{title:"Embed",items:[{type:"textarea",name:"embed",label:"Paste your embed code below:"}]}];i.length>0&&c.push(n);const m={type:"tabpanel",tabs:c},u=e.windowManager.open({title:"Insert/Edit Media",size:"normal",body:m,buttons:[{type:"cancel",name:"cancel",text:"Cancel"},{type:"submit",name:"save",text:"Save",primary:!0}],onSubmit:t=>{const o=Q(t.getData());((e,t,r)=>{var o,a;t.embed=te(e,t)&&j(r)?G(r,{...t,embed:""}):P(null!==(o=t.embed)&&void 0!==o?o:"",t,!1,r.schema),t.embed&&(e.source===t.source||(a=t.source,h(q,a)))?Z(r,t.embed):J(r,t).then((e=>{Z(r,e.html)})).catch(X(r))})(r.get(),o,e),t.close()},onChange:(t,o)=>{switch(o.name){case"source":((t,r)=>{const o=Q(r.getData(),"source");t.source!==o.source&&(Y(u,e)({url:o.source,html:""}),J(e,o).then(Y(u,e)).catch(X(e)))})(r.get(),t);break;case"embed":(t=>{var r;const o=Q(t.getData()),a=D(null!==(r=o.embed)&&void 0!==r?r:"",e.schema);t.setData(V(a))})(t);break;case"dimensions":case"altsource":case"poster":((t,r,o)=>{const a=Q(t.getData(),r),s=te(o,a)&&j(e)?{...a,embed:""}:a,i=G(e,s);t.setData(V({...s,embed:i}))})(t,o.name,r.get())}r.set(Q(t.getData()))},initialData:o})};var oe=tinymce.util.Tools.resolve("tinymce.Env");const ae=e=>{const t=e.name;return"iframe"===t||"video"===t||"audio"===t},se=(e,t,r,o=null)=>{const a=e.attr(r);return s(a)?a:h(t,r)?null:o},ie=(e,t,r)=>{const o="img"===t.name||"video"===e.name,a=o?"300":null,s="audio"===e.name?"30":"150",i=o?s:null;t.attr({width:se(e,r,"width",a),height:se(e,r,"height",i)})},ne=(e,t)=>{const r=t.name,o=new z("img",1);return le(e,t,o),ie(t,o,{}),o.attr({style:t.attr("style"),src:oe.transparentSrc,"data-mce-object":r,class:"mce-object mce-object-"+r}),o},ce=(e,t)=>{var r;const o=t.name,a=new z("span",1);a.attr({contentEditable:"false",style:t.attr("style"),"data-mce-object":o,class:"mce-preview-object mce-object-"+o}),le(e,t,a);const i=e.dom.parseStyle(null!==(r=t.attr("style"))&&void 0!==r?r:""),n=new z(o,1);if(ie(t,n,i),n.attr({src:t.attr("src"),style:t.attr("style"),class:t.attr("class")}),"iframe"===o)n.attr({allowfullscreen:t.attr("allowfullscreen"),frameborder:"0"});else{c(["controls","crossorigin","currentTime","loop","muted","poster","preload"],(e=>{n.attr(e,t.attr(e))}));const r=a.attr("data-mce-html");s(r)&&((e,t,r,o)=>{const a=M(e.schema).parse(o,{context:t});for(;a.firstChild;)r.append(a.firstChild)})(e,o,n,unescape(r))}const l=new z("span",1);return l.attr("class","mce-shim"),a.append(n),a.append(l),a},le=(e,t,r)=>{var o;const a=null!==(o=t.attributes)&&void 0!==o?o:[];let s=a.length;for(;s--;){const t=a[s].name;let o=a[s].value;"width"===t||"height"===t||"style"===t||(n="data-mce-",(i=t).length>=9&&i.substr(0,9)===n)||("data"!==t&&"src"!==t||(o=e.convertURL(o,t)),r.attr("data-mce-p-"+t,o))}var i,n;const l=F({inner:!0},e.schema),m=new z("div",1);c(t.children(),(e=>m.append(e)));const u=l.serialize(m);u&&(r.attr("data-mce-html",escape(u)),r.empty())},me=e=>{const t=e.attr("class");return r(t)&&/\btiny-pageembed\b/.test(t)},ue=e=>{let t=e;for(;t=t.parent;)if(t.attr("data-ephox-embed-iri")||me(t))return!0;return!1},de=(e,t,r)=>{const o=(0,e.options.get)("xss_sanitization"),a=y(e);return M(e.schema,{sanitize:o,validate:a}).parse(r,{context:t})},he=e=>t=>{const r=()=>{t.setEnabled(e.selection.isEditable())};return e.on("NodeChange",r),r(),()=>{e.off("NodeChange",r)}};e.add("media",(e=>((e=>{const t=e.options.register;t("audio_template_callback",{processor:"function"}),t("video_template_callback",{processor:"function"}),t("iframe_template_callback",{processor:"function"}),t("media_live_embeds",{processor:"boolean",default:!0}),t("media_filter_html",{processor:"boolean",default:!0}),t("media_url_resolver",{processor:"function"}),t("media_alt_source",{processor:"boolean",default:!0}),t("media_poster",{processor:"boolean",default:!0}),t("media_dimensions",{processor:"boolean",default:!0})})(e),(e=>{e.addCommand("mceMedia",(()=>{re(e)}))})(e),(e=>{const t=()=>e.execCommand("mceMedia");e.ui.registry.addToggleButton("media",{tooltip:"Insert/edit media",icon:"embed",onAction:t,onSetup:t=>{const r=e.selection;t.setActive(W(r.getNode()));const o=r.selectorChangedWithUnbind("img[data-mce-object],span[data-mce-object],div[data-ephox-embed-iri]",t.setActive).unbind,a=he(e)(t);return()=>{o(),a()}}}),e.ui.registry.addMenuItem("media",{icon:"embed",text:"Media...",onAction:t,onSetup:he(e)})})(e),(e=>{e.on("ResolveName",(e=>{let t;1===e.target.nodeType&&(t=e.target.getAttribute("data-mce-object"))&&(e.name=t)}))})(e),(e=>{e.on("PreInit",(()=>{const{schema:t,serializer:r,parser:o}=e,a=t.getBoolAttrs();c("webkitallowfullscreen mozallowfullscreen".split(" "),(e=>{a[e]={}})),((e,t)=>{const r=m(e);for(let o=0,a=r.length;o<a;o++){const a=r[o];t(e[a],a)}})({embed:["wmode"]},((e,r)=>{const o=t.getElementRule(r);o&&c(e,(e=>{o.attributes[e]={},o.attributesOrder.push(e)}))})),o.addNodeFilter("iframe,video,audio,object,embed,script",(e=>t=>{let r,o=t.length;for(;o--;)r=t[o],r.parent&&(r.parent.attr("data-mce-object")||(ae(r)&&v(e)?ue(r)||r.replace(ce(e,r)):ue(r)||r.replace(ne(e,r))))})(e)),r.addAttributeFilter("data-mce-object",((t,r)=>{var o;let a=t.length;for(;a--;){const s=t[a];if(!s.parent)continue;const i=s.attr(r),n=new z(i,1);if("audio"!==i&&"script"!==i){const e=s.attr("class");e&&-1!==e.indexOf("mce-preview-object")&&s.firstChild?n.attr({width:s.firstChild.attr("width"),height:s.firstChild.attr("height")}):n.attr({width:s.attr("width"),height:s.attr("height")})}n.attr({style:s.attr("style")});const l=null!==(o=s.attributes)&&void 0!==o?o:[];let m=l.length;for(;m--;){const e=l[m].name;0===e.indexOf("data-mce-p-")&&n.attr(e.substr(11),l[m].value)}"script"===i&&n.attr("type","text/javascript");const u=s.attr("data-mce-html");if(u){const t=de(e,i,unescape(u));c(t.children(),(e=>n.append(e)))}s.replace(n)}}))})),e.on("SetContent",(()=>{const t=e.dom;c(t.select("span.mce-preview-object"),(e=>{0===t.select("span.mce-shim",e).length&&t.add(e,"span",{class:"mce-shim"})}))}))})(e),(e=>{e.on("click keyup touchend",(()=>{const t=e.selection.getNode();t&&e.dom.hasClass(t,"mce-preview-object")&&e.dom.getAttrib(t,"data-mce-selected")&&t.setAttribute("data-mce-selected","2")})),e.on("ObjectSelected",(e=>{"script"===e.target.getAttribute("data-mce-object")&&e.preventDefault()})),e.on("ObjectResized",(t=>{const r=t.target;if(r.getAttribute("data-mce-object")){let o=r.getAttribute("data-mce-html");o&&(o=unescape(o),r.setAttribute("data-mce-html",escape(P(o,{width:String(t.width),height:String(t.height)},!1,e.schema))))}}))})(e),(e=>({showDialog:()=>{re(e)}}))(e))))}();
+/**
+ * TinyMCE version 6.5.1 (2023-06-19)
+ */
+
+(function () {
+    'use strict';
+
+    var global$6 = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
+    const hasProto = (v, constructor, predicate) => {
+      var _a;
+      if (predicate(v, constructor.prototype)) {
+        return true;
+      } else {
+        return ((_a = v.constructor) === null || _a === void 0 ? void 0 : _a.name) === constructor.name;
+      }
+    };
+    const typeOf = x => {
+      const t = typeof x;
+      if (x === null) {
+        return 'null';
+      } else if (t === 'object' && Array.isArray(x)) {
+        return 'array';
+      } else if (t === 'object' && hasProto(x, String, (o, proto) => proto.isPrototypeOf(o))) {
+        return 'string';
+      } else {
+        return t;
+      }
+    };
+    const isType = type => value => typeOf(value) === type;
+    const isString = isType('string');
+    const isObject = isType('object');
+    const isArray = isType('array');
+    const isNullable = a => a === null || a === undefined;
+    const isNonNullable = a => !isNullable(a);
+
+    class Optional {
+      constructor(tag, value) {
+        this.tag = tag;
+        this.value = value;
+      }
+      static some(value) {
+        return new Optional(true, value);
+      }
+      static none() {
+        return Optional.singletonNone;
+      }
+      fold(onNone, onSome) {
+        if (this.tag) {
+          return onSome(this.value);
+        } else {
+          return onNone();
+        }
+      }
+      isSome() {
+        return this.tag;
+      }
+      isNone() {
+        return !this.tag;
+      }
+      map(mapper) {
+        if (this.tag) {
+          return Optional.some(mapper(this.value));
+        } else {
+          return Optional.none();
+        }
+      }
+      bind(binder) {
+        if (this.tag) {
+          return binder(this.value);
+        } else {
+          return Optional.none();
+        }
+      }
+      exists(predicate) {
+        return this.tag && predicate(this.value);
+      }
+      forall(predicate) {
+        return !this.tag || predicate(this.value);
+      }
+      filter(predicate) {
+        if (!this.tag || predicate(this.value)) {
+          return this;
+        } else {
+          return Optional.none();
+        }
+      }
+      getOr(replacement) {
+        return this.tag ? this.value : replacement;
+      }
+      or(replacement) {
+        return this.tag ? this : replacement;
+      }
+      getOrThunk(thunk) {
+        return this.tag ? this.value : thunk();
+      }
+      orThunk(thunk) {
+        return this.tag ? this : thunk();
+      }
+      getOrDie(message) {
+        if (!this.tag) {
+          throw new Error(message !== null && message !== void 0 ? message : 'Called getOrDie on None');
+        } else {
+          return this.value;
+        }
+      }
+      static from(value) {
+        return isNonNullable(value) ? Optional.some(value) : Optional.none();
+      }
+      getOrNull() {
+        return this.tag ? this.value : null;
+      }
+      getOrUndefined() {
+        return this.value;
+      }
+      each(worker) {
+        if (this.tag) {
+          worker(this.value);
+        }
+      }
+      toArray() {
+        return this.tag ? [this.value] : [];
+      }
+      toString() {
+        return this.tag ? `some(${ this.value })` : 'none()';
+      }
+    }
+    Optional.singletonNone = new Optional(false);
+
+    const nativePush = Array.prototype.push;
+    const each$1 = (xs, f) => {
+      for (let i = 0, len = xs.length; i < len; i++) {
+        const x = xs[i];
+        f(x, i);
+      }
+    };
+    const flatten = xs => {
+      const r = [];
+      for (let i = 0, len = xs.length; i < len; ++i) {
+        if (!isArray(xs[i])) {
+          throw new Error('Arr.flatten item ' + i + ' was not an array, input: ' + xs);
+        }
+        nativePush.apply(r, xs[i]);
+      }
+      return r;
+    };
+
+    const Cell = initial => {
+      let value = initial;
+      const get = () => {
+        return value;
+      };
+      const set = v => {
+        value = v;
+      };
+      return {
+        get,
+        set
+      };
+    };
+
+    const keys = Object.keys;
+    const hasOwnProperty = Object.hasOwnProperty;
+    const each = (obj, f) => {
+      const props = keys(obj);
+      for (let k = 0, len = props.length; k < len; k++) {
+        const i = props[k];
+        const x = obj[i];
+        f(x, i);
+      }
+    };
+    const get$1 = (obj, key) => {
+      return has(obj, key) ? Optional.from(obj[key]) : Optional.none();
+    };
+    const has = (obj, key) => hasOwnProperty.call(obj, key);
+
+    const option = name => editor => editor.options.get(name);
+    const register$2 = editor => {
+      const registerOption = editor.options.register;
+      registerOption('audio_template_callback', { processor: 'function' });
+      registerOption('video_template_callback', { processor: 'function' });
+      registerOption('iframe_template_callback', { processor: 'function' });
+      registerOption('media_live_embeds', {
+        processor: 'boolean',
+        default: true
+      });
+      registerOption('media_filter_html', {
+        processor: 'boolean',
+        default: true
+      });
+      registerOption('media_url_resolver', { processor: 'function' });
+      registerOption('media_alt_source', {
+        processor: 'boolean',
+        default: true
+      });
+      registerOption('media_poster', {
+        processor: 'boolean',
+        default: true
+      });
+      registerOption('media_dimensions', {
+        processor: 'boolean',
+        default: true
+      });
+    };
+    const getAudioTemplateCallback = option('audio_template_callback');
+    const getVideoTemplateCallback = option('video_template_callback');
+    const getIframeTemplateCallback = option('iframe_template_callback');
+    const hasLiveEmbeds = option('media_live_embeds');
+    const shouldFilterHtml = option('media_filter_html');
+    const getUrlResolver = option('media_url_resolver');
+    const hasAltSource = option('media_alt_source');
+    const hasPoster = option('media_poster');
+    const hasDimensions = option('media_dimensions');
+
+    var global$5 = tinymce.util.Tools.resolve('tinymce.util.Tools');
+
+    var global$4 = tinymce.util.Tools.resolve('tinymce.dom.DOMUtils');
+
+    var global$3 = tinymce.util.Tools.resolve('tinymce.html.DomParser');
+
+    const DOM$1 = global$4.DOM;
+    const trimPx = value => value.replace(/px$/, '');
+    const getEphoxEmbedData = node => {
+      const style = node.attr('style');
+      const styles = style ? DOM$1.parseStyle(style) : {};
+      return {
+        type: 'ephox-embed-iri',
+        source: node.attr('data-ephox-embed-iri'),
+        altsource: '',
+        poster: '',
+        width: get$1(styles, 'max-width').map(trimPx).getOr(''),
+        height: get$1(styles, 'max-height').map(trimPx).getOr('')
+      };
+    };
+    const htmlToData = (html, schema) => {
+      let data = {};
+      const parser = global$3({
+        validate: false,
+        forced_root_block: false
+      }, schema);
+      const rootNode = parser.parse(html);
+      for (let node = rootNode; node; node = node.walk()) {
+        if (node.type === 1) {
+          const name = node.name;
+          if (node.attr('data-ephox-embed-iri')) {
+            data = getEphoxEmbedData(node);
+            break;
+          } else {
+            if (!data.source && name === 'param') {
+              data.source = node.attr('movie');
+            }
+            if (name === 'iframe' || name === 'object' || name === 'embed' || name === 'video' || name === 'audio') {
+              if (!data.type) {
+                data.type = name;
+              }
+              data = global$5.extend(node.attributes.map, data);
+            }
+            if (name === 'script') {
+              data = {
+                type: 'script',
+                source: node.attr('src')
+              };
+            }
+            if (name === 'source') {
+              if (!data.source) {
+                data.source = node.attr('src');
+              } else if (!data.altsource) {
+                data.altsource = node.attr('src');
+              }
+            }
+            if (name === 'img' && !data.poster) {
+              data.poster = node.attr('src');
+            }
+          }
+        }
+      }
+      data.source = data.source || data.src || '';
+      data.altsource = data.altsource || '';
+      data.poster = data.poster || '';
+      return data;
+    };
+
+    const guess = url => {
+      var _a;
+      const mimes = {
+        mp3: 'audio/mpeg',
+        m4a: 'audio/x-m4a',
+        wav: 'audio/wav',
+        mp4: 'video/mp4',
+        webm: 'video/webm',
+        ogg: 'video/ogg',
+        swf: 'application/x-shockwave-flash'
+      };
+      const fileEnd = (_a = url.toLowerCase().split('.').pop()) !== null && _a !== void 0 ? _a : '';
+      return get$1(mimes, fileEnd).getOr('');
+    };
+
+    var global$2 = tinymce.util.Tools.resolve('tinymce.html.Node');
+
+    var global$1 = tinymce.util.Tools.resolve('tinymce.html.Serializer');
+
+    const Parser = (schema, settings = {}) => global$3({
+      forced_root_block: false,
+      validate: false,
+      allow_conditional_comments: true,
+      ...settings
+    }, schema);
+
+    const DOM = global$4.DOM;
+    const addPx = value => /^[0-9.]+$/.test(value) ? value + 'px' : value;
+    const updateEphoxEmbed = (data, node) => {
+      const style = node.attr('style');
+      const styleMap = style ? DOM.parseStyle(style) : {};
+      if (isNonNullable(data.width)) {
+        styleMap['max-width'] = addPx(data.width);
+      }
+      if (isNonNullable(data.height)) {
+        styleMap['max-height'] = addPx(data.height);
+      }
+      node.attr('style', DOM.serializeStyle(styleMap));
+    };
+    const sources = [
+      'source',
+      'altsource'
+    ];
+    const updateHtml = (html, data, updateAll, schema) => {
+      let numSources = 0;
+      let sourceCount = 0;
+      const parser = Parser(schema);
+      parser.addNodeFilter('source', nodes => numSources = nodes.length);
+      const rootNode = parser.parse(html);
+      for (let node = rootNode; node; node = node.walk()) {
+        if (node.type === 1) {
+          const name = node.name;
+          if (node.attr('data-ephox-embed-iri')) {
+            updateEphoxEmbed(data, node);
+            break;
+          } else {
+            switch (name) {
+            case 'video':
+            case 'object':
+            case 'embed':
+            case 'img':
+            case 'iframe':
+              if (data.height !== undefined && data.width !== undefined) {
+                node.attr('width', data.width);
+                node.attr('height', data.height);
+              }
+              break;
+            }
+            if (updateAll) {
+              switch (name) {
+              case 'video':
+                node.attr('poster', data.poster);
+                node.attr('src', null);
+                for (let index = numSources; index < 2; index++) {
+                  if (data[sources[index]]) {
+                    const source = new global$2('source', 1);
+                    source.attr('src', data[sources[index]]);
+                    source.attr('type', data[sources[index] + 'mime'] || null);
+                    node.append(source);
+                  }
+                }
+                break;
+              case 'iframe':
+                node.attr('src', data.source);
+                break;
+              case 'object':
+                const hasImage = node.getAll('img').length > 0;
+                if (data.poster && !hasImage) {
+                  node.attr('src', data.poster);
+                  const img = new global$2('img', 1);
+                  img.attr('src', data.poster);
+                  img.attr('width', data.width);
+                  img.attr('height', data.height);
+                  node.append(img);
+                }
+                break;
+              case 'source':
+                if (sourceCount < 2) {
+                  node.attr('src', data[sources[sourceCount]]);
+                  node.attr('type', data[sources[sourceCount] + 'mime'] || null);
+                  if (!data[sources[sourceCount]]) {
+                    node.remove();
+                    continue;
+                  }
+                }
+                sourceCount++;
+                break;
+              case 'img':
+                if (!data.poster) {
+                  node.remove();
+                }
+                break;
+              }
+            }
+          }
+        }
+      }
+      return global$1({}, schema).serialize(rootNode);
+    };
+
+    const urlPatterns = [
+      {
+        regex: /youtu\.be\/([\w\-_\?&=.]+)/i,
+        type: 'iframe',
+        w: 560,
+        h: 314,
+        url: 'www.youtube.com/embed/$1',
+        allowFullscreen: true
+      },
+      {
+        regex: /youtube\.com(.+)v=([^&]+)(&([a-z0-9&=\-_]+))?/i,
+        type: 'iframe',
+        w: 560,
+        h: 314,
+        url: 'www.youtube.com/embed/$2?$4',
+        allowFullscreen: true
+      },
+      {
+        regex: /youtube.com\/embed\/([a-z0-9\?&=\-_]+)/i,
+        type: 'iframe',
+        w: 560,
+        h: 314,
+        url: 'www.youtube.com/embed/$1',
+        allowFullscreen: true
+      },
+      {
+        regex: /vimeo\.com\/([0-9]+)\?h=(\w+)/,
+        type: 'iframe',
+        w: 425,
+        h: 350,
+        url: 'player.vimeo.com/video/$1?h=$2&title=0&byline=0&portrait=0&color=8dc7dc',
+        allowFullscreen: true
+      },
+      {
+        regex: /vimeo\.com\/(.*)\/([0-9]+)\?h=(\w+)/,
+        type: 'iframe',
+        w: 425,
+        h: 350,
+        url: 'player.vimeo.com/video/$2?h=$3&title=0&amp;byline=0',
+        allowFullscreen: true
+      },
+      {
+        regex: /vimeo\.com\/([0-9]+)/,
+        type: 'iframe',
+        w: 425,
+        h: 350,
+        url: 'player.vimeo.com/video/$1?title=0&byline=0&portrait=0&color=8dc7dc',
+        allowFullscreen: true
+      },
+      {
+        regex: /vimeo\.com\/(.*)\/([0-9]+)/,
+        type: 'iframe',
+        w: 425,
+        h: 350,
+        url: 'player.vimeo.com/video/$2?title=0&amp;byline=0',
+        allowFullscreen: true
+      },
+      {
+        regex: /maps\.google\.([a-z]{2,3})\/maps\/(.+)msid=(.+)/,
+        type: 'iframe',
+        w: 425,
+        h: 350,
+        url: 'maps.google.com/maps/ms?msid=$2&output=embed"',
+        allowFullscreen: false
+      },
+      {
+        regex: /dailymotion\.com\/video\/([^_]+)/,
+        type: 'iframe',
+        w: 480,
+        h: 270,
+        url: 'www.dailymotion.com/embed/video/$1',
+        allowFullscreen: true
+      },
+      {
+        regex: /dai\.ly\/([^_]+)/,
+        type: 'iframe',
+        w: 480,
+        h: 270,
+        url: 'www.dailymotion.com/embed/video/$1',
+        allowFullscreen: true
+      }
+    ];
+    const getProtocol = url => {
+      const protocolMatches = url.match(/^(https?:\/\/|www\.)(.+)$/i);
+      if (protocolMatches && protocolMatches.length > 1) {
+        return protocolMatches[1] === 'www.' ? 'https://' : protocolMatches[1];
+      } else {
+        return 'https://';
+      }
+    };
+    const getUrl = (pattern, url) => {
+      const protocol = getProtocol(url);
+      const match = pattern.regex.exec(url);
+      let newUrl = protocol + pattern.url;
+      if (isNonNullable(match)) {
+        for (let i = 0; i < match.length; i++) {
+          newUrl = newUrl.replace('$' + i, () => match[i] ? match[i] : '');
+        }
+      }
+      return newUrl.replace(/\?$/, '');
+    };
+    const matchPattern = url => {
+      const patterns = urlPatterns.filter(pattern => pattern.regex.test(url));
+      if (patterns.length > 0) {
+        return global$5.extend({}, patterns[0], { url: getUrl(patterns[0], url) });
+      } else {
+        return null;
+      }
+    };
+
+    const getIframeHtml = (data, iframeTemplateCallback) => {
+      if (iframeTemplateCallback) {
+        return iframeTemplateCallback(data);
+      } else {
+        const allowFullscreen = data.allowfullscreen ? ' allowFullscreen="1"' : '';
+        return '<iframe src="' + data.source + '" width="' + data.width + '" height="' + data.height + '"' + allowFullscreen + '></iframe>';
+      }
+    };
+    const getFlashHtml = data => {
+      let html = '<object data="' + data.source + '" width="' + data.width + '" height="' + data.height + '" type="application/x-shockwave-flash">';
+      if (data.poster) {
+        html += '<img src="' + data.poster + '" width="' + data.width + '" height="' + data.height + '" />';
+      }
+      html += '</object>';
+      return html;
+    };
+    const getAudioHtml = (data, audioTemplateCallback) => {
+      if (audioTemplateCallback) {
+        return audioTemplateCallback(data);
+      } else {
+        return '<audio controls="controls" src="' + data.source + '">' + (data.altsource ? '\n<source src="' + data.altsource + '"' + (data.altsourcemime ? ' type="' + data.altsourcemime + '"' : '') + ' />\n' : '') + '</audio>';
+      }
+    };
+    const getVideoHtml = (data, videoTemplateCallback) => {
+      if (videoTemplateCallback) {
+        return videoTemplateCallback(data);
+      } else {
+        return '<video width="' + data.width + '" height="' + data.height + '"' + (data.poster ? ' poster="' + data.poster + '"' : '') + ' controls="controls">\n' + '<source src="' + data.source + '"' + (data.sourcemime ? ' type="' + data.sourcemime + '"' : '') + ' />\n' + (data.altsource ? '<source src="' + data.altsource + '"' + (data.altsourcemime ? ' type="' + data.altsourcemime + '"' : '') + ' />\n' : '') + '</video>';
+      }
+    };
+    const getScriptHtml = data => {
+      return '<script src="' + data.source + '"></script>';
+    };
+    const dataToHtml = (editor, dataIn) => {
+      var _a;
+      const data = global$5.extend({}, dataIn);
+      if (!data.source) {
+        global$5.extend(data, htmlToData((_a = data.embed) !== null && _a !== void 0 ? _a : '', editor.schema));
+        if (!data.source) {
+          return '';
+        }
+      }
+      if (!data.altsource) {
+        data.altsource = '';
+      }
+      if (!data.poster) {
+        data.poster = '';
+      }
+      data.source = editor.convertURL(data.source, 'source');
+      data.altsource = editor.convertURL(data.altsource, 'source');
+      data.sourcemime = guess(data.source);
+      data.altsourcemime = guess(data.altsource);
+      data.poster = editor.convertURL(data.poster, 'poster');
+      const pattern = matchPattern(data.source);
+      if (pattern) {
+        data.source = pattern.url;
+        data.type = pattern.type;
+        data.allowfullscreen = pattern.allowFullscreen;
+        data.width = data.width || String(pattern.w);
+        data.height = data.height || String(pattern.h);
+      }
+      if (data.embed) {
+        return updateHtml(data.embed, data, true, editor.schema);
+      } else {
+        const audioTemplateCallback = getAudioTemplateCallback(editor);
+        const videoTemplateCallback = getVideoTemplateCallback(editor);
+        const iframeTemplateCallback = getIframeTemplateCallback(editor);
+        data.width = data.width || '300';
+        data.height = data.height || '150';
+        global$5.each(data, (value, key) => {
+          data[key] = editor.dom.encode('' + value);
+        });
+        if (data.type === 'iframe') {
+          return getIframeHtml(data, iframeTemplateCallback);
+        } else if (data.sourcemime === 'application/x-shockwave-flash') {
+          return getFlashHtml(data);
+        } else if (data.sourcemime.indexOf('audio') !== -1) {
+          return getAudioHtml(data, audioTemplateCallback);
+        } else if (data.type === 'script') {
+          return getScriptHtml(data);
+        } else {
+          return getVideoHtml(data, videoTemplateCallback);
+        }
+      }
+    };
+
+    const isMediaElement = element => element.hasAttribute('data-mce-object') || element.hasAttribute('data-ephox-embed-iri');
+    const setup$2 = editor => {
+      editor.on('click keyup touchend', () => {
+        const selectedNode = editor.selection.getNode();
+        if (selectedNode && editor.dom.hasClass(selectedNode, 'mce-preview-object')) {
+          if (editor.dom.getAttrib(selectedNode, 'data-mce-selected')) {
+            selectedNode.setAttribute('data-mce-selected', '2');
+          }
+        }
+      });
+      editor.on('ObjectSelected', e => {
+        const objectType = e.target.getAttribute('data-mce-object');
+        if (objectType === 'script') {
+          e.preventDefault();
+        }
+      });
+      editor.on('ObjectResized', e => {
+        const target = e.target;
+        if (target.getAttribute('data-mce-object')) {
+          let html = target.getAttribute('data-mce-html');
+          if (html) {
+            html = unescape(html);
+            target.setAttribute('data-mce-html', escape(updateHtml(html, {
+              width: String(e.width),
+              height: String(e.height)
+            }, false, editor.schema)));
+          }
+        }
+      });
+    };
+
+    const cache = {};
+    const embedPromise = (data, dataToHtml, handler) => {
+      return new Promise((res, rej) => {
+        const wrappedResolve = response => {
+          if (response.html) {
+            cache[data.source] = response;
+          }
+          return res({
+            url: data.source,
+            html: response.html ? response.html : dataToHtml(data)
+          });
+        };
+        if (cache[data.source]) {
+          wrappedResolve(cache[data.source]);
+        } else {
+          handler({ url: data.source }, wrappedResolve, rej);
+        }
+      });
+    };
+    const defaultPromise = (data, dataToHtml) => Promise.resolve({
+      html: dataToHtml(data),
+      url: data.source
+    });
+    const loadedData = editor => data => dataToHtml(editor, data);
+    const getEmbedHtml = (editor, data) => {
+      const embedHandler = getUrlResolver(editor);
+      return embedHandler ? embedPromise(data, loadedData(editor), embedHandler) : defaultPromise(data, loadedData(editor));
+    };
+    const isCached = url => has(cache, url);
+
+    const extractMeta = (sourceInput, data) => get$1(data, sourceInput).bind(mainData => get$1(mainData, 'meta'));
+    const getValue = (data, metaData, sourceInput) => prop => {
+      const getFromData = () => get$1(data, prop);
+      const getFromMetaData = () => get$1(metaData, prop);
+      const getNonEmptyValue = c => get$1(c, 'value').bind(v => v.length > 0 ? Optional.some(v) : Optional.none());
+      const getFromValueFirst = () => getFromData().bind(child => isObject(child) ? getNonEmptyValue(child).orThunk(getFromMetaData) : getFromMetaData().orThunk(() => Optional.from(child)));
+      const getFromMetaFirst = () => getFromMetaData().orThunk(() => getFromData().bind(child => isObject(child) ? getNonEmptyValue(child) : Optional.from(child)));
+      return { [prop]: (prop === sourceInput ? getFromValueFirst() : getFromMetaFirst()).getOr('') };
+    };
+    const getDimensions = (data, metaData) => {
+      const dimensions = {};
+      get$1(data, 'dimensions').each(dims => {
+        each$1([
+          'width',
+          'height'
+        ], prop => {
+          get$1(metaData, prop).orThunk(() => get$1(dims, prop)).each(value => dimensions[prop] = value);
+        });
+      });
+      return dimensions;
+    };
+    const unwrap = (data, sourceInput) => {
+      const metaData = sourceInput && sourceInput !== 'dimensions' ? extractMeta(sourceInput, data).getOr({}) : {};
+      const get = getValue(data, metaData, sourceInput);
+      return {
+        ...get('source'),
+        ...get('altsource'),
+        ...get('poster'),
+        ...get('embed'),
+        ...getDimensions(data, metaData)
+      };
+    };
+    const wrap = data => {
+      const wrapped = {
+        ...data,
+        source: { value: get$1(data, 'source').getOr('') },
+        altsource: { value: get$1(data, 'altsource').getOr('') },
+        poster: { value: get$1(data, 'poster').getOr('') }
+      };
+      each$1([
+        'width',
+        'height'
+      ], prop => {
+        get$1(data, prop).each(value => {
+          const dimensions = wrapped.dimensions || {};
+          dimensions[prop] = value;
+          wrapped.dimensions = dimensions;
+        });
+      });
+      return wrapped;
+    };
+    const handleError = editor => error => {
+      const errorMessage = error && error.msg ? 'Media embed handler error: ' + error.msg : 'Media embed handler threw unknown error.';
+      editor.notificationManager.open({
+        type: 'error',
+        text: errorMessage
+      });
+    };
+    const getEditorData = editor => {
+      const element = editor.selection.getNode();
+      const snippet = isMediaElement(element) ? editor.serializer.serialize(element, { selection: true }) : '';
+      const data = htmlToData(snippet, editor.schema);
+      const getDimensionsOfElement = () => {
+        if (isEmbedIframe(data.source, data.type)) {
+          const rect = editor.dom.getRect(element);
+          return {
+            width: rect.w.toString().replace(/px$/, ''),
+            height: rect.h.toString().replace(/px$/, '')
+          };
+        } else {
+          return {};
+        }
+      };
+      const dimensions = getDimensionsOfElement();
+      return {
+        embed: snippet,
+        ...data,
+        ...dimensions
+      };
+    };
+    const addEmbedHtml = (api, editor) => response => {
+      if (isString(response.url) && response.url.trim().length > 0) {
+        const html = response.html;
+        const snippetData = htmlToData(html, editor.schema);
+        const nuData = {
+          ...snippetData,
+          source: response.url,
+          embed: html
+        };
+        api.setData(wrap(nuData));
+      }
+    };
+    const selectPlaceholder = (editor, beforeObjects) => {
+      const afterObjects = editor.dom.select('*[data-mce-object]');
+      for (let i = 0; i < beforeObjects.length; i++) {
+        for (let y = afterObjects.length - 1; y >= 0; y--) {
+          if (beforeObjects[i] === afterObjects[y]) {
+            afterObjects.splice(y, 1);
+          }
+        }
+      }
+      editor.selection.select(afterObjects[0]);
+    };
+    const handleInsert = (editor, html) => {
+      const beforeObjects = editor.dom.select('*[data-mce-object]');
+      editor.insertContent(html);
+      selectPlaceholder(editor, beforeObjects);
+      editor.nodeChanged();
+    };
+    const isEmbedIframe = (url, mediaDataType) => isNonNullable(mediaDataType) && mediaDataType === 'ephox-embed-iri' && isNonNullable(matchPattern(url));
+    const shouldInsertAsNewIframe = (prevData, newData) => {
+      const hasDimensionsChanged = (prevData, newData) => prevData.width !== newData.width || prevData.height !== newData.height;
+      return hasDimensionsChanged(prevData, newData) && isEmbedIframe(newData.source, prevData.type);
+    };
+    const submitForm = (prevData, newData, editor) => {
+      var _a;
+      newData.embed = shouldInsertAsNewIframe(prevData, newData) && hasDimensions(editor) ? dataToHtml(editor, {
+        ...newData,
+        embed: ''
+      }) : updateHtml((_a = newData.embed) !== null && _a !== void 0 ? _a : '', newData, false, editor.schema);
+      if (newData.embed && (prevData.source === newData.source || isCached(newData.source))) {
+        handleInsert(editor, newData.embed);
+      } else {
+        getEmbedHtml(editor, newData).then(response => {
+          handleInsert(editor, response.html);
+        }).catch(handleError(editor));
+      }
+    };
+    const showDialog = editor => {
+      const editorData = getEditorData(editor);
+      const currentData = Cell(editorData);
+      const initialData = wrap(editorData);
+      const handleSource = (prevData, api) => {
+        const serviceData = unwrap(api.getData(), 'source');
+        if (prevData.source !== serviceData.source) {
+          addEmbedHtml(win, editor)({
+            url: serviceData.source,
+            html: ''
+          });
+          getEmbedHtml(editor, serviceData).then(addEmbedHtml(win, editor)).catch(handleError(editor));
+        }
+      };
+      const handleEmbed = api => {
+        var _a;
+        const data = unwrap(api.getData());
+        const dataFromEmbed = htmlToData((_a = data.embed) !== null && _a !== void 0 ? _a : '', editor.schema);
+        api.setData(wrap(dataFromEmbed));
+      };
+      const handleUpdate = (api, sourceInput, prevData) => {
+        const dialogData = unwrap(api.getData(), sourceInput);
+        const data = shouldInsertAsNewIframe(prevData, dialogData) && hasDimensions(editor) ? {
+          ...dialogData,
+          embed: ''
+        } : dialogData;
+        const embed = dataToHtml(editor, data);
+        api.setData(wrap({
+          ...data,
+          embed
+        }));
+      };
+      const mediaInput = [{
+          name: 'source',
+          type: 'urlinput',
+          filetype: 'media',
+          label: 'Source'
+        }];
+      const sizeInput = !hasDimensions(editor) ? [] : [{
+          type: 'sizeinput',
+          name: 'dimensions',
+          label: 'Constrain proportions',
+          constrain: true
+        }];
+      const generalTab = {
+        title: 'General',
+        name: 'general',
+        items: flatten([
+          mediaInput,
+          sizeInput
+        ])
+      };
+      const embedTextarea = {
+        type: 'textarea',
+        name: 'embed',
+        label: 'Paste your embed code below:'
+      };
+      const embedTab = {
+        title: 'Embed',
+        items: [embedTextarea]
+      };
+      const advancedFormItems = [];
+      if (hasAltSource(editor)) {
+        advancedFormItems.push({
+          name: 'altsource',
+          type: 'urlinput',
+          filetype: 'media',
+          label: 'Alternative source URL'
+        });
+      }
+      if (hasPoster(editor)) {
+        advancedFormItems.push({
+          name: 'poster',
+          type: 'urlinput',
+          filetype: 'image',
+          label: 'Media poster (Image URL)'
+        });
+      }
+      const advancedTab = {
+        title: 'Advanced',
+        name: 'advanced',
+        items: advancedFormItems
+      };
+      const tabs = [
+        generalTab,
+        embedTab
+      ];
+      if (advancedFormItems.length > 0) {
+        tabs.push(advancedTab);
+      }
+      const body = {
+        type: 'tabpanel',
+        tabs
+      };
+      const win = editor.windowManager.open({
+        title: 'Insert/Edit Media',
+        size: 'normal',
+        body,
+        buttons: [
+          {
+            type: 'cancel',
+            name: 'cancel',
+            text: 'Cancel'
+          },
+          {
+            type: 'submit',
+            name: 'save',
+            text: 'Save',
+            primary: true
+          }
+        ],
+        onSubmit: api => {
+          const serviceData = unwrap(api.getData());
+          submitForm(currentData.get(), serviceData, editor);
+          api.close();
+        },
+        onChange: (api, detail) => {
+          switch (detail.name) {
+          case 'source':
+            handleSource(currentData.get(), api);
+            break;
+          case 'embed':
+            handleEmbed(api);
+            break;
+          case 'dimensions':
+          case 'altsource':
+          case 'poster':
+            handleUpdate(api, detail.name, currentData.get());
+            break;
+          }
+          currentData.set(unwrap(api.getData()));
+        },
+        initialData
+      });
+    };
+
+    const get = editor => {
+      const showDialog$1 = () => {
+        showDialog(editor);
+      };
+      return { showDialog: showDialog$1 };
+    };
+
+    const register$1 = editor => {
+      const showDialog$1 = () => {
+        showDialog(editor);
+      };
+      editor.addCommand('mceMedia', showDialog$1);
+    };
+
+    const checkRange = (str, substr, start) => substr === '' || str.length >= substr.length && str.substr(start, start + substr.length) === substr;
+    const startsWith = (str, prefix) => {
+      return checkRange(str, prefix, 0);
+    };
+
+    var global = tinymce.util.Tools.resolve('tinymce.Env');
+
+    const isLiveEmbedNode = node => {
+      const name = node.name;
+      return name === 'iframe' || name === 'video' || name === 'audio';
+    };
+    const getDimension = (node, styles, dimension, defaultValue = null) => {
+      const value = node.attr(dimension);
+      if (isNonNullable(value)) {
+        return value;
+      } else if (!has(styles, dimension)) {
+        return defaultValue;
+      } else {
+        return null;
+      }
+    };
+    const setDimensions = (node, previewNode, styles) => {
+      const useDefaults = previewNode.name === 'img' || node.name === 'video';
+      const defaultWidth = useDefaults ? '300' : null;
+      const fallbackHeight = node.name === 'audio' ? '30' : '150';
+      const defaultHeight = useDefaults ? fallbackHeight : null;
+      previewNode.attr({
+        width: getDimension(node, styles, 'width', defaultWidth),
+        height: getDimension(node, styles, 'height', defaultHeight)
+      });
+    };
+    const appendNodeContent = (editor, nodeName, previewNode, html) => {
+      const newNode = Parser(editor.schema).parse(html, { context: nodeName });
+      while (newNode.firstChild) {
+        previewNode.append(newNode.firstChild);
+      }
+    };
+    const createPlaceholderNode = (editor, node) => {
+      const name = node.name;
+      const placeHolder = new global$2('img', 1);
+      retainAttributesAndInnerHtml(editor, node, placeHolder);
+      setDimensions(node, placeHolder, {});
+      placeHolder.attr({
+        'style': node.attr('style'),
+        'src': global.transparentSrc,
+        'data-mce-object': name,
+        'class': 'mce-object mce-object-' + name
+      });
+      return placeHolder;
+    };
+    const createPreviewNode = (editor, node) => {
+      var _a;
+      const name = node.name;
+      const previewWrapper = new global$2('span', 1);
+      previewWrapper.attr({
+        'contentEditable': 'false',
+        'style': node.attr('style'),
+        'data-mce-object': name,
+        'class': 'mce-preview-object mce-object-' + name
+      });
+      retainAttributesAndInnerHtml(editor, node, previewWrapper);
+      const styles = editor.dom.parseStyle((_a = node.attr('style')) !== null && _a !== void 0 ? _a : '');
+      const previewNode = new global$2(name, 1);
+      setDimensions(node, previewNode, styles);
+      previewNode.attr({
+        src: node.attr('src'),
+        style: node.attr('style'),
+        class: node.attr('class')
+      });
+      if (name === 'iframe') {
+        previewNode.attr({
+          allowfullscreen: node.attr('allowfullscreen'),
+          frameborder: '0'
+        });
+      } else {
+        const attrs = [
+          'controls',
+          'crossorigin',
+          'currentTime',
+          'loop',
+          'muted',
+          'poster',
+          'preload'
+        ];
+        each$1(attrs, attrName => {
+          previewNode.attr(attrName, node.attr(attrName));
+        });
+        const sanitizedHtml = previewWrapper.attr('data-mce-html');
+        if (isNonNullable(sanitizedHtml)) {
+          appendNodeContent(editor, name, previewNode, unescape(sanitizedHtml));
+        }
+      }
+      const shimNode = new global$2('span', 1);
+      shimNode.attr('class', 'mce-shim');
+      previewWrapper.append(previewNode);
+      previewWrapper.append(shimNode);
+      return previewWrapper;
+    };
+    const retainAttributesAndInnerHtml = (editor, sourceNode, targetNode) => {
+      var _a;
+      const attribs = (_a = sourceNode.attributes) !== null && _a !== void 0 ? _a : [];
+      let ai = attribs.length;
+      while (ai--) {
+        const attrName = attribs[ai].name;
+        let attrValue = attribs[ai].value;
+        if (attrName !== 'width' && attrName !== 'height' && attrName !== 'style' && !startsWith(attrName, 'data-mce-')) {
+          if (attrName === 'data' || attrName === 'src') {
+            attrValue = editor.convertURL(attrValue, attrName);
+          }
+          targetNode.attr('data-mce-p-' + attrName, attrValue);
+        }
+      }
+      const serializer = global$1({ inner: true }, editor.schema);
+      const tempNode = new global$2('div', 1);
+      each$1(sourceNode.children(), child => tempNode.append(child));
+      const innerHtml = serializer.serialize(tempNode);
+      if (innerHtml) {
+        targetNode.attr('data-mce-html', escape(innerHtml));
+        targetNode.empty();
+      }
+    };
+    const isPageEmbedWrapper = node => {
+      const nodeClass = node.attr('class');
+      return isString(nodeClass) && /\btiny-pageembed\b/.test(nodeClass);
+    };
+    const isWithinEmbedWrapper = node => {
+      let tempNode = node;
+      while (tempNode = tempNode.parent) {
+        if (tempNode.attr('data-ephox-embed-iri') || isPageEmbedWrapper(tempNode)) {
+          return true;
+        }
+      }
+      return false;
+    };
+    const placeHolderConverter = editor => nodes => {
+      let i = nodes.length;
+      let node;
+      while (i--) {
+        node = nodes[i];
+        if (!node.parent) {
+          continue;
+        }
+        if (node.parent.attr('data-mce-object')) {
+          continue;
+        }
+        if (isLiveEmbedNode(node) && hasLiveEmbeds(editor)) {
+          if (!isWithinEmbedWrapper(node)) {
+            node.replace(createPreviewNode(editor, node));
+          }
+        } else {
+          if (!isWithinEmbedWrapper(node)) {
+            node.replace(createPlaceholderNode(editor, node));
+          }
+        }
+      }
+    };
+
+    const parseAndSanitize = (editor, context, html) => {
+      const getEditorOption = editor.options.get;
+      const sanitize = getEditorOption('xss_sanitization');
+      const validate = shouldFilterHtml(editor);
+      return Parser(editor.schema, {
+        sanitize,
+        validate
+      }).parse(html, { context });
+    };
+
+    const setup$1 = editor => {
+      editor.on('PreInit', () => {
+        const {schema, serializer, parser} = editor;
+        const boolAttrs = schema.getBoolAttrs();
+        each$1('webkitallowfullscreen mozallowfullscreen'.split(' '), name => {
+          boolAttrs[name] = {};
+        });
+        each({ embed: ['wmode'] }, (attrs, name) => {
+          const rule = schema.getElementRule(name);
+          if (rule) {
+            each$1(attrs, attr => {
+              rule.attributes[attr] = {};
+              rule.attributesOrder.push(attr);
+            });
+          }
+        });
+        parser.addNodeFilter('iframe,video,audio,object,embed,script', placeHolderConverter(editor));
+        serializer.addAttributeFilter('data-mce-object', (nodes, name) => {
+          var _a;
+          let i = nodes.length;
+          while (i--) {
+            const node = nodes[i];
+            if (!node.parent) {
+              continue;
+            }
+            const realElmName = node.attr(name);
+            const realElm = new global$2(realElmName, 1);
+            if (realElmName !== 'audio' && realElmName !== 'script') {
+              const className = node.attr('class');
+              if (className && className.indexOf('mce-preview-object') !== -1 && node.firstChild) {
+                realElm.attr({
+                  width: node.firstChild.attr('width'),
+                  height: node.firstChild.attr('height')
+                });
+              } else {
+                realElm.attr({
+                  width: node.attr('width'),
+                  height: node.attr('height')
+                });
+              }
+            }
+            realElm.attr({ style: node.attr('style') });
+            const attribs = (_a = node.attributes) !== null && _a !== void 0 ? _a : [];
+            let ai = attribs.length;
+            while (ai--) {
+              const attrName = attribs[ai].name;
+              if (attrName.indexOf('data-mce-p-') === 0) {
+                realElm.attr(attrName.substr(11), attribs[ai].value);
+              }
+            }
+            if (realElmName === 'script') {
+              realElm.attr('type', 'text/javascript');
+            }
+            const innerHtml = node.attr('data-mce-html');
+            if (innerHtml) {
+              const fragment = parseAndSanitize(editor, realElmName, unescape(innerHtml));
+              each$1(fragment.children(), child => realElm.append(child));
+            }
+            node.replace(realElm);
+          }
+        });
+      });
+      editor.on('SetContent', () => {
+        const dom = editor.dom;
+        each$1(dom.select('span.mce-preview-object'), elm => {
+          if (dom.select('span.mce-shim', elm).length === 0) {
+            dom.add(elm, 'span', { class: 'mce-shim' });
+          }
+        });
+      });
+    };
+
+    const setup = editor => {
+      editor.on('ResolveName', e => {
+        let name;
+        if (e.target.nodeType === 1 && (name = e.target.getAttribute('data-mce-object'))) {
+          e.name = name;
+        }
+      });
+    };
+
+    const onSetupEditable = editor => api => {
+      const nodeChanged = () => {
+        api.setEnabled(editor.selection.isEditable());
+      };
+      editor.on('NodeChange', nodeChanged);
+      nodeChanged();
+      return () => {
+        editor.off('NodeChange', nodeChanged);
+      };
+    };
+    const register = editor => {
+      const onAction = () => editor.execCommand('mceMedia');
+      editor.ui.registry.addToggleButton('media', {
+        tooltip: 'Insert/edit media',
+        icon: 'embed',
+        onAction,
+        onSetup: buttonApi => {
+          const selection = editor.selection;
+          buttonApi.setActive(isMediaElement(selection.getNode()));
+          const unbindSelectorChanged = selection.selectorChangedWithUnbind('img[data-mce-object],span[data-mce-object],div[data-ephox-embed-iri]', buttonApi.setActive).unbind;
+          const unbindEditable = onSetupEditable(editor)(buttonApi);
+          return () => {
+            unbindSelectorChanged();
+            unbindEditable();
+          };
+        }
+      });
+      editor.ui.registry.addMenuItem('media', {
+        icon: 'embed',
+        text: 'Media...',
+        onAction,
+        onSetup: onSetupEditable(editor)
+      });
+    };
+
+    var Plugin = () => {
+      global$6.add('media', editor => {
+        register$2(editor);
+        register$1(editor);
+        register(editor);
+        setup(editor);
+        setup$1(editor);
+        setup$2(editor);
+        return get(editor);
+      });
+    };
+
+    Plugin();
+
+})();
