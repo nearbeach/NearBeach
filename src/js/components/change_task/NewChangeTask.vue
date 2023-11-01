@@ -320,6 +320,10 @@ export default {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect) {
+				//Set the status back to "ready"
+				this.currentStatus = "ready";
+
+				//Do nothing, and return
 				return;
 			}
 
