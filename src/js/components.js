@@ -216,6 +216,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/profile/ProfileInformation.vue"
             )
     ),
+    RenderToasts = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "render-toasts" */
+            "./components/render/RenderToasts.vue"
+            )
+    ),
     ResetUserPassword = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "reset-user-password" */

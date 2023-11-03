@@ -1,0 +1,11 @@
+.toast-container {
+    position: fixed;
+    bottom: 5px;
+    right: 50%;
+    transform: translateX(50%);
+
+    @media screen and (min-width: 768px) {
+        right: 5px;
+        transform: translate(0%);
+    }
+}
