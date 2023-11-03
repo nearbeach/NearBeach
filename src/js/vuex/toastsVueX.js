@@ -19,7 +19,7 @@ export const moduleToasts = {
                 header: "",
                 message: "",
                 timestamp: timestamp.getTime(),
-                type: "",
+                unique_type: "",
             };
 
             //Loop through each keys for the payload, and update the relevant field
@@ -49,11 +49,11 @@ export const moduleToasts = {
                 return condition_1 || condition_2;
             });
 
-            //Filter out - any toasts that has the same type (exclude empty types)
-            if (new_toast.type !== "") {
+            //Filter out - any toasts that has the same unique type (exclude empty unique types)
+            if (new_toast.unique_type !== "") {
                 //There is a non empty type, filter out any types that match
                 update_state = update_state.filter((row) => {
-                    return row.type !== new_toast.type;
+                    return row.unique_type !== new_toast.unique_type;
                 })
             }
 
