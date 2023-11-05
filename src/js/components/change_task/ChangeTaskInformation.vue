@@ -331,9 +331,21 @@ export default {
 				)
 				.then((response) => {
 					//If successful, go back
+					this.$store.dispatch("newToast", {
+						header: "Saved Change Task",
+						message: "Your change task has saved.",
+						extra_classes: "bg-success",
+						unique_type: "save",
+					});
 					//window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0].fields.request_for_change}/`;
 				})
 				.catch((error) => {
+					this.$store.dispatch("newToast", {
+						header: "Can not save",
+						message: "Sorry, we could not save your change task",
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 					//this.showErrorModal(error, 'Change Task');
 				});
 		},
@@ -353,6 +365,12 @@ export default {
 					window.location.reload(true);
 				})
 				.catch((error) => {
+					this.$store.dispatch("newToast", {
+						header: "Can not save",
+						message: "Sorry, we could not save your change task",
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 		updateDates(data) {
