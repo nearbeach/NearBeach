@@ -9,6 +9,7 @@ import {moduleGroupsAndUsers} from "./vuex/groupAndUsersVueX";
 import {moduleKanban} from "./vuex/kanbanVueX";
 import {moduleObjectLink} from "./vuex/objectLinkVueX";
 import {moduleRfc} from "./vuex/rfcVueX";
+import {moduleToasts} from "./vuex/toastsVueX";
 import {moduleUrl} from "./vuex/urlVueX";
 import {moduleUserLevel} from "./vuex/userLevelVueX";
 
@@ -27,6 +28,7 @@ export const store = createStore({
         kanban: moduleKanban,
         objectLink: moduleObjectLink,
         rfc: moduleRfc,
+        toasts: moduleToasts,
         url: moduleUrl,
         userLevel: moduleUserLevel,
 

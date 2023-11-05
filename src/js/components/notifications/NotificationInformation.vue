@@ -91,7 +91,6 @@ import BetweenDates from "../dates/BetweenDates.vue";
 const axios = require("axios");
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 
 //Validation
@@ -133,7 +132,7 @@ export default {
 			default: "",
 		},
 	},
-	mixins: [errorModalMixin, getThemeMixin],
+	mixins: [getThemeMixin],
 	data() {
 		return {
 			endDateModel: this.notificationResults[0].fields.notification_end_date,
@@ -175,7 +174,14 @@ export default {
 			).then(response => {
 				//Go back to search
 				window.location.href = `${this.rootUrl}search/notification/`;
-			}).catch((error) => {});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Can not delete",
+					message: "Sorry, we are having issues deleting this notification. Please contact your system admin",
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 		updateDates(data) {
 			//Update both the start and end dates
@@ -208,7 +214,20 @@ export default {
 				data_to_send,
 			).then((response) => {
 				//Tell user that this was successful
-			}).catch((error) => {});
+				this.$store.dispatch("newToast", {
+					header: "Saved Notification",
+					message: "Your notification has saved.",
+					extra_classes: "bg-success",
+					unique_type: "save",
+				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Can not save Notification",
+					message: `Error saving notification. Error: ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 }

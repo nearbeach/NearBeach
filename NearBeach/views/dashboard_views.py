@@ -43,8 +43,8 @@ def dashboard(request):
     notification_results = Notification.objects.filter(
         Q(
             is_deleted=False,
-            notification_start_date__lte=datetime.datetime.now(),
-            notification_end_date__gte=datetime.datetime.now(),
+            notification_start_date__lte=datetime.datetime.now().date(),
+            notification_end_date__gte=datetime.datetime.now().date(),
         )
         & Q(Q(notification_location="all") | Q(notification_location="dashboard"))
     )
