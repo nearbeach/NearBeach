@@ -24,8 +24,6 @@
 					</template>
 				</n-switch>
 			</div>
-			<div class="kanban-edit-text">
-			</div>
 
 			<!-- Rendering the Kanban Container -->
 			<kanban-board

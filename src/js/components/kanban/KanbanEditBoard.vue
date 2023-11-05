@@ -13,6 +13,11 @@
 							Drag the cards around to sort out the columns how you
 							want them.
 						</p>
+						<strong>Rename Columns & Levels</strong>
+						<p class="text-instructions">
+							To rename any level or object, double click on the card.
+							This will bring up the card's properties.
+						</p>
 						<n-switch v-model:value="canDragCards"
 								  @update:value="updateCanDragCards"
 						>
