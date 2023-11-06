@@ -70,7 +70,7 @@
 
 							<div
 								v-if="
-									objectResults.length == 0 &&
+									objectResults.length === 0 &&
 									objectModel != null
 								"
 								class="alert alert-warning"
@@ -114,72 +114,35 @@
 								</thead>
 
 								<!-- PROJECTS -->
-								<tbody v-if="objectModel == 'Project'">
+								<tbody>
 								<tr
 									v-for="result in objectFilteredResults"
-									:key="result.pk"
+									:key="result.id"
 								>
 									<td>
 										<div class="form-check">
 											<input
 												class="form-check-input"
 												type="checkbox"
-												v-bind:value="result.pk"
-												v-bind:id="`checkbox_project_${result.pk}`"
+												v-bind:value="result.id"
+												v-bind:id="`checkbox_${objectModel.toLowerCase()}_${result.id}`"
 												v-model="linkModel"
 											/>
 											<label
 												class="form-check-label"
-												v-bind:for="`checkbox_project_${result.pk}`"
+												v-bind:for="`checkbox_${objectModel.toLowerCase()}_${result.id}`"
 											>
-												{{
-													result.fields
-														.project_name
-												}}
+												{{ result.description }}
 											</label>
 										</div>
 										<div class="spacer"></div>
 										<p class="small-text">
-											Project {{ result.pk }}
+											{{objectModel}} {{ result.id }}
 										</p>
 									</td>
 									<td>
-										{{ result.fields.project_status }}
+										{{ result.status }}
 									</td>
-								</tr>
-								</tbody>
-
-								<!-- TASKS -->
-								<tbody v-if="objectModel == 'Task'">
-								<tr
-									v-for="result in objectFilteredResults"
-									:key="result.pk"
-								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="checkbox"
-												v-bind:value="result.pk"
-												v-bind:id="`checkbox_task_${result.pk}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`checkbox_task_${result.pk}`"
-											>
-												{{
-													result.fields
-														.task_short_description
-												}}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
-											Task {{ result.pk }}
-										</p>
-									</td>
-									<td>{{ result.fields.task_status }}</td>
 								</tr>
 								</tbody>
 							</table>
@@ -270,23 +233,22 @@ export default {
 			});
 
 			// Use axios to send data
-			axios
-				.post(
-					`${this.rootUrl}${this.destination}_information/${this.locationId}/add_link/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Data has been successfully saved. Time to update the requirement links
-					this.$emit("update_module", response.data);
+			axios.post(
+				`${this.rootUrl}${this.destination}_information/${this.locationId}/add_link/`,
+				data_to_send
+			)
+			.then((response) => {
+				//Data has been successfully saved. Time to update the requirement links
+				this.$emit("update_module", response.data);
 
-					//Click on the close button - a hack, but it should close the modal
-					document
-						.getElementById("requirementLinkCloseButton")
-						.click();
+				//Click on the close button - a hack, but it should close the modal
+				document
+					.getElementById("requirementLinkCloseButton")
+					.click();
 
-					//Clear results
-					this.objectModel = null;
-				});
+				//Clear results
+				this.objectModel = null;
+			});
 		},
 	},
 	watch: {
@@ -323,7 +285,12 @@ export default {
 					this.searchTermModel = "";
 				})
 				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+					this.$store.dispatch("newToast", {
+						header: "Error retrieving links",
+						message: "We are currently having issues obtaining data",
+						delay: 0,
+						extra_classes: "bg-danger",
+					});
 				});
 		},
 		searchTermModel() {
