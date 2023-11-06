@@ -74,7 +74,6 @@ def new_user_save(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_admin_permissions(2, "administration_create_user")
 def update_password(request, *args, **kwargs):
     """ """
     # Get form data
