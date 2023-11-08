@@ -10,12 +10,14 @@ from NearBeach.forms import SearchForm, NewGroupForm
 from NearBeach.models import Group
 from NearBeach.views.tools.internal_functions import get_user_permissions
 from NearBeach.views.theme_views import get_theme
+from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
 
 import json
 
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
+@check_user_admin_permissions(1, "administration_create_user")
 def check_group_name(request):
     """
     Checks to see if the group name exists
@@ -41,6 +43,7 @@ def check_group_name(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(1, "administration_create_user")
 def group_information(request, group_id):
     """
     Render the group information page
@@ -78,6 +81,7 @@ def group_information(request, group_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(2, "administration_create_user")
 def group_information_save(request, group_id):
     """
     Save/Update the group data
@@ -103,6 +107,7 @@ def group_information_save(request, group_id):
 
 
 @login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(3, "administration_create_user")
 def new_group(request):
     """
     Create a new group
@@ -132,6 +137,7 @@ def new_group(request):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(3, "administration_create_user")
 def new_group_save(request):
     """
     Save the new group
