@@ -69,7 +69,8 @@ export const moduleKanban = {
 
             var new_elem = event.to,
                 old_elem = event.from,
-                card_id = event.item.dataset.cardId;
+                card_id = event.item.dataset.cardId,
+                card_priorty = event.item.dataset.cardPriority;
 
             //Setup variables (for shorthand)
             let new_card_column = new_elem.dataset.column,
@@ -104,6 +105,7 @@ export const moduleKanban = {
                 kanban_column: new_card_column,
                 kanban_level: new_card_level,
                 kanban_card_sort_number: new_card_sort_number,
+                kanban_card_priority: card_priorty,
             });
 
             // 4. Filter for the new column/level location cards

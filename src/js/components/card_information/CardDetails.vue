@@ -260,6 +260,7 @@ export default {
         item: {
           dataset: {
             cardId: this.cardId,
+			  cardPriority: this.cardPriority,
           }
         },
         newIndex: new_index,
@@ -294,6 +295,7 @@ export default {
         type: "updateKanbanCard",
         card_id: this.cardId,
         kanban_card_text: this.cardTitle,
+		  kanban_card_priority: this.cardPriority,
       });
 
       //Tell the parent node that we have updated the data
@@ -318,10 +320,8 @@ export default {
 
       //If there are no changes - just send the data upstream
       if (condition_1 && condition_2) {
-        console.log("Same destination");
         this.sameDestination(close_modal)
       } else {
-        console.log("New Destination");
         this.differentDestination(close_modal, old_card);
       }
 		},
