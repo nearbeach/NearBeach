@@ -1,2 +1,2 @@
 name = "NearBeach"
-__version__ = "0.30.22"
+__version__ = "0.30.23"

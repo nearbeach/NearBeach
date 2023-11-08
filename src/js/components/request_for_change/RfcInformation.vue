@@ -495,12 +495,13 @@ export default {
 					window.location.reload(true);
 				})
 				.catch((error) => {
-					//Show error if there is one
-					this.showErrorModal(
-						error,
-						"Request for Change",
-						this.rfcResults[0].pk
-					);
+					this.$store.dispatch("newToast", {
+						header: "Can not update status of RFC",
+						message: "Sadly we had issues trying to update the status for the RFC. Please consult your" +
+							" system admin",
+						delay: 0,
+						extra_classes: "bg-warning",
+					})
 				});
 		},
 		startRFCStatus() {
@@ -542,9 +543,6 @@ export default {
 				new Date(this.rfcReleaseModel).toISOString()
 			);
 
-			//Open up the loading modal
-			this.showLoadingModal("Project");
-
 			//Use Axios to send the data
 			axios
 				.post(
@@ -553,10 +551,20 @@ export default {
 				)
 				.then((response) => {
 					//Notify user of success update
-					this.closeLoadingModal();
+					this.$store.dispatch("newToast", {
+						header: "Save Successfully",
+						message: "RFC Has saved",
+						delay: 3000,
+						extra_classes: "bg-success",
+					});
 				})
 				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+					this.$store.dispatch("newToast", {
+						header: "Can not save RFC",
+						message: `Sadly we've had the following error ${error}`,
+						delay: 0,
+						extra_classes: "bg-warning",
+					})
 				});
 		},
 		updateRFCStatus() {

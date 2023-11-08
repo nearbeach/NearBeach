@@ -19,16 +19,19 @@
 				:id="element.pk"
 				v-bind:data-sort-number="element.fields.kanban_card_sort_number"
 				v-bind:data-card-id="element.pk"
+				v-bind:data-card-priority="element.fields.kanban_card_priority"
 				v-on:dblclick="doubleClickCard($event)"
 			>
 				<div v-bind:class="`card-priority-line priority-${priorityList[element.fields.kanban_card_priority]}`"
 					 v-bind:data-card-id="element.pk"
 					 v-bind:data-sort-number="element.fields.kanban_card_sort_number"
+					 v-bind:data-card-priority="element.fields.kanban_card_priority"
 				></div>
 				<Icon v-if="isLinkedObject(element).length > 0"
 					  v-bind:icon="icons.linkOut"
 					  v-bind:data-card-id="element.pk"
 					  v-bind:data-sort-number="element.fields.kanban_card_sort_number"
+					  v-bind:data-card-priority="element.fields.kanban_card_priority"
 					  class="card-external-link"
 				></Icon>
 				<b>#{{ element.pk }}</b

@@ -164,7 +164,7 @@
 		<!-- UPLOAD DOCUMENT WIZARD -->
 		<upload-document-wizard
 			v-bind:destination="getDestination()"
-			v-bind:location-id="locationId"
+			v-bind:location-id="getLocationId()"
 			v-bind:current-folder="currentFolder"
 			v-bind:exclude-documents="documentFilteredList"
 			v-on:update_document_list="updateDocumentList($event)"

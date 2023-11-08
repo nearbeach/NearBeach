@@ -1,4 +1,5 @@
 import json
+from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
@@ -26,6 +27,7 @@ from NearBeach.models import (
     UserGroup,
 )
 from NearBeach.views.theme_views import get_theme
+from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
 
 
 # Internal Function
@@ -301,7 +303,8 @@ def search_customer_data(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def search_group(request):
+@check_user_admin_permissions(3, "administration_create_user")
+def search_group(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -356,6 +359,7 @@ def search_group_data(request):
     return HttpResponse(json_results, content_type="application/json")
 
 
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name=None)
 def search_notification(request):
     t = loader.get_template("NearBeach/search/search_notifications.html")
 
@@ -452,7 +456,8 @@ def search_organisation_data(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def search_permission_set(request):
+@check_user_admin_permissions(3, "administration_create_user")
+def search_permission_set(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -534,7 +539,8 @@ def search_tag(request, *args, **kwargs):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def search_user(request):
+@check_user_admin_permissions(3, "administration_create_user")
+def search_user(request, *args, **kwargs):
     """
     :param request:
     :return:

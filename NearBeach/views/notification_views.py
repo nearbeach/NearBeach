@@ -9,7 +9,7 @@ from NearBeach.forms import NotificationForm, NotificationDeleteForm
 from django.contrib.auth.decorators import user_passes_test
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name=None)
 def new_notification(request):
     """
     :param request:
@@ -27,7 +27,7 @@ def new_notification(request):
     return HttpResponse(t.render(c, request))
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name=None)
 def new_notification_save(request):
     """
     :param request:
@@ -52,7 +52,7 @@ def new_notification_save(request):
     )
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name=None)
 def notification_information(request, notification_id):
     # Get template
     t = loader.get_template("NearBeach/notifications/notification_information.html")
@@ -72,7 +72,7 @@ def notification_information(request, notification_id):
     return HttpResponse(t.render(c, request))
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name=None)
 def notification_information_delete(request):
     form = NotificationDeleteForm(request.POST)
     if not form.is_valid():
@@ -90,7 +90,7 @@ def notification_information_delete(request):
     return HttpResponse("")
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name=None)
 def notification_information_save(request, notification_id):
     form = NotificationForm(request.POST)
     if not form.is_valid():

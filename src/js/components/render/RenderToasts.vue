@@ -45,7 +45,6 @@ export default {
 
 				//Loop through each toast item and deploy :)
 				toastList.forEach((row) => {
-					console.log("Row: ", row);
 					//Get the delay
 					var delay = row.dataset.delay;
 

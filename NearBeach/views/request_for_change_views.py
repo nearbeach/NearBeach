@@ -560,13 +560,13 @@ def rfc_status_rejected(rfc_id, rfc_results):
     ).update(approval=3)
 
     # Reject who RFC
-    rfc_results.rfc_status = 6
-    rfc_results.save()
+    # rfc_results.rfc_status = 6
+    # rfc_results.save()
 
     # Reject all the change tasks
     ChangeTask.objects.filter(
         is_deleted=False,
-        rfc_id=rfc_id,
+        request_for_change_id=rfc_id,
     ).update(change_task_status=6)
 
 
@@ -678,9 +678,6 @@ def rfc_update_status(request, rfc_id, *args, **kwargs):
     :param rfc_id:
     :return:
     """
-    # Add in user permissions
-
-    # Get the form data
     form = UpdateRFCStatus(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)

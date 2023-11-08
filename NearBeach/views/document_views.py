@@ -326,6 +326,11 @@ def private_download_file(request, document_key):
             #     organisation__isnull=False,
             # )
             Q(
+                # Kanban board
+                kanban_board__isnull=False,
+                kanban_board_id__in=document_permission_results.values("kanban_card__kanban_board_id"),
+            )
+            | Q(
                 # Project Links
                 project__isnull=False,
                 project_id__in=document_permission_results.values("project_id"),
