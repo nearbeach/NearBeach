@@ -183,6 +183,7 @@ def get_context(kanban_board_id):
         "kanban_board_id": kanban_board_id,
         "level_results": serializers.serialize("json", level_results),
         "nearbeach_title": f"Kanban Information {kanban_board_id}",
+        "kanban_board_status": kanban_board_results.kanban_board_status,
     }
 
     return c
@@ -333,6 +334,19 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
     return HttpResponse(
         serializers.serialize("json", object_results), content_type="application/json"
     )
+
+
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
+@check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
+def kanban_reopen_board(request, kanban_board_id, *args, **kwargs):
+    """Reopen the kanban board"""
+    kanban_update = KanbanBoard.objects.get(kanban_board_id=kanban_board_id)
+    kanban_update.kanban_board_status = "Open"
+    kanban_update.save()
+
+    # Return Success
+    return HttpResponse("")
 
 
 @login_required(login_url="login", redirect_field_name="")

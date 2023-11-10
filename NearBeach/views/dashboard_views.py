@@ -183,6 +183,7 @@ def get_my_objects(request):
                 kanban_card_id__isnull=False,
                 assigned_user=request.user,
             ).values("kanban_card_id"),
+            kanban_board__kanban_board_status="Open",
         )
         .exclude(
             Q(

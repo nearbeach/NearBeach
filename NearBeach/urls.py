@@ -268,6 +268,11 @@ urlpatterns = [
         name="kanban_edit_board",
     ),
     path(
+        "kanban_information/<int:kanban_board_id>/reopen_board/",
+        kanban_views.kanban_reopen_board,
+        name="kanban_reopen_board",
+    ),
+    path(
         "kanban_information/<int:kanban_board_id>/<object_lookup>/add_link/",
         kanban_views.add_kanban_link,
         name="add_kanban_link",

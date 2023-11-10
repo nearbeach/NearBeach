@@ -577,6 +577,44 @@ def bug_list(request, destination, location_id):
     return HttpResponse(json_results, content_type="application/json")
 
 
+# Internal Function
+def clean_users_from_object(destination, location_id):
+    """
+    Problem: There could be users assigned to this object but have no group association. They must be removed from this
+    object.
+    Solution
+    1. Get new list of groups associated with object
+    2. From prior list get list of current users for those groups
+    3. Grab all users associated with the object, exclude those from prior step
+    4. Update and remove those users (as they are no longer associated with this object).
+    """
+    groups_associated = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        group_id__isnull=False,
+    )
+    groups_associated = get_object_from_destination(groups_associated, destination, location_id)
+
+    # Users associated with the groups
+    user_list_results = UserGroup.objects.filter(
+        is_deleted=False,
+        group_id__in=groups_associated.values('group_id'),
+    )
+
+    remove_user_list = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        assigned_user_id__isnull=False,
+    ).exclude(
+        assigned_user_id__in=user_list_results.values('pk'),
+    )
+
+    remove_user_list = get_object_from_destination(remove_user_list, destination, location_id)
+
+    # Delete what is left
+    remove_user_list.update(
+        is_deleted=True,
+    )
+
+
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
@@ -1239,6 +1277,9 @@ def remove_group(request, destination, location_id):
     update_object_assignment.update(
         is_deleted=True,
     )
+
+    # Remove any users that no longer have a group associated with this object
+    clean_users_from_object(destination, location_id)
 
     # Return the updated groups and user back to front end
     return JsonResponse(

@@ -32,6 +32,7 @@ import {
     ChangeTaskInformation,
     ChangeTaskModules,
     ConfirmKanbanBoardClosure,
+    ConfirmKanbanBoardReopen,
     CustomerInformation,
     DashboardKanbanList,
     DashboardMyObjects,
@@ -87,6 +88,7 @@ const app = createApp({
     components: {
         //BugsModule,
         ConfirmKanbanBoardClosure,
+        ConfirmKanbanBoardReopen,
         ChangeTaskInformation,
         ChangeTaskModules,
         CustomerInformation,

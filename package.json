@@ -1,6 +1,6 @@
 {
   "name": "nearbeach",
-  "version": "0.30.23",
+  "version": "0.30.24",
   "description": "NearBeach - an Open Source project management system built with Django web framework",
   "main": "/src/js/app.js",
   "directories": {
@@ -32,7 +32,6 @@
   },
   "homepage": "https://github.com/robotichead/NearBeach#readme",
   "devDependencies": {
-    "@esbuild/darwin-arm64": "^0.19.5",
     "@iconify-icons/akar-icons": "^1.1.17",
     "@iconify-icons/bi": "^1.1.2",
     "@iconify-icons/bx": "^1.1.0",

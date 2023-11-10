@@ -186,59 +186,59 @@ export default {
 				});
 		},
 		getData() {
+			const data_to_send = new FormData();
+
 			//Use Axios to obtain all the group, permission-set, and user results
-			axios
-				.post(`${this.rootUrl}object_data/admin_add_user/`)
-				.then((response) => {
-					//Assign it to the appropriate variable
-					this.groupResults = response.data.group_results.map(
-						(data) => {
-							return {
-								label: data.group_name,
-								value: data.group_id,
-							};
-						}
-					);
-
-					this.permissionSetResults =
-						response.data.permission_set_results.map((data) => {
-							return {
-								label: data.permission_set_name,
-								value: data.permission_set_id,
-							};
-						});
-
-					this.userResults = response.data.user_results.map(
-						(data) => {
-							return {
-								label: `${data.id}: ${data.first_name} ${data.last_name}`,
-								value: data.id,
-							};
-						}
-					);
-
-					//Use a simple if statement to find out which destination we are concentrating on
-					//Then filter the responses of that destination to determine the modal response
-					switch (this.destination) {
-						case "group":
-							//Filter group model data from group results
-							this.groupModel = [this.locationId];
-							break;
-						case "permission_set":
-							//Filter permission set model data from permission set results
-							this.permissionSetModel = [this.locationId];
-							break;
-						case "user":
-							//Filter user model data from user results
-							this.userModel = this.locationId;
-							break;
-						default:
-							break;
+			axios.post(
+				`${this.rootUrl}object_data/admin_add_user/`,
+				data_to_send
+			).then((response) => {
+				//Assign it to the appropriate variable
+				this.groupResults = response.data.group_results.map(
+					(data) => {
+						return {
+							label: data.group_name,
+							value: data.group_id,
+						};
 					}
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "Admin Add User", "");
+				);
+
+				this.permissionSetResults =
+					response.data.permission_set_results.map((data) => {
+						return {
+							label: data.permission_set_name,
+							value: data.permission_set_id,
+						};
+					});
+
+				this.userResults = response.data.user_results.map((data) => {
+					return {
+						label: `${data.id}: ${data.first_name} ${data.last_name}`,
+						value: data.id,
+					};
 				});
+
+				//Use a simple if statement to find out which destination we are concentrating on
+				//Then filter the responses of that destination to determine the modal response
+				switch (this.destination) {
+					case "group":
+						//Filter group model data from group results
+						this.groupModel = [this.locationId];
+						break;
+					case "permission_set":
+						//Filter permission set model data from permission set results
+						this.permissionSetModel = [this.locationId];
+						break;
+					case "user":
+						//Filter user model data from user results
+						this.userModel = this.locationId;
+						break;
+					default:
+						break;
+				}
+			}).catch((error) => {
+				this.showErrorModal(error, "Admin Add User", "");
+			});
 		},
 	},
 	mounted() {

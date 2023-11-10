@@ -24,6 +24,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/kanban/ConfirmKanbanBoardClosure.vue"
             )
     ),
+    ConfirmKanbanBoardReopen = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "confirm-kanban-board-reopen" */
+            "./components/kanban/ConfirmKanbanBoardReopen.vue"
+            )
+    ),
     CustomerInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "customer-information" */
