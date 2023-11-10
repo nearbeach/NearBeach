@@ -131,6 +131,8 @@
 		<!-- MODALS -->
 		<add-group-wizard></add-group-wizard>
 		<add-user-wizard></add-user-wizard>
+		<confirm-group-delete v-bind:group-id="deleteGroupId"></confirm-group-delete>
+		<confirm-user-delete v-bind:username="deleteUsername"></confirm-user-delete>
 	</div>
 </template>
 
@@ -143,6 +145,8 @@ import axios from "axios";
 import {Modal} from "bootstrap";
 import AddGroupWizard from "../wizards/AddGroupWizard.vue";
 import AddUserWizard from "../wizards/AddUserWizard.vue";
+import ConfirmGroupDelete from "../wizards/ConfirmGroupDelete.vue";
+import ConfirmUserDelete from "../wizards/ConfirmUserDelete.vue";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -152,11 +156,19 @@ export default {
 	components: {
 		AddGroupWizard,
 		AddUserWizard,
+		ConfirmGroupDelete,
+		ConfirmUserDelete,
 		Icon,
 	},
 	inject: [
 		'nextTick',
 	],
+	data() {
+		return {
+			deleteGroupId: 0,
+			deleteUsername: "",
+		}
+	},
 	computed: {
 		...mapGetters({
 			addingGroupStatus: "getAddingGroupStatus",
@@ -208,68 +220,20 @@ export default {
 			return `${this.staticUrl}NearBeach/images/placeholder/people_tax.svg`;
 		},
 		removeGroup(group_id) {
-			//Optimistic Update - we assume everything is going to be ok
-			//Remove the group from the list
-			this.$store.commit("updateGroupsAndUsers", {
-				objectGroupList: this.objectGroupList.filter(row => {
-					return row.group_id !== group_id;
-				}),
-			});
+			//Tell the confirmation modal what group id is being deleted
+			this.deleteGroupId = group_id;
 
-			//Setup data to send
-			const data_to_send = new FormData();
-			data_to_send.set("group_id", group_id);
-
-			//Tell the backend to remove this group
-			axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_group/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Update VueX with the required data
-					this.$store.commit("updateGroupsAndUsers", {
-						objectGroupList: response.data.object_group_list,
-						objectUserList: response.data.object_user_list,
-						potentialGroupList: response.data.potential_group_list,
-						potentialUserList: response.data.potential_user_list,
-					})
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
-				});
+			//Open the modal
+			const modal = new Modal(document.getElementById("confirmGroupDeleteModal"));
+			modal.show();
 		},
 		removeUser(username) {
-			//Optimistic Update - we assume everything is going to be ok
-			//Remove the user from the list
-			this.$store.commit("updateGroupsAndUsers", {
-				objectUserList: this.objectUserList.filter(row => {
-					return row.username !== username;
-				}),
-			});
+			//Tell the confirmation modal what user id is being deleted
+			this.deleteUsername = username;
 
-			//Setup data to send
-			const data_to_send = new FormData();
-			data_to_send.set("username", username);
-
-			//Tell the backend we no longer want this user attached
-			axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_user/`,
-					data_to_send
-				)
-				.then(response => {
-					//Update VueX with the required data
-					this.$store.commit("updateGroupsAndUsers", {
-						objectGroupList: response.data.object_group_list,
-						objectUserList: response.data.object_user_list,
-						potentialGroupList: response.data.potential_group_list,
-						potentialUserList: response.data.potential_user_list,
-					})
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
-				});
+			//Open the modal
+			const modal = new Modal(document.getElementById("confirmUserDeleteModal"));
+			modal.show();
 		},
 	},
 	mounted() {
