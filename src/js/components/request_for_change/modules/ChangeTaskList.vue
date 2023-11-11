@@ -172,7 +172,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {Modal} from "bootstrap";
 import ConfirmChangeTaskClosure from "./ConfirmChangeTaskClosure.vue";
 import NewChangeTask from "../../change_task/NewChangeTask.vue";
@@ -311,7 +310,7 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("rfc_status", 5);
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}rfc_information/${this.rfcId}/update_status/`,
 					data_to_send
@@ -325,7 +324,7 @@ export default {
 				});
 		},
 		getRunSheetList() {
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}rfc_information/${this.locationId}/change_task_list/`
 				)
@@ -419,7 +418,7 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("change_task_status", change_task_status);
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}change_task_update_status/${change_task_id}/`,
 					data_to_send

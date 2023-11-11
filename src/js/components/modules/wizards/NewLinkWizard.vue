@@ -182,7 +182,6 @@
 import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
-import axios from "axios";
 import {NSelect} from "naive-ui";
 
 //VueX
@@ -252,7 +251,7 @@ export default {
 			data_to_send.set("object_relation", this.objectRelationModel);
 
 			// Use axios to send data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_link/`,
 					data_to_send
@@ -285,7 +284,7 @@ export default {
 			this.isSearching = true;
 
 			//Now to use axios to get the data we require
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${
 						this.locationId

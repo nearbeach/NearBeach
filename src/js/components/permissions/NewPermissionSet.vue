@@ -41,8 +41,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
 //Import mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
@@ -74,7 +72,7 @@ export default {
 				this.permissionSetNameModel
 			);
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}new_permission_set/save/`,
 					data_to_send

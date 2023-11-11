@@ -142,7 +142,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 import Editor from "@tinymce/tinymce-vue";
@@ -164,9 +163,6 @@ export default {
 	setup() {
 		return {v$: useVuelidate()};
 	},
-	inject: [
-		"nextTick",
-	],
 	components: {
 		editor: Editor,
 		Icon,
@@ -232,7 +228,7 @@ export default {
 			);
 			data_to_send.set("requirement_item_type", this.typeItemModel);
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}new_requirement_item/save/${this.locationId}/`,
 					data_to_send
@@ -257,7 +253,7 @@ export default {
 				});
 		},
 		updateStatusList() {
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}requirement_information/data/list_of_item_status_values/`
 			).then((response) => {
 				this.statusItemFixList = response.data.map((row) => {
@@ -269,7 +265,7 @@ export default {
 			});
 		},
 		updateTypeList() {
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}requirement_information/data/list_of_item_type_values/`
 			).then((response) => {
 				this.typeItemFixList = response.data.map((row) => {

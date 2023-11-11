@@ -38,8 +38,6 @@
 
 <script>
 //JavaScript Libraries
-const axios = require("axios");
-import {Modal} from "bootstrap";
 import {NSelect} from "naive-ui";
 
 //VueX
@@ -58,9 +56,6 @@ export default {
 	setup() {
 		return {v$: useVuelidate()};
 	},
-	inject: [
-		'nextTick',
-	],
 	components: {
 		NSelect,
 		ValidationRendering,
@@ -105,7 +100,7 @@ export default {
 			data_to_send.set("search", search);
 
 			// Now that the timer has run out, lets use AJAX to get the organisations.
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}search/organisation/data/`,
 					data_to_send

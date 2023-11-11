@@ -79,7 +79,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 import draggable from "vuedraggable";
 
@@ -227,7 +226,7 @@ export default {
 				});
 			});
 
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}kanban_information/fix_card_ordering/`,
 				data_to_send,
 			).catch((error) => {});
@@ -295,7 +294,7 @@ export default {
 			});
 
 			//Use axios to send the data to the database
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}kanban_information/${card_id}/move_card/`,
 				data_to_send
 			).catch((error) => {});

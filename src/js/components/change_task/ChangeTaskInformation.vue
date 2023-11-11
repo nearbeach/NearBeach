@@ -170,9 +170,6 @@
 </template>
 
 <script>
-//Axios
-const axios = require("axios");
-
 //Widgets
 import BetweenDates from "../dates/BetweenDates.vue";
 import {NSelect} from "naive-ui";
@@ -265,7 +262,7 @@ export default {
 	methods: {
 		deleteChangeTask() {
 			//Send the trigger
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}change_task_information/${this.changeTaskResults[0].pk}/delete/`
 				)
@@ -324,7 +321,7 @@ export default {
 			);
 			data_to_send.set("is_downtime", this.changeIsDowntimeModel);
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}change_task_information/${this.changeTaskResults[0].pk}/save/`,
 					data_to_send
@@ -355,7 +352,7 @@ export default {
 			data_to_send.set("change_task_status", new_status);
 
 			//Use axios to send the data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}change_task_update_status/${this.changeTaskResults[0].pk}/`,
 					data_to_send

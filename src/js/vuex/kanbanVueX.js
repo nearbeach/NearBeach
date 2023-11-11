@@ -226,7 +226,6 @@ export const moduleKanban = {
     getters: {
         getCard: (state) => (card_id) => {
             return state.kanbanCardResults.filter((row) => {
-                console.log("Row: ", row);
                 return parseInt(row.pk) === parseInt(card_id);
             })[0];
         },

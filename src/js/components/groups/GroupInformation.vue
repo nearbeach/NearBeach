@@ -56,7 +56,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import { NSelect, NConfigProvider } from "naive-ui";
 
 //Load mixins
@@ -115,17 +114,14 @@ export default {
 			this.showLoadingModal("Group Information");
 
 			//User axios to send data
-			axios
-				.post(
-					`${this.rootUrl}group_information/${this.groupResults[0].pk}/save/`,
-					data_to_send
-				)
-				.then((response) => {
-					this.closeLoadingModal();
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "group_information", "");
-				});
+			this.axios.post(
+				`${this.rootUrl}group_information/${this.groupResults[0].pk}/save/`,
+				data_to_send
+			).then((response) => {
+				this.closeLoadingModal();
+			}).catch((error) => {
+				this.showErrorModal(error, "group_information", "");
+			});
 		},
 	},
 	mounted() {

@@ -141,7 +141,6 @@
 import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
-import axios from "axios";
 import {Modal} from "bootstrap";
 import AddGroupWizard from "../wizards/AddGroupWizard.vue";
 import AddUserWizard from "../wizards/AddUserWizard.vue";
@@ -160,9 +159,6 @@ export default {
 		ConfirmUserDelete,
 		Icon,
 	},
-	inject: [
-		'nextTick',
-	],
 	data() {
 		return {
 			deleteGroupId: 0,
@@ -198,7 +194,7 @@ export default {
 		},
 		getGroupAndUserData() {
 			//Get the data from the database
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_and_user_data/`
 			).then((response) => {
 				//Update VueX with the required data

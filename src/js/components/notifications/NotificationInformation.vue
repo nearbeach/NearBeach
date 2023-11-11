@@ -88,8 +88,6 @@
 <script>
 import BetweenDates from "../dates/BetweenDates.vue";
 
-const axios = require("axios");
-
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
 
@@ -168,7 +166,7 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("notification_id", this.notificationResults[0].pk);
 
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}notification_information/delete/`,
 				data_to_send,
 			).then(response => {
@@ -209,7 +207,7 @@ export default {
 				this.endDateModel.toISOString(),
 			);
 
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}notification_information/${this.notificationResults[0].pk}/save/`,
 				data_to_send,
 			).then((response) => {

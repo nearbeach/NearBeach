@@ -117,7 +117,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import Editor from "@tinymce/tinymce-vue";
 
 //Components
@@ -256,7 +255,7 @@ export default {
 			});
 
 			//Send data to backend
-			axios
+			this.axios
 				.post(`${this.rootUrl}new_project/save/`, data_to_send)
 				.then((response) => {
 					//Go to the new project

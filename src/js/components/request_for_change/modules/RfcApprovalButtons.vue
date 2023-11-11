@@ -40,8 +40,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
 //VueX
 import {mapGetters} from "vuex";
 
@@ -98,7 +96,7 @@ export default {
 			this.showLoadingModal("Request for Change");
 
 			//Use axios to send the status update to the backend
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/update_status/`,
 					data_to_send

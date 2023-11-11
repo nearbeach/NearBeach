@@ -65,7 +65,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
@@ -118,7 +117,7 @@ export default {
 			data_to_send.set("username", this.userModel);
 
 			//User axios to send the data to the backend
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}rfc_information/${this.locationId}/update_change_lead/`,
 				data_to_send
 			)

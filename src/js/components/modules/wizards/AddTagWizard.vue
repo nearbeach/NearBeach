@@ -70,7 +70,6 @@
 import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
-import axios from "axios";
 import {NSelect} from "naive-ui";
 
 //VueX
@@ -82,9 +81,6 @@ export default {
 		Icon,
 		NSelect,
 	},
-	inject: [
-		'nextTick',
-	],
 	props: {
 		assignedTags: {
 			type: Array,
@@ -133,7 +129,7 @@ export default {
 			});
 
 			//Use Axios to send data to backend
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_tags/`,
 					data_to_send
@@ -150,7 +146,7 @@ export default {
 				});
 		},
 		getTagList() {
-			axios
+			this.axios
 				.post(`${this.rootUrl}object_data/tag_list_all/`)
 				.then((response) => {
 					//Map data to the preferred data format for vue-select

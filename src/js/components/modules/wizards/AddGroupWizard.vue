@@ -101,8 +101,6 @@ import {NSelect} from "naive-ui";
 import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 
-const axios = require("axios");
-
 //VueX
 import {mapGetters} from "vuex";
 
@@ -112,9 +110,6 @@ export default {
 		Icon,
 		NSelect,
 	},
-	inject: [
-		'nextTick',
-	],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -159,7 +154,7 @@ export default {
 			});
 
 			//user axios
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_group/`,
 					data_to_send

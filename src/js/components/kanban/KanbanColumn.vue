@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 
@@ -183,7 +182,7 @@ export default {
 				});
 
 				//Use axios to send the data to the database
-				axios.post(
+				this.axios.post(
 					`${this.rootUrl}kanban_information/${row.pk}/move_card/`,
 					data_to_send
 				);

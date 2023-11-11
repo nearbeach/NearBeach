@@ -73,7 +73,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import RfcDescription from "./tabs/RfcDescription.vue";
 import RfcDetails from "./tabs/RfcDetails.vue";
 import RfcRisk from "./tabs/RfcRisk.vue";
@@ -217,7 +216,7 @@ export default {
 				data_to_send.append("group_list", row);
 			});
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}new_request_for_change/save/`,
 					data_to_send

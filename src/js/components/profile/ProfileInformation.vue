@@ -102,7 +102,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {NSelect} from "naive-ui";
 
 //Validations
@@ -211,7 +210,7 @@ export default {
 			document.documentElement.setAttribute("data-bs-theme", this.themeModel);
 
 			//Send data via axios
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}profile_information/update_data/`,
 					data_to_send

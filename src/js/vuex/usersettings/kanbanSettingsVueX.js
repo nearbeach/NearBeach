@@ -1,4 +1,4 @@
-import axios from "axios";
+const axios = require('axios');
 
 export const kanbanSettings = {
     state: () => ({
@@ -62,6 +62,10 @@ export const kanbanSettings = {
             axios.post(
                 "/user_settings/update/",
                 data_to_send,
+                {
+                    xsrfCookieName: 'csrftoken',
+                    xsrfHeaderName: 'X-CSRFTOKEN',
+                }
             );
         }
     },

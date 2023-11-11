@@ -141,8 +141,6 @@
 
 <script>
 //JavaScript Libraries
-const axios = require("axios");
-import {Modal} from "bootstrap";
 import ListOrganisations from "./ListOrganisations.vue";
 
 //Validation
@@ -205,7 +203,7 @@ export default {
 
 			//Check the organisation's data to make sure there are no duplicates
 			//Use axios to contact the database
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}organisation_duplicates/`,
 					this.dataToSend()
@@ -245,7 +243,7 @@ export default {
 		uploadOrganisationData() {
 			//Use Axios to send the data
 			//Get the data to send
-			axios
+			this.axios
 				.post("save/", this.dataToSend())
 				.then((response) => {
 					//Go to the url sent back

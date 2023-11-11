@@ -101,7 +101,6 @@
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 
-const axios = require("axios");
 import NewLinkWizard from "../wizards/NewLinkWizard.vue";
 import SubObjectLinks from "./SubObjectLinks.vue";
 import ConfirmLinkDelete from "../wizards/ConfirmLinkDelete.vue";
@@ -120,9 +119,6 @@ export default {
 		NewLinkWizard,
 		SubObjectLinks,
 	},
-	inject: [
-		'nextTick',
-	],
 	mixins: [iconMixin],
 	data() {
 		return {
@@ -169,7 +165,7 @@ export default {
 			this.linkResults = [];
 
 			//Get the data from the database
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/object_link_list/`
 				)

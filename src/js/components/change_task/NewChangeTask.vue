@@ -201,7 +201,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import Editor from "@tinymce/tinymce-vue";
 import {NSelect, NDatePicker} from "naive-ui";
 
@@ -233,9 +232,6 @@ export default {
 			default: 0,
 		},
 	},
-	inject: [
-		'nextTick',
-	],
 	mixins: [errorModalMixin],
 	data: () => ({
 		assignedUserModel: null,
@@ -356,7 +352,7 @@ export default {
 			);
 			data_to_send.set("change_task_qa_user", this.qaUserModel);
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}rfc_information/${this.locationId}/new_change_task/`,
 					data_to_send

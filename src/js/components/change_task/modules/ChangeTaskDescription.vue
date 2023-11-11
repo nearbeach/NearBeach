@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 
 //VueX
@@ -90,7 +89,7 @@ export default {
 			const url = `${this.rootUrl}documentation/request_for_change/${this.changeTaskResults[0].fields.request_for_change}/upload/`;
 
 			//Use axios to send the data
-			axios
+			this.axios
 				.post(url, data_to_send, config)
 				.then((response) => {
 					//Just send the location to the success
@@ -103,7 +102,7 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set('change_task_description', this.changeDescriptionModel);
 
-			axios.post(
+			this.axios.post(
 				"update/description/",
 				data_to_send,
 			).then((response) => {

@@ -60,7 +60,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Modal} from "bootstrap";
 
 //Validation
@@ -85,9 +84,6 @@ export default {
 		NewCustomerForm,
 		NSelect,
 	},
-	inject: [
-		'nextTick',
-	],
 	props: {
 		organisationName: {
 			type: String,
@@ -152,7 +148,7 @@ export default {
 			data_to_send.set("search", search);
 
 			// Now that the timer has run out, lets use AJAX to get the organisations.
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}search/organisation/data/`,
 					data_to_send
@@ -234,7 +230,7 @@ export default {
 			}
 
 			//Send the data using axios
-			axios
+			this.axios
 				.post(`${this.rootUrl}new_customer/save/`, data_to_send)
 				.then((response) => {
 					//Go to the new customer page

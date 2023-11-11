@@ -56,7 +56,6 @@
 //JavaScript Libraries
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
-import axios from "axios";
 
 //Components
 import NewRequirementItemWizard from "../wizards/NewRequirementItemWizard.vue";
@@ -112,7 +111,9 @@ export default {
 			this.itemResults = data;
 		},
 		updateItemResults() {
-			axios.post("data/items/").then((response) => {
+			this.axios.post(
+				"data/items/",
+			).then((response) => {
 				this.itemResults = response.data;
 			});
 		},

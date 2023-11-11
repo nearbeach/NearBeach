@@ -98,7 +98,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 import {Modal} from "bootstrap";
@@ -116,9 +115,6 @@ export default {
 		Icon,
 		NSelect,
 	},
-	inject: [
-		'nextTick',
-	],
 	mixins: [errorModalMixin, iconMixin],
 	computed: {
 		...mapGetters({
@@ -158,7 +154,7 @@ export default {
 			});
 
 			//User axios to send the data to the backend
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/kanban_card/${this.cardId}/add_user/`,
 					data_to_send

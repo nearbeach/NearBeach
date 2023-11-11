@@ -118,8 +118,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-import {Modal} from "bootstrap";
 import {NButton, NSelect, NUpload} from "naive-ui";
 import StakeholderInformation from "../organisations/StakeholderInformation.vue";
 
@@ -251,7 +249,7 @@ export default {
 			this.showLoadingModal("Customer Information");
 
 			//Use axios to send the data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}customer_information/${this.customerResults[0].pk}/save/`,
 					data_to_send
@@ -274,7 +272,7 @@ export default {
 		},
 		updateProfilePicture() {
 			//Contact the API to get the location of the new image
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}customer_information/${this.customerResults[0].pk}/get_profile_picture/`,
 					{}

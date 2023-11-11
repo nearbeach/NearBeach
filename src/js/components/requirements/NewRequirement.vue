@@ -150,7 +150,6 @@
 
 <script>
 //JavaScript Libraries
-const axios = require("axios");
 import {Modal} from "bootstrap";
 import Editor from "@tinymce/tinymce-vue";
 import GetStakeholders from "../organisations/GetStakeholders.vue";
@@ -293,7 +292,7 @@ export default {
 			});
 
 			// Use Axion to send the data
-			axios
+			this.axios
 				.post("save/", data_to_send)
 				.then((response) => {
 					// Use the result to go to the url

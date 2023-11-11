@@ -51,7 +51,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {mapGetters} from "vuex";
 
 export default {
@@ -75,7 +74,7 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("document_key", this.documentKey);
 
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/remove/`,
 				data_to_send,
 			).then(() => {

@@ -54,8 +54,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
 // Import mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
 import searchMixin from "../../mixins/searchMixin";
@@ -89,7 +87,7 @@ export default {
 			data_to_send.set("search", this.searchModel);
 
 			//Use Axios to send data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}search/permission_set/data/`,
 					data_to_send

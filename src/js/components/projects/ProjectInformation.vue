@@ -164,7 +164,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {NSelect} from "naive-ui";
 import BetweenDates from "../dates/BetweenDates.vue";
 import StakeholderInformation from "../organisations/StakeholderInformation.vue";
@@ -305,18 +304,29 @@ export default {
 			);
 			data_to_send.set("project_status", this.projectStatusModel);
 
-			//Open up the loading modal
-			this.showLoadingModal("Project");
+			//Notify user of attempting to save
+			this.$store.dispatch("newToast", {
+				header: "Project Currently Saving",
+				message: "Please wait whilst we save the project",
+				extra_classes: "bg-warning",
+				unique_type: "save",
+				delay: 0,
+			});
 
 			//Use axios to send data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}project_information/${this.projectResults[0].pk}/save/`,
 					data_to_send
 				)
 				.then((response) => {
 					//Notify user of success update
-					this.closeLoadingModal();
+					this.$store.dispatch("newToast", {
+						header: "Project Saved",
+						message: "Project Saved",
+						extra_classes: "bg-success",
+						unique_type: "save",
+					});
 
 					//Reload the page IF the status is closed
 					if (this.projectStatusModel === "Closed")

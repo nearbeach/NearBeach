@@ -283,7 +283,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import ChangeTaskList from "./modules/ChangeTaskList.vue";
 import RfcBackoutPlan from "./tabs/RfcBackoutPlan.vue";
 import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
@@ -370,7 +369,7 @@ export default {
 			this.showLoadingModal("Project");
 
 			//Use axios to send the data
-			axios
+			this.axios
 				.post(url, data_to_send)
 				.then((response) => {
 					//Notify user of success update

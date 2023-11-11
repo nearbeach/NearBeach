@@ -52,7 +52,6 @@
 <script>
 import {mapGetters} from "vuex";
 import {Modal} from "bootstrap";
-import axios from "axios";
 
 export default {
 	name: "ArchiveCards",
@@ -118,7 +117,7 @@ export default {
 			});
 
 			// Use axios to contact backend
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}kanban_information/archive_kanban_cards/`,
 					data_to_send

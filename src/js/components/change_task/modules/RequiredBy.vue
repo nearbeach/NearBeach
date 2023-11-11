@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
 	name: "RequiredBy",
 	computed: {
@@ -60,7 +58,7 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("change_task_required_by", requiredBy);
 
-			axios.post(
+			this.axios.post(
 				"update/required_by/",
 				data_to_send,
 			).then((response) => {

@@ -151,7 +151,6 @@
 import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
-import axios from "axios";
 import {NSelect} from "naive-ui";
 
 //VueX
@@ -163,9 +162,6 @@ export default {
 		Icon,
 		NSelect,
 	},
-	inject: [
-		'nextTick',
-	],
 	props: {
 		destination: {
 			type: String,
@@ -195,7 +191,7 @@ export default {
 	},
 	methods: {
 		loadBugClientList() {
-			axios
+			this.axios
 				.post(`${this.rootUrl}object_data/bug_client_list/`)
 				.then((response) => {
 					//Clear out the bug list
@@ -233,7 +229,7 @@ export default {
 			data_to_send.set("search", this.searchModel);
 
 			//Send the data - then wait for a response
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/query_bug_client/`,
 					data_to_send
@@ -273,7 +269,7 @@ export default {
 			data_to_send.set("bug_status", filted_bug_results[0].status);
 
 			//Send data to the backend
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_bug/`,
 					data_to_send

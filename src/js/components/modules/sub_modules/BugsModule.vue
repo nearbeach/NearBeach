@@ -90,7 +90,6 @@
 
 <script>
 //JavaScript components
-import axios from "axios";
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 import AddBugWizard from "../wizards/AddBugWizard.vue";
@@ -108,9 +107,6 @@ export default {
 		AddBugWizard,
 		Icon,
 	},
-	inject: [
-		'nextTick',
-	],
 	mixins: [errorModalMixin, iconMixin],
 	data() {
 		return {
@@ -158,7 +154,7 @@ export default {
 				return;
 			}
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/bug_list/`
 				)
@@ -181,7 +177,7 @@ export default {
 			data_to_send.set("bug_id", bug_id);
 
 			//Use Axios to send data to backend
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/delete_bug/`,
 					data_to_send

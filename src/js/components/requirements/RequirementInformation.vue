@@ -175,7 +175,6 @@
 
 <script>
 //JavaScript Libraries
-const axios = require("axios");
 import Editor from "@tinymce/tinymce-vue";
 import {NSelect} from "naive-ui";
 import StakeholderInformation from "../organisations/StakeholderInformation.vue";
@@ -307,7 +306,7 @@ export default {
 			data_to_send.set("requirement_type", this.typeModel);
 
 			// Use Axion to send the data
-			axios
+			this.axios
 				.post("save/", data_to_send)
 				.then((response) => {
 					this.closeLoadingModal();

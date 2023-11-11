@@ -90,8 +90,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
 //Import mixins
 import searchMixin from "../../mixins/searchMixin";
 
@@ -180,7 +178,7 @@ export default {
 			);
 
 			//Use axios to request data
-			axios
+			this.axios
 				.post(`${this.rootUrl}search/data/`, data_to_send)
 				.then((response) => {
 					//Update the localSearchResults with the data

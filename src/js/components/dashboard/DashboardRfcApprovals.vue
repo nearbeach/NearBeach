@@ -49,8 +49,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
 //Import mixins
 import datetimeMixin from "../../mixins/datetimeMixin";
 import errorModalMixin from "../../mixins/errorModalMixin";
@@ -72,7 +70,7 @@ export default {
 	methods: {
 		getRfcApprovalsList() {
 			//Use axios to get data
-			axios
+			this.axios
 				.post(`${this.rootUrl}dashboard/get/rfc_approvals/`)
 				.then((response) => {
 					//Place the data into rfcApprovalsList

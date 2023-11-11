@@ -55,8 +55,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
 // Mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
 
@@ -121,7 +119,7 @@ export default {
 	methods: {
 		getMyObjects() {
 			//Use axios to get the objects assigned to me
-			axios
+			this.axios
 				.post(`${this.rootUrl}dashboard/get/my_objects/`)
 				.then((response) => {
 					this.objectResults = response.data;

@@ -99,7 +99,6 @@
 
 <script>
 //JavaScript components
-import axios from "axios";
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 
@@ -170,7 +169,7 @@ export default {
 			data_to_send.set("username", this.username);
 
 			//Setup Axios to send data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}${this.location}update_user_password/`,
 					data_to_send

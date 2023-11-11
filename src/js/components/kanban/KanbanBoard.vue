@@ -69,9 +69,6 @@ export default {
 	components: {
 		KanbanRow,
 	},
-	inject: [
-		'nextTick',
-	],
 	props: {
 		kanbanBoardResults: {
 			type: Array,

@@ -255,7 +255,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
@@ -344,7 +343,7 @@ export default {
 			);
 
 			// Use axios to send data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}kanban_information/${
 						this.locationId
@@ -381,7 +380,7 @@ export default {
 			this.isSearching = true;
 
 			//Now to use axios to get the data we require
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`
 				)

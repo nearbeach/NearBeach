@@ -44,9 +44,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
-
 //Mixins
 import ErrorModalMixin from "../../mixins/errorModalMixin";
 
@@ -71,7 +68,7 @@ export default {
 	methods: {
 		getUserList() {
 			//Get the data from the database
-			axios
+			this.axios
 				.post(`${this.rootUrl}dashboard/get/users_with_no_groups/`)
 				.then((response) => {
 					this.userList = response.data;

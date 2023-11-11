@@ -95,8 +95,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
 //VueX
 import {mapGetters} from "vuex";
 
@@ -171,7 +169,7 @@ export default {
 	methods: {
 		deleteTag() {
 			//Use axios to send the request
-			axios
+			this.axios
 				.post(`${this.rootUrl}tag/delete/${this.tagId}/`)
 				.then((response) => {
 					//Tell the component up stream that we removed this tag
@@ -196,7 +194,7 @@ export default {
 		},
 		newTag(data_to_send) {
 			//Use axios to send data
-			axios
+			this.axios
 				.post(`${this.rootUrl}tag/new/`, data_to_send)
 				.then((response) => {
 					// Send data upstream
@@ -229,7 +227,7 @@ export default {
 		},
 		updateTag(data_to_send) {
 			//Use axios to send data
-			axios
+			this.axios
 				.post(`${this.rootUrl}tag/save/`, data_to_send)
 				.then((response) => {
 					// Send data upstream

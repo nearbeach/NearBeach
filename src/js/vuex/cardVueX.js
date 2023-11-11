@@ -1,4 +1,4 @@
-import axios from "axios";
+const axios = require('axios');
 
 export const moduleCard = {
     state: () => ({
@@ -54,25 +54,35 @@ export const moduleCard = {
             state.cardPriority = payload.cardPriority;
 
             //Get data for the notes
-            axios
-                .post(`/object_data/kanban_card/${payload.cardId}/note_list/`)
-                .then((response) => {
-                    //Save the data into noteHistoryResults
-                    state.cardNotes = response.data;
-                });
+            axios.post(
+                `/object_data/kanban_card/${payload.cardId}/note_list/`,
+                {},
+                {
+                    xsrfCookieName: 'csrftoken',
+                    xsrfHeaderName: 'X-CSRFTOKEN',
+                }
+            ).then((response) => {
+                //Save the data into noteHistoryResults
+                state.cardNotes = response.data;
+            });
 
             //Get data for the user list
-            axios
-                .post(`/object_data/kanban_card/${payload.cardId}/group_and_user_data/`)
-                .then((response) => {
-                    //Save the data into userList
-                    commit('updateGroupsAndUsers', {
-                        objectGroupList: response.data.object_group_list,
-                        objectUserList: response.data.object_user_list,
-                        potentialGroupList: response.data.potential_group_list,
-                        potentialUserList: response.data.potential_user_list,
-                    })
-                });
+            axios.post(
+                `/object_data/kanban_card/${payload.cardId}/group_and_user_data/`,
+                {},
+                {
+                    xsrfCookieName: 'csrftoken',
+                    xsrfHeaderName: 'X-CSRFTOKEN',
+                }
+            ).then((response) => {
+                //Save the data into userList
+                commit('updateGroupsAndUsers', {
+                    objectGroupList: response.data.object_group_list,
+                    objectUserList: response.data.object_user_list,
+                    potentialGroupList: response.data.potential_group_list,
+                    potentialUserList: response.data.potential_user_list,
+                })
+            });
         },
     },
     getters: {

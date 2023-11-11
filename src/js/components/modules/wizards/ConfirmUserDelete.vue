@@ -51,7 +51,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {mapGetters} from "vuex";
 
 export default {
@@ -85,7 +84,7 @@ export default {
 			data_to_send.set("username", this.username);
 
 			//Tell the backend we no longer want this user attached
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_user/`,
 				data_to_send
 			).then(response => {

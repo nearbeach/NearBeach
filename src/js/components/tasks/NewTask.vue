@@ -117,7 +117,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
@@ -249,7 +248,7 @@ export default {
 			});
 
 			//Send data to backend
-			axios
+			this.axios
 				.post("save/", data_to_send)
 				.then((response) => {
 					//Go to the new project

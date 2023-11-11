@@ -249,7 +249,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import RfcDescription from "./tabs/RfcDescription.vue";
 import UpdateChangeLead from "../modules/wizards/UpdateChangeLead.vue"
 import {NSelect, NDatePicker} from "naive-ui";
@@ -485,7 +484,7 @@ export default {
 			this.sendUpdate(data_to_send);
 		},
 		sendUpdate(data_to_send) {
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/update_status/`,
 					data_to_send
@@ -544,7 +543,7 @@ export default {
 			);
 
 			//Use Axios to send the data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/`,
 					data_to_send

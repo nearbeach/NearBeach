@@ -57,7 +57,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {mapGetters} from "vuex";
 import {Modal} from "bootstrap";
 
@@ -91,7 +90,7 @@ export default {
 				.click();
 
 			//Send the data to backend
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}kanban_information/archive_kanban_cards/`,
 					data_to_send

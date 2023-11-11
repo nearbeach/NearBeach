@@ -47,7 +47,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 
@@ -64,9 +63,6 @@ export default {
 		AddTagWizard,
 		Icon,
 	},
-	inject: [
-		'nextTick',
-	],
 	data() {
 		return {
 			tagList: [],
@@ -93,7 +89,7 @@ export default {
 			newTagModal.show();
 		},
 		getAssignedTags() {
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/tag_list/`
 				)
@@ -111,7 +107,7 @@ export default {
 			data_to_send.set("object_id", this.locationId);
 
 			//Send data using axios
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/delete_tag/`,
 					data_to_send

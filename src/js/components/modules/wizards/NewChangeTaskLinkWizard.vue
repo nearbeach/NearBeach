@@ -108,8 +108,6 @@
 </template>
 
 <script>
-const axios = require('axios');
-
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
@@ -181,7 +179,7 @@ export default {
 		},
 		getAllChangeTasks() {
 			//Use Axios to get data
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}change_task_information/${this.locationId}/get_change_task_list/`
 			).then(response => {
 				this.changeTaskResults = response.data;
@@ -206,7 +204,7 @@ export default {
 			data_to_send.set("object_relation", this.changeTaskRelationModel);
 
 			// Use axios to send data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/change_task/${this.locationId}/add_link/`,
 					data_to_send

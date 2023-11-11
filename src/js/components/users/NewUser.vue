@@ -135,8 +135,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {email, helpers, required} from "@vuelidate/validators";
@@ -215,7 +213,7 @@ export default {
 			data_to_send.set("password1", this.password1Model);
 			data_to_send.set("password2", this.password2Model);
 
-			axios
+			this.axios
 				.post(`${this.rootUrl}new_user/save/`, data_to_send)
 				.then((response) => {
 					//Send user to the user information page

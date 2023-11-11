@@ -55,7 +55,6 @@
 <script>
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
-import axios from "axios";
 
 //Components
 import NewChangeTaskLinkWizardVue from "../../modules/wizards/NewChangeTaskLinkWizard.vue";
@@ -112,7 +111,7 @@ export default {
 			this.linkResults = [];
 
 			//Get the data from the database
-			axios.post(
+			this.axios.post(
 					`${this.rootUrl}object_data/change_task/${this.locationId}/object_link_list/`
       		).then((response) => {
 				this.linkResults = response.data.map((row) => {

@@ -173,7 +173,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 import AddFolderWizard from "../wizards/AddFolderWizard.vue";
@@ -267,7 +266,7 @@ export default {
 			//If getLocationID === 0 - bail on axios
 			if (this.getLocationId() === 0) return;
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/list/files/`
 				)
@@ -281,7 +280,7 @@ export default {
 			//If getLocationID === 0 - bail on axios
 			if (this.getLocationId() === 0) return;
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/list/folders/`
 				)

@@ -18,8 +18,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
 //Mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
 
@@ -52,7 +50,7 @@ export default {
 	methods: {
 		getMyKanbanList() {
 			//Use axios to get data
-			axios
+			this.axios
 				.post(`${this.rootUrl}dashboard/get/kanban_list/`)
 				.then((response) => {
 					//Map out the data to a flatted table for rendering purposes.

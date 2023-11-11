@@ -17,8 +17,11 @@ import "./global.js";
 
 //Import axios for ajax
 const axios = require("axios");
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-axios.defaults.xsrfCookieName = "csrftoken";
+const axiosInstance = axios.create({
+    withCredentials: true,
+    xsrfCookieName: "csrftoken",
+    xsrfHeaderName: "X-CSRFTOKEN",
+});
 
 //nextTick
 import {nextTick} from 'vue';
@@ -154,6 +157,6 @@ const app = createApp({
 });
 app.config.devtools = true;
 app.use(store);
-app.provide('nextTick', nextTick) //Do the same thing with axios, modal etc.
+app.config.globalProperties.axios=axiosInstance;
 app.component("NConfigProvider", NConfigProvider);
 app.mount("#app");

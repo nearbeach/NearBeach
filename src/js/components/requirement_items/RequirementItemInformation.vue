@@ -181,7 +181,6 @@
 //JavaScript Libraries
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
-import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 import {NSelect} from "naive-ui";
 
@@ -340,7 +339,7 @@ export default {
 			data_to_send.set("requirement_item_type", this.typeModel);
 
 			// Use Axion to send the data
-			axios
+			this.axios
 				.post("save/", data_to_send)
 				.then((response) => {
 					//Update the message in the loading modal

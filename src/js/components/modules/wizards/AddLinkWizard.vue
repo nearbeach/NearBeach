@@ -96,7 +96,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 
 //VueX
@@ -187,7 +186,7 @@ export default {
 				data_to_send.set("parent_folder", this.currentFolder);
 			}
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}documentation/${this.destination}/${this.locationId}/add_link/`,
 					data_to_send

@@ -43,8 +43,6 @@
 <script>
 import {Icon} from "@iconify/vue";
 
-const axios = require("axios");
-
 //Mixins
 import iconMixin from "../../../mixins/iconMixin";
 
@@ -95,7 +93,7 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("customer_id", customer_id);
 
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_customer/`,
 				data_to_send,
 			).then(() => {

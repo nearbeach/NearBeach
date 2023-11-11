@@ -261,7 +261,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import SinglePermissionProperties from "./SinglePermissionProperties.vue";
 
 //Mixins
@@ -392,7 +391,7 @@ export default {
 			this.showLoadingModal("permission set");
 
 			//Send data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}permission_set_information/${this.permissionSetResults[0].pk}/save/`,
 					data_to_send

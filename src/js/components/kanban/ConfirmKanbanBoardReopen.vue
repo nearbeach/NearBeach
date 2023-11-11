@@ -51,7 +51,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {mapGetters} from "vuex";
 
 export default {
@@ -65,21 +64,18 @@ export default {
 	},
 	methods: {
 		reopenKanbanBoard() {
-			axios
-				.post(
-					`${this.rootUrl}kanban_information/${this.locationId}/reopen_board/`
-				)
-				.then(() => {
-					window.location.reload();
-				})
-				.catch((error) => {
-					this.$store.dispatch("newToast", {
-						heading: "Error Reopening Kanban board",
-						message: `Error typing to reopen kanban board: Error -> ${error}`,
-						extra_classes: "bg-danger",
-						delay: 0,
-					});
+			this.axios.post(
+				`${this.rootUrl}kanban_information/${this.locationId}/reopen_board/`
+			).then(() => {
+				window.location.reload();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					heading: "Error Reopening Kanban board",
+					message: `Error typing to reopen kanban board: Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		closeModal() {
 			document.getElementById("confirmKanbanBoardOpen").click();

@@ -63,7 +63,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import Editor from "@tinymce/tinymce-vue";
 import ListNotes from "../modules/sub_modules/ListNotes.vue";
 
@@ -99,7 +98,7 @@ export default {
 			data_to_send.set("note", this.cardNoteModel);
 
 			//Use axios to send the data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
 					data_to_send

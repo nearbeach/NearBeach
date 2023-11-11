@@ -35,7 +35,7 @@
 						}"
 						:data="{}"
 						@finish="updateProfilePicture"
-						@error="showErrorModal('Profile Picture was not updated','Profile Picture','')"
+						@error="showErrorToast"
 					>
 						<n-button>Update Profile Picture</n-button>
 					</n-upload>
@@ -115,8 +115,6 @@
 </template>
 
 <script>
-import axios from "axios";
-//import { NButton, NUpload } from 'naive-ui';
 import {NButton, NUpload} from "naive-ui";
 
 //VueX
@@ -184,6 +182,14 @@ export default {
 		},
 	},
 	methods: {
+		showErrorToast() {
+			this.$store.dispatch("newToast", {
+				header: "Error uploading profile picture",
+				message: `Sorry, we had an issue uploading the profile image.`,
+				extra_classes: "bg-danger",
+				delay: 0,
+			});
+		},
 		setProfilePicture() {
 			let profile_picture =
 				this.organisationResults[0].fields
@@ -230,7 +236,7 @@ export default {
 			this.showLoadingModal("Organisation");
 
 			//Use axios to send the data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/save/`,
 					data_to_send
@@ -247,18 +253,37 @@ export default {
 				});
 		},
 		updateProfilePicture() {
+			//Notify user of intention
+			this.$store.dispatch("newToast", {
+				header: "Profile Picture updated",
+				message: "Good news - profile picture updated",
+				extra_classes: "bg-success",
+				unique_type: "update_profile",
+				delay: 0,
+			});
+
 			//Contact the API to get the location of the new image
-			axios
-				.post(
-					`${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/get_profile_picture/`,
-					{}
-				)
-				.then((response) => {
-					this.profilePicture = response.data;
-				})
-				.catch(() => {
-					this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
+			this.axios.post(
+				`${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/get_profile_picture/`,
+			).then((response) => {
+				this.profilePicture = response.data;
+
+				this.$store.dispatch("newToast", {
+					header: "Profile Picture updated",
+					message: "Good news - profile picture updated",
+					extra_classes: "bg-success",
+					unique_type: "update_profile",
 				});
+			}).catch((error) => {
+				this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
+
+				this.$store.dispatch("newToast", {
+					header: "Error uploading profile picture",
+					message: `Sorry, we had an issue uploading the profile image. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	mounted() {

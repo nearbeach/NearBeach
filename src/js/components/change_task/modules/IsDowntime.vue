@@ -34,8 +34,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
 	name: "IsDowntime",
 	computed: {
@@ -66,7 +64,7 @@ export default {
 			data_to_send.set('is_downtime', isDowntime);
 
 			//Send to the backend
-			axios.post(
+			this.axios.post(
 				"update/is_downtime/",
 				data_to_send,
 			).then((response) => {

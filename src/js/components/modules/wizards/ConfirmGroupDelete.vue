@@ -51,7 +51,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {mapGetters} from "vuex";
 
 export default {
@@ -85,7 +84,7 @@ export default {
 			data_to_send.set("group_id", `${this.groupId}`);
 
 			//Tell the backend to remove this group
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_group/`,
 				data_to_send
 			).then((response) => {

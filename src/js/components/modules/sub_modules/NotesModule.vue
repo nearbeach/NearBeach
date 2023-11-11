@@ -43,7 +43,6 @@
 import {Modal} from "bootstrap";
 import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 import ListNotes from "./ListNotes.vue";
 import NewHistoryNoteWizard from "../wizards/NewHistoryNoteWizard.vue";
@@ -58,9 +57,6 @@ export default {
 		ListNotes,
 		NewHistoryNoteWizard,
 	},
-	inject: [
-		'nextTick',
-	],
 	mixins: [errorModalMixin, iconMixin],
 	data() {
 		return {
@@ -83,9 +79,9 @@ export default {
 			newNoteModal.show();
 		},
 		getNoteHistoryResults() {
-			axios
+			this.axios
 				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`
+					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
 				)
 				.then((response) => {
 					this.noteHistoryResults = response.data;

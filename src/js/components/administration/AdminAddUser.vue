@@ -117,8 +117,6 @@
 </template>
 
 <script>
-// const axios = require('axios');
-import axios from "axios";
 import {NSelect} from "naive-ui";
 
 //VueX
@@ -175,7 +173,7 @@ export default {
 				data_to_send.append("permission_set", row);
 			});
 
-			axios
+			this.axios
 				.post(`${this.rootUrl}admin_add_user/`, data_to_send)
 				.then((response) => {
 					//Just refresh the page (for now)
@@ -189,7 +187,7 @@ export default {
 			const data_to_send = new FormData();
 
 			//Use Axios to obtain all the group, permission-set, and user results
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}object_data/admin_add_user/`,
 				data_to_send
 			).then((response) => {

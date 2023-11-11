@@ -69,7 +69,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {NSelect} from "naive-ui";
 
 // Validation
@@ -156,7 +155,7 @@ export default {
 			}
 
 			//Use Axios to send data
-			axios
+			this.axios
 				.post(`${this.rootUrl}new_group/save/`, data_to_send)
 				.then((response) => {
 					//Go to that webpage
@@ -172,7 +171,7 @@ export default {
 			data_to_send.set("search", this.groupNameModel);
 
 			//User Axios to send data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}group_information/check_group_name/`,
 					data_to_send

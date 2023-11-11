@@ -96,7 +96,6 @@
 <script>
 //JavaScript components
 import {Modal} from "bootstrap";
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 
 //Components
@@ -119,9 +118,6 @@ export default {
 		NewRequirementLinkWizard,
 	},
 	mixins: [iconMixin],
-	inject: [
-		'nextTick',
-	],
 	data() {
 		return {
 			itemLinkProject: [],
@@ -149,7 +145,7 @@ export default {
 		},
 		updateLinkResults() {
 			//Get the data from the database
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}object_data/requirement/${this.locationId}/object_link_list/`,
 			).then((response) => {
 				this.linkProject = response.data.filter((row) => {
@@ -162,7 +158,7 @@ export default {
 			})
 
 			//Get the ITEM links
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}requirement_information/${this.locationId}/data/item_links/`,
 			).then((response) => {
 				this.itemLinkProject = response.data.filter((row) => {

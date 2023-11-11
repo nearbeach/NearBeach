@@ -115,7 +115,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
 import {NSelect} from "naive-ui";
@@ -224,7 +223,7 @@ export default {
 			)
 
 			//Send the data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/new_card/`,
 					data_to_send

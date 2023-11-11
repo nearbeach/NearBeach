@@ -56,12 +56,11 @@ import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import CustomersListModule from "./CustomersListModule.vue";
 import AddCustomerWizard from "../wizards/AddCustomerWizard.vue";
+import {Modal} from "bootstrap";
 
 //VueX
 import {mapGetters} from "vuex";
 
-const axios = require("axios");
-import {Modal} from "bootstrap";
 
 export default {
 	name: "CustomersModule",
@@ -70,9 +69,6 @@ export default {
 		CustomersListModule,
 		Icon,
 	},
-	inject: [
-		'nextTick',
-	],
 	mixins: [errorModalMixin, iconMixin],
 	data() {
 		return {
@@ -95,7 +91,7 @@ export default {
 			addCustomerModal.show();
 		},
 		loadCustomerResults() {
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list/`
 				)

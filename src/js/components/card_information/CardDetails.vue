@@ -125,7 +125,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {NSelect} from "naive-ui";
 import {mapGetters} from "vuex";
 import {Modal} from "bootstrap";

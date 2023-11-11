@@ -51,7 +51,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {mapGetters} from "vuex";
 
 export default {
@@ -65,7 +64,7 @@ export default {
 	},
 	methods: {
 		closeKanbanBoard() {
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}kanban_information/${this.locationId}/close_board/`
 				)

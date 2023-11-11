@@ -61,7 +61,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 import NewRequirementLinkWizard from "../wizards/NewRequirementLinkWizard.vue";
@@ -83,9 +82,6 @@ export default {
     SubObjectLinks,
 	},
 	mixins: [iconMixin],
-  inject: [
-      'nextTick',
-  ],
 	data() {
 		return {
 			// itemLinkResults: [],
@@ -159,7 +155,7 @@ export default {
 		// },
 		updateLinkResults() {
 			//Get the data from the database
-			axios.post(
+			this.axios.post(
           `${this.rootUrl}object_data/requirement_item/${this.locationId}/object_link_list/`,
       ).then((response) => {
 				// this.itemLinkResults = response.data;

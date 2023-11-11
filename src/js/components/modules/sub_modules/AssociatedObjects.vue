@@ -165,7 +165,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 
 //VueX
@@ -179,9 +178,6 @@ export default {
 	components: {
 		Icon,
 	},
-	inject: [
-		'nextTick',
-	],
 	mixins: [iconMixin],
 	data() {
 		return {
@@ -199,7 +195,7 @@ export default {
 	},
 	methods: {
 		getAssociatedObjectResults() {
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/associated_objects/`
 				)

@@ -161,7 +161,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
@@ -319,7 +318,7 @@ export default {
 			data_to_send.set("task_status", this.taskStatusModel);
 
 			//Send data to backend
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}task_information/${this.taskResults[0].pk}/save/`,
 					data_to_send

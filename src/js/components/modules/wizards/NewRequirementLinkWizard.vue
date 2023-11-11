@@ -175,7 +175,6 @@
 //JavaScript components
 import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
@@ -233,7 +232,7 @@ export default {
 			});
 
 			// Use axios to send data
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}${this.destination}_information/${this.locationId}/add_link/`,
 				data_to_send
 			)
@@ -267,7 +266,7 @@ export default {
 			this.isSearching = true;
 
 			//Now to use axios to get the data we require
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${
 						this.locationId

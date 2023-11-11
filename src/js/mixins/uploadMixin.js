@@ -55,8 +55,6 @@ export default {
                 });
         },
         newObjectUploadImage(blobInfo, progress) {
-            console.log("UUID: ", this.uuid);
-
             //Create the form
             const data_to_send = new FormData();
             data_to_send.set("document", blobInfo.blob(), blobInfo.filename());

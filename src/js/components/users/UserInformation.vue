@@ -143,8 +143,6 @@
 
 <script>
 //Vue is like "I wanna write JS in my HTML" and React is like "I wanna write my HTML as JS"
-const axios = require("axios");
-
 //Import mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
 import loadingModalMixin from "../../mixins/loadingModalMixin";
@@ -222,7 +220,7 @@ export default {
 			data_to_send.set("first_name", this.firstNameModel);
 			data_to_send.set("last_name", this.lastNameModel);
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}user_information/${this.userResults[0]["pk"]}/save/`,
 					data_to_send

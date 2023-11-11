@@ -100,7 +100,6 @@
 <script>
 import {Modal} from "bootstrap";
 
-const axios = require("axios");
 
 //Import mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
@@ -212,7 +211,7 @@ export default {
 				);
 			}
 
-			axios
+			this.axios
 				.post(
 					`/update_group_leader_status/${this.destination}/`,
 					data_to_send

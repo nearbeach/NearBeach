@@ -87,8 +87,6 @@
 <script>
 import BetweenDates from "../dates/BetweenDates.vue";
 
-const axios = require("axios");
-
 //Mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
@@ -179,7 +177,7 @@ export default {
 				this.endDateModel.toISOString(),
 			);
 
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}new_notification_save/`,
 				data_to_send,
 			).then((response) => {

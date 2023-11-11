@@ -168,7 +168,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 
 //VueX
@@ -183,9 +182,6 @@ export default {
 	components: {
 		Icon,
 	},
-	inject: [
-		'nextTick',
-	],
 	props: {
 		acceptedDocuments: {
 			type: String,
@@ -288,7 +284,7 @@ export default {
 			};
 
 			//Use axios to send it to the backend
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
 					data_to_send,
@@ -359,7 +355,7 @@ export default {
 		//Wait a few seconds before getting the max file upload size
 		this.$nextTick(() => {
 			//Get the max file upload size
-			axios
+			this.axios
 				.post(`${this.rootUrl}documentation/get/max_upload/`)
 				.then((response) => {
 					//Set the value

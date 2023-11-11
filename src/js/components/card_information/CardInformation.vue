@@ -186,7 +186,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Icon} from "@iconify/vue";
 import CardDetails from "./CardDetails.vue";
 import CardNotes from "./CardNotes.vue";
@@ -257,7 +256,7 @@ export default {
       }
 
 			//Use Axios to send data to backend
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}kanban_information/update_card/`,
 					data_to_send

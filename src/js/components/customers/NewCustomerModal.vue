@@ -53,7 +53,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 import NewCustomerForm from "./NewCustomerForm.vue";
@@ -167,14 +166,20 @@ export default {
 			data_to_send.set("organisation", this.organisationId);
 
 			//Send the data using axios
-			axios
-				.post(`${this.rootUrl}new_customer/save/`, data_to_send)
-				.then((response) => {
-					//Go to the new customer page
-					window.location.href = response.data;
-				})
-				.catch((error) => {
+			this.axios.post(
+				`${this.rootUrl}new_customer/save/`,
+				data_to_send
+			).then((response) => {
+				//Go to the new customer page
+				window.location.href = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Could not save customer",
+					message: `Sorry, could not save the customer. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		updateCustomerData(data) {
 			//Update the modal field with the value data

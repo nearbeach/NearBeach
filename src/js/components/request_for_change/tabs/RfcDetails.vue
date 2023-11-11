@@ -150,7 +150,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {NSelect, NDatePicker} from "naive-ui";
 import GroupPermissions from "../../permissions/GroupPermissions.vue";
 
@@ -177,9 +176,6 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
-	inject: [
-		'nextTick',
-	],
 	props: {
 		groupResults: {
 			type: Array,
@@ -317,7 +313,7 @@ export default {
 			data_to_send.set("search", search);
 
 			// Now that the timer has run out, lets use AJAX to get the organisations.
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/lead_user_list/`,
 					data_to_send

@@ -44,8 +44,6 @@ import errorModalMixin from "../../mixins/errorModalMixin";
 import getToken from "../../mixins/getTokenMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 
-const axios = require('axios');
-
 export default {
 	name: "UpdateProfilePicture",
 	components: {
@@ -95,7 +93,7 @@ export default {
 		},
 		updateProfilePicture() {
 			//Contact the API to get the location of the new image
-			axios
+			this.axios
 				.get(
 					"get_profile_picture/",
 					{}

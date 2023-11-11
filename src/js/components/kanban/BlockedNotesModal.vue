@@ -70,7 +70,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 
 //VueX
@@ -102,7 +101,7 @@ export default {
 			data_to_send.set("note", this.noteModal);
 
 			//Use axios to send the data
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/kanban_card/${this.cardId}/add_notes/`,
 					data_to_send

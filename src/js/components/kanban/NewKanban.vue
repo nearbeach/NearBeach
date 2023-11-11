@@ -100,7 +100,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
 import GroupPermissions from "../permissions/GroupPermissions.vue";
 
@@ -279,7 +278,7 @@ export default {
 			});
 
 			//Use axios to send the data
-			axios
+			this.axios
 				.post(`${this.rootUrl}new_kanban_save/`, data_to_send)
 				.then((response) => {
 					//Go to that webpage
@@ -297,7 +296,7 @@ export default {
 			);
 
 			//Use axios to query the database
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}kanban_information/check_kanban_board_name/`,
 					data_to_send

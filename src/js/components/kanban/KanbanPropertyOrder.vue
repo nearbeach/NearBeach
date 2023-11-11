@@ -220,7 +220,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 import {NSelect, NRadioGroup, NRadio, NSpace} from "naive-ui";
@@ -355,7 +354,7 @@ export default {
 			const url = `${this.rootUrl}kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/delete/`;
 
 			//Use axios to send data to backend
-			axios
+			this.axios
 				.post(url, data_to_send)
 				.then((response) => {
 					//Filter out the id we want to remove
@@ -429,7 +428,7 @@ export default {
 			}
 
 			// Send data
-			await axios
+			await this.axios
 				.post(url, data_to_send)
 				.then((response) => {
 					//Data
@@ -572,7 +571,7 @@ export default {
 					data_to_send.append("item", row.id);
 				});
 
-				axios
+				this.axios
 					.post(url, data_to_send)
 					.then((response) => {
 					})

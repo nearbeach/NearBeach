@@ -45,7 +45,6 @@
 import {mapGetters} from "vuex";
 import {Icon} from "@iconify/vue";
 
-const axios = require("axios");
 import {Modal} from "bootstrap";
 
 //Mixins

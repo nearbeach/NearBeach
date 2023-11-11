@@ -47,7 +47,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 
 export default {
 	name: "ConfirmPermissionDelete",
@@ -63,7 +62,7 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("user_group_id", this.permissionDeleteId);
 
-			axios.post(
+			this.axios.post(
 				"/user_information/remove_permission/",
 				data_to_send
 			).catch((error) => {

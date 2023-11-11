@@ -59,8 +59,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
 //Mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
 import searchMixin from "../../mixins/searchMixin";
@@ -94,7 +92,7 @@ export default {
 			data_to_send.set("search", this.searchModel);
 
 			//Use Axios to send data
-			axios.post(
+			this.axios.post(
 				`${this.rootUrl}search/notification/data/`,
 				data_to_send,
 			).then((response) => {

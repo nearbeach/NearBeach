@@ -63,9 +63,6 @@
 </template>
 
 <script>
-//Axios
-const axios = require("axios");
-
 //TinyMce
 import Editor from "@tinymce/tinymce-vue";
 

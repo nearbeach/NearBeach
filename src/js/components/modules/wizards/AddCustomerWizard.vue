@@ -94,7 +94,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
@@ -111,9 +110,6 @@ export default {
 		Icon,
 		NSelect,
 	},
-	inject: [
-		'nextTick',
-	],
 	props: {
 		destination: {
 			type: String,
@@ -150,7 +146,7 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("customer", this.customerModel);
 
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_customer/`,
 					data_to_send
@@ -172,7 +168,7 @@ export default {
 				});
 		},
 		getCustomerList() {
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list_all/`
 				)

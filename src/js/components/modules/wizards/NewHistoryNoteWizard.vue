@@ -76,7 +76,6 @@
 import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
-import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 
 //VueX
@@ -120,7 +119,7 @@ export default {
 			data_to_send.set("note", this.newNoteModel);
 
 			//Add the data to data_to_send
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_notes/`,
 					data_to_send

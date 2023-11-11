@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 
@@ -95,7 +94,7 @@ export default {
 			data_to_send.set("username", username);
 
 			//Axios
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}object_data/kanban_card/${this.locationId}/remove_user/`,
 					data_to_send

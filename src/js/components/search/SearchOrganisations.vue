@@ -46,8 +46,6 @@
 </template>
 
 <script>
-const axios = require("axios");
-
 //Import mixins
 import searchMixin from "../../mixins/searchMixin";
 
@@ -90,7 +88,7 @@ export default {
 			data_to_send.set("search", this.searchModel);
 
 			//Use axios to obtain the data we require
-			axios
+			this.axios
 				.post(
 					`${this.rootUrl}search/organisation/data/`,
 					data_to_send
