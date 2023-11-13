@@ -8,8 +8,8 @@ import CardInformation from "/src/js/components/card_information/CardInformation
 // VueX
 import { store } from "/src/js/vuex-store";
 
-// Vue
-import { nextTick } from "vue";
+// Axios
+const axios = require("axios");
 
 describe('AdminAddUser.vue - rendering component', () => {
     //Using mount - insert data
@@ -18,6 +18,9 @@ describe('AdminAddUser.vue - rendering component', () => {
         },
         global: {
             plugins: [store],
+            mocks: {
+                axios,
+            }
         },
         inject: ["nextTick"],
     });

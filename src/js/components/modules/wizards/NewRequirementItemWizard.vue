@@ -228,29 +228,26 @@ export default {
 			);
 			data_to_send.set("requirement_item_type", this.typeItemModel);
 
-			this.axios
-				.post(
-					`${this.rootUrl}new_requirement_item/save/${this.locationId}/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Data saved successfully - clear all models
-					this.requirementItemScopeModel = "";
-					this.requirementItemTitleModel = "";
-					this.statusItemModel = "";
-					this.typeItemModel = "";
+			this.axios.post(
+				`${this.rootUrl}new_requirement_item/save/${this.locationId}/`,
+				data_to_send
+			).then((response) => {
+				//Data saved successfully - clear all models
+				this.requirementItemScopeModel = "";
+				this.requirementItemTitleModel = "";
+				this.statusItemModel = "";
+				this.typeItemModel = "";
 
-					//EMIT THE NEW DATA UPSTREAM
-					this.$emit("new_item_added", response.data);
+				//EMIT THE NEW DATA UPSTREAM
+				this.$emit("new_item_added", response.data);
 
-					//SHOULD CLOSE MODAL HERE!
-					document
-						.getElementById("requirementItemCloseButton")
-						.click();
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
-				});
+				//SHOULD CLOSE MODAL HERE!
+				document
+					.getElementById("requirementItemCloseButton")
+					.click();
+			}).catch((error) => {
+				this.showErrorModal(error, this.destination);
+			});
 		},
 		updateStatusList() {
 			this.axios.post(
@@ -262,6 +259,13 @@ export default {
 						label: row.fields.requirement_item_status,
 					}
 				})
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Status List",
+					message: `There was an error updating the status list - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 		updateTypeList() {
@@ -273,6 +277,13 @@ export default {
 						value: row.pk,
 						label: row.fields.requirement_item_type,
 					}
+				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Type List",
+					message: `There was an error updating the type list - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
 			});
 		},

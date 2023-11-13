@@ -191,17 +191,24 @@ export default {
 	},
 	methods: {
 		loadBugClientList() {
-			this.axios
-				.post(`${this.rootUrl}object_data/bug_client_list/`)
-				.then((response) => {
-					//Clear out the bug list
-					this.bugClientList = response.data.map((row) => {
-						return {
-							value: row.pk,
-							label: row.fields.bug_client_name,
-						};
-					});
+			this.axios.post(
+				`${this.rootUrl}object_data/bug_client_list/`
+			).then((response) => {
+				//Clear out the bug list
+				this.bugClientList = response.data.map((row) => {
+					return {
+						value: row.pk,
+						label: row.fields.bug_client_name,
+					};
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error loading bug client list",
+					message: `We had an issue loading the bug client list - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 		startSearchTimer() {
 			//Destroy the first timer if it exists

@@ -1,4 +1,27 @@
 // Vitest
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
+import {mount, VueWrapper} from "@vue/test-utils";
 
-test('blank', () => {});
+// Import vue component
+import KanbanPropertyOrder from "/src/js/components/kanban/KanbanPropertyOrder.vue";
+
+// VueX
+import { store } from "/src/js/vuex-store";
+
+// Axios
+const axios = require('axios');
+
+describe('KanbanPropertyOrder.vue - rendering component', () => {
+    //Using mount - insert data
+    const wrapper = mount(KanbanPropertyOrder, {
+        props: {},
+        global: {
+            plugins: [store],
+            mocks: {
+                axios,
+            }
+        },
+    });
+
+    test('Empty test', () => {});
+});

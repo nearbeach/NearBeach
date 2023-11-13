@@ -8,6 +8,9 @@ import NewCustomer from "/src/js/components/customers/NewCustomer.vue";
 // VueX
 import { store } from "/src/js/vuex-store";
 
+// Axios
+const axios = require('axios');
+
 describe('NewChangeTask.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(NewCustomer, {
@@ -16,6 +19,9 @@ describe('NewChangeTask.vue - rendering component', () => {
         },
         global: {
             plugins: [store],
+            mocks: {
+                axios,
+            }
         },
     });
 

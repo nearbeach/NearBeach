@@ -8,6 +8,9 @@ import DashboardKanbanList from "/src/js/components/dashboard/DashboardKanbanLis
 // VueX
 import { store } from "/src/js/vuex-store";
 
+// Axios
+const axios = require("axios");
+
 describe('NewChangeTask.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(DashboardKanbanList, {
@@ -15,6 +18,9 @@ describe('NewChangeTask.vue - rendering component', () => {
         },
         global: {
             plugins: [store],
+            mocks: {
+                axios,
+            },
         },
     });
 

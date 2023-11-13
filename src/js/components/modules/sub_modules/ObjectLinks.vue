@@ -165,64 +165,69 @@ export default {
 			this.linkResults = [];
 
 			//Get the data from the database
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/object_link_list/`
-				)
-				.then((response) => {
-					this.linkResults = response.data
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/object_link_list/`
+			).then((response) => {
+				this.linkResults = response.data
 
-					//Filter out the data for relates to
-					this.relatesTo = response.data.filter(row => {
-						//We only have one condition - if there is a relate
-						return row.link_relationship === 'Relate' || row.link_relationship === null;
-					});
-
-					//Filter out the data for is blocked by
-					this.isBlockedBy = response.data.filter(row => {
-						const condition_1 = row.link_relationship === 'Block' && row.parent_link !== this.destination && row.reverse_relation === false;
-						const condition_2 = row.link_relationship === 'Block' && row.parent_link === this.destination && row.reverse_relation === true; //reverse
-						return condition_1 || condition_2;
-					})
-
-					//Filter out the data for kanban cards
-					this.kanbanCard = response.data.filter(row => {
-						//We only have one condition - if there is a kanban card
-						return row.link_relationship === 'Card'
-					})
-
-					//Filter out the data for is currently blocking
-					this.isCurrentlyBlocking = response.data.filter(row => {
-						const condition_1 = row.link_relationship === 'Block' && row.parent_link === this.destination && row.reverse_relation === false;
-						const condition_2 = row.link_relationship === 'Block' && row.parent_link !== this.destination && row.reverse_relation === true; //reverse
-						return condition_1 || condition_2;
-					})
-
-					//Filter out the dat for is subobject of
-					this.isSubObjectOf = response.data.filter(row => {
-						const condition_1 = row.link_relationship === 'Subobject' && row.parent_link !== this.destination && row.reverse_relation === false;
-						const condition_2 = row.link_relationship === 'Subobject' && row.parent_link === this.destination && row.reverse_relation === true;
-						return condition_1 || condition_2;
-					})
-
-					this.isParentOf = response.data.filter(row => {
-						const condition_1 = row.link_relationship === 'Subobject' && row.parent_link === this.destination && row.reverse_relation === false;
-						const condition_2 = row.link_relationship === 'Subobject' && row.parent_link !== this.destination && row.reverse_relation === true;
-						return condition_1 || condition_2;
-					})
-
-					this.hasDuplicateObjectOf = response.data.filter(row => {
-						const condition_1 = row.link_relationship === 'Duplicate' && row.parent_link === this.destination && row.reverse_relation === false;
-						const condition_2 = row.link_relationship === 'Duplicate' && row.parent_link !== this.destination && row.reverse_relation === true;
-						return condition_1 || condition_2;
-					})
-
-					this.isDuplicateObjectOf = response.data.filter(row => {
-						const condition_1 = row.link_relationship === 'Duplicate' && row.parent_link !== this.destination && row.reverse_relation === false;
-						const condition_2 = row.link_relationship === 'Duplicate' && row.parent_link === this.destination && row.reverse_relation === true;
-						return condition_1 || condition_2;
-					})
+				//Filter out the data for relates to
+				this.relatesTo = response.data.filter(row => {
+					//We only have one condition - if there is a relate
+					return row.link_relationship === 'Relate' || row.link_relationship === null;
 				});
+
+				//Filter out the data for is blocked by
+				this.isBlockedBy = response.data.filter(row => {
+					const condition_1 = row.link_relationship === 'Block' && row.parent_link !== this.destination && row.reverse_relation === false;
+					const condition_2 = row.link_relationship === 'Block' && row.parent_link === this.destination && row.reverse_relation === true; //reverse
+					return condition_1 || condition_2;
+				})
+
+				//Filter out the data for kanban cards
+				this.kanbanCard = response.data.filter(row => {
+					//We only have one condition - if there is a kanban card
+					return row.link_relationship === 'Card'
+				})
+
+				//Filter out the data for is currently blocking
+				this.isCurrentlyBlocking = response.data.filter(row => {
+					const condition_1 = row.link_relationship === 'Block' && row.parent_link === this.destination && row.reverse_relation === false;
+					const condition_2 = row.link_relationship === 'Block' && row.parent_link !== this.destination && row.reverse_relation === true; //reverse
+					return condition_1 || condition_2;
+				})
+
+				//Filter out the dat for is subobject of
+				this.isSubObjectOf = response.data.filter(row => {
+					const condition_1 = row.link_relationship === 'Subobject' && row.parent_link !== this.destination && row.reverse_relation === false;
+					const condition_2 = row.link_relationship === 'Subobject' && row.parent_link === this.destination && row.reverse_relation === true;
+					return condition_1 || condition_2;
+				})
+
+				this.isParentOf = response.data.filter(row => {
+					const condition_1 = row.link_relationship === 'Subobject' && row.parent_link === this.destination && row.reverse_relation === false;
+					const condition_2 = row.link_relationship === 'Subobject' && row.parent_link !== this.destination && row.reverse_relation === true;
+					return condition_1 || condition_2;
+				})
+
+				this.hasDuplicateObjectOf = response.data.filter(row => {
+					const condition_1 = row.link_relationship === 'Duplicate' && row.parent_link === this.destination && row.reverse_relation === false;
+					const condition_2 = row.link_relationship === 'Duplicate' && row.parent_link !== this.destination && row.reverse_relation === true;
+					return condition_1 || condition_2;
+				})
+
+				this.isDuplicateObjectOf = response.data.filter(row => {
+					const condition_1 = row.link_relationship === 'Duplicate' && row.parent_link !== this.destination && row.reverse_relation === false;
+					const condition_2 = row.link_relationship === 'Duplicate' && row.parent_link === this.destination && row.reverse_relation === true;
+					return condition_1 || condition_2;
+				})
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					heading: "Object Links failed to get data",
+					message: `Failed to get data - Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	mounted() {
