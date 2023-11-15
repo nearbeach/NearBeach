@@ -413,11 +413,17 @@ def rfc_approvals(request):
                 group_leader=True,
             ).values("group_id"),
         ).values("request_for_change_id")
+    ).values(
+        "rfc_id",
+        "rfc_title",
+        "rfc_status",
+        "rfc_status__rfc_status",
     )
 
-    return HttpResponse(
-        serializers.serialize("json", rfc_results), content_type="application/json"
-    )
+    # Turn results into json
+    json_results = json.dumps(list(rfc_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type="application/json")
 
 
 @login_required(login_url="login", redirect_field_name="")

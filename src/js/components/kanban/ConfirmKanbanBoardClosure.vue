@@ -64,16 +64,15 @@ export default {
 	},
 	methods: {
 		closeKanbanBoard() {
-			this.axios
-				.post(
-					`${this.rootUrl}kanban_information/${this.locationId}/close_board/`
-				)
-				.then((response) => {
-					window.location.href = `${this.rootUrl}`;
-				})
-				.catch((error) => {
-					// this.showErrorModal(error, this.destination);
-				});
+			this.axios.post(
+				`${this.rootUrl}kanban_information/${this.locationId}/close_board/`
+			)
+			.then((response) => {
+				window.location.href = `${this.rootUrl}`;
+			})
+			.catch((error) => {
+				// this.showErrorModal(error, this.destination);
+			});
 		},
 		closeModal() {
 			document.getElementById("confirmKanbanCloseButton").click();

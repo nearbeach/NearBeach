@@ -98,74 +98,25 @@ export default {
 		}),
 	},
 	methods: {
-		// extractObjectDescription(link) {
-		// 	/*
-		// 	The following function will accept a link in. It will then check what that link is connected to. From
-		// 	there it will determine which fields it will extract out.
-		// 	 */
-		// 	var object_description = "ERROR",
-		// 		object_id = "ERROR",
-		// 		object_link = "/",
-		// 		requirement_item_description = "";
-    //
-		// 	if (link.project_id !== null) {
-		// 		object_description = link.project_id__project_name;
-		// 		object_id = `Project ${link.project_id}`;
-		// 		object_link = `${this.rootUrl}project_information/${link.project_id}`;
-		// 	} else if (link.task_id !== null) {
-		// 		object_description = link.task_id__task_short_description;
-		// 		object_id = `Task ${link.task_id}`;
-		// 		object_link = `${this.rootUrl}task_information/${link.task_id}`;
-		// 	}
-    //
-		// 	//Check to see if we need to inser the requirement item description.
-		// 	if (link.requirement_id !== null) {
-		// 		requirement_item_description = `<p class="requirement-item-link-type">${link.requirement_item_id__requirement_item_title}</p>`;
-		// 		object_id = `${object_id} / Item ${link.requirement_id}`;
-		// 	}
-    //
-		// 	//Return the HTML
-		// 	return `
-    //                 <a href="${object_link}">
-    //                     <p>
-    //                         ${object_description}
-    //                     </p>
-    //                     <div class="spacer"></div>
-    //                     ${requirement_item_description}
-    //                     <p class="requirement-link-type">
-    //                         ${object_id}
-    //                     </p>
-    //                 </a>
-    //             `;
-		// },
-		// extractObjectStatus(link) {
-		// 	/*
-		// 	The following function will accept a link in. It will then check what that link is connected to. From
-		// 	there it will determine what status field it will extract out.
-		// 	 */
-		// 	var object_status = "ERROR";
-    //
-		// 	if (link.project_id !== null) {
-		// 		object_status = link.project_id__project_status;
-		// 	} else if (link.task_id !== null) {
-		// 		object_status = link.task_id__task_status;
-		// 	}
-    //
-		// 	return object_status;
-		// },
 		updateLinkResults() {
 			//Get the data from the database
 			this.axios.post(
-          `${this.rootUrl}object_data/requirement_item/${this.locationId}/object_link_list/`,
-      ).then((response) => {
-				// this.itemLinkResults = response.data;
-        this.itemLinkProject = response.data.filter((row) => {
-          return row.object_type === "project";
-        });
+          		`${this.rootUrl}object_data/requirement_item/${this.locationId}/object_link_list/`,
+			).then((response) => {
+				this.itemLinkProject = response.data.filter((row) => {
+			  		return row.object_type === "project";
+				});
 
-        this.itemLinkTask = response.data.filter((row) => {
-          return row.object_type === "task";
-        });
+				this.itemLinkTask = response.data.filter((row) => {
+					return row.object_type === "task";
+				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Link Results",
+					message: `We have had issues updating link results - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 		newRequirementItemLink() {
@@ -175,9 +126,6 @@ export default {
 			);
 			elem_modal.show();
 		},
-		// updateModel(data) {
-		// 	this.itemLinkResults = data;
-		// },
 	},
 	mounted() {
 		//Get the required data we need

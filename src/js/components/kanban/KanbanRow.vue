@@ -33,7 +33,7 @@
 <script>
 import {mapGetters} from "vuex";
 import KanbanColumn from "./KanbanColumn.vue";
-import KanbanColumnDraggable from "./kanbanColumnDraggable.vue";
+import KanbanColumnDraggable from "./KanbanColumnDraggable.vue";
 
 export default {
 	name: "KanbanRow",

@@ -112,9 +112,16 @@ export default {
 		},
 		updateItemResults() {
 			this.axios.post(
-				"data/items/",
+				"data/items/"
 			).then((response) => {
 				this.itemResults = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Item Results",
+					message: `We are having issues updating item results: Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 	},

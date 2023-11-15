@@ -23,7 +23,7 @@
 						}"
 							:data="{}"
 							:max="1"
-							@error="showErrorModal('Profile Picture was not updated','Profile Picture','')"
+							@error="showErrorToast"
 							@finish="updateProfilePicture"
 						>
 							<n-button>Update Profile Picture</n-button>
@@ -40,7 +40,6 @@ import {NUpload, NButton} from "naive-ui";
 import {mapGetters} from "vuex";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getToken from "../../mixins/getTokenMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 
@@ -71,7 +70,7 @@ export default {
 			rootUrl: "getRootUrl",
 		}),
 	},
-	mixins: [errorModalMixin, getToken, getThemeMixin],
+	mixins: [getToken, getThemeMixin],
 	methods: {
 		setProfilePicture() {
 			//Set the default
@@ -90,6 +89,15 @@ export default {
 				//There is a profile image
 				this.profilePicture = `${this.rootUrl}private/${profile_picture}`;
 			}
+		},
+		showErrorToast(data) {
+			console.log("Data: ", data);
+			this.$store.dispatch("newToast", {
+				header: "Can not update profile picture",
+				message: data.event.target.responseText,
+				extra_classes: "bg-danger",
+				delay: 0,
+			});
 		},
 		updateProfilePicture() {
 			//Contact the API to get the location of the new image

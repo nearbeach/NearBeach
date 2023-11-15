@@ -8,6 +8,9 @@ import DashboardUnassignedObjects from "/src/js/components/dashboard/DashboardUn
 // VueX
 import { store } from "/src/js/vuex-store";
 
+// Axios
+const axios = require("axios");
+
 describe('NewChangeTask.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(DashboardUnassignedObjects, {
@@ -15,6 +18,9 @@ describe('NewChangeTask.vue - rendering component', () => {
         },
         global: {
             plugins: [store],
+            mocks: {
+                axios,
+            }
         },
     });
 

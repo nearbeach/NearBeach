@@ -155,6 +155,13 @@ export default {
 				this.linkTask = response.data.filter((row) => {
 					return row.object_type === "task";
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Link Results",
+					message: `We have had issues updating link results - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			})
 
 			//Get the ITEM links
@@ -187,6 +194,13 @@ export default {
 						object_type: row.object_type,
 						reverse_relation: false
 					};
+				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Link Results",
+					message: `We have had issues updating link results - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
 			});
 		}

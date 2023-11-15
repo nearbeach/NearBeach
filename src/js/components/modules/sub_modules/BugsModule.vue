@@ -154,22 +154,19 @@ export default {
 				return;
 			}
 
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/bug_list/`
-				)
-				.then((response) => {
-					//Clear the current list
-					this.bugList = [];
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/bug_list/`
+			).then((response) => {
+				//Clear the current list
+				this.bugList = [];
 
-					//Loop through the results, and push each rows into the array
-					response.data.forEach((row) => {
-						this.bugList.push(row);
-					});
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+				//Loop through the results, and push each rows into the array
+				response.data.forEach((row) => {
+					this.bugList.push(row);
 				});
+			}).catch((error) => {
+				this.showErrorModal(error, this.destination);
+			});
 		},
 		removeBug(bug_id) {
 			//Create data_to_send
@@ -177,17 +174,22 @@ export default {
 			data_to_send.set("bug_id", bug_id);
 
 			//Use Axios to send data to backend
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/delete_bug/`,
-					data_to_send
-				)
-				.then(() => {
-					//Remove the bug from the model
-					this.bugList = this.bugList.filter((row) => {
-						return row.bug_id !== bug_id;
-					});
+			this.axios.post(
+				`${this.rootUrl}object_data/delete_bug/`,
+				data_to_send
+			).then(() => {
+				//Remove the bug from the model
+				this.bugList = this.bugList.filter((row) => {
+					return row.bug_id !== bug_id;
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Removing Bug",
+					message: `We had an issue removing the bug - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	mounted() {

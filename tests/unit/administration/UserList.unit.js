@@ -8,6 +8,9 @@ import UserList from "/src/js/components/administration/UserList.vue";
 // VueX
 import { store } from "/src/js/vuex-store";
 
+// Axios
+const axios = require("axios");
+
 describe('AdminAddUser.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(UserList, {
@@ -32,6 +35,9 @@ describe('AdminAddUser.vue - rendering component', () => {
         },
         global: {
             plugins: [store],
+            mocks: {
+                axios,
+            }
         },
     });
 

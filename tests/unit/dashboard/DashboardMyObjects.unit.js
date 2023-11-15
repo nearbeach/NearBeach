@@ -8,6 +8,9 @@ import DashboardMyObjects from "/src/js/components/dashboard/DashboardMyObjects.
 // VueX
 import { store } from "/src/js/vuex-store";
 
+// Axios
+const axios = require("axios");
+
 describe('NewChangeTask.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(DashboardMyObjects, {
@@ -15,6 +18,9 @@ describe('NewChangeTask.vue - rendering component', () => {
         },
         global: {
             plugins: [store],
+            mocks: {
+                axios,
+            },
         },
     });
 
