@@ -186,6 +186,13 @@ export default {
 
 				//Get filtered data
 				this.filterBlocking();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting all change tasks",
+					message: `There is an issue getting all change tasks - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			})
 		},
 		saveLinks() {
@@ -204,18 +211,23 @@ export default {
 			data_to_send.set("object_relation", this.changeTaskRelationModel);
 
 			// Use axios to send data
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/change_task/${this.locationId}/add_link/`,
-					data_to_send
-				)
-				.then(() => {
-					//Data has been successfully saved. Time to update the requirement links
-					this.$emit("update_link_results", {});
+			this.axios.post(
+				`${this.rootUrl}object_data/change_task/${this.locationId}/add_link/`,
+				data_to_send
+			).then(() => {
+				//Data has been successfully saved. Time to update the requirement links
+				this.$emit("update_link_results", {});
 
-					//Click on the close button - a hack, but it should close the modal
-					document.getElementById("linkCloseButton").click();
+				//Click on the close button - a hack, but it should close the modal
+				document.getElementById("linkCloseButton").click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting all change tasks",
+					message: `There is an issue getting all change tasks - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		}
 	},
 	mounted() {
