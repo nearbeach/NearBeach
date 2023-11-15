@@ -237,7 +237,7 @@ export default {
 		doubleClickCard(data) {
 			//Filter out the data we want to send up stream
 			const filtered_data = this.masterList.filter((row) => {
-				return row.pk === data.target.dataset.cardId;
+				return parseInt(row.pk) === parseInt(data.target.dataset.cardId);
 			})[0];
 
 			//Setup data to send upstream
