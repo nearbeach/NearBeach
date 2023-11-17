@@ -174,7 +174,6 @@ import {Icon} from "@iconify/vue";
 import {mapGetters} from "vuex";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 
 export default {
@@ -207,7 +206,7 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			disableUploadButton: true,
@@ -284,27 +283,29 @@ export default {
 			};
 
 			//Use axios to send it to the backend
-			this.axios
-				.post(
-					`${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
-					data_to_send,
-					config
-				)
-				.then((response) => {
-					//Send the data upstream
-					this.$emit("update_document_list", response.data);
+			this.axios.post(
+				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
+				data_to_send,
+				config
+			).then((response) => {
+				//Send the data upstream
+				this.$emit("update_document_list", response.data);
 
-					//Close the modal
-					document
-						.getElementById("uploadDocumentCloseButton")
-						.click();
+				//Close the modal
+				document
+					.getElementById("uploadDocumentCloseButton")
+					.click();
 
-					//Reset the document
-					this.resetForm();
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+				//Reset the document
+				this.resetForm();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to upload documentation",
+					message: `Can not upload the documentation. ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 	watch: {
@@ -355,15 +356,19 @@ export default {
 		//Wait a few seconds before getting the max file upload size
 		this.$nextTick(() => {
 			//Get the max file upload size
-			this.axios
-				.post(`${this.rootUrl}documentation/get/max_upload/`)
-				.then((response) => {
-					//Set the value
-					this.maxUploadSize = response.data.max_upload_size;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+			this.axios.post(
+				`${this.rootUrl}documentation/get/max_upload/`
+			).then((response) => {
+				//Set the value
+				this.maxUploadSize = response.data.max_upload_size;
+			}).catch(() => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to get the max upload size",
+					message: `Had an issue getting data from backend. ${this.maxUploadString}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		});
 	},
 };
