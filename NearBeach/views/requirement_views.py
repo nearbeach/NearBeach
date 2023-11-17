@@ -287,16 +287,6 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     # TODO: Check if I need to have a separate read only tempalte now.
     requirement_results = Requirement.objects.get(requirement_id=requirement_id)
 
-    requirement_is_closed = (
-        requirement_results.requirement_status.requirement_status_is_closed
-    )
-
-    # If the requirement has been closed - send user to the read only section
-    if requirement_results.requirement_status.requirement_status == "Completed":
-        return HttpResponseRedirect(
-            reverse("requirement_readonly", args={requirement_id})
-        )
-
     # Load template
     t = loader.get_template("NearBeach/requirements/requirement_information.html")
 
@@ -322,6 +312,10 @@ def requirement_information(request, requirement_id, *args, **kwargs):
         requirement_id=requirement_id,
     )
 
+    # If requirement is closed - downgrade user permissions
+    if requirement_results.requirement_status.requirement_status_is_closed:
+        user_level = 1
+
     # context
     c = {
         "group_results": serializers.serialize("json", group_results),
@@ -329,7 +323,6 @@ def requirement_information(request, requirement_id, *args, **kwargs):
         "organisation_results": serializers.serialize("json", [organisation_results]),
         "requirement_results": serializers.serialize("json", [requirement_results]),
         "requirement_id": requirement_id,
-        "requirement_is_closed": requirement_is_closed,
         "requirement_item_results": serializers.serialize(
             "json", requirement_item_results
         ),
