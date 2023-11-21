@@ -1,5 +1,7 @@
 # Import Forms
-from ..forms import PermissionSet, Group, LoginForm, User
+from django.contrib.auth import get_user_model
+
+from ..forms import PermissionSet, Group, LoginForm
 from ..models import UserGroup, Notification, Organisation
 from django.contrib.auth.models import User
 
@@ -17,6 +19,8 @@ from NearBeach.decorators.check_user_permissions import check_permission_denied
 import json
 import urllib.parse
 import datetime
+
+User = get_user_model()
 
 
 def check_first_time_login(request):
@@ -236,7 +240,7 @@ def login(request):
             if user is not None:
                 auth.login(request, user)
 
-        # Just double checking. :)
+        # Just double-checking. :)
         if request.user.is_authenticated:
             # Check to make sure it isn't first time login -> need to setup functionalities
             check_first_time_login(request)
@@ -245,7 +249,8 @@ def login(request):
             user_group_count = len(
                 UserGroup.objects.filter(
                     is_deleted=False,
-                    username_id__in=User.objects.filter(username=username).values('id'),
+                    # username_id__in=User.objects.filter(username=username).values('id'),
+                    username__in=User.objects.filter(email=username).values('id') ## TODO: Will need to actually make it so this is somewhat a variable?
                 )
             )
 

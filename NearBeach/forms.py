@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from django import forms
+from django.contrib.auth import get_user_model
 from django.db.models import Case, When
+from django.conf import settings
 
 # Import from Models
 from .models import (
@@ -8,7 +10,7 @@ from .models import (
     Folder,
     Group,
     Tag,
-    User,
+    # User,
     ChangeTask,
     Customer,
     KanbanColumn,
@@ -31,6 +33,7 @@ from .models import (
     UserSetting,
 )
 
+USER_MODEL = get_user_model()
 
 # CUSTOM Fields
 # https://stackoverflow.com/questions/10296333/django-multiplechoicefield-does-not-preserve-order-of-selected-values
@@ -199,7 +202,7 @@ class AdminAddUserForm(forms.Form):
         queryset=PermissionSet.objects.all(),
     )
     username = forms.ModelChoiceField(
-        queryset=User.objects.all(),
+        queryset=USER_MODEL.objects.all(),
     )
 
 
@@ -395,7 +398,7 @@ class KanbanCardArchiveForm(forms.Form):
 class AddUserForm(forms.Form):
     user_list = forms.ModelMultipleChoiceField(
         required=True,
-        queryset=User.objects.all(),
+        queryset=USER_MODEL.objects.all(),
     )
 
 
@@ -699,11 +702,11 @@ class NewUserForm(forms.ModelForm):
 
     # Basic Meta data
     class Meta:
-        model = User
+        model = get_user_model()
         fields = [
-            "username",
-            "first_name",
-            "last_name",
+            # "username",
+            # "first_name",
+            # "last_name",
             "email",
         ]
 
@@ -755,7 +758,7 @@ class PasswordResetForm(forms.Form):
         required=True,
     )
     username = forms.ModelChoiceField(
-        queryset=User.objects.all(),
+        queryset=USER_MODEL.objects.all(),
         required=True,
     )
 
@@ -921,14 +924,14 @@ class TaskInformationForm(forms.ModelForm):
 
 class UpdateChangeLeadForm(forms.Form):
     username = forms.ModelChoiceField(
-        queryset=User.objects.all(),
+        queryset=USER_MODEL.objects.all(),
         required=True,
     )
 
 
 class UpdateGroupLeaderStatusForm(forms.Form):
     username = forms.ModelChoiceField(
-        queryset=User.objects.all(),
+        queryset=USER_MODEL.objects.all(),
         required=False,
     )
     group = forms.ModelMultipleChoiceField(
@@ -998,7 +1001,7 @@ class UpdateUserForm(forms.ModelForm):
     # Basic Meta Data
 
     class Meta:
-        model = User
+        model = get_user_model()
         fields = [
             "email",
             "first_name",

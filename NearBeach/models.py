@@ -1,9 +1,25 @@
 from __future__ import unicode_literals
+
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 from .private_media import FileStorage
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 import uuid
+from django.conf import settings
+
+# if "OVERRIDE_AUTH_USER_MODEL" in os.environ:
+#     USER_MODEL = os.getenv("OVERRIDE_AUTH_USER_MODEL")
+# else:
+#     USER_MODEL = User
+
+USER_MODEL = settings.AUTH_USER_MODEL
+
+
+# class CustomerUser(AbstractBaseUser):
+    # objects = CustomerUserManager()
+    # objects = v
+
 
 # ENUM choices
 DISCOUNT_CHOICE = (
@@ -191,7 +207,7 @@ class Bug(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
     )
@@ -214,7 +230,7 @@ class BugClient(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
     )
@@ -246,12 +262,12 @@ class ChangeTask(models.Model):
         default=0,
     )
     change_task_assigned_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="change_assigned_user",
     )
     change_task_qa_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="change_qa_user",
     )
@@ -268,12 +284,12 @@ class ChangeTask(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
     )
     creation_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -298,12 +314,12 @@ class ChangeTaskBlock(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
     )
     creation_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -337,7 +353,7 @@ class Customer(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -374,7 +390,7 @@ class Document(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -438,7 +454,7 @@ class DocumentPermission(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     new_object = models.UUIDField(
         blank=True,
         null=True,
@@ -452,7 +468,7 @@ class DocumentPermission(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -508,7 +524,7 @@ class Folder(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -532,7 +548,7 @@ class Group(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -555,7 +571,7 @@ class GroupPermission(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -582,10 +598,10 @@ class KanbanBoard(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -643,7 +659,7 @@ class KanbanCard(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -669,7 +685,7 @@ class KanbanColumn(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -690,7 +706,7 @@ class KanbanLevel(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -717,7 +733,7 @@ class ListOfBugClient(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
@@ -742,7 +758,7 @@ class ListOfRequirementItemStatus(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
@@ -764,7 +780,7 @@ class ListOfRequirementItemType(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
@@ -789,7 +805,7 @@ class ListOfRequirementStatus(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
@@ -811,7 +827,7 @@ class ListOfRequirementType(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
@@ -833,7 +849,7 @@ class ListOfRFCStatus(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
@@ -853,7 +869,7 @@ class ListOfTitle(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
@@ -895,7 +911,7 @@ class Notification(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
@@ -923,7 +939,7 @@ class ObjectAssignment(models.Model):
 
     object_assignment_id = models.BigAutoField(primary_key=True)
     assigned_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_assigned_user",
         null=True,
@@ -1025,7 +1041,7 @@ class ObjectAssignment(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1085,7 +1101,7 @@ class ObjectNote(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1106,7 +1122,7 @@ class Organisation(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1201,7 +1217,7 @@ class PermissionSet(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1238,10 +1254,10 @@ class Project(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1278,7 +1294,7 @@ class RequestForChange(models.Model):
         on_delete=models.CASCADE,
     )
     rfc_lead = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="RfcLead",
     )
@@ -1309,10 +1325,10 @@ class RequestForChange(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1339,7 +1355,7 @@ class RequestForChangeGroupApproval(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1377,10 +1393,10 @@ class Requirement(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1414,7 +1430,7 @@ class RequirementItem(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1436,7 +1452,7 @@ class Tag(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1474,7 +1490,7 @@ class TagAssignment(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1494,7 +1510,7 @@ class Task(models.Model):
     task_start_date = models.DateTimeField()
     task_end_date = models.DateTimeField()
     task_assigned_to = models.ForeignKey(
-        User,
+        USER_MODEL,
         null=True,
         blank=True,
         on_delete=models.CASCADE,
@@ -1507,10 +1523,10 @@ class Task(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1523,7 +1539,7 @@ class Task(models.Model):
 class UserGroup(models.Model):
     user_group_id = models.BigAutoField(primary_key=True)
     username = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
     )
     group = models.ForeignKey(
@@ -1535,7 +1551,7 @@ class UserGroup(models.Model):
         on_delete=models.CASCADE,
     )
     report_to = models.ForeignKey(
-        User,
+        USER_MODEL,
         related_name="report_to",
         on_delete=models.CASCADE,
         null=True,
@@ -1547,7 +1563,7 @@ class UserGroup(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1556,7 +1572,7 @@ class UserGroup(models.Model):
 
 class UserProfilePicture(models.Model):
     username = models.OneToOneField(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         primary_key=True,
     )
@@ -1567,7 +1583,7 @@ class UserProfilePicture(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
         default=False,
@@ -1588,7 +1604,7 @@ class UserSetting(models.Model):
 
     user_setting_id = models.BigAutoField(primary_key=True)
     username = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
     )
     setting_type = models.CharField(

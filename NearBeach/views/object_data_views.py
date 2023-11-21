@@ -1,4 +1,6 @@
 from collections import namedtuple
+
+from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -46,7 +48,6 @@ from NearBeach.forms import (
     AddUserForm,
     RemoveCustomerForm,
     RemoveGroupForm,
-    User,
     DeleteBugForm,
     DeleteLinkForm,
     DeleteTagForm,
@@ -55,6 +56,8 @@ from NearBeach.forms import (
     QueryBugClientForm,
     RemoveLinkForm,
 )
+
+User = get_user_model()
 
 from NearBeach.views.tools.lookup_functions import (
     lookup_project,
