@@ -138,7 +138,6 @@
 
 <script>
 //JavaScript extras
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import {Modal} from "bootstrap";
@@ -179,7 +178,7 @@ export default {
 			userLevel: "getUserLevel",
 		}),
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	methods: {
 		addNewGroup() {
 			const addGroupModal = new Modal(
@@ -206,7 +205,12 @@ export default {
 					potentialUserList: response.data.potential_user_list,
 				})
 			}).catch((error) => {
-				this.showErrorModal(error, "Fetching Group and Users data");
+				this.$store.dispatch("newToast", {
+					header: `Error fetching group and user data`,
+					message: `Sorry we could not get any group or user data. Error -> ${error}`,
+					extra_classes: "bd-danger",
+					delay: 0,
+				});
 			})
 		},
 		profilePicture(picture_uuid) {

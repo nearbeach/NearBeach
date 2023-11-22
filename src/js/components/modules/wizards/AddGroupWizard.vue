@@ -98,7 +98,6 @@ import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 
 //VueX
@@ -131,7 +130,7 @@ export default {
 			})
 		}
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			groupFixList: [],
@@ -154,31 +153,36 @@ export default {
 			});
 
 			//user axios
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_group/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Update VueX with the required data
-					this.$store.commit("updateGroupsAndUsers", {
-						objectGroupList: response.data.object_group_list,
-						objectUserList: response.data.object_user_list,
-						potentialGroupList: response.data.potential_group_list,
-						potentialUserList: response.data.potential_user_list,
-					})
-
-					//Update the user
-					this.$store.commit("updateAddingGroupStatus", {
-						addingGroupStatus: false,
-					});
-
-					//Close this modal
-					document.getElementById("addGroupCloseButton").click();
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_group/`,
+				data_to_send
+			).then((response) => {
+				//Update VueX with the required data
+				this.$store.commit("updateGroupsAndUsers", {
+					objectGroupList: response.data.object_group_list,
+					objectUserList: response.data.object_user_list,
+					potentialGroupList: response.data.potential_group_list,
+					potentialUserList: response.data.potential_user_list,
 				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+
+				//Update the user
+				this.$store.commit("updateAddingGroupStatus", {
+					addingGroupStatus: false,
 				});
+
+				//Clear the list
+				this.groupModel = [];
+
+				//Close this modal
+				document.getElementById("addGroupCloseButton").click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: `Error adding group to ${this.destination}`,
+					message: `Sorry, we could not add the group to the ${this.destination}. Error -> ${error}`,
+					extra_classes: "bd-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 };
