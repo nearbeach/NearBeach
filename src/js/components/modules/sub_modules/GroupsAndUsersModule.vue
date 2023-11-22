@@ -7,10 +7,10 @@
 		</h2>
 		<p class="text-instructions">
 			The following list are all the Groups connected to this
-			{{ destination }}. Users will have to be included in these groups to
-			be added to this {{ destination }}
+			{{ destinationTitle }}. Users will have to be included in these groups to
+			be added to this {{ destinationTitle }}
 		</p>
-		<div v-if="objectGroupList.length == 0 && !addingGroupStatus"
+		<div v-if="objectGroupList.length === 0 && !addingGroupStatus"
 			 class="alert alert-dark"
 		>
 			Sorry - there are no groups active.
@@ -52,7 +52,7 @@
 					class="btn btn-primary save-changes"
 					v-on:click="addNewGroup"
 					v-if="userLevel > 1"
-				>Add Group to {{ destination }}</a
+				>Add Group to {{ destinationTitle }}</a
 				>
 			</div>
 		</div>
@@ -65,7 +65,7 @@
 		</h2>
 		<p class="text-instructions">
 			The following are a list of users who are connected to this
-			{{ destination }}. Please note - users have to be a part of the
+			{{ destinationTitle }}. Please note - users have to be a part of the
 			groups list above.
 		</p>
 		<div
@@ -123,7 +123,7 @@
 					class="btn btn-primary save-changes"
 					v-on:click="addNewUser"
 					v-if="userLevel > 1"
-				>Add User to {{ destination }}</a
+				>Add User to {{ destinationTitle }}</a
 				>
 			</div>
 		</div>
@@ -138,7 +138,6 @@
 
 <script>
 //JavaScript extras
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import {Modal} from "bootstrap";
@@ -163,6 +162,7 @@ export default {
 		return {
 			deleteGroupId: 0,
 			deleteUsername: "",
+			destinationTitle: "",
 		}
 	},
 	computed: {
@@ -178,7 +178,7 @@ export default {
 			userLevel: "getUserLevel",
 		}),
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	methods: {
 		addNewGroup() {
 			const addGroupModal = new Modal(
@@ -205,7 +205,12 @@ export default {
 					potentialUserList: response.data.potential_user_list,
 				})
 			}).catch((error) => {
-				this.showErrorModal(error, "Fetching Group and Users data");
+				this.$store.dispatch("newToast", {
+					header: `Error fetching group and user data`,
+					message: `Sorry we could not get any group or user data. Error -> ${error}`,
+					extra_classes: "bd-danger",
+					delay: 0,
+				});
 			})
 		},
 		profilePicture(picture_uuid) {
@@ -245,6 +250,20 @@ export default {
 
 			//All is good - get the data
 			this.getGroupAndUserData();
+
+			//Use the destination string to pull out the title. i.e. request_for_change => Request For Change
+			let title = this.destination;
+
+			//Replace any _ with a space
+			title = title.replaceAll("_", " ");
+
+			//Title case
+			this.destinationTitle = title.replace(
+				/\w\S*/g,
+				(txt) => {
+					return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+				}
+			);
 		});
 	},
 };

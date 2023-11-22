@@ -40,7 +40,7 @@
 
 .kanban-container {
     overflow: auto;
-    margin: 5px 35px 0 35px;
+    margin: 5px 2px 0 2px;
     max-height: calc(100vh - 150px);
     scrollbar-color: orange lightyellow;
 
@@ -128,14 +128,14 @@
 
 .kanban-sticky-row {
     position: fixed;
-    top: 142px;
+    top: 137px;
     z-index: 2;
-    width: calc(100vw - 11px);
+    width: calc(100vw - 10px);
     overflow: hidden;
 
     @media (min-width: 576px) {
         top: 146px;
-        width: calc(100vw - 70px);
+        width: calc(100vw - 4px);
     }
 }
 

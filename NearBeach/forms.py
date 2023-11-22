@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django import forms
+from django.contrib.auth.password_validation import validate_password
 from django.db.models import Case, When
 
 # Import from Models
@@ -758,6 +759,11 @@ class PasswordResetForm(forms.Form):
         queryset=User.objects.all(),
         required=True,
     )
+
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        validate_password(password)
+        return password
 
 
 class PermissionSetForm(forms.ModelForm):

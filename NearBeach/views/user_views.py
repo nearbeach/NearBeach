@@ -79,7 +79,7 @@ def update_password(request, *args, **kwargs):
     # Get form data
     form = PasswordResetForm(request.POST)
     if not form.is_valid():
-        return HttpResponseBadRequest(form.errors)
+        return HttpResponseBadRequest(form.errors.as_json())
 
     # Check to make sure we are updating ONLY the current user
     if not form.cleaned_data["username"] == request.user:

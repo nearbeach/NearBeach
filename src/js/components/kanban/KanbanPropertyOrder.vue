@@ -232,7 +232,6 @@ import {required} from "@vuelidate/validators";
 
 //Mixins
 import iconMixin from "../../mixins/iconMixin";
-import errorModalMixin from "../../mixins/errorModalMixin";
 
 export default {
 	name: "KanbanPropertyOrder",
@@ -301,7 +300,7 @@ export default {
 			singleItemId: "",
 		};
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	validations: {
 		localPropertyList: {
 			required,
@@ -336,9 +335,9 @@ export default {
 			this.sendPropertyListUp();
 
 			//Close the modal
-			document
-				.getElementById(`addItemClose${this.propertyName}`)
-				.click();
+			document.getElementById(
+				`addItemClose${this.propertyName}`
+			).click();
 		},
 		deleteItem() {
 			//Construct the data_to_send
@@ -354,37 +353,36 @@ export default {
 			const url = `${this.rootUrl}kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/delete/`;
 
 			//Use axios to send data to backend
-			this.axios
-				.post(url, data_to_send)
-				.then((response) => {
-					//Filter out the id we want to remove
-					this.localPropertyList = this.localPropertyList.filter(
-						(row) => {
-							//Filter out the id we don't want
-							return row.id !== this.deleteItemId;
-						}
-					);
+			this.axios.post(
+				url,
+				data_to_send
+			).then((response) => {
+				//Filter out the id we want to remove
+				this.localPropertyList = this.localPropertyList.filter(
+					(row) => {
+						//Filter out the id we don't want
+						return row.id !== this.deleteItemId;
+					}
+				);
 
-					//Send the data upstream
-					this.$emit("update_property_list", {
-						source: this.source,
-						data: this.localPropertyList,
-					});
-
-					//Close the dialog
-					document
-						.getElementById(
-							`deleteItemClose${this.propertyName}`
-						)
-						.click();
-				})
-				.catch((error) => {
-					this.showErrorModal(
-						error,
-						"kanban item delete",
-						this.kanbanBoardId
-					);
+				//Send the data upstream
+				this.$emit("update_property_list", {
+					source: this.source,
+					data: this.localPropertyList,
 				});
+
+				//Close the dialog
+				document.getElementById(
+					`deleteItemClose${this.propertyName}`
+				).click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Can not delete item",
+					message: `Sorry, but we are having issues deleting item - Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 		editItem(event) {
 			//Get the id and title from the item
@@ -428,42 +426,48 @@ export default {
 			}
 
 			// Send data
-			await this.axios
-				.post(url, data_to_send)
-				.then((response) => {
-					//Data
-					const data = response.data[0];
+			await this.axios.post(
+				url,
+				data_to_send
+			).then((response) => {
+				//Data
+				const data = response.data[0];
 
+				//Add as a new item
+				if (single_item_id === "") {
 					//Add as a new item
-					if (single_item_id === "") {
-						//Add as a new item
-						this.localPropertyList.push({
-							id: data.pk,
-							property: data.fields.kanban_column_property,
-							title: data.fields[name],
-						});
-					} else {
-						//Item already exists - edit the item.
-						this.localPropertyList.forEach((row) => {
-							//If the id is the same - update the values
-							if (row.id === this.singleItemId) {
-								row.title = this.newPropertyItem;
-								row.property = this.columnPropertyModel;
-							}
-						});
-					}
+					this.localPropertyList.push({
+						id: data.pk,
+						property: data.fields.kanban_column_property,
+						title: data.fields[name],
+					});
+				} else {
+					//Item already exists - edit the item.
+					this.localPropertyList.forEach((row) => {
+						//If the id is the same - update the values
+						if (parseInt(row.id) === parseInt(this.singleItemId)) {
+							row.title = this.newPropertyItem;
+							row.property = this.columnPropertyModel;
+						}
+					});
+				}
 
-					//Reset variables now we are finished
-					this.singleItemId = "";
-					this.newPropertyItem = "";
-				})
-				.catch((error) => {
-					this.showErrorModal(
-						error,
-						"kanban board",
-						this.kanbanBoardId
-					);
+				//Reset variables now we are finished
+				this.singleItemId = "";
+				this.newPropertyItem = "";
+			}).catch((error) => {
+				this.showErrorModal(
+					error,
+					"kanban board",
+					this.kanbanBoardId
+				);
+				this.$store.dispatch("newToast", {
+					header: "Can not add/edit",
+					message: `Sorry, but we are having issues editing or adding - Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		getMaxId() {
 			//Lets use some math trickery
@@ -571,12 +575,17 @@ export default {
 					data_to_send.append("item", row.id);
 				});
 
-				this.axios
-					.post(url, data_to_send)
-					.then((response) => {
-					})
-					.catch((error) => {
+				this.axios.post(
+					url,
+					data_to_send
+				).catch((error) => {
+					this.$store.dispatch("newToast", {
+						header: "Can not apply resort",
+						message: `Sorry, we've had an issue resorting. Please refresh the page. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
 					});
+				});
 			}
 		},
 	},
