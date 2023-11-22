@@ -371,6 +371,9 @@ class Document(models.Model):
         null=True,
         storage=FileStorage(),
     )
+    document_upload_successfully = models.BooleanField(
+        default=False,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

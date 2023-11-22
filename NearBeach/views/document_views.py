@@ -81,8 +81,6 @@ def document_add_link(request, destination, location_id):
     :param location_id:
     :return:
     """
-    # ADD IN PERMISSION CHECKS
-
     # Get the form data
     form = AddLinkForm(request.POST)
     if not form.is_valid():
@@ -93,6 +91,7 @@ def document_add_link(request, destination, location_id):
         change_user=request.user,
         document_description=form.cleaned_data["document_description"],
         document_url_location=form.cleaned_data["document_url_location"],
+        document_upload_successfully=True,
     )
     document_submit.save()
 
@@ -142,6 +141,7 @@ def document_list_files(request, destination, location_id):
     """
     document_permission_results = DocumentPermission.objects.filter(
         is_deleted=False,
+        document_key__document_upload_successfully=True,
     ).values(
         "document_key_id",
         "document_key__document_description",
@@ -159,14 +159,6 @@ def document_list_files(request, destination, location_id):
     json_results = json.dumps(list(document_permission_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type="application/json")
-
-    # # Get the document information
-    # document_results = document.objects.filter(
-    #     is_deleted=False,
-    #     document_key__in=document_permission_results.values('document_key')
-    # )
-    #
-    # return HttpResponse(serializers.serialize('json',document_results),content_type='application/json')
 
 
 @require_http_methods(["POST"])
@@ -453,6 +445,9 @@ def handle_document_permissions(
     )
 
     FILE_HANDLER.upload(upload, document_submit, file)
+
+    document_submit.document_upload_successfully = True
+    document_submit.save()
 
     return document_submit, document_results
 

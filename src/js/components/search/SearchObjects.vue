@@ -90,9 +90,6 @@
 </template>
 
 <script>
-//Import mixins
-import searchMixin from "../../mixins/searchMixin";
-
 //Vue Components
 import ListSearchResults from "./ListSearchResults.vue";
 
@@ -123,7 +120,6 @@ export default {
 			},
 		},
 	},
-	mixins: [searchMixin],
 	data() {
 		return {
 			includeClosedObjectsModel: this.includeClosed,
@@ -178,14 +174,19 @@ export default {
 			);
 
 			//Use axios to request data
-			this.axios
-				.post(`${this.rootUrl}search/data/`, data_to_send)
-				.then((response) => {
-					//Update the localSearchResults with the data
-					this.localSearchResults = response.data;
-				})
-				.catch((error) => {
+			this.axios.post(
+				`${this.rootUrl}search/data/`, data_to_send
+			).then((response) => {
+				//Update the localSearchResults with the data
+				this.localSearchResults = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to get search results",
+					message: `Sorry, we failed to get your search results. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 	watch: {
@@ -200,10 +201,16 @@ export default {
 			this.getSearchResults();
 		},
 		searchModel() {
-			this.searchTrigger({
-				return_function: this.getSearchResults,
-				searchTimeout: this.searchTimeout,
-			});
+			//Reset the timer if it exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock!
+				clearTimeout(this.searchTimeout);
+			}
+
+			this.searchTimeout = setTimeout(
+				this.getSearchResults,
+				500
+			);
 		},
 	},
 	mounted() {
