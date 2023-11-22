@@ -128,3 +128,4 @@ node_modules/
 /test-results/
 /playwright/.cache/
 /coverage/
+/NearBeach/static/
