@@ -75,11 +75,11 @@
 		<!-- WHEN THERE ARE NO RESULTS -->
 		<div
 			v-if="
-				localSearchResults.requirement.length +
+					localSearchResults.requirement.length +
 					localSearchResults.project.length +
 					localSearchResults.task.length +
-					localSearchResults.request_for_change ==
-				0
+					localSearchResults.kanban.length +
+					localSearchResults.request_for_change.length === 0
 			"
 			class="alert alert-warning"
 		>
