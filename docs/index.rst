@@ -40,7 +40,7 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
 
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :hidden:
     :caption: 💡 Installation
 
@@ -51,7 +51,7 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
 
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :hidden:
     :caption: 🏸 Local Development Environment Setup
 
@@ -59,30 +59,30 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
 
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :hidden:
     :caption: 🎣 Administration Tasks
 
     First Time Setup </003-administration-tasks/index>
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :hidden:
     :caption: 🪀 Basic Usage
 
     Basic Usage </004-basic-usage/index>
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :hidden:
     :caption: 🛝 Procedure
 
     Procedures </005-procedures/index>
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :hidden:
     :caption: 🥋 Misc
 
-
+    Misc </006-misc/index>
 
