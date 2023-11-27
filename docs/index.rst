@@ -21,7 +21,7 @@ NearBeach is an Open Source Project Management system built using VueJS and the 
 
 .. note:: NearBeach is licensed under the MIT license
 
-.. note:: If you want to setup a local development environment, please view our :ref:`easy_development_environment`.
+.. note:: If you want to setup a local development environment, please view our :ref:`local_development_environment`.
 
 
 -----------

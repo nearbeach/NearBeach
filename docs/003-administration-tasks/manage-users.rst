@@ -1,4 +1,8 @@
-.. manage-users:
+.. _manage-users:
+
+==============
+Managing Users
+==============
 
 ~~~~~~~~~~~~~~~~
 Create New Users

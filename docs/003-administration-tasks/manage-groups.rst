@@ -1,4 +1,8 @@
-.. _manage-users:
+.. _manage-groups:
+
+===============
+Managing Groups
+===============
 
 ~~~~~~~~~~~~~~~~~~
 Create User Groups

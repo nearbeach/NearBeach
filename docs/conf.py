@@ -22,7 +22,7 @@ copyright = '2023, Luke Christopher Clarke'
 author = 'Luke Christopher Clarke'
 
 # The full version, including alpha/beta/rc tags
-release = '0.30.7'
+release = '0.30.27'
 
 
 # -- General configuration ---------------------------------------------------
