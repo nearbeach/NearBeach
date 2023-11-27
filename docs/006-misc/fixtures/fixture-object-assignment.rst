@@ -49,5 +49,9 @@ The below table defines the SUB objects, and what object they are connected to a
 +========+====+===============+===========+
 | Card   | 1  | Kanban Board  | 1         |
 +--------+----+---------------+-----------+
-|        |    |               |           |
+| Card   | 2  | Kanban Board  | 2         |
++--------+----+---------------+-----------+
+| R Item | 1  | Requirement   | 1         |
++--------+----+---------------+-----------+
+| R Item | 2  | Requirement   | 2         |
 +--------+----+---------------+-----------+
