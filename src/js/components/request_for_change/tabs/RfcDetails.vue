@@ -313,51 +313,35 @@ export default {
 			data_to_send.set("search", search);
 
 			// Now that the timer has run out, lets use AJAX to get the organisations.
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/lead_user_list/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Clear the stakeholderFixList
-					this.rfcChangeLeadFixList = [];
+			this.axios.post(
+				`${this.rootUrl}object_data/lead_user_list/`,
+				data_to_send
+			).then((response) => {
+				//Clear the stakeholderFixList
+				this.rfcChangeLeadFixList = [];
 
-					//Extract the required JSON data
-					const extracted_data = response.data;
+				//Extract the required JSON data
+				const extracted_data = response.data;
 
-					//Look through the extracted data - and map the required fields into stakeholder fix list
-					extracted_data.forEach((row) => {
-						//Create the creation object
-						const creation_object = {
-							value: row.pk,
-							label: `${row.fields.username} - ${row.fields.first_name} ${row.fields.last_name}`,
-						};
+				//Look through the extracted data - and map the required fields into stakeholder fix list
+				extracted_data.forEach((row) => {
+					//Create the creation object
+					const creation_object = {
+						value: row.pk,
+						label: `${row.fields.username} - ${row.fields.first_name} ${row.fields.last_name}`,
+					};
 
-						//Push that object into the stakeholders
-						this.rfcChangeLeadFixList.push(creation_object);
-					});
-				})
-				.catch(function (error) {
-					// Get the error modal
-					const elem_cont =
-						document.getElementById("errorModalContent");
-
-					// Update the content
-					elem_cont.innerHTML = `<strong>Search Lead User Issue:</strong><br/>${error}`;
-
-					// Show the modal
-					const errorModal = new bootstrap.Modal(
-						document.getElementById("errorModal"),
-						{
-							keyboard: false,
-						}
-					);
-					errorModal.show();
-
-					// Hide the loader
-					const loader_element = document.getElementById("loader");
-					loader_element.style.display = "none";
+					//Push that object into the stakeholders
+					this.rfcChangeLeadFixList.push(creation_object);
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting change lead data",
+					message: `Error getting change lead data. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				})
+			});
 		},
 		updateGroupModel(data) {
 			this.groupModel = data;
