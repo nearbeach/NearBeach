@@ -10,7 +10,7 @@
 				v-for="tag in tagList"
 				:key="tag.pk"
 				class="single-tag"
-				v-bind:style="`background-color: ${tag.fields.tag_colour};`"
+				v-bind:style="`background-color: ${tag.fields.tag_colour};color: ${tag.fields.tag_text_colour};`"
 			>
 				{{ tag.fields.tag_name }}
 				<span

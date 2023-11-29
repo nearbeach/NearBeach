@@ -27,7 +27,7 @@
 					<div
 						v-for="tag in localTagResults"
 						v-bind:key="tag.pk"
-						v-bind:style="`background-color: ${tag.fields.tag_colour};`"
+						v-bind:style="`background-color: ${tag.fields.tag_colour};color: ${tag.fields.tag_text_colour}`"
 						v-on:dblclick="editTag(tag.pk)"
 						class="single-tag"
 					>
@@ -58,6 +58,7 @@
 				v-bind:tag-colour="singleTagColour"
 				v-bind:tag-id="singleTagId"
 				v-bind:tag-name="singleTagName"
+				v-bind:tag-text-colour="singleTagTextColour"
 				v-on:new_tag="newTag"
 				v-on:delete_tag="deleteTag($event)"
 				v-on:update_tags="updateTags"
@@ -99,7 +100,8 @@ export default {
 			},*/
 			singleTagColour: "",
 			singleTagId: 0,
-			singleTagName: "",
+			singleTagName: "#37cbd2",
+			singleTagTextColour: "#ffffff",
 			localTagResults: this.tagResults,
 		};
 	},
@@ -110,6 +112,7 @@ export default {
 			this.singleTagName = "default tag";
 			this.singleTagId = 0;
 			this.singleTagColour = "#37cbd2";
+			this.singleTagTextColour = "#ffffff";
 
 			//Open up modal
 			let edit_tag_modal = new Modal(
@@ -133,6 +136,7 @@ export default {
 			this.singleTagName = single_tag.fields.tag_name;
 			this.singleTagId = tag_id;
 			this.singleTagColour = single_tag.fields.tag_colour;
+			this.singleTagTextColour = single_tag.fields.tag_text_colour;
 
 			//Open up modal
 			let edit_tag_modal = new Modal(
@@ -152,6 +156,7 @@ export default {
 			// Update the data
 			this.localTagResults[index].fields.tag_name = data.tag_name;
 			this.localTagResults[index].fields.tag_colour = data.tag_colour;
+			this.localTagResults[index].fields.tag_text_colour = data.tag_text_colour;
 		},
 	},
 	mounted() {

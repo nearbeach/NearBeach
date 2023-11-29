@@ -1436,6 +1436,10 @@ class Tag(models.Model):
         max_length=7,
         default="#651794",
     )
+    tag_text_colour = models.CharField(
+        max_length=7,
+        default="#ffffff",
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
