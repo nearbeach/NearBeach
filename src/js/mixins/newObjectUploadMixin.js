@@ -1,11 +1,4 @@
-//Axios
-import axios from "axios";
-
-//Import Mixins
-import errorModalMixin from "./errorModalMixin";
-
 export default {
-    mixins: [errorModalMixin],
     methods: {
         newObjectUploadImage(blobInfo, progress) {
             //Create the form
@@ -24,26 +17,21 @@ export default {
                 },
             };
 
-            //Use axios to send the data
-            return axios
-                .post(
-                    `${this.rootUrl}documentation/new_object_upload/`,
-                    data_to_send,
-                    config
-                )
-                .then((response) => {
-                    //Just send the location to the success
-                    return `/private/${response.data[0].document_key_id}`;
-                })
-                .catch((error) => {
-                    this.showErrorModal(
-                        error,
-                        "Upload Image",
-                        ""
-                    );
-
-
+            return this.axios.post(
+                `${this.rootUrl}documentation/new_object_upload/`,
+                data_to_send,
+                config
+            ).then((response) => {
+                //Just send the location to the success
+                return `/private/${response.data[0].document_key_id}`;
+            }).catch((error) => {
+                this.$store.dispatch("newToast",{
+                    header: "Error uploading image",
+                    message: `Error uploading image. Error -> ${error}`,
+                    extra_classes: "bg-danger",
+                    delay: 0,
                 });
+            });
         },
         replaceIncorrectImageUrl(input_string) {
             //Using regex - we are finding the img src and removing the ../
