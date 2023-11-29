@@ -36,6 +36,7 @@ def new_tag(request, *args, **kwargs):
     submit_tag = Tag(
         tag_name=form.cleaned_data["tag_name"],
         tag_colour=form.cleaned_data["tag_colour"],
+        tag_text_colour=form.cleaned_data["tag_text_colour"],
         change_user=request.user,
     )
     submit_tag.save()
@@ -68,6 +69,7 @@ def save_tag(request, *args, **kwargs):
     # Update the required fields
     update_tag.tag_name = form.cleaned_data["tag_name"]
     update_tag.tag_colour = form.cleaned_data["tag_colour"]
+    update_tag.tag_text_colour = form.cleaned_data["tag_text_colour"]
     update_tag.change_user = request.user
 
     # Save data

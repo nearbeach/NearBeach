@@ -100,45 +100,29 @@ export default {
 			data_to_send.set("search", search);
 
 			// Now that the timer has run out, lets use AJAX to get the organisations.
-			this.axios
-				.post(
-					`${this.rootUrl}search/organisation/data/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Extract the required JSON data
-					const extracted_data = response.data;
+			this.axios.post(
+				`${this.rootUrl}search/organisation/data/`,
+				data_to_send
+			).then((response) => {
+				//Extract the required JSON data
+				const extracted_data = response.data;
 
-					//Look through the extracted data - and map the required fields into stakeholder fix list
-					this.stakeholderFixList = extracted_data.map((row) => {
-						//Create the creation object
-						return {
-							value: row.pk,
-							label: row.fields.organisation_name,
-						};
-					});
-				})
-				.catch(function (error) {
-					// Get the error modal
-					const elem_cont =
-						document.getElementById("errorModalContent");
-
-					// Update the content
-					elem_cont.innerHTML = `<strong>Search Organisation Issue:</strong><br/>${error}`;
-
-					// Show the modal
-					const errorModal = new bootstrap.Modal(
-						document.getElementById("errorModal"),
-						{
-							keyboard: false,
-						}
-					);
-					errorModal.show();
-
-					// Hide the loader
-					const loader_element = document.getElementById("loader");
-					loader_element.style.display = "none";
+				//Look through the extracted data - and map the required fields into stakeholder fix list
+				this.stakeholderFixList = extracted_data.map((row) => {
+					//Create the creation object
+					return {
+						value: row.pk,
+						label: row.fields.organisation_name,
+					};
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting organisation data",
+					message: `Error getting the organisation data. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				})
+			});
 		},
 	},
 	watch: {

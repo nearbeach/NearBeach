@@ -48,18 +48,35 @@
 						<div class="col-md-4">
 							<strong>Pick Colour</strong>
 							<p class="text-instructions">
-								Please click on a preferred colour. This will be
-								tags colour.
+								Please choose a background and text colour for your tag.
 							</p>
 						</div>
-						<div class="colour-picker col-md-8">
-							<div
-								v-for="colour in colourList"
-								v-bind:key="colour"
-								v-bind:class="getClasses(colour)"
-								v-bind:style="`background-color: ${colour};`"
-								v-on:click="updateColour(colour)"
-							></div>
+						<div class="col-md-8">
+							<div class="form-group">
+								<label>Background Colour</label>
+								<n-color-picker :show-alpha="false"
+												v-model:value="tagColourModel"
+												:modes="['hex']"
+								></n-color-picker>
+							</div>
+
+							<div class="form-group">
+								<label>Text Colour</label>
+
+								<n-color-picker v-model:value="tagTextColourModel"
+												:show-alpha="false"
+												:modes="['hex']"
+								/>
+      							<span>{{ tagTextColourModel }}</span>
+							</div>
+
+							<hr>
+
+							<div class="single-tag"
+								 v-bind:style="`margin-right:0;background-color:${tagColourModel};color:${tagTextColourModel};`"
+							>
+								{{ tagNameModel }}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -98,8 +115,15 @@
 //VueX
 import {mapGetters} from "vuex";
 
+//Naive UI
+import {NColorPicker} from "naive-ui";
+import {reactive} from "vue";
+
 export default {
 	name: "EditTagModal",
+	components: {
+		NColorPicker,
+	},
 	props: {
 		existingTags: {
 			type: Array,
@@ -109,7 +133,7 @@ export default {
 		},
 		tagColour: {
 			type: String,
-			default: "/",
+			default: "",
 		},
 		tagId: {
 			type: Number,
@@ -119,25 +143,16 @@ export default {
 			type: String,
 			default: "",
 		},
+		tagTextColour: {
+			type: String,
+			default: "",
+		},
 	},
 	data() {
 		return {
-			colourList: [
-				"#37cbd2",
-				"#8b8295",
-				"#6f84bb",
-				"#1fc4b5",
-				"#651794",
-				"#7ea52c",
-				"#6df79e",
-				"#53ef5f",
-				"#79c121",
-				"#91fbde",
-				"#e01059",
-				"#33ae24",
-			],
 			tagColourModel: this.tagColour,
 			tagNameModel: this.tagName,
+			tagTextColourModel: this.tagTextColour,
 		};
 	},
 	watch: {
@@ -147,6 +162,9 @@ export default {
 		tagName() {
 			this.tagNameModel = this.tagName;
 		},
+		tagTextColour() {
+			this.tagTextColourModel = this.tagTextColour;
+		}
 	},
 	computed: {
 		...mapGetters({
@@ -169,24 +187,29 @@ export default {
 	methods: {
 		deleteTag() {
 			//Use axios to send the request
-			this.axios
-				.post(`${this.rootUrl}tag/delete/${this.tagId}/`)
-				.then((response) => {
-					//Tell the component up stream that we removed this tag
-					this.$emit("delete_tag", {
-						tag_id: this.tagId,
-					});
-
-					//Close the modal
-					document.getElementById("editTagCloseModal").click();
-				})
-				.catch((error) => {
+			this.axios.post(
+				`${this.rootUrl}tag/delete/${this.tagId}/`
+			).then((response) => {
+				//Tell the component up stream that we removed this tag
+				this.$emit("delete_tag", {
+					tag_id: this.tagId,
 				});
+
+				//Close the modal
+				document.getElementById("editTagCloseModal").click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast",{
+					header: "Error deleting tag",
+					message: `Sorry we could not delete your tag. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 		getClasses(colour) {
 			let return_class = "single-colour";
 
-			if (colour == this.tagColourModel) {
+			if (colour === this.tagColourModel) {
 				return_class = `${return_class} selected-colour`;
 			}
 
@@ -194,18 +217,23 @@ export default {
 		},
 		newTag(data_to_send) {
 			//Use axios to send data
-			this.axios
-				.post(`${this.rootUrl}tag/new/`, data_to_send)
-				.then((response) => {
-					// Send data upstream
-					this.$emit("new_tag", response.data);
+			this.axios.post(
+				`${this.rootUrl}tag/new/`,
+				data_to_send
+			).then((response) => {
+				// Send data upstream
+				this.$emit("new_tag", response.data);
 
-					//Close the modal
-					document.getElementById("editTagCloseModal").click();
-				})
-				.catch((error) => {
-					//ADD CODE
+				//Close the modal
+				document.getElementById("editTagCloseModal").click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Can not create new tag",
+					message: `Sorry, we could not create your new tag. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		saveTag() {
 			//Create data to send
@@ -213,6 +241,7 @@ export default {
 			data_to_send.set("tag_id", this.tagId);
 			data_to_send.set("tag_name", this.tagNameModel);
 			data_to_send.set("tag_colour", this.tagColourModel);
+			data_to_send.set("tag_text_colour", this.tagTextColourModel);
 
 			if (this.tagId === 0) {
 				//CREATE A NEW TAG
@@ -229,19 +258,25 @@ export default {
 			//Use axios to send data
 			this.axios
 				.post(`${this.rootUrl}tag/save/`, data_to_send)
-				.then((response) => {
+				.then(() => {
 					// Send data upstream
 					this.$emit("update_tags", {
 						tag_id: this.tagId,
 						tag_name: this.tagNameModel,
 						tag_colour: this.tagColourModel,
+						tag_text_colour: this.tagTextColourModel,
 					});
 
 					//Close the modal
 					document.getElementById("editTagCloseModal").click();
 				})
 				.catch((error) => {
-					//ADD CODE
+					this.$store.dispatch("newToast", {
+						header: "Can not update tag",
+						message: `Sorry, we could not update your tag. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 	},

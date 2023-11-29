@@ -659,6 +659,7 @@ class NewTagForm(forms.ModelForm):
         fields = [
             "tag_name",
             "tag_colour",
+            "tag_text_colour",
         ]
 
 
@@ -907,6 +908,10 @@ class TagForm(forms.Form):
         max_length=50,
     )
     tag_colour = forms.CharField(
+        required=True,
+        max_length=7,
+    )
+    tag_text_colour = forms.CharField(
         required=True,
         max_length=7,
     )

@@ -5,8 +5,10 @@
 		v-bind:data-level="levelId"
 		v-bind:data-column="columnId"
 		v-bind:data-column-property="columnProperty"
+		v-bind:animation="200"
 		:disabled="kanbanStatus === 'Closed' || !canDragCards"
 		group="tasks"
+		ghost-class="ghost"
 		@end="onEnd($event)"
 		v-model="masterList"
 		item-key="pk"
@@ -138,6 +140,14 @@ export default {
 			openCardOnLoad: "getOpenCardOnLoad",
 			rootUrl: "getRootUrl",
 		}),
+		dragOptions() {
+			return {
+				animation: 200,
+				group: "description",
+				disabled: false,
+				ghostClass: "ghost"
+			};
+		},
 		masterList() {
 			return this.$store.getters.getCardsOrder(this.columnId, this.levelId);
 		},
