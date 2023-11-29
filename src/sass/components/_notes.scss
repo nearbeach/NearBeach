@@ -1,0 +1,27 @@
+.note-history {
+    display: flex;
+    flex-direction: column;
+
+    .note-history--row {
+        display: flex;
+        flex-direction: row;
+        margin-top: 25px;
+        border-top: solid 1px #656565;
+        padding-top: 25px;
+
+        .note-history--profile {
+            display: flex;
+            flex-direction: column;
+
+            .note-history--profile-picture {
+                height: 150px;
+                width: 150px;
+            }
+        }
+
+        .note-history--note {
+            width: 100%;
+            padding: 0 0 0 10px;
+        }
+    }
+}
