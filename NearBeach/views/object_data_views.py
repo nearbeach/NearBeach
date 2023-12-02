@@ -306,13 +306,29 @@ def add_notes(request, destination, location_id):
     submit_object_note.save()
 
     # Get data to send back to user
-    note_resuts = ObjectNote.objects.filter(
+    note_results = ObjectNote.objects.filter(
         object_note_id=submit_object_note.object_note_id
     )
 
-    return HttpResponse(
-        serializers.serialize("json", note_resuts), content_type="application.json"
+    note_results = note_results.annotate(
+        username=F('change_user'),
+        first_name=F('change_user__first_name'),
+        last_name=F('change_user__last_name'),
+        profile_picture=F('change_user__userprofilepicture__document_id__document_key')
+    ).values(
+        "object_note_id",
+        "username",
+        "first_name",
+        "last_name",
+        "profile_picture",
+        "object_note",
+        "date_modified",
     )
+
+    # Return JSON results
+    note_json = json.dumps(list(note_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(note_json, content_type="application/json")
 
 
 @require_http_methods(["POST"])
