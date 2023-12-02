@@ -2,7 +2,8 @@
 	<n-config-provider :theme="getTheme(theme)">
 		<div class="card">
 			<div class="card-body">
-				<h2>User List</h2>
+				<h2 v-if="destination === 'user'">User Permission List</h2>
+        <h2 v-else>User List</h2>
 				<hr/>
 				<div class="row">
 					<div class="col-md-4">
