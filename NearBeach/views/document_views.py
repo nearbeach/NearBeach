@@ -467,9 +467,8 @@ class LocalFileHandler(FileHandler):
     def fetch(self, document_results):
         # Normal setup - find document on server and serve
         # Get the Document path information
-        with (self.root / document_results.document).open("rb") as file:
-            # Send file to user
-            return FileResponse(file)
+        file = self.root / str(document_results.document)
+        return FileResponse(open(file, 'rb'))
 
     def upload(self, upload_document, document_results, file):
         """
@@ -481,7 +480,7 @@ class LocalFileHandler(FileHandler):
         """
         # Make the directory we want to save the file in. The directory will have the document_key
         file_permissions = 0o755  # Look at these permissions later
-        storage_location = self.root / document_results.document
+        storage_location = self.root / str(document_results.document)
         storage_location.parent.mkdir(mode=file_permissions, exist_ok=True)
 
         # Save the upload document in the location
