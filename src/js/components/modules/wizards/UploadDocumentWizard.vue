@@ -30,7 +30,7 @@
 							<strong>Uploading File</strong>
 							<p class="text-instructions">
 								You will be able to upload a file against this
-								{{ destination }}. It will appear in the current
+								{{ getDestination }}. It will appear in the current
 								folder.
 							</p>
 							<p v-if="documentModel.length === 0">
@@ -182,28 +182,28 @@ export default {
 		Icon,
 	},
 	props: {
-		acceptedDocuments: {
-			type: String,
-			default:
-				"image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-		},
-		currentFolder: {
+		// acceptedDocuments: {
+		// 	type: String,
+		// 	default:
+		// 		"image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+		// },
+		// currentFolder: {
+		// 	type: String,
+		// 	default: "",
+		// },
+		// excludeDocuments: {
+		// 	type: Array,
+		// 	default: () => {
+		// 		return [];
+		// 	},
+		// },
+		overrideDestination: {
 			type: String,
 			default: "",
 		},
-		destination: {
+		overrideLocationId: {
 			type: String,
 			default: "",
-		},
-		excludeDocuments: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
-		locationId: {
-			type: Number,
-			default: 0,
 		},
 	},
 	mixins: [iconMixin],
@@ -220,11 +220,23 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			acceptedDocuments: "getAcceptedDocuments",
+			currentFolder: "getCurrentFolder",
+			destination: "getDestination",
+			excludeDocuments: "getDocumentFilteredList",
+			locationId: "getLocationId",
 			staticUrl: "getStaticUrl",
 			rootUrl: "getRootUrl",
 		}),
 	},
 	methods: {
+		getDestination() {
+			return this.overrideDestination !== "" ? this.overrideDestination : this.destination;
+		},
+		getLocationId() {
+			//If there is an overrideDestination - we want to use the overrideLocationId
+			return this.overrideDestination !== "" ? this.overrideLocationId : this.locationId;
+		},
 		handleFileUploads(fileList) {
 			/*Check that the size of the fileList is not too big
 			  The boolean (0!=this.maxUploadSize) will product a 0 result when maxUploadSize is 0. Thus negating
@@ -268,7 +280,7 @@ export default {
 			);
 
 			//If there is a current/partent folder - then add it to the data to send
-			if (this.currentFolder !== "" && this.currentFolder !== null) {
+			if (this.currentFolder > 0) {
 				data_to_send.set("parent_folder", this.currentFolder);
 			}
 
@@ -284,17 +296,17 @@ export default {
 
 			//Use axios to send it to the backend
 			this.axios.post(
-				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
+				`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/upload/`,
 				data_to_send,
 				config
 			).then((response) => {
-				//Send the data upstream
-				this.$emit("update_document_list", response.data);
+				//Append the new document to the existing document list
+				this.$store.dispatch("appendDocumentList", {
+					documentList: response.data[0],
+				});
 
 				//Close the modal
-				document
-					.getElementById("uploadDocumentCloseButton")
-					.click();
+				document.getElementById("uploadDocumentCloseButton").click();
 
 				//Reset the document
 				this.resetForm();

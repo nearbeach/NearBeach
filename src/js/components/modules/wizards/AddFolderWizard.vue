@@ -89,8 +89,8 @@ export default {
 	},
 	props: {
 		currentFolder: {
-			type: String,
-			default: "/",
+			type: Number,
+			default: 0,
 		},
 		destination: {
 			type: String,
@@ -128,7 +128,7 @@ export default {
 				this.folderDescriptionModel
 			);
 
-			if (this.currentFolder !== null && this.currentFolder !== "") {
+			if (this.currentFolder > 0) {
 				data_to_send.set("parent_folder", this.currentFolder);
 			}
 

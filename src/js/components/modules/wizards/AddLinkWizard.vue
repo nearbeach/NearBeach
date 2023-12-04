@@ -102,7 +102,6 @@ import {Icon} from "@iconify/vue";
 import {mapGetters} from "vuex";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 
 //Validation
@@ -121,8 +120,8 @@ export default {
 	},
 	props: {
 		currentFolder: {
-			type: String,
-			default: "/",
+			type: Number,
+			default: 0,
 		},
 		destination: {
 			type: String,
@@ -145,7 +144,7 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			linkModel: "",
@@ -182,29 +181,31 @@ export default {
 			);
 
 			//Only set the parent folder variable if there exists a variable in current folder
-			if (this.currentFolder !== null && this.currentFolder !== "") {
+			if (this.currentFolder > 0) {
 				data_to_send.set("parent_folder", this.currentFolder);
 			}
 
-			this.axios
-				.post(
-					`${this.rootUrl}documentation/${this.destination}/${this.locationId}/add_link/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Emit the results up stream
-					this.$emit("update_document_list", response.data);
+			this.axios.post(
+				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/add_link/`,
+				data_to_send
+			).then((response) => {
+				//Emit the results up stream
+				this.$emit("update_document_list", response.data);
 
-					//Clear the data
-					this.documentDescriptionModel = "";
-					this.documentUrlLocationModel = "";
+				//Clear the data
+				this.documentDescriptionModel = "";
+				this.documentUrlLocationModel = "";
 
-					//Close the modal
-					document.getElementById("addLinkCloseButton").click();
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+				//Close the modal
+				document.getElementById("addLinkCloseButton").click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Adding Link",
+					message: `Sorry, could not add the link for you. Error - ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 	updated() {

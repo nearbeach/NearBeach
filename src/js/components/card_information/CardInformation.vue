@@ -177,6 +177,11 @@
 								v-bind:override-location-id="cardId"
 								v-bind:read-only="kanbanStatus === 'Closed'"
 							></documents-module>
+
+							<upload-document-wizard
+								v-bind:override-destination="'kanban_card'"
+								v-bind:override-location-id="cardId"
+							></upload-document-wizard>
 						</div>
 					</div>
 				</div>
@@ -198,10 +203,12 @@ import {mapGetters} from "vuex";
 
 //Mixins
 import iconMixin from "../../mixins/iconMixin";
+import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
 
 export default {
 	name: "CardInformation",
 	components: {
+		UploadDocumentWizard,
 		CardDescription,
 		CardDetails,
 		CardNotes,

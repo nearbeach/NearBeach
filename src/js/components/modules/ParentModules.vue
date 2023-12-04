@@ -262,6 +262,7 @@
 						aria-labelledby="contact-tab"
 					>
 						<documents-module></documents-module>
+						<upload-document-wizard></upload-document-wizard>
 					</div>
 					<div
 						class="tab-pane fade"
@@ -320,6 +321,7 @@ import CustomersModule from "./sub_modules/CustomersModule.vue";
 import ListTagsModule from "./sub_modules/ListTagsModule.vue";
 import BugsModule from "./sub_modules/BugsModule.vue";
 import NotesModule from "./sub_modules/NotesModule.vue";
+import UploadDocumentWizard from "./wizards/UploadDocumentWizard.vue";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
@@ -337,6 +339,7 @@ export default {
 		RequirementItemLinksModule,
 		RequirementItemsModule,
 		RequirementLinksModule,
+		UploadDocumentWizard,
 	},
 	mixins: [
 		getThemeMixin
