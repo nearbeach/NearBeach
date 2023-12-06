@@ -2,6 +2,8 @@
 	<div
 		class="modal fade"
 		id="uploadDocumentModal"
+		data-bs-backdrop="static"
+		data-bs-keyboard="false"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -175,6 +177,7 @@ import {mapGetters} from "vuex";
 
 //Mixins
 import iconMixin from "../../../mixins/iconMixin";
+import {Modal} from "bootstrap";
 
 export default {
 	name: "UploadDocumentWizard",
@@ -182,28 +185,13 @@ export default {
 		Icon,
 	},
 	props: {
-		// acceptedDocuments: {
-		// 	type: String,
-		// 	default:
-		// 		"image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-		// },
-		// currentFolder: {
-		// 	type: String,
-		// 	default: "",
-		// },
-		// excludeDocuments: {
-		// 	type: Array,
-		// 	default: () => {
-		// 		return [];
-		// 	},
-		// },
 		overrideDestination: {
 			type: String,
 			default: "",
 		},
 		overrideLocationId: {
-			type: String,
-			default: "",
+			type: Number,
+			default: 0,
 		},
 	},
 	mixins: [iconMixin],
@@ -310,6 +298,14 @@ export default {
 
 				//Reset the document
 				this.resetForm();
+
+				//Reshow the card information modal if exists
+				let cardModal = document.getElementById("cardInformationModal");
+				if (cardModal !== null)
+				{
+					cardModal = new Modal(cardModal);
+					cardModal.show();
+				}
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Failed to upload documentation",

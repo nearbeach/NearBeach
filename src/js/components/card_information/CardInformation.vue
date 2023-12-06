@@ -177,11 +177,6 @@
 								v-bind:override-location-id="cardId"
 								v-bind:read-only="kanbanStatus === 'Closed'"
 							></documents-module>
-
-							<upload-document-wizard
-								v-bind:override-destination="'kanban_card'"
-								v-bind:override-location-id="cardId"
-							></upload-document-wizard>
 						</div>
 					</div>
 				</div>

@@ -3,9 +3,8 @@ export const moduleDocuments = {
         acceptedDocuments: "image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         currentFolder: 0,
         documentList: [],
-        // documentFilteredList
+        documentRemoveKey: "",
         folderList: [],
-        // folderFilteredList
     }),
     mutations: {
         updateCurrentFolder: (state, payload) => {
@@ -17,6 +16,9 @@ export const moduleDocuments = {
         },
         updateDocumentList: (state, payload) => {
             state.documentList = payload.documentList;
+        },
+        updateDocumentRemoveKey: (state, payload) => {
+            state.documentRemoveKey = payload.documentRemoveKey;
         },
         updateFolderList: (state, payload) => {
             state.folderList = payload.folderList;
@@ -97,6 +99,9 @@ export const moduleDocuments = {
         getDocumentObjectCount: (state) => {
             //A simple count, that returns the number of folders and documents
             return state.documentList.length + state.folderList.length;
+        },
+        getDocumentRemoveKey: (state) => {
+            return state.documentRemoveKey;
         },
         getFolderFilteredList: (state) => {
             //If current folder set as 0 - filter for none
