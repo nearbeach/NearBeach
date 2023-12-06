@@ -262,6 +262,20 @@
 						aria-labelledby="contact-tab"
 					>
 						<documents-module></documents-module>
+
+						<upload-document-wizard></upload-document-wizard>
+
+						<add-folder-wizard
+							v-bind:destination="destination"
+							v-bind:location-id="locationId"
+						></add-folder-wizard>
+
+						<add-link-wizard
+							v-bind:destination="destination"
+							v-bind:location-id="locationId"
+						></add-link-wizard>
+
+						<confirm-file-delete-vue></confirm-file-delete-vue>
 					</div>
 					<div
 						class="tab-pane fade"
@@ -320,6 +334,10 @@ import CustomersModule from "./sub_modules/CustomersModule.vue";
 import ListTagsModule from "./sub_modules/ListTagsModule.vue";
 import BugsModule from "./sub_modules/BugsModule.vue";
 import NotesModule from "./sub_modules/NotesModule.vue";
+import UploadDocumentWizard from "./wizards/UploadDocumentWizard.vue";
+import AddLinkWizard from "./wizards/AddLinkWizard.vue";
+import ConfirmFileDeleteVue from "./wizards/ConfirmFileDelete.vue";
+import AddFolderWizard from "./wizards/AddFolderWizard.vue";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
@@ -327,6 +345,9 @@ import getThemeMixin from "../../mixins/getThemeMixin";
 export default {
 	name: "ParentModules",
 	components: {
+		AddFolderWizard,
+		ConfirmFileDeleteVue,
+		AddLinkWizard,
 		BugsModule,
 		CustomersModule,
 		DocumentsModule,
@@ -337,6 +358,7 @@ export default {
 		RequirementItemLinksModule,
 		RequirementItemsModule,
 		RequirementLinksModule,
+		UploadDocumentWizard,
 	},
 	mixins: [
 		getThemeMixin

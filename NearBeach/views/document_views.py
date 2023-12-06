@@ -35,6 +35,27 @@ from django.conf import settings
 import boto3
 import json
 from pathlib import Path
+from botocore.config import Config
+
+
+# Internal function
+def connect_check_client_s3(botoInitValues):
+    config = Config(
+        connect_timeout=4,
+        retries=dict(
+            max_attempts=1,
+        )
+    )
+    botoInitValues.update(
+        config=config
+    )
+    client = boto3.client("s3", **botoInitValues)
+
+    # Check to see if the connection works
+    try:
+        response = client.list_buckets()
+    except Exception as e:
+        print(F"An issue has occurred trying to connect to the S3 bucket. Please see the following errors - {e}")
 
 
 @require_http_methods(["POST"])
@@ -467,9 +488,8 @@ class LocalFileHandler(FileHandler):
     def fetch(self, document_results):
         # Normal setup - find document on server and serve
         # Get the Document path information
-        with (self.root / document_results.document).open("rb") as file:
-            # Send file to user
-            return FileResponse(file)
+        file = self.root / str(document_results.document)
+        return FileResponse(open(file, 'rb'))
 
     def upload(self, upload_document, document_results, file):
         """
@@ -481,7 +501,7 @@ class LocalFileHandler(FileHandler):
         """
         # Make the directory we want to save the file in. The directory will have the document_key
         file_permissions = 0o755  # Look at these permissions later
-        storage_location = self.root / document_results.document
+        storage_location = self.root / str(document_results.document)
         storage_location.parent.mkdir(mode=file_permissions, exist_ok=True)
 
         # Save the upload document in the location
@@ -510,6 +530,9 @@ class S3FileHandler(FileHandler):
                 verify=getattr(settings, "AWS_VERIFY_TLS", True),
                 **getattr(settings, "AWS_INIT_VALUES", {})
             )
+            # Log any issues for the user
+            connect_check_client_s3(botoInitValues)
+
         self._s3 = boto3.client("s3",   **botoInitValues)
         self._bucket = settings.AWS_STORAGE_BUCKET_NAME
 

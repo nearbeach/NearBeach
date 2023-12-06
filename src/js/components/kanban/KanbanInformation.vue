@@ -61,6 +61,24 @@
 				v-on:update_card="updateCard($event)"
 			></card-information>
 
+			<upload-document-wizard
+				v-bind:override-destination="'kanban_card'"
+				v-bind:override-location-id="cardId"
+			></upload-document-wizard>
+
+			<add-folder-wizard
+				v-bind:destination="'kanban_card'"
+				v-bind:location-id="locationId"
+			></add-folder-wizard>
+
+			<add-link-wizard
+				v-bind:destination="'kanban_card'"
+				v-bind:location-id="locationId"
+			></add-link-wizard>
+
+			<!-- CONFIRM DOCUMENT DELETE -->
+			<confirm-file-delete-vue></confirm-file-delete-vue>
+
 			<new-kanban-link-wizard
 				v-bind:location-id="locationId"
 				v-bind:column-results="columnResults"
@@ -89,10 +107,18 @@ import {NSwitch} from "naive-ui";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
+import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
+import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
+import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
+import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
 
 export default {
 	name: "KanbanInformation",
 	components: {
+		ConfirmFileDeleteVue,
+		AddLinkWizard,
+		AddFolderWizard,
+		UploadDocumentWizard,
 		AddUserToCard,
 		ArchiveCards,
 		BlockedNotesModal,

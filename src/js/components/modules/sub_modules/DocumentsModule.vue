@@ -11,7 +11,7 @@
 
 		<!-- DOCUMENT FOLDER TREE -->
 		<div
-			v-if="documentList.length + folderList.length == 0"
+			v-if="parseInt(documentObjectCount) === 0"
 			class="module-spacer"
 		>
 			<div class="alert alert-dark">
@@ -24,7 +24,7 @@
 		>
 			<!-- GO TO PARENT DIRECTORY -->
 			<div
-				v-if="this.currentFolder != null"
+				v-if="this.currentFolder !== 0"
 				v-on:click="goToParentDirectory()"
 				class="document--child"
 			>
@@ -70,11 +70,7 @@
 						height="80px"
 					/>
 					<p class="text-instructions">
-						{{
-							shortName(
-								document.document_key__document_description
-							)
-						}}
+						{{ shortName(document.document_key__document_description) }}
 					</p>
 				</a>
 
@@ -135,50 +131,12 @@
 				</li>
 			</ul>
 		</div>
-
-		<!-- MODALS -->
-		<!-- ADD FOLDER ID -->
-		<add-folder-wizard
-			v-bind:destination="getDestination()"
-			v-bind:location-id="locationId"
-			v-bind:current-folder="currentFolder"
-			v-bind:existing-folders="folderFilteredList"
-			v-on:update_folder_list="updateFolderList($event)"
-		></add-folder-wizard>
-
-		<!-- ADD LINK WIZARD -->
-		<add-link-wizard
-			v-bind:destination="getDestination()"
-			v-bind:location-id="locationId"
-			v-bind:current-folder="currentFolder"
-			v-bind:exclude-documents="documentFilteredList"
-			v-on:update_document_list="updateDocumentList($event)"
-		></add-link-wizard>
-
-		<!-- CONFIRM DOCUMENT DELETE -->
-		<confirm-file-delete-vue
-			v-bind:document-key="removeDocumentKey"
-			v-on:remove_document="removeDocument($event)"
-		></confirm-file-delete-vue>
-
-		<!-- UPLOAD DOCUMENT WIZARD -->
-		<upload-document-wizard
-			v-bind:destination="getDestination()"
-			v-bind:location-id="getLocationId()"
-			v-bind:current-folder="currentFolder"
-			v-bind:exclude-documents="documentFilteredList"
-			v-on:update_document_list="updateDocumentList($event)"
-		></upload-document-wizard>
 	</div>
 </template>
 
 <script>
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
-import AddFolderWizard from "../wizards/AddFolderWizard.vue";
-import AddLinkWizard from "../wizards/AddLinkWizard.vue";
-import ConfirmFileDeleteVue from "../wizards/ConfirmFileDelete.vue";
-import UploadDocumentWizard from "../wizards/UploadDocumentWizard.vue";
 
 //Mixins
 import iconMixin from "../../../mixins/iconMixin";
@@ -189,11 +147,7 @@ import {mapGetters} from "vuex";
 export default {
 	name: "DocumentsModule",
 	components: {
-		AddFolderWizard,
-		AddLinkWizard,
-		ConfirmFileDeleteVue,
 		Icon,
-		UploadDocumentWizard,
 	},
 	props: {
 		overrideDestination: {
@@ -209,20 +163,14 @@ export default {
 			default: false,
 		},
 	},
-	data() {
-		return {
-			currentFolder: null,
-			documentList: [],
-			documentFilteredList: [],
-			folderList: [],
-			folderFilteredList: [],
-			removeDocumentKey: "",
-		};
-	},
 	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
+			currentFolder: "getCurrentFolder",
 			destination: "getDestination",
+			documentFilteredList: "getDocumentFilteredList",
+			documentObjectCount: "getDocumentObjectCount",
+			folderFilteredList: "getFolderFilteredList",
 			locationId: "getLocationId",
 			userLevel: "getUserLevel",
 			rootUrl: "getRootUrl",
@@ -237,20 +185,44 @@ export default {
 	},
 	methods: {
 		addFolder() {
+			//Close the card modal if exists
+			const cardModal = document.getElementById("cardInformationModalCloseButton");
+			if (cardModal !== null)
+			{
+				cardModal.click();
+			}
+
 			const addFolderModal = new Modal(
 				document.getElementById("addFolderModal")
 			);
 			addFolderModal.show();
 		},
 		addLink() {
+			//Close the card modal if exists
+			const cardModal = document.getElementById("cardInformationModalCloseButton");
+			if (cardModal !== null)
+			{
+				cardModal.click();
+			}
+
 			const addLinkModal = new Modal(
 				document.getElementById("addLinkModal")
 			);
 			addLinkModal.show();
 		},
 		confirmFileDelete(document_key) {
-			//Send data downstream
-			this.removeDocumentKey = document_key;
+			//Send the document key to VueX
+			this.$store.commit({
+				type: "updateDocumentRemoveKey",
+				documentRemoveKey: document_key,
+			});
+
+			//Close the card modal if exists
+			const cardModal = document.getElementById("cardInformationModalCloseButton");
+			if (cardModal !== null)
+			{
+				cardModal.click();
+			}
 
 			//Open the modal
 			const confirmFileDeleteModal = new Modal(
@@ -266,29 +238,40 @@ export default {
 			//If getLocationID === 0 - bail on axios
 			if (this.getLocationId() === 0) return;
 
-			this.axios
-				.post(
-					`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/list/files/`
-				)
-				.then((response) => {
-					this.documentList = response.data;
-
-					this.updateDocumentFilteredList();
+			this.axios.post(
+				`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/list/files/`
+			).then((response) => {
+				// this.documentList = response.data;
+				//
+				// this.updateDocumentFilteredList();
+				this.$store.commit({
+					type: "updateDocumentList",
+					documentList: response.data,
+				})
+			}).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting Document List",
+					message: `Can not retrieve document list. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		getFolderList() {
 			//If getLocationID === 0 - bail on axios
 			if (this.getLocationId() === 0) return;
 
-			this.axios
-				.post(
-					`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/list/folders/`
-				)
-				.then((response) => {
-					this.folderList = response.data;
-
-					this.updateFolderFilteredList();
+			this.axios.post(
+				`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/list/folders/`
+			).then((response) => {
+				// this.folderList = response.data;
+				//
+				// this.updateFolderFilteredList();
+				this.$store.commit({
+					type: "updateFolderList",
+					folderList: response.data,
 				});
+			});
 		},
 		getIcon(document) {
 			//If the document is a weblink - just return the link image
@@ -330,20 +313,7 @@ export default {
 			return this.overrideDestination !== "" ? this.overrideLocationId : this.locationId;
 		},
 		goToParentDirectory() {
-			//Filter for the directory - then obtain it's parent directory variable.
-			const filtered_data = this.folderList.filter((row) => {
-				return row.pk == this.currentFolder;
-			})[0];
-
-			//Update the current directory to the parent folder
-			this.updateCurrentFolder(filtered_data.fields.parent_folder);
-		},
-		removeDocument(event) {
-			this.documentList = this.documentList.filter((row) => {
-				return row.document_key_id !== event.document_key;
-			});
-
-			this.updateDocumentFilteredList();
+			this.$store.dispatch("goToParentDirectory",{});
 		},
 		shortName(input_string) {
 			//The following method will determine if we need an ellipsis (...) at the end of the file/folder name
@@ -355,54 +325,27 @@ export default {
 			}
 
 			//Now we split the string by max_string_length - 3 (3 for the ...)
-			const new_string = `${input_string.substring(
+			return `${input_string.substring(
 				0,
 				max_string_length - 3
 			)}...`;
-
-			//Return the new string
-			return new_string;
 		},
 		updateCurrentFolder(new_folder_id) {
 			//Update the current folder id
-			this.currentFolder = new_folder_id;
-
-			//Update the filtered lists
-			this.updateDocumentFilteredList();
-			this.updateFolderFilteredList();
-		},
-		updateDocumentList(data) {
-			//Add data to the docuemnt List
-			this.documentList.push(data[0]);
-
-			//Update the filtered list
-			this.updateDocumentFilteredList();
-		},
-		updateDocumentFilteredList() {
-			//Filter the results to contain only the documents in the current folder
-			this.documentFilteredList = this.documentList.filter((row) => {
-				return row.folder === this.currentFolder;
-			}).sort((a, b) => {
-				return a.document_key__document_description > b.document_key__document_description;
-			});
-
-		},
-		updateFolderList(data) {
-			//Append the first row of the data (there will always be one row)
-			this.folderList.push(data[0]);
-
-			//Update the folder filtered list
-			this.updateFolderFilteredList();
-		},
-		updateFolderFilteredList() {
-			//Filter the results to contain only the folders in the current folder
-			this.folderFilteredList = this.folderList.filter((row) => {
-				return row.fields.parent_folder === this.currentFolder;
-			}).sort((a, b) => {
-				return a.fields.folder_description > b.fields.folder_description;
+			this.$store.commit({
+				type: "updateCurrentFolder",
+				currentFolder: new_folder_id,
 			});
 		},
 		uploadDocument() {
+			//Close the card modal if exists
+			const cardModal = document.getElementById("cardInformationModalCloseButton");
+			if (cardModal !== null)
+			{
+				cardModal.click();
+			}
+
+			//Open the upload document modal
 			const uploadDocumentModal = new Modal(
 				document.getElementById("uploadDocumentModal")
 			);

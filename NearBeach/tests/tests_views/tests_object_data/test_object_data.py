@@ -174,5 +174,4 @@ class TestObjectData(TestCase):
                     reverse(data["url"], args=["task", 1]), data["formData"]
                 )
                 reverseUrl = reverse(data["url"], args=["task", 1])
-                print(F"Reverse URL : {reverseUrl}")
                 self.assertEqual(response.status_code, 200)

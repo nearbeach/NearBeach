@@ -198,10 +198,12 @@ import {mapGetters} from "vuex";
 
 //Mixins
 import iconMixin from "../../mixins/iconMixin";
+import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
 
 export default {
 	name: "CardInformation",
 	components: {
+		UploadDocumentWizard,
 		CardDescription,
 		CardDetails,
 		CardNotes,

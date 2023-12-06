@@ -420,7 +420,7 @@ urlpatterns = [
     path(
         "object_data/admin_add_user/",
         object_data_views.admin_add_user,
-        name="admin_add_user",
+        name="object_admin_add_user",
     ),
     path(
         "object_data/<destination>/<location_id>/add_bug/",

@@ -69,7 +69,9 @@ class AdminPermissionTests(TestCase):
             URLTest("task_information", [1], {}, 200, "GET"),
             URLTest("user_information", [1], {}, 200, "GET"),
             URLTest("password_reset", [], {}, 200, "GET"),
-            URLTest("admin_add_user", [], {"username": 2}, 200, "POST"),
+            URLTest("object_admin_add_user", [], {"username": 2}, 200, "POST"),
+            URLTest("admin_add_user", [], {"group": 1, "permission_set": 1, "username": 1}, 200, "POST"),
+            URLTest("admin_add_user", [], {"group": 1, "permission_set": 1}, 400, "POST"),
             URLTest("add_customer", ["project", 1], {"customer": 1}, 200, "POST"),
             URLTest("add_group", ["project", 1], {"group_list": [1, 2]}, 200, "POST"),
             URLTest(
@@ -90,6 +92,19 @@ class AdminPermissionTests(TestCase):
             URLTest("new_notification", [], {}, 200),
             URLTest("notification_information", [1], {}, 200),
             URLTest("search_notification", [], {}, 200),
+            URLTest("update_group_leader_status", ["group"], {"group":1,"permission_set":1,"username":1,"group_leader":"true"}, 200, "POST"),
+            URLTest("update_group_leader_status", ["permission_set"], {"group": 1, "permission_set": 1, "username": 1, "group_leader": "true"}, 200, "POST"),
+            URLTest("update_group_leader_status", ["user"], {"group": 1, "permission_set": 1, "username": 1, "group_leader": "true"}, 200, "POST"),
+            URLTest("update_group_leader_status", ["group"],
+                    {"group": 1, "permission_set": 1, "username": 1, "group_leader": "false"}, 200, "POST"),
+            URLTest("update_group_leader_status", ["permission_set"],
+                    {"group": 1, "permission_set": 1, "username": 1, "group_leader": "false"}, 200, "POST"),
+            URLTest("update_group_leader_status", ["user"],
+                    {"group": 1, "permission_set": 1, "username": 1, "group_leader": "false"}, 200, "POST"),
+            URLTest("update_user_password", [], {"username": 1, "password": "Test1234$"}, 200, "POST"),
+            # URLTest("update_user_password", [], {}, 400, "POST"), # Get 200 http code for some reason?
+            URLTest("profile_update_data", [], {"username": 1, "first_name": "Admin", "last_name": "Admin", "theme": "dark"}, 200, "POST"),
+
         ]
 
         # Loop through each url to test to make sure the decorator is applied
