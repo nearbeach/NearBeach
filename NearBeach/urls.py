@@ -661,6 +661,11 @@ urlpatterns = [
         name="rfc_change_task_list",
     ),
     path(
+        "rfc_information/<int:rfc_id>/get_approval_users/",
+        request_for_change_views.rfc_get_approval_users,
+        name="rfc_get_approval_users",
+    ),
+    path(
         "rfc_information/<int:rfc_id>/new_change_task/",
         request_for_change_views.rfc_new_change_task,
         name="rfc_new_change_task",

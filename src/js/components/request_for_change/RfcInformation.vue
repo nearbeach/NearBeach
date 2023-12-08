@@ -135,11 +135,8 @@
 									/>
 								</td>
 								<td>
-									<strong
-									>{{
-											localChangeLead[0].username
-										}}: </strong
-									>{{ localChangeLead[0].first_name }}
+									<strong>{{ localChangeLead[0].username }}: </strong>
+									{{ localChangeLead[0].first_name }}
 									{{ localChangeLead[0].last_name }}
 									<div class="spacer"></div>
 									<p class="user-card-email">
@@ -151,6 +148,46 @@
 						</table>
 					</div>
 				</div>
+
+				<hr v-if="parseInt(rfcResults[0].fields.rfc_status) === 2"/>
+				<div v-if="parseInt(rfcResults[0].fields.rfc_status) === 2"
+					 class="row"
+				>
+					<div class="col-md-4">
+						<strong>Waiting for approval</strong>
+						<p class="text-instructions">
+							The following users will be able to approve or reject this RFC. Please contact them.
+						</p>
+					</div>
+					<div v-if="approvalUsersList.length === 0"
+						class="col-md-8"
+					>
+						Currently gathering User Approval List.
+					</div>
+					<div v-else
+						 class="user-card-list col-md-8"
+					>
+						<div v-for="user in approvalUsersList"
+							 v-bind:key="user.username"
+							 class="user-card wide"
+						>
+							<img
+								v-bind:src="profilePicture(user.profile_picture)"
+								alt="default profile"
+								class="user-card--profile"
+							/>
+							<div class="user-card--details">
+								<div class="user-card--name">
+									{{ user.first_name }} {{ user.last_name }}
+								</div>
+								<div class="user-card--email">
+									{{ user.email }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<hr v-if="parseInt(rfcResults[0].fields.rfc_status) === 2"/>
 
 				<!-- Update Button -->
 				<hr v-if="!isReadOnly"/>
@@ -232,9 +269,9 @@
 							class="restart-rfc-button save-changes"
 							v-on:click="startRFCStatus"
 							v-if="
-							userLevel > 1 &&
-							rfcResults[0].fields.rfc_status == 7
-						"
+								userLevel > 1 &&
+								rfcResults[0].fields.rfc_status == 7
+							"
 						>
 							Restart RFC
 						</a>
@@ -376,6 +413,7 @@ export default {
 	mixins: [datetimeMixin, errorModalMixin, getThemeMixin, loadingModalMixin],
 	data() {
 		return {
+			approvalUsersList: [],
 			localChangeLead: this.rfcChangeLead,
 			localEndDate: 0,
 			localReleaseDate: 0,
@@ -452,6 +490,23 @@ export default {
 
 			return this.disableDate(date);
 		},
+		getApprovalUserList() {
+			//If the status isn't 2 (i.e. waiting for approval), then just return. Don't need the data
+			if (parseInt(this.rfcResults[0].fields.rfc_status) !== 2) return;
+
+			this.axios.post(
+				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/get_approval_users/`
+			).then((response) => {
+				this.approvalUsersList = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Approval User List",
+					message: "Sorry, we could not get you the list of users who can approve this RFC",
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		},
 		getProfilePicture(profile_picture) {
 			//If customer profile is blank - return default picture
 			if (profile_picture === "" || profile_picture === null || profile_picture === undefined) {
@@ -475,6 +530,13 @@ export default {
 
 			//Send data
 			this.sendUpdate(data_to_send);
+		},
+		profilePicture(picture_uuid) {
+			if (picture_uuid !== null && picture_uuid !== "") {
+				return `${this.rootUrl}private/${picture_uuid}/`;
+			}
+
+			return `${this.staticUrl}NearBeach/images/placeholder/people_tax.svg`;
 		},
 		rejectRFCStatus() {
 			const data_to_send = new FormData();
@@ -625,6 +687,9 @@ export default {
 
 		//Update State Management
 		this.updateStateManagement();
+
+		//Get the list of users who can approve
+		this.getApprovalUserList();
 	},
 };
 </script>

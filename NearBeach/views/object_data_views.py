@@ -927,23 +927,6 @@ def group_and_user_data(request, destination, location_id, *args, **kwargs):
     )
 
 
-
-#     # Return the data
-#     return HttpResponse(
-#         serializers.serialize("json", group_results), content_type="application/json"
-#     )
-
-
-
-#     # Obtain data
-
-
-#     # Return data as json
-#     return HttpResponse(
-#         serializers.serialize("json", group_results), content_type="application/json"
-#     )
-
-
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 def lead_user_list(request):
