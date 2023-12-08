@@ -198,7 +198,7 @@
 					<div class="col-md-12">
 						<a
 							href="javascript:void(0)"
-							class="btn btn-dark"
+							class="btn btn-secondary"
 							v-on:click="updateRFCStatus"
 							v-if="userLevel > 1 && changeTaskCount > 0"
 						>Submit RFC for Approval</a
