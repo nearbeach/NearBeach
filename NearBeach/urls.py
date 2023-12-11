@@ -20,6 +20,7 @@ from .views import (
     permission_set_views,
     profile_views,
     project_views,
+    public_views,
     request_for_change_views,
     requirement_item_views,
     requirement_views,
@@ -584,6 +585,32 @@ urlpatterns = [
         "project_information/<int:project_id>/save/",
         project_views.project_information_save,
         name="project_information_save",
+    ),
+    # Public
+    path(
+        "public/<destination>/<int:location_id>/<uuid:public_link_id>/",
+        public_views.public_link,
+        name="public_link",
+    ),
+    path(
+        "public_data/<destination>/<int:location_id>/create/",
+        public_views.create_public_link,
+        name="create_public_link",
+    ),
+    path(
+        "public_data/<destination>/<int:location_id>/delete/",
+        public_views.delete_public_link,
+        name="delete_public_link",
+    ),
+    path(
+        "public_data/<destination>/<int:location_id>/get_links/",
+        public_views.get_public_links,
+        name="get_public_links",
+    ),
+    path(
+        "public_data/update_link/",
+        public_views.update_public_link,
+        name="update_public_link",
     ),
     # Requirements
     path(

@@ -23,7 +23,6 @@
 		</div>
 
 		<!-- ADD TAG BUTTON -->
-		<hr/>
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<a

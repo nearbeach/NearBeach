@@ -1,3 +1,4 @@
+An issue has occurred trying to connect to the S3 bucket. Please see the following errors - Could not connect to the endpoint URL: "http://localhost:9000/"
 [
 {
   "model": "NearBeach.changetask",
@@ -66,6 +67,7 @@
     "document_description": "NearBeach Homepage",
     "document_url_location": "https://nearbeach.org",
     "document": "",
+    "document_upload_successfully": false,
     "date_created": "2023-02-22T09:18:33.040Z",
     "date_modified": "2023-02-22T09:18:33.040Z",
     "change_user": 1,
@@ -79,6 +81,7 @@
     "document_description": "NearBeach Homepage",
     "document_url_location": "https://nearbeach.org",
     "document": "",
+    "document_upload_successfully": false,
     "date_created": "2023-02-22T09:18:51.309Z",
     "date_modified": "2023-02-22T09:18:51.309Z",
     "change_user": 1,
@@ -3882,6 +3885,42 @@
   }
 },
 {
+  "model": "auth.permission",
+  "pk": 177,
+  "fields": {
+    "name": "Can add public link",
+    "content_type": 45,
+    "codename": "add_publiclink"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 178,
+  "fields": {
+    "name": "Can change public link",
+    "content_type": 45,
+    "codename": "change_publiclink"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 179,
+  "fields": {
+    "name": "Can delete public link",
+    "content_type": 45,
+    "codename": "delete_publiclink"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 180,
+  "fields": {
+    "name": "Can view public link",
+    "content_type": 45,
+    "codename": "view_publiclink"
+  }
+},
+{
   "model": "auth.user",
   "pk": 1,
   "fields": {
@@ -4357,6 +4396,14 @@
   "fields": {
     "app_label": "NearBeach",
     "model": "usersetting"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 45,
+  "fields": {
+    "app_label": "NearBeach",
+    "model": "publiclink"
   }
 },
 {

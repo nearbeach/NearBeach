@@ -307,7 +307,7 @@
 						role="tabpanel"
 						aria-labelledby="contact-tab"
 					>
-						<list-tags-module></list-tags-module>
+						<misc-module></misc-module>
 					</div>
 					<div
 						class="tab-pane fade"
@@ -331,7 +331,7 @@ import RequirementLinksModule from "./sub_modules/RequirementLinksModule.vue";
 import DocumentsModule from "./sub_modules/DocumentsModule.vue";
 import ObjectLinks from "./sub_modules/ObjectLinks.vue";
 import CustomersModule from "./sub_modules/CustomersModule.vue";
-import ListTagsModule from "./sub_modules/ListTagsModule.vue";
+import MiscModule from "./sub_modules/MiscModule.vue";
 import BugsModule from "./sub_modules/BugsModule.vue";
 import NotesModule from "./sub_modules/NotesModule.vue";
 import UploadDocumentWizard from "./wizards/UploadDocumentWizard.vue";
@@ -352,13 +352,13 @@ export default {
 		CustomersModule,
 		DocumentsModule,
 		GroupsAndUsersModule,
-		ListTagsModule,
 		NotesModule,
 		ObjectLinks,
 		RequirementItemLinksModule,
 		RequirementItemsModule,
 		RequirementLinksModule,
 		UploadDocumentWizard,
+		MiscModule,
 	},
 	mixins: [
 		getThemeMixin

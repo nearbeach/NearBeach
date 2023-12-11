@@ -1254,6 +1254,72 @@ class Project(models.Model):
         return str(self.project_name)
 
 
+class PublicLink(models.Model):
+    public_link_id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+    public_link_is_active = models.BooleanField(
+        default=True,
+    )
+    requirement = models.ForeignKey(
+        "requirement",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    requirement_item = models.ForeignKey(
+        "RequirementItem",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    project = models.ForeignKey(
+        "project",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    task = models.ForeignKey(
+        "task",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    kanban_board = models.ForeignKey(
+        "KanbanBoard",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    kanban_card = models.ForeignKey(
+        "KanbanCard",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    request_for_change = models.ForeignKey(
+        "RequestForChange",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+    )
+    creation_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
+
+    def __str__(self):
+        return str(self.public_link_id)
+
+
 class RequestForChange(models.Model):
     """
     Due to the long and complicated name,

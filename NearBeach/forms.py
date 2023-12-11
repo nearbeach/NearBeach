@@ -20,6 +20,7 @@ from .models import (
     Notification,
     PermissionSet,
     Project,
+    PublicLink,
     RequestForChange,
     RequirementItem,
     Requirement,
@@ -797,6 +798,23 @@ class ProjectForm(forms.ModelForm):
             "project_start_date",
             "project_end_date",
             "project_status",
+        ]
+
+
+class PublicLinkDeleteForm(forms.ModelForm):
+    class Meta:
+        model = PublicLink
+        fields = [
+            "public_link_id",
+        ]
+
+
+class PublicLinkUpdateForm(forms.ModelForm):
+    class Meta:
+        model = PublicLink
+        fields = [
+            "public_link_id",
+            "public_link_is_active",
         ]
 
 
