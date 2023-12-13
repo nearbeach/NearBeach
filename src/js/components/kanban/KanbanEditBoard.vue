@@ -138,7 +138,7 @@ export default {
 	mixins: [errorModalMixin, getThemeMixin, searchMixin],
 	data() {
 		return {
-			canDragCards: true,
+			canDragCards: false,
 			columnModel: [],
 			levelModel: [],
 		};
@@ -205,6 +205,9 @@ export default {
 				title: row.fields.kanban_level_name,
 			};
 		});
+
+		//Update Can Drag Cards value
+		this.updateCanDragCards(false);
 	},
 };
 </script>
