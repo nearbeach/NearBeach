@@ -801,21 +801,21 @@ class ProjectForm(forms.ModelForm):
         ]
 
 
-class PublicLinkDeleteForm(forms.ModelForm):
-    class Meta:
-        model = PublicLink
-        fields = [
-            "public_link_id",
-        ]
+class PublicLinkDeleteForm(forms.Form):
+    public_link_id = forms.ModelChoiceField(
+        queryset=PublicLink.objects.all(),
+        required=True,
+    )
 
 
-class PublicLinkUpdateForm(forms.ModelForm):
-    class Meta:
-        model = PublicLink
-        fields = [
-            "public_link_id",
-            "public_link_is_active",
-        ]
+class PublicLinkUpdateForm(forms.Form):
+    public_link_id = forms.ModelChoiceField(
+        queryset=PublicLink.objects.all(),
+        required=True,
+    )
+    public_link_is_active = forms.BooleanField(
+        required=False,
+    )
 
 
 class ResortColumnForm(forms.Form):

@@ -20,6 +20,7 @@ def create_public_link(request, destination, location_id):
     # Create new public link
     submit_public_link = PublicLink(
         change_user=request.user,
+        creation_user=request.user,
     )
 
     # Assign to the destination/location
@@ -41,16 +42,21 @@ def create_public_link(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def delete_public_link(request):
+def delete_public_link(request, destination, location_id):
     form = PublicLinkDeleteForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # Delete the data
-    PublicLink.objects.filter(
-        public_link_id=form.cleaned_data["public_link_id"],
-    ).update(
-        is_deleted=True,
+    # Get the data we want
+    uuid = str(form.cleaned_data["public_link_id"])
+    public_link_update = PublicLink.objects.filter(
+        public_link_id=uuid,
+        is_deleted=False,
+    )
+    public_link_update = get_object_from_destination(public_link_update, destination, location_id)
+
+    public_link_update.update(
+        is_deleted=True
     )
 
     return HttpResponse()
@@ -100,8 +106,10 @@ def update_public_link(request):
         return HttpResponseBadRequest(form.errors)
 
     # Update the data
+    uuid = str(form.cleaned_data["public_link_id"])
+
     PublicLink.objects.filter(
-        public_link_id=form.cleaned_data["public_link_id"],
+        public_link_id=uuid,
     ).update(
         public_link_is_active=form.cleaned_data["public_link_is_active"]
     )

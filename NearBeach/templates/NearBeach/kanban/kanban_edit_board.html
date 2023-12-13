@@ -18,6 +18,12 @@
 
     <div class="spacer"></div>
 
+    <kanban-public-links
+            v-bind:theme="`{{ theme }}`"
+    ></kanban-public-links>
+
+    <div class="spacer"></div>
+
     <kanban-danger-zone
             v-bind:kanban-board-status="`{{ kanban_board_status }}`"
             v-bind:theme="`{{ theme }}`"

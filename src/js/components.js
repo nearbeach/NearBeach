@@ -96,6 +96,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/kanban/KanbanInformation.vue"
             )
     ),
+    KanbanPublicLinks = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "kanban-public-links" */
+            "./components/kanban/KanbanPublicLinks.vue"
+            )
+    ),
     ListSearchResults = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "list-search-results" */
