@@ -228,6 +228,18 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/profile/ProfileInformation.vue"
             )
     ),
+    PublicCardInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "public-card-information" */
+            "./components/public/public_card_information.vue"
+            )
+    ),
+    PublicRequirementItemList = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "public-requirement-item-list" */
+            "./components/public/public_requirement_item_list.vue"
+            )
+    ),
     RenderToasts = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "render-toasts" */

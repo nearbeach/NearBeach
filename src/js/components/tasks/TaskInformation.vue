@@ -65,6 +65,7 @@
 							skin: `${this.skin}`,
 							content_css: `${this.contentCss}`,
 						}"
+							v-bind:disabled="isReadOnly"
 							v-model="taskDescriptionModel"
 						/>
 					</div>
@@ -81,36 +82,12 @@
 							the change.
 						</p>
 					</div>
-					<div
-						class="col-md-4"
-						v-if="!isReadOnly"
-					>
+					<div class="col-md-4">
 						<n-select
 							v-bind:options="statusOptions"
+							v-bind:disabled="isReadOnly"
 							v-model:value="taskStatusModel"
 						></n-select>
-					</div>
-					<div
-						class="col-md-4"
-						v-if="!isReadOnly"
-					>
-						<div
-							class="alert alert-danger"
-							v-if="taskStatusModel === 'Closed'"
-						>
-							Saving the task with this status will close the task.
-						</div>
-					</div>
-					<div
-						class="col-md-4"
-						v-if="isReadOnly"
-					>
-						<div
-							class="alert alert-info"
-							v-if="taskStatusModel === 'Closed'"
-						>
-							Project has been closed.
-						</div>
 					</div>
 				</div>
 				<!-- STAKEHOLDER ORGANISATION -->
@@ -240,10 +217,12 @@ export default {
 		return {
 			isReadOnly: false,
 			statusOptions: [
+				{value: "New", label: "New"},
 				{value: "Backlog", label: "Backlog"},
 				{value: "Blocked", label: "Blocked"},
 				{value: "In Progress", label: "In Progress"},
 				{value: "Test/Review", label: "Test/Review"},
+				{value: "Closed", label: "Closed"},
 			],
 			taskDescriptionModel:
 			this.taskResults[0].fields.task_long_description,
@@ -281,6 +260,17 @@ export default {
 
 			//Save the status
 			this.updateTask();
+		},
+		setReadOnly() {
+			//If the project is closed -> we state that is read only is true
+			if (this.taskResults[0].fields.task_status === "Closed") {
+				this.isReadOnly = true;
+				return;
+			}
+
+			if (this.userLevel <= 1) {
+				this.isReadOnly = true;
+			}
 		},
 		updateTask() {
 			//Check validation
@@ -353,13 +343,11 @@ export default {
 	},
 	mounted() {
 		//If users have enough permissions add in the "Closed" functionaly
-		if (this.userLevel >= 3) {
-			this.statusOptions.push("Closed");
-		}
+		// if (this.userLevel >= 3) {
+		// 	this.statusOptions.push("Closed");
+		// }
 
-		//If the project is closed -> we state that is read only is true
-		this.isReadOnly =
-			this.taskResults[0].fields.task_status === "Closed";
+		this.setReadOnly();
 	},
 };
 </script>

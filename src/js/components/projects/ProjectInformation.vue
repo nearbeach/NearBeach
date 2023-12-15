@@ -82,37 +82,12 @@
 							save the change.
 						</p>
 					</div>
-					<div
-						class="col-md-4"
-						v-if="!isReadOnly"
-					>
+					<div class="col-md-4">
 						<n-select
 							v-bind:options="statusOptions"
+							v-bind:disabled="userLevel<=1"
 							v-model:value="projectStatusModel"
 						></n-select>
-					</div>
-					<div
-						class="col-md-4"
-						v-if="!isReadOnly"
-					>
-						<div
-							class="alert alert-danger"
-							v-if="projectStatusModel === 'Closed'"
-						>
-							Saving the project with this status will close the
-							project.
-						</div>
-					</div>
-					<div
-						class="col-md-4"
-						v-if="isReadOnly"
-					>
-						<div
-							class="alert alert-info"
-							v-if="projectStatusModel === 'Closed'"
-						>
-							Project has been closed.
-						</div>
 					</div>
 				</div>
 
@@ -245,10 +220,12 @@ export default {
 			projectStatusModel:
 			this.projectResults[0].fields.project_status,
 			statusOptions: [
+				{value: "New", label: "New"},
 				{value: "Backlog", label: "Backlog"},
 				{value: "Blocked", label: "Blocked"},
 				{value: "In Progress", label: "In Progress"},
 				{value: "Test/Review", label: "Test/Review"},
+				{value: "Closed", label: "Closed"},
 			],
 		};
 	},
@@ -275,6 +252,18 @@ export default {
 
 			//Update the project
 			this.updateProject();
+		},
+		setReadOnly() {
+			//If the project status is closed => set the isReadOnly to true
+			if (this.projectResults[0].fields.project_status === "Closed") {
+				this.isReadOnly = true;
+				return;
+			}
+
+			//If the user level is 1 or below
+			if (this.userLevel <= 1) {
+				this.isReadOnly = true;
+			}
 		},
 		updateDates(data) {
 			this.projectEndDateModel = new Date(data.end_date);
@@ -344,13 +333,12 @@ export default {
 	},
 	mounted() {
 		//If users have enough permissions add in the "Closed" functionaly
-		if (this.userLevel >= 3) {
-			this.statusOptions.push("Closed");
-		}
+		// if (this.userLevel >= 3) {
+		// 	this.statusOptions.push("Closed");
+		// }
 
-		//If the project status is closed => set the isReadOnly to true
-		this.isReadOnly =
-			this.projectResults[0].fields.project_status === "Closed";
+		//Set the read only status
+		this.setReadOnly();
 	},
 };
 </script>

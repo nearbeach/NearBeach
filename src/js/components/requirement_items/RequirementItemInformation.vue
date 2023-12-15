@@ -263,14 +263,14 @@ export default {
 	mixins: [getThemeMixin, iconMixin, uploadMixin],
 	data() {
 		return {
-			requirementItemScopeModel: "",
-			requirementItemTitleModel: "",
-			stakeholderModel: "",
+			requirementItemScopeModel: this.requirementItemResults[0].fields.requirement_item_scope,
+			requirementItemTitleModel: this.requirementItemResults[0].fields.requirement_item_title,
+			stakeholderModel: this.organisationResults[0].fields,
 
 			statusFixList: [],
-			statusModel: "",
+			statusModel: this.requirementItemResults[0].fields.requirement_item_status,
 			typeFixList: [],
-			typeModel: "",
+			typeModel: this.requirementItemResults[0].fields.requirement_item_type,
 		};
 	},
 	validations: {
@@ -297,33 +297,27 @@ export default {
 			this.v$.$touch();
 
 			if (this.v$.$invalid) {
-				//Show the error dialog and notify to the user that there were field missing.
-				const elem_cont =
-					document.getElementById("errorModalContent");
-
-				// Update the content
-				elem_cont.innerHTML = "<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.";
-
-				// Show the modal
-				const errorModal = new Modal(
-					document.getElementById("errorModal")
-				);
-				errorModal.show();
+				//Notify the user of the issues
+				this.$store.dispatch("newToast", {
+					header: "Error Saving",
+					message: "Please fill out the form appropriately",
+					extra_classes: "bg-warning",
+					delay: 0,
+					unique_type: "saving",
+				});
 
 				//Just return - as we do not need to do the rest of this function
 				return;
 			}
 
 			//Open up the loading modal
-			const loadingModal = new Modal(
-				document.getElementById("loadingModal")
-			);
-			loadingModal.show();
-
-			//Update message in loading modal
-			document.getElementById(
-				"loadingModalContent"
-			).innerHTML = "Updating your Requirement Item details";
+			this.$store.dispatch("newToast", {
+				header: "Saving Requirement Item",
+				message: "We are saving your requirement item. Please wait",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "saving",
+			});
 
 			// Set up the data object to send
 			const data_to_send = new FormData();
@@ -339,56 +333,36 @@ export default {
 			data_to_send.set("requirement_item_type", this.typeModel);
 
 			// Use Axion to send the data
-			this.axios
-				.post("save/", data_to_send)
-				.then((response) => {
-					//Update the message in the loading modal
-					document.getElementById(
-						"loadingModalContent"
-					).innerHTML = "UPDATED SUCCESSFULLY";
-
-					//Close after 1 second
-					setTimeout(() => {
-						loadingModal.hide();
-					}, 1000);
-				})
-				.catch((error) => {
-					//Hide the loading modal
-					loadingModal.hide();
-
-					// Get the error modal
-					const elem_cont =
-						document.getElementById("errorModalContent");
-
-					// Update the content
-					elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new requirement item<hr>${error}`;
-
-					// Show the modal
-					const errorModal = new Modal(
-						document.getElementById("errorModal")
-					);
-					errorModal.show();
+			this.axios.post(
+				"save/",
+				data_to_send
+			).then((response) => {
+				//Tell user of successfull update
+				this.$store.dispatch("newToast", {
+					header: "Saved Requirement Item",
+					message: "Your Requirement Item has saved",
+					extra_classes: "bg-success",
+					unique_type: "saving",
 				});
+
+
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Saving Requirement Item",
+					message: `Sorry, your requirement item failed to save. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "saving",
+				});
+			});
 		},
 	},
-  async beforeMount() {
-    await this.$store.dispatch("processThemeUpdate", {
-      theme: this.theme,
-    });
-  },
+  	async beforeMount() {
+    	await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
 	mounted() {
-		//Get data from the requirementResults and delegate to the Models
-		const requirement_item_results =
-			this.requirementItemResults[0].fields;
-
-		this.requirementItemScopeModel =
-			requirement_item_results.requirement_item_scope;
-		this.requirementItemTitleModel =
-			requirement_item_results.requirement_item_title;
-
-		//Extract the organisation results directly
-		this.stakeholderModel = this.organisationResults[0].fields;
-
 		//Map the original lists to something NSelect can read
 		this.statusFixList = this.statusList.map((row) => {
 			return {
@@ -403,10 +377,6 @@ export default {
 				label: row.fields.requirement_item_type,
 			};
 		});
-
-		//Set the status and type models
-		this.statusModel = requirement_item_results.requirement_item_status;
-		this.typeModel = requirement_item_results.requirement_item_type;
 	},
 };
 </script>

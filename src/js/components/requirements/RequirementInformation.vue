@@ -106,6 +106,7 @@
 										</label>
 										<n-select
 											:options="statusFixList"
+											v-bind:disabled="isReadOnly"
 											v-bind:clearable="false"
 											label="status"
 											v-model:value="statusModel"

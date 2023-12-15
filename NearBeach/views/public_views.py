@@ -4,13 +4,25 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_protect
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
+from django.shortcuts import redirect
+from django.template import loader
 
-from NearBeach.decorators.check_destination import check_destination
+from NearBeach.decorators.check_destination import check_destination, check_public_destination
 from NearBeach.views.object_data_views import set_object_from_destination, get_object_from_destination
-from NearBeach.models import PublicLink
+from NearBeach.models import PublicLink, \
+    RequirementItem, \
+    ListOfRequirementItemStatus, \
+    ListOfRequirementItemType, \
+    ListOfRequirementStatus, \
+    ListOfRequirementType
 from NearBeach.forms import PublicLinkDeleteForm, PublicLinkUpdateForm
 
 import json
+
+# Convert kanban card priorty to dict for easy lookup
+from NearBeach.models import KANBAN_CARD_PRIORITY
+DICT_KANBAN_CARD_PRIORITY = dict(KANBAN_CARD_PRIORITY)
+
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
@@ -63,6 +75,84 @@ def delete_public_link(request, destination, location_id):
 
 
 # Internal function
+def get_public_context(results):
+    organisation_results = getattr(
+        results,
+        "organisation"
+    )
+
+    # Serialise in the if statement - as None can not be serialized
+    organisation_results = serializers.serialize("json", [organisation_results])
+    results = serializers.serialize("json", [results])
+
+    return {
+        "organisation_results": organisation_results,
+        "results": results,
+    }
+
+
+# Internal function
+def get_public_context_kanban_card(results):
+    return {
+        "card_column": results.kanban_column.kanban_column_name,
+        "card_description": results.kanban_card_description,
+        "card_id": results.kanban_card_id,
+        "card_level": results.kanban_level.kanban_level_name,
+        "card_priority": DICT_KANBAN_CARD_PRIORITY[results.kanban_card_priority],
+        "card_text": results.kanban_card_text,
+    }
+
+
+# Internal function
+def get_public_context_requirement(results):
+    # Get all the requirement item information
+    requirement_item_results = RequirementItem.objects.filter(
+        is_deleted=False,
+        requirement_id=results.requirement_id,
+    )
+
+    status_list = ListOfRequirementStatus.objects.filter(
+        is_deleted=False,
+    )
+
+    status_item_list = ListOfRequirementItemStatus.objects.filter(
+        is_deleted=False,
+    )
+
+    type_list = ListOfRequirementType.objects.filter(
+        is_deleted=False,
+    )
+
+    type_item_list = ListOfRequirementItemType.objects.filter(
+        is_deleted=False,
+    )
+
+    organisation_results = getattr(
+        results,
+        "organisation"
+    )
+
+    # Serialise
+    organisation_results = serializers.serialize("json", [organisation_results])
+    results = serializers.serialize("json", [results])
+    requirement_item_results = serializers.serialize("json", requirement_item_results)
+    status_list = serializers.serialize("json", status_list)
+    status_item_list = serializers.serialize("json", status_item_list)
+    type_list = serializers.serialize("json", type_list)
+    type_item_list = serializers.serialize("json", type_item_list)
+
+    return {
+        "results": results,
+        "requirement_item_results": requirement_item_results,
+        "organisation_results": organisation_results,
+        "status_list": status_list,
+        "status_item_list": status_item_list,
+        "type_list": type_list,
+        "type_item_list": type_item_list,
+    }
+
+
+# Internal function
 def get_public_link_results(destination, location_id):
     public_link_results = PublicLink.objects.filter(
         is_deleted=False,
@@ -94,9 +184,46 @@ def get_public_links(request, destination, location_id):
     )
 
 
-@check_destination()
-def public_link(request, destination, location_id, public_link_id):
-    return HttpResponse()
+@check_public_destination()
+def public_link(request, destination, location_id, public_link_id, *args, **kwargs):
+    # Check to make sure object exists
+    public_link_results = PublicLink.objects.filter(
+        is_deleted=False,
+        public_link_id=public_link_id,
+    )
+
+    # Double check everything matches
+    public_link_results = get_object_from_destination(
+        public_link_results,
+        destination,
+        location_id,
+    )
+
+    # If there are no matching public links - redirect to the login page
+    if len(public_link_results) == 0:
+        return redirect('login')
+
+    # Get the template
+    t = loader.get_template(F"NearBeach/public/public_{destination}_information.html")
+
+    # Get the first results dependent on the destination.
+    results = getattr(
+        public_link_results.first(),
+        destination
+    )
+
+    # Depending on the destination, depends on how we setup the context
+    if destination == "kanban_card":
+        c = get_public_context_kanban_card(results)
+    elif destination == "requirement":
+        c = get_public_context_requirement(results)
+    else:
+        c = get_public_context(results)
+
+    # Add tinymce flag
+    c["need_tinymce"] = True
+
+    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url="login", redirect_field_name="")
