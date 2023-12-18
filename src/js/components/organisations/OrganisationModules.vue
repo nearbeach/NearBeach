@@ -155,7 +155,7 @@
 							v-bind:destination="destination"
 							v-bind:location-id="locationId"
 						></documents-module>
-						
+
 						<upload-document-wizard></upload-document-wizard>
 
 						<add-folder-wizard

@@ -42,6 +42,8 @@ def new_project(request, *args, **kwargs):
         .distinct()
     )
 
+    user_level = kwargs["user_level"]
+
     # Context
     c = {
         "group_results": serializers.serialize("json", group_results),
@@ -51,6 +53,7 @@ def new_project(request, *args, **kwargs):
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "user_level": user_level,
         "uuid": str(uuid.uuid4()),
     }
 

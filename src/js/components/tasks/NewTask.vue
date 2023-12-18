@@ -170,6 +170,10 @@ export default {
 				return [];
 			},
 		},
+		userLevel: {
+			type: Number,
+			default: 1,
+		},
 		uuid: {
 			type: String,
 			default: "",
@@ -288,6 +292,11 @@ export default {
 			type: "updateUrl",
 			rootUrl: this.rootUrl,
 			staticUrl: this.staticUrl,
+		});
+
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
 		});
 	},
 };

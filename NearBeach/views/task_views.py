@@ -44,6 +44,8 @@ def new_task(request, *args, **kwargs):
         .distinct()
     )
 
+    user_level = kwargs["user_level"]
+
     # Context
     c = {
         "nearbeach_title": "New Task",
@@ -53,6 +55,7 @@ def new_task(request, *args, **kwargs):
         ),
         "need_tinymce": True,
         "uuid": str(uuid.uuid4()),
+        "user_level": user_level,
         "theme": get_theme(request),
     }
 
