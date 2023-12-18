@@ -24,17 +24,17 @@
 
             a {
                 text-decoration: none;
+            }
 
-                .object-card--detail--link {
-                    //color: #4f4f4f;
-                    color: var(--bs-body-color);
-                    font-weight: lighter;
-                }
+            .object-card--detail--link {
+                //color: #4f4f4f;
+                color: var(--bs-body-color);
+                font-weight: lighter;
+            }
 
-                .object-card--detail--description {
-                    white-space: nowrap;
-                    overflow: clip;
-                }
+            .object-card--detail--description {
+                white-space: nowrap;
+                overflow: clip;
             }
         }
 

@@ -222,6 +222,7 @@ def public_link(request, destination, location_id, public_link_id, *args, **kwar
 
     # Add tinymce flag
     c["need_tinymce"] = True
+    c["theme"] = 'light'
 
     return HttpResponse(t.render(c, request))
 
