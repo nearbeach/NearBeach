@@ -178,14 +178,6 @@ export default {
 
 			//Get the distance to the top of the page
 			const scrollTop = document.getElementById("kanban_container").scrollTop;
-			// var scrollTop =
-			// 	window.pageYOffset !== undefined
-			// 		? window.pageYOffset
-			// 		: (
-			// 			document.documentElement ||
-			// 			document.body.parentNode ||
-			// 			document.body
-			// 		).scrollTop;
 
 			//Determine if we are hidding the element or not
 			if (scrollTop < 90) {

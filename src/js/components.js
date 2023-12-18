@@ -234,6 +234,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/public/public_card_information.vue"
             )
     ),
+    PublicKanbanBoard = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "public-kanban-board" */
+            "./components/public/public_kanban_board.vue"
+            )
+    ),
     PublicRequirementItemList = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "public-requirement-item-list" */

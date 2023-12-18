@@ -9,13 +9,17 @@ from django.template import loader
 
 from NearBeach.decorators.check_destination import check_destination, check_public_destination
 from NearBeach.views.object_data_views import set_object_from_destination, get_object_from_destination
-from NearBeach.models import PublicLink, \
+from NearBeach.models import KanbanCard, \
+    KanbanColumn, \
+    KanbanLevel, \
+    PublicLink, \
     RequirementItem, \
     ListOfRequirementItemStatus, \
     ListOfRequirementItemType, \
     ListOfRequirementStatus, \
     ListOfRequirementType
 from NearBeach.forms import PublicLinkDeleteForm, PublicLinkUpdateForm
+from NearBeach.views.kanban_views import get_context as kanban_get_context
 
 import json
 
@@ -101,6 +105,24 @@ def get_public_context_kanban_card(results):
         "card_priority": DICT_KANBAN_CARD_PRIORITY[results.kanban_card_priority],
         "card_text": results.kanban_card_text,
     }
+
+
+# Internal function
+def get_public_context_kanban_board(results):
+    # Use the kanban view get_context
+    context = kanban_get_context(results.kanban_board_id)
+
+    # Get kanban card results
+    kanban_card_results = KanbanCard.objects.filter(
+        is_archived=False,
+        is_deleted=False,
+        kanban_board_id=results.kanban_board_id,
+    ).order_by("kanban_card_sort_number")
+
+    # Add kanban card results to context
+    context["kanban_card_results"] = serializers.serialize("json", kanban_card_results)
+
+    return context
 
 
 # Internal function
@@ -215,6 +237,8 @@ def public_link(request, destination, location_id, public_link_id, *args, **kwar
     # Depending on the destination, depends on how we setup the context
     if destination == "kanban_card":
         c = get_public_context_kanban_card(results)
+    elif destination == "kanban_board":
+        c = get_public_context_kanban_board(results)
     elif destination == "requirement":
         c = get_public_context_requirement(results)
     else:
