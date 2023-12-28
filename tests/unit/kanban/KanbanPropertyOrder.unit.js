@@ -14,7 +14,14 @@ const axios = require('axios');
 describe('KanbanPropertyOrder.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(KanbanPropertyOrder, {
-        props: {},
+        props: {
+            isDirty:false,
+            isNewMode:false,
+            kanbanBoardId:1,
+            propertyList:[{"id":1,"property":"Normal","title":"Backlog"},{"id":2,"property":"Blocked","title":"Blocked"},{"id":3,"property":"Normal","title":"In Progress"},{"id":4,"property":"Normal","title":"Review and QA"},{"id":5,"property":"Closed","title":"Completed"}],
+            propertyName:"Column",
+            source:"columnModel",
+        },
         global: {
             plugins: [store],
             mocks: {

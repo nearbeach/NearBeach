@@ -30,26 +30,26 @@
 						</n-switch>
 					</div>
 					<div class="col-md-4">
-						<kanban-property-order
-							v-bind:property-name="'Column'"
-							v-bind:property-list="columnModel"
-							v-bind:source="'columnModel'"
-							v-bind:is-dirty="v$.columnModel.$dirty"
-							v-bind:is-new-mode="false"
-							v-bind:kanban-board-id="kanbanBoardResults[0].pk"
-							v-on:update_property_list="updatePropertyList($event)"
-						></kanban-property-order>
+<!--						<kanban-property-order-->
+<!--							v-bind:property-name="'Column'"-->
+<!--							v-bind:property-list="columnModel"-->
+<!--							v-bind:source="'columnModel'"-->
+<!--							v-bind:is-dirty="v$.columnModel.$dirty"-->
+<!--							v-bind:is-new-mode="false"-->
+<!--							v-bind:kanban-board-id="kanbanBoardResults[0].pk"-->
+<!--							v-on:update_property_list="updatePropertyList($event)"-->
+<!--						></kanban-property-order>-->
 					</div>
 					<div class="col-md-4">
-						<kanban-property-order
-							v-bind:property-name="'Level'"
-							v-bind:property-list="levelModel"
-							v-bind:source="'levelModel'"
-							v-bind:is-dirty="v$.columnModel.$dirty"
-							v-bind:is-new-mode="false"
-							v-bind:kanban-board-id="kanbanBoardResults[0].pk"
-							v-on:update_property_list="updatePropertyList($event)"
-						></kanban-property-order>
+<!--						<kanban-property-order-->
+<!--							v-bind:property-name="'Level'"-->
+<!--							v-bind:property-list="levelModel"-->
+<!--							v-bind:source="'levelModel'"-->
+<!--							v-bind:is-dirty="v$.columnModel.$dirty"-->
+<!--							v-bind:is-new-mode="false"-->
+<!--							v-bind:kanban-board-id="kanbanBoardResults[0].pk"-->
+<!--							v-on:update_property_list="updatePropertyList($event)"-->
+<!--						></kanban-property-order>-->
 					</div>
 				</div>
 
@@ -71,18 +71,16 @@
 </template>
 
 <script>
-import {Modal} from "bootstrap";
 import {NSwitch} from "naive-ui";
 
 // Components
-import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
+// import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
 
 // Validation
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 import searchMixin from "../../mixins/searchMixin";
 
@@ -92,7 +90,7 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
-		KanbanPropertyOrder,
+		// KanbanPropertyOrder,
 		NSwitch,
 	},
 	props: {
@@ -135,7 +133,7 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [errorModalMixin, getThemeMixin, searchMixin],
+	mixins: [getThemeMixin, searchMixin],
 	data() {
 		return {
 			canDragCards: false,
@@ -156,14 +154,14 @@ export default {
 			window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/`;
 		},
 		updateCanDragCards(value) {
-			// this.$store.commit({
-			//   type: "updateCanDragCards",
-			//   canDragCards: value,
-			// })
-			this.$store.dispatch({
-				type: "updateCanDragCards",
-				canDragCards: value,
-			});
+			this.$store.commit({
+			  type: "updateCanDragCards",
+			  canDragCards: value,
+			})
+			// this.$store.dispatch({
+			// 	type: "updateCanDragCards",
+			// 	canDragCards: value,
+			// });
 		},
 		updatePropertyList(data) {
 			this[data.source] = data.data;
