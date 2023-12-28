@@ -1,4 +1,3 @@
-An issue has occurred trying to connect to the S3 bucket. Please see the following errors - Could not connect to the endpoint URL: "http://localhost:9000/"
 [
 {
   "model": "NearBeach.changetask",
@@ -458,11 +457,90 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   }
 },
 {
+  "model": "NearBeach.listofprojectstatus",
+  "pk": 1,
+  "fields": {
+    "project_status": "New",
+    "project_higher_order_status": "Backlog",
+    "project_status_order": 1,
+    "date_created": "2023-12-28T02:27:16.716Z",
+    "date_modified": "2023-12-28T02:27:16.716Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.listofprojectstatus",
+  "pk": 2,
+  "fields": {
+    "project_status": "Backlog",
+    "project_higher_order_status": "Backlog",
+    "project_status_order": 2,
+    "date_created": "2023-12-28T02:27:16.716Z",
+    "date_modified": "2023-12-28T02:27:16.716Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.listofprojectstatus",
+  "pk": 3,
+  "fields": {
+    "project_status": "Blocked",
+    "project_higher_order_status": "Blocked",
+    "project_status_order": 3,
+    "date_created": "2023-12-28T02:27:16.716Z",
+    "date_modified": "2023-12-28T02:27:16.716Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.listofprojectstatus",
+  "pk": 4,
+  "fields": {
+    "project_status": "In Progress",
+    "project_higher_order_status": "Normal",
+    "project_status_order": 4,
+    "date_created": "2023-12-28T02:27:16.716Z",
+    "date_modified": "2023-12-28T02:27:16.716Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.listofprojectstatus",
+  "pk": 5,
+  "fields": {
+    "project_status": "Test/Review",
+    "project_higher_order_status": "Normal",
+    "project_status_order": 5,
+    "date_created": "2023-12-28T02:27:16.716Z",
+    "date_modified": "2023-12-28T02:27:16.716Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.listofprojectstatus",
+  "pk": 6,
+  "fields": {
+    "project_status": "Closed",
+    "project_higher_order_status": "Closed",
+    "project_status_order": 6,
+    "date_created": "2023-12-28T02:27:16.716Z",
+    "date_modified": "2023-12-28T02:27:16.716Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.listofrequirementitemstatus",
   "pk": 1,
   "fields": {
     "requirement_item_status": "Draft",
-    "status_is_closed": false,
+    "requirement_item_higher_order_status": "Backlog",
+    "requirement_item_status_sort_order": 1,
     "date_created": "2023-02-15T08:51:58.372Z",
     "date_modified": "2023-02-15T08:51:58.372Z",
     "change_user": null,
@@ -474,7 +552,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 2,
   "fields": {
     "requirement_item_status": "Review",
-    "status_is_closed": false,
+    "requirement_item_higher_order_status": "Backlog",
+    "requirement_item_status_sort_order": 2,
     "date_created": "2023-02-15T08:51:58.372Z",
     "date_modified": "2023-02-15T08:51:58.372Z",
     "change_user": null,
@@ -486,7 +565,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 3,
   "fields": {
     "requirement_item_status": "Developing/Working",
-    "status_is_closed": false,
+    "requirement_item_higher_order_status": "Normal",
+    "requirement_item_status_sort_order": 3,
     "date_created": "2023-02-15T08:51:58.372Z",
     "date_modified": "2023-02-15T08:51:58.372Z",
     "change_user": null,
@@ -498,7 +578,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 4,
   "fields": {
     "requirement_item_status": "Testing",
-    "status_is_closed": false,
+    "requirement_item_higher_order_status": "Normal",
+    "requirement_item_status_sort_order": 4,
     "date_created": "2023-02-15T08:51:58.372Z",
     "date_modified": "2023-02-15T08:51:58.372Z",
     "change_user": null,
@@ -510,7 +591,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 5,
   "fields": {
     "requirement_item_status": "User Acceptance Testing",
-    "status_is_closed": false,
+    "requirement_item_higher_order_status": "Normal",
+    "requirement_item_status_sort_order": 5,
     "date_created": "2023-02-15T08:51:58.372Z",
     "date_modified": "2023-02-15T08:51:58.372Z",
     "change_user": null,
@@ -522,7 +604,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 6,
   "fields": {
     "requirement_item_status": "Rework",
-    "status_is_closed": false,
+    "requirement_item_higher_order_status": "Normal",
+    "requirement_item_status_sort_order": 6,
     "date_created": "2023-02-15T08:51:58.372Z",
     "date_modified": "2023-02-15T08:51:58.372Z",
     "change_user": null,
@@ -534,7 +617,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 7,
   "fields": {
     "requirement_item_status": "Implemented",
-    "status_is_closed": false,
+    "requirement_item_higher_order_status": "Closed",
+    "requirement_item_status_sort_order": 7,
     "date_created": "2023-02-15T08:51:58.372Z",
     "date_modified": "2023-02-15T08:51:58.372Z",
     "change_user": null,
@@ -546,7 +630,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 8,
   "fields": {
     "requirement_item_status": "Finish",
-    "status_is_closed": false,
+    "requirement_item_higher_order_status": "Closed",
+    "requirement_item_status_sort_order": 8,
     "date_created": "2023-02-15T08:51:58.372Z",
     "date_modified": "2023-02-15T08:51:58.372Z",
     "change_user": null,
@@ -558,7 +643,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 9,
   "fields": {
     "requirement_item_status": "Not Tested",
-    "status_is_closed": false,
+    "requirement_item_higher_order_status": "Normal",
+    "requirement_item_status_sort_order": 9,
     "date_created": "2023-02-15T08:51:58.372Z",
     "date_modified": "2023-02-15T08:51:58.372Z",
     "change_user": null,
@@ -570,7 +656,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 10,
   "fields": {
     "requirement_item_status": "Obsolete",
-    "status_is_closed": false,
+    "requirement_item_higher_order_status": "Closed",
+    "requirement_item_status_sort_order": 10,
     "date_created": "2023-02-15T08:51:58.372Z",
     "date_modified": "2023-02-15T08:51:58.372Z",
     "change_user": null,
@@ -659,7 +746,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 1,
   "fields": {
     "requirement_status": "Backlog",
-    "requirement_status_is_closed": false,
+    "requirement_higher_order_status": "Backlog",
+    "requirement_status_sort_order": 1,
     "date_created": "2023-02-15T08:51:58.373Z",
     "date_modified": "2023-02-15T08:51:58.373Z",
     "change_user": null,
@@ -671,7 +759,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 2,
   "fields": {
     "requirement_status": "Blocked",
-    "requirement_status_is_closed": false,
+    "requirement_higher_order_status": "Blocked",
+    "requirement_status_sort_order": 2,
     "date_created": "2023-02-15T08:51:58.373Z",
     "date_modified": "2023-02-15T08:51:58.373Z",
     "change_user": null,
@@ -683,7 +772,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 3,
   "fields": {
     "requirement_status": "In Progress",
-    "requirement_status_is_closed": false,
+    "requirement_higher_order_status": "Normal",
+    "requirement_status_sort_order": 3,
     "date_created": "2023-02-15T08:51:58.373Z",
     "date_modified": "2023-02-15T08:51:58.373Z",
     "change_user": null,
@@ -695,7 +785,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 4,
   "fields": {
     "requirement_status": "Testing/Review",
-    "requirement_status_is_closed": false,
+    "requirement_higher_order_status": "Normal",
+    "requirement_status_sort_order": 4,
     "date_created": "2023-02-15T08:51:58.373Z",
     "date_modified": "2023-02-15T08:51:58.373Z",
     "change_user": null,
@@ -707,7 +798,8 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "pk": 5,
   "fields": {
     "requirement_status": "Closed",
-    "requirement_status_is_closed": true,
+    "requirement_higher_order_status": "Closed",
+    "requirement_status_sort_order": 5,
     "date_created": "2023-02-15T08:51:58.373Z",
     "date_modified": "2023-02-15T08:51:58.373Z",
     "change_user": null,
@@ -820,6 +912,84 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
     "rfc_status": "Paused",
     "date_created": "2023-02-15T08:51:58.374Z",
     "date_modified": "2023-02-15T08:51:58.374Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.listoftaskstatus",
+  "pk": 1,
+  "fields": {
+    "task_status": "New",
+    "task_higher_order_status": "Backlog",
+    "task_status_order": 1,
+    "date_created": "2023-12-28T02:27:16.717Z",
+    "date_modified": "2023-12-28T02:27:16.717Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.listoftaskstatus",
+  "pk": 2,
+  "fields": {
+    "task_status": "Backlog",
+    "task_higher_order_status": "Backlog",
+    "task_status_order": 2,
+    "date_created": "2023-12-28T02:27:16.717Z",
+    "date_modified": "2023-12-28T02:27:16.717Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.listoftaskstatus",
+  "pk": 3,
+  "fields": {
+    "task_status": "Blocked",
+    "task_higher_order_status": "Blocked",
+    "task_status_order": 3,
+    "date_created": "2023-12-28T02:27:16.717Z",
+    "date_modified": "2023-12-28T02:27:16.717Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.listoftaskstatus",
+  "pk": 4,
+  "fields": {
+    "task_status": "In Progress",
+    "task_higher_order_status": "Normal",
+    "task_status_order": 4,
+    "date_created": "2023-12-28T02:27:16.717Z",
+    "date_modified": "2023-12-28T02:27:16.717Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.listoftaskstatus",
+  "pk": 5,
+  "fields": {
+    "task_status": "Test/Review",
+    "task_higher_order_status": "Normal",
+    "task_status_order": 5,
+    "date_created": "2023-12-28T02:27:16.717Z",
+    "date_modified": "2023-12-28T02:27:16.717Z",
+    "change_user": null,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.listoftaskstatus",
+  "pk": 6,
+  "fields": {
+    "task_status": "Closed",
+    "task_higher_order_status": "Closed",
+    "task_status_order": 6,
+    "date_created": "2023-12-28T02:27:16.717Z",
+    "date_modified": "2023-12-28T02:27:16.717Z",
     "change_user": null,
     "is_deleted": false
   }
@@ -1990,7 +2160,7 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
     "customer": null,
     "project_start_date": "2023-02-14T22:00:00Z",
     "project_end_date": "2023-03-01T05:00:00Z",
-    "project_status": "New",
+    "project_status": 1,
     "project_story_point_min": 1,
     "project_story_point_max": 4,
     "date_created": "2023-02-15T09:13:53.432Z",
@@ -2010,7 +2180,7 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
     "customer": null,
     "project_start_date": "2023-02-14T22:00:00Z",
     "project_end_date": "2023-03-01T05:00:00Z",
-    "project_status": "New",
+    "project_status": 1,
     "project_story_point_min": 1,
     "project_story_point_max": 4,
     "date_created": "2023-02-15T09:14:14.985Z",
@@ -2154,7 +2324,7 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
     "task_start_date": "2023-02-14T22:00:00Z",
     "task_end_date": "2023-03-01T05:00:00Z",
     "task_assigned_to": null,
-    "task_status": "New",
+    "task_status": 1,
     "task_story_point_min": 4,
     "task_story_point_max": 10,
     "date_created": "2023-02-15T09:19:37.972Z",
@@ -2174,7 +2344,7 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
     "task_start_date": "2023-02-14T22:00:00Z",
     "task_end_date": "2023-03-01T05:00:00Z",
     "task_assigned_to": null,
-    "task_status": "New",
+    "task_status": 1,
     "task_story_point_min": 4,
     "task_story_point_max": 10,
     "date_created": "2023-02-15T09:19:58.920Z",
@@ -3921,6 +4091,78 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   }
 },
 {
+  "model": "auth.permission",
+  "pk": 181,
+  "fields": {
+    "name": "Can add list of project status",
+    "content_type": 46,
+    "codename": "add_listofprojectstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 182,
+  "fields": {
+    "name": "Can change list of project status",
+    "content_type": 46,
+    "codename": "change_listofprojectstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 183,
+  "fields": {
+    "name": "Can delete list of project status",
+    "content_type": 46,
+    "codename": "delete_listofprojectstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 184,
+  "fields": {
+    "name": "Can view list of project status",
+    "content_type": 46,
+    "codename": "view_listofprojectstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 185,
+  "fields": {
+    "name": "Can add list of task status",
+    "content_type": 47,
+    "codename": "add_listoftaskstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 186,
+  "fields": {
+    "name": "Can change list of task status",
+    "content_type": 47,
+    "codename": "change_listoftaskstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 187,
+  "fields": {
+    "name": "Can delete list of task status",
+    "content_type": 47,
+    "codename": "delete_listoftaskstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 188,
+  "fields": {
+    "name": "Can view list of task status",
+    "content_type": 47,
+    "codename": "view_listoftaskstatus"
+  }
+},
+{
   "model": "auth.user",
   "pk": 1,
   "fields": {
@@ -4404,6 +4646,22 @@ An issue has occurred trying to connect to the S3 bucket. Please see the followi
   "fields": {
     "app_label": "NearBeach",
     "model": "publiclink"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 46,
+  "fields": {
+    "app_label": "NearBeach",
+    "model": "listofprojectstatus"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 47,
+  "fields": {
+    "app_label": "NearBeach",
+    "model": "listoftaskstatus"
   }
 },
 {
