@@ -78,6 +78,14 @@ def new_task_save(request, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    # Get default task status
+    task_status = ListOfTaskStatus.objects.filter(
+        is_deleted=False,
+    ).order_by("task_status_order")
+
+    if len(task_status) == 0:
+        return HttpResponseBadRequest("No Task Status entered in the system. Please contact system admin")
+
     # Create the new task
     task_submit = Task(
         change_user=request.user,
@@ -87,6 +95,7 @@ def new_task_save(request, *args, **kwargs):
         task_start_date=form.cleaned_data["task_start_date"],
         task_end_date=form.cleaned_data["task_end_date"],
         organisation=form.cleaned_data["organisation"],
+        task_status=task_status.first(),
     )
     task_submit.save()
 

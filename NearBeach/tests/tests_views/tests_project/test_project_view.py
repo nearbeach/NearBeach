@@ -76,7 +76,7 @@ class ProjectViewTests(TestCase):
             "project_description": "A simple project description",
             "project_start_date": "2023-08-10T23:00:00.000Z",
             "project_end_date": "2023-08-10T23:00:00.000Z",
-            "project_status": "New",
+            "project_status": "1",
         }
 
         # Use POST to submit the new project

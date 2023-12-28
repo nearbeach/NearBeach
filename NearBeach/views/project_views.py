@@ -74,6 +74,16 @@ def new_project_save(request, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    # Get first project status
+    project_status = ListOfProjectStatus.objects.filter(
+        is_deleted=False
+    ).order_by(
+        "project_status_order",
+    )
+
+    if len(project_status) == 0:
+        return HttpResponseBadRequest("No Project Status entered in the system. Please contact system admin")
+
     # Create the project
     project_submit = Project(
         change_user=request.user,
@@ -83,6 +93,7 @@ def new_project_save(request, *args, **kwargs):
         project_start_date=form.cleaned_data["project_start_date"],
         project_end_date=form.cleaned_data["project_end_date"],
         organisation=form.cleaned_data["organisation"],
+        project_status=project_status.first(),
     )
     project_submit.save()
 

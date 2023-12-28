@@ -21,7 +21,7 @@ def lookup_project(user_group_results, destination, location_id):
         ).values("project_id"),
     ).exclude(
         Q(
-            project_status="Closed",
+            project_status__project_higher_order_status="Closed",
         )
         | Q(
             project_id__in=ObjectAssignment.objects.filter(
@@ -51,7 +51,7 @@ def lookup_task(user_group_results, destination, location_id):
         ).values("task_id"),
     ).exclude(
         Q(
-            task_status="Closed",
+            task_status__task_higher_order_status="Closed",
         )
         | Q(
             task_id__in=ObjectAssignment.objects.filter(
@@ -74,10 +74,6 @@ def lookup_task(user_group_results, destination, location_id):
 def lookup_requirement(user_group_results, *args, **kwargs):
     return Requirement.objects.filter(
         is_deleted=False,
-        requirement_status_id__in=ListOfRequirementStatus.objects.filter(
-            is_deleted=False,
-            requirement_status_is_closed=False,
-        ).values("requirement_status_id"),
         requirement_id__in=ObjectAssignment.objects.filter(
             is_deleted=False,
             requirement_id__isnull=False,
@@ -86,7 +82,9 @@ def lookup_requirement(user_group_results, *args, **kwargs):
     ).annotate(
         id = F('requirement_id'),
         description = F('requirement_title'),
-        status = F('requirement_status__requirement_status'),
+        status=F('requirement_status__requirement_status'),
+    ).exclude(
+        requirement_status__requirement_higher_order_status="Closed",
     ).values(
         'id',
         'description',
@@ -97,22 +95,26 @@ def lookup_requirement(user_group_results, *args, **kwargs):
 def lookup_requirement_item(user_group_results, *args, **kwargs):
     return RequirementItem.objects.filter(
         is_deleted=False,
-        requirement_item_status_id__in=ListOfRequirementItemStatus.objects.filter(
-            is_deleted=False,
-            status_is_closed=False,
-        ).values("requirement_item_status_id"),
+        # requirement_item_status_id__in=ListOfRequirementItemStatus.objects.filter(
+        #     is_deleted=False,
+        #     status_is_closed=False,
+        # ).values("requirement_item_status_id"),
         requirement_id__in=Requirement.objects.filter(
             is_deleted=False,
-            requirement_status_id__in=ListOfRequirementStatus.objects.filter(
-                is_deleted=False,
-                requirement_status_is_closed=False,
-            ).values("requirement_status_id"),
+            # requirement_status_id__in=ListOfRequirementStatus.objects.filter(
+            #     is_deleted=False,
+            #     requirement_status_is_closed=False,
+            # ).values("requirement_status_id"),
             requirement_id__in=ObjectAssignment.objects.filter(
                 is_deleted=False,
                 requirement_id__isnull=False,
                 group_id__in=user_group_results,
+            ).exclude(
+                requirement_status__requirement_higher_order_status="Closed",
             ).values('requirement_id'),
         ).values("requirement_id"),
+    ).exclude(
+        requirement_item_status__requirement_item_higher_order_status="Closed",
     ).annotate(
         id = F('requirement_item_id'),
         description = F('requirement_item_title'),
