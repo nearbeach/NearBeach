@@ -48,7 +48,7 @@
 								</p>
 							</a>
 						</td>
-						<td>{{ project.project_status }}</td>
+						<td>{{ project.project_status_text }}</td>
 					</tr>
 					</tbody>
 				</table>
@@ -74,6 +74,7 @@
 					<thead>
 					<tr>
 						<td>Requirement Information</td>
+						<td>Status</td>
 					</tr>
 					</thead>
 					<tbody>
@@ -93,6 +94,7 @@
 								</p>
 							</a>
 						</td>
+						<td>{{ requirement.requirement_status_text }}</td>
 					</tr>
 					</tbody>
 				</table>
@@ -140,7 +142,7 @@
 								</p>
 							</a>
 						</td>
-						<td>{{ task.task_status }}</td>
+						<td>{{ task.task_status_text }}</td>
 					</tr>
 					</tbody>
 				</table>

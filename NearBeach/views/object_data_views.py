@@ -517,17 +517,43 @@ def associated_objects_organisations(location_id):
     project_results = Project.objects.filter(
         is_deleted=False,
         organisation=location_id,
-    ).values()
+    ).annotate(
+        project_status_text=F("project_status__project_status"),
+    ).exclude(
+        project_status__project_higher_order_status="Closed",
+    ).values(
+        "project_id",
+        "project_name",
+        "project_end_date",
+        "project_status_text",
+    )
 
     requirement_results = Requirement.objects.filter(
         is_deleted=False,
         organisation=location_id,
-    ).values()
+    ).annotate(
+        requirement_status_text=F("requirement_status__requirement_status"),
+    ).exclude(
+        requirement_status__requirement_higher_order_status="Closed",
+    ).values(
+        "requirement_id",
+        "requirement_title",
+        "requirement_status_text",
+    )
 
     task_results = Task.objects.filter(
         is_deleted=False,
         organisation=location_id,
-    ).values()
+    ).annotate(
+        task_status_text=F("task_status__task_status"),
+    ).exclude(
+        task_status__task_higher_order_status="Closed",
+    ).values(
+        "task_id",
+        "task_short_description",
+        "task_status_text",
+        "task_end_date",
+    )
 
     # Return the JSON Response back - which will return strait to the user
     return JsonResponse(

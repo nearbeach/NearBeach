@@ -78,18 +78,8 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
                 requirement_id=requirement_id,
             ).values("requirement_item_id"),
         )
-        # & Q(Q(project_id__isnull=False) | Q(task_id__isnull=False))
     )
-    # .values(
-    #     "project_id",
-    #     "project_id__project_name",
-    #     "project_id__project_status",
-    #     "task_id",
-    #     "task_id__task_short_description",
-    #     "task_id__task_status",
-    #     "requirement_item_id",
-    #     "requirement_item_id__requirement_item_title",
-    # ))
+
 
     # The results we want to send back
     data_results = []
@@ -184,7 +174,8 @@ def new_requirement(request, *args, **kwargs):
     """
     status_list = ListOfRequirementStatus.objects.filter(
         is_deleted=False,
-        requirement_status_is_closed=False,
+    ).exclude(
+        requirement_higher_order_status="Closed",
     )
 
     type_list = ListOfRequirementType.objects.filter(
@@ -295,12 +286,27 @@ def requirement_information(request, requirement_id, *args, **kwargs):
         organisation_id=requirement_results.organisation_id,
     )
 
-    status_list = ListOfRequirementStatus.objects.filter(
+    status_options = ListOfRequirementStatus.objects.filter(
         is_deleted=False,
+    ).annotate(
+        value=F("requirement_status_id"),
+        label=F("requirement_status"),
+    ).values(
+        "value",
+        "label",
+        "requirement_higher_order_status"
+    ).order_by(
+        "requirement_status_sort_order",
     )
 
-    type_list = ListOfRequirementType.objects.filter(
+    type_options = ListOfRequirementType.objects.filter(
         is_deleted=False,
+    ).annotate(
+        value=F("requirement_type_id"),
+        label=F("requirement_type"),
+    ).values(
+        "value",
+        "label",
     )
 
     group_results = Group.objects.filter(
@@ -312,24 +318,28 @@ def requirement_information(request, requirement_id, *args, **kwargs):
         requirement_id=requirement_id,
     )
 
-    # If requirement is closed - downgrade user permissions
-    if requirement_results.requirement_status.requirement_status_is_closed:
-        user_level = 1
+    # Check to see if the requirement is closed
+    requirement_is_closed = requirement_results.requirement_status.requirement_higher_order_status == "Closed"
+    if requirement_is_closed:
+        requirement_is_closed = "true"
+    else:
+        requirement_is_closed = "false"
 
     # context
     c = {
         "group_results": serializers.serialize("json", group_results),
         "nearbeach_title": f"Requirement Information {requirement_id}",
+        "need_tinymce": True,
         "organisation_results": serializers.serialize("json", [organisation_results]),
         "requirement_results": serializers.serialize("json", [requirement_results]),
         "requirement_id": requirement_id,
+        "requirement_is_closed": requirement_is_closed,
         "requirement_item_results": serializers.serialize(
             "json", requirement_item_results
         ),
-        "status_list": serializers.serialize("json", status_list),
-        "type_list": serializers.serialize("json", type_list),
+        "status_options": json.dumps(list(status_options), cls=DjangoJSONEncoder),
+        "type_options": json.dumps(list(type_options), cls=DjangoJSONEncoder),
         "user_level": user_level,
-        "need_tinymce": True,
         "theme": get_theme(request),
     }
 

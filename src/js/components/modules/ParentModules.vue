@@ -368,6 +368,10 @@ export default {
 			type: String,
 			default: "",
 		}, //Which object we are looking at, i.e. requirement
+		isReadOnly: {
+			type: Boolean,
+			default: false,
+		},
 		locationId: {
 			type: Number,
 			default: 0,
@@ -410,10 +414,21 @@ export default {
 			rootUrl: this.rootUrl,
 			staticUrl: this.staticUrl,
 		});
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: this.userLevel,
-		});
+
+		//If is read only is true, we drop the user level to 1.
+		if (this.isReadOnly) {
+			//Set everything as read only :)
+			this.$store.commit({
+				type: "updateUserLevel",
+				userLevel: 1,
+			});
+		} else {
+			//Use the user level
+			this.$store.commit({
+				type: "updateUserLevel",
+				userLevel: this.userLevel,
+			});
+		}
 	},
 };
 </script>

@@ -36,6 +36,7 @@
 								required="true"
 								maxlength="255"
 								v-model="requirementTitleModel"
+								v-bind:disabled="isReadOnly"
 							/>
 						</div>
 
@@ -91,48 +92,24 @@
 						</p>
 					</div>
 					<div class="col-md-8">
-						<div
-							class="col-md-12"
-							v-if="!statusModel.status_closed"
-						>
-							<div class="row">
-								<div class="col-md-6">
-									<div class="form-group">
-										<label
-										>Requirement Status
-											<validation-rendering
-												v-bind:error-list="v$.statusModel.$errors"
-											></validation-rendering>
-										</label>
-										<n-select
-											:options="statusFixList"
-											v-bind:disabled="isReadOnly"
-											v-bind:clearable="false"
-											label="status"
-											v-model:value="statusModel"
-										></n-select>
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div
-										class="alert alert-danger"
-										v-if="statusModel.status_closed"
-									>
-										Please note - saving the requirement with
-										this status will close the requirement.
-									</div>
-								</div>
-							</div>
-						</div>
-						<div
-							class="col-md-12"
-							v-else
-						>
-							<div class="alert alert-info">
-								Please note - this requirement is closed.
-							</div>
-						</div>
 						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label
+									>Requirement Status
+										<validation-rendering
+											v-bind:error-list="v$.statusModel.$errors"
+										></validation-rendering>
+									</label>
+									<n-select
+										:options="statusOptions"
+										v-bind:disabled="userLevel <= 1"
+										v-bind:clearable="false"
+										label="status"
+										v-model:value="statusModel"
+									></n-select>
+								</div>
+							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<label
@@ -142,7 +119,7 @@
 										></validation-rendering>
 									</label>
 									<n-select
-										:options="typeFixList"
+										:options="typeList"
 										v-bind:disabled="isReadOnly"
 										v-bind:clearable="false"
 										label="type"
@@ -155,18 +132,17 @@
 				</div>
 
 				<!-- Submit Button -->
-				<hr/>
+				<hr v-if="!isReadOnly" />
 				<div
 					class="row submit-row"
-					v-if="userLevel > 1"
+					v-if="!isReadOnly"
 				>
 					<div class="col-md-12">
-						<a
-							href="javascript:void(0)"
-							class="btn btn-primary save-changes"
-							v-on:click="updateRequirement"
-						>Update Requirement</a
+						<button class="btn btn-primary save-changes"
+								v-on:click="updateRequirement"
 						>
+							Update Requirement
+						</button>
 					</div>
 				</div>
 			</div>
@@ -189,9 +165,7 @@ import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin.js";
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin.js";
 import uploadMixin from "../../mixins/uploadMixin";
 
 export default {
@@ -216,13 +190,17 @@ export default {
 				return [];
 			},
 		},
+		requirementIsClosed: {
+			type: Boolean,
+			default: false,
+		},
 		requirementResults: {
 			type: Array,
 			default() {
 				return [];
 			},
 		},
-		statusList: {
+		statusOptions: {
 			type: Array,
 			default() {
 				return [];
@@ -251,18 +229,31 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [errorModalMixin, getThemeMixin, loadingModalMixin, uploadMixin],
+	mixins: [getThemeMixin, uploadMixin],
 	data() {
 		return {
 			isReadOnly: false,
-			requirementScopeModel: "",
-			requirementTitleModel: "",
+			requirementScopeModel: this.requirementResults[0].fields.requirement_scope,
+			requirementTitleModel: this.requirementResults[0].fields.requirement_title,
 			stakeholderModel: "",
-			statusFixList: [],
-			statusModel: "",
-			typeFixList: [],
-			typeModel: "",
+			statusModel: this.requirementResults[0].fields.requirement_status,
+			typeModel: this.requirementResults[0].fields.requirement_type,
 		};
+	},
+	watch: {
+		async statusModel() {
+			console.log("Condition 1: ", !this.requirementIsClosed)
+			//Escape condition 1 - if the project is NOT already closed
+			if (!this.requirementIsClosed) return;
+
+			console.log("Condition 2: ", this.checkStatusIsClosed());
+			//Escape condition 2 - if the NEW status is closed
+			if (this.checkStatusIsClosed()) return;
+
+			//Method - we want to resave the data and then reload
+			await this.updateRequirement();
+			window.location.reload();
+		},
 	},
 	validations: {
 		requirementScopeModel: {
@@ -280,6 +271,30 @@ export default {
 		},
 	},
 	methods: {
+		checkStatusIsClosed() {
+			//Will filter the current status for the status - then check to see if it is closed
+			const filtered_status = this.statusOptions.filter((row) => {
+				return parseInt(row.value) === parseInt(this.statusModel);
+			});
+
+			//If there are not matching status - return true. Assume closed
+			if (filtered_status.length === 0) return true;
+
+			//Use the first value
+			return filtered_status[0].requirement_higher_order_status === "Closed";
+		},
+		setReadOnly() {
+			//If the project status is closed => set the isReadOnly to true
+			if (this.checkStatusIsClosed()) {
+				this.isReadOnly = true;
+				return;
+			}
+
+			//If the user level is 1 or below
+			if (this.userLevel <= 1) {
+				this.isReadOnly = true;
+			}
+		},
 		updateRequirement() {
 			// Check the validation first
 			this.v$.$touch();
@@ -291,7 +306,14 @@ export default {
 				return;
 			}
 
-			this.showLoadingModal("Requirement");
+			//Notify user of attempting to save
+			this.$store.dispatch("newToast", {
+				header: "Requirement Currently Saving",
+				message: "Please wait whilst we save the requirement",
+				extra_classes: "bg-warning",
+				unique_type: "save",
+				delay: 0,
+			});
 
 			// Set up the data object to send
 			const data_to_send = new FormData();
@@ -307,19 +329,31 @@ export default {
 			data_to_send.set("requirement_type", this.typeModel);
 
 			// Use Axion to send the data
-			this.axios
-				.post("save/", data_to_send)
-				.then((response) => {
-					this.closeLoadingModal();
-
-					//If the status is closed - refresh the page
-					if (this.statusModel.status_closed) {
-						window.location.reload();
-					}
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+			this.axios.post(
+				"save/",
+				data_to_send
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "Requirement was save",
+					message: "Requirement saved successfully",
+					extra_classes: "bg-success",
+					unique_type: "save",
+					delay: 0,
 				});
+
+				//If the status is closed - refresh the page
+				if (this.checkStatusIsClosed()) {
+					window.location.reload();
+				}
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Requirement Could not save",
+					message: `There was an error saving the requirement. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					unique_type: "save",
+					delay: 0,
+				});
+			});
 		},
 	},
 	async beforeMount() {
@@ -328,37 +362,8 @@ export default {
 		});
 	},
 	mounted() {
-		//Get data from the requirementResults and delegate to the Models
-		const requirement_results = this.requirementResults[0].fields;
-
-		this.requirementScopeModel = requirement_results.requirement_scope;
-		this.requirementTitleModel = requirement_results.requirement_title;
-
-		//We need to extract "fields" array from the statusList/typeList json data
-		this.statusFixList = this.statusList.map((row) => {
-			//Construct the object
-			return {
-				value: row.pk,
-				label: row.fields.requirement_status,
-			};
-		});
-		this.typeFixList = this.typeList.map((row) => {
-			return {
-				value: row.pk,
-				label: row.fields.requirement_type,
-			};
-		});
-
-		//Get the requirement status id from the requirement results
-		this.statusModel = requirement_results.requirement_status;
-
-		//Update type model
-		this.typeModel = requirement_results.requirement_type;
-
 		//Check for the read only
-		if (this.statusModel.status_closed || this.userLevel === 1) {
-			this.isReadOnly = true;
-		}
+		this.setReadOnly();	
 	},
 };
 </script>

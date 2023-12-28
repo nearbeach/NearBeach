@@ -1,12 +1,13 @@
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.template import loader
 from NearBeach.forms import NewProjectForm, ProjectForm
-from NearBeach.models import Group, UserGroup, ObjectAssignment
+from NearBeach.models import Group, UserGroup, ObjectAssignment, ListOfProjectStatus
 from NearBeach.views.tools.internal_functions import Project, Organisation
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.views.theme_views import get_theme
@@ -124,17 +125,34 @@ def project_information(request, project_id, *args, **kwargs):
 
     # Get data
     project_results = Project.objects.get(project_id=project_id)
-    project_status = project_results.project_status
     user_level = kwargs["user_level"]
+    project_is_closed = project_results.project_status.project_higher_order_status == "Closed"
 
+    # Grab all the status options for the project. Shape the data into the required shape for frontend
+    status_options = ListOfProjectStatus.objects.filter(
+        is_deleted=False,
+    ).annotate(
+        value=F('project_status_id'),
+        label=F('project_status'),
+    ).values(
+        "value",
+        "label",
+        "project_higher_order_status",
+    ).order_by(
+        "project_status_order"
+    )
+
+    # Get the organisation results
     organisation_results = Organisation.objects.filter(
         is_deleted=False,
         organisation_id=project_results.organisation_id,
     )
 
-    # Update user level if currently read only
-    if project_status == "Closed":
-        user_level = 1
+    # Update user level if currently read only - and convert project_is_closed to JS boolean
+    if project_is_closed:
+        project_is_closed = "true"
+    else:
+        project_is_closed = "false"
 
     # Context
     c = {
@@ -142,8 +160,9 @@ def project_information(request, project_id, *args, **kwargs):
         "need_tinymce": True,
         "organisation_results": serializers.serialize("json", organisation_results),
         "project_id": project_id,
+        "project_is_closed": project_is_closed,
         "project_results": serializers.serialize("json", [project_results]),
-        "project_status": project_status,
+        "status_options": json.dumps(list(status_options), cls=DjangoJSONEncoder),
         "user_level": user_level,
         "theme": get_theme(request),
     }

@@ -35,11 +35,12 @@
 							</label>
 							<input
 								id="requirement_item_title"
-								v-model="requirementItemTitleModel"
 								class="form-control"
 								type="text"
 								required="true"
 								maxlength="255"
+								v-model="requirementItemTitleModel"
+								v-bind:disabled="isReadOnly"
 							/>
 						</div>
 						<div class="form-group">
@@ -69,9 +70,10 @@
 										'bullist numlist outdent indent | removeformat | image codesample',
 								],
 								skin: `${this.skin}`,
-								content_css: `${this.contentCss}`,
+								content_css: `${this.contentCss}`
 							}"
 								v-model="requirementItemScopeModel"
+								v-bind:disabled="isReadOnly"
 							/>
 						</div>
 					</div>
@@ -130,13 +132,14 @@
 							<label
 							>Requirement Status
 								<validation-rendering
-									v-bind:error-list="v$.statusFixList.$errors"
+									v-bind:error-list="v$.statusOptions.$errors"
 								></validation-rendering>
 							</label>
 							<n-select
-								:options="statusFixList"
+								:options="statusOptions"
 								label="status"
 								v-model:value="statusModel"
+								v-bind:disabled="userLevel <= 1"
 							></n-select>
 						</div>
 					</div>
@@ -149,27 +152,27 @@
 								></validation-rendering>
 							</label>
 							<n-select
-								:options="typeFixList"
+								:options="typeOptions"
 								label="type"
 								v-model:value="typeModel"
+								v-bind:disabled="isReadOnly"
 							></n-select>
 						</div>
 					</div>
 				</div>
 
 				<!-- Submit Button -->
-				<hr v-if="userLevel > 1"/>
+				<hr v-if="!isReadOnly"/>
 				<div
-					v-if="userLevel > 1"
+					v-if="!isReadOnly"
 					class="row submit-row"
 				>
 					<div class="col-md-12">
-						<a
-							href="javascript:void(0)"
-							class="btn btn-primary save-changes"
-							v-on:click="updateRequirementItem"
-						>Update Requirement</a
+						<button class="btn btn-primary"
+								v-on:click="updateRequirementItem"
 						>
+							Update Requirement
+						</button>
 					</div>
 				</div>
 			</div>
@@ -179,7 +182,6 @@
 
 <script>
 //JavaScript Libraries
-import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
 import {NSelect} from "naive-ui";
@@ -196,6 +198,7 @@ import uploadMixin from "../../mixins/uploadMixin";
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
+import {isReadOnly} from "vuedraggable/src/core/sortableEvents";
 
 export default {
 	name: "RequirementItemInformation.vue",
@@ -225,7 +228,11 @@ export default {
 			type: String,
 			default: "/",
 		},
-		statusList: {
+		requirementItemIsClosed: {
+			type: Boolean,
+			default: false,
+		},
+		statusOptions: {
 			type: Array,
 			default: () => {
 				return [];
@@ -235,11 +242,15 @@ export default {
 			type: String,
 			default: ""
 		},
-		typeList: {
+		typeOptions: {
 			type: Array,
 			default: () => {
 				return [];
 			},
+		},
+		userLevel: {
+			type: Number,
+			default: 0,
 		},
 	},
 	computed: {
@@ -248,7 +259,6 @@ export default {
 			rootUrl: "getRootUrl",
 			skin: "getSkin",
 			staticUrl: "getStaticUrl",
-			userLevel: "getUserLevel",
 		}),
 		getStakeholderImage() {
 			const image =
@@ -263,15 +273,27 @@ export default {
 	mixins: [getThemeMixin, iconMixin, uploadMixin],
 	data() {
 		return {
+			isReadOnly: false,
 			requirementItemScopeModel: this.requirementItemResults[0].fields.requirement_item_scope,
 			requirementItemTitleModel: this.requirementItemResults[0].fields.requirement_item_title,
 			stakeholderModel: this.organisationResults[0].fields,
 
-			statusFixList: [],
 			statusModel: this.requirementItemResults[0].fields.requirement_item_status,
-			typeFixList: [],
 			typeModel: this.requirementItemResults[0].fields.requirement_item_type,
 		};
+	},
+	watch: {
+		async statusModel() {
+			//Escape condition 1 - if the project is NOT already closed
+			if (!this.requirementItemIsClosed) return;
+
+			//Escape condition 2 - if the NEW status is closed
+			if (this.checkStatusIsClosed()) return;
+
+			//Method - we want to resave the data and then reload
+			await this.updateRequirementItem();
+			window.location.reload();
+		},
 	},
 	validations: {
 		requirementItemScopeModel: {
@@ -281,7 +303,7 @@ export default {
 		requirementItemTitleModel: {
 			required,
 		},
-		statusFixList: {
+		statusOptions: {
 			required,
 		},
 		statusModel: {
@@ -292,6 +314,36 @@ export default {
 		},
 	},
 	methods: {
+		checkStatusIsClosed() {
+			//Will filter the current status for the status - then check to see if it is closed
+			const filtered_status = this.statusOptions.filter((row) => {
+				return parseInt(row.value) === parseInt(this.statusModel);
+			});
+
+			//If there are not matching status - return true. Assume closed
+			if (filtered_status.length === 0) return true;
+
+			//Use the first value
+			return filtered_status[0].requirement_item_higher_order_status === "Closed";
+		},
+		setReadOnly() {
+			//If the prop has been set as read only
+			if (this.requirementItemIsClosed) {
+				this.isReadOnly = true;
+				return;
+			}
+
+			//If the requirement item status is closed => set the isReadOnly to true
+			if (this.checkStatusIsClosed()) {
+				this.isReadOnly = true;
+				return;
+			}
+
+			//If the user level is 1 or below
+			if (this.userLevel <= 1) {
+				this.isReadOnly = true;
+			}
+		},
 		updateRequirementItem() {
 			// Check the validation first
 			this.v$.$touch();
@@ -345,7 +397,10 @@ export default {
 					unique_type: "saving",
 				});
 
-
+				//Reload the page IF the status is closed
+				if (this.checkStatusIsClosed()) {
+					window.location.reload();
+				}
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error Saving Requirement Item",
@@ -363,20 +418,8 @@ export default {
 		});
 	},
 	mounted() {
-		//Map the original lists to something NSelect can read
-		this.statusFixList = this.statusList.map((row) => {
-			return {
-				value: row.pk,
-				label: row.fields.requirement_item_status,
-			};
-		});
-
-		this.typeFixList = this.typeList.map((row) => {
-			return {
-				value: row.pk,
-				label: row.fields.requirement_item_type,
-			};
-		});
+		//Set the read only status
+		this.setReadOnly();
 	},
 };
 </script>

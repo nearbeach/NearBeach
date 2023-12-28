@@ -22,7 +22,7 @@
 					class="form-control"
 					:is-date-disabled="startDateDisabled"
 					:is-time-disabled="startDateDisabled"
-					:disabled="userLevel<=1"
+					:disabled="userLevel<=1 || isReadOnly"
 				></n-date-picker>
 			</div>
 		</div>
@@ -40,7 +40,7 @@
 					class="form-control"
 					:is-date-disabled="endDateDisabled"
 					:is-time-disabled="endDateDisabled"
-					:disabled="userLevel<=1"
+					:disabled="userLevel<=1 || isReadOnly"
 				></n-date-picker>
 			</div>
 		</div>
@@ -90,6 +90,10 @@ export default {
 
 				return temp_date.getTime();
 			},
+		},
+		isReadOnly: {
+			type: Boolean,
+			default: false,
 		},
 		noBackDating: {
 			type: Boolean,

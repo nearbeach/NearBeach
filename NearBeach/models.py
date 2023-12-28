@@ -24,12 +24,6 @@ KANBAN_CARD_PRIORITY = (
     (4, "Lowest"),
 )
 
-KANBAN_COLUMN_PROPERTY = (
-    ("Normal", "Normal"),
-    ("Blocked", "Blocked"),
-    ("Closed", "Closed"),
-)
-
 LINK_RELATIONSHIP = (
     ("block", "Block"),
     ("duplicate", "Duplicate"),
@@ -41,6 +35,13 @@ NOTIFICATION_LOCATION = (
     ("all", "All Options"),
     ("dashboard", "Dashboard Screen"),
     ("login", "Login Screen"),
+)
+
+OBJECT_HIGHER_ORDER_STATUS = (
+    ("Backlog", "Backlog"),
+    ("Normal", "Normal"),
+    ("Blocked", "Blocked"),
+    ("Closed", "Closed"),
 )
 
 PAGE_LAYOUT = (
@@ -661,7 +662,7 @@ class KanbanColumn(models.Model):
     kanban_column_name = models.CharField(max_length=255)
     kanban_column_property = models.CharField(
         max_length=10,
-        choices=KANBAN_COLUMN_PROPERTY,
+        choices=OBJECT_HIGHER_ORDER_STATUS,
         default="Normal",
     )
     kanban_column_sort_number = models.IntegerField()
@@ -734,13 +735,47 @@ class ListOfBugClient(models.Model):
         return str(self.bug_client_name)
 
 
+class ListOfProjectStatus(models.Model):
+    project_status_id = models.BigAutoField(primary_key=True)
+    project_status = models.CharField(
+        max_length=100,
+    )
+    project_higher_order_status = models.CharField(
+        max_length=10,
+        choices=OBJECT_HIGHER_ORDER_STATUS,
+        default="Backlog",
+    )
+    project_status_order = models.PositiveIntegerField(
+        default=0,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+        blank=True,
+        null=True,
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
+
+    def __str__(self):
+        return str(self.project_status)
+
 class ListOfRequirementItemStatus(models.Model):
     requirement_item_status_id = models.BigAutoField(primary_key=True)
     requirement_item_status = models.CharField(
         max_length=100,
     )
-    status_is_closed = models.BooleanField(
-        default=False,
+    requirement_item_higher_order_status = models.CharField(
+        max_length=10,
+        choices=OBJECT_HIGHER_ORDER_STATUS,
+        default="Normal",
+    )
+    requirement_item_status_sort_order = models.PositiveIntegerField(
+        default=0,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -786,8 +821,13 @@ class ListOfRequirementStatus(models.Model):
     requirement_status = models.CharField(
         max_length=50,
     )
-    requirement_status_is_closed = models.BooleanField(
-        default=False,
+    requirement_higher_order_status = models.CharField(
+        max_length=10,
+        choices=OBJECT_HIGHER_ORDER_STATUS,
+        default="Normal",
+    )
+    requirement_status_sort_order = models.PositiveIntegerField(
+        default=0,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -848,6 +888,36 @@ class ListOfRFCStatus(models.Model):
 
     def __str__(self):
         return str(self.rfc_status)
+
+
+class ListOfTaskStatus(models.Model):
+    task_status_id = models.BigAutoField(primary_key=True)
+    task_status = models.CharField(
+        max_length=100,
+    )
+    task_higher_order_status = models.CharField(
+        max_length=10,
+        choices=OBJECT_HIGHER_ORDER_STATUS,
+        default="Backlog",
+    )
+    task_status_order = models.PositiveIntegerField(
+        default=0,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+        blank=True,
+        null=True,
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
+
+    def __str__(self):
+        return str(self.task_status)
 
 
 class ListOfTitle(models.Model):
@@ -1233,8 +1303,9 @@ class Project(models.Model):
     )
     project_start_date = models.DateTimeField()
     project_end_date = models.DateTimeField()
-    project_status = models.CharField(
-        max_length=15, choices=PROJECT_STATUS_CHOICE, default="New"
+    project_status = models.ForeignKey(
+        "ListOfProjectStatus",
+        on_delete=models.CASCADE,
     )
     project_story_point_min = models.IntegerField(default=1)
     project_story_point_max = models.IntegerField(default=4)
@@ -1572,8 +1643,9 @@ class Task(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
-    task_status = models.CharField(
-        max_length=15, choices=PROJECT_STATUS_CHOICE, default="New"
+    task_status = models.ForeignKey(
+        "ListOfTaskStatus",
+        on_delete=models.CASCADE,
     )
     task_story_point_min = models.IntegerField(default=4)
     task_story_point_max = models.IntegerField(default=10)

@@ -5,6 +5,12 @@
 				<h1>Task Information</h1>
 				<hr/>
 
+				<div v-if="taskIsClosed"
+					 class="alert alert-info"
+				>
+					Task is currently closed
+				</div>
+
 				<div class="row">
 					<!-- DESCRIPTION -->
 					<div class="col-md-4">
@@ -31,6 +37,7 @@
 							<input
 								type="text"
 								v-model="taskShortDescriptionModel"
+								v-bind:disabled="isReadOnly"
 								class="form-control"
 							/>
 						</div>
@@ -85,7 +92,7 @@
 					<div class="col-md-4">
 						<n-select
 							v-bind:options="statusOptions"
-							v-bind:disabled="isReadOnly"
+							v-bind:disabled="userLevel <= 2"
 							v-model:value="taskStatusModel"
 						></n-select>
 					</div>
@@ -104,32 +111,22 @@
 					v-on:update_dates="updateDates($event)"
 					v-bind:start-date-model="taskStartDateModel.getTime()"
 					v-bind:end-date-model="taskEndDateModel.getTime()"
+					v-bind:is-read-only="isReadOnly"
 				></between-dates>
 
 				<!-- Submit Button -->
-				<hr v-if="userLevel >= 2 && !isReadOnly"/>
+				<hr v-if="!isReadOnly"/>
 				<div
 					class="row submit-row"
 					v-if="!isReadOnly"
 				>
 					<div class="col-md-12">
-						<!-- Close Task -->
-						<a
-							href="javascript:void(0)"
-							v-if="userLevel >= 3"
-							class="btn btn-danger"
-							v-on:click="closeTask"
-						>Close Task</a
-						>
-
 						<!-- Update Task -->
-						<a
-							href="javascript:void(0)"
-							class="btn btn-primary save-changes"
-							v-if="userLevel >= 2"
-							v-on:click="updateTask"
-						>Update Task</a
+						<button class="btn btn-primary save-changes"
+								v-on:click="updateTask"
 						>
+							Update task
+						</button>
 					</div>
 				</div>
 			</div>
@@ -150,7 +147,6 @@ import BetweenDates from "../dates/BetweenDates.vue";
 import {mapGetters} from "vuex";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 import loadingModalMixin from "../../mixins/loadingModalMixin";
 import uploadMixin from "../../mixins/uploadMixin";
@@ -196,6 +192,16 @@ export default {
 				return [];
 			},
 		},
+		statusOptions: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
+		taskIsClosed: {
+			type: Boolean,
+			default: false,
+		},
 		theme: {
 			type: String,
 			default: "",
@@ -213,17 +219,22 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
+	watch: {
+		async taskStatusModel() {
+			//Escape condition 1 - if the task is NOT already closed
+			if (!this.taskIsClosed) return;
+
+			//Escape condition 2 - if the NEW status is closed
+			if (this.checkStatusIsClosed()) return;
+
+			//Method - we want to resave the data and then reload
+			await this.updateTask();
+			window.location.reload();
+		},
+	},
 	data() {
 		return {
 			isReadOnly: false,
-			statusOptions: [
-				{value: "New", label: "New"},
-				{value: "Backlog", label: "Backlog"},
-				{value: "Blocked", label: "Blocked"},
-				{value: "In Progress", label: "In Progress"},
-				{value: "Test/Review", label: "Test/Review"},
-				{value: "Closed", label: "Closed"},
-			],
 			taskDescriptionModel:
 			this.taskResults[0].fields.task_long_description,
 			taskEndDateModel: new Date(
@@ -237,7 +248,7 @@ export default {
 			taskStatusModel: this.taskResults[0].fields.task_status,
 		};
 	},
-	mixins: [errorModalMixin, getThemeMixin, loadingModalMixin, uploadMixin],
+	mixins: [getThemeMixin, loadingModalMixin, uploadMixin],
 	validations: {
 		taskDescriptionModel: {
 			required,
@@ -254,16 +265,21 @@ export default {
 		},
 	},
 	methods: {
-		closeTask() {
-			//Set the status to closed
-			this.taskStatusModel = "Closed";
+		checkStatusIsClosed() {
+			//Will filter the current status for the status - then check to see if it is closed
+			const filtered_status = this.statusOptions.filter((row) => {
+				return parseInt(row.value) === parseInt(this.taskStatusModel);
+			});
 
-			//Save the status
-			this.updateTask();
+			//If there are not matching status - return true. Assume closed
+			if (filtered_status.length === 0) return true;
+
+			//Use the first value
+			return filtered_status[0].task_higher_order_status === "Closed";
 		},
 		setReadOnly() {
 			//If the project is closed -> we state that is read only is true
-			if (this.taskResults[0].fields.task_status === "Closed") {
+			if (this.checkStatusIsClosed()) {
 				this.isReadOnly = true;
 				return;
 			}
@@ -283,9 +299,6 @@ export default {
 				//User does not need to do anything else
 				return;
 			}
-
-			//Show the saving modal
-			this.showLoadingModal("task");
 
 			//Create the data_to_send array
 			const data_to_send = new FormData();
@@ -308,25 +321,25 @@ export default {
 			data_to_send.set("task_status", this.taskStatusModel);
 
 			//Send data to backend
-			this.axios
-				.post(
-					`${this.rootUrl}task_information/${this.taskResults[0].pk}/save/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Hide the loading modal
-					this.closeLoadingModal();
+			this.axios.post(
+				`${this.rootUrl}task_information/${this.taskResults[0].pk}/save/`,
+				data_to_send
+			).then(() => {
+				//Hide the loading modal
+				this.closeLoadingModal();
 
-					//Reload the page IF the status is closed
-					if (this.taskStatusModel === "Closed") {
-						window.location.reload(
-							this.taskStatusModel === "Closed"
-						);
-					}
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+				if (this.checkStatusIsClosed()) {
+					window.location.reload();
+				}
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Project Could not save",
+					message: `There was an error saving the project. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					unique_type: "save",
+					delay: 0,
 				});
+			});
 		},
 		updateDates(data) {
 			this.taskEndDateModel = new Date(data.end_date);
@@ -342,11 +355,7 @@ export default {
 		});
 	},
 	mounted() {
-		//If users have enough permissions add in the "Closed" functionaly
-		// if (this.userLevel >= 3) {
-		// 	this.statusOptions.push("Closed");
-		// }
-
+		//Set the read only on mount :)
 		this.setReadOnly();
 	},
 };
