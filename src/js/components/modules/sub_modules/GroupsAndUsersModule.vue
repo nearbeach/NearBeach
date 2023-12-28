@@ -51,7 +51,7 @@
 					href="javascript:void(0)"
 					class="btn btn-primary save-changes"
 					v-on:click="addNewGroup"
-					v-if="userLevel > 1"
+					v-if="userLevel > 1 && !isReadOnly"
 				>Add Group to {{ destinationTitle }}</a
 				>
 			</div>
@@ -116,13 +116,14 @@
 		<div class="spacer"></div>
 
 		<!-- TO DO - limit it to certain users -->
-		<div class="row submit-row">
+		<div class="row submit-row"
+		     v-if="userLevel > 1 && !isReadOnly"
+		>
 			<div class="col-md-12">
 				<a
 					href="javascript:void(0)"
 					class="btn btn-primary save-changes"
 					v-on:click="addNewUser"
-					v-if="userLevel > 1"
 				>Add User to {{ destinationTitle }}</a
 				>
 			</div>
@@ -157,6 +158,12 @@ export default {
 		ConfirmGroupDelete,
 		ConfirmUserDelete,
 		Icon,
+	},
+	props: {
+		isReadOnly: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	data() {
 		return {

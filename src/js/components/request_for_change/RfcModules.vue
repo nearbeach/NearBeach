@@ -136,6 +136,7 @@
 						<groups-and-users-module
 							v-bind:location-id="locationId"
 							v-bind:destination="destination"
+							v-bind:is-read-only="isReadOnly"
 						></groups-and-users-module>
 					</div>
 					<div

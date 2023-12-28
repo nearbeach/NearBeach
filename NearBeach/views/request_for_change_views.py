@@ -58,6 +58,7 @@ def get_rfc_change_task(rfc_id):
         "blocked_list": json.loads(blocked_list),
     })
 
+
 # Internal function
 def get_rfc_context(rfc_id):
     """
