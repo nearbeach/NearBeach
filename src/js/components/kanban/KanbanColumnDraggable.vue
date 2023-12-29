@@ -49,7 +49,9 @@
 		</template>
 
 		<!--         ADD NEW CARDS + LINK OBJECTS -->
-		<template #footer>
+		<template #footer
+			v-if="kanbanStatus !== 'Closed'"
+		>
 			<div class="kanban-add-new-cards">
 				<a
 					class="kanban-link btn btn-primary"
