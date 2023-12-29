@@ -10,7 +10,12 @@
 			{{ destinationTitle }}. Users will have to be included in these groups to
 			be added to this {{ destinationTitle }}
 		</p>
-		<div v-if="objectGroupList.length === 0 && !addingGroupStatus"
+		<div v-if="loadingData"
+			class="alert alert-info"
+		>
+			Currently loading group data.
+		</div>
+		<div v-else-if="objectGroupList.length === 0 && !addingGroupStatus"
 			 class="alert alert-dark"
 		>
 			Sorry - there are no groups active.
@@ -68,8 +73,13 @@
 			{{ destinationTitle }}. Please note - users have to be a part of the
 			groups list above.
 		</p>
+		<div v-if="loadingData"
+			class="alert alert-info"
+		>
+			Currently loading User Data.
+		</div>
 		<div
-			v-if="objectUserList.length === 0 && !addingUserStatus"
+			v-else-if="objectUserList.length === 0 && !addingUserStatus"
 			class="alert alert-dark"
 		>
 			Sorry - there are no current users active.
@@ -170,6 +180,7 @@ export default {
 			deleteGroupId: 0,
 			deleteUsername: "",
 			destinationTitle: "",
+			loadingData: true,
 		}
 	},
 	computed: {
@@ -210,7 +221,9 @@ export default {
 					objectUserList: response.data.object_user_list,
 					potentialGroupList: response.data.potential_group_list,
 					potentialUserList: response.data.potential_user_list,
-				})
+				});
+
+				this.loadingData = false;
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: `Error fetching group and user data`,
