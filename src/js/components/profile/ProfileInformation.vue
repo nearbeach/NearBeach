@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(themeModel)">
+	<n-config-provider :theme="getTheme(currentTheme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>My Profile</h1>
@@ -143,6 +143,7 @@ export default {
 	},
 	data() {
 		return {
+			currentTheme: this.theme,
 			emailModel: this.userResults[0].email,
 			firstNameModel: this.userResults[0].first_name,
 			lastNameModel: this.userResults[0].last_name,
@@ -211,6 +212,9 @@ export default {
 				extra_classes: "bg-warning",
 				delay: 0,
 			});
+
+			//Update the current theme with the one in the model
+			this.currentTheme = this.themeModel;
 
 			//Send data via axios
 			this.axios.post(
