@@ -127,6 +127,7 @@ RFC_STATUS = (
     (6, "Rejected"),
     (7, "Paused"),
     (8, "Ready for QA"),
+    (9, "Failed"),
 )
 
 RFC_TYPE = (

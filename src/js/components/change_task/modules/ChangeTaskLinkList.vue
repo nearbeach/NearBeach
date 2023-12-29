@@ -86,6 +86,7 @@ export default {
 				6: "Rejected",
 				7: "Paused",
 				8: "Ready for QA",
+				9: "Failed",
 			}
 		};
 	},

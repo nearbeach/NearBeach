@@ -104,7 +104,7 @@
 
 				<!-- FAIL -->
 				<button class="btn btn-danger"
-						v-on:click="openConfirmModal(changeTask.change_task_id, 'Failure', 6)"
+						v-on:click="openConfirmModal(changeTask.change_task_id, 'Failure', 9)"
 						v-if="[4, 8].includes(changeTask.change_task_status)"
 				>
 					Set Task to Fail
@@ -361,13 +361,16 @@ export default {
 					return "Task Finished Successfully";
 
 				case 6:
-					return "Task FAILED";
+					return "Task REJECTED";
 
 				case 7:
 					return "PAUSED Task"
 
 				case 8:
 					return "Ready for QA"
+
+				case 9:
+					return "Task FAILED";
 
 				default:
 					return "---";
