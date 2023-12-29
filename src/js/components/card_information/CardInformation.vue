@@ -119,6 +119,23 @@
 								Downloads
 							</button>
 						</li>
+						<li
+							class="nav-item"
+							role="presentation"
+						>
+							<button
+								class="nav-link"
+								id="public-link-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#public-links"
+								type="button"
+								role="tab"
+								aria-controls="contact"
+								aria-selected="false"
+							>
+								Public Links
+							</button>
+						</li>
 					</ul>
 					<hr/>
 
@@ -178,6 +195,16 @@
 								v-bind:read-only="kanbanStatus === 'Closed'"
 							></documents-module>
 						</div>
+						<div
+							class="tab-pane fade"
+							id="public-links"
+							role="tabpanel"
+							aria-labelledby="user-tab"
+						>
+							<list-public-links v-bind:override-destination="'kanban_card'"
+											   v-bind:override-location-id="cardId"
+							></list-public-links>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -192,6 +219,7 @@ import CardNotes from "./CardNotes.vue";
 import CardDescription from "./CardDescription.vue";
 import CardUsers from "./CardUsers.vue";
 import DocumentsModule from '../modules/sub_modules/DocumentsModule.vue';
+import ListPublicLinks from "../modules/sub_modules/ListPublicLinks.vue";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -203,13 +231,14 @@ import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
 export default {
 	name: "CardInformation",
 	components: {
-		UploadDocumentWizard,
 		CardDescription,
 		CardDetails,
 		CardNotes,
 		CardUsers,
 		DocumentsModule,
 		Icon,
+		ListPublicLinks,
+		UploadDocumentWizard,
 	},
 	mixins: [iconMixin],
 	data() {

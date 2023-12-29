@@ -79,26 +79,20 @@ import RfcRisk from "./tabs/RfcRisk.vue";
 import RfcTestPlan from "./tabs/RfcTestPlan.vue";
 import RfcBackoutPlan from "./tabs/RfcBackoutPlan.vue";
 import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
-// import {FormWizard, TabContent} from "../../vue-form-wizard";
-
-// import {FormWizard, TabContent} from 'vue-form-wizard';
 
 // Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
 
 export default {
 	name: "NewRequestForChange",
 	components: {
-		// FormWizard,
 		RfcBackoutPlan,
 		RfcDescription,
 		RfcDetails,
 		RfcImplementationPlan,
 		RfcRisk,
 		RfcTestPlan,
-		// TabContent,
 	},
 	props: {
 		groupResults: {
@@ -131,7 +125,7 @@ export default {
 		},
 	},
 	emits: ["onComplete"],
-	mixins: [errorModalMixin, getThemeMixin, newObjectUploadMixin],
+	mixins: [getThemeMixin, newObjectUploadMixin],
 	data: () => ({
 		currentTab: 0,
 		rfcData: {
@@ -216,18 +210,20 @@ export default {
 				data_to_send.append("group_list", row);
 			});
 
-			this.axios
-				.post(
-					`${this.rootUrl}new_request_for_change/save/`,
-					data_to_send
-				)
-				.then((response) => {
-					// Just go to the location the data sent back
-					window.location.href = response.data;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "request_for_change", "");
+			this.axios.post(
+				`${this.rootUrl}new_request_for_change/save/`,
+				data_to_send
+			).then((response) => {
+				// Just go to the location the data sent back
+				window.location.href = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Can not submit RFC",
+					message: `Sorry there was an error. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		updateValidation(data) {
 			//Update the value

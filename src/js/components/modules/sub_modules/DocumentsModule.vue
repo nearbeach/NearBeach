@@ -40,17 +40,32 @@
 			<div
 				v-for="folder in folderFilteredList"
 				:key="folder.pk"
-				v-on:click="updateCurrentFolder(folder.pk)"
 				class="document--child"
 			>
-				<Icon
-					v-bind:icon="icons.folderIcon"
-					width="80px"
-					height="80px"
-				/>
-				<p class="text-instructions">
-					{{ shortName(folder.fields.folder_description) }}
-				</p>
+				<a
+					href="javascript:void(0)"
+					v-on:click="updateCurrentFolder(folder.pk)"
+				>
+					<Icon
+						v-bind:icon="icons.folderIcon"
+						width="80px"
+						height="80px"
+					/>
+					<p class="text-instructions">
+						{{ shortName(folder.fields.folder_description) }}
+					</p>
+				</a>
+
+				<!-- REMOVE FOLDER -->
+				<div
+					class="document--remove"
+					v-if="userLevel >= 2"
+				>
+					<Icon
+						v-bind:icon="icons.trashCan"
+						v-on:click="confirmFolderDelete(folder.pk)"
+					/>
+				</div>
 			</div>
 
 			<!-- RENDER THE FILES -->
@@ -230,6 +245,26 @@ export default {
 			);
 			confirmFileDeleteModal.show();
 
+		},
+		confirmFolderDelete(folder_id) {
+			//Send the folder id to VueX
+			this.$store.commit({
+				type: "updateFolderRemoveId",
+				folderRemoveId: folder_id,
+			});
+
+			//Close the card modal if exists
+			const cardModal = document.getElementById("cardInformationModalCloseButton");
+			if (cardModal !== null)
+			{
+				cardModal.click();
+			}
+
+			//Open the modal
+			const confirmFolderDeleteModal = new Modal(
+				document.getElementById("confirmFolderDeleteModal")
+			);
+			confirmFolderDeleteModal.show();
 		},
 		getDestination() {
 			return this.overrideDestination !== "" ? this.overrideDestination : this.destination;

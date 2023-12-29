@@ -17,17 +17,20 @@ from .models import (
     KanbanColumn,
     KanbanLevel,
     ListOfBugClient,
+    ListOfProjectStatus,
     ListOfRequirementItemStatus,
     ListOfRequirementItemType,
     ListOfRequirementStatus,
     ListOfRequirementType,
     ListOfRFCStatus,
+    ListOfTaskStatus,
     ListOfTitle,
     Notification,
     ObjectAssignment,
     Organisation,
     PermissionSet,
     Project,
+    PublicLink,
     RequestForChange,
     RequestForChangeGroupApproval,
     Requirement,
@@ -53,17 +56,20 @@ admin.site.register(KanbanCard)
 admin.site.register(KanbanColumn)
 admin.site.register(KanbanLevel)
 admin.site.register(ListOfBugClient)
+admin.site.register(ListOfProjectStatus)
 admin.site.register(ListOfRequirementItemStatus)
 admin.site.register(ListOfRequirementItemType)
 admin.site.register(ListOfRequirementStatus)
 admin.site.register(ListOfRequirementType)
 admin.site.register(ListOfRFCStatus)
+admin.site.register(ListOfTaskStatus)
 admin.site.register(ListOfTitle)
 admin.site.register(Notification)
 admin.site.register(ObjectAssignment)
 admin.site.register(Organisation)
 admin.site.register(PermissionSet)
 admin.site.register(Project)
+admin.site.register(PublicLink)
 admin.site.register(RequestForChange)
 admin.site.register(RequestForChangeGroupApproval)
 admin.site.register(Requirement)

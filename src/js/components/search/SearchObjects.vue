@@ -136,7 +136,7 @@ export default {
 				prefix: "Pro",
 				id: "project_id",
 				title: "project_name",
-				status: "project_status",
+				status: "project_status_text",
 			},
 			requestForChangeVariables: {
 				header: "Request for Change",
@@ -159,7 +159,7 @@ export default {
 				prefix: "Task",
 				id: "task_id",
 				title: "task_short_description",
-				status: "task_status",
+				status: "task_status_text",
 			},
 		};
 	},

@@ -276,6 +276,7 @@
 						></add-link-wizard>
 
 						<confirm-file-delete-vue></confirm-file-delete-vue>
+						<confirm-folder-delete></confirm-folder-delete>
 					</div>
 					<div
 						class="tab-pane fade"
@@ -307,7 +308,7 @@
 						role="tabpanel"
 						aria-labelledby="contact-tab"
 					>
-						<list-tags-module></list-tags-module>
+						<misc-module></misc-module>
 					</div>
 					<div
 						class="tab-pane fade"
@@ -331,12 +332,13 @@ import RequirementLinksModule from "./sub_modules/RequirementLinksModule.vue";
 import DocumentsModule from "./sub_modules/DocumentsModule.vue";
 import ObjectLinks from "./sub_modules/ObjectLinks.vue";
 import CustomersModule from "./sub_modules/CustomersModule.vue";
-import ListTagsModule from "./sub_modules/ListTagsModule.vue";
+import MiscModule from "./sub_modules/MiscModule.vue";
 import BugsModule from "./sub_modules/BugsModule.vue";
 import NotesModule from "./sub_modules/NotesModule.vue";
 import UploadDocumentWizard from "./wizards/UploadDocumentWizard.vue";
 import AddLinkWizard from "./wizards/AddLinkWizard.vue";
 import ConfirmFileDeleteVue from "./wizards/ConfirmFileDelete.vue";
+import ConfirmFolderDelete from "./wizards/ConfirmFolderDelete.vue";
 import AddFolderWizard from "./wizards/AddFolderWizard.vue";
 
 //Mixins
@@ -349,16 +351,17 @@ export default {
 		ConfirmFileDeleteVue,
 		AddLinkWizard,
 		BugsModule,
+		ConfirmFolderDelete,
 		CustomersModule,
 		DocumentsModule,
 		GroupsAndUsersModule,
-		ListTagsModule,
 		NotesModule,
 		ObjectLinks,
 		RequirementItemLinksModule,
 		RequirementItemsModule,
 		RequirementLinksModule,
 		UploadDocumentWizard,
+		MiscModule,
 	},
 	mixins: [
 		getThemeMixin
@@ -368,6 +371,10 @@ export default {
 			type: String,
 			default: "",
 		}, //Which object we are looking at, i.e. requirement
+		isReadOnly: {
+			type: Boolean,
+			default: false,
+		},
 		locationId: {
 			type: Number,
 			default: 0,
@@ -410,10 +417,21 @@ export default {
 			rootUrl: this.rootUrl,
 			staticUrl: this.staticUrl,
 		});
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: this.userLevel,
-		});
+
+		//If is read only is true, we drop the user level to 1.
+		if (this.isReadOnly) {
+			//Set everything as read only :)
+			this.$store.commit({
+				type: "updateUserLevel",
+				userLevel: 1,
+			});
+		} else {
+			//Use the user level
+			this.$store.commit({
+				type: "updateUserLevel",
+				userLevel: this.userLevel,
+			});
+		}
 	},
 };
 </script>

@@ -71,7 +71,6 @@
 </template>
 
 <script>
-import {Modal} from "bootstrap";
 import {NSwitch} from "naive-ui";
 
 // Components
@@ -82,7 +81,6 @@ import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 import searchMixin from "../../mixins/searchMixin";
 
@@ -135,10 +133,10 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [errorModalMixin, getThemeMixin, searchMixin],
+	mixins: [getThemeMixin, searchMixin],
 	data() {
 		return {
-			canDragCards: true,
+			canDragCards: false,
 			columnModel: [],
 			levelModel: [],
 		};
@@ -156,14 +154,14 @@ export default {
 			window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/`;
 		},
 		updateCanDragCards(value) {
-			// this.$store.commit({
-			//   type: "updateCanDragCards",
-			//   canDragCards: value,
-			// })
-			this.$store.dispatch({
-				type: "updateCanDragCards",
-				canDragCards: value,
-			});
+			this.$store.commit({
+			  type: "updateCanDragCards",
+			  canDragCards: value,
+			})
+			// this.$store.dispatch({
+			// 	type: "updateCanDragCards",
+			// 	canDragCards: value,
+			// });
 		},
 		updatePropertyList(data) {
 			this[data.source] = data.data;
@@ -205,6 +203,9 @@ export default {
 				title: row.fields.kanban_level_name,
 			};
 		});
+
+		//Update Can Drag Cards value
+		this.updateCanDragCards(false);
 	},
 };
 </script>

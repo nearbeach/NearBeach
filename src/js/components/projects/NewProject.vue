@@ -61,11 +61,8 @@
 							menubar: false,
 							paste_data_images: true,
 							plugins: ['lists', 'image', 'codesample', 'table'],
-							toolbar: [
-								'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-								'bold italic strikethrough underline backcolor | table | ' +
-									'bullist numlist outdent indent | removeformat | image codesample',
-							],
+            				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
+									 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
 							skin: `${this.skin}`,
 							content_css: `${this.contentCss}`,
 						}"
@@ -174,10 +171,14 @@ export default {
 				return [];
 			},
 		},
+		userLevel: {
+			type: Number,
+			default: 1,
+		},
 		uuid: {
 			type: String,
 			default: "",
-		}
+		},
 	},
 	computed: {
 		...mapGetters({
@@ -292,6 +293,11 @@ export default {
 			type: "updateUrl",
 			rootUrl: this.rootUrl,
 			staticUrl: this.staticUrl,
+		});
+
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
 		});
 	},
 };

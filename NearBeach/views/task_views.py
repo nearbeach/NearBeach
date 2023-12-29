@@ -4,10 +4,11 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.urls import reverse
+from django.db.models import F
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.forms import NewTaskForm, TaskInformationForm
-from NearBeach.models import Group, UserGroup, ObjectAssignment
+from NearBeach.models import Group, UserGroup, ObjectAssignment, ListOfTaskStatus
 from NearBeach.views.tools.internal_functions import Task, Organisation
 from NearBeach.views.theme_views import get_theme
 
@@ -44,6 +45,8 @@ def new_task(request, *args, **kwargs):
         .distinct()
     )
 
+    user_level = kwargs["user_level"]
+
     # Context
     c = {
         "nearbeach_title": "New Task",
@@ -53,6 +56,7 @@ def new_task(request, *args, **kwargs):
         ),
         "need_tinymce": True,
         "uuid": str(uuid.uuid4()),
+        "user_level": user_level,
         "theme": get_theme(request),
     }
 
@@ -74,6 +78,14 @@ def new_task_save(request, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    # Get default task status
+    task_status = ListOfTaskStatus.objects.filter(
+        is_deleted=False,
+    ).order_by("task_status_order")
+
+    if len(task_status) == 0:
+        return HttpResponseBadRequest("No Task Status entered in the system. Please contact system admin")
+
     # Create the new task
     task_submit = Task(
         change_user=request.user,
@@ -83,6 +95,7 @@ def new_task_save(request, *args, **kwargs):
         task_start_date=form.cleaned_data["task_start_date"],
         task_end_date=form.cleaned_data["task_end_date"],
         organisation=form.cleaned_data["organisation"],
+        task_status=task_status.first(),
     )
     task_submit.save()
 
@@ -123,6 +136,27 @@ def task_information(request, task_id, *args, **kwargs):
     # Get Data
     task_results = Task.objects.get(task_id=task_id)
     task_status = task_results.task_status
+    task_is_closed = task_results.task_status.task_higher_order_status == "Closed"
+
+    # Get the status data
+    status_options = ListOfTaskStatus.objects.filter(
+        is_deleted=False,
+    ).annotate(
+        value=F("task_status_id"),
+        label=F("task_status"),
+    ).values(
+        "value",
+        "label",
+        "task_higher_order_status",
+    ).order_by(
+        "task_status_order",
+    )
+
+    # Translate the task is closed
+    if (task_is_closed):
+        task_is_closed = "true"
+    else:
+        task_is_closed = "false"
 
     organisation_results = Organisation.objects.filter(
         is_deleted=False,
@@ -132,13 +166,15 @@ def task_information(request, task_id, *args, **kwargs):
     # Context
     c = {
         "nearbeach_title": f"Task Information {task_id}",
+        "need_tinymce": True,
         "organisation_results": serializers.serialize("json", organisation_results),
-        "user_level": user_level,
+        "status_options": json.dumps(list(status_options), cls=DjangoJSONEncoder),
         "task_id": task_id,
+        "task_is_closed": task_is_closed,
         "task_results": serializers.serialize("json", [task_results]),
         "task_status": task_status,
-        "need_tinymce": True,
         "theme": get_theme(request),
+        "user_level": user_level,
     }
 
     return HttpResponse(t.render(c, request))

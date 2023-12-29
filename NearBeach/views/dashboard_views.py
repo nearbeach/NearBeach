@@ -126,7 +126,7 @@ def get_my_objects(request):
             ).values("project_id"),
         )
         .exclude(
-            project_status="Closed",
+            project_status__project_higher_order_status="Closed",
         )
         .values(
             "project_id",
@@ -146,7 +146,7 @@ def get_my_objects(request):
             ).values("requirement_id"),
         )
         .exclude(
-            requirement_status__requirement_status_is_closed=True,
+            requirement_status__requirement_higher_order_status="Closed",
         )
         .values(
             "requirement_id",
@@ -165,7 +165,7 @@ def get_my_objects(request):
             ).values("task_id"),
         )
         .exclude(
-            task_status="Closed",
+            task_status__task_higher_order_status="Closed",
         )
         .values(
             "task_id",
@@ -268,7 +268,8 @@ def get_unassigned_objects(request):
         )
         .exclude(
             Q(
-                project_status="Closed",
+                # project_status="Closed",
+                project_status__project_higher_order_status="Closed",
             )
             | Q(
                 # Project has no users assigned to it
@@ -302,7 +303,7 @@ def get_unassigned_objects(request):
         )
         .exclude(
             Q(
-                requirement_status__requirement_status_is_closed=True,
+                requirement_status__requirement_higher_order_status="Closed",
             )
             | Q(
                 # Requirement has no users assigned to it
@@ -336,7 +337,8 @@ def get_unassigned_objects(request):
         )
         .exclude(
             Q(
-                task_status="Closed",
+                # task_status="Closed",
+                task_status__task_higher_order_status="Closed",
             )
             | Q(
                 # Task has no users assigned to it

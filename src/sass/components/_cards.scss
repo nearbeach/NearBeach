@@ -63,13 +63,13 @@
         .organisation-email,
         .organisation-link {
             font-weight: lighter;
-            color: #737373;
+            color: var(--bs-card-color);
             font-size: 15px;
             margin-bottom: 2px;
 
             & svg {
                 width: 14px;
-                color: #474f57;
+                color: var(--bs-card-color);
             }
         }
 

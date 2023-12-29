@@ -279,6 +279,10 @@ export default {
 			columnPropertyModel: "Normal",
 			columnPropertyOptions: [
 				{
+					label: "Backlog",
+					value: "Backlog",
+				},
+				{
 					label: "Normal",
 					value: "Normal",
 				},

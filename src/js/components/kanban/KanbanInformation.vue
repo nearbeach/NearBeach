@@ -78,6 +78,7 @@
 
 			<!-- CONFIRM DOCUMENT DELETE -->
 			<confirm-file-delete-vue></confirm-file-delete-vue>
+			<confirm-folder-delete></confirm-folder-delete>
 
 			<new-kanban-link-wizard
 				v-bind:location-id="locationId"
@@ -111,10 +112,12 @@ import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
 import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
 import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
 import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
+import ConfirmFolderDelete from "../modules/wizards/ConfirmFolderDelete.vue";
 
 export default {
 	name: "KanbanInformation",
 	components: {
+		ConfirmFolderDelete,
 		ConfirmFileDeleteVue,
 		AddLinkWizard,
 		AddFolderWizard,

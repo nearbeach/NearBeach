@@ -127,7 +127,6 @@ import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixins
 import errorModalMixin from "../../mixins/errorModalMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 import getToken from "../../mixins/getTokenMixin";
 
 export default {
@@ -148,7 +147,7 @@ export default {
 			},
 		},
 	},
-	mixins: [errorModalMixin, getToken, loadingModalMixin],
+	mixins: [errorModalMixin, getToken],
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",
@@ -232,25 +231,37 @@ export default {
 				this.organisationWebsiteModel
 			);
 
-			//Show the loader
-			this.showLoadingModal("Organisation");
+			//Notify user we are updating
+			this.$store.dispatch("newToast", {
+				header: "Updating Organisation",
+				message: "Please wait whilst we update organisation",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "save",
+			});
 
 			//Use axios to send the data
-			this.axios
-				.post(
-					`${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/save/`,
-					data_to_send
-				)
-				.then((response) => {
-					this.closeLoadingModal();
-				})
-				.catch((error) => {
-					this.showErrorModal(
-						error,
-						"organisation",
-						this.organisationResults[0].pk
-					);
+			this.axios.post(
+				`${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/save/`,
+				data_to_send
+			).then(() => {
+				//Notify user we are updating
+				this.$store.dispatch("newToast", {
+					header: "Organisation Updated",
+					message: "The Organisation has updated",
+					extra_classes: "bg-success",
+					unique_type: "save",
 				});
+			}).catch((error) => {
+				//Notify user we are updating
+				this.$store.dispatch("newToast", {
+					header: "Failed to Update Organisation",
+					message: `Sorry. We have encounted an error. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "save",
+				});
+			});
 		},
 		updateProfilePicture() {
 			//Notify user of intention

@@ -58,6 +58,7 @@ def get_rfc_change_task(rfc_id):
         "blocked_list": json.loads(blocked_list),
     })
 
+
 # Internal function
 def get_rfc_context(rfc_id):
     """
@@ -248,6 +249,43 @@ def rfc_deployment(request, rfc_id, *args, **kwargs):
     c = get_rfc_context(rfc_id)
 
     return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_rfc_permissions(min_permission_level=1)
+def rfc_get_approval_users(request, rfc_id, *args, **kwargs):
+    """
+    :param request:
+    :param rfc_id:
+    :return:
+    """
+    user_group_results = UserGroup.objects.filter(
+        is_deleted=False,
+        group_id__in=ObjectAssignment.objects.filter(
+            is_deleted=False,
+            request_for_change_id=rfc_id,
+        ).values('group_id'),
+        group_leader=True,
+    )
+
+    # Get the user details
+    user_results = User.objects.filter(
+        id__in=user_group_results.values("username_id")
+    ).annotate(
+        profile_picture=F('userprofilepicture__document_id__document_key')
+    ).values(
+        "id",
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "profile_picture",
+    )
+
+    # Send the data to the user
+    data_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
+    return JsonResponse(json.loads(data_results), safe=False)
 
 
 @require_http_methods(["POST"])

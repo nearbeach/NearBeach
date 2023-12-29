@@ -20,6 +20,7 @@ from .models import (
     Notification,
     PermissionSet,
     Project,
+    PublicLink,
     RequestForChange,
     RequirementItem,
     Requirement,
@@ -347,6 +348,13 @@ class FixCardOrderingForm(forms.Form):
     kanban_cards = forms.ModelMultipleChoiceField(
         required=True,
         queryset=KanbanCard.objects.all(),
+    )
+
+
+class FolderRemoveForm(forms.Form):
+    folder_id = forms.ModelChoiceField(
+        queryset=Folder.objects.all(),
+        required=True,
     )
 
 
@@ -798,6 +806,23 @@ class ProjectForm(forms.ModelForm):
             "project_end_date",
             "project_status",
         ]
+
+
+class PublicLinkDeleteForm(forms.Form):
+    public_link_id = forms.ModelChoiceField(
+        queryset=PublicLink.objects.all(),
+        required=True,
+    )
+
+
+class PublicLinkUpdateForm(forms.Form):
+    public_link_id = forms.ModelChoiceField(
+        queryset=PublicLink.objects.all(),
+        required=True,
+    )
+    public_link_is_active = forms.BooleanField(
+        required=False,
+    )
 
 
 class ResortColumnForm(forms.Form):

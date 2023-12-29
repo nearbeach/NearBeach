@@ -20,6 +20,7 @@ from .views import (
     permission_set_views,
     profile_views,
     project_views,
+    public_views,
     request_for_change_views,
     requirement_item_views,
     requirement_views,
@@ -162,6 +163,11 @@ urlpatterns = [
         "documentation/<destination>/<location_id>/remove/",
         document_views.document_remove,
         name="document_remove",
+    ),
+    path(
+        "documentation/<destination>/<location_id>/remove_folder/",
+        document_views.document_remove_folder,
+        name="document_remove_folder",
     ),
     path(
         "documentation/<destination>/<location_id>/upload/",
@@ -585,6 +591,32 @@ urlpatterns = [
         project_views.project_information_save,
         name="project_information_save",
     ),
+    # Public
+    path(
+        "public/<destination>/<int:location_id>/<uuid:public_link_id>/",
+        public_views.public_link,
+        name="public_link",
+    ),
+    path(
+        "public_data/<destination>/<int:location_id>/create/",
+        public_views.create_public_link,
+        name="create_public_link",
+    ),
+    path(
+        "public_data/<destination>/<int:location_id>/delete/",
+        public_views.delete_public_link,
+        name="delete_public_link",
+    ),
+    path(
+        "public_data/<destination>/<int:location_id>/get_links/",
+        public_views.get_public_links,
+        name="get_public_links",
+    ),
+    path(
+        "public_data/update_link/",
+        public_views.update_public_link,
+        name="update_public_link",
+    ),
     # Requirements
     path(
         "requirement_information/<int:requirement_id>/",
@@ -659,6 +691,11 @@ urlpatterns = [
         "rfc_information/<int:rfc_id>/change_task_list/",
         request_for_change_views.rfc_change_task_list,
         name="rfc_change_task_list",
+    ),
+    path(
+        "rfc_information/<int:rfc_id>/get_approval_users/",
+        request_for_change_views.rfc_get_approval_users,
+        name="rfc_get_approval_users",
     ),
     path(
         "rfc_information/<int:rfc_id>/new_change_task/",

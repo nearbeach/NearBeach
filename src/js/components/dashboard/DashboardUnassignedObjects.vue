@@ -47,9 +47,6 @@
 </template>
 
 <script>
-// Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
-
 //Components
 import RenderObjectCard from '../render/RenderObjectCard.vue';
 
@@ -98,7 +95,6 @@ export default {
 			},
 		};
 	},
-	mixins: [errorModalMixin],
 	methods: {
 		getMyObjects() {
 			//Use axios to get the objects assigned to me
@@ -111,10 +107,12 @@ export default {
 					this.isLoaded = true;
 				})
 				.catch((error) => {
-					this.showErrorModal(
-						error,
-						"Dashboard Unassigned Objects"
-					);
+					this.$store.dispatch("newToast", {
+						header: "Error Getting Dashboard Data",
+						message: `Can't get data for My Objects. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 	},
