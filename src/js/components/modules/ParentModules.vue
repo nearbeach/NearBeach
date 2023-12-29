@@ -276,6 +276,7 @@
 						></add-link-wizard>
 
 						<confirm-file-delete-vue></confirm-file-delete-vue>
+						<confirm-folder-delete></confirm-folder-delete>
 					</div>
 					<div
 						class="tab-pane fade"
@@ -337,6 +338,7 @@ import NotesModule from "./sub_modules/NotesModule.vue";
 import UploadDocumentWizard from "./wizards/UploadDocumentWizard.vue";
 import AddLinkWizard from "./wizards/AddLinkWizard.vue";
 import ConfirmFileDeleteVue from "./wizards/ConfirmFileDelete.vue";
+import ConfirmFolderDelete from "./wizards/ConfirmFolderDelete.vue";
 import AddFolderWizard from "./wizards/AddFolderWizard.vue";
 
 //Mixins
@@ -349,6 +351,7 @@ export default {
 		ConfirmFileDeleteVue,
 		AddLinkWizard,
 		BugsModule,
+		ConfirmFolderDelete,
 		CustomersModule,
 		DocumentsModule,
 		GroupsAndUsersModule,

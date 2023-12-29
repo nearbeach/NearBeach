@@ -26,7 +26,7 @@ from ..forms import (
     Document,
     DocumentRemoveForm,
     DocumentUploadForm,
-    RequirementItem,
+    RequirementItem, FolderRemoveForm,
 )
 from ..models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
 from azure.storage.blob import BlobServiceClient
@@ -227,6 +227,22 @@ def document_remove(request, destination, location_id):
     document_permission_update = DocumentPermission.objects.get(document_key = document_update.document_key)
     document_permission_update.is_deleted = True
     document_permission_update.save()
+
+    return HttpResponse("")
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+def document_remove_folder(request, destination, location_id):
+    # Get form data
+    form = FolderRemoveForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get folder from the from
+    folder_update = form.cleaned_data["folder_id"]
+    folder_update.is_deleted = True
+    folder_update.save()
 
     return HttpResponse("")
 

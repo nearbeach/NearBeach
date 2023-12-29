@@ -351,6 +351,13 @@ class FixCardOrderingForm(forms.Form):
     )
 
 
+class FolderRemoveForm(forms.Form):
+    folder_id = forms.ModelChoiceField(
+        queryset=Folder.objects.all(),
+        required=True,
+    )
+
+
 class KanbanCardForm(forms.ModelForm):
     kanban_card_id = forms.ModelChoiceField(
         required=True,

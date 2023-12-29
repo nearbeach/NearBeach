@@ -5,6 +5,7 @@ export const moduleDocuments = {
         documentList: [],
         documentRemoveKey: "",
         folderList: [],
+        folderRemoveId: "",
     }),
     mutations: {
         updateCurrentFolder: (state, payload) => {
@@ -22,6 +23,9 @@ export const moduleDocuments = {
         },
         updateFolderList: (state, payload) => {
             state.folderList = payload.folderList;
+        },
+        updateFolderRemoveId: (state, payload) => {
+            state.folderRemoveId = payload.folderRemoveId;
         },
     },
     actions: {
@@ -75,7 +79,19 @@ export const moduleDocuments = {
                 type: "updateDocumentList",
                 documentList: new_document_list,
             });
-        }
+        },
+        removeFolder: ({state, commit}, payload) => {
+            //Filter out the folders
+            const new_folder_list = state.folderList.filter((row) => {
+                return parseInt(row.pk) !== payload.folder_id;
+            });
+
+            //Commit the new folder list
+            commit({
+                type: "updateFolderList",
+                folderList: new_folder_list,
+            });
+        },
     },
     getters: {
         getAcceptedDocuments: (state) => {
@@ -114,6 +130,9 @@ export const moduleDocuments = {
             }).sort((a, b) => {
                 return a.fields.folder_description > b.fields.folder_description;
             });
+        },
+        getFolderRemoveId: (state) => {
+            return state.folderRemoveId;
         },
     },
 }
