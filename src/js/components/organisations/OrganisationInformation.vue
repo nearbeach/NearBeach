@@ -244,7 +244,7 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/save/`,
 				data_to_send
-			).then((response) => {
+			).then(() => {
 				//Notify user we are updating
 				this.$store.dispatch("newToast", {
 					header: "Organisation Updated",

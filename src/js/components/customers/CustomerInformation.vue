@@ -35,8 +35,8 @@
 								'X-CSRFTOKEN': getToken('csrftoken'),
 							}"
 								:data="{}"
-								@error="showErrorModal('Profile Picture was not updated','Profile Picture','')"
 								@finish="updateProfilePicture"
+								@error="showErrorToast"
 							>
 								<n-button>Update Profile Picture</n-button>
 							</n-upload>
@@ -127,9 +127,7 @@ import {required, email} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue"
 
 //Import Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 import getToken from "../../mixins/getTokenMixin";
 
 export default {
@@ -198,7 +196,7 @@ export default {
 			titleFixList: [],
 		};
 	},
-	mixins: [errorModalMixin, getThemeMixin, getToken, loadingModalMixin],
+	mixins: [getThemeMixin, getToken],
 	validations: {
 		customerEmailModel: {
 			required,
@@ -215,6 +213,14 @@ export default {
 		},
 	},
 	methods: {
+		showErrorToast() {
+			this.$store.dispatch("newToast", {
+				header: "Error uploading profile picture",
+				message: `Sorry, we had an issue uploading the profile image.`,
+				extra_classes: "bg-danger",
+				delay: 0,
+			});
+		},
 		setProfilePicture() {
 			//If there is a profile picture/image, update. Otherwise use default
 			let profile_picture =
@@ -245,44 +251,49 @@ export default {
 			);
 			data_to_send.set("customer_title", this.customerTitleModel);
 
-			//Show loading screen
-			this.showLoadingModal("Customer Information");
+			//Notify user we are updating
+			this.$store.dispatch("newToast", {
+				header: "Updating Customer",
+				message: "Please wait whilst we update customer",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "save",
+			});
 
 			//Use axios to send the data
-			this.axios
-				.post(
-					`${this.rootUrl}customer_information/${this.customerResults[0].pk}/save/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Close the loading screen
-					this.closeLoadingModal();
-
-					//Check to see if we are updating the profile picture
-					this.updateProfilePicture();
-				})
-				.catch((error) => {
-					//Show the error modal
-					this.showErrorModal(
-						error,
-						"customer",
-						this.customerResults[0].pk
-					);
+			this.axios.post(
+				`${this.rootUrl}customer_information/${this.customerResults[0].pk}/save/`,
+				data_to_send
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "Customer Updated",
+					message: "The Customer has updated",
+					extra_classes: "bg-sucess",
+					unique_type: "save",
 				});
+
+				//Check to see if we are updating the profile picture
+				this.updateProfilePicture();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to Update Customer",
+					message: `Sorry. We have encounted an error. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "save",
+				});
+			});
 		},
 		updateProfilePicture() {
 			//Contact the API to get the location of the new image
-			this.axios
-				.post(
-					`${this.rootUrl}customer_information/${this.customerResults[0].pk}/get_profile_picture/`,
-					{}
-				)
-				.then((response) => {
-					this.profilePicture = response.data;
-				})
-				.catch(() => {
-					this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
-				});
+			this.axios.post(
+				`${this.rootUrl}customer_information/${this.customerResults[0].pk}/get_profile_picture/`,
+				{}
+			).then((response) => {
+				this.profilePicture = response.data;
+			}).catch(() => {
+				this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
+			});
 		},
 	},
 	mounted() {
