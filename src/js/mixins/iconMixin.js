@@ -26,35 +26,35 @@ import usersIcon from "@iconify/icons-feather/users";
 import xCircle from "@iconify-icons/feather/x-circle";
 
 export default {
-	data() {
-		return {
-			icons: {
-				arrowUp,
-				bugIcon,
-				bxBriefcase,
-				cardChecklist,
-				clipboardIcon,
-				documentPdf,
-				documentText,
-				folderIcon,
-				groupPresentation,
-				imageIcon,
-				infoCircle,
-				linkIcon,
-				linkIcon2,
-				linkOut,
-				mailIcon,
-				microsoftExcel,
-				microsoftPowerpoint,
-				microsoftWord,
-				noteAdd,
-				objectStorage,
-				passwordIcon,
-				trashCan,
-				userIcon,
-				usersIcon,
-				xCircle,
-			},
-		};
-	},
+    data() {
+        return {
+            icons: {
+                arrowUp,
+                bugIcon,
+                bxBriefcase,
+                cardChecklist,
+                clipboardIcon,
+                documentPdf,
+                documentText,
+                folderIcon,
+                groupPresentation,
+                imageIcon,
+                infoCircle,
+                linkIcon,
+                linkIcon2,
+                linkOut,
+                mailIcon,
+                microsoftExcel,
+                microsoftPowerpoint,
+                microsoftWord,
+                noteAdd,
+                objectStorage,
+                passwordIcon,
+                trashCan,
+                userIcon,
+                usersIcon,
+                xCircle,
+            },
+        };
+    },
 };

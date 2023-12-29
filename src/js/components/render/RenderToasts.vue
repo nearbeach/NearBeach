@@ -1,0 +1,89 @@
+<template>
+	<div class="toast-container">
+		<div v-for="(single_toast, index) in toastList"
+			 :key="index"
+			 v-bind:class="`toast ${single_toast.extra_classes}`"
+			 role="alert"
+			 aria-live="assertive"
+			 aria-atomic="true"
+			 v-bind:data-delay="single_toast.delay"
+		>
+			<div class="toast-header">
+				<strong class="me-auto">{{ single_toast.header }}</strong>
+				<small>{{ getTime(single_toast.timestamp) }}</small>
+				<button type="button"
+						class="btn-close"
+						data-bs-dismiss="toast"
+						aria-label="Close"
+				></button>
+			</div>
+			<div class="toast-body">
+				{{ single_toast.message }}
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+import { mapGetters } from "vuex";
+import { Toast } from "bootstrap";
+
+export default {
+	name: "RenderToasts",
+	props: {},
+	computed: {
+		...mapGetters({
+			toastList: "getToastList",
+		})
+	},
+	watch: {
+		toastList() {
+			//Wait until AFTER rendering happens
+			this.$nextTick(() => {
+				// let toastList = document.getElementsByClassName("toast");
+				let toastList = [].slice.call(document.querySelectorAll('.toast'))
+
+				//Loop through each toast item and deploy :)
+				toastList.forEach((row) => {
+					//Get the delay
+					var delay = row.dataset.delay;
+
+					//Setup the options
+					let options = {
+						delay: parseInt(delay),
+						autohide: parseInt(delay) > 0,
+					};
+
+					//Create the new toast
+					let toast = new Toast(row, options);
+
+					//Show the toast
+					toast.show();
+				})
+			})
+		},
+	},
+	methods: {
+		getTime(raw_timestamp) {
+			//Get the date object
+			const timestamp = new Date(raw_timestamp);
+
+			//Get the hours
+			let hours = timestamp.getHours();
+
+			//Determine if hours are AM or PM
+			let ampm = hours >= 12 ? 'PM' : 'AM';
+
+			//Reset hours into non 24 format
+			hours = hours % 12;
+			hours = hours ? hours : 12;
+
+			//Get minutes in the 00 format
+			let minutes = timestamp.getMinutes() < 10 ? `0${timestamp.getMinutes()}` : timestamp.getMinutes();
+
+			//Return what we have
+			return `${hours}:${minutes} ${ampm}`;
+		},
+	},
+}
+</script>

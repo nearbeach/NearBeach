@@ -14,7 +14,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.cardChecklist"></Icon> Add
+						<Icon v-bind:icon="icons.cardChecklist"></Icon>
+						Add
 						Kanban Card Wizard
 					</h2>
 					<button
@@ -83,9 +84,9 @@
 										'bold italic strikethrough underline backcolor | table | ' +
 											'bullist numlist outdent indent | removeformat | image codesample',
 									],
+            						skin: `${this.skin}`,
+						            content_css: `${this.contentCss}`
 								}"
-								v-bind:content_css="false"
-								v-bind:skin="false"
 								v-model="kanbanCardDescriptionModel"
 							/>
 						</div>
@@ -114,164 +115,166 @@
 </template>
 
 <script>
-	import axios from "axios";
-	import { Icon } from "@iconify/vue";
-	import Editor from "@tinymce/tinymce-vue";
-	import { NSelect} from "naive-ui";
+import {Icon} from "@iconify/vue";
+import Editor from "@tinymce/tinymce-vue";
+import {NSelect} from "naive-ui";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Mixins
-	import iconMixin from "../../../mixins/iconMixin";
-	import uploadMixin from "../../../mixins/uploadMixin";
+//Mixins
+import iconMixin from "../../../mixins/iconMixin";
+import uploadMixin from "../../../mixins/uploadMixin";
 
-	export default {
-		name: "NewKanbanCard",
-		components: {
-			editor: Editor,
-			Icon,
-			NSelect,
-		},
-		props: {
-			columnResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			kanbanCardResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			levelResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			kanbanBoardResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
+export default {
+	name: "NewKanbanCard",
+	components: {
+		editor: Editor,
+		Icon,
+		NSelect,
+	},
+	props: {
+		columnResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		mixins: [iconMixin, uploadMixin],
-		data() {
-			return {
-				disableAddButton: true,
-				kanbanCardDescriptionModel: "",
-				kanbanCardTextModel: "",
-				kanbanCardPriorityModal: 2,
-				listPriority: [
-					{
-						label: "Highest",
-						value: 0,
-					},
-					{
-						label: "High",
-						value: 1,
-					},
-					{
-						label: "Normal",
-						value: 2,
-					},
-					{
-						label: "Low",
-						value: 3,
-					},
-					{
-						label: "Lowest",
-						value: 4,
-					},
-				],
-			};
+		kanbanCardResults: {
+			type: Array,
+			default: () => {
+				return [];
+			},
 		},
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-			}),
+		levelResults: {
+			type: Array,
+			default: () => {
+				return [];
+			},
 		},
-		methods: {
-			addKanbanCard() {
-				//Get the modal to extract data from
-				var self_modal = document.getElementById("addKanbanCardModal");
+		kanbanBoardResults: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
+	},
+	mixins: [iconMixin, uploadMixin],
+	data() {
+		return {
+			disableAddButton: true,
+			kanbanCardDescriptionModel: "",
+			kanbanCardTextModel: "",
+			kanbanCardPriorityModal: 2,
+			listPriority: [
+				{
+					label: "Highest",
+					value: 0,
+				},
+				{
+					label: "High",
+					value: 1,
+				},
+				{
+					label: "Normal",
+					value: 2,
+				},
+				{
+					label: "Low",
+					value: 3,
+				},
+				{
+					label: "Lowest",
+					value: 4,
+				},
+			],
+		};
+	},
+	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			rootUrl: "getRootUrl",
+			skin: "getSkin",
+		}),
+	},
+	methods: {
+		addKanbanCard() {
+			//Get the modal to extract data from
+			const self_modal = document.getElementById("addKanbanCardModal");
 
-				//Create the data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("kanban_card_text", this.kanbanCardTextModel);
-				data_to_send.set(
-					"kanban_card_description",
-					this.kanbanCardDescriptionModel
-				);
-				data_to_send.set(
-					"kanban_level",
-					self_modal.dataset.kanbanLevel
-				);
-				data_to_send.set(
-					"kanban_column",
-					self_modal.dataset.kanbanColumn
-				);
-				data_to_send.set(
-					"kanban_card_priority",
-					this.kanbanCardPriorityModal
+			//Create the data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("kanban_card_text", this.kanbanCardTextModel);
+			data_to_send.set(
+				"kanban_card_description",
+				this.kanbanCardDescriptionModel
+			);
+			data_to_send.set(
+				"kanban_level",
+				self_modal.dataset.kanbanLevel
+			);
+			data_to_send.set(
+				"kanban_column",
+				self_modal.dataset.kanbanColumn
+			);
+			data_to_send.set(
+				"kanban_card_priority",
+				this.kanbanCardPriorityModal
+			)
+
+			//Send the data
+			this.axios
+				.post(
+					`${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/new_card/`,
+					data_to_send
 				)
+				.then((response) => {
+					//Emit the data upstream
+					this.$emit("new_card", response.data);
 
-				//Send the data
-				axios
-					.post(
-						`${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/new_card/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Emit the data upstream
-						this.$emit("new_card", response.data);
+					//Blank the model
+					this.kanbanCardTextModel = "";
+					this.kanbanCardDescriptionModel = "";
 
-						//Blank the model
-						this.kanbanCardTextModel = "";
-						this.kanbanCardDescriptionModel = "";
-
-						//Close the modal
-						document
-							.getElementById("addKanbanCardCloseButton")
-							.click();
-					})
-					.catch((error) => {});
-			},
-		},
-		watch: {
-			kanbanCardTextModel() {
-				// If the model is blank OR the text already exists - turn disableAddButton to true
-				this.disableAddButton = false; //People can click the "Add" button
-
-				if (this.kanbanCardTextModel.length == 0) {
-					this.disableAddButton = true;
-				}
-
-				//Check to make sure it does not exist
-				var filtered_results = this.kanbanCardResults.filter((row) => {
-					return (
-						row.fields.kanban_card_text == this.kanbanCardTextModel
-					);
+					//Close the modal
+					document
+						.getElementById("addKanbanCardCloseButton")
+						.click();
+				})
+				.catch((error) => {
 				});
-
-				if (filtered_results.length > 0) {
-					this.disableAddButton = true;
-				}
-
-				//If there are no rows or levels - we don't want the user to submit a card
-				if (
-					this.columnResults.length == 0 ||
-					this.levelResults.length == 0
-				) {
-					this.disableAddButton = true;
-				}
-			},
 		},
-	};
+	},
+	watch: {
+		kanbanCardTextModel() {
+			// If the model is blank OR the text already exists - turn disableAddButton to true
+			this.disableAddButton = false; //People can click the "Add" button
+
+			if (this.kanbanCardTextModel.length === 0) {
+				this.disableAddButton = true;
+			}
+
+			//Check to make sure it does not exist
+			const filtered_results = this.kanbanCardResults.filter((row) => {
+				return (
+					row.fields.kanban_card_text === this.kanbanCardTextModel
+				);
+			});
+
+			if (filtered_results.length > 0) {
+				this.disableAddButton = true;
+			}
+
+			//If there are no rows or levels - we don't want the user to submit a card
+			if (
+				this.columnResults.length === 0 ||
+				this.levelResults.length === 0
+			) {
+				this.disableAddButton = true;
+			}
+		},
+	},
+};
 </script>
 
 <style scoped></style>

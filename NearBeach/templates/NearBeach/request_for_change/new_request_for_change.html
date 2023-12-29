@@ -5,5 +5,7 @@
                             v-bind:user-group-results="{{user_group_results}}"
                             v-bind:root-url="`{% url 'dashboard' %}`"
                             v-bind:static-url="`{% static '' %}`"
+                            v-bind:theme="`{{ theme }}`"
+                            v-bind:uuid="`{{ uuid }}`"
     ></new-request-for-change>
 {% endblock %}

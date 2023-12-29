@@ -42,7 +42,7 @@
 							/>
 						</div>
 					</div>
-					<hr />
+					<hr/>
 
 					<div class="row">
 						<div class="col-md-4">
@@ -95,156 +95,155 @@
 </template>
 
 <script>
-	const axios = require("axios");
+//VueX
+import {mapGetters} from "vuex";
 
-	//VueX
-	import { mapGetters } from "vuex";
-
-	export default {
-		name: "EditTagModal",
-		props: {
-			existingTags: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			tagColour: {
-				type: String,
-				default: "/",
-			},
-			tagId: {
-				type: Number,
-				default: 0,
-			},
-			tagName: {
-				type: String,
-				default: "",
+export default {
+	name: "EditTagModal",
+	props: {
+		existingTags: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		data() {
-			return {
-				colourList: [
-					"#37cbd2",
-					"#8b8295",
-					"#6f84bb",
-					"#1fc4b5",
-					"#651794",
-					"#7ea52c",
-					"#6df79e",
-					"#53ef5f",
-					"#79c121",
-					"#91fbde",
-					"#e01059",
-					"#33ae24",
-				],
-				tagColourModel: this.tagColour,
-				tagNameModel: this.tagName,
-			};
+		tagColour: {
+			type: String,
+			default: "/",
 		},
-		watch: {
-			tagColour() {
-				this.tagColourModel = this.tagColour;
-			},
-			tagName() {
-				this.tagNameModel = this.tagName;
-			},
+		tagId: {
+			type: Number,
+			default: 0,
 		},
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-			}),
-			canSave() {
-				//Return false if user has written a duplicate tag name
-				const count = this.existingTags.filter((row) => {
-					const tag_name_1 = row.fields.tag_name.toUpperCase(),
-						tag_name_2 = this.tagNameModel.toUpperCase();
-
-					//Return if the tag names are the same WHILST NOT being the same tag ID
-					return tag_name_1 === tag_name_2 && row.pk !== this.tagId;
-				}).length;
-
-				//Return true if there is no duplicate
-				return count === 0;
-			},
+		tagName: {
+			type: String,
+			default: "",
 		},
-		methods: {
-			deleteTag() {
-				//Use axios to send the request
-				axios
-					.post(`${this.rootUrl}tag/delete/${this.tagId}/`)
-					.then((response) => {
-						//Tell the component up stream that we removed this tag
-						this.$emit("delete_tag", {
-							tag_id: this.tagId,
-						});
+	},
+	data() {
+		return {
+			colourList: [
+				"#37cbd2",
+				"#8b8295",
+				"#6f84bb",
+				"#1fc4b5",
+				"#651794",
+				"#7ea52c",
+				"#6df79e",
+				"#53ef5f",
+				"#79c121",
+				"#91fbde",
+				"#e01059",
+				"#33ae24",
+			],
+			tagColourModel: this.tagColour,
+			tagNameModel: this.tagName,
+		};
+	},
+	watch: {
+		tagColour() {
+			this.tagColourModel = this.tagColour;
+		},
+		tagName() {
+			this.tagNameModel = this.tagName;
+		},
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+		}),
+		canSave() {
+			//Return false if user has written a duplicate tag name
+			const count = this.existingTags.filter((row) => {
+				const tag_name_1 = row.fields.tag_name.toUpperCase(),
+					tag_name_2 = this.tagNameModel.toUpperCase();
 
-						//Close the modal
-						document.getElementById("editTagCloseModal").click();
-					})
-					.catch((error) => {});
-			},
-			getClasses(colour) {
-				let return_class = "single-colour";
+				//Return if the tag names are the same WHILST NOT being the same tag ID
+				return tag_name_1 === tag_name_2 && row.pk !== this.tagId;
+			}).length;
 
-				if (colour == this.tagColourModel) {
-					return_class = return_class + " selected-colour";
-				}
-
-				return return_class;
-			},
-			newTag(data_to_send) {
-				//Use axios to send data
-				axios
-					.post(`${this.rootUrl}tag/new/`, data_to_send)
-					.then((response) => {
-						// Send data upstream
-						this.$emit("new_tag", response.data);
-
-						//Close the modal
-						document.getElementById("editTagCloseModal").click();
-					})
-					.catch((error) => {
-						//ADD CODE
+			//Return true if there is no duplicate
+			return count === 0;
+		},
+	},
+	methods: {
+		deleteTag() {
+			//Use axios to send the request
+			this.axios
+				.post(`${this.rootUrl}tag/delete/${this.tagId}/`)
+				.then((response) => {
+					//Tell the component up stream that we removed this tag
+					this.$emit("delete_tag", {
+						tag_id: this.tagId,
 					});
-			},
-			saveTag() {
-				//Create data to send
-				const data_to_send = new FormData();
-				data_to_send.set("tag_id", this.tagId);
-				data_to_send.set("tag_name", this.tagNameModel);
-				data_to_send.set("tag_colour", this.tagColourModel);
 
-				if (this.tagId === 0) {
-					//CREATE A NEW TAG
-					this.newTag(data_to_send);
-				} else {
-					//Save existing tag
-					this.updateTag(data_to_send);
-				}
-			},
-			updateColour(selected_colour) {
-				this.tagColourModel = selected_colour;
-			},
-			updateTag(data_to_send) {
-				//Use axios to send data
-				axios
-					.post(`${this.rootUrl}tag/save/`, data_to_send)
-					.then((response) => {
-						// Send data upstream
-						this.$emit("update_tags", {
-							tag_id: this.tagId,
-							tag_name: this.tagNameModel,
-							tag_colour: this.tagColourModel,
-						});
-
-						//Close the modal
-						document.getElementById("editTagCloseModal").click();
-					})
-					.catch((error) => {
-						//ADD CODE
-					});
-			},
+					//Close the modal
+					document.getElementById("editTagCloseModal").click();
+				})
+				.catch((error) => {
+				});
 		},
-	};
+		getClasses(colour) {
+			let return_class = "single-colour";
+
+			if (colour == this.tagColourModel) {
+				return_class = `${return_class} selected-colour`;
+			}
+
+			return return_class;
+		},
+		newTag(data_to_send) {
+			//Use axios to send data
+			this.axios
+				.post(`${this.rootUrl}tag/new/`, data_to_send)
+				.then((response) => {
+					// Send data upstream
+					this.$emit("new_tag", response.data);
+
+					//Close the modal
+					document.getElementById("editTagCloseModal").click();
+				})
+				.catch((error) => {
+					//ADD CODE
+				});
+		},
+		saveTag() {
+			//Create data to send
+			const data_to_send = new FormData();
+			data_to_send.set("tag_id", this.tagId);
+			data_to_send.set("tag_name", this.tagNameModel);
+			data_to_send.set("tag_colour", this.tagColourModel);
+
+			if (this.tagId === 0) {
+				//CREATE A NEW TAG
+				this.newTag(data_to_send);
+			} else {
+				//Save existing tag
+				this.updateTag(data_to_send);
+			}
+		},
+		updateColour(selected_colour) {
+			this.tagColourModel = selected_colour;
+		},
+		updateTag(data_to_send) {
+			//Use axios to send data
+			this.axios
+				.post(`${this.rootUrl}tag/save/`, data_to_send)
+				.then((response) => {
+					// Send data upstream
+					this.$emit("update_tags", {
+						tag_id: this.tagId,
+						tag_name: this.tagNameModel,
+						tag_colour: this.tagColourModel,
+					});
+
+					//Close the modal
+					document.getElementById("editTagCloseModal").click();
+				})
+				.catch((error) => {
+					//ADD CODE
+				});
+		},
+	},
+};
 </script>

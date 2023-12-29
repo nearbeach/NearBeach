@@ -1,12 +1,12 @@
 //Vue
-import { createApp } from "vue/dist/vue.esm-bundler";
+import {createApp} from "vue/dist/vue.esm-bundler";
 
 //VueX
 // import { createStore } from 'vuex';
-import { store } from "./vuex-store";
+import {store} from "./vuex-store";
 
 //Import Bootstrap
-import { createPopper } from "@popperjs/core";
+import {createPopper} from "@popperjs/core";
 import bootstrap from "bootstrap";
 
 //SCSS Library
@@ -17,127 +17,146 @@ import "./global.js";
 
 //Import axios for ajax
 const axios = require("axios");
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-axios.defaults.xsrfCookieName = "csrftoken";
+const axiosInstance = axios.create({
+    withCredentials: true,
+    xsrfCookieName: "csrftoken",
+    xsrfHeaderName: "X-CSRFTOKEN",
+});
 
 //nextTick
-import { nextTick } from 'vue';
+import {nextTick} from 'vue';
+
+//Naive-ui
+import {NConfigProvider} from "naive-ui";
 
 //Lazy Load Parent Components
 import {
-	//BugsModule,
-	ChangeTaskInformation,
-	ChangeTaskModules,
-	ConfirmKanbanBoardClosure,
-	CustomerInformation,
-	DashboardKanbanList,
-	DashboardMyObjects,
-	DashboardRfcApprovals,
-	DashboardUnassignedObjects,
-	DashboardUsersWithNoGroups,
-	GroupInformation,
-	KanbanEditBoard,
-	KanbanGroupPermissions,
-	KanbanInformation,
-	ListSearchResults,
-	NewCustomer,
-	NewGroup,
-	NewKanban,
-	NewOrganisation,
-	NewPermissionSet,
-	NewProject,
-	NewRequestForChange,
-	NewRequirement,
-	NewTask,
-	NewUser,
-	OrganisationInformation,
-	OrganisationModules,
-	ParentModules,
-	PermissionInformation,
-	ProfileInformation,
-	ProjectInformation,
-	RequirementInformation,
-	RequirementItemInformation,
-	ResetUserPassword,
-	RfcInformation,
-	RfcModules,
-	SearchCustomers,
-	SearchGroups,
-	SearchObjects,
-	SearchOrganisations,
-	SearchPermissionSets,
-	SearchTags,
-	SearchUsers,
-	TaskInformation,
-	UpdateProfilePicture,
-	UserInformation,
-	UserList,
+    //BugsModule,
+    ChangeTaskInformation,
+    ChangeTaskModules,
+    ConfirmKanbanBoardClosure,
+    ConfirmKanbanBoardReopen,
+    CustomerInformation,
+    DashboardKanbanList,
+    DashboardMyObjects,
+    DashboardRfcApprovals,
+    DashboardUnassignedObjects,
+    DashboardUsersWithNoGroups,
+    GroupInformation,
+    KanbanDangerZone,
+    KanbanEditBoard,
+    KanbanGroupPermissions,
+    KanbanInformation,
+    ListSearchResults,
+    NewCustomer,
+    NewGroup,
+    NewKanban,
+    NewNotification,
+    NewOrganisation,
+    NewPermissionSet,
+    NewProject,
+    NewRequestForChange,
+    NewRequirement,
+    NewTask,
+    NewUser,
+    NotificationInformation,
+    OrganisationInformation,
+    OrganisationModules,
+    ParentModules,
+    PermissionInformation,
+    ProfileInformation,
+    ProjectInformation,
+    RenderToasts,
+    RequirementInformation,
+    RequirementItemInformation,
+    ResetUserPassword,
+    RfcInformation,
+    RfcModules,
+    SearchCustomers,
+    SearchGroups,
+    SearchNotifications,
+    SearchObjects,
+    SearchOrganisations,
+    SearchPermissionSets,
+    SearchTags,
+    SearchUsers,
+    TaskInformation,
+    UpdateProfilePicture,
+    UserInformation,
+    UserList,
 } from "./components";
 
 //Construction of the VUE App
 const app = createApp({
-	components: {
-		//BugsModule,
-		ConfirmKanbanBoardClosure,
-		ChangeTaskInformation,
-		ChangeTaskModules,
-		CustomerInformation,
-		DashboardKanbanList,
-		DashboardMyObjects,
-		DashboardRfcApprovals,
-		DashboardUnassignedObjects,
-		DashboardUsersWithNoGroups,
-		GroupInformation,
-		KanbanEditBoard,
-		KanbanGroupPermissions,
-		KanbanInformation,
-		ListSearchResults,
-		NewCustomer,
-		NewGroup,
-		NewKanban,
-		NewOrganisation,
-		NewPermissionSet,
-		NewProject,
-		NewRequestForChange,
-		NewRequirement,
-		NewTask,
-		NewUser,
-		OrganisationInformation,
-		OrganisationModules,
-		ParentModules,
-		PermissionInformation,
-		ProfileInformation,
-		ProjectInformation,
-		RequirementInformation,
-		RequirementItemInformation,
-		ResetUserPassword,
-		RfcInformation,
-		RfcModules,
-		SearchCustomers,
-		SearchGroups,
-		SearchObjects,
-		SearchOrganisations,
-		SearchPermissionSets,
-		SearchTags,
-		SearchUsers,
-		TaskInformation,
-		UpdateProfilePicture,
-		UserInformation,
-		UserList,
-	},
-	mounted() {
-		//Remove the loader
-		const loader_elem = document.getElementById("loader");
-		loader_elem.style.transform = "translateY(-100vh)";
+    components: {
+        //BugsModule,
+        ConfirmKanbanBoardClosure,
+        ConfirmKanbanBoardReopen,
+        ChangeTaskInformation,
+        ChangeTaskModules,
+        CustomerInformation,
+        DashboardKanbanList,
+        DashboardMyObjects,
+        DashboardRfcApprovals,
+        DashboardUnassignedObjects,
+        DashboardUsersWithNoGroups,
+        GroupInformation,
+        KanbanDangerZone,
+        KanbanEditBoard,
+        KanbanGroupPermissions,
+        KanbanInformation,
+        ListSearchResults,
+        NewCustomer,
+        NewGroup,
+        NewKanban,
+        NewNotification,
+        NewOrganisation,
+        NewPermissionSet,
+        NewProject,
+        NewRequestForChange,
+        NewRequirement,
+        NewTask,
+        NewUser,
+        NotificationInformation,
+        OrganisationInformation,
+        OrganisationModules,
+        ParentModules,
+        PermissionInformation,
+        ProfileInformation,
+        ProjectInformation,
+        RenderToasts,
+        RequirementInformation,
+        RequirementItemInformation,
+        ResetUserPassword,
+        RfcInformation,
+        RfcModules,
+        SearchCustomers,
+        SearchGroups,
+        SearchNotifications,
+        SearchObjects,
+        SearchOrganisations,
+        SearchPermissionSets,
+        SearchTags,
+        SearchUsers,
+        TaskInformation,
+        UpdateProfilePicture,
+        UserInformation,
+        UserList,
+    },
+    mounted() {
+        //Remove the loader
+        const loader_elem = document.getElementById("loader");
+        loader_elem.style.transform = "translateY(-100vh)";
 
-		//Remove the element when we are finished with it
-		setTimeout(() => {
-			//Destroy the evidance
-			loader_elem.remove();
-		}, 500);
-	},
+        //Remove the element when we are finished with it
+        setTimeout(() => {
+            //Destroy the evidance
+            loader_elem.remove();
+        }, 500);
+    },
 });
 app.config.devtools = true;
 app.use(store);
-app.provide('nextTick', nextTick) //Do the same thing with axios, modal etc.
+app.config.globalProperties.axios=axiosInstance;
+app.component("NConfigProvider", NConfigProvider);
 app.mount("#app");

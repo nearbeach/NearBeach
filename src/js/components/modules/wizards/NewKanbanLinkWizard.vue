@@ -12,7 +12,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.linkOut"></Icon> New Kanban
+						<Icon v-bind:icon="icons.linkOut"></Icon>
+						New Kanban
 						Link Wizard
 					</h2>
 					<button
@@ -50,7 +51,7 @@
 							</div>
 						</div>
 					</div>
-					<hr />
+					<hr/>
 
 					<!-- SELECTING WHICH OBJECTS TO LINK TO -->
 					<div class="row">
@@ -100,7 +101,7 @@
 									type="text"
 								/>
 							</div>
-							<br />
+							<br/>
 
 							<!-- TABLE CONTAINING RESULTS -->
 							<table
@@ -112,120 +113,120 @@
 								"
 							>
 								<thead>
-									<tr>
-										<td>{{ objectModel }} Description</td>
-										<td>Status</td>
-									</tr>
+								<tr>
+									<td>{{ objectModel }} Description</td>
+									<td>Status</td>
+								</tr>
 								</thead>
 
 								<!-- PROJECTS -->
 								<tbody v-if="objectModel == 'Project'">
-									<tr
-										v-for="result in objectFilteredResults"
-										:key="result.pk"
-									>
-										<td>
-											<div class="form-check">
-												<input
-													class="form-check-input"
-													type="radio"
-													name="link-option"
-													v-bind:value="result.pk"
-													v-bind:id="`radio_project_${result.pk}`"
-													v-model="linkModel"
-												/>
-												<label
-													class="form-check-label"
-													v-bind:for="`radio_project_${result.pk}`"
-												>
-													{{
-														result.fields
-															.project_name
-													}}
-												</label>
-											</div>
-											<div class="spacer"></div>
-											<p class="small-text">
-												Project {{ result.pk }}
-											</p>
-										</td>
-										<td>
-											{{ result.fields.project_status }}
-										</td>
-									</tr>
+								<tr
+									v-for="result in objectFilteredResults"
+									:key="result.pk"
+								>
+									<td>
+										<div class="form-check">
+											<input
+												class="form-check-input"
+												type="radio"
+												name="link-option"
+												v-bind:value="result.pk"
+												v-bind:id="`radio_project_${result.pk}`"
+												v-model="linkModel"
+											/>
+											<label
+												class="form-check-label"
+												v-bind:for="`radio_project_${result.pk}`"
+											>
+												{{
+													result.fields
+														.project_name
+												}}
+											</label>
+										</div>
+										<div class="spacer"></div>
+										<p class="small-text">
+											Project {{ result.pk }}
+										</p>
+									</td>
+									<td>
+										{{ result.fields.project_status }}
+									</td>
+								</tr>
 								</tbody>
 
 								<!-- REQUIREMENTS -->
 								<tbody v-if="objectModel == 'Requirement'">
-									<tr
-										v-for="result in objectFilteredResults"
-										:key="result.pk"
-									>
-										<td>
-											<div class="form-check">
-												<input
-													class="form-check-input"
-													type="radio"
-													name="link-option"
-													v-bind:value="result.pk"
-													v-bind:id="`radio_requirement_${result.pk}`"
-													v-model="linkModel"
-												/>
-												<label
-													class="form-check-label"
-													v-bind:for="`radio_task_${result.pk}`"
-												>
-													{{
-														result.fields
-															.requirement_title
-													}}
-												</label>
-											</div>
-											<div class="spacer"></div>
-											<p class="small-text">
-												Requirement {{ result.pk }}
-											</p>
-										</td>
-										<td>
-											{{
-												result.fields.requirement_status
-											}}
-										</td>
-									</tr>
+								<tr
+									v-for="result in objectFilteredResults"
+									:key="result.pk"
+								>
+									<td>
+										<div class="form-check">
+											<input
+												class="form-check-input"
+												type="radio"
+												name="link-option"
+												v-bind:value="result.pk"
+												v-bind:id="`radio_requirement_${result.pk}`"
+												v-model="linkModel"
+											/>
+											<label
+												class="form-check-label"
+												v-bind:for="`radio_task_${result.pk}`"
+											>
+												{{
+													result.fields
+														.requirement_title
+												}}
+											</label>
+										</div>
+										<div class="spacer"></div>
+										<p class="small-text">
+											Requirement {{ result.pk }}
+										</p>
+									</td>
+									<td>
+										{{
+											result.fields.requirement_status
+										}}
+									</td>
+								</tr>
 								</tbody>
 
 								<!-- TASKS -->
 								<tbody v-if="objectModel == 'Task'">
-									<tr
-										v-for="result in objectFilteredResults"
-										:key="result.pk"
-									>
-										<td>
-											<div class="form-check">
-												<input
-													class="form-check-input"
-													type="radio"
-													v-bind:value="result.pk"
-													v-bind:id="`radio_task_${result.pk}`"
-													v-model="linkModel"
-												/>
-												<label
-													class="form-check-label"
-													v-bind:for="`radio_task_${result.pk}`"
-												>
-													{{
-														result.fields
-															.task_short_description
-													}}
-												</label>
-											</div>
-											<div class="spacer"></div>
-											<p class="small-text">
-												Task {{ result.pk }}
-											</p>
-										</td>
-										<td>{{ result.fields.task_status }}</td>
-									</tr>
+								<tr
+									v-for="result in objectFilteredResults"
+									:key="result.pk"
+								>
+									<td>
+										<div class="form-check">
+											<input
+												class="form-check-input"
+												type="radio"
+												v-bind:value="result.pk"
+												v-bind:id="`radio_task_${result.pk}`"
+												v-model="linkModel"
+											/>
+											<label
+												class="form-check-label"
+												v-bind:for="`radio_task_${result.pk}`"
+											>
+												{{
+													result.fields
+														.task_short_description
+												}}
+											</label>
+										</div>
+										<div class="spacer"></div>
+										<p class="small-text">
+											Task {{ result.pk }}
+										</p>
+									</td>
+									<td>{{ result.fields.task_status }}</td>
+								</tr>
 								</tbody>
 							</table>
 						</div>
@@ -254,182 +255,181 @@
 </template>
 
 <script>
-	import axios from "axios";
-	import { Icon } from "@iconify/vue";
-	import { NSelect } from "naive-ui";
+import {Icon} from "@iconify/vue";
+import {NSelect} from "naive-ui";
 
-	//Mixins
-	import iconMixin from "../../../mixins/iconMixin";
-	import errorModalMixin from "../../../mixins/errorModalMixin";
+//Mixins
+import iconMixin from "../../../mixins/iconMixin";
+import errorModalMixin from "../../../mixins/errorModalMixin";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	export default {
-		name: "NewKanbanLinkWizard",
-		components: {
-			Icon,
-			NSelect,
+export default {
+	name: "NewKanbanLinkWizard",
+	components: {
+		Icon,
+		NSelect,
+	},
+	props: {
+		columnResults: {
+			type: Array,
+			default: () => {
+				return [];
+			},
 		},
-		props: {
-			columnResults: {
-				type: Array,
-				default: () => {
-					return [];
+		levelResults: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
+		locationId: {
+			type: Number,
+			default: 0,
+		},
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+		}),
+	},
+	mixins: [errorModalMixin, iconMixin],
+	data() {
+		return {
+			isSearching: false,
+			linkModel: [],
+			objectModel: null,
+			objectFilteredResults: [],
+			objectResults: [],
+			objectSelection: [
+				{
+					value: "Project",
+					label: "Project",
 				},
-			},
-			levelResults: {
-				type: Array,
-				default: () => {
-					return [];
+				{
+					value: "Requirement",
+					label: "Requirement",
 				},
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
+				{
+					value: "Task",
+					label: "Task",
+				},
+			],
+			searchTermModel: "",
+		};
+	},
+	methods: {
+		saveLinks() {
+			// Set up the data object to send
+			const data_to_send = new FormData();
+
+			//Get the modal to extract data from
+			const self_modal = document.getElementById("newLinkModal");
+
+			//Depending on what the object model is - depends what is sent
+			data_to_send.set(
+				`${this.objectModel.toLowerCase()}`,
+				this.linkModel
+			);
+			data_to_send.set(
+				"kanban_level",
+				self_modal.dataset.kanbanLevel
+			);
+			data_to_send.set(
+				"kanban_column",
+				self_modal.dataset.kanbanColumn
+			);
+
+			// Use axios to send data
+			this.axios
+				.post(
+					`${this.rootUrl}kanban_information/${
+						this.locationId
+					}/${this.objectModel.toLowerCase()}/add_link/`,
+					data_to_send
+				)
+				.then((response) => {
+					//Data has been successfully saved. Time to add the card to the board
+					this.$emit("new_card", response.data);
+
+					//Clear the object model
+					this.objectModel = null;
+
+					//Click on the close button - a hack, but it should close the modal
+					document
+						.getElementById("requirementLinkCloseButton")
+						.click();
+				});
 		},
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-				staticUrl: "getStaticUrl",
-			}),
-		},
-		mixins: [errorModalMixin, iconMixin],
-		data() {
-			return {
-				isSearching: false,
-				linkModel: [],
-				objectModel: null,
-				objectFilteredResults: [],
-				objectResults: [],
-				objectSelection: [
-					{
-						value: "Project",
-						label: "Project",
-					},
-					{
-						value: "Requirement",
-						label: "Requirement",
-					},
-					{
-						value: "Task",
-						label: "Task",
-					},
-				],
-				searchTermModel: "",
-			};
-		},
-		methods: {
-			saveLinks() {
-				// Set up the data object to send
-				const data_to_send = new FormData();
+	},
+	watch: {
+		objectModel() {
+			//Clear data
+			this.linkModel = [];
 
-				//Get the modal to extract data from
-				var self_modal = document.getElementById("newLinkModal");
+			//User has chosen an object.
+			if (this.objectModel === null) {
+				//Ok - then removed the objects. We don't need to do anything
+				this.isSearching = false;
+				return;
+			}
 
-				//Depending on what the object model is - depends what is sent
-				data_to_send.set(
-					`${this.objectModel.toLowerCase()}`,
-					this.linkModel
-				);
-				data_to_send.set(
-					"kanban_level",
-					self_modal.dataset.kanbanLevel
-				);
-				data_to_send.set(
-					"kanban_column",
-					self_modal.dataset.kanbanColumn
-				);
+			//Tell the form that we are searching
+			this.isSearching = true;
 
-				// Use axios to send data
-				axios
-					.post(
-						`${this.rootUrl}kanban_information/${
-							this.locationId
-						}/${this.objectModel.toLowerCase()}/add_link/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Data has been successfully saved. Time to add the card to the board
-						this.$emit("new_card", response.data);
+			//Now to use axios to get the data we require
+			this.axios
+				.post(
+					`${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`
+				)
+				.then((response) => {
+					//Load the data into the array
+					this.objectResults = response.data;
+					this.objectFilteredResults = response.data;
 
-						//Clear the object model
-						this.objectModel = null;
-
-						//Click on the close button - a hack, but it should close the modal
-						document
-							.getElementById("requirementLinkCloseButton")
-							.click();
-					});
-			},
-		},
-		watch: {
-			objectModel() {
-				//Clear data
-				this.linkModel = [];
-
-				//User has chosen an object.
-				if (this.objectModel === null) {
-					//Ok - then removed the objects. We don't need to do anything
+					//Tell the user we are no longer searching
 					this.isSearching = false;
-					return;
-				}
 
-				//Tell the form that we are searching
-				this.isSearching = true;
-
-				//Now to use axios to get the data we require
-				axios
-					.post(
-						`${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`
-					)
-					.then((response) => {
-						//Load the data into the array
-						this.objectResults = response.data;
-						this.objectFilteredResults = response.data;
-
-						//Tell the user we are no longer searching
-						this.isSearching = false;
-
-						//Clear out search term model
-						this.searchTermModel = "";
-					})
-					.catch((error) => {
-						this.showErrorModal(error, "kanban");
-					});
-			},
-			searchTermModel() {
-				if (
-					this.searchTermModel === "" ||
-					this.searchTermModel === null
-				) {
-					this.objectFilteredResults = this.objectResults;
-					return;
-				}
-
-				//Update the filters by checking to see if the string matches
-				this.objectFilteredResults = this.objectResults.filter(
-					(row) => {
-						//Get the description from either task or project
-						let description = "";
-						if (row.fields.project_description !== undefined) {
-							description =
-								row.fields.project_description.toLowerCase();
-						} else {
-							description =
-								row.fields.task_short_description.toLowerCase();
-						}
-
-						//Return true or false if the string is inside the description
-						return description.includes(
-							this.searchTermModel.toLowerCase()
-						);
-					}
-				);
-			},
+					//Clear out search term model
+					this.searchTermModel = "";
+				})
+				.catch((error) => {
+					this.showErrorModal(error, "kanban");
+				});
 		},
-	};
+		searchTermModel() {
+			if (
+				this.searchTermModel === "" ||
+				this.searchTermModel === null
+			) {
+				this.objectFilteredResults = this.objectResults;
+				return;
+			}
+
+			//Update the filters by checking to see if the string matches
+			this.objectFilteredResults = this.objectResults.filter(
+				(row) => {
+					//Get the description from either task or project
+					let description = "";
+					if (row.fields.project_description !== undefined) {
+						description =
+							row.fields.project_description.toLowerCase();
+					} else {
+						description =
+							row.fields.task_short_description.toLowerCase();
+					}
+
+					//Return true or false if the string is inside the description
+					return description.includes(
+						this.searchTermModel.toLowerCase()
+					);
+				}
+			);
+		},
+	},
+};
 </script>
 
 <style scoped></style>

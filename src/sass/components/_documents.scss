@@ -1,42 +1,42 @@
 .closed-folder {
-	i {
-		font-size: 10px;
-	}
+    i {
+        font-size: 10px;
+    }
 
-	ul {
-		display: none;
-	}
+    ul {
+        display: none;
+    }
 }
 
 .document--widget {
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: flex-start;
-	padding: 10px 0;
-	text-align: center;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    padding: 10px 0;
+    text-align: center;
 }
 
 .document--child {
-	width: 120px;
-	//height: 100px;
-	margin: 10px 7px;
+    width: 120px;
+    //height: 100px;
+    margin: 10px 7px;
 
-	.document--remove {
-		opacity: 0;
-		color: red;
-		animation: opac 0.8s;
-		cursor: pointer;
-	}
+    .document--remove {
+        opacity: 0;
+        color: red;
+        animation: opac 0.8s;
+        cursor: pointer;
+    }
 
-	&:hover {
-		background-color: #f4f2f2;
+    &:hover {
+        background-color: var(--nb-document-hover);
 
-		.document--remove {
-			opacity: 0.4;
+        .document--remove {
+            opacity: 0.4;
 
-			&:hover {
-				opacity: 1;
-			}
-		}
-	}
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
 }

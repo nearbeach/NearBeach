@@ -3,11 +3,11 @@
 		<div class="card-body">
 			<!-- TITLE -->
 			<h1>Organisation Information</h1>
-			<br />
+			<br/>
 			<a v-bind:href="`${rootUrl}search/organisation/`"
-				>Back to organisation search</a
+			>Back to organisation search</a
 			>
-			<hr />
+			<hr/>
 
 			<!-- FIELDS SECTION -->
 			<div class="row">
@@ -25,7 +25,7 @@
 						alt="Profile Picture"
 						class="organisation-profile-image"
 					/>
-					<br />
+					<br/>
 					<!--<button class="btn btn-primary">Update Profile...</button>-->
 					<n-upload
 						v-if="userLevel > 1"
@@ -35,7 +35,7 @@
 						}"
 						:data="{}"
 						@finish="updateProfilePicture"
-						@error="showErrorModal('Profile Picture was not updated','Profile Picture','')"
+						@error="showErrorToast"
 					>
 						<n-button>Update Profile Picture</n-button>
 					</n-upload>
@@ -56,7 +56,7 @@
 							class="form-control"
 						/>
 					</div>
-					<br />
+					<br/>
 
 					<!-- ORGANISATION WEBSITE -->
 					<div class="form-group">
@@ -73,7 +73,7 @@
 							class="form-control"
 						/>
 					</div>
-					<br />
+					<br/>
 
 					<!-- ORGANISATION EMAIL -->
 					<div class="form-group">
@@ -92,11 +92,11 @@
 					</div>
 				</div>
 			</div>
-			<br />
+			<br/>
 
 			<!-- NEED TO APPLY PERMISSIONS -->
 			<!-- Submit Button -->
-			<hr v-if="userLevel > 1" />
+			<hr v-if="userLevel > 1"/>
 			<div
 				v-if="userLevel > 1"
 				class="row submit-row"
@@ -106,7 +106,7 @@
 						href="javascript:void(0)"
 						class="btn btn-primary save-changes"
 						v-on:click="updateOrganisation"
-						>Update Organisation</a
+					>Update Organisation</a
 					>
 				</div>
 			</div>
@@ -115,157 +115,182 @@
 </template>
 
 <script>
-	import axios from "axios";
-	//import { NButton, NUpload } from 'naive-ui';
-	import { NButton, NUpload } from "naive-ui";
+import {NButton, NUpload} from "naive-ui";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Validation
-	import useVuelidate from "@vuelidate/core";
-	import { email, maxLength, required, url } from "@vuelidate/validators";
-	import ValidationRendering from "../validation/ValidationRendering.vue";
+//Validation
+import useVuelidate from "@vuelidate/core";
+import {email, maxLength, required, url} from "@vuelidate/validators";
+import ValidationRendering from "../validation/ValidationRendering.vue";
 
-	//Mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
-	import loadingModalMixin from "../../mixins/loadingModalMixin";
-	import getToken from "../../mixins/getTokenMixin";
+//Mixins
+import errorModalMixin from "../../mixins/errorModalMixin";
+import loadingModalMixin from "../../mixins/loadingModalMixin";
+import getToken from "../../mixins/getTokenMixin";
 
-	export default {
-		name: "OrganisationInformation",
-		setup() {
-			return { v$: useVuelidate() };
-		},
-		components: {
-			NButton,
-			NUpload,
-			ValidationRendering,
-		},
-		props: {
-			organisationResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
+export default {
+	name: "OrganisationInformation",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	components: {
+		NButton,
+		NUpload,
+		ValidationRendering,
+	},
+	props: {
+		organisationResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		mixins: [errorModalMixin, getToken, loadingModalMixin],
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-				staticUrl: "getStaticUrl",
-				userLevel: "getUserLevel",
-			}),
+	},
+	mixins: [errorModalMixin, getToken, loadingModalMixin],
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+			userLevel: "getUserLevel",
+		}),
+	},
+	data() {
+		return {
+			organisationNameModel:
+			this.organisationResults[0].fields.organisation_name,
+			organisationEmailModel:
+			this.organisationResults[0].fields.organisation_email,
+			organisationWebsiteModel:
+			this.organisationResults[0].fields.organisation_website,
+			profilePicture: "",
+		};
+	},
+	validations: {
+		organisationNameModel: {
+			required,
+			maxLength: maxLength(255),
 		},
-		data() {
-			return {
-				organisationNameModel:
-					this.organisationResults[0].fields.organisation_name,
-				organisationEmailModel:
-					this.organisationResults[0].fields.organisation_email,
-				organisationWebsiteModel:
-					this.organisationResults[0].fields.organisation_website,
-				profilePicture: "",
-			};
+		organisationWebsiteModel: {
+			required,
+			url,
 		},
-		validations: {
-			organisationNameModel: {
-				required,
-				maxLength: maxLength(255),
-			},
-			organisationWebsiteModel: {
-				required,
-				url,
-			},
-			organisationEmailModel: {
-				required,
-				email,
-			},
+		organisationEmailModel: {
+			required,
+			email,
 		},
-		methods: {
-			setProfilePicture() {
-				let profile_picture =
-					this.organisationResults[0].fields
-						.organisation_profile_picture;
-
-				if (
-					profile_picture !== undefined &&
-					profile_picture !== null &&
-					profile_picture !== ""
-				) {
-					//There is a profile image
-					this.profilePicture = `${this.rootUrl}private/${profile_picture}`;
-				} else {
-					this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
-				}
-			},
-			updateOrganisation() {
-				//Check validation
-				this.v$.$touch();
-
-				if (this.v$.$invalid) {
-					this.showValidationErrorModal();
-
-					//Just return - as we do not need to do the rest of this function
-					return;
-				}
-
-				//Construct the data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set(
-					"organisation_name",
-					this.organisationNameModel
-				);
-				data_to_send.set(
-					"organisation_email",
-					this.organisationEmailModel
-				);
-				data_to_send.set(
-					"organisation_website",
-					this.organisationWebsiteModel
-				);
-
-				//Show the loader
-				this.showLoadingModal("Organisation");
-
-				//Use axios to send the data
-				axios
-					.post(
-						`${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/save/`,
-						data_to_send
-					)
-					.then((response) => {
-						this.closeLoadingModal();
-					})
-					.catch((error) => {
-						this.showErrorModal(
-							error,
-							"organisation",
-							this.organisationResults[0].pk
-						);
-					});
-			},
-			updateProfilePicture() {
-				//Contact the API to get the location of the new image
-				axios
-					.post(
-						`${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/get_profile_picture/`,
-						{}
-					)
-					.then((response) => {
-						this.profilePicture = response.data;
-					})
-					.catch(() => {
-						this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
-					});
-			},
+	},
+	methods: {
+		showErrorToast() {
+			this.$store.dispatch("newToast", {
+				header: "Error uploading profile picture",
+				message: `Sorry, we had an issue uploading the profile image.`,
+				extra_classes: "bg-danger",
+				delay: 0,
+			});
 		},
-		mounted() {
-			//Set profile picture
-			this.setProfilePicture();
+		setProfilePicture() {
+			let profile_picture =
+				this.organisationResults[0].fields
+					.organisation_profile_picture;
+
+			if (
+				profile_picture !== undefined &&
+				profile_picture !== null &&
+				profile_picture !== ""
+			) {
+				//There is a profile image
+				this.profilePicture = `${this.rootUrl}private/${profile_picture}`;
+			} else {
+				this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
+			}
 		},
-	};
+		updateOrganisation() {
+			//Check validation
+			this.v$.$touch();
+
+			if (this.v$.$invalid) {
+				this.showValidationErrorModal();
+
+				//Just return - as we do not need to do the rest of this function
+				return;
+			}
+
+			//Construct the data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set(
+				"organisation_name",
+				this.organisationNameModel
+			);
+			data_to_send.set(
+				"organisation_email",
+				this.organisationEmailModel
+			);
+			data_to_send.set(
+				"organisation_website",
+				this.organisationWebsiteModel
+			);
+
+			//Show the loader
+			this.showLoadingModal("Organisation");
+
+			//Use axios to send the data
+			this.axios
+				.post(
+					`${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/save/`,
+					data_to_send
+				)
+				.then((response) => {
+					this.closeLoadingModal();
+				})
+				.catch((error) => {
+					this.showErrorModal(
+						error,
+						"organisation",
+						this.organisationResults[0].pk
+					);
+				});
+		},
+		updateProfilePicture() {
+			//Notify user of intention
+			this.$store.dispatch("newToast", {
+				header: "Profile Picture updated",
+				message: "Good news - profile picture updated",
+				extra_classes: "bg-success",
+				unique_type: "update_profile",
+				delay: 0,
+			});
+
+			//Contact the API to get the location of the new image
+			this.axios.post(
+				`${this.rootUrl}organisation_information/${this.organisationResults[0].pk}/get_profile_picture/`,
+			).then((response) => {
+				this.profilePicture = response.data;
+
+				this.$store.dispatch("newToast", {
+					header: "Profile Picture updated",
+					message: "Good news - profile picture updated",
+					extra_classes: "bg-success",
+					unique_type: "update_profile",
+				});
+			}).catch((error) => {
+				this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
+
+				this.$store.dispatch("newToast", {
+					header: "Error uploading profile picture",
+					message: `Sorry, we had an issue uploading the profile image. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		},
+	},
+	mounted() {
+		//Set profile picture
+		this.setProfilePicture();
+	},
+};
 </script>
 
 <style scoped></style>

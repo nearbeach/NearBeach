@@ -14,7 +14,10 @@
 		>
 			<div class="modal-content">
 				<div class="modal-header">
-					<h2><Icon v-bind:icon="icons.noteAdd"></Icon> New Note</h2>
+					<h2>
+						<Icon v-bind:icon="icons.noteAdd"></Icon>
+						New Note
+					</h2>
 					<button
 						type="button"
 						class="btn-close"
@@ -40,9 +43,9 @@
 								'bold italic strikethrough underline backcolor | table | ' +
 									'bullist numlist outdent indent | removeformat | codesample',
 							],
+            				skin: `${this.skin}`,
+			            	content_css: `${this.contentCss}`
 						}"
-						v-bind:content_css="false"
-						v-bind:skin="false"
 						v-model="newNoteModel"
 					/>
 				</div>
@@ -69,76 +72,77 @@
 </template>
 
 <script>
-	//JavaScript components
-	import errorModalMixin from "../../../mixins/errorModalMixin";
-	import iconMixin from "../../../mixins/iconMixin";
-	import { Icon } from "@iconify/vue";
-	import axios from "axios";
-	import Editor from "@tinymce/tinymce-vue";
+//JavaScript components
+import errorModalMixin from "../../../mixins/errorModalMixin";
+import iconMixin from "../../../mixins/iconMixin";
+import {Icon} from "@iconify/vue";
+import Editor from "@tinymce/tinymce-vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	export default {
-		name: "NewHistoryNoteWizard",
-		components: {
-			editor: Editor,
-			Icon,
+export default {
+	name: "NewHistoryNoteWizard",
+	components: {
+		editor: Editor,
+		Icon,
+	},
+	props: {
+		destination: {
+			type: String,
+			default: "",
 		},
-		props: {
-			destination: {
-				type: String,
-				default: "",
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
+		locationId: {
+			type: Number,
+			default: 0,
 		},
-		mixins: [errorModalMixin, iconMixin],
-		data() {
-			return {
-				newNoteModel: "",
-			};
-		},
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-			}),
-		},
-		methods: {
-			submitNote() {
-				//Construct the form data to send
-				const data_to_send = new FormData();
-				data_to_send.set("destination", this.destination);
-				data_to_send.set("location_id", this.locationId);
-				data_to_send.set("note", this.newNoteModel);
+	},
+	mixins: [errorModalMixin, iconMixin],
+	data() {
+		return {
+			newNoteModel: "",
+		};
+	},
+	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			rootUrl: "getRootUrl",
+			skin: "getSkin",
+		}),
+	},
+	methods: {
+		submitNote() {
+			//Construct the form data to send
+			const data_to_send = new FormData();
+			data_to_send.set("destination", this.destination);
+			data_to_send.set("location_id", this.locationId);
+			data_to_send.set("note", this.newNoteModel);
 
-				//Add the data to data_to_send
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_notes/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Submit the note up
-						this.$emit(
-							"update_note_history_results",
-							response.data
-						);
+			//Add the data to data_to_send
+			this.axios
+				.post(
+					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_notes/`,
+					data_to_send
+				)
+				.then((response) => {
+					//Submit the note up
+					this.$emit(
+						"update_note_history_results",
+						response.data
+					);
 
-						//Close the modal
-						document.getElementById("newNoteCloseButton").click();
+					//Close the modal
+					document.getElementById("newNoteCloseButton").click();
 
-						//Clear the notes
-						this.newNoteModel = "";
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
+					//Clear the notes
+					this.newNoteModel = "";
+				})
+				.catch((error) => {
+					this.showErrorModal(error, this.destination);
+				});
 		},
-	};
+	},
+};
 </script>
 
 <style scoped></style>

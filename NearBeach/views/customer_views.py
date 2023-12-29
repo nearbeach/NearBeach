@@ -9,6 +9,7 @@ from NearBeach.decorators.check_user_permissions import check_user_customer_perm
 from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
 from NearBeach.models import Customer, ListOfTitle, Organisation
 from NearBeach.views.document_views import handle_document_permissions
+from NearBeach.views.theme_views import get_theme
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -38,7 +39,9 @@ def customer_information(request, customer_id, *args, **kwargs):
     c = {
         "customer_results": serializers.serialize("json", [customer_results]),
         "nearbeach_title": f"Customer Information {customer_id}",
+        "need_tinymce": False,
         "organisation_results": serializers.serialize("json", organisation_results),
+        "theme": get_theme(request),
         "title_list": serializers.serialize("json", title_list),
         "user_level": kwargs["user_level"],
     }
@@ -94,6 +97,10 @@ def customer_update_profile(request, customer_id, *args, **kwargs):
 
     file = form.cleaned_data["file"]
     document_description = str(file)
+
+    # Check file size
+    if file.size > 250 * 1024:
+        return HttpResponseBadRequest("File size too large")
 
     # Upload the document
     document_submit, _ = handle_document_permissions(
@@ -151,8 +158,10 @@ def new_customer(request, *args, **kwargs):
 
     # Get Context
     c = {
+        "need_tinymce": False,
         "nearbeach_title": "New Customer",
         "title_list": serializers.serialize("json", title_list),
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

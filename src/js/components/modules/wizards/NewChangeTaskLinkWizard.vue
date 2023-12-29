@@ -10,7 +10,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.linkOut"></Icon> New
+						<Icon v-bind:icon="icons.linkOut"></Icon>
+						New
 						Change Task Link Wizard
 					</h2>
 					<button
@@ -30,11 +31,11 @@
 							<strong>Relationship</strong>
 							<p class="text-instructions">
 								Please indicate if you are blocking future Changes Tasks, or if a
-                                past Change Task is blocking current Change Task.
+								past Change Task is blocking current Change Task.
 							</p>
 						</div>
 						<div class="col-md-8">
-							Current change task <br />
+							Current change task <br/>
 							<n-select
 								:options="changeTaskRelation"
 								v-model:value="changeTaskRelationModel"
@@ -42,7 +43,7 @@
 							></n-select>
 						</div>
 					</div>
-					<hr />
+					<hr/>
 
 					<!-- SELECTING WHICH OBJECTS TO LINK TO -->
 					<div class="row">
@@ -62,8 +63,8 @@
 							</div>
 
 							<div v-for="changeTask in filteredChangeTaskResults"
-								:key="changeTask.pk"
-								v-bind:class="checkSelected(changeTask.pk)"
+								 :key="changeTask.pk"
+								 v-bind:class="checkSelected(changeTask.pk)"
 							>
 								<div class="form-check">
 									<input
@@ -77,7 +78,7 @@
 										class="form-check-label"
 										v-bind:for="`checkbox_change_task_${changeTask.pk}`"
 									>
-										Change Task {{changeTask.pk}} - {{changeTask.fields.change_task_title}}
+										Change Task {{ changeTask.pk }} - {{ changeTask.fields.change_task_title }}
 									</label>
 								</div>
 							</div>
@@ -107,124 +108,134 @@
 </template>
 
 <script>
-    const axios = require('axios');
+import iconMixin from "../../../mixins/iconMixin";
+import {Icon} from "@iconify/vue";
+import {NSelect} from "naive-ui";
 
-	import iconMixin from "../../../mixins/iconMixin";
-	import { Icon } from "@iconify/vue";
-    import { NSelect } from "naive-ui";
-    
-    //VueX
-	import { mapGetters } from "vuex";
-    
-    export default {
-        name: "NewChangeTaskLinkWizard",
-        components: {
-            Icon,
-            NSelect,
-        },
-        data() {
-            return {
-                changeTaskRelation: [
-					{ value: "blocked_by", label: "Is Blocked By" },
-					{ value: "blocking", label: "Is Currently Blocking" },
-				],
-				changeTaskRelationModel: "blocking",
-				changeTaskResults: [],
-				filteredChangeTaskResults: [],
-                linkModel: [],
-            }
-        },  
-        computed: {
-			...mapGetters({
-                destination: "getDestination",
-				endDate: "getChangeTaskEndDate",
-                locationId: "getLocationId",
-				rootUrl: "getRootUrl",
-				startDate: "getChangeTaskStartDate",
-				staticUrl: "getStaticUrl",
-			}),
-		},
-		watch: {
-			changeTaskRelationModel() {
-				if (this.changeTaskRelationModel === "blocking") {
-					this.filterBlocking();
-				} else {
-					this.filterBlockedBy();
-				}
-			},
-		},
-        mixins: [iconMixin],
-        methods: {
-			checkSelected(pk) {
-				if (this.linkModel.includes(pk)) {
-					return "row change-task--detail change-task--selected";
-				}
-				
-				return "row change-task--detail";
-			},
-			filterBlockedBy() {
-				//Filter out all dates where the change task end date <= start_date of current change task
-				this.filteredChangeTaskResults = this.changeTaskResults.filter(row => {
-					const end_date = new Date(row.fields.change_task_end_date);
+//VueX
+import {mapGetters} from "vuex";
 
-					return end_date.getTime() <= this.startDate.getTime();
-				})
-			},
-			filterBlocking() {
-				//Filter out all dates where the change task start date >= end_date of the current change task
-				this.filteredChangeTaskResults = this.changeTaskResults.filter(row => {
-					const start_date = new Date(row.fields.change_task_start_date);
-					
-					return start_date.getTime() >= this.endDate.getTime();
-				})
-			},
-            getAllChangeTasks() {
-                //Use Axios to get data
-                axios.post(
-                    `${this.rootUrl}change_task_information/${this.locationId}/get_change_task_list/`
-                ).then(response => {
-                    this.changeTaskResults = response.data;
-
-					//Get filtered data
-					this.filterBlocking();
-                })
-            },
-			saveLinks() {
-				// Set up the data object to send
-				const data_to_send = new FormData();
-
-				// Go through all link models to add to data_to_send
-				this.linkModel.forEach((link) => {
-					data_to_send.append(
-						"change_task",
-						link
-					);
-				});
-
-				//Tells the backend the relationship we want
-				data_to_send.set("object_relation", this.changeTaskRelationModel);
-
-				// Use axios to send data
-				axios
-					.post(
-						`${this.rootUrl}object_data/change_task/${this.locationId}/add_link/`,
-						data_to_send
-					)
-					.then(() => {
-						//Data has been successfully saved. Time to update the requirement links
-						this.$emit("update_link_results", {});
-
-						//Click on the close button - a hack, but it should close the modal
-						document.getElementById("linkCloseButton").click();
-					});
+export default {
+	name: "NewChangeTaskLinkWizard",
+	components: {
+		Icon,
+		NSelect,
+	},
+	data() {
+		return {
+			changeTaskRelation: [
+				{value: "blocked_by", label: "Is Blocked By"},
+				{value: "blocking", label: "Is Currently Blocking"},
+			],
+			changeTaskRelationModel: "blocking",
+			changeTaskResults: [],
+			filteredChangeTaskResults: [],
+			linkModel: [],
+		}
+	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			endDate: "getChangeTaskEndDate",
+			locationId: "getLocationId",
+			rootUrl: "getRootUrl",
+			startDate: "getChangeTaskStartDate",
+			staticUrl: "getStaticUrl",
+		}),
+	},
+	watch: {
+		changeTaskRelationModel() {
+			if (this.changeTaskRelationModel === "blocking") {
+				this.filterBlocking();
+			} else {
+				this.filterBlockedBy();
 			}
-        },
-        mounted() {
-            //Get the required data
-			//Have to wait a little extra - tick does not work :'(
-            setTimeout(()=> {
-                this.getAllChangeTasks();
-            }, 200);
-        }
-    }
+		},
+	},
+	mixins: [iconMixin],
+	methods: {
+		checkSelected(pk) {
+			if (this.linkModel.includes(pk)) {
+				return "row change-task--detail change-task--selected";
+			}
+
+			return "row change-task--detail";
+		},
+		filterBlockedBy() {
+			//Filter out all dates where the change task end date <= start_date of current change task
+			this.filteredChangeTaskResults = this.changeTaskResults.filter(row => {
+				const end_date = new Date(row.fields.change_task_end_date);
+
+				return end_date.getTime() <= this.startDate.getTime();
+			})
+		},
+		filterBlocking() {
+			//Filter out all dates where the change task start date >= end_date of the current change task
+			this.filteredChangeTaskResults = this.changeTaskResults.filter(row => {
+				const start_date = new Date(row.fields.change_task_start_date);
+
+				return start_date.getTime() >= this.endDate.getTime();
+			})
+		},
+		getAllChangeTasks() {
+			//Use Axios to get data
+			this.axios.post(
+				`${this.rootUrl}change_task_information/${this.locationId}/get_change_task_list/`
+			).then(response => {
+				this.changeTaskResults = response.data;
+
+				//Get filtered data
+				this.filterBlocking();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting all change tasks",
+					message: `There is an issue getting all change tasks - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			})
+		},
+		saveLinks() {
+			// Set up the data object to send
+			const data_to_send = new FormData();
+
+			// Go through all link models to add to data_to_send
+			this.linkModel.forEach((link) => {
+				data_to_send.append(
+					"change_task",
+					link
+				);
+			});
+
+			//Tells the backend the relationship we want
+			data_to_send.set("object_relation", this.changeTaskRelationModel);
+
+			// Use axios to send data
+			this.axios.post(
+				`${this.rootUrl}object_data/change_task/${this.locationId}/add_link/`,
+				data_to_send
+			).then(() => {
+				//Data has been successfully saved. Time to update the requirement links
+				this.$emit("update_link_results", {});
+
+				//Click on the close button - a hack, but it should close the modal
+				document.getElementById("linkCloseButton").click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting all change tasks",
+					message: `There is an issue getting all change tasks - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		}
+	},
+	mounted() {
+		//Get the required data
+		//Have to wait a little extra - tick does not work :'(
+		setTimeout(() => {
+			this.getAllChangeTasks();
+		}, 200);
+	}
+}
 </script>

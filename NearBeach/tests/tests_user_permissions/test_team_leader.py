@@ -47,7 +47,7 @@ class TeamLeaderPermissionTests(TestCase):
             URLTest("permission_set_information", [2], {}, 403),
             URLTest("profile_information", [], {}, 200),
             URLTest("new_customer", [], {}, 200),
-            URLTest("new_group", [], {}, 200),
+            URLTest("new_group", [], {}, 403),
             URLTest("new_kanban", [], {}, 200),
             URLTest("new_organisation", [], {}, 200),
             URLTest("new_permission_set", [], {}, 403),
@@ -63,12 +63,12 @@ class TeamLeaderPermissionTests(TestCase):
             URLTest("rfc_information", [2], {}, 200),
             URLTest("rfc_readonly", [2], {}, 200),
             URLTest("search", [], {}, 200),
-            URLTest("search_group", [], {}, 200),
+            URLTest("search_group", [], {}, 403),
             URLTest("search_customer", [], {}, 200),
             URLTest("search_organisation", [], {}, 200),
-            URLTest("search_permission_set", [], {}, 200),
+            URLTest("search_permission_set", [], {}, 403),
             URLTest("search_tag", [], {}, 200),
-            URLTest("search_user", [], {}, 200),
+            URLTest("search_user", [], {}, 403),
             URLTest("task_information", [2], {}, 200),
             URLTest("change_task_information", [1], {}, 403),
             URLTest("kanban_information", [1], {}, 403),
@@ -81,6 +81,7 @@ class TeamLeaderPermissionTests(TestCase):
             URLTest("task_information", [1], {}, 403),
             URLTest("user_information", [1], {}, 403),
             URLTest("add_customer", ["project", 2], {"customer": 1}, 200, "POST"),
+            URLTest("private_download_file", ["80a7bd50-eba9-49f8-a55c-d1febd052ab9"], {}, 400),
         ]
 
         # Loop through each url to test to make sure the decorator is applied
@@ -96,3 +97,40 @@ class TeamLeaderPermissionTests(TestCase):
                     )
 
                 self.assertEqual(response.status_code, data.status_code)
+
+    def test_notification_pages_redirect_to_dashboard(self):
+        """
+        The following tests will make sure the team leader can not access the notifications pages.
+        The following uses a named tuple to shorten the tests.
+        """
+        URLTest = namedtuple(
+            "URLTest",
+            ["url","expected_url", "args", "data", "status_code", "target_status_code", "method"],
+            defaults=["","", [], {}, 302, 200, "GET"],
+        )
+
+        data_list = [
+            URLTest("search_notification", "/", [], {}, 302, 200, "GET"),
+            URLTest("new_notification", "/", [], {}, 302, 200, "GET"),
+            URLTest("notification_information", "/", [1], {}, 302, 200, "GET"),
+        ]
+
+        # Loop through each url to test to make sure the decorator is applied
+        for data in data_list:
+            with self.subTest(data):
+                if data.method == "GET":
+                    response = self.client.get(
+                        reverse(data.url, args=data.args), data.data, follow=True
+                    )
+                else:
+                    response = self.client.post(
+                        reverse(data.url, args=data.args), data.data, follow=True
+                    )
+
+                self.assertRedirects(
+                    response,
+                    expected_url=data.expected_url,
+                    status_code=data.status_code,
+                    target_status_code=data.target_status_code,
+                    fetch_redirect_response=True
+                )

@@ -126,9 +126,7 @@ def update_group_leader_status(request, destination, *args, **kwargs):
 @login_required(login_url="login", redirect_field_name="")
 @check_user_admin_permissions(2, "administration_create_user")
 def update_user_password(request, *args, **kwargs):
-    '''
-    Will update the users password
-    ''' 
+    '''Will update the users password''' 
     # Get form data
     form = PasswordResetForm(request.POST)
     if not form.is_valid():

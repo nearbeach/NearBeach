@@ -4,10 +4,12 @@
     <profile-information v-bind:user-results="{{user_results}}"
                          v-bind:root-url="`{% url 'dashboard' %}`"
                          v-bind:static-url="`{% static '' %}`"
+                         v-bind:theme="`{{ theme }}`"
     ></profile-information>
     <br/>
 
     <update-profile-picture v-bind:user-profile="{{user_profile}}"
+                            v-bind:theme="`{{ theme }}`"
     ></update-profile-picture>
     <br/>
 

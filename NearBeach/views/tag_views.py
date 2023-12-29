@@ -60,7 +60,6 @@ def save_tag(request, *args, **kwargs):
     # Get form data
     form = TagForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Get the data to manipulate

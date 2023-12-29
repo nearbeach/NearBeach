@@ -30,7 +30,7 @@
 					<div class="row">
 						<div class="col">Card No. - {{ cardId }}</div>
 					</div>
-					<br />
+					<br/>
 					<div class="row">
 						<div class="col">Card Title - {{ cardTitle }}</div>
 					</div>
@@ -57,59 +57,58 @@
 </template>
 
 <script>
-	const axios = require("axios");
-	import { mapGetters } from "vuex";
-	import { Modal } from "bootstrap";
+import {mapGetters} from "vuex";
+import {Modal} from "bootstrap";
 
-	export default {
-		name: "ConfirmCardArchive",
-		computed: {
-			...mapGetters({
-				cardId: "getCardId",
-				cardTitle: "getCardTitle",
-				rootUrl: "getRootUrl",
-			}),
-		},
-		methods: {
-			archiveCard() {
-				//Create data to send
-				const data_to_send = new FormData();
+export default {
+	name: "ConfirmCardArchive",
+	computed: {
+		...mapGetters({
+			cardId: "getCardId",
+			cardTitle: "getCardTitle",
+			rootUrl: "getRootUrl",
+		}),
+	},
+	methods: {
+		archiveCard() {
+			//Create data to send
+			const data_to_send = new FormData();
 
-				//Append the kanban_card_id, not set, as the form is expecting an array/list
-				data_to_send.append("kanban_card_id", this.cardId);
+			//Append the kanban_card_id, not set, as the form is expecting an array/list
+			data_to_send.append("kanban_card_id", this.cardId);
 
-				//TODO - update VueX to remove single card
-				//Mutate the data to exlcude the archived card
-				this.$store.commit({
-					type: "archiveCard",
-					cardId: this.cardId,
+			//TODO - update VueX to remove single card
+			//Mutate the data to exlcude the archived card
+			this.$store.commit({
+				type: "archiveCard",
+				cardId: this.cardId,
+			});
+
+			//Close the modal
+			document
+				.getElementById("confirmCardArchiveModalCloseButton")
+				.click();
+
+			//Send the data to backend
+			this.axios
+				.post(
+					`${this.rootUrl}kanban_information/archive_kanban_cards/`,
+					data_to_send
+				)
+				.catch((error) => {
+					//TODO: show card error
 				});
-
-				//Close the modal
-				document
-					.getElementById("confirmCardArchiveModalCloseButton")
-					.click();
-
-				//Send the data to backend
-				axios
-					.post(
-						`${this.rootUrl}kanban_information/archive_kanban_cards/`,
-						data_to_send
-					)
-					.catch((error) => {
-						//TODO: show card error
-					});
-			},
-			goBack() {
-				//Close current modal
-				document
-					.getElementById("confirmCardArchiveModalCloseButton")
-					.click();
-
-				//Open previous modal
-				const modal = new Modal("#cardInformationModal");
-				modal.show();
-			},
 		},
-	};
+		goBack() {
+			//Close current modal
+			document
+				.getElementById("confirmCardArchiveModalCloseButton")
+				.click();
+
+			//Open previous modal
+			const modal = new Modal("#cardInformationModal");
+			modal.show();
+		},
+	},
+};
 </script>

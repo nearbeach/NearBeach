@@ -28,6 +28,7 @@ from NearBeach.models import (
     ListOfRequirementItemType,
     Group,
 )
+from NearBeach.views.theme_views import get_theme
 
 
 @require_http_methods(["POST"])
@@ -89,26 +90,9 @@ def get_requirement_item_links(requirement_item_id):
     )
 
 
-@require_http_methods(["POST"])
-@login_required(login_url="login", redirect_field_name="")
-@check_user_requirement_item_permissions(min_permission_level=1)
-def get_requirement_item_links_list(request, requirement_item_id, *args, **kwargs):
-    """
-    :param request:
-    :param requirement_item_id:
-    :return:
-    """
-    # Use object_assignment to get the requirments
-    link_results = get_requirement_item_links(requirement_item_id)
-
-    # Send back json data
-    json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
-
-    return HttpResponse(json_results, content_type="application/json")
 
 
 @login_required(login_url="login", redirect_field_name="")
-# @check_user_requirement_item_permissions(min_permission_level=3) # Function won't work without requirmeent_item_id
 @check_user_permissions(min_permission_level=3, object_lookup="requirement_id")
 def new_requirement_item(request, requirement_id, *args, **kwargs):
     """Check to see if POST"""
@@ -194,6 +178,8 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
         "status_list": serializers.serialize("json", status_list),
         "type_list": serializers.serialize("json", type_list),
         "user_level": user_level,
+        "need_tinymce": True,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

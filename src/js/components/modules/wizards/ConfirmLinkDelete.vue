@@ -1,5 +1,5 @@
 <template>
-    <div
+	<div
 		class="modal fade"
 		id="confirmLinkDeleteModal"
 		tabindex="-1"
@@ -17,7 +17,7 @@
 					>
 						Please confirm Link Deletion
 					</h5>
-                    <!-- TASK INFORMATION -->
+					<!-- TASK INFORMATION -->
 					<button
 						type="button"
 						class="btn-close"
@@ -51,47 +51,46 @@
 </template>
 
 <script>
-	const axios = require("axios");
-    import { mapGetters } from "vuex";
+import {mapGetters} from "vuex";
 
-    export default {
-        name: "ConfirmLinkDelete",
-        props: {},
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				objectLink: "getObjectLink",
-				rootUrl: "getRootUrl",
-			})
+export default {
+	name: "ConfirmLinkDelete",
+	props: {},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			objectLink: "getObjectLink",
+			rootUrl: "getRootUrl",
+		})
+	},
+	methods: {
+		deleteLink() {
+			//Create data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("link_id", this.objectLink.object_id);
+			data_to_send.set(
+				"link_connection",
+				this.objectLink.object_type === this.destination ? "meta_object" : this.objectLink.object_type
+			);
+
+			//Send the data to the backend
+			this.axios
+				.post(
+					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_link/`,
+					data_to_send
+				)
+				.then(() => {
+					//Update the data
+					this.$emit("update_link_results", {});
+				});
+
+			//Close the modal
+			this.closeModal();
 		},
-        methods: {
-			deleteLink() {
-				//Create data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("link_id", this.objectLink.object_id);
-				data_to_send.set(
-					"link_connection",
-					this.objectLink.object_type === this.destination ? "meta_object" : this.objectLink.object_type
-				);
-
-				//Send the data to the backend
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_link/`,
-						data_to_send
-					)
-					.then(() => {
-						//Update the data
-                        this.$emit("update_link_results", {});
-					});
-
-				//Close the modal
-                this.closeModal();
-			},
-			closeModal() {
-				document.getElementById("confirmLinkDeleteButton").click();
-			}
-        },
-    }
+		closeModal() {
+			document.getElementById("confirmLinkDeleteButton").click();
+		}
+	},
+}
 </script>

@@ -2,7 +2,7 @@
 	<div class="card">
 		<div class="card-body">
 			<h1>Unassigned Objects</h1>
-			<hr />
+			<hr/>
 
 			<div
 				class="alert alert-dark"
@@ -47,97 +47,95 @@
 </template>
 
 <script>
-	const axios = require("axios");
+// Mixins
+import errorModalMixin from "../../mixins/errorModalMixin";
 
-	// Mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
+//Components
+import RenderObjectCard from '../render/RenderObjectCard.vue';
 
-	//Components
-	import RenderObjectCard from '../render/RenderObjectCard.vue';
-
-	export default {
-		name: "DashboardUnassignedObjects",
-		components: {
-			RenderObjectCard,
+export default {
+	name: "DashboardUnassignedObjects",
+	components: {
+		RenderObjectCard,
+	},
+	props: {
+		rootUrl: {
+			type: String,
+			default: "/",
 		},
-		props: {
-			rootUrl: {
-				type: String,
-				default: "/",
+	},
+	data() {
+		return {
+			isLoaded: false,
+			objectResults: {
+				requirement: [],
+				project: [],
+				task: [],
 			},
-		},
-		data() {
-			return {
-				isLoaded: false,
-				objectResults: {
-					requirement: [],
-					project: [],
-					task: [],
-				},
-				projectVariables: {
-					header: "Projects",
-					prefix: "Pro",
-					id: "project_id",
-					title: "project_name",
-					status: "project_status",
-					end_date: "project_end_date",
-				},
-				requirementVariables: {
-					header: "Your Requirements",
-					prefix: "Req",
-					id: "requirement_id",
-					title: "requirement_title",
-					status: "requirement_status__requirement_status",
-					end_date: "",
-				},
-				taskVariables: {
-					header: "Tasks",
-					prefix: "Task",
-					id: "task_id",
-					title: "task_short_description",
-					status: "task_status",
-					end_date: "task_end_date",
-				},
-			};
-		},
-		mixins: [errorModalMixin],
-		methods: {
-			getMyObjects() {
-				//Use axios to get the objects assigned to me
-				axios
-					.post(`${this.rootUrl}dashboard/get/unassigned_objects/`)
-					.then((response) => {
-						this.objectResults = response.data;
-
-						//Update loading status
-						this.isLoaded = true;
-					})
-					.catch((error) => {
-						this.showErrorModal(
-							error,
-							"Dashboard Unassigned Objects"
-						);
-					});
+			projectVariables: {
+				header: "Projects",
+				prefix: "Pro",
+				id: "project_id",
+				title: "project_name",
+				status: "project_status",
+				end_date: "project_end_date",
 			},
-		},
-		computed: {
-			countObjects() {
-				return (
-					this.objectResults.requirement.length +
-					this.objectResults.project.length +
-					this.objectResults.task.length
-				);
+			requirementVariables: {
+				header: "Your Requirements",
+				prefix: "Req",
+				id: "requirement_id",
+				title: "requirement_title",
+				status: "requirement_status__requirement_status",
+				end_date: "",
 			},
-		},
-		mounted() {
-			//Get the data we want
-			this.getMyObjects();
+			taskVariables: {
+				header: "Tasks",
+				prefix: "Task",
+				id: "task_id",
+				title: "task_short_description",
+				status: "task_status",
+				end_date: "task_end_date",
+			},
+		};
+	},
+	mixins: [errorModalMixin],
+	methods: {
+		getMyObjects() {
+			//Use axios to get the objects assigned to me
+			this.axios
+				.post(`${this.rootUrl}dashboard/get/unassigned_objects/`)
+				.then((response) => {
+					this.objectResults = response.data;
 
-			//Update the state management
-			this.$store.commit({
-				type: "updateUrl",
-				rootUrl: this.rootUrl,
-			})
+					//Update loading status
+					this.isLoaded = true;
+				})
+				.catch((error) => {
+					this.showErrorModal(
+						error,
+						"Dashboard Unassigned Objects"
+					);
+				});
 		},
-	};
+	},
+	computed: {
+		countObjects() {
+			return (
+				this.objectResults.requirement.length +
+				this.objectResults.project.length +
+				this.objectResults.task.length
+			);
+		},
+	},
+	mounted() {
+		//Get the data we want
+		this.getMyObjects();
+
+		//Update the state management
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+		})
+	},
+};
 </script>

@@ -1,19 +1,19 @@
 #misc_module_tabs,
 #card_information_tabs {
-	border: none;
+    border: none;
 
-	.nav-link {
-		padding: 0;
-		margin: 0 20px;
-	}
+    .nav-link {
+        padding: 0;
+        margin: 0 20px;
+    }
 
-	.active {
-		//Remove all the borders
-		border: none;
+    .active {
+        //Remove all the borders
+        border: none;
 
-		//Add in the bottom border
-		border-bottom-style: solid;
-		border-width: 2px;
-		border-bottom-color: black;
-	}
+        //Add in the bottom border
+        border-bottom-style: solid;
+        border-width: 2px;
+        border-bottom-color: black;
+    }
 }

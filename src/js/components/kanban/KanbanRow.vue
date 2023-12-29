@@ -31,41 +31,41 @@
 </template>
 
 <script>
-	import { mapGetters } from "vuex";
-	import KanbanColumn from "./KanbanColumn.vue";
-	import KanbanColumnDraggable from "./kanbanColumnDraggable.vue";
+import {mapGetters} from "vuex";
+import KanbanColumn from "./KanbanColumn.vue";
+import KanbanColumnDraggable from "./KanbanColumnDraggable.vue";
 
-	export default {
-		name: "KanbanRow",
-		components: {
-			KanbanColumn,
-			KanbanColumnDraggable,
+export default {
+	name: "KanbanRow",
+	components: {
+		KanbanColumn,
+		KanbanColumnDraggable,
+	},
+	props: {
+		levelId: {
+			type: Number,
+			default: 0,
 		},
-		props: {
-			levelId: {
-				type: Number,
-				default: 0,
-			},
-			newCardInfo: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-		},
-		computed: {
-			...mapGetters({
-				columnResults: "getColumnResults",
-				userLevel: "getUserLevel",
-			}),
-		},
-		methods: {
-			doubleClickedCard(data) {
-				//Emit the card id up stream
-				this.$emit("double_clicked_card", data);
+		newCardInfo: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-	};
+	},
+	computed: {
+		...mapGetters({
+			columnResults: "getColumnResults",
+			userLevel: "getUserLevel",
+		}),
+	},
+	methods: {
+		doubleClickedCard(data) {
+			//Emit the card id up stream
+			this.$emit("double_clicked_card", data);
+		},
+	},
+};
 </script>
 
 <style scoped></style>

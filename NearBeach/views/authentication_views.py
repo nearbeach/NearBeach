@@ -1,6 +1,7 @@
 # Import Forms
 from ..forms import PermissionSet, Group, LoginForm, User
-from ..models import UserGroup, Notification, Organisation, User
+from ..models import UserGroup, Notification, Organisation
+from django.contrib.auth.models import User
 
 # Import Django Libraries
 from django.contrib import auth
@@ -15,6 +16,7 @@ from NearBeach.decorators.check_user_permissions import check_permission_denied
 # Import Python Libraries
 import json
 import urllib.parse
+import datetime
 
 
 def check_first_time_login(request):
@@ -274,10 +276,11 @@ def login(request):
     # Get notification results
     notification_results = Notification.objects.filter(
         Q(
-            # is_deleted=False,
-            # ADD IN DATES LOGIC HERE
+            is_deleted=False,
+            notification_start_date__lte=datetime.datetime.now().date(),
+            notification_end_date__gte=datetime.datetime.now().date(),
         )
-        & Q(Q(notification_location="All") | Q(notification_location="Login"))
+        & Q(Q(notification_location="all") | Q(notification_location="login"))
     )
 
     # Get random number

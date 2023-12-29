@@ -10,7 +10,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon> Upload
+						<Icon v-bind:icon="icons.userIcon"></Icon>
+						Upload
 						Document Wizard
 					</h2>
 					<button
@@ -56,7 +57,7 @@
 										for="document"
 										class="form-label"
 									>
-										Please upload a file<br />
+										Please upload a file<br/>
 										{{ maxUploadString }}
 										<div
 											class="alert alert-warning"
@@ -85,7 +86,7 @@
 								<!-- DOCUMENT DESCRIPTION -->
 								<div class="form-group">
 									<label for="documentDescription"
-										>Document Description</label
+									>Document Description</label
 									>
 									<input
 										id="documentDescription"
@@ -96,7 +97,7 @@
 								</div>
 
 								<!-- RESET FORM BUTTON -->
-								<br />
+								<br/>
 								<div class="form-row">
 									<button
 										v-on:click="resetForm"
@@ -167,209 +168,210 @@
 </template>
 
 <script>
-	import axios from "axios";
-	import { Icon } from "@iconify/vue";
+import {Icon} from "@iconify/vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Mixins
-	import errorModalMixin from "../../../mixins/errorModalMixin";
-	import iconMixin from "../../../mixins/iconMixin";
+//Mixins
+import iconMixin from "../../../mixins/iconMixin";
 
-	export default {
-		name: "UploadDocumentWizard",
-		components: {
-			Icon,
+export default {
+	name: "UploadDocumentWizard",
+	components: {
+		Icon,
+	},
+	props: {
+		acceptedDocuments: {
+			type: String,
+			default:
+				"image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 		},
-		inject: [
-			'nextTick',
-		],
-		props: {
-			acceptedDocuments: {
-				type: String,
-				default:
-					"image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+		currentFolder: {
+			type: String,
+			default: "",
+		},
+		destination: {
+			type: String,
+			default: "",
+		},
+		excludeDocuments: {
+			type: Array,
+			default: () => {
+				return [];
 			},
-			currentFolder: {
-				type: String,
-				default: "",
-			},
-			destination: {
-				type: String,
-				default: "",
-			},
-			excludeDocuments: {
-				type: Array,
-				default: () => {
-					return [];
+		},
+		locationId: {
+			type: Number,
+			default: 0,
+		},
+	},
+	mixins: [iconMixin],
+	data() {
+		return {
+			disableUploadButton: true,
+			documentModel: [],
+			documentDescriptionModel: "",
+			uploadPercentage: "",
+			maxUploadSize: 0,
+			maxUploadString: "No Upload Limit",
+			maxUploadWarning: false,
+		};
+	},
+	computed: {
+		...mapGetters({
+			staticUrl: "getStaticUrl",
+			rootUrl: "getRootUrl",
+		}),
+	},
+	methods: {
+		handleFileUploads(fileList) {
+			/*Check that the size of the fileList is not too big
+			  The boolean (0!=this.maxUploadSize) will product a 0 result when maxUploadSize is 0. Thus negating
+			  the need for an extra if statement*/
+			if (
+				fileList[0].size * (this.maxUploadSize !== 0) >
+				this.maxUploadSize
+			) {
+				this.maxUploadWarning = true;
+
+				//Just return
+				return;
+			}
+
+			//Remove maxUploadWarning
+			this.maxUploadWarning = false;
+
+			//Update the document modal
+			this.documentModel = fileList[0];
+
+			//Extract the file name and place into the document description for the user
+			this.documentDescriptionModel = fileList[0].name;
+		},
+		resetForm() {
+			//Blank out all the models
+			this.documentModel = "";
+			this.documentDescriptionModel = "";
+			this.uploadPercentage = "";
+		},
+		uploadFile() {
+			//Create the data to send
+			const data_to_send = new FormData();
+			data_to_send.set(
+				"document",
+				this.documentModel,
+				this.documentDescriptionModel
+			);
+			data_to_send.set(
+				"document_description",
+				this.documentDescriptionModel
+			);
+
+			//If there is a current/partent folder - then add it to the data to send
+			if (this.currentFolder !== "" && this.currentFolder !== null) {
+				data_to_send.set("parent_folder", this.currentFolder);
+			}
+
+			//Configuration for axios
+			const config = {
+				onUploadProgress: (progressEvent) => {
+					//As the document gets uploaded - we want to update the upload Percentage
+					this.uploadPercentage =
+						parseFloat(progressEvent.loaded) /
+						parseFloat(progressEvent.total);
 				},
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
-		},
-		mixins: [errorModalMixin, iconMixin],
-		data() {
-			return {
-				disableUploadButton: true,
-				documentModel: [],
-				documentDescriptionModel: "",
-				uploadPercentage: "",
-				maxUploadSize: 0,
-				maxUploadString: "No Upload Limit",
-				maxUploadWarning: false,
 			};
-		},
-		computed: {
-			...mapGetters({
-				staticUrl: "getStaticUrl",
-				rootUrl: "getRootUrl",
-			}),
-		},
-		methods: {
-			handleFileUploads(fileList) {
-				/*Check that the size of the fileList is not too big
-                  The boolean (0!=this.maxUploadSize) will product a 0 result when maxUploadSize is 0. Thus negating
-                  the need for an extra if statement*/
-				if (
-					fileList[0].size * (this.maxUploadSize != 0) >
-					this.maxUploadSize
-				) {
-					this.maxUploadWarning = true;
 
-					//Just return
-					return;
-				}
+			//Use axios to send it to the backend
+			this.axios.post(
+				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
+				data_to_send,
+				config
+			).then((response) => {
+				//Send the data upstream
+				this.$emit("update_document_list", response.data);
 
-				//Remove maxUploadWarning
-				this.maxUploadWarning = false;
+				//Close the modal
+				document
+					.getElementById("uploadDocumentCloseButton")
+					.click();
 
-				//Update the document modal
-				this.documentModel = fileList[0];
-
-				//Extract the file name and place into the document description for the user
-				this.documentDescriptionModel = fileList[0].name;
-			},
-			resetForm() {
-				//Blank out all the models
-				this.documentModel = "";
-				this.documentDescriptionModel = "";
-				this.uploadPercentage = "";
-			},
-			uploadFile() {
-				//Create the data to send
-				const data_to_send = new FormData();
-				data_to_send.set(
-					"document",
-					this.documentModel,
-					this.documentDescriptionModel
-				);
-				data_to_send.set(
-					"document_description",
-					this.documentDescriptionModel
-				);
-
-				//If there is a current/partent folder - then add it to the data to send
-				if (this.currentFolder != "" && this.currentFolder !== null) {
-					data_to_send.set("parent_folder", this.currentFolder);
-				}
-
-				//Configuration for axios
-				const config = {
-					onUploadProgress: (progressEvent) => {
-						//As the document gets uploaded - we want to update the upload Percentage
-						this.uploadPercentage =
-							parseFloat(progressEvent.loaded) /
-							parseFloat(progressEvent.total);
-					},
-				};
-
-				//Use axios to send it to the backend
-				axios
-					.post(
-						`${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
-						data_to_send,
-						config
-					)
-					.then((response) => {
-						//Send the data upstream
-						this.$emit("update_document_list", response.data);
-
-						//Close the modal
-						document
-							.getElementById("uploadDocumentCloseButton")
-							.click();
-
-						//Reset the document
-						this.resetForm();
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
-		},
-		watch: {
-			maxUploadSize() {
-				//If the user has set 0 -> just say "No Upload Limit"
-				if (this.maxUploadSize === 0) {
-					return "No Upload Limit";
-				}
-
-				//Define the constants we wish to use
-				const k = 1024;
-				const sizes = [
-					"Bytes",
-					"KB",
-					"MB",
-					"GB",
-					"TB",
-					"PB",
-					"EB",
-					"ZB",
-					"YB",
-				];
-
-				//Use math to find out which array section we are going to use from sizes
-				const i = Math.floor(
-					Math.log(this.maxUploadSize) / Math.log(k)
-				);
-
-				this.maxUploadString = `Max Upload Size: ${parseFloat(
-					(this.maxUploadSize / Math.pow(k, i)).toFixed(2)
-				)} ${sizes[i]}`;
-			},
-		},
-		updated() {
-			var match = this.excludeDocuments.filter((row) => {
-				return (
-					row.document_key__document_description ==
-					this.documentDescriptionModel
-				);
-			});
-
-			this.disableUploadButton =
-				this.documentModel == "" ||
-				this.documentDescriptionModel.length == 0 ||
-				match.length > 0;
-		},
-		mounted() {
-			//Wait a few seconds before getting the max file upload size
-			this.nextTick(() => {
-				//Get the max file upload size
-				axios
-					.post(`${this.rootUrl}documentation/get/max_upload/`)
-					.then((response) => {
-						//Set the value
-						this.maxUploadSize = response.data.max_upload_size;
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
+				//Reset the document
+				this.resetForm();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to upload documentation",
+					message: `Can not upload the documentation. ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
-	};
+	},
+	watch: {
+		maxUploadSize() {
+			//If the user has set 0 -> just say "No Upload Limit"
+			if (this.maxUploadSize === 0) {
+				return "No Upload Limit";
+			}
+
+			//Define the constants we wish to use
+			const k = 1024;
+			const sizes = [
+				"Bytes",
+				"KB",
+				"MB",
+				"GB",
+				"TB",
+				"PB",
+				"EB",
+				"ZB",
+				"YB",
+			];
+
+			//Use math to find out which array section we are going to use from sizes
+			const i = Math.floor(
+				Math.log(this.maxUploadSize) / Math.log(k)
+			);
+
+			this.maxUploadString = `Max Upload Size: ${parseFloat(
+				(this.maxUploadSize / Math.pow(k, i)).toFixed(2)
+			)} ${sizes[i]}`;
+		},
+	},
+	updated() {
+		const match = this.excludeDocuments.filter((row) => {
+			return (
+				row.document_key__document_description ===
+				this.documentDescriptionModel
+			);
+		});
+
+		this.disableUploadButton =
+			this.documentModel === "" ||
+			this.documentDescriptionModel.length === 0 ||
+			match.length > 0;
+	},
+	mounted() {
+		//Wait a few seconds before getting the max file upload size
+		this.$nextTick(() => {
+			//Get the max file upload size
+			this.axios.post(
+				`${this.rootUrl}documentation/get/max_upload/`
+			).then((response) => {
+				//Set the value
+				this.maxUploadSize = response.data.max_upload_size;
+			}).catch(() => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to get the max upload size",
+					message: `Had an issue getting data from backend. ${this.maxUploadString}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		});
+	},
+};
 </script>
 
 <style scoped></style>

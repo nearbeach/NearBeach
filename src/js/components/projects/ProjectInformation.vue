@@ -1,55 +1,56 @@
 <template>
-	<div class="card">
-		<div class="card-body">
-			<h1>Project Information</h1>
-			<hr />
+	<n-config-provider :theme="getTheme(theme)">
+		<div class="card">
+			<div class="card-body">
+				<h1>Project Information</h1>
+				<hr/>
 
-			<div class="row">
-				<!-- DESCRIPTION -->
-				<div class="col-md-4">
-					<h2>Description</h2>
-					<p class="text-instructions">
-						Edit the project information and then click the "Update
-						Project" button at the bottom of the page
-					</p>
-				</div>
+				<div class="row">
+					<!-- DESCRIPTION -->
+					<div class="col-md-4">
+						<h2>Description</h2>
+						<p class="text-instructions">
+							Edit the project information and then click the "Update
+							Project" button at the bottom of the page
+						</p>
+					</div>
 
-				<!-- PROJECT FORM -->
-				<div
-					class="col-md-8"
-					style="min-height: 610px"
-				>
-					<!-- PROJECT NAME -->
-					<div class="form-group">
-						<label
+					<!-- PROJECT FORM -->
+					<div
+						class="col-md-8"
+						style="min-height: 610px"
+					>
+						<!-- PROJECT NAME -->
+						<div class="form-group">
+							<label
 							>Project Name
+								<validation-rendering
+									v-bind:error-list="v$.projectNameModel.$errors"
+								></validation-rendering>
+							</label>
+							<input
+								type="text"
+								v-model="projectNameModel"
+								class="form-control"
+							/>
+						</div>
+						<br/>
+
+						<!-- PROJECT DESCRIPTION -->
+						<label>
+							Project Description:
 							<validation-rendering
-								v-bind:error-list="v$.projectNameModel.$errors"
+								v-bind:error-list="v$.projectDescriptionModel.$errors"
 							></validation-rendering>
 						</label>
-						<input
-							type="text"
-							v-model="projectNameModel"
-							class="form-control"
+						<br/>
+						<img
+							v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
+							class="loader-image"
+							alt="loading image for Tinymce"
 						/>
-					</div>
-					<br />
-
-					<!-- PROJECT DESCRIPTION -->
-					<label>
-						Project Description:
-						<validation-rendering
-							v-bind:error-list="v$.projectDescriptionModel.$errors"
-						></validation-rendering>
-					</label>
-					<br />
-					<img
-						v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
-						class="loader-image"
-						alt="loading image for Tinymce"
-					/>
-					<editor
-						:init="{
+						<editor
+							:init="{
 							file_picker_types: 'image',
 							height: 500,
 							images_upload_handler: uploadImage,
@@ -61,274 +62,297 @@
 								'bold italic strikethrough underline backcolor | table | ' +
 									'bullist numlist outdent indent | removeformat | image codesample',
 							],
+							skin: `${this.skin}`,
+							content_css: `${this.contentCss}`,
 						}"
-						v-bind:content_css="false"
-						v-bind:skin="false"
-						v-bind:disabled="isReadOnly"
-						v-model="projectDescriptionModel"
-					/>
-				</div>
-			</div>
-
-			<!-- PROJECT STATUS -->
-			<hr />
-			<div class="row">
-				<div class="col-md-4">
-					<strong>Project Status</strong>
-					<p class="text-instructions">
-						Please update the project's task to reflect it's current
-						status. Then click on the "Update Project" button to
-						save the change.
-					</p>
-				</div>
-				<div
-					class="col-md-4"
-					v-if="!isReadOnly"
-				>
-					<n-select
-						v-bind:options="statusOptions"
-						v-model:value="projectStatusModel"
-					></n-select>
-				</div>
-				<div
-					class="col-md-4"
-					v-if="!isReadOnly"
-				>
-					<div
-						class="alert alert-danger"
-						v-if="projectStatusModel === 'Closed'"
-					>
-						Saving the project with this status will close the
-						project.
+							v-bind:disabled="isReadOnly"
+							v-model="projectDescriptionModel"
+						/>
 					</div>
 				</div>
-				<div
-					class="col-md-4"
-					v-if="isReadOnly"
-				>
+
+				<!-- PROJECT STATUS -->
+				<hr/>
+				<div class="row">
+					<div class="col-md-4">
+						<strong>Project Status</strong>
+						<p class="text-instructions">
+							Please update the project's task to reflect it's current
+							status. Then click on the "Update Project" button to
+							save the change.
+						</p>
+					</div>
 					<div
-						class="alert alert-info"
-						v-if="projectStatusModel === 'Closed'"
+						class="col-md-4"
+						v-if="!isReadOnly"
 					>
-						Project has been closed.
+						<n-select
+							v-bind:options="statusOptions"
+							v-model:value="projectStatusModel"
+						></n-select>
+					</div>
+					<div
+						class="col-md-4"
+						v-if="!isReadOnly"
+					>
+						<div
+							class="alert alert-danger"
+							v-if="projectStatusModel === 'Closed'"
+						>
+							Saving the project with this status will close the
+							project.
+						</div>
+					</div>
+					<div
+						class="col-md-4"
+						v-if="isReadOnly"
+					>
+						<div
+							class="alert alert-info"
+							v-if="projectStatusModel === 'Closed'"
+						>
+							Project has been closed.
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<!-- STAKEHOLDER ORGANISATION -->
-			<hr />
-			<stakeholder-information
-				v-bind:organisation-results="organisationResults"
-				v-bind:default-stakeholder-image="defaultStakeholderImage"
-			></stakeholder-information>
+				<!-- STAKEHOLDER ORGANISATION -->
+				<hr/>
+				<stakeholder-information
+					v-bind:organisation-results="organisationResults"
+					v-bind:default-stakeholder-image="defaultStakeholderImage"
+				></stakeholder-information>
 
-			<!-- START DATE & END DATE -->
-			<hr />
-			<between-dates
-				destination="project"
-				v-on:update_dates="updateDates($event)"
-				v-bind:end-date-model="projectEndDateModel.getTime()"
-				v-bind:start-date-model="projectStartDateModel.getTime()"
-			></between-dates>
+				<!-- START DATE & END DATE -->
+				<hr/>
+				<between-dates
+					destination="project"
+					v-on:update_dates="updateDates($event)"
+					v-bind:end-date-model="projectEndDateModel.getTime()"
+					v-bind:start-date-model="projectStartDateModel.getTime()"
+				></between-dates>
 
-			<!-- Submit and Close Button -->
-			<hr v-if="userLevel >= 2 && !isReadOnly" />
-			<div
-				class="row submit-row"
-				v-if="!isReadOnly"
-			>
-				<div class="col-md-12">
-					<!-- Close Project -->
-					<a
-						href="javascript:void(0)"
-						v-if="userLevel >= 3"
-						class="btn btn-danger"
-						v-on:click="closeProject"
+				<!-- Submit and Close Button -->
+				<hr v-if="userLevel >= 2 && !isReadOnly"/>
+				<div
+					class="row submit-row"
+					v-if="!isReadOnly"
+				>
+					<div class="col-md-12">
+						<!-- Close Project -->
+						<a
+							href="javascript:void(0)"
+							v-if="userLevel >= 3"
+							class="btn btn-danger"
+							v-on:click="closeProject"
 						>Close Project</a
-					>
+						>
 
-					<!-- Update Project -->
-					<a
-						href="javascript:void(0)"
-						v-if="userLevel >= 2"
-						class="btn btn-primary save-changes"
-						v-on:click="updateProject"
+						<!-- Update Project -->
+						<a
+							href="javascript:void(0)"
+							v-if="userLevel >= 2"
+							class="btn btn-primary save-changes"
+							v-on:click="updateProject"
 						>Update Project</a
-					>
+						>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</n-config-provider>
 </template>
 
 <script>
-	const axios = require("axios");
-	import { NSelect } from "naive-ui";
-	import BetweenDates from "../dates/BetweenDates.vue";
-	import StakeholderInformation from "../organisations/StakeholderInformation.vue";
-	import Editor from "@tinymce/tinymce-vue";
+import {NSelect} from "naive-ui";
+import BetweenDates from "../dates/BetweenDates.vue";
+import StakeholderInformation from "../organisations/StakeholderInformation.vue";
+import Editor from "@tinymce/tinymce-vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Validations
-	import useVuelidate from "@vuelidate/core";
-	import { required, maxLength } from "@vuelidate/validators";
-	import ValidationRendering from "../validation/ValidationRendering.vue";
+//Validations
+import useVuelidate from "@vuelidate/core";
+import {required, maxLength} from "@vuelidate/validators";
+import ValidationRendering from "../validation/ValidationRendering.vue";
 
-	//Mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
-	import loadingModalMixin from "../../mixins/loadingModalMixin";
-	import uploadMixin from "../../mixins/uploadMixin";
+//Mixins
+import errorModalMixin from "../../mixins/errorModalMixin";
+import getThemeMixin from "../../mixins/getThemeMixin";
+import loadingModalMixin from "../../mixins/loadingModalMixin";
+import uploadMixin from "../../mixins/uploadMixin";
 
-	export default {
-		name: "ProjectInformation",
-		setup() {
-			return { v$: useVuelidate() };
+export default {
+	name: "ProjectInformation",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	components: {
+		BetweenDates,
+		editor: Editor,
+		NSelect,
+		StakeholderInformation,
+		ValidationRendering,
+	},
+	props: {
+		defaultStakeholderImage: {
+			type: String,
+			default: "",
 		},
-		components: {
-			BetweenDates,
-			editor: Editor,
-			NSelect,
-			StakeholderInformation,
-			ValidationRendering,
-		},
-		props: {
-			defaultStakeholderImage: {
-				type: String,
-				default: "",
-			},
-			organisationResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			projectResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			userLevel: {
-				type: Number,
-				default: 1,
+		organisationResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-				staticUrl: "getStaticUrl",
-			}),
-		},
-		mixins: [errorModalMixin, loadingModalMixin, uploadMixin],
-		data() {
-			return {
-				isReadOnly: false,
-				projectDescriptionModel:
-					this.projectResults[0].fields.project_description,
-				projectEndDateModel: new Date(
-					this.projectResults[0].fields.project_end_date
-				),
-				projectNameModel: this.projectResults[0].fields.project_name,
-				projectStartDateModel: new Date(
-					this.projectResults[0].fields.project_start_date
-				),
-				projectStatusModel:
-					this.projectResults[0].fields.project_status,
-				statusOptions: [
-					{ value: "Backlog", label: "Backlog" },
-					{ value: "Blocked", label: "Blocked" },
-					{ value: "In Progress", label: "In Progress" },
-					{ value: "Test/Review", label: "Test/Review" },
-				],
-			};
-		},
-		validations: {
-			projectDescriptionModel: {
-				required,
-				maxLength: maxLength(630000),
-			},
-			projectEndDateModel: {
-				required,
-			},
-			projectNameModel: {
-				maxLength: maxLength(255),
-				required,
-			},
-			projectStartDateModel: {
-				required,
+		projectResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		methods: {
-			closeProject() {
-				//Set the project status to Closed
-				this.projectStatusModel = "Closed";
-
-				//Update the project
-				this.updateProject();
-			},
-			updateDates(data) {
-				this.projectEndDateModel = new Date(data.end_date);
-				this.projectStartDateModel = new Date(data.start_date);
-			},
-			async updateProject() {
-				//Check validation
-				const isFormCorrect = await this.v$.$validate();
-				if (!isFormCorrect) {
-					return;
-				}
-
-				//Construct data_to_send to backend
-				const data_to_send = new FormData();
-				data_to_send.set(
-					"project_description",
-					this.projectDescriptionModel
-				);
-				data_to_send.set(
-					"project_end_date",
-					this.projectEndDateModel.toISOString()
-				);
-				data_to_send.set("project_name", this.projectNameModel);
-				data_to_send.set(
-					"project_start_date",
-					this.projectStartDateModel.toISOString()
-				);
-				data_to_send.set("project_status", this.projectStatusModel);
-
-				//Open up the loading modal
-				this.showLoadingModal("Project");
-
-				//Use axios to send data
-				axios
-					.post(
-						`${this.rootUrl}project_information/${this.projectResults[0].pk}/save/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Notify user of success update
-						this.closeLoadingModal();
-
-						//Reload the page IF the status is closed
-						if (this.projectStatusModel === "Closed")
-							window.location.reload(true);
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
+		theme: {
+			type: String,
+			default: "",
 		},
-		mounted() {
-			//If users have enough permissions add in the "Closed" functionaly
-			if (this.userLevel >= 3) {
-				this.statusOptions.push("Closed");
+		userLevel: {
+			type: Number,
+			default: 1,
+		},
+	},
+	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			rootUrl: "getRootUrl",
+			skin: "getSkin",
+			staticUrl: "getStaticUrl",
+		}),
+	},
+	mixins: [errorModalMixin, getThemeMixin, loadingModalMixin, uploadMixin],
+	data() {
+		return {
+			isReadOnly: false,
+			projectDescriptionModel:
+			this.projectResults[0].fields.project_description,
+			projectEndDateModel: new Date(
+				this.projectResults[0].fields.project_end_date
+			),
+			projectNameModel: this.projectResults[0].fields.project_name,
+			projectStartDateModel: new Date(
+				this.projectResults[0].fields.project_start_date
+			),
+			projectStatusModel:
+			this.projectResults[0].fields.project_status,
+			statusOptions: [
+				{value: "Backlog", label: "Backlog"},
+				{value: "Blocked", label: "Blocked"},
+				{value: "In Progress", label: "In Progress"},
+				{value: "Test/Review", label: "Test/Review"},
+			],
+		};
+	},
+	validations: {
+		projectDescriptionModel: {
+			required,
+			maxLength: maxLength(630000),
+		},
+		projectEndDateModel: {
+			required,
+		},
+		projectNameModel: {
+			maxLength: maxLength(255),
+			required,
+		},
+		projectStartDateModel: {
+			required,
+		},
+	},
+	methods: {
+		closeProject() {
+			//Set the project status to Closed
+			this.projectStatusModel = "Closed";
+
+			//Update the project
+			this.updateProject();
+		},
+		updateDates(data) {
+			this.projectEndDateModel = new Date(data.end_date);
+			this.projectStartDateModel = new Date(data.start_date);
+		},
+		async updateProject() {
+			//Check validation
+			const isFormCorrect = await this.v$.$validate();
+			if (!isFormCorrect) {
+				return;
 			}
 
-			//If the project status is closed => set the isReadOnly to true
-			this.isReadOnly =
-				this.projectResults[0].fields.project_status === "Closed";
+			//Construct data_to_send to backend
+			const data_to_send = new FormData();
+			data_to_send.set(
+				"project_description",
+				this.projectDescriptionModel
+			);
+			data_to_send.set(
+				"project_end_date",
+				this.projectEndDateModel.toISOString()
+			);
+			data_to_send.set("project_name", this.projectNameModel);
+			data_to_send.set(
+				"project_start_date",
+				this.projectStartDateModel.toISOString()
+			);
+			data_to_send.set("project_status", this.projectStatusModel);
+
+			//Notify user of attempting to save
+			this.$store.dispatch("newToast", {
+				header: "Project Currently Saving",
+				message: "Please wait whilst we save the project",
+				extra_classes: "bg-warning",
+				unique_type: "save",
+				delay: 0,
+			});
+
+			//Use axios to send data
+			this.axios
+				.post(
+					`${this.rootUrl}project_information/${this.projectResults[0].pk}/save/`,
+					data_to_send
+				)
+				.then((response) => {
+					//Notify user of success update
+					this.$store.dispatch("newToast", {
+						header: "Project Saved",
+						message: "Project Saved",
+						extra_classes: "bg-success",
+						unique_type: "save",
+					});
+
+					//Reload the page IF the status is closed
+					if (this.projectStatusModel === "Closed")
+						window.location.reload(true);
+				})
+				.catch((error) => {
+					this.showErrorModal(error, this.destination);
+				});
 		},
-	};
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		//If users have enough permissions add in the "Closed" functionaly
+		if (this.userLevel >= 3) {
+			this.statusOptions.push("Closed");
+		}
+
+		//If the project status is closed => set the isReadOnly to true
+		this.isReadOnly =
+			this.projectResults[0].fields.project_status === "Closed";
+	},
+};
 </script>
 
 <style scoped></style>

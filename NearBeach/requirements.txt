@@ -1,7 +1,7 @@
 # requirement.txt
 Django>=3.1
 simplejson
-pillow>=7.1.0
+pillow>=10.0.1
 urllib3
 boto3
 azure-storage-blob

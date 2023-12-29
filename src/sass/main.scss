@@ -4,6 +4,10 @@
 // Import Bootstrap
 @import "~bootstrap/scss/bootstrap";
 
+// Import Themes
+@import "./themes/light_theme";
+@import "./themes/dark_theme";
+
 //Import components
 @import "components/body";
 @import "components/buttons";
@@ -20,6 +24,7 @@
 @import "components/tables";
 @import "components/tags";
 @import "components/tinymce";
+@import "components/toasts";
 @import "components/vselect";
 @import "components/drag_and_drop";
 @import "components/users_and_groups";

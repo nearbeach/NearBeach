@@ -34,13 +34,13 @@ LINK_RELATIONSHIP = (
     ("block", "Block"),
     ("duplicate", "Duplicate"),
     ("relate", "Relate"),
-    ("subobject","Subobject"),
+    ("subobject", "Subobject"),
 )
 
 NOTIFICATION_LOCATION = (
-    ("All", "All"),
-    ("Login", "Login"),
-    ("Dashboard", "Dashboard"),
+    ("all", "All Options"),
+    ("dashboard", "Dashboard Screen"),
+    ("login", "Login Screen"),
 )
 
 PAGE_LAYOUT = (
@@ -371,6 +371,9 @@ class Document(models.Model):
         null=True,
         storage=FileStorage(),
     )
+    document_upload_successfully = models.BooleanField(
+        default=False,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -439,6 +442,10 @@ class DocumentPermission(models.Model):
         on_delete=models.CASCADE,
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    new_object = models.UUIDField(
+        blank=True,
+        null=True,
+    )
     folder = models.ForeignKey(
         "folder",
         on_delete=models.CASCADE,
@@ -897,6 +904,9 @@ class Notification(models.Model):
         blank=True,
         null=True,
     )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
 
 
 class ObjectAssignment(models.Model):
@@ -995,23 +1005,23 @@ class ObjectAssignment(models.Model):
     meta_object_title = models.CharField(
         max_length=255,
         blank=True,
-        null=True,
+        default='',
     )
     meta_object_status = models.CharField(
         max_length=255,
         blank=True,
-        null=True,
+        default='',
     )
     link_relationship = models.CharField(
         max_length=10,
         choices=LINK_RELATIONSHIP,
         blank=True,
-        null=True,
+        default='',
     )
     parent_link = models.CharField(
         max_length=20,
         blank=True,
-        null=True,
+        default='',
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1264,7 +1274,7 @@ class RequestForChange(models.Model):
     rfc_version_number = models.CharField(
         max_length=25,
         blank=True,
-        null=True,
+        default='',
     )
     rfc_status = models.ForeignKey(
         "ListOfRfcStatus",
@@ -1569,3 +1579,24 @@ class UserProfilePicture(models.Model):
     def __str__(self):
         # Return the document key
         return self.document.document_key
+
+
+class UserSetting(models.Model):
+    class SettingType(models.TextChoices):
+        DASHBOARD = "DASHBOARD", _("Dashboard")
+        EDIT_KANBAN_BOARD = "EDIT_KANBAN_BOARD", _("Edit Kanban Board")
+        KANBAN_BOARD = "KANBAN_BOARD", _("Kanban Board")
+        SEARCH = "SEARCH", _("Search")
+        THEME = "THEME", _("NearBeach Theme")
+
+    user_setting_id = models.BigAutoField(primary_key=True)
+    username = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+    setting_type = models.CharField(
+        max_length=30,
+        choices=SettingType.choices,
+        default=SettingType.THEME
+    )
+    setting_data = models.JSONField()

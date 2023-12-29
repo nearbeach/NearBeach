@@ -52,7 +52,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'NearBeach.urls'
+# ROOT_URLCONF = 'NearBeach.urls'
+ROOT_URLCONF = 'local.urls'
 
 TEMPLATES = [
     {
@@ -116,9 +117,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-AZURE_STORAGE_CONTAINER_NAME = os.getenv("AZURE_STORAGE_CONTAINER_NAME")
-
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 PRIVATE_MEDIA_ROOT = os.path.join(PROJECT_PATH, 'private')
 PRIVATE_MEDIA_SERVER = 'DefaultServer'
@@ -126,7 +124,7 @@ PRIVATE_MEDIA_URL = '/private/'
 
 # Static files setup
 # Check to see if we are importing Azure Credentials
-if "AWS_ACCESS_KEY_ID" in os.environ:
+if "CLOUDFLARE_ACCOUNT_ID" in os.environ:
     # Get the cloudflare account id
     CLOUDFLARE_ACCOUNT_ID = os.getenv("CLOUDFLARE_ACCOUNT_ID")
 
@@ -139,6 +137,14 @@ if "AWS_ACCESS_KEY_ID" in os.environ:
     AWS_LOCATION = F"{VERSION}"
     AWS_S3_ENDPOINT_URL = F"https://{CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
 
+    # To use a selfsigned cert you can put the path to the cert bundle
+    # here e.g. AWS_VERIFY_TLS = path/to/cert/bundle.pem
+    # AWS_VERIFY_TLS = False
+
+    # AWS_CONFIG can be used to set configure the botocore config
+    # see https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html
+
+
     # Defining STORAGES
     STORAGES = {"staticfiles": {"BACKEND": "storages.backends.s3boto3.S3StaticStorage"}}
 
@@ -148,5 +154,23 @@ else:
     STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
+
+# Check to see if we are importing AWS credentials
+if "AWS_ACCESS_KEY_ID" in os.environ and "CLOUDFLARE_ACCOUNT_ID" not in os.environ:
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+
+# Check to see if we are importing Azure Credentials
+if "AZURE_STORAGE_CONNECTION_STRING" in os.environ:
+    AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    AZURE_STORAGE_CONTAINER_NAME = os.getenv("AZURE_STORAGE_CONTAINER_NAME")
+
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+MAX_FILE_SIZE_UPLOAD = 104857600
+if "MAX_FILE_SIZE_UPLOAD" in os.environ:
+    MAX_FILE_SIZE_UPLOAD = os.getenv("MAX_FILE_SIZE_UPLOAD")

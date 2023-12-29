@@ -1,4 +1,3 @@
-# Password reset
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
@@ -15,6 +14,7 @@ from .views import (
     kanban_column_views,
     kanban_level_views,
     kanban_views,
+    notification_views,
     object_data_views,
     organisation_views,
     permission_set_views,
@@ -26,6 +26,7 @@ from .views import (
     search_views,
     tag_views,
     task_views,
+    user_setting_views,
     user_views,
 )
 
@@ -172,6 +173,11 @@ urlpatterns = [
         document_views.get_max_upload,
         name="document_get_max_upload",
     ),
+    path(
+        "documentation/new_object_upload/",
+        document_views.new_object_upload,
+        name="document_new_object_upload",
+    ),
     # Groups
     path(
         "group_information/<int:group_id>/",
@@ -237,6 +243,11 @@ urlpatterns = [
         name="archive_kanban_cards",
     ),
     path(
+        "kanban_information/fix_card_ordering/",
+        kanban_views.fix_card_ordering,
+        name="fix_card_ordering",
+    ),
+    path(
         "kanban_information/<int:kanban_board_id>/",
         kanban_views.kanban_information,
         name="kanban_information",
@@ -255,6 +266,11 @@ urlpatterns = [
         "kanban_information/<int:kanban_board_id>/edit_board/",
         kanban_views.kanban_edit_board,
         name="kanban_edit_board",
+    ),
+    path(
+        "kanban_information/<int:kanban_board_id>/reopen_board/",
+        kanban_views.kanban_reopen_board,
+        name="kanban_reopen_board",
     ),
     path(
         "kanban_information/<int:kanban_board_id>/<object_lookup>/add_link/",
@@ -336,6 +352,8 @@ urlpatterns = [
     path("new_group/save/", group_views.new_group_save, name="new_group_save"),
     path("new_kanban/", kanban_views.new_kanban, name="new_kanban"),
     path("new_kanban_save/", kanban_views.new_kanban_save, name="new_kanban_save"),
+    path("new_notification/", notification_views.new_notification, name="new_notification"),
+    path("new_notification_save/", notification_views.new_notification_save, name="new_notification_save"),
     path(
         "new_organisation/",
         organisation_views.new_organisation,
@@ -383,6 +401,21 @@ urlpatterns = [
     path("new_task/save/", task_views.new_task_save, name="new_task_save"),
     path("new_user/", user_views.new_user, name="new_user"),
     path("new_user/save/", user_views.new_user_save, name="new_user_save"),
+    path(
+        "notification_information/delete/",
+        notification_views.notification_information_delete,
+        name="notification_delete",
+    ),
+    path(
+        "notification_information/<notification_id>/",
+        notification_views.notification_information,
+        name="notification_information"
+    ),
+    path(
+        "notification_information/<notification_id>/save/",
+        notification_views.notification_information_save,
+        name="notification_information_save"
+    ),
     # Object Data
     path(
         "object_data/admin_add_user/",
@@ -454,16 +487,6 @@ urlpatterns = [
         object_data_views.group_and_user_data,
         name="group_and_user_data",
     ),
-    # path(
-    #     "object_data/<destination>/<location_id>/group_list/",
-    #     object_data_views.group_list,
-    #     name="group_list",
-    # ),
-    # path(
-    #     "object_data/<destination>/<location_id>/group_list_all/",
-    #     object_data_views.group_list_all,
-    #     name="group_list_all",
-    # ),
     path(
         "object_data/<destination>/<location_id>/<object_lookup>/link_list/",
         object_data_views.link_list,
@@ -517,11 +540,6 @@ urlpatterns = [
         object_data_views.user_list,
         name="user_list",
     ),
-    # path(
-    #     "object_data/<destination>/<location_id>/user_list_all/",
-    #     object_data_views.user_list_all,
-    #     name="user_list_all",
-    # ),
     path("object_data/delete_bug/", object_data_views.delete_bug, name="delete_bug"),
     path("object_data/delete_link/", object_data_views.delete_link, name="delete_link"),
     path("object_data/delete_tag/", object_data_views.delete_tag, name="delete_tag"),
@@ -601,11 +619,6 @@ urlpatterns = [
         name="get_requirement_item_type_list",
     ),
     path(
-        "requirement_information/<int:requirement_id>/data/links/",
-        requirement_views.get_requirement_links_list,
-        name="get_requirement_links_list",
-    ),
-    path(
         "requirement_information/<int:requirement_id>/save/",
         requirement_views.requirement_information_save,
         name="requirement_information_save",
@@ -625,11 +638,6 @@ urlpatterns = [
         "requirement_item_information/<int:requirement_item_id>/",
         requirement_item_views.requirement_item_information,
         name="requirement_item_information",
-    ),
-    path(
-        "requirement_item_information/<int:requirement_item_id>/data/links/",
-        requirement_item_views.get_requirement_item_links_list,
-        name="get_requirement_item_links_list",
     ),
     path(
         "requirement_item_information/<int:requirement_item_id>/save/",
@@ -711,6 +719,16 @@ urlpatterns = [
         name="search_customer_data",
     ),
     path(
+        "search/notification/",
+        search_views.search_notification,
+        name="search_notification",
+    ),
+    path(
+        "search/notification/data/",
+        search_views.search_notification_data,
+        name="search_notification_data",
+    ),
+    path(
         "search/organisation/",
         search_views.search_organisation,
         name="search_organisation",
@@ -779,8 +797,18 @@ urlpatterns = [
         admin_views.update_group_leader_status,
         name="update_group_leader_status",
     ),
+    # DELETE IS CURRENTLY NOT USED!!! PLACE INTO THE SYSTEM JUST IN CASE :)
+    # path(
+    #     "user_settings/delete/",
+    #     user_setting_views.delete_user_settings,
+    #     name="user_settings_delete",
+    # ),
+    path(
+        "user_settings/update/",
+        user_setting_views.update_user_settings,
+        name="user_settings_update",
+    ),
     # Changing and Resetting Passwords
-    # path('change-password/', auth_views.PasswordChangeView.as_view()),
     path(
         "password_reset/",
         auth_views.PasswordResetView.as_view(

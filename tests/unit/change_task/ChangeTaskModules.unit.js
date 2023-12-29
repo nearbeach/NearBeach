@@ -1,4 +1,24 @@
 // Vitest
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
+import {mount, VueWrapper} from "@vue/test-utils";
 
-test('blank', () => {});
+// Import vue component
+import ChangeTaskModules from "/src/js/components/change_task/ChangeTaskModules.vue";
+
+// VueX
+import { store } from "/src/js/vuex-store";
+
+// describe('ChangeTaskModules.vue - rendering component.', () => {
+//     //Using mount - insert data
+//     const wrapper = mount(ChangeTaskModules, {
+//         props: {
+//         },
+//         global: {
+//             plugins: [store],
+//         },
+//     });
+//
+//     test('Empty test', () => {});
+// });
+
+test('Empty test', () => {});

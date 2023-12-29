@@ -12,6 +12,7 @@ from NearBeach.decorators.check_user_permissions import check_user_admin_permiss
 from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm, UserRemovePermissionForm
 from NearBeach.models import UserGroup
 from NearBeach.views.tools.internal_functions import get_user_permissions
+from NearBeach.views.theme_views import get_theme
 
 import json
 
@@ -31,6 +32,8 @@ def new_user(request, *args, **kwargs):
     # Get context
     c = {
         "nearbeach_title": "New User",
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -71,13 +74,12 @@ def new_user_save(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_admin_permissions(2, "administration_create_user")
 def update_password(request, *args, **kwargs):
     """ """
     # Get form data
     form = PasswordResetForm(request.POST)
     if not form.is_valid():
-        return HttpResponseBadRequest(form.errors)
+        return HttpResponseBadRequest(form.errors.as_json())
 
     # Check to make sure we are updating ONLY the current user
     if not form.cleaned_data["username"] == request.user:
@@ -119,6 +121,8 @@ def user_information(request, username, *args, **kwargs):
         "user_list_results": user_list_results,
         "user_results": serializers.serialize("json", [user_results]),
         "username": username,
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -165,9 +169,9 @@ def user_remove_permission(request, *args, **kwargs):
     form = UserRemovePermissionForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     user_group_id = form.cleaned_data['user_group_id']
-    
+
     user_group_update = UserGroup.objects.get(
         user_group_id = user_group_id.user_group_id,
     )

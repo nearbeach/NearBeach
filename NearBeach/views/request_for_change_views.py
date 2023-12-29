@@ -1,4 +1,4 @@
-import json
+import json, uuid
 from NearBeach.forms import (
     NewRequestForChangeForm,
     RfcModuleForm,
@@ -18,6 +18,7 @@ from NearBeach.models import (
     RequestForChangeGroupApproval,
     ListOfRFCStatus,
 )
+from NearBeach.views.theme_views import get_theme
 from django.db.models import Q, F
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
@@ -30,9 +31,7 @@ from django.core import serializers
 
 # Internal function
 def get_rfc_change_task(rfc_id):
-    """ 
-    Obtains a list of change tasks for this particular RFC, along with any blocked information.
-    """
+    """Obtains a list of change tasks for this particular RFC, along with any blocked information."""
     change_task_results = ChangeTask.objects.filter(
         is_deleted=False,
         request_for_change=rfc_id,
@@ -108,6 +107,7 @@ def get_rfc_context(rfc_id):
         "rfc_results": serializers.serialize("json", [rfc_results]),
         "rfc_change_lead": rfc_change_lead,
         "user_list": user_list,
+        "need_tinymce": True,
     }
 
     return c
@@ -146,9 +146,12 @@ def new_request_for_change(request, *args, **kwargs):
 
     # Context
     c = {
+        "need_tinymce": True,
         "group_results": serializers.serialize("json", group_results),
         "nearbeach_title": "New RFC",
         "user_group_results": user_group_results,
+        "theme": get_theme(request),
+        "uuid": uuid.uuid4,
     }
 
     return HttpResponse(t.render(c, request))
@@ -302,6 +305,7 @@ def rfc_information(request, rfc_id, *args, **kwargs):
     # Get context
     c = get_rfc_context(rfc_id)
     c["user_level"] = kwargs["user_level"]
+    c["theme"] = get_theme(request)
 
     return HttpResponse(t.render(c, request))
 
@@ -375,6 +379,7 @@ def rfc_readonly(request, rfc_id, *args, **kwargs):
     # Add the group_leader_count to c dict
     c.update({"group_leader_count": group_leader_count})
     c["user_level"] = kwargs["user_level"]
+    c["theme"] = get_theme(request)
 
     return HttpResponse(t.render(c, request))
 
@@ -555,13 +560,13 @@ def rfc_status_rejected(rfc_id, rfc_results):
     ).update(approval=3)
 
     # Reject who RFC
-    rfc_results.rfc_status = 6
-    rfc_results.save()
+    # rfc_results.rfc_status = 6
+    # rfc_results.save()
 
     # Reject all the change tasks
     ChangeTask.objects.filter(
         is_deleted=False,
-        rfc_id=rfc_id,
+        request_for_change_id=rfc_id,
     ).update(change_task_status=6)
 
 
@@ -673,9 +678,6 @@ def rfc_update_status(request, rfc_id, *args, **kwargs):
     :param rfc_id:
     :return:
     """
-    # Add in user permissions
-
-    # Get the form data
     form = UpdateRFCStatus(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)

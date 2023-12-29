@@ -1,6 +1,9 @@
 <template>
 	<div>
-		<h2><Icon v-bind:icon="icons.noteAdd"></Icon> Note History</h2>
+		<h2>
+			<Icon v-bind:icon="icons.noteAdd"></Icon>
+			Note History
+		</h2>
 		<p class="text-instructions">
 			The following are saved notes against this {{ destination }}. Add
 			notes by clicking on the button below.
@@ -13,7 +16,7 @@
 
 		<!-- ADD NOTE HISTORY -->
 		<!-- TO DO - limit it to certain users -->
-		<hr />
+		<hr/>
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<a
@@ -21,7 +24,7 @@
 					class="btn btn-primary save-changes"
 					v-on:click="createNewNote"
 					v-if="userLevel > 1"
-					>Add Note to {{ destination }}</a
+				>Add Note to {{ destination }}</a
 				>
 			</div>
 		</div>
@@ -36,72 +39,68 @@
 </template>
 
 <script>
-	// JavaScript Libraries
-	import { Modal } from "bootstrap";
-	import errorModalMixin from "../../../mixins/errorModalMixin";
-	import iconMixin from "../../../mixins/iconMixin";
-	import axios from "axios";
-	import { Icon } from "@iconify/vue";
-	import ListNotes from "./ListNotes.vue";
-	import NewHistoryNoteWizard from "../wizards/NewHistoryNoteWizard.vue";
+// JavaScript Libraries
+import {Modal} from "bootstrap";
+import errorModalMixin from "../../../mixins/errorModalMixin";
+import iconMixin from "../../../mixins/iconMixin";
+import {Icon} from "@iconify/vue";
+import ListNotes from "./ListNotes.vue";
+import NewHistoryNoteWizard from "../wizards/NewHistoryNoteWizard.vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	export default {
-		name: "NotesModule",
-		components: {
-			Icon,
-			ListNotes,
-			NewHistoryNoteWizard,
+export default {
+	name: "NotesModule",
+	components: {
+		Icon,
+		ListNotes,
+		NewHistoryNoteWizard,
+	},
+	mixins: [errorModalMixin, iconMixin],
+	data() {
+		return {
+			noteHistoryResults: [],
+		};
+	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			userLevel: "getUserLevel",
+			rootUrl: "getRootUrl",
+		}),
+	},
+	methods: {
+		createNewNote() {
+			const newNoteModal = new Modal(
+				document.getElementById("newNoteModal")
+			);
+			newNoteModal.show();
 		},
-		inject: [
-			'nextTick',
-		],
-		mixins: [errorModalMixin, iconMixin],
-		data() {
-			return {
-				noteHistoryResults: [],
-			};
+		getNoteHistoryResults() {
+			this.axios
+				.post(
+					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
+				)
+				.then((response) => {
+					this.noteHistoryResults = response.data;
+				})
+				.catch((error) => {
+					this.showErrorModal(error, this.destination);
+				});
 		},
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				userLevel: "getUserLevel",
-				rootUrl: "getRootUrl",
-			}),
+		updateNoteHistoryResults(data) {
+			//Add the extra data
+			this.noteHistoryResults.push(data[0]);
 		},
-		methods: {
-			createNewNote() {
-				var newNoteModal = new Modal(
-					document.getElementById("newNoteModal")
-				);
-				newNoteModal.show();
-			},
-			getNoteHistoryResults() {
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`
-					)
-					.then((response) => {
-						this.noteHistoryResults = response.data;
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
-			updateNoteHistoryResults(data) {
-				//Add the extra data
-				this.noteHistoryResults.push(data[0]);
-			},
-		},
-		mounted() {
-			this.nextTick(() => {
-				this.getNoteHistoryResults();
-			});
-		},
-	};
+	},
+	mounted() {
+		this.$nextTick(() => {
+			this.getNoteHistoryResults();
+		});
+	},
+};
 </script>
 
 <style scoped></style>

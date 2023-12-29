@@ -7,6 +7,7 @@
     <task-information v-bind:task-results="{{task_results}}"
                       v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
                       v-bind:organisation-results="{{organisation_results}}"
+                      v-bind:theme="`{{ theme }}`"
                       v-bind:user-level="{{ user_level }}"
     ></task-information>
     {% if task_status == 'Closed' or user_level == 1 %}
@@ -20,5 +21,6 @@
                     v-bind:user-level="{{ user_level }}"
                     v-bind:root-url="`{% url 'dashboard' %}`"
                     v-bind:static-url="`{% static '/' %}`"
+                    v-bind:theme="`{{ theme }}`"
     ></parent-modules>
 {% endblock %}

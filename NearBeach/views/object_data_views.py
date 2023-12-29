@@ -11,6 +11,7 @@ from django.views.decorators.http import require_http_methods
 import urllib3
 import urllib
 import json
+
 from NearBeach.models import (
     Bug,
     BugClient,
@@ -18,8 +19,6 @@ from NearBeach.models import (
     Customer,
     Group,
     KanbanCard,
-    ListOfRequirementItemStatus,
-    ListOfRequirementStatus,
     ObjectAssignment,
     ObjectNote,
     Organisation,
@@ -56,6 +55,21 @@ from NearBeach.forms import (
     QueryBugClientForm,
     RemoveLinkForm,
 )
+
+from NearBeach.views.tools.lookup_functions import (
+    lookup_project,
+    lookup_requirement,
+    lookup_task,
+    lookup_requirement_item
+)
+
+# Used for the link list
+LOOKUP_FUNCS = {
+    "project": lookup_project,
+    "task": lookup_task,
+    "requirement": lookup_requirement,
+    "requirement_item": lookup_requirement_item,
+}
 
 
 @require_http_methods(["POST"])
@@ -173,7 +187,7 @@ def add_link(request, destination, location_id):
     :param location_id:
     :return:
     """
-    
+
     # Get the data
     form = AddObjectLinkForm(request.POST)
     if not form.is_valid():
@@ -243,7 +257,7 @@ def add_link(request, destination, location_id):
                     submit_object_assignment.parent_link = "meta_object"
                 else:
                     submit_object_assignment.parent_link = object_type
-            
+
             # Add the link relationship from the dictionary
             submit_object_assignment.link_relationship = relation_dict[object_relation]
 
@@ -563,6 +577,44 @@ def bug_list(request, destination, location_id):
     return HttpResponse(json_results, content_type="application/json")
 
 
+# Internal Function
+def clean_users_from_object(destination, location_id):
+    """
+    Problem: There could be users assigned to this object but have no group association. They must be removed from this
+    object.
+    Solution
+    1. Get new list of groups associated with object
+    2. From prior list get list of current users for those groups
+    3. Grab all users associated with the object, exclude those from prior step
+    4. Update and remove those users (as they are no longer associated with this object).
+    """
+    groups_associated = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        group_id__isnull=False,
+    )
+    groups_associated = get_object_from_destination(groups_associated, destination, location_id)
+
+    # Users associated with the groups
+    user_list_results = UserGroup.objects.filter(
+        is_deleted=False,
+        group_id__in=groups_associated.values('group_id'),
+    )
+
+    remove_user_list = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        assigned_user_id__isnull=False,
+    ).exclude(
+        assigned_user_id__in=user_list_results.values('pk'),
+    )
+
+    remove_user_list = get_object_from_destination(remove_user_list, destination, location_id)
+
+    # Delete what is left
+    remove_user_list.update(
+        is_deleted=True,
+    )
+
+
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
@@ -859,12 +911,6 @@ def group_and_user_data(request, destination, location_id, *args, **kwargs):
     )
 
 
-# @require_http_methods(["POST"])
-# @login_required(login_url="login", redirect_field_name="")
-# @check_destination()
-# def group_list(request, destination, location_id):
-#     # Get the data dependant on the object lookup
-#     group_results = get_group_list(destination, location_id)
 
 #     # Return the data
 #     return HttpResponse(
@@ -872,24 +918,9 @@ def group_and_user_data(request, destination, location_id, *args, **kwargs):
 #     )
 
 
-# @require_http_methods(["POST"])
-# @login_required(login_url="login", redirect_field_name="")
-# @check_destination()
-# def group_list_all(request, destination, location_id):
-#     # ADD CHECKS FOR USER PERMISSIONS!
 
 #     # Obtain data
-#     group_existing_results = ObjectAssignment.objects.filter(
-#         is_deleted=False,
-#         group_id__isnull=False,
-#     )
-#     group_existing_results = get_object_from_destination(
-#         group_existing_results, destination, location_id
-#     )
 
-#     group_results = Group.objects.filter(
-#         is_deleted=False,
-#     ).exclude(group_id__in=group_existing_results.values("group_id"))
 
 #     # Return data as json
 #     return HttpResponse(
@@ -949,80 +980,15 @@ def link_list(request, destination, location_id, object_lookup):
         group_id__isnull=False,
     ).values("group_id")
 
-    # Get the data dependent on the object lookup
-    if object_lookup == "project":
-        data_results = Project.objects.filter(
-            is_deleted=False,
-            project_id__in=ObjectAssignment.objects.filter(
-                is_deleted=False,
-                project_id__isnull=False,
-                group_id__in=user_group_results,
-            ).values("project_id"),
-        ).exclude(
-            Q(
-                project_status="Closed",
-            )
-            | Q(
-                project_id__in=ObjectAssignment.objects.filter(
-                    is_deleted=False,
-                    project_id__isnull=False,
-                    **{destination: location_id},
-                ).values("project_id")
-            )
-        )
-    elif object_lookup == "task":
-        data_results = Task.objects.filter(
-            is_deleted=False,
-            task_id__in=ObjectAssignment.objects.filter(
-                is_deleted=False,
-                task_id__isnull=False,
-                group_id__in=user_group_results,
-            ).values(
-                "task_id",
-            ),
-        ).exclude(
-            Q(
-                task_status="Closed",
-            )
-            | Q(
-                task_id__in=ObjectAssignment.objects.filter(
-                    is_deleted=False,
-                    task_id__isnull=False,
-                    **{destination: location_id},
-                ).values("task_id")
-            )
-        )
-    elif object_lookup == "requirement":
-        data_results = Requirement.objects.filter(
-            is_deleted=False,
-            requirement_status_id__in=ListOfRequirementStatus.objects.filter(
-                is_deleted=False,
-                requirement_status_is_closed=False,
-            ).values("requirement_status_id"),
-        )
-    elif object_lookup == "requirement_item":
-        data_results = RequirementItem.objects.filter(
-            is_deleted=False,
-            requirement_item_status_id__in=ListOfRequirementItemStatus.objects.filter(
-                is_deleted=False,
-                status_is_closed=False,
-            ).values("requirement_item_status_id"),
-            requirement_id__in=Requirement.objects.filter(
-                is_deleted=False,
-                requirement_status_id__in=ListOfRequirementStatus.objects.filter(
-                    is_deleted=False,
-                    requirement_status_is_closed=False,
-                ).values("requirement_status_id"),
-            ).values("requirement_id"),
-        )
-    else:
-        # There is an error.
+    if object_lookup not in LOOKUP_FUNCS:
         return HttpResponseBadRequest("Sorry - but that object lookup does not exist")
 
+    # Get the data dependent on the object lookup
+    data_results = LOOKUP_FUNCS[object_lookup](user_group_results, destination, location_id)
+
     # Send the data to the user
-    return HttpResponse(
-        serializers.serialize("json", data_results), content_type="application/json"
-    )
+    data_results = json.dumps(list(data_results), cls=DjangoJSONEncoder)
+    return JsonResponse(json.loads(data_results), safe=False)
 
 
 # Internal function
@@ -1108,15 +1074,15 @@ def object_link_list(request, destination, location_id):
     # - meta
     ObjectStructure = namedtuple(
         "ObjectStructure",
-        ["object_id", "object_title", "object_status", "object_type","non_null_field"]    
+        ["object_id", "object_title", "object_status", "object_type", "non_null_field"]    
     )
 
     data_point_list = [
-        ObjectStructure("project_id","project_id__project_name","project_id__project_status","project","project"),
-        ObjectStructure("task_id","task_id__task_short_description","task_id__task_status","task","task"),
-        ObjectStructure("requirement_id","requirement_id__requirement_title","requirement_id__requirement_status__requirement_status","requirement","requirement"),
-        ObjectStructure("requirement_item_id","requirement_item_id__requirement_item_title","requirement_item_id__requirement_item_status__requirement_item_status","requirement_item","requirement_item"),
-        ObjectStructure("meta_object","meta_object_title","meta_object_status",destination,"meta_object"),
+        ObjectStructure("project_id", "project_id__project_name", "project_id__project_status", "project","project"),
+        ObjectStructure("task_id", "task_id__task_short_description", "task_id__task_status", "task", "task"),
+        ObjectStructure("requirement_id", "requirement_id__requirement_title", "requirement_id__requirement_status__requirement_status", "requirement", "requirement"),
+        ObjectStructure("requirement_item_id", "requirement_item_id__requirement_item_title", "requirement_item_id__requirement_item_status__requirement_item_status", "requirement_item", "requirement_item"),
+        ObjectStructure("meta_object", "meta_object_title", "meta_object_status", destination, "meta_object"),
     ]
 
     data_results = []
@@ -1271,7 +1237,7 @@ def remove_customer(request, destination, location_id):
     form = RemoveCustomerForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     update_object_assignment = ObjectAssignment.objects.filter(
         customer_id=form.cleaned_data["customer_id"],
     )
@@ -1311,6 +1277,9 @@ def remove_group(request, destination, location_id):
     update_object_assignment.update(
         is_deleted=True,
     )
+
+    # Remove any users that no longer have a group associated with this object
+    clean_users_from_object(destination, location_id)
 
     # Return the updated groups and user back to front end
     return JsonResponse(
@@ -1419,16 +1388,9 @@ def user_list(request, destination, location_id):
     return HttpResponse(user_results, content_type="application/json")
 
 
-# @require_http_methods(["POST"])
-# @login_required(login_url="login", redirect_field_name="")
-# @check_destination()
-# def user_list_all(request, destination, location_id):
-#     # ADD IN PERMISSIONS LATER
 
 #     # Get Data we want
-#     user_results = get_user_list_all(destination, location_id)
 
 #     # Send back json data
-#     json_results = json.dumps(list(user_results), cls=DjangoJSONEncoder)
 
 #     return HttpResponse(json_results, content_type="application/json")

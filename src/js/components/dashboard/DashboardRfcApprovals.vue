@@ -1,92 +1,75 @@
 <template>
 	<div
 		v-if="rfcApprovalsList.length > 0"
-		class="card rfc-approvals-card"
+		class="card bg-danger"
 	>
 		<div class="card-body">
 			<h1>Request for Changes Waiting for Approval</h1>
-			<hr />
+			<hr/>
 
 			<p class="text-instructions">
 				The following Request for Changes, require you to action them.
 				You can either approve or reject these Request for Changes.
 			</p>
 
-			<table class="table">
-				<thead>
-					<tr>
-						<td width="75%">Request for Change</td>
-						<td width="25%">Implementation Date</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-						v-for="rfc in rfcApprovalsList"
-						:key="rfc.pk"
-						class="bg-white"
-					>
-						<td>
-							<a
-								v-bind:href="`${rootUrl}rfc_readonly/${rfc.pk}/`"
-							>
-								<p>{{ rfc.fields.rfc_title }}</p>
-								<div class="spacer"></div>
-								<p class="small-text">RFC{{ rfc.pk }}</p>
-							</a>
-						</td>
-						<td>
-							{{
-								getNiceDate(
-									rfc.fields.rfc_implementation_start_date
-								)
-							}}
-						</td>
-					</tr>
-				</tbody>
-			</table>
+
+			<render-object-card v-bind:search-results="rfcApprovalsList"
+								v-bind:import-variables="rfcVariables"
+								v-bind:destination="'rfc'"
+			></render-object-card>
 		</div>
 	</div>
 </template>
 
 <script>
-	const axios = require("axios");
+//Import mixins
+import datetimeMixin from "../../mixins/datetimeMixin";
+import RenderObjectCard from "../render/RenderObjectCard.vue";
 
-	//Import mixins
-	import datetimeMixin from "../../mixins/datetimeMixin";
-	import errorModalMixin from "../../mixins/errorModalMixin";
-
-	export default {
-		name: "DashboardRfcApprovals.vue",
-		props: {
-			rootUrl: {
-				type: String,
-				default: "/",
+export default {
+	name: "DashboardRfcApprovals.vue",
+	components: {RenderObjectCard},
+	props: {
+		rootUrl: {
+			type: String,
+			default: "/",
+		},
+	},
+	data() {
+		return {
+			rfcApprovalsList: [],
+			rfcVariables: {
+				header: "Request for Change",
+				prefix: "Rfc",
+				id: "rfc_id",
+				title: "rfc_title",
+				status: "rfc_status__rfc_status",
 			},
+		};
+	},
+	mixins: [datetimeMixin],
+	methods: {
+		getRfcApprovalsList() {
+			//Use axios to get data
+			this.axios.post(
+				`${this.rootUrl}dashboard/get/rfc_approvals/`
+			).then((response) => {
+				//Place the data into rfcApprovalsList
+				this.rfcApprovalsList = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting RFC Approvals list",
+					message: `We can not get the RFC Approvals List atm. Error -> ${error}`,
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
+			});
 		},
-		data() {
-			return {
-				rfcApprovalsList: [],
-			};
-		},
-		mixins: [datetimeMixin, errorModalMixin],
-		methods: {
-			getRfcApprovalsList() {
-				//Use axios to get data
-				axios
-					.post(`${this.rootUrl}dashboard/get/rfc_approvals/`)
-					.then((response) => {
-						//Place the data into rfcApprovalsList
-						this.rfcApprovalsList = response.data;
-					})
-					.catch((error) => {
-						this.showErrorModal(error, "Dashboard", "");
-					});
-			},
-		},
-		mounted() {
-			this.getRfcApprovalsList();
-		},
-	};
+	},
+	mounted() {
+		this.getRfcApprovalsList();
+	},
+};
 </script>
 
 <style scoped></style>

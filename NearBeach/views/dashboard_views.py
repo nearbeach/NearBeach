@@ -10,7 +10,7 @@ from django.db.models import Count, Q, F
 from django.contrib.auth.models import User
 
 # Import Python Libraries
-import json
+import json, datetime
 
 # Import NearBeach Models
 from NearBeach.models import (
@@ -25,6 +25,7 @@ from NearBeach.models import (
     Bug,
     Requirement,
 )
+from NearBeach.views.theme_views import get_theme
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -38,9 +39,22 @@ def dashboard(request):
     # Load the template
     t = loader.get_template("NearBeach/dashboard/dashboard.html")
 
+    # Get notification results
+    notification_results = Notification.objects.filter(
+        Q(
+            is_deleted=False,
+            notification_start_date__lte=datetime.datetime.now().date(),
+            notification_end_date__gte=datetime.datetime.now().date(),
+        )
+        & Q(Q(notification_location="all") | Q(notification_location="dashboard"))
+    )
+
     # context
     c = {
         "nearbeach_title": "NearBeach Dashboard",
+        "need_tinymce": False,
+        "notification_results": notification_results,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -72,9 +86,7 @@ def get_bug_list(request):
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
 def get_kanban_list(request):
-    """
-    Gets a list of all kanban's the users assigned to
-    """
+    """Gets a list of all kanban's the users assigned to"""
     object_assignment_results = ObjectAssignment.objects.filter(
         is_deleted=False,
         kanban_board_id__isnull=False,
@@ -171,6 +183,7 @@ def get_my_objects(request):
                 kanban_card_id__isnull=False,
                 assigned_user=request.user,
             ).values("kanban_card_id"),
+            kanban_board__kanban_board_status="Open",
         )
         .exclude(
             Q(
@@ -400,11 +413,17 @@ def rfc_approvals(request):
                 group_leader=True,
             ).values("group_id"),
         ).values("request_for_change_id")
+    ).values(
+        "rfc_id",
+        "rfc_title",
+        "rfc_status",
+        "rfc_status__rfc_status",
     )
 
-    return HttpResponse(
-        serializers.serialize("json", rfc_results), content_type="application/json"
-    )
+    # Turn results into json
+    json_results = json.dumps(list(rfc_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type="application/json")
 
 
 @login_required(login_url="login", redirect_field_name="")

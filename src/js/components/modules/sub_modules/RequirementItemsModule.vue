@@ -1,7 +1,8 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.clipboardIcon"></Icon> Requirement Items
+			<Icon v-bind:icon="icons.clipboardIcon"></Icon>
+			Requirement Items
 		</h2>
 		<p class="text-instructions">
 			Requirements should be broken down into smaller components called
@@ -18,47 +19,15 @@
 			</div>
 		</div>
 		<div v-else>
-			<table class="table">
-				<thead>
-					<tr>
-						<td width="75%">Requirement Item</td>
-						<td width="25%">Status</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-						v-for="item in itemResults"
-						:key="item.pk"
-					>
-						<td>
-							<a
-								v-bind:href="`${rootUrl}requirement_item_information/${item.pk}/`"
-							>
-								<p>
-									{{ item.fields.requirement_item_title }}
-								</p>
-								<div class="spacer"></div>
-								<p class="small-text">
-									Item No. {{ item.pk }} -
-									{{
-										getType(
-											item.fields.requirement_item_type
-										)
-									}}
-								</p>
-							</a>
-						</td>
-						<td>
-							{{ getStatus(item.fields.requirement_item_status) }}
-						</td>
-					</tr>
-				</tbody>
-			</table>
+			<render-object-card v-bind:import-variables="requirementItemVariables"
+								v-bind:destination="'requirement_item'"
+								v-bind:search-results="itemResults"
+			></render-object-card>
 		</div>
 
 		<!-- Submit Button -->
 		<!-- TO DO - limit it to certain users -->
-		<hr v-if="userLevel > 1" />
+		<hr v-if="userLevel > 1"/>
 		<div
 			v-if="userLevel > 1"
 			class="row submit-row"
@@ -78,127 +47,88 @@
 			v-bind:item-status-list="itemStatusList"
 			v-bind:item-type-list="itemTypeList"
 			v-bind:location-id="locationId"
-			v-on:new_item_added="new_item_added($event)"
+			v-on:new_item_added="newItemAdded($event)"
 		></new-requirement-item-wizard>
 	</div>
 </template>
 
 <script>
-	//JavaScript Libraries
-	import { Modal } from "bootstrap";
-	import { Icon } from "@iconify/vue";
-	import axios from "axios";
-	import NewRequirementItemWizard from "../wizards/NewRequirementItemWizard.vue";
+//JavaScript Libraries
+import {Modal} from "bootstrap";
+import {Icon} from "@iconify/vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//Components
+import NewRequirementItemWizard from "../wizards/NewRequirementItemWizard.vue";
+import RenderObjectCard from "../../render/RenderObjectCard.vue";
 
-	//Mixins
-	import iconMixin from "../../../mixins/iconMixin";
+//VueX
+import {mapGetters} from "vuex";
 
-	export default {
-		name: "RequirementItemsModule",
-		components: {
-			Icon,
-			NewRequirementItemWizard,
+//Mixins
+import iconMixin from "../../../mixins/iconMixin";
+
+export default {
+	name: "RequirementItemsModule",
+	components: {
+		RenderObjectCard,
+		Icon,
+		NewRequirementItemWizard,
+	},
+	mixins: [iconMixin],
+	data() {
+		return {
+			requirementItemVariables: {
+				header: "Requirement Items",
+				prefix: "RI-",
+				id: "requirement_item_id",
+				title: "requirement_item_title",
+				status: "requirement_item_status_text",
+				end_date: "",
+			},
+			itemResults: [],
+			itemStatusList: [],
+			itemTypeList: [],
+		};
+	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			rootUrl: "getRootUrl",
+			userLevel: "getUserLevel",
+		}),
+	},
+	methods: {
+		createNewItem() {
+			const new_item_modal = new Modal(
+				document.getElementById("newItemModal")
+			);
+			new_item_modal.show();
 		},
-		mixins: [iconMixin],
-		data() {
-			return {
-				itemResults: [],
-				itemStatusList: [],
-				itemTypeList: [],
-			};
+		newItemAdded(data) {
+			//A new item has been added in the wizard. We use the new data that has passed through to update
+			//the item results array.
+			this.itemResults = data;
 		},
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				rootUrl: "getRootUrl",
-				userLevel: "getUserLevel",
-			}),
+		updateItemResults() {
+			this.axios.post(
+				"data/items/"
+			).then((response) => {
+				this.itemResults = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Item Results",
+					message: `We are having issues updating item results: Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
-		methods: {
-			createNewItem() {
-				var new_item_modal = new Modal(
-					document.getElementById("newItemModal")
-				);
-				new_item_modal.show();
-			},
-			getStatus(status_id) {
-				//Filter the status status id
-				var filtered_data = this.itemStatusList.filter((row) => {
-					return row.pk == status_id;
-				});
-
-				//If there are no results, send back "Unknown Status"
-				if (filtered_data.length == 0) {
-					return "Unknown Status";
-				}
-
-				//Return the first result
-				return filtered_data[0]["fields"]["requirement_item_status"];
-			},
-			getType(type_id) {
-				//Filter the type id
-				var filtered_data = this.itemTypeList.filter((row) => {
-					return row.pk == type_id;
-				});
-
-				//If there are no results, send back "Unknown Type"
-				if (filtered_data.length == 0) {
-					return "Unknown Type";
-				}
-
-				//Return the first result
-				return filtered_data[0]["fields"]["requirement_item_type"];
-			},
-			new_item_added(data) {
-				//A new item has been added in the wizard. We use the new data that has passed through to update
-				//the item results array.
-				this.itemResults = data;
-			},
-			updateItemResults() {
-				axios.post("data/items/").then((response) => {
-					//Clear the current list
-					this.itemResults = [];
-
-					//Loop through the results, and push each rows into the array
-					response.data.forEach((row) => {
-						//Update the itemResults
-						this.itemResults.push(row);
-					});
-				});
-			},
-			updateStatusList() {
-				axios.post(`${this.rootUrl}requirement_information/data/list_of_item_status_values/`).then((response) => {
-					//Clear the current list
-					this.itemStatusList = [];
-
-					//Loop through the results, and push each rows into the array
-					response.data.forEach((row) => {
-						this.itemStatusList.push(row);
-					});
-				});
-			},
-			updateTypeList() {
-				axios.post(`${this.rootUrl}requirement_information/data/list_of_item_type_values/`).then((response) => {
-					//Clear the current list
-					this.itemTypeList = [];
-
-					//Loop through the results, and push each rows into the array
-					response.data.forEach((row) => {
-						this.itemTypeList.push(row);
-					});
-				});
-			},
-		},
-		mounted() {
-			this.updateStatusList();
-			this.updateTypeList();
-			this.updateItemResults();
-		},
-	};
+	},
+	mounted() {
+		this.updateItemResults();
+	},
+};
 </script>
 
 <style scoped></style>

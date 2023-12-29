@@ -29,13 +29,12 @@ from ..forms import (
     RequirementItem,
 )
 from ..models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
-
-from azure.identity import DefaultAzureCredential
-from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+from azure.storage.blob import BlobServiceClient
+from django.conf import settings
 
 import boto3
 import json
-import os
+from pathlib import Path
 
 
 @require_http_methods(["POST"])
@@ -82,8 +81,6 @@ def document_add_link(request, destination, location_id):
     :param location_id:
     :return:
     """
-    # ADD IN PERMISSION CHECKS
-
     # Get the form data
     form = AddLinkForm(request.POST)
     if not form.is_valid():
@@ -94,6 +91,7 @@ def document_add_link(request, destination, location_id):
         change_user=request.user,
         document_description=form.cleaned_data["document_description"],
         document_url_location=form.cleaned_data["document_url_location"],
+        document_upload_successfully=True,
     )
     document_submit.save()
 
@@ -143,6 +141,7 @@ def document_list_files(request, destination, location_id):
     """
     document_permission_results = DocumentPermission.objects.filter(
         is_deleted=False,
+        document_key__document_upload_successfully=True,
     ).values(
         "document_key_id",
         "document_key__document_description",
@@ -160,14 +159,6 @@ def document_list_files(request, destination, location_id):
     json_results = json.dumps(list(document_permission_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type="application/json")
-
-    # # Get the document information
-    # document_results = document.objects.filter(
-    #     is_deleted=False,
-    #     document_key__in=document_permission_results.values('document_key')
-    # )
-    #
-    # return HttpResponse(serializers.serialize('json',document_results),content_type='application/json')
 
 
 @require_http_methods(["POST"])
@@ -206,7 +197,7 @@ def document_remove(request, destination, location_id):
     form = DocumentRemoveForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     # Get document from the form
     document_update = form.cleaned_data["document_key"]
     document_update.is_deleted = True
@@ -232,7 +223,6 @@ def document_upload(request, destination, location_id):
     :param request:
     :param destination: the object in question
     :param location_id: The location of the object
-    :param folder_id: Which folder we will associate this with
     :return:
     """
     form = DocumentUploadForm(request.POST, request.FILES)
@@ -242,6 +232,11 @@ def document_upload(request, destination, location_id):
     # Get the document description - if blank we use the file name
     document_description = form.cleaned_data["document_description"]
     file = form.cleaned_data["document"]
+
+    # Check file size upload
+    if file.size > settings.MAX_FILE_SIZE_UPLOAD:
+        return HttpResponseBadRequest("File size too large")
+
     if document_description == "":
         # Replace the document description with the file name
         document_description = str(file)
@@ -323,6 +318,11 @@ def private_download_file(request, document_key):
             #     organisation__isnull=False,
             # )
             Q(
+                # Kanban board
+                kanban_board__isnull=False,
+                kanban_board_id__in=document_permission_results.values("kanban_card__kanban_board_id"),
+            )
+            | Q(
                 # Project Links
                 project__isnull=False,
                 project_id__in=document_permission_results.values("project_id"),
@@ -386,56 +386,7 @@ def private_download_file(request, document_key):
     if document_results.document_url_location:
         return HttpResponseRedirect(document_results.document_url_location)
 
-    # If S3 has been setup - download file from S3 bucket
-    if getattr(settings, "AWS_ACCESS_KEY_ID", None):
-        # Use boto3 to download
-        s3 = boto3.client(
-            "s3",
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
-
-        response = s3.get_object(
-            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-            Key=f"{document_results.document}",
-        )
-
-        return FileResponse(
-            response["Body"],
-            as_attachment=True,
-            filename=document_results.document_description,
-        )
-    elif getattr(settings, "AZURE_STORAGE_CONNECTION_STRING", None):
-        # Use Azure to download
-        blob_service_client = BlobServiceClient.from_connection_string(
-            settings.AZURE_STORAGE_CONNECTION_STRING
-        )
-
-        # Get container
-        container_client = blob_service_client.get_container_client(
-            container=settings.AZURE_STORAGE_CONTAINER_NAME
-        )
-
-        # Setup the file to send
-        file_to_send = ContentFile(
-            container_client.download_blob(
-                f"{document_results.document}"
-            ).readall()
-        )
-
-        # Return file
-        return FileResponse(
-            file_to_send,
-            as_attachment=True,
-            filename=document_results.document_description,
-        )
-
-    # Normal setup - find document on server and serve
-    # Get the Document path information
-    path = f"{settings.PRIVATE_MEDIA_ROOT}/{document_results.document}"
-
-    # Send file to user
-    return FileResponse(open(path, "rb"))
+    return FILE_HANDLER.fetch(document_results)
 
 
 # Internal Function
@@ -462,14 +413,22 @@ def handle_document_permissions(
         change_user=request.user,
         document_key=document_submit,
     )
-    document_permission_submit = set_object_from_destination(
-        document_permission_submit, destination, location_id
-    )
+
+    """
+    If the destination value is "new_object", we'll add the location_id (which contains the UUID) to the "new_object" 
+    field. Otherwise we'll add the foreign key of the destination/location_id to the appropriate field.
+    """
+    if destination == "new_object":
+        document_permission_submit.new_object = location_id
+    else:
+        document_permission_submit = set_object_from_destination(
+            document_permission_submit, destination, location_id
+        )
 
     # Apply the parent folder if required
-    if parent_folder is not 0:
+    if parent_folder != 0:
         document_permission_submit.folder = parent_folder
-    
+
     # Save document permission
     document_permission_submit.save()
 
@@ -485,61 +444,185 @@ def handle_document_permissions(
         "folder",
     )
 
-    # Handle the document upload
-    if getattr(settings, "AWS_ACCESS_KEY_ID", None):
-        # Use boto to upload the file
-        s3 = boto3.client(
-            "s3",
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
+    FILE_HANDLER.upload(upload, document_submit, file)
 
-        # Upload a new file
-        s3.upload_fileobj(
-            file,
-            settings.AWS_STORAGE_BUCKET_NAME,
-            f"private/{document_submit.document_key}/{file}",
-        )
-    elif getattr(settings, "AZURE_STORAGE_CONNECTION_STRING", None):
-        # Create the BlobServiceClient object
-        blob_service_client = BlobServiceClient.from_connection_string(
-            settings.AZURE_STORAGE_CONNECTION_STRING
-        )
-
-        # Create the blob client using the private file path name as the name for the blob
-        blob_client = blob_service_client.get_blob_client(
-            container=settings.AZURE_STORAGE_CONTAINER_NAME, 
-            blob=f"private/{document_submit.document_key}/{file}",
-        )
-
-        # Upload the created file
-        blob_client.upload_blob(file)
-    else:
-        handle_file_upload(upload, document_results, file)
+    document_submit.document_upload_successfully = True
+    document_submit.save()
 
     return document_submit, document_results
 
 
-# Internal Function
-def handle_file_upload(upload_document, document_results, file):
+class FileHandler:
+
+    def upload(self, upload_document, document_results, file):
+        return NotImplemented
+
+    def fetch(self, document_results):
+        return NotImplemented
+
+class LocalFileHandler(FileHandler):
+    def __init__(self, settings):
+        self.root = Path(settings.PRIVATE_MEDIA_ROOT)
+
+    def fetch(self, document_results):
+        # Normal setup - find document on server and serve
+        # Get the Document path information
+        with (self.root / document_results.document).open("rb") as file:
+            # Send file to user
+            return FileResponse(file)
+
+    def upload(self, upload_document, document_results, file):
+        """
+        This function will upload the file and store it in the private folder destination under a subfolder that
+        contains the same document_key value.
+        :param upload_document: The FILE itself - to be uploaded
+        :param document_results: The document_results - with variables we require
+        :return:
+        """
+        # Make the directory we want to save the file in. The directory will have the document_key
+        file_permissions = 0o755  # Look at these permissions later
+        storage_location = self.root / document_results.document
+        storage_location.parent.mkdir(mode=file_permissions, exist_ok=True)
+
+        # Save the upload document in the location
+        with open(storage_location, "wb+") as destination:
+            for chunk in upload_document.chunks():
+                destination.write(chunk)
+
+
+class S3FileHandler(FileHandler):
+    def __init__(self, settings):
+        botoInitValues = {
+            "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
+            "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
+        }
+        if getattr(settings, "AWS_S3_ENDPOINT_URL", None):
+            # Assume the person is using minio  so defualts are the values
+            # which will allow for connection to minio
+            botoInitValues.update(
+                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                aws_session_token=getattr(settings, "AWS_S3_SESSION_TOKEN", None),
+                config=getattr(
+                    settings, 
+                    "AWS_CONFIG", 
+                    boto3.session.Config(signature_version='s3v4'),
+                ),
+                verify=getattr(settings, "AWS_VERIFY_TLS", True),
+                **getattr(settings, "AWS_INIT_VALUES", {})
+            )
+        self._s3 = boto3.client("s3",   **botoInitValues)
+        self._bucket = settings.AWS_STORAGE_BUCKET_NAME
+
+    def fetch(self, document_results):
+        # Use boto3 to download
+        response = self._s3.get_object(
+            Bucket=self._bucket,
+            Key=str(document_results.document),
+        )
+        return FileResponse(
+            response["Body"],
+            as_attachment=True,
+            filename=document_results.document_description,
+        )
+
+    def upload(self, upload_document, document_results, file):
+        # Use boto to upload the file
+        # Upload a new file
+        self._s3.upload_fileobj(
+            file,
+            self._bucket,
+            str(document_results.document),
+        )
+
+class AzureFileHanlder(FileHandler):
+    def __init__(self, settings):
+        # Create the BlobServiceClient object
+        self._sevice_client = BlobServiceClient.from_connection_string(
+            settings.AZURE_STORAGE_CONNECTION_STRING
+        )
+        self._client_name = settings.AZURE_STORAGE_CONTAINER_NAME
+
+    def fetch(self, document_results):
+        # Get container
+        container_client = self._sevice_client.get_container_client(
+            container=self._client_name
+        )
+        # Setup the file to send
+        file_to_send = ContentFile(
+            container_client.download_blob(
+                str(document_results.document)
+            ).readall()
+        )
+        # Return file
+        return FileResponse(
+            file_to_send,
+            as_attachment=True,
+            filename=document_results.document_description,
+        )
+
+    def upload(self, upload_document, document_results, file):
+        # Create the blob client using the private file path name as the name for the blob
+        blob_client = self._sevice_client.get_blob_client(
+            container=self._client_name, 
+            blob=document_results.document,
+        )
+        # Upload the created file
+        blob_client.upload_blob(file)
+
+
+def get_file_handler(settings):
+    # Handle the document upload
+    if getattr(settings, "AWS_ACCESS_KEY_ID", None):
+        return S3FileHandler(settings)
+    if getattr(settings, "AZURE_STORAGE_CONNECTION_STRING", None):
+        return AzureFileHanlder(settings)
+    return LocalFileHandler(settings)
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+def new_object_upload(request):
     """
-    This function will upload the file and store it in the private folder destination under a subfolder that contains
-    the same document_key value.
-    :param upload_document: The FILE itself - to be uploaded
-    :param document_results: The document_results - with variables we require
-    :return:
+    Handles file uploads from new objects. New objects do not have a destination or location. So we pass through a uuid
+    to track the document we are uploading.
     """
-    # Make the directory we want to save the file in. The directory will have the document_key
-    file_permissions = 0o755  # Look at these permissions later
-    path = os.path.join(
-        settings.PRIVATE_MEDIA_ROOT,
-        f"private/{document_results[0]['document_key_id']}",
+    form = DocumentUploadForm(request.POST, request.FILES)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # There will be no document description, as the user is uploading the file into the TinyMce WYSIWYG
+    file = form.cleaned_data["document"]
+    document_description = str(file)
+
+    # Upload the document
+    _, document_results = handle_document_permissions(
+        request,
+        request.FILES["document"],
+        file,
+        document_description,
+        "new_object",
+        form.cleaned_data["uuid"],
+        form.cleaned_data["parent_folder"],
     )
-    os.mkdir(path, file_permissions)
 
-    storage_location = f"{settings.PRIVATE_MEDIA_ROOT}/private/{document_results[0]['document_key_id']}/{file}"
+    # Send back json data
+    json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)
 
-    # Save the upload document in the location
-    with open(storage_location, "wb+") as destination:
-        for chunk in upload_document.chunks():
-            destination.write(chunk)
+    return HttpResponse(json_results, content_type="application/json")
+
+
+# Internal function
+def transfer_new_object_uploads(destination, location_id, uuid):
+    """
+    An Internal function that will add the new destination/location_id to an already uploaded document(s) which match
+    the supplied UUID. Thus removing the lack of permissions around the document.
+    """
+    document_permission_results = DocumentPermission.objects.filter(
+        is_deleted=False,
+        new_object=uuid,
+    ).update(
+        **{destination: location_id},
+    )
+
+
+FILE_HANDLER = get_file_handler(settings)

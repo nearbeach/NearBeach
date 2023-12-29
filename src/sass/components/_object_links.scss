@@ -1,8 +1,8 @@
 .object-link {
-    border: 1px solid lightgray;
+    border: var(--nb-object-card--border);
     margin: 10px 5px;
     padding: 10px 5px;
-    background-color: #fcfcfcf0;;
+    background-color: var(--nb-object-card--background-color);
 }
 
 .object-link--details {
@@ -11,7 +11,7 @@
     }
 
     .object-link--link {
-        color: #4f4f4f;
+        color: var(--nb-change-task-subtext);
         font-weight: lighter;
     }
 
@@ -24,7 +24,7 @@
 }
 
 .object-link--status {
-    color: #4f4f4f;
+    color: var(--nb-change-task-subtext);
     font-weight: lighter;
 
     @media screen and (min-width: 768px) {

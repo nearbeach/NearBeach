@@ -1,38 +1,41 @@
 <template>
 	<div>
 		<!-- GROUPS -->
-		<h2><Icon v-bind:icon="icons.groupPresentation"></Icon> Groups</h2>
+		<h2>
+			<Icon v-bind:icon="icons.groupPresentation"></Icon>
+			Groups
+		</h2>
 		<p class="text-instructions">
 			The following list are all the Groups connected to this
-			{{ destination }}. Users will have to be included in these groups to
-			be added to this {{ destination }}
+			{{ destinationTitle }}. Users will have to be included in these groups to
+			be added to this {{ destinationTitle }}
 		</p>
-		<div v-if="objectGroupList.length == 0 && !addingGroupStatus"
-			class="alert alert-dark"
+		<div v-if="objectGroupList.length === 0 && !addingGroupStatus"
+			 class="alert alert-dark"
 		>
 			Sorry - there are no groups active.
 		</div>
 		<div v-else
-			class="group-card-list"
+			 class="group-card-list"
 		>
 			<div v-for="group in objectGroupList"
-				v-bind:key="group.group_id"
-				class="group-card"
+				 v-bind:key="group.group_id"
+				 class="group-card"
 			>
 				<div class="group-card--details">
 					{{ group.group_name }}
 				</div>
 				<div class="group-card--remove"
-					v-if="userLevel >= 3"
+					 v-if="userLevel >= 3 && objectGroupList.length > 1"
 				>
 					<Icon
 						v-bind:icon="icons.trashCan"
 						v-on:click="removeGroup(group.group_id)"
-					/>	
+					/>
 				</div>
 			</div>
 			<div v-if="addingGroupStatus"
-				class="group-card"
+				 class="group-card"
 			>
 				<div class="group-card--details">++ Adding New Group ++</div>
 			</div>
@@ -49,17 +52,20 @@
 					class="btn btn-primary save-changes"
 					v-on:click="addNewGroup"
 					v-if="userLevel > 1"
-					>Add Group to {{ destination }}</a
+				>Add Group to {{ destinationTitle }}</a
 				>
 			</div>
 		</div>
-		<hr />
+		<hr/>
 
 		<!-- USERS -->
-		<h2><Icon v-bind:icon="icons.userIcon"></Icon> Users</h2>
+		<h2>
+			<Icon v-bind:icon="icons.userIcon"></Icon>
+			Users
+		</h2>
 		<p class="text-instructions">
 			The following are a list of users who are connected to this
-			{{ destination }}. Please note - users have to be a part of the
+			{{ destinationTitle }}. Please note - users have to be a part of the
 			groups list above.
 		</p>
 		<div
@@ -117,7 +123,7 @@
 					class="btn btn-primary save-changes"
 					v-on:click="addNewUser"
 					v-if="userLevel > 1"
-					>Add User to {{ destination }}</a
+				>Add User to {{ destinationTitle }}</a
 				>
 			</div>
 		</div>
@@ -125,163 +131,142 @@
 		<!-- MODALS -->
 		<add-group-wizard></add-group-wizard>
 		<add-user-wizard></add-user-wizard>
+		<confirm-group-delete v-bind:group-id="deleteGroupId"></confirm-group-delete>
+		<confirm-user-delete v-bind:username="deleteUsername"></confirm-user-delete>
 	</div>
 </template>
 
 <script>
-	//JavaScript extras
-	import errorModalMixin from "../../../mixins/errorModalMixin";
-	import iconMixin from "../../../mixins/iconMixin";
-	import { Icon } from "@iconify/vue";
-	import axios from "axios";
-	import { Modal } from "bootstrap";
-	import AddGroupWizard from "../wizards/AddGroupWizard.vue";
-	import AddUserWizard from "../wizards/AddUserWizard.vue";
+//JavaScript extras
+import iconMixin from "../../../mixins/iconMixin";
+import {Icon} from "@iconify/vue";
+import {Modal} from "bootstrap";
+import AddGroupWizard from "../wizards/AddGroupWizard.vue";
+import AddUserWizard from "../wizards/AddUserWizard.vue";
+import ConfirmGroupDelete from "../wizards/ConfirmGroupDelete.vue";
+import ConfirmUserDelete from "../wizards/ConfirmUserDelete.vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	export default {
-		name: "GroupsAndUsersModule",
-		components: {
-			AddGroupWizard,
-			AddUserWizard,
-			Icon,
+export default {
+	name: "GroupsAndUsersModule",
+	components: {
+		AddGroupWizard,
+		AddUserWizard,
+		ConfirmGroupDelete,
+		ConfirmUserDelete,
+		Icon,
+	},
+	data() {
+		return {
+			deleteGroupId: 0,
+			deleteUsername: "",
+			destinationTitle: "",
+		}
+	},
+	computed: {
+		...mapGetters({
+			addingGroupStatus: "getAddingGroupStatus",
+			addingUserStatus: "getAddingUserStatus",
+			destination: "getDestination",
+			locationId: "getLocationId",
+			objectGroupList: "getObjectGroupList",
+			objectUserList: "getObjectUserList",
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+			userLevel: "getUserLevel",
+		}),
+	},
+	mixins: [iconMixin],
+	methods: {
+		addNewGroup() {
+			const addGroupModal = new Modal(
+				document.getElementById("addGroupModal")
+			);
+			addGroupModal.show();
 		},
-		inject: [
-			'nextTick',
-		],
-		computed: {
-			...mapGetters({
-				addingGroupStatus: "getAddingGroupStatus",
-				addingUserStatus: "getAddingUserStatus",
-				destination: "getDestination",
-				locationId: "getLocationId",
-				objectGroupList: "getObjectGroupList",
-				objectUserList: "getObjectUserList",
-				rootUrl: "getRootUrl",
-				staticUrl: "getStaticUrl",
-				userLevel: "getUserLevel",
-			}),
+		addNewUser() {
+			const addUserModal = new Modal(
+				document.getElementById("addUserModal")
+			);
+			addUserModal.show();
 		},
-		mixins: [errorModalMixin, iconMixin],
-		methods: {
-			addNewGroup() {
-				var addGroupModal = new Modal(
-					document.getElementById("addGroupModal")
-				);
-				addGroupModal.show();
-			},
-			addNewUser() {
-				var addUserModal = new Modal(
-					document.getElementById("addUserModal")
-				);
-				addUserModal.show();
-			},
-			getGroupAndUserData() {
-				//Get the data from the database
-				axios.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_and_user_data/`
-				).then((response) => {
-					//Update VueX with the required data
-					this.$store.commit("updateGroupsAndUsers", {
-						objectGroupList: response.data.object_group_list,
-						objectUserList: response.data.object_user_list,
-						potentialGroupList: response.data.potential_group_list,
-						potentialUserList: response.data.potential_user_list,
-					})
-				}).catch((error) => {
-					this.showErrorModal(error, "Fetching Group and Users data");
+		getGroupAndUserData() {
+			//Get the data from the database
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/group_and_user_data/`
+			).then((response) => {
+				//Update VueX with the required data
+				this.$store.commit("updateGroupsAndUsers", {
+					objectGroupList: response.data.object_group_list,
+					objectUserList: response.data.object_user_list,
+					potentialGroupList: response.data.potential_group_list,
+					potentialUserList: response.data.potential_user_list,
 				})
-			},
-			profilePicture(picture_uuid) {
-				if (picture_uuid !== null && picture_uuid !== "") {
-					return `${this.rootUrl}private/${picture_uuid}/`;
-				}
-
-				return `${this.staticUrl}NearBeach/images/placeholder/people_tax.svg`;
-			},
-			removeGroup(group_id) {
-				//Optimistic Update - we assume everything is going to be ok
-				//Remove the group from the list
-				this.$store.commit("updateGroupsAndUsers", {
-					objectGroupList: this.objectGroupList.filter(row => {
-						return row.group_id !== group_id;
-					}),
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: `Error fetching group and user data`,
+					message: `Sorry we could not get any group or user data. Error -> ${error}`,
+					extra_classes: "bd-danger",
+					delay: 0,
 				});
-
-				//Setup data to send
-				const data_to_send = new FormData();
-				data_to_send.set("group_id", group_id);
-
-				//Tell the backend to remove this group
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_group/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Update VueX with the required data
-						this.$store.commit("updateGroupsAndUsers", {
-							objectGroupList: response.data.object_group_list,
-							objectUserList: response.data.object_user_list,
-							potentialGroupList: response.data.potential_group_list,
-							potentialUserList: response.data.potential_user_list,
-						})
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
-			removeUser(username) {
-				//Optimistic Update - we assume everything is going to be ok
-				//Remove the user from the list
-				this.$store.commit("updateGroupsAndUsers", {
-					objectUserList: this.objectUserList.filter(row => {
-						return row.username !== username;
-					}),
-				});
-
-				//Setup data to send
-				const data_to_send = new FormData();
-				data_to_send.set("username", username);
-
-				//Tell the backend we no longer want this user attached
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_user/`,
-						data_to_send
-					)
-					.then(response => {
-						//Update VueX with the required data
-						this.$store.commit("updateGroupsAndUsers", {
-							objectGroupList: response.data.object_group_list,
-							objectUserList: response.data.object_user_list,
-							potentialGroupList: response.data.potential_group_list,
-							potentialUserList: response.data.potential_user_list,
-						})
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
+			})
 		},
-		mounted() {
-			//Get the data with the 0'th count
-			this.nextTick(() => {
-				// If location Id = 0, we have a problem
-				if (this.locationId === 0) {
-					setTimeout(() => {
-						this.getGroupAndUserData();
-					}, 100);
-					return;
+		profilePicture(picture_uuid) {
+			if (picture_uuid !== null && picture_uuid !== "") {
+				return `${this.rootUrl}private/${picture_uuid}/`;
+			}
+
+			return `${this.staticUrl}NearBeach/images/placeholder/people_tax.svg`;
+		},
+		removeGroup(group_id) {
+			//Tell the confirmation modal what group id is being deleted
+			this.deleteGroupId = group_id;
+
+			//Open the modal
+			const modal = new Modal(document.getElementById("confirmGroupDeleteModal"));
+			modal.show();
+		},
+		removeUser(username) {
+			//Tell the confirmation modal what user id is being deleted
+			this.deleteUsername = username;
+
+			//Open the modal
+			const modal = new Modal(document.getElementById("confirmUserDeleteModal"));
+			modal.show();
+		},
+	},
+	mounted() {
+		//Get the data with the 0'th count
+		this.$nextTick(() => {
+			// If location Id = 0, we have a problem
+			if (this.locationId === 0) {
+				setTimeout(() => {
+					this.getGroupAndUserData();
+				}, 100);
+				return;
+			}
+
+			//All is good - get the data
+			this.getGroupAndUserData();
+
+			//Use the destination string to pull out the title. i.e. request_for_change => Request For Change
+			let title = this.destination;
+
+			//Replace any _ with a space
+			title = title.replaceAll("_", " ");
+
+			//Title case
+			this.destinationTitle = title.replace(
+				/\w\S*/g,
+				(txt) => {
+					return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 				}
-
-				//All is good - get the data
-				this.getGroupAndUserData();
-			});	
-		},
-	};
+			);
+		});
+	},
+};
 </script>
 
 <style scoped></style>

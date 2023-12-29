@@ -4,11 +4,13 @@
     <group-information v-bind:group-results="{{group_results}}"
                        v-bind:parent-group-results="{{parent_group_results}}"
                        v-bind:root-url="`{% url 'dashboard' %}`"
+                       v-bind:theme="'{{ theme }}'"
     ></group-information>
 
     <br/>
     <user-list v-bind:user-list-results="{{user_list_results}}"
                v-bind:destination="'group'"
                v-bind:location-id="{{group_id}}"
+               v-bind:theme="'{{ theme }}'"
     ></user-list>
 {% endblock %}

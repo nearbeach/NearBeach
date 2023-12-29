@@ -46,7 +46,7 @@
 							/>
 						</div>
 					</div>
-					<hr v-if="destination !== 'user'" />
+					<hr v-if="destination !== 'user'"/>
 
 					<!-- Search Groups -->
 					<div
@@ -70,7 +70,7 @@
 							/>
 						</div>
 					</div>
-					<hr v-if="destination !== 'group'" />
+					<hr v-if="destination !== 'group'"/>
 
 					<!-- Search Permission Sets -->
 					<div
@@ -117,135 +117,133 @@
 </template>
 
 <script>
-	// const axios = require('axios');
-	import axios from "axios";
-	import { NSelect } from "naive-ui";
+import {NSelect} from "naive-ui";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Import Mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
+//Import Mixins
+import errorModalMixin from "../../mixins/errorModalMixin";
 
-	export default {
-		name: "AdminAddUser",
-		components: {
-			NSelect,
+export default {
+	name: "AdminAddUser",
+	components: {
+		NSelect,
+	},
+	props: {
+		destination: {
+			type: String,
+			default: "",
 		},
-		props: {
-			destination: {
-				type: String,
-				default: "",
-			},
-			locationId: {
-				type: Number,
-				default: 0,
-			},
+		locationId: {
+			type: Number,
+			default: 0,
 		},
-		data() {
-			return {
-				groupModel: [],
-				groupResults: [],
-				permissionSetModel: [],
-				permissionSetResults: [],
-				userModel: [],
-				userResults: [],
-			};
-		},
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-				userLevel: "getUserLevel",
-			}),
-		},
-		mixins: [errorModalMixin],
-		methods: {
-			addUser() {
-				//Create the data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("username", this.userModel);
+	},
+	data() {
+		return {
+			groupModel: [],
+			groupResults: [],
+			permissionSetModel: [],
+			permissionSetResults: [],
+			userModel: [],
+			userResults: [],
+		};
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+			userLevel: "getUserLevel",
+		}),
+	},
+	mixins: [errorModalMixin],
+	methods: {
+		addUser() {
+			//Create the data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("username", this.userModel);
 
-				//Loop through all the groups
-				this.groupModel.forEach((row) => {
-					data_to_send.append("group", row);
+			//Loop through all the groups
+			this.groupModel.forEach((row) => {
+				data_to_send.append("group", row);
+			});
+
+			//Loop through all the permission_sets
+			this.permissionSetModel.forEach((row) => {
+				data_to_send.append("permission_set", row);
+			});
+
+			this.axios
+				.post(`${this.rootUrl}admin_add_user/`, data_to_send)
+				.then((response) => {
+					//Just refresh the page (for now)
+					window.location.reload(true);
+				})
+				.catch((error) => {
+					this.showErrorModal(error, "Admin Add user", "");
+				});
+		},
+		getData() {
+			const data_to_send = new FormData();
+
+			//Use Axios to obtain all the group, permission-set, and user results
+			this.axios.post(
+				`${this.rootUrl}object_data/admin_add_user/`,
+				data_to_send
+			).then((response) => {
+				//Assign it to the appropriate variable
+				this.groupResults = response.data.group_results.map(
+					(data) => {
+						return {
+							label: data.group_name,
+							value: data.group_id,
+						};
+					}
+				);
+
+				this.permissionSetResults =
+					response.data.permission_set_results.map((data) => {
+						return {
+							label: data.permission_set_name,
+							value: data.permission_set_id,
+						};
+					});
+
+				this.userResults = response.data.user_results.map((data) => {
+					return {
+						label: `${data.id}: ${data.first_name} ${data.last_name}`,
+						value: data.id,
+					};
 				});
 
-				//Loop through all the permission_sets
-				this.permissionSetModel.forEach((row) => {
-					data_to_send.append("permission_set", row);
-				});
-
-				axios
-					.post(`${this.rootUrl}admin_add_user/`, data_to_send)
-					.then((response) => {
-						//Just refresh the page (for now)
-						window.location.reload(true);
-					})
-					.catch((error) => {
-						this.showErrorModal(error, "Admin Add user", "");
-					});
-			},
-			getData() {
-				//Use Axios to obtain all the group, permission-set, and user results
-				axios
-					.post(`${this.rootUrl}object_data/admin_add_user/`)
-					.then((response) => {
-						//Assign it to the appropriate variable
-						this.groupResults = response.data.group_results.map(
-							(data) => {
-								return {
-									label: data.group_name,
-									value: data.group_id,
-								};
-							}
-						);
-
-						this.permissionSetResults =
-							response.data.permission_set_results.map((data) => {
-								return {
-									label: data.permission_set_name,
-									value: data.permission_set_id,
-								};
-							});
-
-						this.userResults = response.data.user_results.map(
-							(data) => {
-								return {
-									label: `${data.id}: ${data.first_name} ${data.last_name}`,
-									value: data.id,
-								};
-							}
-						);
-
-						//Use a simple if statement to find out which destination we are concentrating on
-						//Then filter the responses of that destination to determine the modal response
-						switch (this.destination) {
-							case "group":
-								//Filter group model data from group results
-								this.groupModel = [this.locationId];
-								break;
-							case "permission_set":
-								//Filter permission set model data from permission set results
-								this.permissionSetModel = [this.locationId];
-								break;
-							case "user":
-								//Filter user model data from user results
-								this.userModel = this.locationId;
-								break;
-							default:
-								break;
-						}
-					})
-					.catch((error) => {
-						this.showErrorModal(error, "Admin Add User", "");
-					});
-			},
+				//Use a simple if statement to find out which destination we are concentrating on
+				//Then filter the responses of that destination to determine the modal response
+				switch (this.destination) {
+					case "group":
+						//Filter group model data from group results
+						this.groupModel = [this.locationId];
+						break;
+					case "permission_set":
+						//Filter permission set model data from permission set results
+						this.permissionSetModel = [this.locationId];
+						break;
+					case "user":
+						//Filter user model data from user results
+						this.userModel = this.locationId;
+						break;
+					default:
+						break;
+				}
+			}).catch((error) => {
+				this.showErrorModal(error, "Admin Add User", "");
+			});
 		},
-		mounted() {
-			//Form loads - obtain data.
-			this.getData();
-		},
-	};
+	},
+	mounted() {
+		//Form loads - obtain data.
+		this.getData();
+	},
+};
 </script>
 
 <style scoped></style>

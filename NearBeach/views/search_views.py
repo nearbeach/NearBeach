@@ -1,4 +1,5 @@
 import json
+from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
@@ -9,6 +10,7 @@ from django.core import serializers
 from NearBeach.forms import SearchObjectsForm, SearchForm
 from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.models import (
+    Notification,
     ObjectAssignment,
     RequestForChange,
     Requirement,
@@ -24,6 +26,8 @@ from NearBeach.models import (
     Tag,
     UserGroup,
 )
+from NearBeach.views.theme_views import get_theme
+from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
 
 
 # Internal Function
@@ -214,9 +218,11 @@ def search(request):
     # Context
     c = {
         "include_closed": include_closed,
+        "need_tinymce": False,
         "nearbeach_title": "Search",
         "search_input": form.cleaned_data["search"],
         "search_results": get_object_search_data(form, request),
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -252,8 +258,10 @@ def search_customer(request):
     )[:50]
 
     c = {
+        "need_tinymce": False,
         "customer_results": serializers.serialize("json", customer_results),
         "nearbeach_title": "Search Customers",
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -295,7 +303,8 @@ def search_customer_data(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def search_group(request):
+@check_user_admin_permissions(3, "administration_create_user")
+def search_group(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -313,12 +322,13 @@ def search_group(request):
     c = {
         "group_results": serializers.serialize("json", group_results),
         "nearbeach_title": "Search Groups",
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
 
 
-# @require_http_methods(['POST'])
 @login_required(login_url="login", redirect_field_name="")
 def search_group_data(request):
     """
@@ -349,6 +359,50 @@ def search_group_data(request):
     return HttpResponse(json_results, content_type="application/json")
 
 
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name=None)
+def search_notification(request):
+    t = loader.get_template("NearBeach/search/search_notifications.html")
+
+    notification_results = Notification.objects.filter()
+
+    c = {
+        "need_tinymce": False,
+        "notification_results": serializers.serialize("json", notification_results),
+        "theme": get_theme(request),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+def search_notification_data(request):
+    """
+    :param request:
+    :return:
+    """
+    # Obtain form data
+    search_form = SearchForm(request.POST)
+    if not search_form.is_valid():
+        return HttpResponseBadRequest(search_form.errors)
+
+    # Get the base group results
+    notification_results = Notification.objects.filter()
+
+    # Loop through the search results
+    for split_row in search_form.cleaned_data["search"].split(" "):
+        notification_results = notification_results.filter(
+            Q(notification_header__icontains=split_row,) |
+            Q(notification_message__icontains=split_row)
+        )
+
+    notification_results = notification_results.order_by("notification_header")[:25]
+
+    # Send back json data
+    json_results = serializers.serialize("json", notification_results)
+
+    return HttpResponse(json_results, content_type="application/json")
+
+
 @login_required(login_url="login", redirect_field_name="")
 def search_organisation(request):
     """
@@ -363,8 +417,10 @@ def search_organisation(request):
     )[:25]
 
     c = {
+        "need_tinymce": True,
         "nearbeach_title": "Search Organisations",
         "organisation_results": serializers.serialize("json", organisation_results),
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -400,7 +456,8 @@ def search_organisation_data(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def search_permission_set(request):
+@check_user_admin_permissions(3, "administration_create_user")
+def search_permission_set(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -419,6 +476,8 @@ def search_permission_set(request):
     c = {
         "nearbeach_title": "Search Permission Sets",
         "permission_set_results": serializers.serialize("json", permission_set_results),
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -470,7 +529,9 @@ def search_tag(request, *args, **kwargs):
 
     # Context
     c = {
+        "need_tinymce": False,
         "tag_results": serializers.serialize("json", tag_results),
+        "theme": get_theme(request),
     }
 
     # Send back json data
@@ -478,7 +539,8 @@ def search_tag(request, *args, **kwargs):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def search_user(request):
+@check_user_admin_permissions(3, "administration_create_user")
+def search_user(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -505,6 +567,8 @@ def search_user(request):
     c = {
         "nearbeach_title": "Search User",
         "user_results": json.dumps(list(user_results), cls=DjangoJSONEncoder),
+        "need_tinymce": False,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

@@ -1,5 +1,5 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" data-bs-theme="dark">
     <div class="container-fluid">
         <!-- Navbar branding and burger menu -->
         <a class="navbar-brand" href="{% url 'dashboard' %}">
@@ -81,11 +81,13 @@
                     >
                         Administration
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="administrationDropdown">
-                        <a class="dropdown-item" href="{% url 'search_group' %}">Groups</a>
-                        <a class="dropdown-item" href="{% url 'search_permission_set' %}">Permission Sets</a>
-                        <a class="dropdown-item" href="{% url 'search_user' %}">Users</a>
-                    </div>
+                    <ul class="dropdown-menu" aria-labelledby="administrationDropdown">
+                        <li><a class="dropdown-item" href="{% url 'search_notification' %}">Search Notifications</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'search_group' %}">Groups</a></li>
+                        <li><a class="dropdown-item" href="{% url 'search_permission_set' %}">Permission Sets</a></li>
+                        <li><a class="dropdown-item" href="{% url 'search_user' %}">Users</a></li>
+                    </ul>
                 </li>
                 {% endif %}
             </ul>

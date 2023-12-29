@@ -2,8 +2,8 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.db.models import Q, F, Value as V
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
@@ -27,6 +27,9 @@ from NearBeach.models import (
     Group,
     UserGroup,
 )
+from NearBeach.views.theme_views import get_theme
+
+import uuid
 
 
 @require_http_methods(["POST"])
@@ -47,6 +50,7 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
             requirement=requirement_instance,
             project=Project.objects.get(project_id=row),
             change_user=request.user,
+            link_relationship="Relate"
         )
         submit_object_assignment.save()
 
@@ -65,8 +69,8 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
 @login_required(login_url="login", redirect_field_name="")
 @check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
 def get_requirement_item_links(request, requirement_id, *args, **kwargs):
-    """Get the requirement informatio"""
-    link_results = ObjectAssignment.objects.filter(
+    # Get the object assignment results associated wtih that requirement
+    object_assignment_results = ObjectAssignment.objects.filter(
         Q(
             is_deleted=False,
             requirement_item_id__in=RequirementItem.objects.filter(
@@ -74,17 +78,38 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
                 requirement_id=requirement_id,
             ).values("requirement_item_id"),
         )
-        & Q(Q(project_id__isnull=False) | Q(task_id__isnull=False))
-    ).values(
-        "project_id",
-        "project_id__project_name",
-        "project_id__project_status",
-        "task_id",
-        "task_id__task_short_description",
-        "task_id__task_status",
-        "requirement_item_id",
-        "requirement_item_id__requirement_item_title",
+        # & Q(Q(project_id__isnull=False) | Q(task_id__isnull=False))
     )
+    # .values(
+    #     "project_id",
+    #     "project_id__project_name",
+    #     "project_id__project_status",
+    #     "task_id",
+    #     "task_id__task_short_description",
+    #     "task_id__task_status",
+    #     "requirement_item_id",
+    #     "requirement_item_id__requirement_item_title",
+    # ))
+
+    # The results we want to send back
+    data_results = []
+
+    # Deal with the projects
+    data_results.extend(object_assignment_results.filter(
+        project_id__isnull=False,
+    ).annotate(
+        object_id=F("project_id"),
+        object_title=V("My pain"),
+        object_status=F("project_id__project_status"),
+        object_type=V("project"),
+    ).values(
+        "object_id",
+        "object_title",
+        "object_status",
+        "object_type",
+        "requirement_item_id",
+    ))
+
 
     """
     As explained on stack overflow here -
@@ -94,9 +119,7 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
     """
 
     # Send back json data
-    json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
-
-    return HttpResponse(json_results, content_type="application/json")
+    return JsonResponse(data_results, safe=False)
 
 
 @require_http_methods(["POST"])
@@ -133,49 +156,20 @@ def get_requirement_items(request, requirement_id, *args, **kwargs):
     requirement_item_results = RequirementItem.objects.filter(
         is_deleted=False,
         requirement_id=requirement_id,
-    )
-
-    # Send back json data
-    json_results = serializers.serialize("json", requirement_item_results)
-
-    return HttpResponse(json_results, content_type="application/json")
-
-
-@require_http_methods(["POST"])
-@login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
-def get_requirement_links_list(request, requirement_id, *args, **kwargs):
-    """Get the requirement information"""
-    link_results = ObjectAssignment.objects.filter(
-        Q(
-            is_deleted=False,
-            requirement_id=requirement_id,
-        )
-        & Q(Q(project_id__isnull=False) | Q(task_id__isnull=False))
+    ).annotate(
+        requirement_item_status_text=F('requirement_item_status__requirement_item_status')
     ).values(
-        "object_assignment_id",
-        "project_id",
-        "project_id__project_name",
-        "project_id__project_status",
-        "task_id",
-        "task_id__task_short_description",
-        "task_id__task_status",
-        "requirement_item_id",
-        "requirement_item_id__requirement_item_title",
-        "requirement_id",
+        'requirement_item_id',
+        'requirement_item_title',
+        'requirement_item_status_text',
     )
 
-    """
-    As explained on stack overflow here -
-    https://stackoverflow.com/questions/7650448/django-serialize-queryset-values-into-json#31994176
-    We need to Django's serializers can't handle a ValuesQuerySet. However, you can serialize by using a standard
-    json.dumps() and transforming your ValuesQuerySet to a list by using list().[sic]
-    """
-
     # Send back json data
-    json_results = json.dumps(list(link_results), cls=DjangoJSONEncoder)
+    json_results = json.dumps(list(requirement_item_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type="application/json")
+
+
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -219,6 +213,7 @@ def new_requirement(request, *args, **kwargs):
 
     # context
     c = {
+        "need_tinymce": True,
         "nearbeach_title": "New Requirements",
         "status_list": serializers.serialize("json", status_list),
         "type_list": serializers.serialize("json", type_list),
@@ -226,6 +221,8 @@ def new_requirement(request, *args, **kwargs):
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "uuid": str(uuid.uuid4()),
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -290,16 +287,6 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     # TODO: Check if I need to have a separate read only tempalte now.
     requirement_results = Requirement.objects.get(requirement_id=requirement_id)
 
-    requirement_is_closed = (
-        requirement_results.requirement_status.requirement_status_is_closed
-    )
-
-    # If the requirement has been closed - send user to the read only section
-    if requirement_results.requirement_status.requirement_status == "Completed":
-        return HttpResponseRedirect(
-            reverse("requirement_readonly", args={requirement_id})
-        )
-
     # Load template
     t = loader.get_template("NearBeach/requirements/requirement_information.html")
 
@@ -325,6 +312,10 @@ def requirement_information(request, requirement_id, *args, **kwargs):
         requirement_id=requirement_id,
     )
 
+    # If requirement is closed - downgrade user permissions
+    if requirement_results.requirement_status.requirement_status_is_closed:
+        user_level = 1
+
     # context
     c = {
         "group_results": serializers.serialize("json", group_results),
@@ -332,13 +323,14 @@ def requirement_information(request, requirement_id, *args, **kwargs):
         "organisation_results": serializers.serialize("json", [organisation_results]),
         "requirement_results": serializers.serialize("json", [requirement_results]),
         "requirement_id": requirement_id,
-        "requirement_is_closed": requirement_is_closed,
         "requirement_item_results": serializers.serialize(
             "json", requirement_item_results
         ),
         "status_list": serializers.serialize("json", status_list),
         "type_list": serializers.serialize("json", type_list),
         "user_level": user_level,
+        "need_tinymce": True,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))

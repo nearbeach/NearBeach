@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from NearBeach.forms import ChangeTaskIsDowntimeForm, ChangeTaskStatusForm, ChangeTaskForm, ChangeTaskDescriptionForm, ChangeTaskRequiredByForm
 from NearBeach.models import ChangeTask, RequestForChange, User
+from NearBeach.views.theme_views import get_theme
 
 from NearBeach.decorators.check_user_permissions import check_change_task_permissions
 
@@ -53,10 +54,12 @@ def change_task_information(request, change_task_id, *args, **kwargs):
     c = {
         "change_task_id": change_task_id,
         "change_task_results": serializers.serialize("json", [change_task_results]),
+        "need_tinymce": True,
         "nearbeach_title": f"Change Task {change_task_id}",
         "rfc_status": rfc_results.rfc_status,
         "user_level": kwargs["user_level"],
         "user_list": user_list,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -162,7 +165,7 @@ def update_description(request, change_task_id, *args, **kwargs):
     form = ChangeTaskDescriptionForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     # Get change task
     change_task_results = ChangeTask.objects.get(change_task_id=change_task_id)
 
@@ -180,7 +183,7 @@ def update_is_downtime(request, change_task_id, *args, **kwargs):
     form = ChangeTaskIsDowntimeForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     # Get the change task
     change_task_results = ChangeTask.objects.get(change_task_id=change_task_id)
 
@@ -198,7 +201,7 @@ def update_required_by(request, change_task_id, *args, **kwargs):
     form = ChangeTaskRequiredByForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-    
+
     # Get the change task
     change_task_results = ChangeTask.objects.get(change_task_id=change_task_id)
 
@@ -226,7 +229,7 @@ def update_status(request, change_task_id, *args, **kwargs):
 
     # Get change task
     change_task_results = ChangeTask.objects.get(change_task_id=change_task_id)
-    
+
     # Double check RFC is still open - otherwise send back a 423
     rfc_results = RequestForChange.objects.get(
         rfc_id=change_task_results.request_for_change_id
@@ -234,7 +237,7 @@ def update_status(request, change_task_id, *args, **kwargs):
     if not rfc_results.rfc_status_id == 4:
         return HttpResponse(
             "RFC Currently Locked - not in start mode",
-            status = 423 # Locked
+            status = 423  # Locked
         )
 
     # Update the change task results

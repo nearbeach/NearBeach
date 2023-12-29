@@ -9,8 +9,10 @@ from NearBeach.forms import NewProjectForm, ProjectForm
 from NearBeach.models import Group, UserGroup, ObjectAssignment
 from NearBeach.views.tools.internal_functions import Project, Organisation
 from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.views.theme_views import get_theme
+from NearBeach.views.document_views import transfer_new_object_uploads
 
-import json
+import json, uuid
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -20,9 +22,6 @@ def new_project(request, *args, **kwargs):
     :param request:
     :return:
     """
-    # ADD IN PERMISSIONS CHECKER
-
-    # Template
     t = loader.get_template("NearBeach/projects/new_project.html")
 
     # Get data we require
@@ -46,10 +45,13 @@ def new_project(request, *args, **kwargs):
     # Context
     c = {
         "group_results": serializers.serialize("json", group_results),
+        "need_tinymce": True,
         "nearbeach_title": "New Project",
+        "theme": get_theme(request),
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "uuid": str(uuid.uuid4()),
     }
 
     return HttpResponse(t.render(c, request))
@@ -97,6 +99,9 @@ def new_project_save(request, *args, **kwargs):
         # Save
         submit_object_assignment.save()
 
+    # Transfer any images to the new project id
+    transfer_new_object_uploads("project", project_submit.project_id, form.cleaned_data['uuid'])
+
     # Send back requirement_information URL
     return HttpResponse(
         reverse("project_information", args={project_submit.project_id})
@@ -131,11 +136,13 @@ def project_information(request, project_id, *args, **kwargs):
     # Context
     c = {
         "nearbeach_title": f"Project Information {project_id}",
+        "need_tinymce": True,
         "organisation_results": serializers.serialize("json", organisation_results),
         "project_id": project_id,
         "project_results": serializers.serialize("json", [project_results]),
         "project_status": project_status,
         "user_level": user_level,
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -153,7 +160,6 @@ def project_information_save(request, project_id, *args, **kwargs):
     # Get the form data
     form = ProjectForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Get the project data

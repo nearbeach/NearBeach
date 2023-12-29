@@ -1,36 +1,44 @@
-import { Modal } from "bootstrap";
+import {Modal} from "bootstrap";
 
 export default {
-	methods: {
-		showErrorModal(error, destination, location_id) {
-			//Get the loading modal
-			const loadingModal = new Modal(
-				document.getElementById("loadingModal")
-			);
+    methods: {
+        showErrorModal(error, destination, location_id) {
+            //Get the loading modal
+            const loadingElement = document.getElementById("loadingModal");
+            if (loadingElement === null) return;
 
-			//Hide the loading modal
-			loadingModal.hide();
+            //Loading modal exists
+            const loadingModal = new Modal(loadingElement);
 
-			// Get the error modal
-			const elem_cont = document.getElementById("errorModalContent");
+            //Hide the loading modal
+            loadingModal.hide();
 
-			// Update the content
-			elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new ${destination}-${location_id}<hr>${error}`;
+            // Get the error modal
+            const elem_cont = document.getElementById("errorModalContent");
+            if (elem_cont === undefined) return;
 
-			// Show the modal
-			const errorModal = new Modal(document.getElementById("errorModal"));
-			errorModal.show();
-		},
-		showValidationErrorModal() {
-			//Show the error dialog and notify to the user that there were field missing.
-			const elem_cont = document.getElementById("errorModalContent");
+            // Update the content
+            elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new ${destination}-${location_id}<hr>${error}`;
 
-			// Update the content
-			elem_cont.innerHTML = `<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.`;
+            // Show the modal
+            const errorElement = document.getElementById("errorModal");
+            if (errorElement === null) return;
 
-			// Show the modal
-			const errorModal = new Modal(document.getElementById("errorModal"));
-			errorModal.show();
-		},
-	},
+            //Error Element exists - open the modal
+            const errorModal = new Modal(errorModal);
+            errorModal.show();
+
+        },
+        showValidationErrorModal() {
+            //Show the error dialog and notify to the user that there were field missing.
+            const elem_cont = document.getElementById("errorModalContent");
+
+            // Update the content
+            elem_cont.innerHTML = "<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.";
+
+            // Show the modal
+            const errorModal = new Modal(document.getElementById("errorModal"));
+            errorModal.show();
+        },
+    },
 };

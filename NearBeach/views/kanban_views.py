@@ -5,7 +5,9 @@ from NearBeach.models import (
     ObjectAssignment,
     Group,
     UserGroup,
+    UserSetting,
 )
+from NearBeach.views.theme_views import get_theme
 from NearBeach.views.tools.internal_functions import (
     KanbanCard,
     KanbanBoard,
@@ -19,6 +21,7 @@ from NearBeach.decorators.check_user_permissions import (
 )
 from NearBeach.forms import (
     AddKanbanLinkForm,
+    FixCardOrderingForm,
     KanbanCardArchiveForm,
     CheckKanbanBoardName,
     MoveKanbanCardForm,
@@ -135,6 +138,25 @@ def check_kanban_board_name(request, *args, **kwargs):
     )
 
 
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
+@check_user_permissions(min_permission_level=1, object_lookup="kanban_board_id")
+def fix_card_ordering(request, *args, **kwargs):
+    form = FixCardOrderingForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get the kanban cards data
+    kanban_cards = form.cleaned_data['kanban_cards']
+
+    # Loop through each card - and update it's order
+    for index, single_card in enumerate(kanban_cards):
+        single_card.kanban_card_sort_number = index
+        single_card.save()
+
+    return HttpResponse("")
+
+
 # Internal function
 def get_context(kanban_board_id):
     # Get the kanban data
@@ -161,6 +183,7 @@ def get_context(kanban_board_id):
         "kanban_board_id": kanban_board_id,
         "level_results": serializers.serialize("json", level_results),
         "nearbeach_title": f"Kanban Information {kanban_board_id}",
+        "kanban_board_status": kanban_board_results.kanban_board_status,
     }
 
     return c
@@ -212,6 +235,8 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
 
     # Get context
     c = get_context(kanban_board_id)
+    c["theme"] = get_theme(request)
+    c["need_tinymce"] = False
     c["user_level"] = user_level
     c["group_results"] = serializers.serialize("json", group_results)
 
@@ -230,6 +255,7 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
     Renders out the kanban board information
     :param request:
     :param kanban_board_id: The board id we wish to render out
+    :param open_card_on_load: Will open a card if value is placed in here. Zero is default
     :return:
     """
     user_level = kwargs["user_level"]
@@ -241,10 +267,23 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
         kanban_board_id=kanban_board_id,
     ).order_by("kanban_card_sort_number")
 
+    # Get kanban user settings
+    kanban_settings = UserSetting.objects.filter(
+        username=request.user,
+        setting_type="KANBAN_BOARD"
+    ).values(
+        "setting_data"
+    ).first()
+    if kanban_settings is None:
+        kanban_settings = {}
+
     # Get context
     c = get_context(kanban_board_id)
+    c["theme"] = get_theme(request)
+    c["need_tinymce"] = True
     c["user_level"] = user_level
     c["kanban_card_results"] = serializers.serialize("json", kanban_card_results)
+    c["kanban_settings"] = json.dumps(kanban_settings)
     c["open_card_on_load"] = open_card_on_load
 
     # Get the template
@@ -299,6 +338,19 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
+@check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
+def kanban_reopen_board(request, kanban_board_id, *args, **kwargs):
+    """Reopen the kanban board"""
+    kanban_update = KanbanBoard.objects.get(kanban_board_id=kanban_board_id)
+    kanban_update.kanban_board_status = "Open"
+    kanban_update.save()
+
+    # Return Success
+    return HttpResponse("")
+
+
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 @check_user_kanban_permissions(min_permission_level=2)
 def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     """
@@ -317,87 +369,34 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     # Update the card data
     kanban_card_update.kanban_column = form.cleaned_data["new_card_column"]
     kanban_card_update.kanban_level = form.cleaned_data["new_card_level"]
-    kanban_card_update.kanban_card_sort_number = form.cleaned_data[
-        "new_card_sort_number"
-    ]
-    kanban_card_update.save()
+    # kanban_card_update.save()
 
     """
     Update the sort order
     ~~~~~~~~~~~~~~~~~~~~~
-
-    If both the old and new level/column destination are the same, we take the difference between the two values
-    Otherwise we apply two sort orders to both the old and the new
+   
+    The front end will send the following data;
+    - new_destination
+    - old_destination
+    
+    This is a ()set of kanban cards that are in the correct order. We'll loop through these cards and update them.
+    
+    The old destination ()set is optional.
     """
-    if (
-        form.cleaned_data["new_card_column"] == form.cleaned_data["old_card_column"]
-        and form.cleaned_data["new_card_level"] == form.cleaned_data["old_card_level"]
-    ):
-        # The card has stayed in the same column/level
-        resort_array = KanbanCard.objects.filter(
-            Q(
-                Q(
-                    is_deleted=False,
-                    kanban_card_sort_number__range=[
-                        form.cleaned_data["old_card_sort_number"],
-                        form.cleaned_data["new_card_sort_number"],
-                    ],
-                )
-                | Q(
-                    is_deleted=False,
-                    kanban_card_sort_number__range=[
-                        form.cleaned_data["new_card_sort_number"],
-                        form.cleaned_data["old_card_sort_number"],
-                    ],
-                )
-            )
-            & ~Q(
-                kanban_card_id=kanban_card_id,
-            )
-        ).order_by("kanban_card_sort_number")
+    new_destination = form.cleaned_data['new_destination']
+    old_destination = form.cleaned_data['old_destination']
 
-        # Determine if we are using a positive or negative delta - using math
-        delta = (-1) * (
-            form.cleaned_data["new_card_sort_number"]
-            > form.cleaned_data["old_card_sort_number"]
-        ) + (
-            form.cleaned_data["new_card_sort_number"]
-            < form.cleaned_data["old_card_sort_number"]
-        )
+    for index, card in enumerate(new_destination):
+        if card.kanban_card_id == kanban_card_update.kanban_card_id:
+            kanban_card_update.kanban_card_sort_number = index
+            kanban_card_update.save()
+        else:
+            card.kanban_card_sort_number = index
+            card.save()
 
-        # Send the data away to get manipulated
-        update_sort_number(resort_array, delta)
-    else:
-        """
-        The cards have been moved outside the origianl column/level. We need to update both the old and new location's
-        sort orders.
-
-        The old location will have a delta -1, to move the higher cards into the place left by the card
-
-        The new location will have a delta +1, to move the higher cards away, to create a space for the card
-        """
-        old_resort_array = KanbanCard.objects.filter(
-            Q(
-                is_deleted=False,
-                kanban_card_sort_number__gte=form.cleaned_data["old_card_sort_number"],
-            )
-            & ~Q(
-                kanban_card_id=kanban_card_id,
-            )
-        ).order_by("kanban_card_sort_number")
-
-        new_resort_array = KanbanCard.objects.filter(
-            Q(
-                is_deleted=False,
-                kanban_card_sort_number__gte=form.cleaned_data["new_card_sort_number"],
-            )
-            & ~Q(
-                kanban_card_id=kanban_card_id,
-            )
-        ).order_by("kanban_card_sort_number")
-
-        update_sort_number(old_resort_array, -1)
-        update_sort_number(new_resort_array, 1)
+    for index, card in enumerate(old_destination):
+        card.kanban_card_sort_number = index
+        card.save()
 
     return HttpResponse("")
 
@@ -436,10 +435,12 @@ def new_kanban(request, *args, **kwargs):
     # Context
     c = {
         "group_results": serializers.serialize("json", group_results),
-        "nearbeach_title": f"New Kanban",
+        "need_tinymce": False,
+        "nearbeach_title": "New Kanban",
         "user_group_results": json.dumps(
             list(user_group_results), cls=DjangoJSONEncoder
         ),
+        "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
@@ -576,6 +577,23 @@ def update_card(request, *args, **kwargs):
     kanban_card_update.kanban_column = form.cleaned_data["kanban_column"]
     kanban_card_update.kanban_level = form.cleaned_data["kanban_level"]
     kanban_card_update.save()
+
+
+    # If we move the card's destination, we want to update the sort order in both the old and new destination
+    new_destination = form.cleaned_data['new_destination']
+    old_destination = form.cleaned_data['old_destination']
+
+    for index, card in enumerate(new_destination):
+        if card.kanban_card_id == kanban_card_update.kanban_card_id:
+            kanban_card_update.kanban_card_sort_number = index
+            kanban_card_update.save()
+        else:
+            card.kanban_card_sort_number = index
+            card.save()
+
+    for index, card in enumerate(old_destination):
+        card.kanban_card_sort_number = index
+        card.save()
 
     return HttpResponse("")
 

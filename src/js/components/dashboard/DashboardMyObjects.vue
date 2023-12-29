@@ -2,7 +2,7 @@
 	<div class="card">
 		<div class="card-body">
 			<h1>My Current Objects</h1>
-			<hr />
+			<hr/>
 
 			<div
 				class="alert alert-dark"
@@ -55,98 +55,96 @@
 </template>
 
 <script>
-	const axios = require("axios");
+// Mixins
+import errorModalMixin from "../../mixins/errorModalMixin";
 
-	// Mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
+//Components
+import RenderObjectCard from "../render/RenderObjectCard.vue";
 
-	//Components
-	import RenderObjectCard from "../render/RenderObjectCard.vue";
-
-	export default {
-		name: "DashboardMyObjects",
-		components: {
-			RenderObjectCard,
+export default {
+	name: "DashboardMyObjects",
+	components: {
+		RenderObjectCard,
+	},
+	props: {
+		rootUrl: {
+			type: String,
+			default: "/",
 		},
-		props: {
-			rootUrl: {
-				type: String,
-				default: "/",
+	},
+	data() {
+		return {
+			isLoaded: false,
+			objectResults: {
+				card: [],
+				requirement: [],
+				project: [],
+				task: [],
 			},
-		},
-		data() {
-			return {
-				isLoaded: false,
-				objectResults: {
-					card: [],
-					requirement: [],
-					project: [],
-					task: [],
-				},
-				cardVariables: {
-					header: "Cards",
-					prefix: "Card",
-					id: "kanban_card_id",
-					title: "kanban_card_text",
-					status: "kanban_column__kanban_column_name",
-					end_date: "",
-				},
-				projectVariables: {
-					header: "Projects",
-					prefix: "Pro",
-					id: "project_id",
-					title: "project_name",
-					status: "project_status",
-					end_date: "project_end_date",
-				},
-				requirementVariables: {
-					header: "Your Requirements",
-					prefix: "Req",
-					id: "requirement_id",
-					title: "requirement_title",
-					status: "requirement_status__requirement_status",
-					end_date: "",
-				},
-				taskVariables: {
-					header: "Tasks",
-					prefix: "Task",
-					id: "task_id",
-					title: "task_short_description",
-					status: "task_status",
-					end_date: "task_end_date",
-				},
-			};
-		},
-		mixins: [errorModalMixin],
-		methods: {
-			getMyObjects() {
-				//Use axios to get the objects assigned to me
-				axios
-					.post(`${this.rootUrl}dashboard/get/my_objects/`)
-					.then((response) => {
-						this.objectResults = response.data;
+			cardVariables: {
+				header: "Cards",
+				prefix: "Card",
+				id: "kanban_card_id",
+				title: "kanban_card_text",
+				status: "kanban_column__kanban_column_name",
+				end_date: "",
+			},
+			projectVariables: {
+				header: "Projects",
+				prefix: "Pro",
+				id: "project_id",
+				title: "project_name",
+				status: "project_status",
+				end_date: "project_end_date",
+			},
+			requirementVariables: {
+				header: "Your Requirements",
+				prefix: "Req",
+				id: "requirement_id",
+				title: "requirement_title",
+				status: "requirement_status__requirement_status",
+				end_date: "",
+			},
+			taskVariables: {
+				header: "Tasks",
+				prefix: "Task",
+				id: "task_id",
+				title: "task_short_description",
+				status: "task_status",
+				end_date: "task_end_date",
+			},
+		};
+	},
+	mixins: [errorModalMixin],
+	methods: {
+		getMyObjects() {
+			//Use axios to get the objects assigned to me
+			this.axios
+				.post(`${this.rootUrl}dashboard/get/my_objects/`)
+				.then((response) => {
+					this.objectResults = response.data;
 
-						//Update loading status
-						this.isLoaded = true;
-					})
-					.catch((error) => {
-						this.showErrorModal(error, "Dashboard My Objects");
-					});
-			},
+					//Update loading status
+					this.isLoaded = true;
+				})
+				.catch((error) => {
+					this.showErrorModal(error, "Dashboard My Objects");
+				});
 		},
-		computed: {
-			countObjects() {
-				return (
-					this.objectResults.requirement.length +
-					this.objectResults.project.length +
-					this.objectResults.task.length +
-					this.objectResults.card.length
-				);
-			},
+	},
+	computed: {
+		countObjects() {
+			return (
+				this.objectResults.requirement.length +
+				this.objectResults.project.length +
+				this.objectResults.task.length +
+				this.objectResults.card.length
+			);
 		},
-		mounted() {
-			//Get the data we want
-			this.getMyObjects();
-		},
-	};
+	},
+	mounted() {
+		//Get the data we want
+		this.getMyObjects();
+	},
+};
 </script>

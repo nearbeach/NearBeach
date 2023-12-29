@@ -9,13 +9,16 @@ from django.core.serializers.json import DjangoJSONEncoder
 from NearBeach.forms import SearchForm, NewGroupForm
 from NearBeach.models import Group
 from NearBeach.views.tools.internal_functions import get_user_permissions
+from NearBeach.views.theme_views import get_theme
+from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
 
 import json
 
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-def check_group_name(request):
+@check_user_admin_permissions(1, "administration_create_user")
+def check_group_name(request, *args, **kwargs):
     """
     Checks to see if the group name exists
     :param request:
@@ -40,7 +43,8 @@ def check_group_name(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def group_information(request, group_id):
+@check_user_admin_permissions(1, "administration_create_user")
+def group_information(request, group_id, *args, **kwargs):
     """
     Render the group information page
     :param request:
@@ -66,7 +70,9 @@ def group_information(request, group_id):
         "group_id": group_id,
         "group_results": serializers.serialize("json", [group_results]),
         "nearbeach_title": f"Group Information {group_id}",
+        "need_tinymce": False,
         "parent_group_results": serializers.serialize("json", parent_group_results),
+        "theme": get_theme(request),
         "user_list_results": user_list_results,
     }
 
@@ -75,7 +81,8 @@ def group_information(request, group_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def group_information_save(request, group_id):
+@check_user_admin_permissions(2, "administration_create_user")
+def group_information_save(request, group_id, *args, **kwargs):
     """
     Save/Update the group data
     :param request:
@@ -100,7 +107,8 @@ def group_information_save(request, group_id):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def new_group(request):
+@check_user_admin_permissions(3, "administration_create_user")
+def new_group(request, *args, **kwargs):
     """
     Create a new group
     :param request:
@@ -120,6 +128,7 @@ def new_group(request):
     c = {
         "group_results": serializers.serialize("json", group_results),
         "nearbeach_title": "New Group",
+        "theme": get_theme(request),
     }
 
     # Return
@@ -128,7 +137,8 @@ def new_group(request):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def new_group_save(request):
+@check_user_admin_permissions(3, "administration_create_user")
+def new_group_save(request, *args, **kwargs):
     """
     Save the new group
     :param request:

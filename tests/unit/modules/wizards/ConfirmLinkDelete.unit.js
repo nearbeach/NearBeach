@@ -1,4 +1,27 @@
 // Vitest
-import { test } from "vitest";
+import { describe, expect, test } from "vitest";
+import {mount, VueWrapper} from "@vue/test-utils";
 
-test('blank', () => {});
+// Import vue component
+import ConfirmLinkDelete from "/src/js/components/modules/wizards/ConfirmLinkDelete.vue";
+
+// VueX
+import { store } from "/src/js/vuex-store";
+
+// Axios
+const axios = require("axios");
+
+describe('ConfirmLinkDelete.vue - rendering component', () => {
+    //Using mount - insert data
+    const wrapper = mount(ConfirmLinkDelete, {
+        props: {},
+        global: {
+            plugins: [store],
+            mocks: {
+                axios,
+            }
+        },
+    });
+
+    test('Empty test', () => {});
+})

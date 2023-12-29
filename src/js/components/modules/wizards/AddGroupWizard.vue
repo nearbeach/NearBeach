@@ -10,7 +10,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.groupPresentation"></Icon> Add
+						<Icon v-bind:icon="icons.groupPresentation"></Icon>
+						Add
 						Group Wizard
 					</h2>
 					<button
@@ -93,99 +94,98 @@
 </template>
 
 <script>
-	import { Icon } from "@iconify/vue";
-	import { NSelect } from "naive-ui";
+import {Icon} from "@iconify/vue";
+import {NSelect} from "naive-ui";
 
-	//Mixins
-	import errorModalMixin from "../../../mixins/errorModalMixin";
-	import iconMixin from "../../../mixins/iconMixin";
+//Mixins
+import iconMixin from "../../../mixins/iconMixin";
 
-	const axios = require("axios");
+//VueX
+import {mapGetters} from "vuex";
 
-	//VueX
-	import { mapGetters } from "vuex";
+export default {
+	name: "AddGroupWizard",
+	components: {
+		Icon,
+		NSelect,
+	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			potentialGroupList: "getPotentialGroupList",
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+		}),
+	},
+	watch: {
+		potentialGroupList(new_value) {
+			if (new_value === undefined) return;
 
-	export default {
-		name: "AddGroupWizard",
-		components: {
-			Icon,
-			NSelect,
-		},
-		inject: [
-			'nextTick',
-		],
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				potentialGroupList: "getPotentialGroupList",
-				rootUrl: "getRootUrl",
-				staticUrl: "getStaticUrl",
-			}),
-		},
-		watch: {
-			potentialGroupList(new_value) {
-				if (new_value === undefined) return;
+			this.groupFixList = new_value.map(row => {
+				return {
+					value: row.group_id,
+					label: row.group_name,
+				}
+			})
+		}
+	},
+	mixins: [iconMixin],
+	data() {
+		return {
+			groupFixList: [],
+			groupModel: [],
+		};
+	},
+	methods: {
+		addGroup() {
+			//Tell user we are adding groups
+			this.$store.commit("updateAddingGroupStatus", {
+				addingGroupStatus: true,
+			});
 
-				this.groupFixList = new_value.map(row => {
-					return {
-						value: row.group_id,
-						label: row.group_name,
-					}
+			//Send the database the new groups to add
+			const data_to_send = new FormData();
+
+			//Loop through the model and append the results
+			this.groupModel.forEach((row) => {
+				data_to_send.append("group_list", row);
+			});
+
+			//user axios
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_group/`,
+				data_to_send
+			).then((response) => {
+				//Update VueX with the required data
+				this.$store.commit("updateGroupsAndUsers", {
+					objectGroupList: response.data.object_group_list,
+					objectUserList: response.data.object_user_list,
+					potentialGroupList: response.data.potential_group_list,
+					potentialUserList: response.data.potential_user_list,
 				})
-			}	
-		},
-		mixins: [errorModalMixin, iconMixin],
-		data() {
-			return {
-				groupFixList: [],
-				groupModel: [],
-			};
-		},
-		methods: {
-			addGroup() {
-				//Tell user we are adding groups
+
+				//Update the user
 				this.$store.commit("updateAddingGroupStatus", {
-					addingGroupStatus: true,
+					addingGroupStatus: false,
 				});
 
-				//Send the database the new groups to add
-				const data_to_send = new FormData();
+				//Clear the list
+				this.groupModel = [];
 
-				//Loop through the model and append the results
-				this.groupModel.forEach((row) => {
-					data_to_send.append("group_list", row);
+				//Close this modal
+				document.getElementById("addGroupCloseButton").click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: `Error adding group to ${this.destination}`,
+					message: `Sorry, we could not add the group to the ${this.destination}. Error -> ${error}`,
+					extra_classes: "bd-danger",
+					delay: 0,
 				});
-
-				//user axios
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_group/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Update VueX with the required data
-						this.$store.commit("updateGroupsAndUsers", {
-							objectGroupList: response.data.object_group_list,
-							objectUserList: response.data.object_user_list,
-							potentialGroupList: response.data.potential_group_list,
-							potentialUserList: response.data.potential_user_list,
-						})
-
-						//Update the user
-						this.$store.commit("updateAddingGroupStatus", {
-							addingGroupStatus: false,
-						});
-
-						//Close this modal
-						document.getElementById("addGroupCloseButton").click();
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
+			});
 		},
-	};
+	},
+};
 </script>
 
 <style scoped></style>

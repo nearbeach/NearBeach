@@ -3,7 +3,7 @@
 		<div class="card-body">
 			<!-- TITLE -->
 			<h1>New Organisation</h1>
-			<hr />
+			<hr/>
 
 			<!-- FIELDS SECTION -->
 			<div class="row">
@@ -32,7 +32,7 @@
 							v-model="organisationNameModel"
 						/>
 					</div>
-					<br />
+					<br/>
 
 					<div class="row">
 						<!-- ORGANISATION WEBSITE -->
@@ -71,7 +71,7 @@
 					</div>
 				</div>
 			</div>
-			<hr />
+			<hr/>
 
 			<!-- SUBMIT ORGANISATION BUTTON -->
 			<div
@@ -140,135 +140,134 @@
 </template>
 
 <script>
-	//JavaScript Libraries
-	const axios = require("axios");
-	import { Modal } from "bootstrap";
-	import ListOrganisations from "./ListOrganisations.vue";
+//JavaScript Libraries
+import ListOrganisations from "./ListOrganisations.vue";
 
-	//Validation
-	import useVuelidate from "@vuelidate/core";
-	import { email, maxLength, required, url } from "@vuelidate/validators";
-	import ValidationRendering from "../validation/ValidationRendering.vue";
+//Validation
+import useVuelidate from "@vuelidate/core";
+import {email, maxLength, required, url} from "@vuelidate/validators";
+import ValidationRendering from "../validation/ValidationRendering.vue";
 
-	//Mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
-	import loadingModalMixin from "../../mixins/loadingModalMixin";
+//Mixins
+import errorModalMixin from "../../mixins/errorModalMixin";
+import loadingModalMixin from "../../mixins/loadingModalMixin";
 
-	export default {
-		name: "NewOrganisation",
-		setup() {
-			return { v$: useVuelidate() };
+export default {
+	name: "NewOrganisation",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	components: {
+		ListOrganisations,
+		ValidationRendering,
+	},
+	props: {
+		rootUrl: {
+			type: String,
+			default: "/",
 		},
-		components: {
-			ListOrganisations,
-			ValidationRendering,
+	},
+	mixins: [errorModalMixin, loadingModalMixin],
+	data() {
+		return {
+			duplicateOrganisations: [],
+			organisationNameModel: "",
+			organisationWebsiteModel: "",
+			organisationEmailModel: "",
+		};
+	},
+	watch: {
+		organisationNameModel() {
+			//If user changes anything - reset the duplicate results
+			this.duplicateOrganisations = [];
 		},
-		props: {
-			rootUrl: {
-				type: String,
-				default: "/",
-			},
+		organisationWebsiteModel() {
+			//If user changes anything - reset the duplicate results
+			this.duplicateOrganisations = [];
 		},
-		mixins: [errorModalMixin, loadingModalMixin],
-		data() {
-			return {
-				duplicateOrganisations: [],
-				organisationNameModel: "",
-				organisationWebsiteModel: "",
-				organisationEmailModel: "",
-			};
+		organisationEmailModel() {
+			//If user changes anything - reset the duplicate results
+			this.duplicateOrganisations = [];
 		},
-		watch: {
-			organisationNameModel() {
-				//If user changes anything - reset the duplicate results
-				this.duplicateOrganisations = [];
-			},
-			organisationWebsiteModel() {
-				//If user changes anything - reset the duplicate results
-				this.duplicateOrganisations = [];
-			},
-			organisationEmailModel() {
-				//If user changes anything - reset the duplicate results
-				this.duplicateOrganisations = [];
-			},
-		},
-		methods: {
-			addOrganisation() {
-				// Check the validation first
-				this.v$.$touch();
+	},
+	methods: {
+		addOrganisation() {
+			// Check the validation first
+			this.v$.$touch();
 
-				if (this.v$.$invalid) {
-					this.showValidationErrorModal();
-					//Just return - as we do not need to do the rest of this function
-					return;
-				}
+			if (this.v$.$invalid) {
+				this.showValidationErrorModal();
+				//Just return - as we do not need to do the rest of this function
+				return;
+			}
 
-				//Check the organisation's data to make sure there are no duplicates
-				//Use axios to contact the database
-				axios
-					.post(
-						`${this.rootUrl}organisation_duplicates/`,
-						this.dataToSend()
-					)
-					.then((response) => {
-						//If the response data has nothing in it - we want to submit that data.
-						if (response.data.length === 0) {
-							//Submit that data
-							this.uploadOrganisationData();
-						}
+			//Check the organisation's data to make sure there are no duplicates
+			//Use axios to contact the database
+			this.axios
+				.post(
+					`${this.rootUrl}organisation_duplicates/`,
+					this.dataToSend()
+				)
+				.then((response) => {
+					//If the response data has nothing in it - we want to submit that data.
+					if (response.data.length === 0) {
+						//Submit that data
+						this.uploadOrganisationData();
+					}
 
-						//Copy over the response data
-						this.duplicateOrganisations = response.data;
-					})
-					.catch((error) => {
-						this.showErrorModal(error, "organisation", "");
-					});
-			},
-			dataToSend() {
-				const data_to_send = new FormData();
-				data_to_send.set(
-					"organisation_name",
-					this.organisationNameModel
-				);
-				data_to_send.set(
-					"organisation_website",
-					this.organisationWebsiteModel
-				);
-				data_to_send.set(
-					"organisation_email",
-					this.organisationEmailModel
-				);
-
-				//Return the data
-				return data_to_send;
-			},
-			uploadOrganisationData() {
-				//Use Axios to send the data
-				//Get the data to send
-				axios
-					.post(`save/`, this.dataToSend())
-					.then((response) => {
-						//Go to the url sent back
-						window.location.href = `${this.rootUrl}organisation_information/${response.data[0].pk}/`;
-					})
-					.catch((error) => {});
-			},
+					//Copy over the response data
+					this.duplicateOrganisations = response.data;
+				})
+				.catch((error) => {
+					this.showErrorModal(error, "organisation", "");
+				});
 		},
-		validations: {
-			organisationNameModel: {
-				required,
-				maxLength: maxLength(255),
-			},
-			organisationWebsiteModel: {
-				required,
-				url,
-			},
-			organisationEmailModel: {
-				required,
-				email,
-			},
+		dataToSend() {
+			const data_to_send = new FormData();
+			data_to_send.set(
+				"organisation_name",
+				this.organisationNameModel
+			);
+			data_to_send.set(
+				"organisation_website",
+				this.organisationWebsiteModel
+			);
+			data_to_send.set(
+				"organisation_email",
+				this.organisationEmailModel
+			);
+
+			//Return the data
+			return data_to_send;
 		},
-	};
+		uploadOrganisationData() {
+			//Use Axios to send the data
+			//Get the data to send
+			this.axios
+				.post("save/", this.dataToSend())
+				.then((response) => {
+					//Go to the url sent back
+					window.location.href = `${this.rootUrl}organisation_information/${response.data[0].pk}/`;
+				})
+				.catch((error) => {
+				});
+		},
+	},
+	validations: {
+		organisationNameModel: {
+			required,
+			maxLength: maxLength(255),
+		},
+		organisationWebsiteModel: {
+			required,
+			url,
+		},
+		organisationEmailModel: {
+			required,
+			email,
+		},
+	},
+};
 </script>
 
 <style scoped></style>

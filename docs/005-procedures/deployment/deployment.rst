@@ -65,6 +65,7 @@ Checklist and Method
 
 #. Update any virtualenv packages using the following commands
     `pip list --outdated`
+
     `pip install --upgrade <<package_name>>`
 
 #. Run the following command to setup the dists file
@@ -73,7 +74,7 @@ Checklist and Method
 #. Run the following command to upload NearBeach Application to pypi
     `python3 -m twine upload dist/* --repository NearBeach`
 
-#. Push the code back upstream
+#. Push the code back upstream, remembering to FORCE PUSH the /NearBeach/static code (as this is  now in gitignore)
 
 #. Do a pull request to merge code back into `main` branch
 

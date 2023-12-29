@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-body">
 				<h2>Reset Password</h2>
-				<hr />
+				<hr/>
 
 				<!-- PASSWORD -->
 				<div class="row">
@@ -40,7 +40,8 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h2>
-							<Icon v-bind:icon="icons.passwordIcon"></Icon> Reset
+							<Icon v-bind:icon="icons.passwordIcon"></Icon>
+							Reset
 							User Password
 						</h2>
 						<button
@@ -72,6 +73,19 @@
 								/>
 							</div>
 						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<validation-rendering
+									v-bind:error-list="v$.password1Model.$errors"
+								></validation-rendering>
+								<div class="col-md-12"
+									 v-if="password1Model !== password2Model"
+								>
+									<span class="error">Passwords need to be the same
+									</span>
+								</div>
+							</div>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<button
@@ -97,92 +111,128 @@
 </template>
 
 <script>
-	//JavaScript components
-	import axios from "axios";
-	import { Modal } from "bootstrap";
-	import { Icon } from "@iconify/vue";
+//JavaScript components
+import {Modal} from "bootstrap";
+import {Icon} from "@iconify/vue";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	//Mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
-	import iconMixin from "../../mixins/iconMixin";
+//Mixins
+import iconMixin from "../../mixins/iconMixin";
 
-	export default {
-		name: "ResetUserPassword",
-		components: {
-			Icon,
+//Validation
+import useVuelidate from "@vuelidate/core"
+import {required, minLength, sameAs} from "@vuelidate/validators";
+import ValidationRendering from "../validation/ValidationRendering.vue";
+
+export default {
+	name: "ResetUserPassword",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	components: {
+		Icon,
+		ValidationRendering,
+	},
+	props: {
+		location: {
+			type: String,
+			default: "/",
 		},
-		props: {
-			location: {
-				type: String,
-				default: "/",
-			},
-			username: {
-				type: Number,
-				default: 0,
-			},
+		username: {
+			type: Number,
+			default: 0,
 		},
-		mixins: [errorModalMixin, iconMixin],
-		data() {
-			return {
-				password1Model: "",
-				password2Model: "",
-			};
+	},
+	mixins: [iconMixin],
+	data() {
+		return {
+			password1Model: "",
+			password2Model: "",
+		};
+	},
+	validations: {
+		password1Model: {
+			required,
+			minLength: minLength(8),
 		},
-		computed: {
-			...mapGetters({
-				rootUrl: "getRootUrl",
-			}),
-			disableButton() {
-				//Both passwords have to be the same
-				let condition_1 = this.password1Model === this.password2Model;
-
-				//Passwords can not be less than 8 character
-				let condition_2 = this.password1Model.length >= 8;
-
-				//If all conditions are true, send back false (to enable the button)
-				return !(condition_1 && condition_2 === true);
-			},
+	},
+	watch: {
+		password1Model() {
+			//Validate the passwords as users are typing
+			this.v$.$validate();
 		},
-		methods: {
-			closeModal() {
-				//Clear both passwords
-				this.password1Model = "";
-				this.password2Model = "";
+		password2Model() {
+			//Validate the passwords as users are typing
+			this.v$.$validate();
+		}
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+		}),
+		disableButton() {
+			//Both passwords have to be the same
+			let condition_1 = this.password1Model === this.password2Model;
 
-				//Close modal
-				document.getElementById("passwordResetCloseButton").click();
-			},
-			passwordResetClicked() {
-				//Opens the password reset modal
-				let passwordResetModal = new Modal(
-					document.getElementById("passwordResetModal")
-				);
-				passwordResetModal.show();
-			},
-			updatePassword() {
-				//Create data_to_send
-				const data_to_send = new FormData();
-				data_to_send.set("password", this.password1Model);
-				data_to_send.set("username", this.username);
+			//Passwords can not be less than 8 character
+			let condition_2 = this.password1Model.length >= 8;
 
-				//Setup Axios to send data
-				axios
-					.post(
-						`${this.rootUrl}${this.location}update_user_password/`,
-						data_to_send
-					)
-					.then((response) => {
-						this.closeModal();
-					})
-					.catch((error) => {
-						this.showErrorModal(error, "Saving Password Issue", "");
-					});
-			},
+			//If all conditions are true, send back false (to enable the button)
+			return !(condition_1 && condition_2 === true);
 		},
-	};
+	},
+	methods: {
+		closeModal() {
+			//Clear both passwords
+			this.password1Model = "";
+			this.password2Model = "";
+
+			//Close modal
+			document.getElementById("passwordResetCloseButton").click();
+		},
+		passwordResetClicked() {
+			//Opens the password reset modal
+			let passwordResetModal = new Modal(
+				document.getElementById("passwordResetModal")
+			);
+			passwordResetModal.show();
+		},
+		updatePassword() {
+			//Create data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("password", this.password1Model);
+			data_to_send.set("username", this.username);
+
+			//Setup Axios to send data
+			this.axios.post(
+				`${this.rootUrl}${this.location}update_user_password/`,
+				data_to_send
+			).then(() => {
+				this.closeModal();
+			}).catch((error) => {
+				let error_message = "There was an issue trying to save your password.";
+
+				if (error.response !== undefined) {
+					error_message = "Please fix the following issues: ";
+
+					// Loop through each key and value and write the error message.
+					for (const [key, value] of Object.entries(error.response.data)) {
+						error_message = error_message + `${key} - ${value[0].message} `;
+					}
+				}
+
+				this.$store.dispatch("newToast", {
+					header: "Error Updating User Password",
+					message: error_message,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		},
+	},
+};
 </script>
 
 <style scoped></style>

@@ -2,11 +2,11 @@
 	<div class="card">
 		<div class="card-body">
 			<h1>User Information</h1>
-			<br />
+			<br/>
 			<a v-bind:href="`${this.rootUrl}search/user/`"
-				>Go back to user list</a
+			>Go back to user list</a
 			>
-			<hr />
+			<hr/>
 
 			<!-- USERNAME -->
 			<div class="row">
@@ -30,7 +30,7 @@
 			</div>
 
 			<!-- USER DETAILS -->
-			<hr />
+			<hr/>
 			<div class="row">
 				<div class="col-md-4">
 					<strong>User Details</strong>
@@ -46,7 +46,7 @@
 								<validation-rendering
 									v-bind:error-list="v$.firstNameModel.$errors"
 								></validation-rendering>
-								<br />
+								<br/>
 							</label>
 							<input
 								type="text"
@@ -60,7 +60,7 @@
 								<validation-rendering
 									v-bind:error-list="v$.lastNameModel.$errors"
 								></validation-rendering>
-								<br />
+								<br/>
 							</label>
 							<input
 								type="text"
@@ -74,7 +74,7 @@
 								<validation-rendering
 									v-bind:error-list="v$.emailModel.$errors"
 								></validation-rendering>
-								<br />
+								<br/>
 							</label>
 							<input
 								type="email"
@@ -85,7 +85,7 @@
 					</div>
 				</div>
 			</div>
-			<hr />
+			<hr/>
 
 			<!-- Active USER -->
 			<div class="row">
@@ -103,7 +103,7 @@
 					/>
 				</div>
 			</div>
-			<hr />
+			<hr/>
 
 			<!-- User is SUPER -->
 			<div class="row">
@@ -123,7 +123,7 @@
 					/>
 				</div>
 			</div>
-			<hr />
+			<hr/>
 
 			<!-- UPDATE USER -->
 			<div class="row submit-row">
@@ -142,111 +142,109 @@
 </template>
 
 <script>
-	//Vue is like "I wanna write JS in my HTML" and React is like "I wanna write my HTML as JS"
-	const axios = require("axios");
+//Vue is like "I wanna write JS in my HTML" and React is like "I wanna write my HTML as JS"
+//Import mixins
+import errorModalMixin from "../../mixins/errorModalMixin";
+import loadingModalMixin from "../../mixins/loadingModalMixin";
 
-	//Import mixins
-	import errorModalMixin from "../../mixins/errorModalMixin";
-	import loadingModalMixin from "../../mixins/loadingModalMixin";
+//Validation
+import useVuelidate from "@vuelidate/core";
+import {required, maxLength, email} from "@vuelidate/validators";
+import ValidationRendering from "../validation/ValidationRendering.vue";
 
-	//Validation
-	import useVuelidate from "@vuelidate/core";
-	import { required, maxLength, email } from "@vuelidate/validators";
-	import ValidationRendering from "../validation/ValidationRendering.vue";
-
-	export default {
-		name: "UserInformation",
-		setup() {
-			return { v$: useVuelidate() };
-		},
-		props: {
-			userResults: {
-				type: Array,
-				default: () => {
-					return [];
-				},
-			},
-			rootUrl: {
-				type: String,
-				default: "/",
+export default {
+	name: "UserInformation",
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	props: {
+		userResults: {
+			type: Array,
+			default: () => {
+				return [];
 			},
 		},
-		components: {
-			ValidationRendering,
+		rootUrl: {
+			type: String,
+			default: "/",
 		},
-		data() {
-			return {
-				emailModel: this.userResults[0]["fields"]["email"],
-				isActiveModel: this.userResults[0]["fields"]["is_active"],
-				isSuperuserModel: this.userResults[0]["fields"]["is_superuser"],
-				firstNameModel: this.userResults[0]["fields"]["first_name"],
-				lastNameModel: this.userResults[0]["fields"]["last_name"],
-			};
+	},
+	components: {
+		ValidationRendering,
+	},
+	data() {
+		return {
+			emailModel: this.userResults[0]["fields"]["email"],
+			isActiveModel: this.userResults[0]["fields"]["is_active"],
+			isSuperuserModel: this.userResults[0]["fields"]["is_superuser"],
+			firstNameModel: this.userResults[0]["fields"]["first_name"],
+			lastNameModel: this.userResults[0]["fields"]["last_name"],
+		};
+	},
+	mixins: [errorModalMixin, loadingModalMixin],
+	validations: {
+		lastNameModel: {
+			required,
+			maxLength: maxLength(255),
 		},
-		mixins: [errorModalMixin, loadingModalMixin],
-		validations: {
-			lastNameModel: {
-				required,
-				maxLength: maxLength(255),
-			},
-			firstNameModel: {
-				required,
-				maxLength: maxLength(255),
-			},
-			emailModel: {
-				required,
-				email,
-				maxLength: maxLength(255),
-			},
+		firstNameModel: {
+			required,
+			maxLength: maxLength(255),
 		},
-		methods: {
-			updateUser() {
-				//Check form validation
-				this.v$.$touch();
-
-				if (this.v$.$invalid) {
-					this.showValidationErrorModal();
-
-					//Just return - as we do not need to do the rest of this function
-					return;
-				}
-
-				//Start the loading modal
-				this.showLoadingModal("User Information");
-
-				//Setup data to send
-				const data_to_send = new FormData();
-				data_to_send.set("email", this.emailModel);
-				data_to_send.set("is_active", this.isActiveModel);
-				data_to_send.set("is_superuser", this.isSuperuserModel);
-				data_to_send.set("first_name", this.firstNameModel);
-				data_to_send.set("last_name", this.lastNameModel);
-
-				axios
-					.post(
-						`${this.rootUrl}user_information/${this.userResults[0]["pk"]}/save/`,
-						data_to_send
-					)
-					.then((response) => {
-						//Hide the loading modal
-						this.closeLoadingModal();
-					})
-					.catch((error) => {
-						this.showErrorModal(
-							error,
-							"Update User",
-							this.userResults[0]["pk"]
-						);
-					});
-			},
+		emailModel: {
+			required,
+			email,
+			maxLength: maxLength(255),
 		},
-		mounted() {
-			this.$store.commit({
-				type: "updateUrl",
-				rootUrl: this.rootUrl,
-			});
+	},
+	methods: {
+		updateUser() {
+			//Check form validation
+			this.v$.$touch();
+
+			if (this.v$.$invalid) {
+				this.showValidationErrorModal();
+
+				//Just return - as we do not need to do the rest of this function
+				return;
+			}
+
+			//Start the loading modal
+			this.showLoadingModal("User Information");
+
+			//Setup data to send
+			const data_to_send = new FormData();
+			data_to_send.set("email", this.emailModel);
+			data_to_send.set("is_active", this.isActiveModel);
+			data_to_send.set("is_superuser", this.isSuperuserModel);
+			data_to_send.set("first_name", this.firstNameModel);
+			data_to_send.set("last_name", this.lastNameModel);
+
+			this.axios
+				.post(
+					`${this.rootUrl}user_information/${this.userResults[0]["pk"]}/save/`,
+					data_to_send
+				)
+				.then((response) => {
+					//Hide the loading modal
+					this.closeLoadingModal();
+				})
+				.catch((error) => {
+					this.showErrorModal(
+						error,
+						"Update User",
+						this.userResults[0]["pk"]
+					);
+				});
 		},
-	};
+	},
+	mounted() {
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+		});
+	},
+};
 </script>
 
 <style scoped></style>

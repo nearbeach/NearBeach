@@ -1,6 +1,9 @@
 <template>
 	<div>
-		<h2><Icon v-bind:icon="icons.userIcon"></Icon> Customers</h2>
+		<h2>
+			<Icon v-bind:icon="icons.userIcon"></Icon>
+			Customers
+		</h2>
 		<p class="text-instructions">
 			Below are a list of customers who are stakeholders to this
 			{{ destination }}.
@@ -23,7 +26,7 @@
 		</div>
 
 		<!-- ADD CUSTOMER BUTTON -->
-		<hr />
+		<hr/>
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<button
@@ -47,82 +50,78 @@
 </template>
 
 <script>
-	//JavaScript components
-	import errorModalMixin from "../../../mixins/errorModalMixin";
-	import iconMixin from "../../../mixins/iconMixin";
-	import { Icon } from "@iconify/vue";
-	import CustomersListModule from "./CustomersListModule.vue";
-	import AddCustomerWizard from "../wizards/AddCustomerWizard.vue";
+//JavaScript components
+import errorModalMixin from "../../../mixins/errorModalMixin";
+import iconMixin from "../../../mixins/iconMixin";
+import {Icon} from "@iconify/vue";
+import CustomersListModule from "./CustomersListModule.vue";
+import AddCustomerWizard from "../wizards/AddCustomerWizard.vue";
+import {Modal} from "bootstrap";
 
-	//VueX
-	import { mapGetters } from "vuex";
+//VueX
+import {mapGetters} from "vuex";
 
-	const axios = require("axios");
-	import { Modal } from "bootstrap";
 
-	export default {
-		name: "CustomersModule",
-		components: {
-			AddCustomerWizard,
-			CustomersListModule,
-			Icon,
+export default {
+	name: "CustomersModule",
+	components: {
+		AddCustomerWizard,
+		CustomersListModule,
+		Icon,
+	},
+	mixins: [errorModalMixin, iconMixin],
+	data() {
+		return {
+			customerResults: [],
+		};
+	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			userLevel: "getUserLevel",
+			rootUrl: "getRootUrl",
+		}),
+	},
+	methods: {
+		addNewCustomer() {
+			const addCustomerModal = new Modal(
+				document.getElementById("addCustomerModal")
+			);
+			addCustomerModal.show();
 		},
-		inject: [
-			'nextTick',
-		],
-		mixins: [errorModalMixin, iconMixin],
-		data() {
-			return {
-				customerResults: [],
-			};
-		},
-		computed: {
-			...mapGetters({
-				destination: "getDestination",
-				locationId: "getLocationId",
-				userLevel: "getUserLevel",
-				rootUrl: "getRootUrl",
-			}),
-		},
-		methods: {
-			addNewCustomer() {
-				var addCustomerModal = new Modal(
-					document.getElementById("addCustomerModal")
-				);
-				addCustomerModal.show();
-			},
-			loadCustomerResults() {
-				axios
-					.post(
-						`${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list/`
-					)
-					.then((response) => {
-						this.customerResults = response.data;
-					})
-					.catch((error) => {
-						this.showErrorModal(error, this.destination);
-					});
-			},
-			removeCustomer(customer_id) {
-				this.customerResults = this.customerResults.filter((row) => {
-					return row.pk !== customer_id;
+		loadCustomerResults() {
+			this.axios
+				.post(
+					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/customer_list/`
+				)
+				.then((response) => {
+					this.customerResults = response.data;
+				})
+				.catch((error) => {
+					this.showErrorModal(error, this.destination);
 				});
-			},
-			updateCustomerResults(data) {
-				this.customerResults = data;
-			},
 		},
-		mounted() {
-			//If the location is inside the array - don't bother getting the data
-			var escape_array = ["requirement_item"];
-			if (escape_array.indexOf(this.destination) >= 0) return;
-
-			//Wait 200ms before getting data
-			this.nextTick(() => {
-				this.loadCustomerResults();
+		removeCustomer(customer_id) {
+			this.customerResults = this.customerResults.filter((row) => {
+				return row.pk !== customer_id;
 			});
 		},
-	};
+		updateCustomerResults(data) {
+			this.customerResults = data;
+		},
+	},
+	mounted() {
+		//If the location is inside the array - don't bother getting the data
+		const escape_array = ["requirement_item"];
+		if (escape_array.indexOf(this.destination) >= 0) return;
+
+		//Wait 200ms before getting data
+		this.$nextTick(() => {
+			this.loadCustomerResults();
+		});
+	},
+};
 </script>
 
 <style scoped></style>
