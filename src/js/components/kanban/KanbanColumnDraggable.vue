@@ -241,7 +241,14 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}kanban_information/fix_card_ordering/`,
 				data_to_send,
-			).catch((error) => {});
+			).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to move card",
+					message: `Sorry, we could not move your card. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 
 			//Done - hide the error screen
 			document.getElementById("sort_error").style.display = "";
@@ -309,7 +316,27 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}kanban_information/${card_id}/move_card/`,
 				data_to_send
-			).catch((error) => {});
+			).then(() => {
+				if (column_property === "Blocked") {
+					//Tell Axios about the card id
+					this.$store.commit({
+						type: "updateValue",
+						field: "cardId",
+						value: parseInt(card_id),
+					});
+
+					//Open the required modal
+					const modal = new Modal(document.getElementById("blockedNotesModal"));
+					modal.show();
+				}
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Can not update Card",
+					message: `Sorry, moving the card had an error. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 		sendDataUpstream(filtered_data) {
 			// Check to make sure this is a linked object

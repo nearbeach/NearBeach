@@ -30,26 +30,26 @@
 						</n-switch>
 					</div>
 					<div class="col-md-4">
-<!--						<kanban-property-order-->
-<!--							v-bind:property-name="'Column'"-->
-<!--							v-bind:property-list="columnModel"-->
-<!--							v-bind:source="'columnModel'"-->
-<!--							v-bind:is-dirty="v$.columnModel.$dirty"-->
-<!--							v-bind:is-new-mode="false"-->
-<!--							v-bind:kanban-board-id="kanbanBoardResults[0].pk"-->
-<!--							v-on:update_property_list="updatePropertyList($event)"-->
-<!--						></kanban-property-order>-->
+						<kanban-property-order
+							v-bind:property-name="'Column'"
+							v-bind:property-list="columnModel"
+							v-bind:source="'columnModel'"
+							v-bind:is-dirty="v$.columnModel.$dirty"
+							v-bind:is-new-mode="false"
+							v-bind:kanban-board-id="kanbanBoardResults[0].pk"
+							v-on:update_property_list="updatePropertyList($event)"
+						></kanban-property-order>
 					</div>
 					<div class="col-md-4">
-<!--						<kanban-property-order-->
-<!--							v-bind:property-name="'Level'"-->
-<!--							v-bind:property-list="levelModel"-->
-<!--							v-bind:source="'levelModel'"-->
-<!--							v-bind:is-dirty="v$.columnModel.$dirty"-->
-<!--							v-bind:is-new-mode="false"-->
-<!--							v-bind:kanban-board-id="kanbanBoardResults[0].pk"-->
-<!--							v-on:update_property_list="updatePropertyList($event)"-->
-<!--						></kanban-property-order>-->
+						<kanban-property-order
+							v-bind:property-name="'Level'"
+							v-bind:property-list="levelModel"
+							v-bind:source="'levelModel'"
+							v-bind:is-dirty="v$.columnModel.$dirty"
+							v-bind:is-new-mode="false"
+							v-bind:kanban-board-id="kanbanBoardResults[0].pk"
+							v-on:update_property_list="updatePropertyList($event)"
+						></kanban-property-order>
 					</div>
 				</div>
 
@@ -74,7 +74,7 @@
 import {NSwitch} from "naive-ui";
 
 // Components
-// import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
+import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
 
 // Validation
 import useVuelidate from "@vuelidate/core";
@@ -90,7 +90,7 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
-		// KanbanPropertyOrder,
+		KanbanPropertyOrder,
 		NSwitch,
 	},
 	props: {
