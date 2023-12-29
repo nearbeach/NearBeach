@@ -41,6 +41,7 @@ Copy the following code and paste it into a file called `docker-compose.yaml`
             - ADMIN_USERNAME=<<Please fill>>
             - ADMIN_EMAIL=<<Please fill>>
             - CSRF_TRUSTED_URLS=<<https://yourdomain.com.au>>
+            - ALLOWED_HOSTS=localhost,127.0.0.1
             - AZURE_STORAGE_CONNECTION_STRING=<<Please fill>>
             - AZURE_STORAGE_CONTAINER_NAME=<<Please fill>>
             volumes:
@@ -59,35 +60,79 @@ Copy the following code and paste it into a file called `docker-compose.yaml`
             - db
 
 
-1. Fill out the following fields appropriately.
+#. Inside the docker-compose.yaml file, edit the SECRET_KEY. This will be a large string with symbols, letters and
+numbers. You can use a generate like https://djecrety.ir/
 
-    SMTP is used to send the reset password functionality required to login for the first time.
+
+#. Inside the docker-compose.yaml file, fill out the following fields appropriately. SMTP is used to send the reset
+password functionality required to login for the first time.
 
     - SMTP_EMAIL_HOST
     - SMTP_EMAIL_PORT
     - SMTP_EMAIL_HOST_USER
     - SMTP_EMAIL_HOST_PASSWORD
+
+
+#. The administration username/email will be used to log into NearBeach. This will need to be filled out appropriately
+because changing
+
     - ADMIN_USERNAME
     - ADMIN_EMAIL
 
-    The administration username will be used to log into NearBeach.
 
-
-2. Fill out the database connection. Please note you will need the same variable value for the following pairs;
+#. Inside the docker-compose.yaml file, there are two services. One will be for setting up the Database, and the other
+service will setup NearBeach. You will need to fill out the database connection/details. Please note you will need the
+same variable value for the following pairs;
 
     - DB_DATABASE / MARIADB_DATABASE
     - DB_USER / MARIADB_USER
     - DB_PASSWORD / MARIADB_PASSWORD
     - MARIADB_ROOT_PASSWORD
 
-3. Fill out the CSRF_TRUSTED_URLS value. This will need to be the EXACT domain. Please view the examples below
+    MARIADB_ROOT_PASSWORD will not have a pair.
+
+
+#. Fill out the CSRF_TRUSTED_URLS value. This will need to be the EXACT domain. Please view the examples below
 
     .. code-block:: bash
 
         CSRF_TRUSTED_URLS=https://demo.nearbeach.org
 
-4. Use your Azure Blob storage to store uploaded files from NearBeach. If you don't require Azure Blob storage, please delete these two lines.
+    If you would like to demo NearBeach, please fill out the following
 
-5. Using a terminal, change directory to the location that you stored the docker-compose file. Run the following command: "docker-compose up -D"
+    .. code-block:: bash
 
-You are now up and running NearBeach on your local environment. Visiting `http://localhost:8000` in your browser will take you to NearBeach
+        CSRF_TRUSTED_URLS=http://localhost:8000,http://127.0.0.1:8000
+
+#. Fill out the ALLOWED_HOSTS. This will be similar to the CSRF_TRUSTED, but without the http and port numbers.
+
+    .. code-block:: bash
+
+        - ALLOWED_HOST=demo.nearbeach.org
+
+
+    Alternatively - if using localhost
+
+
+    .. code-block:: bash
+
+        - ALLOWED_HOSTS=localhost,127.0.0.1
+
+
+#. Use your Azure Blob storage to store uploaded files from NearBeach. If you don't require Azure Blob storage, please
+delete these two lines;
+
+    .. code-block:: bash
+
+        - AZURE_STORAGE_CONNECTION_STRING
+        - AZURE_STORAGE_CONTAINER_NAME
+
+
+#. Using a terminal, change directory to the location that you stored the docker-compose file. Run the following
+command: `docker-compose up -d`. If you would like to specify a project name for your NearBeach instance. Run the
+following command instead: `docker-compose up -d --project-name NearBeach`.
+
+
+You are now up and running NearBeach in Docker. Visiting the URL you set in the `CSRF_TRUSTED_URLS` in your browser will
+take you to NearBeach. For first time logins, you will need to reset your password. Clicking "Reset" password and
+filling out your email will send you a password reset.
