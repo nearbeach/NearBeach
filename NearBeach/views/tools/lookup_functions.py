@@ -110,7 +110,7 @@ def lookup_requirement_item(user_group_results, *args, **kwargs):
                 requirement_id__isnull=False,
                 group_id__in=user_group_results,
             ).exclude(
-                requirement_status__requirement_higher_order_status="Closed",
+                requirement__requirement_status__requirement_higher_order_status="Closed",
             ).values('requirement_id'),
         ).values("requirement_id"),
     ).exclude(
