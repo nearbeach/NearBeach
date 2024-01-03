@@ -11,6 +11,12 @@
 				</a>
 				<hr/>
 
+				<div v-if="requirementItemIsClosed"
+					 class="alert alert-info"
+				>
+					Requirement Item is currently closed.
+				</div>
+
 				<div class="row">
 					<!-- Description -->
 					<div class="col-md-4">
