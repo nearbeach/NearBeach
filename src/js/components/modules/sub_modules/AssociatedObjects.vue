@@ -4,160 +4,43 @@
 			<Icon v-bind:icon="icons.objectStorage"></Icon>
 			Associated Objects
 		</h2>
-		<hr v-if="projectResults.length + taskResults.length > 0"/>
+		<p class="text-instructions">
+			The following are current OPEN objects associated with the organisation.
+		</p>
+		<hr v-if="projectResults.length + taskResults.length + requirementResults.length > 0"/>
 
 		<!-- Project Results -->
-		<div
-			class="row"
-			v-if="projectResults.length > 0"
-		>
-			<div class="col-md-4">
-				<strong>Project</strong>
-				<p class="text-instructions">
-					The following are current OPEN projects associated with the
-					organisation.
-				</p>
-			</div>
-			<div class="col-md-8">
-				<table class="table">
-					<thead>
-					<tr>
-						<td>Project Information</td>
-						<td>Status</td>
-					</tr>
-					</thead>
-					<tbody>
-					<tr
-						v-for="project in projectResults"
-						:key="project.project_id"
-					>
-						<td>
-							<a
-								v-bind:href="`${rootUrl}project_information/${project.project_id}/`"
-							>
-								<p>{{ project.project_name }}</p>
-								<div class="spacer"></div>
-								<p class="small-text">
-									Project {{ project.project_id }} - End
-									Date:
-									{{
-										getFriendlyDate(
-											project.project_end_date
-										)
-									}}
-								</p>
-							</a>
-						</td>
-						<td>{{ project.project_status_text }}</td>
-					</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<!-- THE FOLLOWING HR WILL NEED TO BE FIXED! -->
-		<hr v-if="projectResults.length > 0"/>
+		<render-object-card v-bind:search-results="projectResults"
+							v-bind:import-variables="projectVariables"
+							v-bind:destination="'project'"
+							v-if="projectResults.length > 0"
+		></render-object-card>
+
 
 		<!-- Requirement Results -->
-		<div
-			class="row"
-			v-if="requirementResults.length > 0"
-		>
-			<div class="col-md-4">
-				<strong>Requirement</strong>
-				<p class="text-instructions">
-					The following are current OPEN requirements associated with
-					the organisation.
-				</p>
-			</div>
-			<div class="col-md-8">
-				<table class="table">
-					<thead>
-					<tr>
-						<td>Requirement Information</td>
-						<td>Status</td>
-					</tr>
-					</thead>
-					<tbody>
-					<tr
-						v-for="requirement in requirementResults"
-						:key="requirement.requirement_id"
-					>
-						<td>
-							<a
-								v-bind:href="`${rootUrl}requirement_information/${requirement.requirement_id}/`"
-							>
-								<p>{{ requirement.requirement_title }}</p>
-								<div class="spacer"></div>
-								<p class="small-text">
-									Requirement
-									{{ requirement.requirement_id }}
-								</p>
-							</a>
-						</td>
-						<td>{{ requirement.requirement_status_text }}</td>
-					</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<!-- THE FOLLOWING HR WILL NEED TO BE FIXED! -->
-		<hr v-if="projectResults.length > 0"/>
+		<render-object-card v-bind:search-results="requirementResults"
+							v-bind:import-variables="requirementVariables"
+							v-bind:destination="'requirement'"
+							v-if="requirementResults.length > 0"
+		></render-object-card>
+
 
 		<!-- Task Results -->
-		<div
-			class="row"
-			v-if="taskResults.length > 0"
-		>
-			<div class="col-md-4">
-				<strong>Task</strong>
-				<p class="text-instructions">
-					The following are current OPEN tasks associated with the
-					organisation.
-				</p>
-			</div>
-			<div class="col-md-8">
-				<table class="table">
-					<thead>
-					<tr>
-						<td>Task Information</td>
-						<td>Status</td>
-					</tr>
-					</thead>
-					<tbody>
-					<tr
-						v-for="task in taskResults"
-						:key="task.task_id"
-					>
-						<td>
-							<a
-								v-bind:href="`${rootUrl}task_information/${task.task_id}/`"
-							>
-								<p>{{ task.task_short_description }}</p>
-								<div class="spacer"></div>
-								<p class="small-text">
-									Task {{ task.task_id }} - End Date:
-									{{
-										getFriendlyDate(task.task_end_date)
-									}}
-								</p>
-							</a>
-						</td>
-						<td>{{ task.task_status_text }}</td>
-					</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
+		<render-object-card v-bind:search-results="taskResults"
+							v-bind:import-variables="taskVariables"
+							v-bind:destination="'task'"
+							v-if="taskResults.length > 0"
+		></render-object-card>
 
 		<!-- Only show when there are no associated tasks -->
 		<div
 			class="spacer"
-			v-if="projectResults.length + taskResults.length === 0"
+			v-if="projectResults.length + taskResults.length + requirementResults.length === 0"
 		></div>
 
 		<div
 			class="alert alert-info"
-			v-if="projectResults.length + taskResults.length === 0"
+			v-if="projectResults.length + taskResults.length + requirementResults.length === 0"
 		>
 			There are currently no Objects associated with this Organisation.
 			You can create some new objects by click on the "New Objects" menu
@@ -174,18 +57,41 @@ import {mapGetters} from "vuex";
 
 //Mixins
 import iconMixin from "../../../mixins/iconMixin";
+import RenderObjectCard from "../../render/RenderObjectCard.vue";
 
 export default {
 	name: "AssociatedObjects",
 	components: {
+		RenderObjectCard,
 		Icon,
 	},
 	mixins: [iconMixin],
 	data() {
 		return {
 			projectResults: [],
+			projectVariables: {
+				header: "Projects",
+				prefix: "Pro",
+				id: "project_id",
+				title: "project_name",
+				status: "project_status_text",
+			},
 			requirementResults: [],
+			requirementVariables: {
+				header: "Requirements",
+				prefix: "Req",
+				id: "requirement_id",
+				title: "requirement_title",
+				status: "requirement_status__requirement_status",
+			},
 			taskResults: [],
+			taskVariables: {
+				header: "Tasks",
+				prefix: "Task",
+				id: "task_id",
+				title: "task_short_description",
+				status: "task_status_text",
+			},
 		};
 	},
 	computed: {
