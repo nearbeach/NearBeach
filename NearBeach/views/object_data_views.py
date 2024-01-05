@@ -646,7 +646,7 @@ def clean_users_from_object(destination, location_id):
         is_deleted=False,
         assigned_user_id__isnull=False,
     ).exclude(
-        assigned_user_id__in=user_list_results.values('pk'),
+        assigned_user_id__in=user_list_results.values('username_id'),
     )
 
     remove_user_list = get_object_from_destination(remove_user_list, destination, location_id)
