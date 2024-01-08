@@ -91,11 +91,13 @@ export default {
 			default: "",
 		},
 	},
-	data: () => ({
-		groupNameModel: this.groupResults[0].fields.group_name,
-		parentGroupFixList: [],
-		parentGroupModel: this.groupResults[0].fields.parent_group,
-	}),
+	data() {
+		return {
+			groupNameModel: this.groupResults[0].fields.group_name,
+			parentGroupFixList: [],
+			parentGroupModel: this.groupResults[0].fields.parent_group,
+		}
+	},
 	mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
 	methods: {
 		updateGroup() {
