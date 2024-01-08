@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<!-- Request for Change Types and Release Number -->
-		<hr/>
 		<div class="row">
 			<div class="col-md-4">
 				<h2>Type and Version</h2>

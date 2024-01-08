@@ -237,92 +237,92 @@ export default {
 				.getElementById("cardInformationModalCloseButton")
 				.click();
 		},
-    async differentDestination(close_modal, old_card) {
-      //The card is assumed to be placed at the end of the new destination. So lets look up how many cards are there
-      //and then use that number
-      const new_index = this.$store.getters.getCardsOrder(this.cardColumn, this.cardLevel).length;
+		async differentDestination(close_modal, old_card) {
+			//The card is assumed to be placed at the end of the new destination. So lets look up how many cards are there
+			//and then use that number
+			const new_index = this.$store.getters.getCardsOrder(this.cardColumn, this.cardLevel).length;
 
-      //Create the EVENT object for VueX
-      const event = {
-        to: {
-          dataset: {
-            column: this.cardColumn,
-            level: this.cardLevel,
-          },
-        },
-        from: {
-          dataset: {
-            column: old_card.fields.kanban_column,
-            level: old_card.fields.kanban_level,
-          }
-        },
-        item: {
-          dataset: {
-            cardId: this.cardId,
-			  cardPriority: this.cardPriority,
-          }
-        },
-        newIndex: new_index,
-      };
+			//Create the EVENT object for VueX
+			const event = {
+				to: {
+					dataset: {
+						column: this.cardColumn,
+						level: this.cardLevel,
+					},
+				},
+				from: {
+					dataset: {
+						column: old_card.fields.kanban_column,
+						level: old_card.fields.kanban_level,
+					}
+				},
+				item: {
+					dataset: {
+						cardId: this.cardId,
+						cardPriority: this.cardPriority,
+					}
+				},
+				newIndex: new_index,
+			};
 
-      //Send this information up to vueX :)
-      //VueX will move everything around for us - like we have moved the card manually
-      await this.$store.dispatch("kanbanCardMoved", {
-        event: event,
-      });
+			//Send this information up to vueX :)
+			//VueX will move everything around for us - like we have moved the card manually
+			await this.$store.dispatch("kanbanCardMoved", {
+				event: event,
+			});
 
-      //Now we get the new destination and old destination
-      const new_destination = this.$store.getters.getCardsOrder(this.cardColumn, this.cardLevel);
-      const old_destination = this.$store.getters.getCardsOrder(
-          old_card.fields.kanban_column,
-          old_card.fields.kanban_level
-      ).filter((row) => {
-        //We don't want the old destination to have the card id...
-        return parseInt(row.pk) !== parseInt(this.cardId);
-      });
+			//Now we get the new destination and old destination
+			const new_destination = this.$store.getters.getCardsOrder(this.cardColumn, this.cardLevel);
+			const old_destination = this.$store.getters.getCardsOrder(
+				old_card.fields.kanban_column,
+				old_card.fields.kanban_level
+			).filter((row) => {
+				//We don't want the old destination to have the card id...
+				return parseInt(row.pk) !== parseInt(this.cardId);
+			});
 
-      //Tell the parent node that we have updated the data
-      this.$emit("update_card", {
-        close_modal: close_modal,
-        new_destination: new_destination,
-        old_destination: old_destination,
-      });
-    },
-    sameDestination(close_modal) {
-     //Update the card title
-      this.$store.commit({
-        type: "updateKanbanCard",
-        card_id: this.cardId,
-        kanban_card_text: this.cardTitle,
-		  kanban_card_priority: this.cardPriority,
-      });
+			//Tell the parent node that we have updated the data
+			this.$emit("update_card", {
+				close_modal: close_modal,
+				new_destination: new_destination,
+				old_destination: old_destination,
+			});
+		},
+		sameDestination(close_modal) {
+			//Update the card title
+			this.$store.commit({
+				type: "updateKanbanCard",
+				card_id: this.cardId,
+				kanban_card_text: this.cardTitle,
+				kanban_card_priority: this.cardPriority,
+			});
 
-      //Tell the parent node that we have updated the data
-      this.$emit("update_card", {
-        close_modal: close_modal,
-      });
-    },
+			//Tell the parent node that we have updated the data
+			this.$emit("update_card", {
+				close_modal: close_modal,
+			});
+		},
 		updateCard(close_modal) {
-      /* METHOD
-       * ~~~~~~
-       * 1. Determine if there is a change in either column/level
-       * 2. If no change - just send back basic information to save
-       * 3.
-       */
+			/* METHOD
+			 * ~~~~~~
+			 * 1. Determine if there is a change in either column/level
+			 * 2. If no change - just send back basic information to save
+			 * 3.
+			 */
 
-      //Get the old card information
-      const old_card = this.$store.getters.getCard(this.cardId);
+			//Get the old card information
+			const old_card = this.$store.getters.getCard(this.cardId);
 
-      //Determine if we are changing levels or columns
-      const condition_1 = parseInt(this.cardColumn) === parseInt(old_card.fields.kanban_column);
-      const condition_2 = parseInt(this.cardLevel) === parseInt(old_card.fields.kanban_level);
+			//Determine if we are changing levels or columns
+			const condition_1 = parseInt(this.cardColumn) === parseInt(old_card.fields.kanban_column);
+			const condition_2 = parseInt(this.cardLevel) === parseInt(old_card.fields.kanban_level);
 
-      //If there are no changes - just send the data upstream
-      if (condition_1 && condition_2) {
-        this.sameDestination(close_modal)
-      } else {
-        this.differentDestination(close_modal, old_card);
-      }
+			//If there are no changes - just send the data upstream
+			if (condition_1 && condition_2) {
+				this.sameDestination(close_modal)
+			} else {
+				this.differentDestination(close_modal, old_card);
+			}
 		},
 	},
 };

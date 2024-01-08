@@ -43,6 +43,7 @@ export const moduleKanban = {
 
             //Loop through each keys for the payload, and update the relevant field
             const continue_keys = ["type", "card_id"];
+            const int_keys = ["kanban_column", "kanban_level", "kanban_sort_number", "kanban_card_priority"];
             Object.keys(payload).forEach((key) => {
                 //Skip some certain keys
                 if (continue_keys.includes(key)) {
@@ -50,8 +51,12 @@ export const moduleKanban = {
                 }
 
                 //Update the results
-                state.kanbanCardResults[index_location].fields[key] =
-                    payload[key];
+                //Check to see if we need to parse as int.
+                if (int_keys.includes(key)) {
+                    state.kanbanCardResults[index_location].fields[key] = parseInt(payload[key]);
+                } else {
+                    state.kanbanCardResults[index_location].fields[key] = payload[key];
+                }
             });
         },
         //The initial payload of kanban card results

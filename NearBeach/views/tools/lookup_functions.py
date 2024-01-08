@@ -33,7 +33,7 @@ def lookup_project(user_group_results, destination, location_id):
     ).annotate(
         id = F('project_id'),
         description = F('project_name'),
-        status = F('project_status'),
+        status = F('project_status__project_status'),
     ).values(
         'id',
         'description',
@@ -63,7 +63,7 @@ def lookup_task(user_group_results, destination, location_id):
     ).annotate(
         id = F('task_id'),
         description = F('task_short_description'),
-        status = F('task_status'),
+        status = F('task_status__task_status'),
     ).values(
         'id',
         'description',
@@ -110,7 +110,7 @@ def lookup_requirement_item(user_group_results, *args, **kwargs):
                 requirement_id__isnull=False,
                 group_id__in=user_group_results,
             ).exclude(
-                requirement_status__requirement_higher_order_status="Closed",
+                requirement__requirement_status__requirement_higher_order_status="Closed",
             ).values('requirement_id'),
         ).values("requirement_id"),
     ).exclude(

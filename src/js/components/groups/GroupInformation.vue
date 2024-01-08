@@ -96,7 +96,7 @@ export default {
 			groupNameModel: this.groupResults[0].fields.group_name,
 			parentGroupFixList: [],
 			parentGroupModel: this.groupResults[0].fields.parent_group,
-		};
+		}
 	},
 	mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
 	methods: {

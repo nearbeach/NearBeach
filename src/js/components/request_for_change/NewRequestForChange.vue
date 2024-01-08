@@ -5,14 +5,16 @@
 				<h1>New Request for Change</h1>
 				<hr/>
 
+				<rfc-wizard v-bind:current-tab="currentTab"></rfc-wizard>
+
 				<!-- DESCRIPTION -->
 				<rfc-description
 					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
 					v-bind:static-url="staticUrl"
+					v-if="currentTab===0"
 				></rfc-description>
-				<hr/>
 
 				<!-- Details -->
 				<rfc-details
@@ -21,50 +23,68 @@
 					v-bind:user-group-results="userGroupResults"
 					v-on:update_validation="updateValidation($event)"
 					v-on:update_values="updateValues($event)"
+					v-if="currentTab===1"
 				></rfc-details>
-				<hr/>
 
 				<!-- Risk -->
 				<rfc-risk
 					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
+					v-if="currentTab===2"
 				></rfc-risk>
-				<hr/>
 
 				<!-- Implementation Plan -->
 				<rfc-implementation-plan
 					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
+					v-if="currentTab===3"
 				></rfc-implementation-plan>
-				<hr/>
 
 				<!-- Backout Plan -->
 				<rfc-backout-plan
 					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
+					v-if="currentTab===4"
 				></rfc-backout-plan>
-				<hr/>
 
 				<!-- Test Plan -->
 				<rfc-test-plan
 					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
+					v-if="currentTab===5"
 				></rfc-test-plan>
 
-				<!-- Submit Button -->
+				<!-- NAVIGATIONS-->
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						<a
-							href="javascript:void(0)"
-							class="btn btn-primary save-changes"
-							v-on:click="onComplete"
-						>Create new Request for Change</a
+						<!-- PREVIOUS -->
+						<button class="btn btn-primary"
+								v-on:click="previousTab"
+								v-if="currentTab!==0"
 						>
+							Previous
+						</button>
+
+						<!-- NEXT -->
+						<button class="btn btn-primary save-changes"
+								v-on:click="nextTab"
+								v-if="currentTab!==5"
+						>
+							Next
+						</button>
+
+						<!-- SUMBIT-->
+						<button class="btn btn-primary save-changes"
+								v-on:click="submitRfc"
+								v-if="currentTab===5"
+						>
+							Create new Request for Change
+						</button>
 					</div>
 				</div>
 			</div>
@@ -79,6 +99,7 @@ import RfcRisk from "./tabs/RfcRisk.vue";
 import RfcTestPlan from "./tabs/RfcTestPlan.vue";
 import RfcBackoutPlan from "./tabs/RfcBackoutPlan.vue";
 import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
+import RfcWizard from "./RfcWizard.vue";
 
 // Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
@@ -93,6 +114,7 @@ export default {
 		RfcImplementationPlan,
 		RfcRisk,
 		RfcTestPlan,
+		RfcWizard,
 	},
 	props: {
 		groupResults: {
@@ -156,17 +178,38 @@ export default {
 		},
 	}),
 	methods: {
-		beforeChange() {
-			return this.validationData[`tab_${this.currentTab}`];
-		},
-		onChange(prevIndex, nextIndex) {
-			//Update current tab once the validation has been completed.
-			this.currentTab = nextIndex;
+		nextTab() {
+			//Do nothing if tab >= 5
+			if (this.currentTab >= 5) return;
 
-			//Scroll to the top of the page
-			window.scrollTo(0, 60);
+			//Validate the current tab
+			if (this.validationData[`tab_${this.currentTab}`] === false) {
+				//Notify the user of the unvalidated data and return.
+				this.$store.dispatch("newToast", {
+					header: "Please check your inputs",
+					message: "Sorry, we are being told that some of the data is not passing validation. Please check",
+					extra_classes: "bg-danger",
+					delay: 1500,
+				});
+
+				//Do nothing
+				return;
+			}
+
+			//Validation has passed move the user to the next tab
+			this.currentTab = this.currentTab + 1;
+
+			//Scroll to the top
+			window.scrollTo({top: 0, behavior: 'smooth'});
 		},
-		onComplete() {
+		previousTab() {
+			//Do nothing if tab <= 0
+			if (this.currentTab <= 0) return;
+
+			//Move to previous tab
+			this.currentTab = this.currentTab - 1;
+		},
+		submitRfc() {
 			// Setup the new data form
 			const data_to_send = new FormData();
 			const data = this.rfcData;
