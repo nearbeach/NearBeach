@@ -402,6 +402,17 @@ def private_download_file(request, document_key):
         | Q(organisation__isnull=False)
     )
 
+    new_object_picture = document_permission_results.filter(
+        # If everything is empty EXCEPT the UUID new object column
+        new_object__isnull=False,
+        project_id__isnull=True,
+        request_for_change_id__isnull=True,
+        requirement_id__isnull=True,
+        requirement_item_id__isnull=True,
+        task_id__isnull=True,
+        kanban_card_id__isnull=True,
+    )
+
     user_profile_picture = UserProfilePicture.objects.filter(
         document=document_key,
         is_deleted=False,
@@ -412,6 +423,7 @@ def private_download_file(request, document_key):
         object_assignment_results.count() == 0
         and profile_picture_permission.count() == 0
         and user_profile_picture.count() == 0
+        and new_object_picture.count() == 0
         and request.user.is_superuser is False
     ):
         raise Http404
