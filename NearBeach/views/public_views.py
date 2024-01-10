@@ -19,7 +19,8 @@ from NearBeach.models import KanbanCard, \
     ListOfRequirementItemStatus, \
     ListOfRequirementItemType, \
     ListOfRequirementStatus, \
-    ListOfRequirementType
+    ListOfRequirementType, \
+    ListOfTaskStatus
 from NearBeach.forms import PublicLinkDeleteForm, PublicLinkUpdateForm
 from NearBeach.views.kanban_views import get_context as kanban_get_context
 
@@ -208,6 +209,39 @@ def get_public_context_requirement(results):
 
 
 # Internal function
+def get_public_context_task(results):
+    # Get the status data
+    status_options = ListOfTaskStatus.objects.filter(
+        is_deleted=False,
+    ).annotate(
+        value=F("task_status_id"),
+        label=F("task_status"),
+    ).values(
+        "value",
+        "label",
+        "task_higher_order_status",
+    ).order_by(
+        "task_status_order",
+    )
+
+    organisation_results = getattr(
+        results,
+        "organisation"
+    )
+
+    # Serialise in the if statement - as None can not be serialized
+    organisation_results = serializers.serialize("json", [organisation_results])
+    results = serializers.serialize("json", [results])
+
+    return {
+        "organisation_results": organisation_results,
+        "results": results,
+        "status_options": json.dumps(list(status_options), cls=DjangoJSONEncoder),
+    }
+
+
+
+# Internal function
 def get_public_link_results(destination, location_id):
     public_link_results = PublicLink.objects.filter(
         is_deleted=False,
@@ -277,6 +311,8 @@ def public_link(request, destination, location_id, public_link_id, *args, **kwar
         c = get_public_context_requirement(results)
     elif destination == "project":
         c = get_public_context_project(results)
+    elif destination == "task":
+        c = get_public_context_task(results)
     else:
         c = get_public_context(results)
 
