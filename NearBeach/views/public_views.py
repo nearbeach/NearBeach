@@ -211,6 +211,7 @@ def public_link(request, destination, location_id, public_link_id, *args, **kwar
     # Check to make sure object exists
     public_link_results = PublicLink.objects.filter(
         is_deleted=False,
+        public_link_is_active=True,
         public_link_id=public_link_id,
     )
 
