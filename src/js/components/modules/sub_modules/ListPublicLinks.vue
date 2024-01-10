@@ -55,7 +55,9 @@
 			</tr>
 		</tbody>
 	</table>
-	<div class="row submit-row">
+	<div class="row submit-row"
+		 v-if="isReadOnly===false"
+	>
 		<div class="col-md-12">
 			<button class="btn btn-primary save-changes"
 					v-on:click="createPublicLink"
@@ -77,6 +79,10 @@ import iconMixin from "../../../mixins/iconMixin";
 export default {
 	name: "ListPublicLinks",
 	props: {
+		isReadOnly: {
+			type: Boolean,
+			default: false,
+		},
 		overrideDestination: {
 			type: String,
 			default: "",
