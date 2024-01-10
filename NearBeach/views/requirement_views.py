@@ -89,8 +89,8 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
         project_id__isnull=False,
     ).annotate(
         object_id=F("project_id"),
-        object_title=V("My pain"),
-        object_status=F("project_id__project_status"),
+        object_title=F("project_id__project_name"),
+        object_status=F("project_id__project_status__project_status"),
         object_type=V("project"),
     ).values(
         "object_id",
@@ -100,6 +100,20 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
         "requirement_item_id",
     ))
 
+    data_results.extend(object_assignment_results.filter(
+        task_id__isnull=False,
+    ).annotate(
+        object_id=F("task_id"),
+        object_title=F("task_id__task_short_description"),
+        object_status=F("task_id__task_status__task_status"),
+        object_type=V("task"),
+    ).values(
+        "object_id",
+        "object_title",
+        "object_status",
+        "object_type",
+        "requirement_item_id",
+    ))
 
     """
     As explained on stack overflow here -
