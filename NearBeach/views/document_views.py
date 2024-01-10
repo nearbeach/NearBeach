@@ -163,6 +163,7 @@ def document_list_files(request, destination, location_id):
     document_permission_results = DocumentPermission.objects.filter(
         is_deleted=False,
         document_key__document_upload_successfully=True,
+        is_profile_picture=False,
     ).values(
         "document_key_id",
         "document_key__document_description",
@@ -440,7 +441,7 @@ def private_download_file(request, document_key):
 
 # Internal Function
 def handle_document_permissions(
-    request, upload, file, document_description, destination, location_id, parent_folder = 0
+    request, upload, file, document_description, destination, location_id, parent_folder=0, is_profile_picture=False,
 ):
     """
     The function that handles the document permission - i.e. if user has access to the 
@@ -461,6 +462,7 @@ def handle_document_permissions(
     document_permission_submit = DocumentPermission(
         change_user=request.user,
         document_key=document_submit,
+        is_profile_picture=is_profile_picture,
     )
 
     """
@@ -477,6 +479,7 @@ def handle_document_permissions(
     # Apply the parent folder if required
     if parent_folder != 0:
         document_permission_submit.folder = parent_folder
+
 
     # Save document permission
     document_permission_submit.save()

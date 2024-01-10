@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
     <kanban-edit-board v-bind:kanban-board-results="{{kanban_board_results}}"
+                       v-bind:is-read-only="{{ kanban_board_is_closed }}"
                        v-bind:column-results="{{column_results}}"
                        v-bind:group-results="{{group_results}}"
                        v-bind:level-results="{{level_results}}"
@@ -14,12 +15,14 @@
 
     <kanban-group-permissions
             v-bind:theme="`{{ theme }}`"
+            v-bind:is-read-only="{{ kanban_board_is_closed }}"
     ></kanban-group-permissions>
 
     <div class="spacer"></div>
 
     <kanban-public-links
             v-bind:theme="`{{ theme }}`"
+            v-bind:is-read-only="{{ kanban_board_is_closed }}"
     ></kanban-public-links>
 
     <div class="spacer"></div>

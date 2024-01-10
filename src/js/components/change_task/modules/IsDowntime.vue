@@ -59,6 +59,14 @@ export default {
 			return "No Downtime - click to Schedule";
 		},
 		updateIsDowntime(isDowntime) {
+			this.$store.dispatch("newToast", {
+				header: "Updating Downtime flag",
+				message: "Please wait, we are updating the downtime flag",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "downtime-save",
+			});
+
 			//Setup data to send
 			const data_to_send = new FormData();
 			data_to_send.set('is_downtime', isDowntime);
@@ -67,9 +75,23 @@ export default {
 			this.axios.post(
 				"update/is_downtime/",
 				data_to_send,
-			).then((response) => {
-				//ADD CODE
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "Updated Downtime flag",
+					message: "Successfully Updated the Downtime Flag",
+					extra_classes: "bg-success",
+					unique_type: "downtime-save",
+				});
+
 			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to Update Downtime Flag",
+					message: `We have come across an issue updating the downtime flag. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "downtime-save",
+				});
+
 			})
 		}
 	},

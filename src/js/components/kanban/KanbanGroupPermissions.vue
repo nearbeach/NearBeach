@@ -4,6 +4,7 @@
 			<div class="card-body">
 				<!-- Group Permissions -->
 				<groups-and-users-module
+					v-bind:is-read-only="isReadOnly"
 				></groups-and-users-module>
 			</div>
 		</div>
@@ -18,6 +19,10 @@ export default {
 	name: "KanbanGroupPermissions",
 	mixins: [getThemeMixins],
 	props: {
+		isReadOnly: {
+			type: Boolean,
+			default: false,
+		},
 		theme: {
 			type: String,
 			default: "",

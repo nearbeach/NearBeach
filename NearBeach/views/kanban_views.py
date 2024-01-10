@@ -240,6 +240,13 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
     c["user_level"] = user_level
     c["group_results"] = serializers.serialize("json", group_results)
 
+    # Convert the closed status into JavaScript boolean
+    if c["kanban_board_status"] == "Closed":
+        c["kanban_board_is_closed"] = "true"
+    else:
+        c["kanban_board_is_closed"] = "false"
+
+
     # Get the template
     t = loader.get_template("NearBeach/kanban/kanban_edit_board.html")
 

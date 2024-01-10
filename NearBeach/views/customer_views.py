@@ -110,6 +110,8 @@ def customer_update_profile(request, customer_id, *args, **kwargs):
         document_description,
         "customer",
         customer_id,
+        0,
+        True,
     )
 
     # Update the customer

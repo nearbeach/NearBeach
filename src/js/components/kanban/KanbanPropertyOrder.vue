@@ -12,7 +12,7 @@
 		<!-- The column of data where you can sort the properties -->
 		<draggable
 			v-model="localPropertyList"
-			:disabled="!canDragCards"
+			:disabled="!canDragCards || isReadOnly"
 			item-key="pk"
 			ghost-class="ghost"
 			@change="sendPropertyListUp"
@@ -55,6 +55,7 @@
 		<button
 			class="btn btn-primary"
 			v-on:click="openModal"
+			v-if="isReadOnly===false"
 		>
 			Add {{ propertyName }} Item
 		</button>
@@ -207,6 +208,7 @@
 						<button
 							type="button"
 							class="btn btn-primary"
+							v-if="isReadOnly===false"
 							v-on:click="deleteItem"
 							v-bind:disabled="this.destinationItemId == null"
 						>
@@ -254,6 +256,10 @@ export default {
 		isNewMode: {
 			type: Boolean,
 			default: true,
+		},
+		isReadOnly: {
+			type: Boolean,
+			default: false,
 		},
 		kanbanBoardId: {
 			type: Number,
@@ -389,6 +395,9 @@ export default {
 			});
 		},
 		editItem(event) {
+			//If read only - ignore
+			if (this.isReadOnly) return;
+
 			//Get the id and title from the item
 			this.newPropertyItem = event.target.dataset.title;
 			this.singleItemId = event.target.dataset.id;

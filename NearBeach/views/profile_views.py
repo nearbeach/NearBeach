@@ -102,6 +102,8 @@ def update_profile(request):
         document_description,
         "user",
         request.user.id,
+        0,
+        True,
     )
 
     # Update user profile

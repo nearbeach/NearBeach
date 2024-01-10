@@ -131,7 +131,7 @@ def get_my_objects(request):
         .values(
             "project_id",
             "project_name",
-            "project_status",
+            "project_status__project_status",
             "project_end_date",
         )
     )
@@ -170,7 +170,7 @@ def get_my_objects(request):
         .values(
             "task_id",
             "task_short_description",
-            "task_status",
+            "task_status__task_status",
             "task_end_date",
         )
     )
@@ -283,7 +283,7 @@ def get_unassigned_objects(request):
         .values(
             "project_id",
             "project_name",
-            "project_status",
+            "project_status__project_status",
             "project_end_date",
         )
     )
@@ -352,7 +352,7 @@ def get_unassigned_objects(request):
         .values(
             "task_id",
             "task_short_description",
-            "task_status",
+            "task_status__task_status",
             "task_end_date",
         )
     )

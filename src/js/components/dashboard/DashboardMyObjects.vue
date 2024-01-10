@@ -91,7 +91,7 @@ export default {
 				prefix: "Pro",
 				id: "project_id",
 				title: "project_name",
-				status: "project_status",
+				status: "project_status__project_status",
 				end_date: "project_end_date",
 			},
 			requirementVariables: {
@@ -107,7 +107,7 @@ export default {
 				prefix: "Task",
 				id: "task_id",
 				title: "task_short_description",
-				status: "task_status",
+				status: "task_status__task_status",
 				end_date: "task_end_date",
 			},
 		};

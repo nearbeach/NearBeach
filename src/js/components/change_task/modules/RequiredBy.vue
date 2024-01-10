@@ -54,6 +54,14 @@ export default {
 	},
 	methods: {
 		updateRequiredBy(requiredBy) {
+			this.$store.dispatch("newToast", {
+				header: "Updating Required By",
+				message: "Please wait, we are updating required by",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "required-save",
+			});
+
 			//Send to the backend
 			const data_to_send = new FormData();
 			data_to_send.set("change_task_required_by", requiredBy);
@@ -61,9 +69,21 @@ export default {
 			this.axios.post(
 				"update/required_by/",
 				data_to_send,
-			).then((response) => {
-				//Add code telling user data is updated
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "Updated Required By",
+					message: "The Required by has been updated",
+					extra_classes: "bg-success",
+					unique_type: "required-save",
+				});
 			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Issue updating Required By",
+					message: `We have had an issue updating required by. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "required-save",
+				});
 			})
 		}
 	}

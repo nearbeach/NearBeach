@@ -31,6 +31,7 @@
 					</div>
 					<div class="col-md-4">
 						<kanban-property-order
+							v-bind:is-read-only="isReadOnly"
 							v-bind:property-name="'Column'"
 							v-bind:property-list="columnModel"
 							v-bind:source="'columnModel'"
@@ -42,6 +43,7 @@
 					</div>
 					<div class="col-md-4">
 						<kanban-property-order
+							v-bind:is-read-only="isReadOnly"
 							v-bind:property-name="'Level'"
 							v-bind:property-list="levelModel"
 							v-bind:source="'levelModel'"
@@ -94,6 +96,10 @@ export default {
 		NSwitch,
 	},
 	props: {
+		isReadOnly: {
+			type: Boolean,
+			default: false,
+		},
 		columnResults: {
 			type: Array,
 			default: () => {

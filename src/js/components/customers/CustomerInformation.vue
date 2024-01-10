@@ -237,7 +237,18 @@ export default {
 				this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
 			}
 		},
-		updateCustomer() {
+		async updateCustomer() {
+			//Check validation
+			const isFormCorrect = await this.v$.$validate();
+			if (!isFormCorrect || this.displayGroupPermissionIssue) {
+				this.$store.dispatch("newToast", {
+					header: "Please correct issues",
+					message: "Not all fields are correctly validated. Please correct.",
+					extra_classes: "bg-danger",
+				})
+				return;
+			}
+
 			//Construct the data_to_send
 			const data_to_send = new FormData();
 			data_to_send.set("customer_email", this.customerEmailModel);

@@ -209,6 +209,8 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
         document_description,
         "organisation",
         organisation_id,
+        0,
+        True,
     )
 
     # Get the organisation object
