@@ -6,6 +6,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import redirect
 from django.template import loader
+from django.db.models import F
 
 from NearBeach.decorators.check_destination import check_destination, check_public_destination
 from NearBeach.views.object_data_views import set_object_from_destination, get_object_from_destination
@@ -14,6 +15,7 @@ from NearBeach.models import KanbanCard, \
     KanbanLevel, \
     PublicLink, \
     RequirementItem, \
+    ListOfProjectStatus, \
     ListOfRequirementItemStatus, \
     ListOfRequirementItemType, \
     ListOfRequirementStatus, \
@@ -124,6 +126,37 @@ def get_public_context_kanban_board(results):
 
     return context
 
+
+# Internal function
+def get_public_context_project(results):
+    # Grab all the status options for the project. Shape the data into the required shape for frontend
+    status_options = ListOfProjectStatus.objects.filter(
+        is_deleted=False,
+    ).annotate(
+        value=F('project_status_id'),
+        label=F('project_status'),
+    ).values(
+        "value",
+        "label",
+        "project_higher_order_status",
+    ).order_by(
+        "project_status_order"
+    )
+
+    organisation_results = getattr(
+        results,
+        "organisation"
+    )
+
+    # Serialise in the if statement - as None can not be serialized
+    organisation_results = serializers.serialize("json", [organisation_results])
+    results = serializers.serialize("json", [results])
+
+    return {
+        "organisation_results": organisation_results,
+        "results": results,
+        "status_options": json.dumps(list(status_options), cls=DjangoJSONEncoder),
+    }
 
 # Internal function
 def get_public_context_requirement(results):
@@ -242,6 +275,8 @@ def public_link(request, destination, location_id, public_link_id, *args, **kwar
         c = get_public_context_kanban_board(results)
     elif destination == "requirement":
         c = get_public_context_requirement(results)
+    elif destination == "project":
+        c = get_public_context_project(results)
     else:
         c = get_public_context(results)
 
