@@ -203,6 +203,7 @@
 						>
 							<list-public-links v-bind:override-destination="'kanban_card'"
 											   v-bind:override-location-id="cardId"
+											   v-bind:is-read-only="kanbanStatus === 'Closed'"
 							></list-public-links>
 						</div>
 					</div>
