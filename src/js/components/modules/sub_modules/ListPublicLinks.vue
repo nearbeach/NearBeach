@@ -56,7 +56,7 @@
 		</tbody>
 	</table>
 	<div class="row submit-row"
-		 v-if="isReadOnly===false"
+		 v-if="isReadOnly===false && userLevel > 1"
 	>
 		<div class="col-md-12">
 			<button class="btn btn-primary save-changes"
