@@ -34,7 +34,7 @@ export default {
             };
 
             //Use axios to send the data
-            return axios
+            return this.axios
                 .post(
                     `${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
                     data_to_send,

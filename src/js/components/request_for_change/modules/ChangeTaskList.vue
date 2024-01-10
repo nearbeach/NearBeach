@@ -233,7 +233,8 @@ export default {
 					const change_task_status =
 						changeTask.change_task_status;
 					return (
-						change_task_status !== 5 && change_task_status !== 6
+						//Finished, Rejected, Failed
+						change_task_status !== 5 && change_task_status !== 6 && change_task_status !== 9
 					);
 				}
 			).length;
