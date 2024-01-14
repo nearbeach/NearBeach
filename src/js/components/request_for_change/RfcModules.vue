@@ -366,18 +366,35 @@ export default {
 	},
 	methods: {
 		sendData(data_to_send, url) {
-			//Open up the loading modal
-			this.showLoadingModal("Project");
+			//Notify user of updating
+			this.$store.dispatch("newToast", {
+				header: "Updating Risk",
+				message: "Currently updating risk - please wait",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "save_risk",
+			})
 
 			//Use axios to send the data
 			this.axios
 				.post(url, data_to_send)
-				.then((response) => {
+				.then(() => {
 					//Notify user of success update
-					this.closeLoadingModal();
+					this.$store.dispatch("newToast", {
+						header: "Successfully Updated Risk",
+						message: "Risk is now updated",
+						extra_classes: "bg-success",
+						unique_type: "save_risk",
+					});
 				})
 				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+					this.$store.dispatch("newToast", {
+						header: "Updating Risk Failed",
+						message: `Sorry, but risk has failed to update. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+						unique_type: "save_risk",
+					});
 				});
 		},
 		updateBackoutPlan() {
