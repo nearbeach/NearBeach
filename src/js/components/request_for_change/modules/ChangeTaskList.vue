@@ -52,6 +52,8 @@
 				</span>
 			</div>
 
+			<div v-if="changeTask.is_downtime">Downtime Scheduled</div>
+
 			<div v-if="blockedBy(changeTask.change_task_id).length > 0">
 				<div class="change-task--blocked-by">
 					Change task currently blocked by;
