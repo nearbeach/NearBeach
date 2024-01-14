@@ -216,11 +216,27 @@ export default {
 			return return_class;
 		},
 		newTag(data_to_send) {
+			//Tell user of saving tag
+			this.$store.dispatch("newToast", {
+				header: "New Tag",
+				message: "Creating new Tag - please wait",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "save_tag",
+			});
+
 			//Use axios to send data
 			this.axios.post(
 				`${this.rootUrl}tag/new/`,
 				data_to_send
 			).then((response) => {
+				this.$store.dispatch("newToast", {
+					header: "Tag Saved",
+					message: "Tag has been successfully saved",
+					extra_classes: "bg-success",
+					unique_type: "save_tag",
+				});
+
 				// Send data upstream
 				this.$emit("new_tag", response.data);
 
@@ -255,29 +271,45 @@ export default {
 			this.tagColourModel = selected_colour;
 		},
 		updateTag(data_to_send) {
-			//Use axios to send data
-			this.axios
-				.post(`${this.rootUrl}tag/save/`, data_to_send)
-				.then(() => {
-					// Send data upstream
-					this.$emit("update_tags", {
-						tag_id: this.tagId,
-						tag_name: this.tagNameModel,
-						tag_colour: this.tagColourModel,
-						tag_text_colour: this.tagTextColourModel,
-					});
+			//Tell user of saving tag
+			this.$store.dispatch("newToast", {
+				header: "Updating Tag",
+				message: "Updating Tag - please wait",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "save_tag",
+			});
 
-					//Close the modal
-					document.getElementById("editTagCloseModal").click();
-				})
-				.catch((error) => {
-					this.$store.dispatch("newToast", {
-						header: "Can not update tag",
-						message: `Sorry, we could not update your tag. Error -> ${error}`,
-						extra_classes: "bg-danger",
-						delay: 0,
-					});
+			//Use axios to send data
+			this.axios.post(
+				`${this.rootUrl}tag/save/`,
+				data_to_send
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "Tag Updated",
+					message: "Tag has been updated successfully",
+					extra_classes: "bg-success",
+					unique_type: "save_tag",
 				});
+
+				// Send data upstream
+				this.$emit("update_tags", {
+					tag_id: this.tagId,
+					tag_name: this.tagNameModel,
+					tag_colour: this.tagColourModel,
+					tag_text_colour: this.tagTextColourModel,
+				});
+
+				//Close the modal
+				document.getElementById("editTagCloseModal").click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Can not update tag",
+					message: `Sorry, we could not update your tag. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 };
