@@ -617,7 +617,7 @@ export default {
 					this.$store.dispatch("newToast", {
 						header: "Save Successfully",
 						message: "RFC Has saved",
-						delay: 3000,
+						delay: 10000,
 						extra_classes: "bg-success",
 					});
 				})
