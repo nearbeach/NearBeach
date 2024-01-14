@@ -235,7 +235,7 @@ export default {
 		//Have to wait a little extra - tick does not work :'(
 		setTimeout(() => {
 			this.getAllChangeTasks();
-		}, 200);
+		}, 500);
 	}
 }
 </script>

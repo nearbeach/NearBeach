@@ -264,7 +264,7 @@ export default {
 			if (this.locationId === 0) {
 				setTimeout(() => {
 					this.getGroupAndUserData();
-				}, 100);
+				}, 500);
 				return;
 			}
 

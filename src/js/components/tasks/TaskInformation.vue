@@ -291,11 +291,24 @@ export default {
 
 			//If the form is not validated
 			if (this.v$.$invalid) {
-				this.showValidationErrorModal();
+				this.$store.dispatch("newToast", {
+					header: "Validation issues",
+					message: "Please correct the validation issues before submitting",
+					extra_classes: "bg-warning",
+					unique_type: "save_task",
+				});
 
 				//User does not need to do anything else
 				return;
 			}
+
+			this.$store.dispatch("newToast", {
+				header: "Saving Task",
+				message: "Please wait whilst saving task",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "save_task",
+			})
 
 			//Create the data_to_send array
 			const data_to_send = new FormData();
@@ -323,7 +336,12 @@ export default {
 				data_to_send
 			).then(() => {
 				//Hide the loading modal
-				this.closeLoadingModal();
+				this.$store.dispatch("newToast", {
+					header: "Task Saved",
+					message: "Task has successfully been saved",
+					extra_classes: "bg-success",
+					unique_type: "save_task",
+				});
 
 				if (this.checkStatusIsClosed()) {
 					window.location.reload();

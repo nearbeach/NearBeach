@@ -86,27 +86,46 @@ export default {
 			const url = `${this.rootUrl}documentation/request_for_change/${this.changeTaskResults[0].fields.request_for_change}/upload/`;
 
 			//Use axios to send the data
-			this.axios
-				.post(url, data_to_send, config)
-				.then((response) => {
-					//Just send the location to the success
-					success(`/private/${response.data[0].document_key_id}`);
-				})
-				.catch((error) => {
-				});
+			this.axios.post(
+				url,
+				data_to_send, config
+			).then((response) => {
+				//Just send the location to the success
+				success(`/private/${response.data[0].document_key_id}`);
+			}).catch((error) => {
+			});
 		},
 		updateDescription() {
+			this.$store.dispatch("newToast", {
+				header: "Updating Description",
+				message: "Updating Description, please wait",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "save_description",
+			});
+
 			const data_to_send = new FormData();
 			data_to_send.set('change_task_description', this.changeDescriptionModel);
 
 			this.axios.post(
 				"update/description/",
 				data_to_send,
-			).then((response) => {
-
-			})
-				.catch((error) => {
-				})
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "Updated Description",
+					message: "Description Updated",
+					extra_classes: "bg-success",
+					unique_type: "save_description",
+				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed Updating Description",
+					message: `Sorry - description failed to update. Error -> ${error}`,
+					extra_classes: "bg-warning",
+					delay: 0,
+					unique_type: "save_description",
+				});
+			});
 		},
 	}
 }
