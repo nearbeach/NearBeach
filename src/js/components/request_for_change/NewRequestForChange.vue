@@ -210,6 +210,23 @@ export default {
 			this.currentTab = this.currentTab - 1;
 		},
 		submitRfc() {
+			// Check validation
+			let validation_is_true = true;
+			for (let tab in this.validationData) {
+				//If there are any FALSE, then the "validation_is_true" will be false
+				validation_is_true = validation_is_true && this.validationData[tab];
+			}
+			if (validation_is_true === false) {
+				this.$store.dispatch("newToast", {
+					header: "Please check your inputs",
+					message: "Sorry, we are being told that some of the data is not passing validation. Please check",
+					extra_classes: "bg-danger",
+					delay: 1500,
+				});
+
+				return;
+			}
+
 			// Setup the new data form
 			const data_to_send = new FormData();
 			const data = this.rfcData;
