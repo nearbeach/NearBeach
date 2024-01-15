@@ -18,6 +18,7 @@ from .models import (
     KanbanCard,
     KanbanBoard,
     Notification,
+    ObjectNote,
     PermissionSet,
     Project,
     PublicLink,
@@ -307,6 +308,14 @@ class DeleteLinkForm(forms.Form):
     )
 
 
+class DeleteNoteForm(forms.ModelForm):
+    class Meta:
+        model = ObjectNote
+        fields = {
+            "object_note_id",
+        }
+
+
 class DeleteTagForm(forms.ModelForm):
     class Meta:
         model = TagAssignment
@@ -341,6 +350,15 @@ class DocumentUploadForm(forms.ModelForm):
         fields = {
             "document",
             "document_description",
+        }
+
+
+class EditNoteForm(forms.ModelForm):
+    class Meta:
+        model = ObjectNote
+        fields = {
+            "object_note_id",
+            "object_note",
         }
 
 

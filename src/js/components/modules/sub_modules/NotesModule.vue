@@ -19,13 +19,13 @@
 		<hr/>
 		<div class="row submit-row">
 			<div class="col-md-12">
-				<a
-					href="javascript:void(0)"
+				<button
 					class="btn btn-primary save-changes"
 					v-on:click="createNewNote"
 					v-if="userLevel > 1"
-				>Add Note to {{ destination }}</a
 				>
+					Add Note to {{ destination }}
+				</button>
 			</div>
 		</div>
 
@@ -35,6 +35,12 @@
 			v-bind:destination="destination"
 			v-on:update_note_history_results="updateNoteHistoryResults($event)"
 		></new-history-note-wizard>
+
+		<edit-history-note-wizard
+			v-bind:note-id="editNoteId"
+			v-bind:note-description="editNoteDescription"
+			v-on:edit_note_history_results="editNoteHistoryResults($event)"
+		></edit-history-note-wizard>
 	</div>
 </template>
 
@@ -49,10 +55,12 @@ import NewHistoryNoteWizard from "../wizards/NewHistoryNoteWizard.vue";
 
 //VueX
 import {mapGetters} from "vuex";
+import EditHistoryNoteWizard from "../wizards/EditHistoryNoteWizard.vue";
 
 export default {
 	name: "NotesModule",
 	components: {
+		EditHistoryNoteWizard,
 		Icon,
 		ListNotes,
 		NewHistoryNoteWizard,
@@ -60,6 +68,8 @@ export default {
 	mixins: [errorModalMixin, iconMixin],
 	data() {
 		return {
+			editNoteId: 0,
+			editNoteDescription: "",
 			noteHistoryResults: [],
 		};
 	},
@@ -77,6 +87,17 @@ export default {
 				document.getElementById("newNoteModal")
 			);
 			newNoteModal.show();
+		},
+		editNoteHistoryResults(data) {
+			const id = data.id;
+			const note_description = data.noteDescription;
+
+			//Get the index of the note with the id
+			var index = this.noteHistoryResults.map((row) => {
+				return row.object_note_id;
+			}).indexOf(data.object_note_id);
+
+			this.noteHistoryResults[index].object_note = data.object_note;
 		},
 		getNoteHistoryResults() {
 			this.axios

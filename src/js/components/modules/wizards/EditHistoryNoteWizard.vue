@@ -1,5 +1,5 @@
 <template>
-	<!-- NEW HISTORY NOTE -->
+	<!-- EDIT HISTORY NOTE -->
 	<div
 		class="modal fade"
 		id="newNoteModal"
@@ -16,7 +16,7 @@
 				<div class="modal-header">
 					<h2>
 						<Icon v-bind:icon="icons.noteAdd"></Icon>
-						New Note
+						Edit Note
 					</h2>
 					<button
 						type="button"
@@ -30,8 +30,8 @@
 				</div>
 				<div class="modal-body">
 					<p class="text-instructions">
-						Use the text editor to type out your note. Click on the
-						submit button to submit the note.
+						Use the text editor to edit your note. Click on the "Update" button
+						to submit the changes.
 					</p>
 					<editor
 						:init="{
@@ -43,17 +43,17 @@
             				skin: `${this.skin}`,
 			            	content_css: `${this.contentCss}`
 						}"
-						v-model="newNoteModel"
+						v-model="noteModel"
 					/>
 				</div>
 				<div class="modal-footer">
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="newNoteModel == ''"
-						v-on:click="submitNote"
+						v-bind:disabled="noteModel == ''"
+						v-on:click="updateNote"
 					>
-						Submit Note
+						Update Note
 					</button>
 					<button
 						type="button"
@@ -70,7 +70,6 @@
 
 <script>
 //JavaScript components
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
@@ -79,25 +78,25 @@ import Editor from "@tinymce/tinymce-vue";
 import {mapGetters} from "vuex";
 
 export default {
-	name: "NewHistoryNoteWizard",
+	name: "EditHistoryNoteWizard",
 	components: {
 		editor: Editor,
 		Icon,
 	},
 	props: {
-		destination: {
-			type: String,
-			default: "",
-		},
-		locationId: {
+		noteId: {
 			type: Number,
 			default: 0,
 		},
+		noteDescription: {
+			type: String,
+			default: "",
+		},
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
-			newNoteModel: "",
+			noteModel: "",
 		};
 	},
 	computed: {
@@ -107,37 +106,48 @@ export default {
 			skin: "getSkin",
 		}),
 	},
-	methods: {
-		submitNote() {
-			//Construct the form data to send
-			const data_to_send = new FormData();
-			data_to_send.set("destination", this.destination);
-			data_to_send.set("location_id", this.locationId);
-			data_to_send.set("note", this.newNoteModel);
-
-			//Add the data to data_to_send
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_notes/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Submit the note up
-					this.$emit(
-						"update_note_history_results",
-						response.data
-					);
-
-					//Close the modal
-					document.getElementById("newNoteCloseButton").click();
-
-					//Clear the notes
-					this.newNoteModel = "";
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
-				});
+	watch: {
+		noteDescription() {
+			//Update local noteModel
+			this.noteModel = this.noteDescription;
 		},
+	},
+	methods: {
+		updateNote() {
+			//Setup data to send
+			const data_to_send = new FormData();
+			data_to_send.set("note_id", `${this.noteId}`);
+			data_to_send.set("note", this.noteModel);
+
+			this.$store.dispatch("newToast", {
+				header: "Updating Note",
+				message: "Please wait - updating your note",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "save_note",
+			});
+
+			this.axios.post(
+				`${this.rootUrl}note/update/`,
+				data_to_send,
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "Updated Note",
+					message: "The note updated successfully.",
+					extra_classes: "bg-success",
+					unique_type: "save_note",
+				});
+
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed Updating Note",
+					message: `Failed to update note - Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "save_note",
+				});
+			});
+		}
 	},
 };
 </script>
