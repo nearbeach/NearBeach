@@ -26,7 +26,14 @@ def update_note(request):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # Get object note
-    form.save()
+    # Get the object to update
+    update_object_note = ObjectNote.objects.get(
+        object_note_id=form.cleaned_data["object_note_id"],
+    )
+
+    # Update the data
+    update_object_note.object_note=form.cleaned_data["object_note"]
+    update_object_note.change_user=request.user
+    update_object_note.save()
 
     return HttpResponse("")

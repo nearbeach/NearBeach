@@ -10,7 +10,6 @@
 		</p>
 
 		<list-notes
-			v-bind:note-history-results="noteHistoryResults"
 			v-bind:destination="destination"
 		></list-notes>
 
@@ -33,14 +32,9 @@
 		<new-history-note-wizard
 			v-bind:location-id="locationId"
 			v-bind:destination="destination"
-			v-on:update_note_history_results="updateNoteHistoryResults($event)"
 		></new-history-note-wizard>
 
-		<edit-history-note-wizard
-			v-bind:note-id="editNoteId"
-			v-bind:note-description="editNoteDescription"
-			v-on:edit_note_history_results="editNoteHistoryResults($event)"
-		></edit-history-note-wizard>
+		<edit-history-note-wizard></edit-history-note-wizard>
 	</div>
 </template>
 
@@ -66,13 +60,6 @@ export default {
 		NewHistoryNoteWizard,
 	},
 	mixins: [errorModalMixin, iconMixin],
-	data() {
-		return {
-			editNoteId: 0,
-			editNoteDescription: "",
-			noteHistoryResults: [],
-		};
-	},
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -88,32 +75,23 @@ export default {
 			);
 			newNoteModal.show();
 		},
-		editNoteHistoryResults(data) {
-			const id = data.id;
-			const note_description = data.noteDescription;
-
-			//Get the index of the note with the id
-			var index = this.noteHistoryResults.map((row) => {
-				return row.object_note_id;
-			}).indexOf(data.object_note_id);
-
-			this.noteHistoryResults[index].object_note = data.object_note;
-		},
 		getNoteHistoryResults() {
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
-				)
-				.then((response) => {
-					this.noteHistoryResults = response.data;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
+			).then((response) => {
+				// this.noteHistoryResults = response.data;
+				this.$store.commit({
+					type: "initNoteList",
+					noteList: response.data,
 				});
-		},
-		updateNoteHistoryResults(data) {
-			//Add the extra data
-			this.noteHistoryResults.push(data[0]);
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Note History",
+					message: `Can not retrieve the note history. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				})
+			});
 		},
 	},
 	mounted() {

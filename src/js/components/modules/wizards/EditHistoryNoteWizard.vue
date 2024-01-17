@@ -2,7 +2,7 @@
 	<!-- EDIT HISTORY NOTE -->
 	<div
 		class="modal fade"
-		id="newNoteModal"
+		id="editNoteModal"
 		tabindex="-1"
 		role="dialog"
 		aria-labelledby="exampleModalLabel"
@@ -23,7 +23,7 @@
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="newNoteCloseButton"
+						id="editNoteCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -83,16 +83,6 @@ export default {
 		editor: Editor,
 		Icon,
 	},
-	props: {
-		noteId: {
-			type: Number,
-			default: 0,
-		},
-		noteDescription: {
-			type: String,
-			default: "",
-		},
-	},
 	mixins: [iconMixin],
 	data() {
 		return {
@@ -101,7 +91,10 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			description: "getSingleNoteDescription",
 			contentCss: "getContentCss",
+			noteDescription: "getSingleNoteDescription",
+			noteId: "getSingleNoteId",
 			rootUrl: "getRootUrl",
 			skin: "getSkin",
 		}),
@@ -116,8 +109,8 @@ export default {
 		updateNote() {
 			//Setup data to send
 			const data_to_send = new FormData();
-			data_to_send.set("note_id", `${this.noteId}`);
-			data_to_send.set("note", this.noteModel);
+			data_to_send.set("object_note_id", `${this.noteId}`);
+			data_to_send.set("object_note", this.noteModel);
 
 			this.$store.dispatch("newToast", {
 				header: "Updating Note",
@@ -138,6 +131,15 @@ export default {
 					unique_type: "save_note",
 				});
 
+				//Update the vueX
+				this.$store.dispatch({
+					type: "editSingleNote",
+					noteId: this.noteId,
+					noteDescription: this.noteModel,
+				});
+
+				//Close the modal
+				document.getElementById("editNoteCloseButton").click();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Failed Updating Note",

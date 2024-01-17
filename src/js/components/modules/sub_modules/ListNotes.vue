@@ -2,7 +2,7 @@
 	<div>
 		<!-- NOTE HISTORY -->
 		<div
-			v-if="noteHistoryResults.length === 0"
+			v-if="noteList.length === 0"
 			class="module-spacer"
 		>
 			<div class="alert alert-dark">
@@ -13,7 +13,7 @@
 			 v-else
 		>
 			<div class="note-history--row"
-				 v-for="note in noteHistoryResults"
+				 v-for="note in noteList"
 				 v-bind:key="note.object_note_id"
 			>
 				<div class="note-history--profile">
@@ -22,11 +22,26 @@
 						alt="default profile"
 						class="note-history--profile-picture"
 					/>
-					<div class="text-instruction">
+					<div class="note-history--username">
 						{{note.first_name}} {{note.last_name}}
 					</div>
-					<div class="text-instruction">
+					<div class="note-history--date">
 						{{getNiceDate(note.date_modified)}}
+					</div>
+
+					<div class="note-history--edit-button">
+						<button type="button"
+								class="btn btn-outline-secondary"
+								v-on:click="editNote(note.object_note_id)"
+						>
+							Edit Note
+						</button>
+						<button type="button"
+								class="btn btn-outline-danger"
+								v-on:click="deleteNote(note.object_note_id)"
+						>
+							Delete Note
+						</button>
 					</div>
 				</div>
 				<div class="note-history--note">
@@ -45,11 +60,15 @@
 				</div>
 			</div>
 		</div>
+
+		<confirm-note-delete></confirm-note-delete>
 	</div>
 </template>
 
 <script>
 import Editor from "@tinymce/tinymce-vue";
+import { Modal } from "bootstrap";
+import ConfirmNoteDelete from "../wizards/ConfirmNoteDelete.vue"
 
 //VueX
 import {mapGetters} from "vuex";
@@ -61,6 +80,7 @@ import datetimeMixin from "../../../mixins/datetimeMixin";
 export default {
 	name: "ListNotes",
 	components: {
+		ConfirmNoteDelete,
 		editor: Editor,
 	},
 	mixins: [datetimeMixin],
@@ -69,22 +89,39 @@ export default {
 			type: String,
 			default: "",
 		},
-		noteHistoryResults: {
-			type: Array,
-			default() {
-				return [];
-			},
-		},
 	},
 	computed: {
 		...mapGetters({
 			contentCss: "getContentCss",
+			noteList: "getNoteList",
 			rootUrl: "getRootUrl",
 			staticUrl: "getStaticUrl",
 			skin: "getSkin",
 		}),
 	},
 	methods: {
+		deleteNote(object_note_id) {
+			//Tell VueX of the note id change
+			this.$store.dispatch({
+				type: "updateNoteId",
+				noteId: object_note_id,
+			});
+
+			//Open the modal
+			const modal = new Modal(document.getElementById("confirmNoteDeleteModal"));
+			modal.show();
+		},
+		editNote(object_note_id) {
+			//Tell VueX of the note id change
+			this.$store.dispatch({
+				type: "updateNoteId",
+				noteId: object_note_id,
+			});
+
+			//Open the modal
+			const modal = new Modal(document.getElementById("editNoteModal"));
+			modal.show();
+		},
 		profilePicture(picture_uuid) {
 			if (picture_uuid !== null && picture_uuid !== "") {
 				return `${this.rootUrl}private/${picture_uuid}/`;

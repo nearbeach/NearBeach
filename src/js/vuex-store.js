@@ -9,6 +9,7 @@ import {moduleDocuments} from "./vuex/documentsVueX";
 import {moduleGroupsAndUsers} from "./vuex/groupAndUsersVueX";
 import {moduleKanban} from "./vuex/kanbanVueX";
 import {moduleObjectLink} from "./vuex/objectLinkVueX";
+import {moduleNote} from "./vuex/noteVueX";
 import {moduleRfc} from "./vuex/rfcVueX";
 import {moduleToasts} from "./vuex/toastsVueX";
 import {moduleUrl} from "./vuex/urlVueX";
@@ -28,6 +29,7 @@ export const store = createStore({
         documents: moduleDocuments,
         groupsAndUsers: moduleGroupsAndUsers,
         kanban: moduleKanban,
+        note: moduleNote,
         objectLink: moduleObjectLink,
         rfc: moduleRfc,
         toasts: moduleToasts,

@@ -309,6 +309,8 @@ class DeleteLinkForm(forms.Form):
 
 
 class DeleteNoteForm(forms.ModelForm):
+    object_note_id=forms.IntegerField()
+
     class Meta:
         model = ObjectNote
         fields = {
@@ -354,6 +356,8 @@ class DocumentUploadForm(forms.ModelForm):
 
 
 class EditNoteForm(forms.ModelForm):
+    object_note_id=forms.IntegerField()
+
     class Meta:
         model = ObjectNote
         fields = {
