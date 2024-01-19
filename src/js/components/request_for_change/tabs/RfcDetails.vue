@@ -115,15 +115,9 @@
 				<div class="form-group">
 					<label>
 						LEAD:
-						<span
-							class="error"
-							v-if="
-								!v$.rfcChangeLeadModel.required &&
-								v$.rfcChangeLeadModel.$dirty
-							"
-						>
-							Please select a Change Lead.</span
-						>
+						<validation-rendering
+							v-bind:error-list="v$.rfcChangeLeadModel.$errors"
+						></validation-rendering>
 					</label>
 					<n-select
 						:options="rfcChangeLeadFixList"

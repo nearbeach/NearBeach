@@ -70,7 +70,6 @@
 
 <script>
 //JavaScript components
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
@@ -94,7 +93,7 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			newNoteModel: "",
@@ -109,34 +108,55 @@ export default {
 	},
 	methods: {
 		submitNote() {
+			//Notify user of submitting note
+			this.$store.dispatch("newToast", {
+				header: "Submitting new note",
+				message: "Please wait. Submitting new note",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "submit_note",
+			});
+
 			//Construct the form data to send
 			const data_to_send = new FormData();
 			data_to_send.set("destination", this.destination);
-			data_to_send.set("location_id", this.locationId);
+			data_to_send.set("location_id", `${this.locationId}`);
 			data_to_send.set("note", this.newNoteModel);
 
 			//Add the data to data_to_send
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_notes/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Submit the note up
-					this.$emit(
-						"update_note_history_results",
-						response.data
-					);
-
-					//Close the modal
-					document.getElementById("newNoteCloseButton").click();
-
-					//Clear the notes
-					this.newNoteModel = "";
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_notes/`,
+				data_to_send
+			).then((response) => {
+				//Notify user of success
+				this.$store.dispatch("newToast", {
+					header: "New Note Submitted",
+					message: "The new note submitted successfully.",
+					extra_classes: "bg-success",
+					unique_type: "submit_note",
 				});
+
+				//Use VueX to add the note to the note list
+				this.$store.commit({
+					type: "addNote",
+					newNote: response.data[0],
+				});
+
+				//Clear the notes
+				this.newNoteModel = "";
+
+				//Close the modal
+				document.getElementById("newNoteCloseButton").click();
+
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Submitting Note",
+					message: `Sorry, the note did not submit. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "submit_note",
+				});
+			});
 		},
 	},
 };

@@ -1,0 +1,112 @@
+<template>
+	<div
+		class="modal fade"
+		id="confirmNoteDeleteModal"
+		tabindex="-1"
+		data-bs-backdrop="static"
+		data-bs-keyboard="false"
+		aria-labelledby="confirmLinkDelete"
+		aria-hidden="true"
+	>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5
+						class="modal-title"
+						id="confirmNoteDelete"
+					>
+						Please confirm Note Deletion
+					</h5>
+					<button
+						type="button"
+						class="btn-close"
+						data-bs-dismiss="modal"
+						aria-label="Close"
+						id="confirmNoteDeleteButton"
+					></button>
+				</div>
+				<div class="modal-body">
+					Are you sure you want to delete the note?
+				</div>
+				<div class="modal-footer">
+					<button
+						type="button"
+						class="btn btn-secondary"
+						v-on:click="closeModal"
+					>
+						No
+					</button>
+					<button
+						type="button"
+						class="btn btn-primary"
+						v-on:click="deleteNote"
+					>
+						Yes
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+import {mapGetters} from "vuex";
+
+export default {
+	name: "ConfirmNoteDelete",
+	props: {},
+	computed: {
+		...mapGetters({
+			noteId: "getSingleNoteId",
+			rootUrl: "getRootUrl",
+		}),
+	},
+	methods: {
+		deleteNote() {
+			//Tell the user we are deleting the note
+			this.$store.dispatch("newToast", {
+				header: "Deleting Note",
+				message: "Currently deleting note",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "delete_note",
+			});
+
+			//Setup the data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("object_note_id", this.noteId);
+
+			this.axios.post(
+				`${this.rootUrl}note/delete/`,
+				data_to_send,
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "Note is deleted",
+					message: "Successfully Deleted Note",
+					extra_classes: "bg-success",
+					unique_type: "delete_note",
+				});
+
+				this.$store.commit({
+					type: "removeNote",
+					noteId: this.noteId,
+				});
+
+				//Close the modal
+				this.closeModal();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to Delete Note",
+					message: `Sorry, we failed to delete the note. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "delete_note",
+				});
+			})
+		},
+		closeModal() {
+			document.getElementById("confirmNoteDeleteButton").click();
+		}
+	},
+}
+</script>

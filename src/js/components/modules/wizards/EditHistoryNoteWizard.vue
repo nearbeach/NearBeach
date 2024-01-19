@@ -1,0 +1,157 @@
+<template>
+	<!-- EDIT HISTORY NOTE -->
+	<div
+		class="modal fade"
+		id="editNoteModal"
+		tabindex="-1"
+		role="dialog"
+		aria-labelledby="exampleModalLabel"
+		aria-hidden="true"
+	>
+		<div
+			class="modal-dialog modal-lg"
+			role="document"
+		>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2>
+						<Icon v-bind:icon="icons.noteAdd"></Icon>
+						Edit Note
+					</h2>
+					<button
+						type="button"
+						class="btn-close"
+						data-bs-dismiss="modal"
+						aria-label="Close"
+						id="editNoteCloseButton"
+					>
+						<span aria-hidden="true"></span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p class="text-instructions">
+						Use the text editor to edit your note. Click on the "Update" button
+						to submit the changes.
+					</p>
+					<editor
+						:init="{
+							height: 300,
+							menubar: false,
+							plugins: ['lists', 'codesample', 'table'],
+            				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
+					 				 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
+            				skin: `${this.skin}`,
+			            	content_css: `${this.contentCss}`
+						}"
+						v-model="noteModel"
+					/>
+				</div>
+				<div class="modal-footer">
+					<button
+						type="button"
+						class="btn btn-primary"
+						v-bind:disabled="noteModel == ''"
+						v-on:click="updateNote"
+					>
+						Update Note
+					</button>
+					<button
+						type="button"
+						class="btn btn-secondary"
+						data-bs-dismiss="modal"
+					>
+						Close
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+//JavaScript components
+import iconMixin from "../../../mixins/iconMixin";
+import {Icon} from "@iconify/vue";
+import Editor from "@tinymce/tinymce-vue";
+
+//VueX
+import {mapGetters} from "vuex";
+
+export default {
+	name: "EditHistoryNoteWizard",
+	components: {
+		editor: Editor,
+		Icon,
+	},
+	mixins: [iconMixin],
+	data() {
+		return {
+			noteModel: "",
+		};
+	},
+	computed: {
+		...mapGetters({
+			description: "getSingleNoteDescription",
+			contentCss: "getContentCss",
+			noteDescription: "getSingleNoteDescription",
+			noteId: "getSingleNoteId",
+			rootUrl: "getRootUrl",
+			skin: "getSkin",
+		}),
+	},
+	watch: {
+		noteDescription() {
+			//Update local noteModel
+			this.noteModel = this.noteDescription;
+		},
+	},
+	methods: {
+		updateNote() {
+			//Setup data to send
+			const data_to_send = new FormData();
+			data_to_send.set("object_note_id", `${this.noteId}`);
+			data_to_send.set("object_note", this.noteModel);
+
+			this.$store.dispatch("newToast", {
+				header: "Updating Note",
+				message: "Please wait - updating your note",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "save_note",
+			});
+
+			this.axios.post(
+				`${this.rootUrl}note/update/`,
+				data_to_send,
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "Updated Note",
+					message: "The note updated successfully.",
+					extra_classes: "bg-success",
+					unique_type: "save_note",
+				});
+
+				//Update the vueX
+				this.$store.dispatch({
+					type: "editSingleNote",
+					noteId: this.noteId,
+					noteDescription: this.noteModel,
+				});
+
+				//Close the modal
+				document.getElementById("editNoteCloseButton").click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed Updating Note",
+					message: `Failed to update note - Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "save_note",
+				});
+			});
+		}
+	},
+};
+</script>
+
+<style scoped></style>

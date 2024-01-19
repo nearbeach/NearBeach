@@ -16,9 +16,6 @@ export const moduleCard = {
         userList: [],
     }),
     mutations: {
-        appendNote(state, payload) {
-            state.cardNotes.push(payload.newNote);
-        },
         updateKanbanStatus(state, payload) {
             state.kanbanStatus = payload.kanbanStatus;
         },
@@ -63,7 +60,10 @@ export const moduleCard = {
                 }
             ).then((response) => {
                 //Save the data into noteHistoryResults
-                state.cardNotes = response.data;
+                //state.cardNotes = response.data;
+                commit("initNoteList", {
+                    noteList: response.data,
+                });
             });
 
             //Get data for the user list

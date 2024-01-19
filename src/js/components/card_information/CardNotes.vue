@@ -56,12 +56,15 @@
 			v-bind:note-history-results="cardNotes"
 			v-bind:destination="'card'"
 		></list-notes>
+
+		<edit-history-note-wizard></edit-history-note-wizard>
 	</div>
 </template>
 
 <script>
 import Editor from "@tinymce/tinymce-vue";
 import ListNotes from "../modules/sub_modules/ListNotes.vue";
+import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -69,6 +72,7 @@ import {mapGetters} from "vuex";
 export default {
 	name: "CardNotes",
 	components: {
+		EditHistoryNoteWizard,
 		editor: Editor,
 		ListNotes,
 	},
@@ -95,23 +99,20 @@ export default {
 			data_to_send.set("note", this.cardNoteModel);
 
 			//Use axios to send the data
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Add the response to the end of the noteHistoryResults
-					this.$store.commit({
-						type: "appendNote",
-						newNote: response.data[0],
-					});
-
-					//Clear the card note model
-					this.cardNoteModel = "";
-				})
-				.catch((error) => {
+			this.axios.post(
+				`${this.rootUrl}object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
+				data_to_send
+			).then((response) => {
+				//Add the response to the end of the noteHistoryResults
+				this.$store.commit({
+					type: "addNote",
+					newNote: response.data[0],
 				});
+
+				//Clear the card note model
+				this.cardNoteModel = "";
+			}).catch((error) => {
+			});
 		},
 		closeModal() {
 			document
