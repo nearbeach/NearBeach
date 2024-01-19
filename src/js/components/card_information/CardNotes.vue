@@ -99,23 +99,20 @@ export default {
 			data_to_send.set("note", this.cardNoteModel);
 
 			//Use axios to send the data
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Add the response to the end of the noteHistoryResults
-					this.$store.commit({
-						type: "appendNote",
-						newNote: response.data[0],
-					});
-
-					//Clear the card note model
-					this.cardNoteModel = "";
-				})
-				.catch((error) => {
+			this.axios.post(
+				`${this.rootUrl}object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
+				data_to_send
+			).then((response) => {
+				//Add the response to the end of the noteHistoryResults
+				this.$store.commit({
+					type: "addNote",
+					newNote: response.data[0],
 				});
+
+				//Clear the card note model
+				this.cardNoteModel = "";
+			}).catch((error) => {
+			});
 		},
 		closeModal() {
 			document

@@ -16,9 +16,6 @@ export const moduleCard = {
         userList: [],
     }),
     mutations: {
-        appendNote(state, payload) {
-            state.cardNotes.push(payload.newNote);
-        },
         updateKanbanStatus(state, payload) {
             state.kanbanStatus = payload.kanbanStatus;
         },
