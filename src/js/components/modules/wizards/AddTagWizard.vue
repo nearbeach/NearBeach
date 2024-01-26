@@ -67,7 +67,6 @@
 
 <script>
 //JavaScript extras
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
@@ -97,7 +96,7 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			allTagList: [],
@@ -129,36 +128,46 @@ export default {
 			});
 
 			//Use Axios to send data to backend
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_tags/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Emit data up
-					this.$emit("add_tags", response.data);
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_tags/`,
+				data_to_send
+			).then((response) => {
+				//Emit data up
+				this.$emit("add_tags", response.data);
 
-					//Close the modal
-					document.getElementById("addTagsCloseButton").click();
+				//Close the modal
+				document.getElementById("addTagsCloseButton").click();
 
-					//Clear the results
-					this.tagModel = [];
+				//Clear the results
+				this.tagModel = [];
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to add tag",
+					message: `Sorry, we could not add tag. Errors -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		getTagList() {
-			this.axios
-				.post(`${this.rootUrl}object_data/tag_list_all/`)
-				.then((response) => {
-					//Map data to the preferred data format for vue-select
-					this.allTagList = response.data.map((row) => {
-						return {
-							value: row.pk,
-							label: row.fields.tag_name,
-						};
-					});
-				})
-				.catch((error) => {
+			this.axios.post(
+				`${this.rootUrl}object_data/tag_list_all/`
+			).then((response) => {
+				//Map data to the preferred data format for vue-select
+				this.allTagList = response.data.map((row) => {
+					return {
+						value: row.pk,
+						label: row.fields.tag_name,
+					};
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to get tag list",
+					message: `Sorry, we could not get the tag list. Errors -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	mounted() {

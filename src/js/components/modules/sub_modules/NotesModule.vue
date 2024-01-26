@@ -41,7 +41,6 @@
 <script>
 // JavaScript Libraries
 import {Modal} from "bootstrap";
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import ListNotes from "./ListNotes.vue";
@@ -59,7 +58,7 @@ export default {
 		ListNotes,
 		NewHistoryNoteWizard,
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
