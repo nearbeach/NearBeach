@@ -7,7 +7,9 @@ Procedures
 The following documents cover procedures around NearBeach.
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Procedures
 
     Deployment of NearBeach </005-procedures/deployment/deployment>
+
+    Python Packages </005-procedures/deployment/python-packages>
