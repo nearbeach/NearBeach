@@ -126,7 +126,6 @@ import {email, maxLength, required, url} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getToken from "../../mixins/getTokenMixin";
 
 export default {
@@ -147,7 +146,7 @@ export default {
 			},
 		},
 	},
-	mixins: [errorModalMixin, getToken],
+	mixins: [getToken],
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",

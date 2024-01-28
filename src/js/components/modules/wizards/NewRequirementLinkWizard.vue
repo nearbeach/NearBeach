@@ -173,7 +173,6 @@
 
 <script>
 //JavaScript components
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
@@ -203,7 +202,7 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			isSearching: false,

@@ -103,7 +103,6 @@ import {Modal} from "bootstrap";
 
 
 //Import mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 
 //Vue Components
@@ -226,7 +225,12 @@ export default {
 						"Updated  Team Leader Status Complete";
 				})
 				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+					this.$store.dispatch("newToast", {
+						header: "Error updating group leader",
+						message: `Sorry, we could not update group leader. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 	},

@@ -51,7 +51,6 @@
 
 <script>
 //JavaScript components
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import CustomersListModule from "./CustomersListModule.vue";
@@ -69,7 +68,7 @@ export default {
 		CustomersListModule,
 		Icon,
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			customerResults: [],
@@ -99,7 +98,12 @@ export default {
 					this.customerResults = response.data;
 				})
 				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+					this.$store.dispatch("newToast", {
+						header: "Error Loading Customer Results",
+						message: `We had an issue loading customer results. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 		removeCustomer(customer_id) {

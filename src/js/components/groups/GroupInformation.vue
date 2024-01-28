@@ -59,7 +59,6 @@
 import { NSelect, NConfigProvider } from "naive-ui";
 
 //Load mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 import loadingModalMixin from "../../mixins/loadingModalMixin";
 
@@ -98,7 +97,7 @@ export default {
 			parentGroupModel: this.groupResults[0].fields.parent_group,
 		}
 	},
-	mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
+	mixins: [getThemeMixin, loadingModalMixin],
 	methods: {
 		updateGroup() {
 			//Construct data to send
@@ -120,7 +119,12 @@ export default {
 			).then((response) => {
 				this.closeLoadingModal();
 			}).catch((error) => {
-				this.showErrorModal(error, "group_information", "");
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Group",
+					message: `We had an issue updating group. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 	},

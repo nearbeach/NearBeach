@@ -67,7 +67,6 @@ import useVuelidate from "@vuelidate/core";
 import {required, email} from "@vuelidate/validators";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 import searchMixin from "../../mixins/searchMixin";
 
@@ -104,7 +103,7 @@ export default {
 			},
 		},
 	},
-	mixins: [errorModalMixin, getThemeMixin, searchMixin],
+	mixins: [getThemeMixin, searchMixin],
 	data() {
 		return {
 			customerEmailModel: "",
@@ -167,11 +166,12 @@ export default {
 					});
 				})
 				.catch((error) => {
-					this.showErrorModal(
-						error,
-						"Search Organisation Issues: can not get list of existing organisations",
-						""
-					);
+					this.$store.dispatch("newToast", {
+						header: "Error Getting Organisation Data",
+						message: `Error getting organisation data. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 		submitNewCustomer: async function () {
@@ -198,11 +198,13 @@ export default {
 				// Update the content
 				elem_cont.innerHTML = "<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.";
 
-				// Show the modal
-				const errorModal = new Modal(
-					document.getElementById("errorModal")
-				);
-				errorModal.show();
+				//Show error modal
+				this.$store.dispatch("newToast", {
+					header: "Error submitting new customer",
+					message: `Sorry, we had an submitting new customer. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 
 				//Just return - as we do not need to do the rest of this function
 				return;
@@ -237,7 +239,12 @@ export default {
 					window.location.href = response.data;
 				})
 				.catch((error) => {
-					this.showErrorModal(error, "customer", "");
+					this.$store.dispatch("newToast", {
+						header: "Error submitting new customer",
+						message: `Sorry, we had an submitting new customer. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 		updateCustomerData(data) {

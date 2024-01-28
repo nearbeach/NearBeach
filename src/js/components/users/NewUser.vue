@@ -141,9 +141,6 @@ import {email, helpers, required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 const usernameRegex = helpers.regex(/^[0-9a-zA-Z,_@+.\-]{1,150}$/);
 
-//Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
-
 export default {
 	name: "NewUser",
 	setup() {
@@ -152,9 +149,6 @@ export default {
 	components: {
 		ValidationRendering,
 	},
-	mixins: [
-		errorModalMixin,
-	],
 	props: {
 		rootUrl: {
 			type: String,
@@ -213,19 +207,20 @@ export default {
 			data_to_send.set("password1", this.password1Model);
 			data_to_send.set("password2", this.password2Model);
 
-			this.axios
-				.post(`${this.rootUrl}new_user/save/`, data_to_send)
-				.then((response) => {
-					//Send user to the user information page
-					window.location.href = response.data;
-				})
-				.catch((error) => {
-					this.showErrorModal(
-						"Please choose a suitable username",
-						"New User",
-						"Username issues"
-					);
+			this.axios.post(
+				`${this.rootUrl}new_user/save/`,
+				data_to_send
+			).then((response) => {
+				//Send user to the user information page
+				window.location.href = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to create user",
+					message: `Sorry. Failed to create user. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 };
