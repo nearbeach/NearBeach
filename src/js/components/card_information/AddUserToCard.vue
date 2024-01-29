@@ -106,7 +106,6 @@ import {Modal} from "bootstrap";
 import {mapGetters} from "vuex";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin"
 import iconMixin from "../../mixins/iconMixin";
 
 export default {
@@ -115,7 +114,7 @@ export default {
 		Icon,
 		NSelect,
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			cardId: "getCardId",
@@ -154,35 +153,37 @@ export default {
 			});
 
 			//User axios to send the data to the backend
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/kanban_card/${this.cardId}/add_user/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Close the modal
-					document.getElementById("addUserCloseButton").click();
+			this.axios.post(
+				`${this.rootUrl}object_data/kanban_card/${this.cardId}/add_user/`,
+				data_to_send
+			).then((response) => {
+				//Close the modal
+				document.getElementById("addUserCloseButton").click();
 
-					//Clear the models
-					this.userModel = [];
+				//Clear the models
+				this.userModel = [];
 
-					//Update VueX with the required data
-					this.$store.commit("updateGroupsAndUsers", {
-						objectGroupList: response.data.object_group_list,
-						objectUserList: response.data.object_user_list,
-						potentialGroupList: response.data.potential_group_list,
-						potentialUserList: response.data.potential_user_list,
-					})
-
-					//Reshow the card information modal
-					const cardModal = new Modal(
-						document.getElementById("cardInformationModal")
-					);
-					cardModal.show();
+				//Update VueX with the required data
+				this.$store.commit("updateGroupsAndUsers", {
+					objectGroupList: response.data.object_group_list,
+					objectUserList: response.data.object_user_list,
+					potentialGroupList: response.data.potential_group_list,
+					potentialUserList: response.data.potential_user_list,
 				})
-				.catch((error) => {
-					this.showErrorModal(error, "kanban card");
+
+				//Reshow the card information modal
+				const cardModal = new Modal(
+					document.getElementById("cardInformationModal")
+				);
+				cardModal.show();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error adding user to kanban card",
+					message: `Sorry, we could not add the user to the kanban card. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 };

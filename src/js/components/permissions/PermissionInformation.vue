@@ -264,7 +264,6 @@
 import SinglePermissionProperties from "./SinglePermissionProperties.vue";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 import loadingModalMixin from "../../mixins/loadingModalMixin";
 
@@ -340,7 +339,7 @@ export default {
 			this.permissionSetResults[0].fields.task_history,
 		};
 	},
-	mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
+	mixins: [getThemeMixin, loadingModalMixin],
 	methods: {
 		saveChanges() {
 			//Setup the data we want to send to the backend
@@ -401,7 +400,12 @@ export default {
 					this.closeLoadingModal();
 				})
 				.catch((error) => {
-					this.showErrorModal(error, "Permission Set", "");
+					this.$store.dispatch("newToast", {
+						header: "Error saving changes",
+						message: `Sorry, we could not save your changes. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 		updatePropertyValue(data) {

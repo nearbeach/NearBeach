@@ -127,7 +127,6 @@ import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
 
@@ -186,7 +185,7 @@ export default {
 			skin: "getSkin",
 		}),
 	},
-	mixins: [errorModalMixin, getThemeMixin, newObjectUploadMixin],
+	mixins: [getThemeMixin, newObjectUploadMixin],
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
@@ -256,15 +255,20 @@ export default {
 			});
 
 			//Send data to backend
-			this.axios
-				.post(`${this.rootUrl}new_project/save/`, data_to_send)
-				.then((response) => {
-					//Go to the new project
-					window.location.href = response.data;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+			this.axios.post(
+				`${this.rootUrl}new_project/save/`,
+				data_to_send
+			).then((response) => {
+				//Go to the new project
+				window.location.href = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error submitting new project",
+					message: `Sorry, we could not submit new project. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		updateDates(data) {
 			//Update both the start and end dates

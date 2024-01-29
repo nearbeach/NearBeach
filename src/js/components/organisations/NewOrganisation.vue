@@ -149,7 +149,6 @@ import {email, maxLength, required, url} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 export default {
@@ -167,7 +166,7 @@ export default {
 			default: "/",
 		},
 	},
-	mixins: [errorModalMixin, loadingModalMixin],
+	mixins: [loadingModalMixin],
 	data() {
 		return {
 			duplicateOrganisations: [],
@@ -196,31 +195,39 @@ export default {
 			this.v$.$touch();
 
 			if (this.v$.$invalid) {
-				this.showValidationErrorModal();
+				this.$store.dispatch("newToast", {
+					header: "Please check validation",
+					message: "Sorry, but can you please fix all validation issues.",
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
+
 				//Just return - as we do not need to do the rest of this function
 				return;
 			}
 
 			//Check the organisation's data to make sure there are no duplicates
 			//Use axios to contact the database
-			this.axios
-				.post(
-					`${this.rootUrl}organisation_duplicates/`,
-					this.dataToSend()
-				)
-				.then((response) => {
-					//If the response data has nothing in it - we want to submit that data.
-					if (response.data.length === 0) {
-						//Submit that data
-						this.uploadOrganisationData();
-					}
+			this.axios.post(
+				`${this.rootUrl}organisation_duplicates/`,
+				this.dataToSend()
+			).then((response) => {
+				//If the response data has nothing in it - we want to submit that data.
+				if (response.data.length === 0) {
+					//Submit that data
+					this.uploadOrganisationData();
+				}
 
-					//Copy over the response data
-					this.duplicateOrganisations = response.data;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "organisation", "");
+				//Copy over the response data
+				this.duplicateOrganisations = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error adding organisation",
+					message: `Sorry, we could not add the organisation. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		dataToSend() {
 			const data_to_send = new FormData();
@@ -243,14 +250,20 @@ export default {
 		uploadOrganisationData() {
 			//Use Axios to send the data
 			//Get the data to send
-			this.axios
-				.post("save/", this.dataToSend())
-				.then((response) => {
-					//Go to the url sent back
-					window.location.href = `${this.rootUrl}organisation_information/${response.data[0].pk}/`;
-				})
-				.catch((error) => {
+			this.axios.post(
+				"save/",
+				this.dataToSend()
+			).then((response) => {
+				//Go to the url sent back
+				window.location.href = `${this.rootUrl}organisation_information/${response.data[0].pk}/`;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error uploading organisation data",
+					message: `Sorry, we could not upload the organisation data. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 	validations: {

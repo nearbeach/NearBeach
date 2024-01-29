@@ -44,8 +44,6 @@
 </template>
 
 <script>
-//Mixins
-import ErrorModalMixin from "../../mixins/errorModalMixin";
 
 export default {
 	name: "DashboardUsersWithNoGroups",
@@ -64,7 +62,6 @@ export default {
 			userList: [],
 		};
 	},
-	mixins: [ErrorModalMixin],
 	methods: {
 		getUserList() {
 			//Get the data from the database
@@ -74,7 +71,12 @@ export default {
 					this.userList = response.data;
 				})
 				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+					this.$store.dispatch("newToast", {
+						header: "Error getting user list",
+						message: `Sorry, we could not retrieve the user user. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 		goToUser(user_id) {

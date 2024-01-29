@@ -469,11 +469,6 @@ export default {
 				this.singleItemId = "";
 				this.newPropertyItem = "";
 			}).catch((error) => {
-				this.showErrorModal(
-					error,
-					"kanban board",
-					this.kanbanBoardId
-				);
 				this.$store.dispatch("newToast", {
 					header: "Can not add/edit",
 					message: `Sorry, but we are having issues editing or adding - Error -> ${error}`,

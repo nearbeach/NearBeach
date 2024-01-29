@@ -134,18 +134,12 @@ export default {
 
 			//NEED TO USE MIXIN FOR THIS SECTION
 			if (!isFormCorrect) {
-				//Show the error dialog and notify to the user that there were field missing.
-				const elem_cont =
-					document.getElementById("errorModalContent");
-
-				// Update the content
-				elem_cont.innerHTML = "<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.";
-
-				// Show the modal
-				const errorModal = new Modal(
-					document.getElementById("errorModal")
-				);
-				errorModal.show();
+				this.$store.dispatch("newToast", {
+					header: "Please check validation",
+					message: "Sorry, but can you please fix all validation issues.",
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
 
 				//Just return - as we do not need to do the rest of this function
 				return;

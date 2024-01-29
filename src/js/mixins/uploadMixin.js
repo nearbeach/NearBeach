@@ -4,9 +4,6 @@ import axios from "axios";
 //VueX
 import {mapGetters} from "vuex";
 
-//Import Mixins
-import errorModalMixin from "./errorModalMixin";
-
 export default {
     computed: {
         ...mapGetters({
@@ -15,7 +12,6 @@ export default {
             rootUrl: "getRootUrl",
         }),
     },
-    mixins: [errorModalMixin],
     methods: {
         uploadImage(blobInfo, progress) {
             //Create the form
@@ -34,25 +30,21 @@ export default {
             };
 
             //Use axios to send the data
-            return this.axios
-                .post(
-                    `${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
-                    data_to_send,
-                    config
-                )
-                .then((response) => {
-                    //Just send the location to the success
-                    return `/private/${response.data[0].document_key_id}`;
-                })
-                .catch((error) => {
-                    this.showErrorModal(
-                        error,
-                        "Upload Image",
-                        ""
-                    );
-
-
+            return this.axios.post(
+                `${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
+                data_to_send,
+                config
+            ).then((response) => {
+                //Just send the location to the success
+                return `/private/${response.data[0].document_key_id}`;
+            }).catch((error) => {
+                this.$store.dispatch("newToast", {
+                    header: "Failed to upload image",
+                    message: `Sorry, could not upload image. Error -> ${error}`,
+                    extra_classes: "bg-danger",
+                    delay: 0,
                 });
+            });
         },
         newObjectUploadImage(blobInfo, progress) {
             //Create the form
@@ -72,25 +64,21 @@ export default {
             };
 
             //Use axios to send the data
-            return axios
-                .post(
-                    `${this.rootUrl}documentation/new_object_upload/`,
-                    data_to_send,
-                    config
-                )
-                .then((response) => {
-                    //Just send the location to the success
-                    return `/private/${response.data[0].document_key_id}`;
-                })
-                .catch((error) => {
-                    this.showErrorModal(
-                        error,
-                        "Upload Image",
-                        ""
-                    );
-
-
+            return axios.post(
+                `${this.rootUrl}documentation/new_object_upload/`,
+                data_to_send,
+                config
+            ).then((response) => {
+                //Just send the location to the success
+                return `/private/${response.data[0].document_key_id}`;
+            }).catch((error) => {
+                this.$store.dispatch("newToast", {
+                    header: "Failed to upload image",
+                    message: `Sorry, could not upload image. Error -> ${error}`,
+                    extra_classes: "bg-danger",
+                    delay: 0,
                 });
+            });
         }
     },
 };

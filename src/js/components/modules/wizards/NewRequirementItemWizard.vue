@@ -144,7 +144,6 @@ import {NSelect} from "naive-ui";
 import Editor from "@tinymce/tinymce-vue";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 
 //Validation
@@ -166,7 +165,7 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			requirementItemScopeModel: "",
@@ -243,7 +242,12 @@ export default {
 					.getElementById("requirementItemCloseButton")
 					.click();
 			}).catch((error) => {
-				this.showErrorModal(error, this.destination);
+				this.$store.dispatch("newToast", {
+					header: "Failed to save item",
+					message: `Failed to save item. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 		updateStatusList() {

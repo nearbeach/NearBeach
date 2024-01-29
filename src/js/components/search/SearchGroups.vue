@@ -56,7 +56,6 @@
 
 <script>
 // Import mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import searchMixin from "../../mixins/searchMixin";
 
 export default {
@@ -73,7 +72,7 @@ export default {
 			default: "/",
 		},
 	},
-	mixins: [errorModalMixin, searchMixin],
+	mixins: [searchMixin],
 	data() {
 		return {
 			groupList: this.groupResults,
@@ -88,15 +87,19 @@ export default {
 			data_to_send.set("search", this.searchModel);
 
 			//Use Axios to send data
-			this.axios
-				.post(`${this.rootUrl}search/group/data/`, data_to_send)
-				.then((response) => {
-					this.groupList = response.data;
-				})
-				.catch((error) => {
-					//Show error
-					this.showErrorModal(error, "Search Groups", "");
+			this.axios.post(
+				`${this.rootUrl}search/group/data/`,
+				data_to_send
+			).then((response) => {
+				this.groupList = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to get search results",
+					message: `Failed to get search results. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 	watch: {
