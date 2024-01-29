@@ -84,7 +84,6 @@ import {required} from "@vuelidate/validators";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
-import searchMixin from "../../mixins/searchMixin";
 
 export default {
 	name: "KanbanEditBoard",
@@ -139,7 +138,7 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [getThemeMixin, searchMixin],
+	mixins: [getThemeMixin],
 	data() {
 		return {
 			canDragCards: false,

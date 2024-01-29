@@ -46,9 +46,6 @@
 </template>
 
 <script>
-//Import mixins
-import searchMixin from "../../mixins/searchMixin";
-
 //Vue Components
 import ListOrganisations from "../organisations/ListOrganisations.vue";
 
@@ -73,7 +70,6 @@ export default {
 			default: "/",
 		},
 	},
-	mixins: [searchMixin],
 	data() {
 		return {
 			localOrganisationResults: this.organisationResults,
@@ -102,10 +98,19 @@ export default {
 	},
 	watch: {
 		searchModel() {
-			this.searchTrigger({
-				return_function: this.getSearchResults,
-				searchTimeout: this.searchTimeout,
-			});
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getSearchResults();
+				}, 500);
+			}
 		},
 	},
 	mounted() {

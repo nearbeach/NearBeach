@@ -48,9 +48,6 @@ import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
-//Mixins
-import searchMixin from "../../mixins/searchMixin";
-
 export default {
 	name: "GetStakeholders",
 	setup() {
@@ -60,7 +57,6 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
-	mixins: [searchMixin],
 	props: {
 		isDirty: {
 			//Passes the value from the template above where the checking is done
@@ -87,12 +83,19 @@ export default {
 	},
 	methods: {
 		fetchOptions(search, loading) {
-			this.searchTrigger({
-				return_function: this.getOrganisationData,
-				searchTimeout: this.searchTimeout,
-				search: search,
-				loading: loading,
-			});
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (search.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getOrganisationData(search, loading);
+				}, 500);
+			}
 		},
 		getOrganisationData(search, loading) {
 			// Save the seach data in FormData

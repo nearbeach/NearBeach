@@ -148,7 +148,6 @@ import GroupPermissions from "../../permissions/GroupPermissions.vue";
 
 //Mixins
 import datetimeMixin from "../../../mixins/datetimeMixin";
-import searchMixin from "../../../mixins/searchMixin";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -187,7 +186,7 @@ export default {
 			default: "",
 		},
 	},
-	mixins: [datetimeMixin, searchMixin],
+	mixins: [datetimeMixin],
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
@@ -293,12 +292,19 @@ export default {
 			return end_date.getTime();
 		},
 		fetchOptions(search, loading) {
-			this.searchTrigger({
-				return_function: this.getChangeLeadData,
-				searchTimeout: this.searchTimeout,
-				search: search,
-				loading: loading,
-			});
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (search.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getChangeLeadData(search, loading);
+				}, 500);
+			}
 		},
 		getChangeLeadData(search, loading) {
 			// Save the seach data in FormData

@@ -46,9 +46,6 @@
 </template>
 
 <script>
-//Import mixins
-import searchMixin from "../../mixins/searchMixin";
-
 //Vue Components
 import ListCustomers from "../customers/ListCustomers.vue";
 
@@ -73,7 +70,6 @@ export default {
 			default: "/",
 		},
 	},
-	mixins: [searchMixin],
 	data() {
 		return {
 			localCustomerResults: this.customerResults,
@@ -88,21 +84,36 @@ export default {
 			data_to_send.set("search", this.searchModel);
 
 			//Use axios to obtain the data we require
-			this.axios
-				.post(`${this.rootUrl}search/customer/data/`, data_to_send)
-				.then((response) => {
-					this.localCustomerResults = response.data;
-				})
-				.catch((error) => {
+			this.axios.post(
+				`${this.rootUrl}search/customer/data/`,
+				data_to_send
+			).then((response) => {
+				this.localCustomerResults = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting search results",
+					message: "Sorry, we could not retrieve your search results",
+					extra_classes: "bg-warning",
+					delay: 0,
 				});
+			});
 		},
 	},
 	watch: {
 		searchModel() {
-			this.searchTrigger({
-				return_function: this.getSearchResults,
-				searchTimeout: this.searchTimeout,
-			});
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getSearchResults();
+				}, 500);
+			}
 		},
 	},
 	mounted() {

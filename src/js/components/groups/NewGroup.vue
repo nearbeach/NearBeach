@@ -78,7 +78,6 @@ import ValidationRendering from "../validation/ValidationRendering.vue";
 
 // Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
-import searchMixin from "../../mixins/searchMixin";
 
 export default {
 	name: "NewGroup",
@@ -111,10 +110,11 @@ export default {
 			groupNameModel: "",
 			groupResultsFixList: [],
 			parentGroupModel: "",
+			searchTimeout: "",
 			uniqueGroupName: true,
 		};
 	},
-	mixins: [getThemeMixin, searchMixin],
+	mixins: [getThemeMixin],
 	validations: {
 		groupNameModel: {
 			required,
@@ -125,11 +125,19 @@ export default {
 			// Tell user that we are searching for the group name
 			this.checkingGroupName = true;
 
-			// Apply the search functional mixing
-			this.searchTrigger({
-				return_function: this.checkGroupName,
-				searchTimeout: this.searchTimeout,
-			});
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.checkGroupName();
+				}, 500);
+			}
 		},
 	},
 	methods: {

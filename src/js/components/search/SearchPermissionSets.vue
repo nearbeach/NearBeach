@@ -54,8 +54,6 @@
 </template>
 
 <script>
-// Import mixins
-import searchMixin from "../../mixins/searchMixin";
 
 export default {
 	name: "SearchPermissionSets",
@@ -71,7 +69,6 @@ export default {
 			default: "/",
 		},
 	},
-	mixins: [searchMixin],
 	data() {
 		return {
 			permissionSetList: this.permissionSetResults,
@@ -106,10 +103,19 @@ export default {
 	},
 	watch: {
 		searchModel() {
-			this.searchTrigger({
-				return_function: this.getSearchResults,
-				searchTimeout: this.searchTimeout,
-			});
+			// Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getSearchResults();
+				}, 500);
+			}
 		},
 	},
 };
