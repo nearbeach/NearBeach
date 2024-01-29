@@ -43,9 +43,6 @@
 //VueX
 import {mapGetters} from "vuex";
 
-//Import mixins
-import loadingModalMixin from "../../../mixins/loadingModalMixin";
-
 export default {
 	name: "RfcApprovalButtons",
 	props: {
@@ -60,7 +57,6 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [loadingModalMixin],
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",
@@ -92,16 +88,19 @@ export default {
 		},
 		sendStatus(data_to_send) {
 			//Open up the loading modal
-			this.showLoadingModal("Request for Change");
+			this.$store.dispatch("newToast", {
+				header: "Updating Status",
+				message: "Updating Status. Please wait.",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "send_status",
+			});
 
 			//Use axios to send the status update to the backend
 			this.axios.post(
 				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/update_status/`,
 				data_to_send
 			).then((response) => {
-				//Notify user of success update
-				this.closeLoadingModal();
-
 				//Reload the page to get redirected to the correct place
 				window.location.reload(true);
 			}).catch((error) => {
@@ -110,6 +109,7 @@ export default {
 					message: `Sorry, we could not update the status. Error -> ${error}`,
 					extra_classes: "bg-danger",
 					delay: 0,
+					unique_type: "send_status",
 				});
 			});
 		},

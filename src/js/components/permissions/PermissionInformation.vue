@@ -265,8 +265,6 @@ import SinglePermissionProperties from "./SinglePermissionProperties.vue";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
-
 export default {
 	name: "PermissionInformation",
 	components: {
@@ -339,7 +337,7 @@ export default {
 			this.permissionSetResults[0].fields.task_history,
 		};
 	},
-	mixins: [getThemeMixin, loadingModalMixin],
+	mixins: [getThemeMixin],
 	methods: {
 		saveChanges() {
 			//Setup the data we want to send to the backend
@@ -386,27 +384,19 @@ export default {
 			data_to_send.set("task_history", this.taskHistoryModel);
 			data_to_send.set("tag", this.tagModel);
 
-			//Show the loading modal mixing
-			this.showLoadingModal("permission set");
-
 			//Send data
-			this.axios
-				.post(
-					`${this.rootUrl}permission_set_information/${this.permissionSetResults[0].pk}/save/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Hide loading modal mixing
-					this.closeLoadingModal();
-				})
-				.catch((error) => {
-					this.$store.dispatch("newToast", {
-						header: "Error saving changes",
-						message: `Sorry, we could not save your changes. Error -> ${error}`,
-						extra_classes: "bg-danger",
-						delay: 0,
-					});
+			this.axios.post(
+				`${this.rootUrl}permission_set_information/${this.permissionSetResults[0].pk}/save/`,
+				data_to_send
+			).then((response) => {
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error saving changes",
+					message: `Sorry, we could not save your changes. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		updatePropertyValue(data) {
 			//Update the property with what we require

@@ -143,8 +143,6 @@
 
 <script>
 //Vue is like "I wanna write JS in my HTML" and React is like "I wanna write my HTML as JS"
-//Import mixins
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
@@ -180,7 +178,6 @@ export default {
 			lastNameModel: this.userResults[0]["fields"]["last_name"],
 		};
 	},
-	mixins: [loadingModalMixin],
 	validations: {
 		lastNameModel: {
 			required,

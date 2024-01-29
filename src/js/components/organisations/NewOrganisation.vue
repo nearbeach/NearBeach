@@ -148,9 +148,6 @@ import useVuelidate from "@vuelidate/core";
 import {email, maxLength, required, url} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
-//Mixins
-import loadingModalMixin from "../../mixins/loadingModalMixin";
-
 export default {
 	name: "NewOrganisation",
 	setup() {
@@ -166,7 +163,6 @@ export default {
 			default: "/",
 		},
 	},
-	mixins: [loadingModalMixin],
 	data() {
 		return {
 			duplicateOrganisations: [],

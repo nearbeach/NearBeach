@@ -148,7 +148,6 @@ import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 import uploadMixin from "../../mixins/uploadMixin";
 
 export default {
@@ -220,7 +219,7 @@ export default {
 			window.location.reload();
 		},
 	},
-	mixins: [getThemeMixin, loadingModalMixin, uploadMixin],
+	mixins: [getThemeMixin, uploadMixin],
 	data() {
 		return {
 			isReadOnly: false,

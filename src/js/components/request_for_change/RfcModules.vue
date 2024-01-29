@@ -297,7 +297,6 @@ import {mapGetters} from "vuex";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 export default {
 	name: "RfcModules",
@@ -338,7 +337,7 @@ export default {
 			},
 		},
 	},
-	mixins: [getThemeMixin, loadingModalMixin],
+	mixins: [getThemeMixin],
 	data: () => ({
 		rfcData: {
 			rfcBackoutPlan: "",

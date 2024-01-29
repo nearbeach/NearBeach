@@ -297,7 +297,6 @@ import {Modal} from "bootstrap";
 //Import mixins
 import datetimeMixin from "../../mixins/datetimeMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
@@ -411,7 +410,7 @@ export default {
 			return start_date || end_date || release_date;
 		},
 	},
-	mixins: [datetimeMixin, getThemeMixin, loadingModalMixin],
+	mixins: [datetimeMixin, getThemeMixin],
 	data() {
 		return {
 			approvalUsersList: [],
