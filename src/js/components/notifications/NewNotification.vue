@@ -88,7 +88,6 @@
 import BetweenDates from "../dates/BetweenDates.vue";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 
 //Validation
@@ -124,7 +123,7 @@ export default {
 			default: "",
 		},
 	},
-	mixins: [errorModalMixin, getThemeMixin],
+	mixins: [getThemeMixin],
 	data() {
 		return {
 			endDateModel: "",
@@ -183,7 +182,14 @@ export default {
 			).then((response) => {
 				//Go to the new notification
 				window.location.href = response.data;
-			}).catch((error) => {});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error submitting new notifications",
+					message: `Sorry, we could not submit the new notification. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 		updateDates(data) {
 			//Update both the start and end dates

@@ -146,7 +146,7 @@ export default {
 			permissionDeleteId: 0,
 		};
 	},
-	mixins: [errorModalMixin, getThemeMixin, iconMixin],
+	mixins: [getThemeMixin, iconMixin],
 	methods: {
 		addUser() {
 			//Show the user's modal

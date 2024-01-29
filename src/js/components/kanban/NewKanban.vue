@@ -247,7 +247,12 @@ export default {
 				!this.uniqueKanbanBoardName ||
 				this.checkingKanbanBoardName
 			) {
-				this.showValidationErrorModal();
+				this.$store.dispatch("newToast", {
+					header: "Please check validation",
+					message: "Sorry, but can you please fix all validation issues.",
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
 
 				//Just return - as we do not need to do the rest of this function
 				return;

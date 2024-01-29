@@ -60,7 +60,6 @@
 
 <script>
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import searchMixin from "../../mixins/searchMixin";
 
 export default {
@@ -77,7 +76,7 @@ export default {
 			default: "/",
 		},
 	},
-	mixins: [errorModalMixin, searchMixin],
+	mixins: [searchMixin],
 	data() {
 		return {
 			localNotificationResults: this.notificationResults,
@@ -98,7 +97,12 @@ export default {
 			).then((response) => {
 				this.localNotificationResults = response.data;
 			}).catch((error) => {
-				this.showErrorModal(error, "Search Notification", "");
+				this.$store.dispatch("newToast", {
+					header: "Error getting search results",
+					message: `Sorry, we could not retrieve the search results. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		}
 	},

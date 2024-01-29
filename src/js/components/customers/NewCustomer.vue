@@ -191,13 +191,6 @@ export default {
 
 			//NEED TO USE MIXIN FOR THIS SECTION
 			if (!hasFormErrors) {
-				//Show the error dialog and notify to the user that there were field missing.
-				const elem_cont =
-					document.getElementById("errorModalContent");
-
-				// Update the content
-				elem_cont.innerHTML = "<strong>FORM ISSUE:</strong> Sorry, but can you please fill out the form completely.";
-
 				//Show error modal
 				this.$store.dispatch("newToast", {
 					header: "Error submitting new customer",

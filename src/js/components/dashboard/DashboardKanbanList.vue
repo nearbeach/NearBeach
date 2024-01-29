@@ -43,7 +43,6 @@ export default {
 			end_date: "end_date",
 		},
 	}),
-	mixins: [errorModalMixin],
 	methods: {
 		getMyKanbanList() {
 			//Use axios to get data
