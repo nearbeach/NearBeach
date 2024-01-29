@@ -279,7 +279,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Customer Updated",
 					message: "The Customer has updated",
-					extra_classes: "bg-sucess",
+					extra_classes: "bg-success",
 					unique_type: "save",
 				});
 
