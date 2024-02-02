@@ -7,7 +7,7 @@ from NearBeach.forms import (
     UpdateChangeLeadForm,
     UpdateRFCStatus,
 )
-from NearBeach.decorators.check_user_permissions import check_rfc_permissions
+from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.models import (
     RequestForChange,
     User,
@@ -115,7 +115,7 @@ def get_rfc_context(rfc_id):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=3)
+@check_specific_object_permissions(min_permission_level=3, object_lookup="request_for_change")
 def new_request_for_change(request, *args, **kwargs):
     """
     :param request:
@@ -160,7 +160,7 @@ def new_request_for_change(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=3)
+@check_specific_object_permissions(min_permission_level=3, object_lookup="request_for_change")
 def new_request_for_change_save(request, *args, **kwargs):
     """
     :param request:
@@ -223,14 +223,14 @@ def new_request_for_change_save(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=1)
+@check_specific_object_permissions(min_permission_level=1, object_lookup="request_for_change")
 def rfc_change_task_list(request, rfc_id, *args, **kwargs):
     # Return data from function get_rfc_change_task
     return get_rfc_change_task(rfc_id)
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="request_for_change")
 def rfc_deployment(request, rfc_id, *args, **kwargs):
     """
     :param request:
@@ -253,7 +253,7 @@ def rfc_deployment(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=1)
+@check_specific_object_permissions(min_permission_level=1, object_lookup="request_for_change")
 def rfc_get_approval_users(request, rfc_id, *args, **kwargs):
     """
     :param request:
@@ -290,7 +290,7 @@ def rfc_get_approval_users(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="request_for_change")
 def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     """
     :param request:
@@ -325,7 +325,7 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=1)
+@check_specific_object_permissions(min_permission_level=1, object_lookup="request_for_change")
 def rfc_information(request, rfc_id, *args, **kwargs):
     """
     :param request:
@@ -350,7 +350,7 @@ def rfc_information(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="request_for_change")
 def rfc_information_save(request, rfc_id, *args, **kwargs):
     """
     :param request:
@@ -390,7 +390,7 @@ def rfc_information_save(request, rfc_id, *args, **kwargs):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=1)
+@check_specific_object_permissions(min_permission_level=1, object_lookup="request_for_change")
 def rfc_readonly(request, rfc_id, *args, **kwargs):
     """
     :param request:
@@ -424,7 +424,7 @@ def rfc_readonly(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="request_for_change")
 def rfc_save_backout(request, rfc_id, *args, **kwargs):
     """
     :param request:
@@ -449,7 +449,7 @@ def rfc_save_backout(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="request_for_change")
 def rfc_save_implementation(request, rfc_id, *args, **kwargs):
     """ """
     # Check user permissions
@@ -473,7 +473,7 @@ def rfc_save_implementation(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="request_for_change")
 def rfc_save_risk(request, rfc_id, *args, **kwargs):
     """ """
     # CHECK USER PERMISSIONS
@@ -501,7 +501,7 @@ def rfc_save_risk(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="request_for_change")
 def rfc_save_test(request, rfc_id, *args, **kwargs):
     """ """
     # Check user permissions
@@ -669,7 +669,7 @@ def rfc_status_waiting_for_approval(rfc_id, rfc_results, request):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="request_for_change")
 def rfc_update_change_lead(request, rfc_id, *args, **kwargs):
     # Get the form data
     form = UpdateChangeLeadForm(request.POST)
@@ -707,7 +707,7 @@ def rfc_update_change_lead(request, rfc_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_rfc_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="request_for_change")
 def rfc_update_status(request, rfc_id, *args, **kwargs):
     """
     Using a simple form, we determine which status we are going to update to

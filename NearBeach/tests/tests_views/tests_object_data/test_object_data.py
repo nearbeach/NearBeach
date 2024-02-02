@@ -68,7 +68,7 @@ class TestObjectData(TestCase):
         for url in url_list:
             with self.subTest(url):
                 # Get data of wrong location - gets a 403
-                response = c.post(reverse(url, args=["taks", 1]))
+                response = c.post(reverse(url, args=["task", 1]))
                 self.assertEqual(response.status_code, 403)
 
     def test_incorrect_destination_data__link_list(self):
@@ -83,7 +83,7 @@ class TestObjectData(TestCase):
         login_user(c, self)
 
         # Get data of wrong location - gets a 403
-        response = c.post(reverse("link_list", args=["taks", 1, "project"]))
+        response = c.post(reverse("link_list", args=["task", 1, "project"]))
         self.assertEqual(response.status_code, 403)
 
     def test_correct_destination_data__link_list(self):
@@ -98,7 +98,7 @@ class TestObjectData(TestCase):
         login_user(c, self)
 
         # Get data of wrong location - gets a 403
-        response = c.post(reverse("link_list", args=["task", 1, "project"]))
+        response = c.post(reverse("link_list", args=["task", 2, "project"]))
         self.assertEqual(response.status_code, 200)
 
     def test_correct_object_data__without_forms(self):
@@ -133,7 +133,7 @@ class TestObjectData(TestCase):
         for url in url_list:
             with self.subTest(url):
                 # Get data of wrong location - gets a 403
-                response = c.post(reverse(url, args=["task", 1]))
+                response = c.post(reverse(url, args=["task", 2]))
                 self.assertEqual(response.status_code, 200)
 
     def test_correct_object_data__with_forms(self):
@@ -171,7 +171,6 @@ class TestObjectData(TestCase):
             with self.subTest(data):
                 # Get data of wrong location - gets a 403
                 response = c.post(
-                    reverse(data["url"], args=["task", 1]), data["formData"]
+                    reverse(data["url"], args=["task", 2]), data["formData"]
                 )
-                reverseUrl = reverse(data["url"], args=["task", 1])
                 self.assertEqual(response.status_code, 200)

@@ -10,7 +10,7 @@ from NearBeach.forms import SearchForm, NewGroupForm
 from NearBeach.models import Group
 from NearBeach.views.tools.internal_functions import get_user_permissions
 from NearBeach.views.theme_views import get_theme
-from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
+from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
 
 import json
 

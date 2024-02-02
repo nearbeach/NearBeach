@@ -5,8 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-
-from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
+from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
 from NearBeach.forms import NewPermissionSetForm, PermissionSetForm
 from NearBeach.models import (
     PermissionSet,

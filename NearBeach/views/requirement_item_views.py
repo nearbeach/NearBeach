@@ -3,13 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q, F
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
-from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import (
-    check_user_requirement_item_permissions,
-    check_user_permissions,
+from NearBeach.decorators.check_user_permissions.object_permissions import (
+    check_specific_object_permissions,
 )
 from NearBeach.forms import (
     AddRequirementLinkForm,
@@ -33,7 +31,7 @@ from NearBeach.views.theme_views import get_theme
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_requirement_item_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="requirement_item")
 def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
     """Obtain form data and validate"""
     form = AddRequirementLinkForm(request.POST)
@@ -93,7 +91,7 @@ def get_requirement_item_links(requirement_item_id):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="requirement_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="requirement")
 def new_requirement_item(request, requirement_id, *args, **kwargs):
     """Check to see if POST"""
     if not request.method == "POST":
@@ -122,7 +120,7 @@ def new_requirement_item(request, requirement_id, *args, **kwargs):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_user_requirement_item_permissions(min_permission_level=1)
+@check_specific_object_permissions(min_permission_level=1, object_lookup="requirement_item")
 def requirement_item_information(request, requirement_item_id, *args, **kwargs):
     """
     Loads the requirement item information.
@@ -203,7 +201,7 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_requirement_item_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="requirement_item")
 def requirement_information_save(request, requirement_item_id, *args, **kwargs):
     """
     The following will save data

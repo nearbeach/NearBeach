@@ -1,5 +1,5 @@
 # Import Forms
-from ..forms import PermissionSet, Group, LoginForm, User
+from ..forms import PermissionSet, Group, LoginForm
 from ..models import UserGroup, Notification, Organisation
 from django.contrib.auth.models import User
 
@@ -11,7 +11,7 @@ from django.template import loader
 from django.urls import reverse
 from django.db.models import Q
 from random import SystemRandom
-from NearBeach.decorators.check_user_permissions import check_permission_denied
+from NearBeach.decorators.check_user_permissions.permission_denied import check_permission_denied
 
 # Import Python Libraries
 import json
