@@ -1,5 +1,18 @@
 [
 {
+  "model": "NearBeach.bugclient",
+  "pk": 1,
+  "fields": {
+    "bug_client_name": "NearBeach Bugzilla",
+    "list_of_bug_client": 1,
+    "bug_client_url": "https://bugzilla.nearbeach.org",
+    "date_created": "2024-02-03T00:53:25.871Z",
+    "date_modified": "2024-02-03T00:53:25.871Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.changetask",
   "pk": 1,
   "fields": {
@@ -2317,6 +2330,19 @@
   }
 },
 {
+  "model": "NearBeach.tag",
+  "pk": 1,
+  "fields": {
+    "tag_name": "default tag",
+    "tag_colour": "#37cbd2",
+    "tag_text_colour": "#ffffff",
+    "date_created": "2024-02-03T00:53:00.375Z",
+    "date_modified": "2024-02-03T00:53:00.375Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.task",
   "pk": 1,
   "fields": {
@@ -2470,6 +2496,19 @@
     "setting_data": {
       "theme": "dark"
     }
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2024-02-03T00:53:25.872Z",
+    "user": 1,
+    "content_type": 35,
+    "object_id": "1",
+    "object_repr": "NearBeach Bugzilla",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
   }
 },
 {
@@ -4132,8 +4171,8 @@
   "model": "auth.user",
   "pk": 1,
   "fields": {
-    "password": "pbkdf2_sha256$600000$M7cJrfehXMKIRmew4XHwV7$HTkU5qu5YT+hDQG350mZ4qpKx9xibWv1e70PgXEWOOk=",
-    "last_login": "2023-11-15T11:04:56.330Z",
+    "password": "pbkdf2_sha256$720000$xBoXxSEeVXBdR0rm6efbo0$//JuZL1sOsIXbgd6qdboRpMTz0MgwRi9Oi5AsuaSVx8=",
+    "last_login": "2024-02-03T00:38:41.706Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "Admin",
@@ -4628,6 +4667,14 @@
   "fields": {
     "session_data": ".eJxVjMsOwiAUBf-FtSHQF-DSvd9AuC9bNa2BsjL-u23ShW7PzJm3iqmuY6yFc5xInZVVp98NEj543gHd03xbNC7zmifQu6IPWvR1IX5eDvcvMKYybm8YerLGJ9dZsCKBxAV0BJ4QWtMIQOux6xu2GFhcFxjZGRnA9uJbNlt0KrHUF-c9q85rrvz5Ar6eQGE:1r3DhY:kBkq63w57t7pLz9nNmDjiZ9gx_r6SSDLMLyMP__LaKY",
     "expire_date": "2023-11-29T11:04:56.353Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "8m5uznyh101is14fmwrekdyh1rf0y6ft",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1rW4H5:z0s-sSFp5Omsk3ltbIEgBmp6Ll-0CCRZo0oHPsZgHl4",
+    "expire_date": "2024-02-17T00:52:51.968Z"
   }
 },
 {

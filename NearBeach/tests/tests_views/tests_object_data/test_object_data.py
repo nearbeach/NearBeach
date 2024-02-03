@@ -1,7 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 
-
 # Declaration of Username and Password
 username = "team_leader"
 password = "Test1234$"
@@ -136,6 +135,32 @@ class TestObjectData(TestCase):
                 response = c.post(reverse(url, args=["task", 2]))
                 self.assertEqual(response.status_code, 200)
 
+    def test_correct_object_data__without_forms_and_args(self):
+        """
+        The following test will make sure;
+        1. Each object data function will work correctly when given the correct;
+            b. Description
+            c. Location
+        Form data is not required for these tests.
+        """
+        c = Client()
+
+        # User wil be logged in
+        login_user(c, self)
+
+        # List or URLS
+        url_list = [
+            "bug_client_list",
+            "tag_list_all",
+        ]
+
+        # Loop through each url to test to make sure the decorator is applied
+        for url in url_list:
+            with self.subTest(url):
+                # Get data of wrong location - gets a 403
+                response = c.post(reverse(url))
+                self.assertEqual(response.status_code, 200)
+
     def test_correct_object_data__with_forms(self):
         """
         The following test will make sure;
@@ -151,6 +176,16 @@ class TestObjectData(TestCase):
 
         # List or URLS
         data_list = [
+            {
+                "url": "add_bug",
+                "formData": {
+                    "bug_client": 1,
+                    "bug_id": 1,
+                    "bug_description": "Test",
+                    "bug_status": "In Progress"
+                }
+            },
+            {"url": "add_tags", "formData": {"tag_id": 1}},
             {"url": "add_customer", "formData": {"customer": 1}},
             {"url": "add_group", "formData": {"group_list": [1, 2]}},
             {
