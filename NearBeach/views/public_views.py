@@ -82,21 +82,21 @@ def delete_public_link(request, destination, location_id, *args, **kwargs):
     return HttpResponse()
 
 
-# Internal function
-def get_public_context(results):
-    organisation_results = getattr(
-        results,
-        "organisation"
-    )
-
-    # Serialise in the if statement - as None can not be serialized
-    organisation_results = serializers.serialize("json", [organisation_results])
-    results = serializers.serialize("json", [results])
-
-    return {
-        "organisation_results": organisation_results,
-        "results": results,
-    }
+# # Internal function
+# def get_public_context(results):
+#     organisation_results = getattr(
+#         results,
+#         "organisation"
+#     )
+#
+#     # Serialise in the if statement - as None can not be serialized
+#     organisation_results = serializers.serialize("json", [organisation_results])
+#     results = serializers.serialize("json", [results])
+#
+#     return {
+#         "organisation_results": organisation_results,
+#         "results": results,
+#     }
 
 
 # Internal function
@@ -209,6 +209,66 @@ def get_public_context_requirement(results):
     }
 
 
+def get_public_context_requirement_item(results):
+    # Get the requirement information
+    requirement_item_results = RequirementItem.objects.get(
+        requirement_item_id=results.requirement_item_id
+    )
+
+    requirement_results = getattr(
+        results,
+        "requirement"
+    )
+
+    organisation_results = getattr(
+        requirement_results,
+        "organisation"
+    )
+
+    status_options = ListOfRequirementItemStatus.objects.filter(
+        is_deleted=False,
+    ).annotate(
+        value=F("requirement_item_status_id"),
+        label=F("requirement_item_status"),
+    ).values(
+        "value",
+        "label",
+        "requirement_item_higher_order_status",
+    )
+
+    type_options = ListOfRequirementItemType.objects.filter(
+        is_deleted=False,
+    ).annotate(
+        value=F("requirement_item_type_id"),
+        label=F("requirement_item_type"),
+    ).values(
+        "value",
+        "label",
+    )
+
+    # Find out if requirement item is read only
+    # Condition 1: If parent requirement is closed
+    # Condition 2: If requirement item is closed
+    condition_1 = requirement_item_results.requirement.requirement_status.requirement_higher_order_status == "Closed"
+    condition_2 = requirement_item_results.requirement_item_status.requirement_item_higher_order_status == "Closed"
+    requirement_item_is_closed = "false"
+    if condition_1 or condition_2:
+        requirement_item_is_closed = "true"
+
+    # context
+    return {
+        "results": results,
+        "organisation_results": serializers.serialize("json", [organisation_results]),
+        "requirement_item_id": requirement_item_results.requirement_item_id,
+        "requirement_item_is_closed": requirement_item_is_closed,
+        "requirement_item_results": serializers.serialize(
+            "json", [requirement_item_results]
+        ),
+        "status_options": json.dumps(list(status_options), cls=DjangoJSONEncoder),
+        "type_options": json.dumps(list(type_options), cls=DjangoJSONEncoder),
+    }
+
+
 # Internal function
 def get_public_context_task(results):
     # Get the status data
@@ -311,12 +371,14 @@ def public_link(request, destination, location_id, public_link_id, *args, **kwar
         c = get_public_context_kanban_board(results)
     elif destination == "requirement":
         c = get_public_context_requirement(results)
+    elif destination == "requirement_item":
+        c = get_public_context_requirement_item(results)
     elif destination == "project":
         c = get_public_context_project(results)
     elif destination == "task":
         c = get_public_context_task(results)
-    else:
-        c = get_public_context(results)
+    # else:
+    #     c = get_public_context(results)
 
     # Add tinymce flag
     c["need_tinymce"] = True

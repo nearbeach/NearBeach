@@ -15,6 +15,8 @@ class PublicViewNoLoginTests(TestCase):
         data_list = [
             kwargsTest("requirement", 1, "fbda2f94-be7b-41e5-b93a-3ce65516d09d"),
             kwargsTest("requirement", 2, "5435086c-a145-4540-bc71-35a0fd0ee171"),
+            kwargsTest("requirement_item", 1, "aba74809-aae5-4fc4-8929-5fd835fefa22"),
+            kwargsTest("requirement_item", 2, "9b6a9317-df46-453f-aa5b-6f33b77c28c4"),
             kwargsTest("project", 1, "3d7346c4-05b6-41df-816a-eff814d9bbd0"),
             kwargsTest("project", 2, "5f369dc9-a0bb-416d-9779-92576d0500bb"),
             kwargsTest("task", 1, "1c1067e9-563f-4419-9dac-e87d757ecb37"),
