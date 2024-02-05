@@ -408,8 +408,8 @@ urlpatterns = [
     path("new_task/save/", task_views.new_task_save, name="new_task_save"),
     path("new_user/", user_views.new_user, name="new_user"),
     path("new_user/save/", user_views.new_user_save, name="new_user_save"),
-    path("note/delete/", note_views.delete_note, name="delete_note"),
-    path("note/update/", note_views.update_note, name="update_note"),
+    path("note/delete/<int:object_note_id>/", note_views.delete_note, name="delete_note"),
+    path("note/update/<int:object_note_id>/", note_views.update_note, name="update_note"),
     path(
         "notification_information/delete/",
         notification_views.notification_information_delete,
@@ -616,7 +616,7 @@ urlpatterns = [
         name="get_public_links",
     ),
     path(
-        "public_data/update_link/",
+        "public_data/<destination>/<int:location_id>/update_link/",
         public_views.update_public_link,
         name="update_public_link",
     ),

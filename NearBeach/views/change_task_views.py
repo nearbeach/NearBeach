@@ -9,14 +9,13 @@ from django.shortcuts import get_object_or_404
 from NearBeach.forms import ChangeTaskIsDowntimeForm, ChangeTaskStatusForm, ChangeTaskForm, ChangeTaskDescriptionForm, ChangeTaskRequiredByForm
 from NearBeach.models import ChangeTask, RequestForChange, User
 from NearBeach.views.theme_views import get_theme
-
-from NearBeach.decorators.check_user_permissions import check_change_task_permissions
+from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 
 import json
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_change_task_permissions(min_permission_level=1)
+@check_specific_object_permissions(min_permission_level=1, object_lookup="change_task")
 def change_task_information(request, change_task_id, *args, **kwargs):
     """
     Render the Change Task information page
@@ -67,7 +66,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_change_task_permissions(min_permission_level=4)
+@check_specific_object_permissions(min_permission_level=4, object_lookup="change_task")
 def change_task_delete(request, change_task_id, *args, **kwargs):
     """
     A simple function to delete the change task
@@ -86,7 +85,7 @@ def change_task_delete(request, change_task_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_change_task_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="change_task")
 def change_task_save(request, change_task_id, *args, **kwargs):
     """
     A simple POST function where the user can save the change task data
@@ -128,7 +127,7 @@ def change_task_save(request, change_task_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_change_task_permissions(min_permission_level=1)
+@check_specific_object_permissions(min_permission_level=1, object_lookup="change_task")
 def get_change_task_list(request, change_task_id, *args, **kwargs):
     """
     A POST node to get a list of all change tasks assigned to an RFC
@@ -154,7 +153,7 @@ def get_change_task_list(request, change_task_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_change_task_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="change_task")
 def update_description(request, change_task_id, *args, **kwargs):
     """
     A POST node to update the change task description
@@ -178,7 +177,7 @@ def update_description(request, change_task_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_change_task_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="change_task")
 def update_is_downtime(request, change_task_id, *args, **kwargs):
     form = ChangeTaskIsDowntimeForm(request.POST)
     if not form.is_valid():
@@ -196,7 +195,7 @@ def update_is_downtime(request, change_task_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_change_task_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="change_task")
 def update_required_by(request, change_task_id, *args, **kwargs):
     form = ChangeTaskRequiredByForm(request.POST)
     if not form.is_valid():
@@ -214,7 +213,7 @@ def update_required_by(request, change_task_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_change_task_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="change_task")
 def update_status(request, change_task_id, *args, **kwargs):
     """
     A POST node to update the change task status

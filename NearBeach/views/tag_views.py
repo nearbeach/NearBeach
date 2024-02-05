@@ -2,7 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_admin_permissions, check_user_permissions
+from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
+from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
 from NearBeach.forms import Tag, NewTagForm, TagForm
 
 
@@ -21,7 +22,7 @@ def delete_tag(request, tag_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="tag")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="tag")
 def new_tag(request, *args, **kwargs):
     """
     :param request:
@@ -51,7 +52,7 @@ def new_tag(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup="tag")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="tag")
 def save_tag(request, *args, **kwargs):
     """
     :param request:

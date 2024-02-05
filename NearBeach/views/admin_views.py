@@ -10,8 +10,7 @@ from NearBeach.forms import (
 )
 from NearBeach.models import UserGroup
 from NearBeach.views.tools.internal_functions import get_user_permissions
-
-from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
+from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
 
 import itertools
 import json
@@ -21,13 +20,13 @@ import json
 @login_required(login_url="login", redirect_field_name="")
 @check_user_admin_permissions(3, "administration_create_user")
 def add_user(request, *args, **kwargs):
-    '''
+    """
     Adds a user to either;
     - Multiple groups and/or
     - Multiple permission sets
     :param request:
     :return: Successful result
-    '''
+    """
     form = AdminAddUserForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)

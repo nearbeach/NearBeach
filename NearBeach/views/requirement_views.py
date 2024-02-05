@@ -3,11 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q, F, Value as V
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.forms import (
     AddRequirementLinkForm,
     NewRequirementForm,
@@ -34,7 +34,7 @@ import uuid
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup="requirement_id")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="requirement")
 def add_requirement_link(request, requirement_id, *args, **kwargs):
     """Check user form is valid"""
     form = AddRequirementLinkForm(request.POST)
@@ -67,9 +67,9 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
+@check_specific_object_permissions(min_permission_level=1, object_lookup="requirement")
 def get_requirement_item_links(request, requirement_id, *args, **kwargs):
-    # Get the object assignment results associated wtih that requirement
+    # Get the object assignment results associated with that requirement
     object_assignment_results = ObjectAssignment.objects.filter(
         Q(
             is_deleted=False,
@@ -79,7 +79,6 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
             ).values("requirement_item_id"),
         )
     )
-
 
     # The results we want to send back
     data_results = []
@@ -128,7 +127,7 @@ def get_requirement_item_links(request, requirement_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
+@check_specific_object_permissions(min_permission_level=1, object_lookup="requirement")
 def get_requirement_item_status_list(request, *args, **kwargs):
     """Get all status - even deleted ones."""
     status_list = ListOfRequirementItemStatus.objects.all()
@@ -141,7 +140,7 @@ def get_requirement_item_status_list(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
+@check_specific_object_permissions(min_permission_level=1, object_lookup="requirement")
 def get_requirement_item_type_list(request, *args, **kwargs):
     """Get all status - even deleted ones."""
     type_list = ListOfRequirementItemType.objects.all()
@@ -154,7 +153,7 @@ def get_requirement_item_type_list(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
+@check_specific_object_permissions(min_permission_level=1, object_lookup="requirement")
 def get_requirement_items(request, requirement_id, *args, **kwargs):
     """Get all the requirement items assigned to the requirement"""
     requirement_item_results = RequirementItem.objects.filter(
@@ -174,10 +173,8 @@ def get_requirement_items(request, requirement_id, *args, **kwargs):
     return HttpResponse(json_results, content_type="application/json")
 
 
-
-
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="requirement_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="requirement")
 def new_requirement(request, *args, **kwargs):
     """
     Loads the new requirement page
@@ -235,7 +232,7 @@ def new_requirement(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="requirement_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="requirement")
 def new_requirement_save(request, *args, **kwargs):
     """Get the data and place into the form"""
     form = NewRequirementForm(request.POST)
@@ -279,7 +276,7 @@ def new_requirement_save(request, *args, **kwargs):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup="requirement_id")
+@check_specific_object_permissions(min_permission_level=1, object_lookup="requirement")
 def requirement_information(request, requirement_id, *args, **kwargs):
     """
     Loads the requirement information.
@@ -362,7 +359,7 @@ def requirement_information(request, requirement_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup="requirement_id")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="requirement")
 def requirement_information_save(request, requirement_id, *args, **kwargs):
     """
     :param request:
