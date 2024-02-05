@@ -308,16 +308,6 @@ class DeleteLinkForm(forms.Form):
     )
 
 
-class DeleteNoteForm(forms.ModelForm):
-    object_note_id=forms.IntegerField()
-
-    class Meta:
-        model = ObjectNote
-        fields = {
-            "object_note_id",
-        }
-
-
 class DeleteTagForm(forms.ModelForm):
     class Meta:
         model = TagAssignment

@@ -121,8 +121,8 @@ export default {
 			});
 
 			this.axios.post(
-				`${this.rootUrl}note/update/`,
-				data_to_send,
+				`${this.rootUrl}note/update/${this.noteId}/`,
+				data_to_send
 			).then(() => {
 				this.$store.dispatch("newToast", {
 					header: "Updated Note",

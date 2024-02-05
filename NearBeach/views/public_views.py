@@ -11,8 +11,6 @@ from django.db.models import F
 from NearBeach.decorators.check_destination import check_destination, check_public_destination
 from NearBeach.views.object_data_views import set_object_from_destination, get_object_from_destination
 from NearBeach.models import KanbanCard, \
-    KanbanColumn, \
-    KanbanLevel, \
     PublicLink, \
     RequirementItem, \
     ListOfProjectStatus, \
@@ -23,6 +21,7 @@ from NearBeach.models import KanbanCard, \
     ListOfTaskStatus
 from NearBeach.forms import PublicLinkDeleteForm, PublicLinkUpdateForm
 from NearBeach.views.kanban_views import get_context as kanban_get_context
+from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
 
 import json
 
@@ -35,7 +34,8 @@ DICT_KANBAN_CARD_PRIORITY = dict(KANBAN_CARD_PRIORITY)
 @login_required(login_url="login", redirect_field_name="")
 @csrf_protect
 @check_destination()
-def create_public_link(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def create_public_link(request, destination, location_id, *args, **kwargs):
     # Create new public link
     submit_public_link = PublicLink(
         change_user=request.user,
@@ -61,7 +61,8 @@ def create_public_link(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def delete_public_link(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def delete_public_link(request, destination, location_id, *args, **kwargs):
     form = PublicLinkDeleteForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -263,7 +264,8 @@ def get_public_link_results(destination, location_id):
 
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def get_public_links(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=1)
+def get_public_links(request, destination, location_id, *args, **kwargs):
     # Return the data we have
     public_link_results = get_public_link_results(destination, location_id)
 
@@ -324,7 +326,8 @@ def public_link(request, destination, location_id, public_link_id, *args, **kwar
 
 
 @login_required(login_url="login", redirect_field_name="")
-def update_public_link(request):
+@check_user_generic_permissions(min_permission_level=2)
+def update_public_link(request, destination, location_id, *args, **kwargs):
     form = PublicLinkUpdateForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -333,6 +336,7 @@ def update_public_link(request):
     uuid = str(form.cleaned_data["public_link_id"])
 
     PublicLink.objects.filter(
+        **{destination: location_id},
         public_link_id=uuid,
     ).update(
         public_link_is_active=form.cleaned_data["public_link_is_active"]

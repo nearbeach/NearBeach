@@ -224,10 +224,12 @@ class CheckObjects(TestCase):
             c.post(reverse("bug_list", args=["project", 1])),
             c.post(reverse("customer_list", args=["project", 1])),
             c.post(reverse("customer_list_all", args=["project", 1])),
+            c.get(reverse("delete_note", args=[1])),
             c.post(reverse("link_list", args=["project", 1, "task"])),
             c.post(reverse("note_list", args=["project", 1])),
             c.post(reverse("object_link_list", args=["project", 1])),
             c.post(reverse("query_bug_client", args=["project", 1])),
+            c.get(reverse("update_note", args=[1]), data={"object_note_id": 1, "object_note": ""}),
             c.post(reverse("user_list", args=["project", 1])),
             c.post(reverse("lead_user_list")),
         ]

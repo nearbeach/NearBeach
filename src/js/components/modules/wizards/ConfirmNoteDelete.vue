@@ -72,13 +72,9 @@ export default {
 				unique_type: "delete_note",
 			});
 
-			//Setup the data_to_send
-			const data_to_send = new FormData();
-			data_to_send.set("object_note_id", this.noteId);
-
+			//Send the data
 			this.axios.post(
-				`${this.rootUrl}note/delete/`,
-				data_to_send,
+				`${this.rootUrl}note/delete/${this.noteId}/`,
 			).then(() => {
 				this.$store.dispatch("newToast", {
 					header: "Note is deleted",

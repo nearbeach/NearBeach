@@ -274,7 +274,7 @@ export default {
 			data_to_send.set("public_link_is_active", is_active);
 
 			this.axios.post(
-				`${this.rootUrl}public_data/update_link/`,
+				`${this.rootUrl}public_data/${this.destination}/${this.locationId}/update_link/`,
 				data_to_send,
 			).then(() => {
 				//Update user

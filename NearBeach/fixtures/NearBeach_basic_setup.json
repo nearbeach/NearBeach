@@ -1978,6 +1978,42 @@
   }
 },
 {
+  "model": "NearBeach.objectnote",
+  "pk": 2,
+  "fields": {
+    "object_note": "<p>Project Note 1 - will be deleted by unit testing.</p>\r\n<p>It will fail when an unprivileged user will try and delete it</p>",
+    "kanban_card": null,
+    "organisation": null,
+    "requirement": null,
+    "requirement_item": null,
+    "project": 1,
+    "task": null,
+    "request_for_change": null,
+    "date_created": "2024-02-05T08:08:34.257Z",
+    "date_modified": "2024-02-05T08:08:34.257Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objectnote",
+  "pk": 3,
+  "fields": {
+    "object_note": "<p>Team leader note. Will pass. Hello World</p>",
+    "kanban_card": null,
+    "organisation": null,
+    "requirement": null,
+    "requirement_item": null,
+    "project": 2,
+    "task": null,
+    "request_for_change": null,
+    "date_created": "2024-02-05T08:09:07.922Z",
+    "date_modified": "2024-02-05T08:19:28.185Z",
+    "change_user": 2,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.organisation",
   "pk": 1,
   "fields": {
@@ -2202,6 +2238,44 @@
     "date_modified": "2023-02-15T09:14:14.985Z",
     "change_user": 1,
     "creation_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.publiclink",
+  "pk": "3d7346c4-05b6-41df-816a-eff814d9bbd0",
+  "fields": {
+    "public_link_is_active": true,
+    "requirement": null,
+    "requirement_item": null,
+    "project": 1,
+    "task": null,
+    "kanban_board": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "date_created": "2024-02-05T08:23:24.147Z",
+    "date_modified": "2024-02-05T08:23:24.147Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.publiclink",
+  "pk": "5f369dc9-a0bb-416d-9779-92576d0500bb",
+  "fields": {
+    "public_link_is_active": true,
+    "requirement": null,
+    "requirement_item": null,
+    "project": 2,
+    "task": null,
+    "kanban_board": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "date_created": "2024-02-05T08:23:08.239Z",
+    "date_modified": "2024-02-05T08:23:08.239Z",
+    "change_user": 2,
+    "creation_user": 2,
     "is_deleted": false
   }
 },
@@ -4172,7 +4246,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$720000$xBoXxSEeVXBdR0rm6efbo0$//JuZL1sOsIXbgd6qdboRpMTz0MgwRi9Oi5AsuaSVx8=",
-    "last_login": "2024-02-03T00:38:41.706Z",
+    "last_login": "2024-02-05T08:07:49.203Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "Admin",
@@ -4189,8 +4263,8 @@
   "model": "auth.user",
   "pk": 2,
   "fields": {
-    "password": "pbkdf2_sha256$390000$PRnYesAIIPtAXQ5owSSKBm$EzGAHpW1bc53Mfr/3AAnPxUm6MuDmswWm+4RgGE6GHk=",
-    "last_login": null,
+    "password": "pbkdf2_sha256$720000$qPwbmUsqdz96LSSCZoFdkm$yT30PhvOS91E/Jn/ZS0fstZYzWLSgvzLHLhJc8V4xSg=",
+    "last_login": "2024-02-05T08:08:56.971Z",
     "is_superuser": false,
     "username": "team_leader",
     "first_name": "Team",
@@ -4663,6 +4737,14 @@
 },
 {
   "model": "sessions.session",
+  "pk": "4ihdjbrhcx7hokg3uisrpinxhca0e34d",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1rWu17:SrFg3vGPTvV2dt_LqWoSdtoKIanQ6J6XeEHfFkzokZg",
+    "expire_date": "2024-02-19T08:07:49.224Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "6ijlztlbeuobpqj85nn5sz82nxb27b6e",
   "fields": {
     "session_data": ".eJxVjMsOwiAUBf-FtSHQF-DSvd9AuC9bNa2BsjL-u23ShW7PzJm3iqmuY6yFc5xInZVVp98NEj543gHd03xbNC7zmifQu6IPWvR1IX5eDvcvMKYybm8YerLGJ9dZsCKBxAV0BJ4QWtMIQOux6xu2GFhcFxjZGRnA9uJbNlt0KrHUF-c9q85rrvz5Ar6eQGE:1r3DhY:kBkq63w57t7pLz9nNmDjiZ9gx_r6SSDLMLyMP__LaKY",
@@ -4675,6 +4757,14 @@
   "fields": {
     "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1rW4H5:z0s-sSFp5Omsk3ltbIEgBmp6Ll-0CCRZo0oHPsZgHl4",
     "expire_date": "2024-02-17T00:52:51.968Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "bjg85wdarjo3cgh7m5n5ghtyuml55cpw",
+  "fields": {
+    "session_data": ".eJxVjjsOwjAQRO_iGln-yklKes5gjb1rEkAJipMKcXewlALaeTNP8xIR-zbGvfIaJxKDMOL0myXkO88N0A3zdZF5mbd1SrJV5EGrvCzEj_PR_ROMqON3nYKzSoOSt9YA1rJP8KZouD4HogJCVlmHYgz3Fsjadz5rx0oF17VXU411f_LatGIoeFR-fwDnpUAT:1rWu2C:w9CQ0CqBFz3eAoPmkTJMR7Jl_30-3aTVL3156Fwm8UA",
+    "expire_date": "2024-02-19T08:08:56.987Z"
   }
 },
 {

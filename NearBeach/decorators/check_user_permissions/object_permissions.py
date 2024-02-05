@@ -8,6 +8,7 @@ from .partials.kanban_card_permissions import kanban_card_permissions
 from .partials.request_for_change_permissions import request_for_change_permissions
 from .partials.requirement_permissions import requirement_permissions
 from .partials.requirement_item_permissions import requirement_item_permissions
+from .partials.object_note_permissions import object_note_permissions
 from .partials.project_permissions import project_permissions
 from .partials.tag_permissions import tag_permissions
 from .partials.task_permissions import task_permissions
@@ -23,6 +24,7 @@ FUNCTION_DICT = {
     "requirement": requirement_permissions,
     "requirement_item": requirement_item_permissions,
     # "organisation",
+    "object_note": object_note_permissions,
     "project": project_permissions,
     "tag": tag_permissions,
     "task": task_permissions,
@@ -48,7 +50,11 @@ def check_user_generic_permissions(min_permission_level):
                 return func(request, *args, **kwargs, user_level=4)
 
             # Obtain destination from args
-            destination = args[0]
+            # Due to weird issue - we check the args length
+            if len(args) == 0:
+                destination = kwargs['destination']
+            else:
+                destination = args[0]
 
             passes, user_level = generic_permissions(request, destination, kwargs)
 
