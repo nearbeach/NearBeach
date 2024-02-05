@@ -50,7 +50,7 @@ class TestNote(TestCase):
 
         # Get data of wrong location - gets a 403
         response = c.post(
-            reverse("delete_note", args=["2"]),
+            reverse("update_note", args=["2"]),
             data={'object_note_id': 2, 'object_note': 'Hello World'}
         )
         self.assertEqual(response.status_code, 403)
@@ -79,7 +79,7 @@ class TestNote(TestCase):
 
         # Get data of wrong location - gets a 403
         response = c.post(
-            reverse("delete_note", args=["3"]),
+            reverse("update_note", args=["3"]),
             data={'object_note_id': 3, 'object_note': 'Hello World'}
         )
         self.assertEqual(response.status_code, 200)

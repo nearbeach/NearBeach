@@ -27,7 +27,7 @@ class PublicViewTests(TestCase):
 
         login_user(self.client, self)
 
-    def create_public_link_fail(self):
+    def test_create_public_link_fail(self):
         """
         We are creating a public link against an object we do not have access too
         """
@@ -40,7 +40,7 @@ class PublicViewTests(TestCase):
         response = c.post(reverse("create_public_link", args=["project", 1]))
         self.assertEqual(response.status_code, 403)
 
-    def create_public_links_list_fail(self):
+    def test_create_public_links_list_fail(self):
         """
         We are creating a public link against an object we do not have access too
         """
@@ -53,7 +53,7 @@ class PublicViewTests(TestCase):
         response = c.post(reverse("get_public_links", args=["project", 1]))
         self.assertEqual(response.status_code, 403)
 
-    def update_public_links_list_fail(self):
+    def test_update_public_link_list_fail(self):
         """
         We are creating a public link against an object we do not have access too
         """
@@ -69,8 +69,7 @@ class PublicViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 403)
 
-
-    def delete_public_link_fail(self):
+    def test_delete_public_link_fail(self):
             """
             We are creating a public link against an object we do not have access too
             """
@@ -86,7 +85,7 @@ class PublicViewTests(TestCase):
             )
             self.assertEqual(response.status_code, 403)
 
-    def create_public_link_pass(self):
+    def test_create_public_link_pass(self):
         """
         We are creating a public link against an object we have access too.
         """
@@ -99,7 +98,7 @@ class PublicViewTests(TestCase):
         response = c.post(reverse("create_public_link", args=["project", 2]))
         self.assertEqual(response.status_code, 200)
 
-    def create_public_links_list_success(self):
+    def test_create_public_links_list_success(self):
         """
         We are creating a public link against an object we do not have access too
         """
@@ -112,7 +111,7 @@ class PublicViewTests(TestCase):
         response = c.post(reverse("get_public_links", args=["project", 2]))
         self.assertEqual(response.status_code, 200)
 
-    def delete_public_link_success(self):
+    def test_delete_public_link_success(self):
             """
             We are creating a public link against an object we do not have access too
             """
@@ -123,12 +122,12 @@ class PublicViewTests(TestCase):
 
             # Get data of wrong location - gets a 403
             response = c.post(
-                reverse("delete_public_link", args=["project", 1]),
+                reverse("delete_public_link", args=["project", 2]),
                 data={"public_link_id": "5f369dc9-a0bb-416d-9779-92576d0500bb"}
             )
             self.assertEqual(response.status_code, 200)
 
-    def update_public_links_list_success(self):
+    def test_update_public_links_list_success(self):
         """
         We are creating a public link against an object we do not have access too
         """
@@ -137,9 +136,8 @@ class PublicViewTests(TestCase):
         # User wil be logged in
         login_user(c, self)
 
-        # Get data of wrong location - gets a 403
         response = c.post(
             reverse("update_public_link", args=["project", 2]),
             data={"public_link_id": "5f369dc9-a0bb-416d-9779-92576d0500bb", "public_link_is_active": "False"}
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
