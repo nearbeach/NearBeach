@@ -23,7 +23,7 @@ If you would like to join our community, please join our [fun and exciting disco
 
 We are always looking for new contributors. There are many different ways to contribute to NearBeach, for example;
 
--   Donating via [github sponsorships](https://github.com/sponsors/robotichead) or [our patreon](https://www.patreon.com/NearBeach)
+-   Donating via [github sponsorships](https://github.com/sponsors/NearBeach) or [our patreon](https://www.patreon.com/NearBeach)
 -   Bug testing
 -   Bug fixing
 -   Writing Documentation
@@ -66,7 +66,6 @@ Please follow the instructions in our documentation: [Setting up local dev envir
 
 Like most projects, there are some overhead costs. Every single dollar that we get will go towards;
 
--   Cloud hosting costs
 -   Software costs
 -   Administration costs
 -   Freelance costs (i.e. hiring help like designers)
@@ -76,10 +75,6 @@ We are being transparent with all our costs and will try and provide a yearly co
 ## Bug Reporting
 
 Bug reporting is a very important role for NearBeach. During Hacktoberfest, you are more than welcome to submit issues.
-
-## Deepsource Issues
-
-NearBeach currently has a number of easy tasks/issues located on our [Deepsource - https://deepsource.io/gh/robotichead/NearBeach/issues](https://deepsource.io/gh/robotichead/NearBeach/issues).
 
 ## CodeClimate Issues
 
