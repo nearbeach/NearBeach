@@ -2,7 +2,7 @@
 
 ![GitHub](https://img.shields.io/github/license/robotichead/NearBeach.svg)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/robotichead/NearBeach.svg)
-[![CircleCI](https://circleci.com/gh/robotichead/NearBeach.svg?style=shield)](https://circleci.com/gh/robotichead/NearBeach)
+[![CircleCI](https://circleci.com/gh/NearBeach/NearBeach.svg?style=shield)](https://circleci.com/gh/NearBeach/NearBeach)
 [![PyPI version](https://badge.fury.io/py/NearBeach.svg)](https://badge.fury.io/py/NearBeach)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/NearBeach.svg?style=flat-square)
 ![GitHub stars](https://img.shields.io/github/stars/robotichead/NearBeach.svg?style=social)
@@ -24,7 +24,6 @@ NearBeach is an open source project management system, built using Django and Vu
 -   [Discord](https://discord.gg/64uhRztS6n)
 -   [Documentation](https://nearbeach.readthedocs.io)
 -   [NearBeach Homepage](https://nearbeach.org)
--   [NearBeach Demo](https://demo.nearbeach.org)
 
 ## Contributing
 
@@ -39,7 +38,7 @@ NearBeach is currently going through a massive rewrite - we have stripped out a 
 We would like to thank the following sponsors. Their contributions have made sure I am coving any costs associated with NearBeach, i.e. hosting. To sponsor you can use either;
 
 -   [Patreon](https://www.patreon.com/NearBeach)
--   [Github](https://github.com/sponsors/robotichead)
+-   [Github](https://github.com/sponsors/NearBeach)
 
 ## Software References (thank you)
 
