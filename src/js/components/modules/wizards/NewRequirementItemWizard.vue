@@ -64,11 +64,8 @@
 									height: 500,
 									menubar: false,
 									plugins: ['lists', 'codesample', 'table'],
-									toolbar: [
-										'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-										'bold italic strikethrough underline backcolor | table | ' +
-											'bullist numlist outdent indent | removeformat | codesample',
-									],
+            						toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
+											 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
             						skin: `${this.skin}`,
 						            content_css: `${this.contentCss}`
 								}"
@@ -147,7 +144,6 @@ import {NSelect} from "naive-ui";
 import Editor from "@tinymce/tinymce-vue";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 
 //Validation
@@ -169,7 +165,7 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			requirementItemScopeModel: "",
@@ -228,29 +224,31 @@ export default {
 			);
 			data_to_send.set("requirement_item_type", this.typeItemModel);
 
-			this.axios
-				.post(
-					`${this.rootUrl}new_requirement_item/save/${this.locationId}/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Data saved successfully - clear all models
-					this.requirementItemScopeModel = "";
-					this.requirementItemTitleModel = "";
-					this.statusItemModel = "";
-					this.typeItemModel = "";
+			this.axios.post(
+				`${this.rootUrl}new_requirement_item/save/${this.locationId}/`,
+				data_to_send
+			).then((response) => {
+				//Data saved successfully - clear all models
+				this.requirementItemScopeModel = "";
+				this.requirementItemTitleModel = "";
+				this.statusItemModel = "";
+				this.typeItemModel = "";
 
-					//EMIT THE NEW DATA UPSTREAM
-					this.$emit("new_item_added", response.data);
+				//EMIT THE NEW DATA UPSTREAM
+				this.$emit("new_item_added", response.data);
 
-					//SHOULD CLOSE MODAL HERE!
-					document
-						.getElementById("requirementItemCloseButton")
-						.click();
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+				//SHOULD CLOSE MODAL HERE!
+				document
+					.getElementById("requirementItemCloseButton")
+					.click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to save item",
+					message: `Failed to save item. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		updateStatusList() {
 			this.axios.post(
@@ -262,6 +260,13 @@ export default {
 						label: row.fields.requirement_item_status,
 					}
 				})
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Status List",
+					message: `There was an error updating the status list - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 		updateTypeList() {
@@ -273,6 +278,13 @@ export default {
 						value: row.pk,
 						label: row.fields.requirement_item_type,
 					}
+				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Type List",
+					message: `There was an error updating the type list - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
 			});
 		},

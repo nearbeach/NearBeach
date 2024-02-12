@@ -119,6 +119,23 @@
 								Downloads
 							</button>
 						</li>
+						<li
+							class="nav-item"
+							role="presentation"
+						>
+							<button
+								class="nav-link"
+								id="public-link-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#public-links"
+								type="button"
+								role="tab"
+								aria-controls="contact"
+								aria-selected="false"
+							>
+								Public Links
+							</button>
+						</li>
 					</ul>
 					<hr/>
 
@@ -178,6 +195,17 @@
 								v-bind:read-only="kanbanStatus === 'Closed'"
 							></documents-module>
 						</div>
+						<div
+							class="tab-pane fade"
+							id="public-links"
+							role="tabpanel"
+							aria-labelledby="user-tab"
+						>
+							<list-public-links v-bind:override-destination="'kanban_card'"
+											   v-bind:override-location-id="cardId"
+											   v-bind:is-read-only="kanbanStatus === 'Closed'"
+							></list-public-links>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -192,12 +220,14 @@ import CardNotes from "./CardNotes.vue";
 import CardDescription from "./CardDescription.vue";
 import CardUsers from "./CardUsers.vue";
 import DocumentsModule from '../modules/sub_modules/DocumentsModule.vue';
+import ListPublicLinks from "../modules/sub_modules/ListPublicLinks.vue";
 
 //VueX
 import {mapGetters} from "vuex";
 
 //Mixins
 import iconMixin from "../../mixins/iconMixin";
+import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
 
 export default {
 	name: "CardInformation",
@@ -208,6 +238,8 @@ export default {
 		CardUsers,
 		DocumentsModule,
 		Icon,
+		ListPublicLinks,
+		UploadDocumentWizard,
 	},
 	mixins: [iconMixin],
 	data() {
@@ -227,6 +259,15 @@ export default {
 	},
 	methods: {
 		updateCard(data) {
+			//Notify the user we are updating the card
+			this.$store.dispatch("newToast", {
+				header: "Updating Current Card",
+				message: "Please wait - we are updating the card's information",
+				extra_classes: "bg-warning",
+				unique_type: "update-card",
+				delay: 0,
+			});
+
 			//Get all data from VueX
 			const all_data = this.$store.getters.getAllCardData;
 
@@ -242,46 +283,58 @@ export default {
 			data_to_send.set("kanban_card_id", all_data.cardId);
 			data_to_send.set("kanban_card_priority", all_data.cardPriority);
 
-      //If there is new_destination or old_destination, we want to send that data into the backend too
-      if (data.new_destination !== undefined) {
-        data.new_destination.forEach((row) => {
-          data_to_send.append("new_destination", row.pk);
-        });
-      }
+			//If there is new_destination or old_destination, we want to send that data into the backend too
+			if (data.new_destination !== undefined) {
+				data.new_destination.forEach((row) => {
+					data_to_send.append("new_destination", row.pk);
+				});
+			}
 
-      if (data.old_destination !== undefined) {
-        data.old_destination.forEach((row) => {
-          data_to_send.append("old_destination", row.pk);
-        });
-      }
+			if (data.old_destination !== undefined) {
+				data.old_destination.forEach((row) => {
+					data_to_send.append("old_destination", row.pk);
+				});
+			}
 
 			//Use Axios to send data to backend
-			this.axios
-				.post(
-					`${this.rootUrl}kanban_information/update_card/`,
-					data_to_send
-				)
-				.then(() => {
-					//Send the new data upstream
-					this.$emit("update_card", {
-						kanban_card_id: all_data.cardId,
-						kanban_card_text: all_data.cardTitle,
-						kanban_card_description:
-						all_data.cardDescriptionModel,
-						// kanban_column: all_data.cardColumn,
-						// kanban_level: all_data.cardLevel,
-						// kanban_card_priority: all_data.cardPriority,
-					});
-
-					//Only close if data.close_modal is true
-					if (data.close_modal) {
-						document
-							.getElementById("cardInformationModalCloseButton")
-							.click();
-					}
-				})
-				.catch((error) => {
+			this.axios.post(
+				`${this.rootUrl}kanban_information/update_card/`,
+				data_to_send
+			).then(() => {
+				//Send the new data upstream
+				this.$emit("update_card", {
+					kanban_card_id: all_data.cardId,
+					kanban_card_text: all_data.cardTitle,
+					kanban_card_description:
+					all_data.cardDescriptionModel,
+					// kanban_column: all_data.cardColumn,
+					// kanban_level: all_data.cardLevel,
+					// kanban_card_priority: all_data.cardPriority,
 				});
+
+				//Notify user of successful update
+				this.$store.dispatch("newToast", {
+					header: "Card successfully updated",
+					message: "Your card has successfully update",
+					extra_classes: "bg-success",
+					unique_type: "update-card",
+				});
+
+				//Only close if data.close_modal is true
+				if (data.close_modal) {
+					document
+						.getElementById("cardInformationModalCloseButton")
+						.click();
+				}
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Card failed to updated",
+					message: `Sorry your card failed to update - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "update-card",
+				});
+			});
 		},
 	},
 };

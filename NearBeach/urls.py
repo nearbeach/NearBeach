@@ -8,18 +8,21 @@ from .views import (
     card_views,
     customer_views,
     dashboard_views,
+    diagnostic_views,
     document_views,
     error_views,
     group_views,
     kanban_column_views,
     kanban_level_views,
     kanban_views,
+    note_views,
     notification_views,
     object_data_views,
     organisation_views,
     permission_set_views,
     profile_views,
     project_views,
+    public_views,
     request_for_change_views,
     requirement_item_views,
     requirement_views,
@@ -137,6 +140,22 @@ urlpatterns = [
         dashboard_views.users_with_no_groups,
         name="users_with_no_groups",
     ),
+    # Diagnostic Page
+    path(
+        "diagnostic_information/",
+        diagnostic_views.diagnostic_information,
+        name="diagnostic_information",
+    ),
+    path(
+        "diagnostic_information/email_test/",
+        diagnostic_views.diagnostic_email_test,
+        name="diagnostic_information_email_test",
+    ),
+    path(
+        "diagnostic_information/upload_test/",
+        diagnostic_views.diagnostic_upload_test,
+        name="diagnostic_information_upload_test",
+    ),
     # Documentation
     path(
         "documentation/<destination>/<location_id>/add_folder/",
@@ -162,6 +181,11 @@ urlpatterns = [
         "documentation/<destination>/<location_id>/remove/",
         document_views.document_remove,
         name="document_remove",
+    ),
+    path(
+        "documentation/<destination>/<location_id>/remove_folder/",
+        document_views.document_remove_folder,
+        name="document_remove_folder",
     ),
     path(
         "documentation/<destination>/<location_id>/upload/",
@@ -401,6 +425,8 @@ urlpatterns = [
     path("new_task/save/", task_views.new_task_save, name="new_task_save"),
     path("new_user/", user_views.new_user, name="new_user"),
     path("new_user/save/", user_views.new_user_save, name="new_user_save"),
+    path("note/delete/<int:object_note_id>/", note_views.delete_note, name="delete_note"),
+    path("note/update/<int:object_note_id>/", note_views.update_note, name="update_note"),
     path(
         "notification_information/delete/",
         notification_views.notification_information_delete,
@@ -420,7 +446,7 @@ urlpatterns = [
     path(
         "object_data/admin_add_user/",
         object_data_views.admin_add_user,
-        name="admin_add_user",
+        name="object_admin_add_user",
     ),
     path(
         "object_data/<destination>/<location_id>/add_bug/",
@@ -585,6 +611,32 @@ urlpatterns = [
         project_views.project_information_save,
         name="project_information_save",
     ),
+    # Public
+    path(
+        "public/<destination>/<int:location_id>/<uuid:public_link_id>/",
+        public_views.public_link,
+        name="public_link",
+    ),
+    path(
+        "public_data/<destination>/<int:location_id>/create/",
+        public_views.create_public_link,
+        name="create_public_link",
+    ),
+    path(
+        "public_data/<destination>/<int:location_id>/delete/",
+        public_views.delete_public_link,
+        name="delete_public_link",
+    ),
+    path(
+        "public_data/<destination>/<int:location_id>/get_links/",
+        public_views.get_public_links,
+        name="get_public_links",
+    ),
+    path(
+        "public_data/<destination>/<int:location_id>/update_link/",
+        public_views.update_public_link,
+        name="update_public_link",
+    ),
     # Requirements
     path(
         "requirement_information/<int:requirement_id>/",
@@ -659,6 +711,11 @@ urlpatterns = [
         "rfc_information/<int:rfc_id>/change_task_list/",
         request_for_change_views.rfc_change_task_list,
         name="rfc_change_task_list",
+    ),
+    path(
+        "rfc_information/<int:rfc_id>/get_approval_users/",
+        request_for_change_views.rfc_get_approval_users,
+        name="rfc_get_approval_users",
     ),
     path(
         "rfc_information/<int:rfc_id>/new_change_task/",

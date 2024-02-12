@@ -2,13 +2,14 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
+from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
 from NearBeach.forms import Tag, NewTagForm, TagForm
 
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=4, object_lookup="tag")
+@check_user_admin_permissions(min_permission_level=4, permission_lookup="tag")
 def delete_tag(request, tag_id, *args, **kwargs):
     # Delete Tag
     update_tag = Tag.objects.get(tag_id=tag_id)
@@ -21,7 +22,7 @@ def delete_tag(request, tag_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="tag")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="tag")
 def new_tag(request, *args, **kwargs):
     """
     :param request:
@@ -36,6 +37,7 @@ def new_tag(request, *args, **kwargs):
     submit_tag = Tag(
         tag_name=form.cleaned_data["tag_name"],
         tag_colour=form.cleaned_data["tag_colour"],
+        tag_text_colour=form.cleaned_data["tag_text_colour"],
         change_user=request.user,
     )
     submit_tag.save()
@@ -50,7 +52,7 @@ def new_tag(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup="tag")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="tag")
 def save_tag(request, *args, **kwargs):
     """
     :param request:
@@ -60,7 +62,6 @@ def save_tag(request, *args, **kwargs):
     # Get form data
     form = TagForm(request.POST)
     if not form.is_valid():
-        print(form.errors)
         return HttpResponseBadRequest(form.errors)
 
     # Get the data to manipulate
@@ -69,6 +70,7 @@ def save_tag(request, *args, **kwargs):
     # Update the required fields
     update_tag.tag_name = form.cleaned_data["tag_name"]
     update_tag.tag_colour = form.cleaned_data["tag_colour"]
+    update_tag.tag_text_colour = form.cleaned_data["tag_text_colour"]
     update_tag.change_user = request.user
 
     # Save data

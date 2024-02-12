@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 from django.db.models import Case, When
-from django.conf import settings
 
 # Import from Models
 from .models import (
@@ -19,8 +19,10 @@ from .models import (
     KanbanCard,
     KanbanBoard,
     Notification,
+    ObjectNote,
     PermissionSet,
     Project,
+    PublicLink,
     RequestForChange,
     RequirementItem,
     Requirement,
@@ -35,6 +37,7 @@ from .models import (
 
 USER_MODEL = get_user_model()
 
+
 # CUSTOM Fields
 # https://stackoverflow.com/questions/10296333/django-multiplechoicefield-does-not-preserve-order-of-selected-values
 # We want a custom field that retains the order for the multiple choice field
@@ -45,7 +48,7 @@ class OrderedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         # Create the preserved condition - where we order it in the same order the user has sent back
         preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(value)])
 
-        #Return the order
+        # Return the order
         return qs.filter(pk__in=value).order_by(preserved)
 
 
@@ -318,6 +321,15 @@ class DeleteTagForm(forms.ModelForm):
         }
 
 
+class DiagnosticUploadTestForm(forms.Form):
+    document = forms.FileField(
+        required=True,
+    )
+    uuid = forms.UUIDField(
+        required=False,
+    )
+
+
 class DocumentRemoveForm(forms.Form):
     document_key = forms.ModelChoiceField(
         queryset=Document.objects.all(),
@@ -345,10 +357,28 @@ class DocumentUploadForm(forms.ModelForm):
         }
 
 
+class EditNoteForm(forms.ModelForm):
+    object_note_id = forms.IntegerField()
+
+    class Meta:
+        model = ObjectNote
+        fields = {
+            "object_note_id",
+            "object_note",
+        }
+
+
 class FixCardOrderingForm(forms.Form):
     kanban_cards = forms.ModelMultipleChoiceField(
         required=True,
         queryset=KanbanCard.objects.all(),
+    )
+
+
+class FolderRemoveForm(forms.Form):
+    folder_id = forms.ModelChoiceField(
+        queryset=Folder.objects.all(),
+        required=True,
     )
 
 
@@ -661,6 +691,7 @@ class NewTagForm(forms.ModelForm):
         fields = [
             "tag_name",
             "tag_colour",
+            "tag_text_colour",
         ]
 
 
@@ -762,6 +793,11 @@ class PasswordResetForm(forms.Form):
         required=True,
     )
 
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        validate_password(password)
+        return password
+
 
 class PermissionSetForm(forms.ModelForm):
     class Meta:
@@ -794,6 +830,23 @@ class ProjectForm(forms.ModelForm):
             "project_end_date",
             "project_status",
         ]
+
+
+class PublicLinkDeleteForm(forms.Form):
+    public_link_id = forms.ModelChoiceField(
+        queryset=PublicLink.objects.all(),
+        required=True,
+    )
+
+
+class PublicLinkUpdateForm(forms.Form):
+    public_link_id = forms.ModelChoiceField(
+        queryset=PublicLink.objects.all(),
+        required=True,
+    )
+    public_link_is_active = forms.BooleanField(
+        required=False,
+    )
 
 
 class ResortColumnForm(forms.Form):
@@ -849,7 +902,7 @@ class RemoveUserForm(forms.Form):
 
 
 class RfcModuleForm(forms.Form):
-    # This form is for all the sub modules that need to be saved separately.
+    # This form is for all the submodules that need to be saved separately.
     text_input = forms.CharField(
         required=True,
     )
@@ -904,6 +957,10 @@ class TagForm(forms.Form):
         max_length=50,
     )
     tag_colour = forms.CharField(
+        required=True,
+        max_length=7,
+    )
+    tag_text_colour = forms.CharField(
         required=True,
         max_length=7,
     )

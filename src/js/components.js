@@ -66,6 +66,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/dashboard/DashboardUsersWithNoGroups.vue"
             )
     ),
+    DiagnosticInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "diagnostic-information" */
+            "./components/diagnostic/DiagnosticInformation.vue"
+            )
+    ),
     GroupInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "group-information" */
@@ -94,6 +100,12 @@ export const // BugsModule = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "kanban-information" */
             "./components/kanban/KanbanInformation.vue"
+            )
+    ),
+    KanbanPublicLinks = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "kanban-public-links" */
+            "./components/kanban/KanbanPublicLinks.vue"
             )
     ),
     ListSearchResults = defineAsyncComponent(() =>
@@ -220,6 +232,24 @@ export const // BugsModule = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "profile-information" */
             "./components/profile/ProfileInformation.vue"
+            )
+    ),
+    PublicCardInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "public-card-information" */
+            "./components/public/public_card_information.vue"
+            )
+    ),
+    PublicKanbanBoard = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "public-kanban-board" */
+            "./components/public/public_kanban_board.vue"
+            )
+    ),
+    PublicRequirementItemList = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "public-requirement-item-list" */
+            "./components/public/public_requirement_item_list.vue"
             )
     ),
     RenderToasts = defineAsyncComponent(() =>

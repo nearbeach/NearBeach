@@ -2,14 +2,12 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.db.models import Q, F
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
-from django.urls import reverse
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import (
-    check_user_requirement_item_permissions,
-    check_user_permissions,
+from NearBeach.decorators.check_user_permissions.object_permissions import (
+    check_specific_object_permissions,
 )
 from NearBeach.forms import (
     AddRequirementLinkForm,
@@ -33,7 +31,7 @@ from NearBeach.views.theme_views import get_theme
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_requirement_item_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="requirement_item")
 def add_requirement_item_link(request, requirement_item_id, *args, **kwargs):
     """Obtain form data and validate"""
     form = AddRequirementLinkForm(request.POST)
@@ -93,7 +91,7 @@ def get_requirement_item_links(requirement_item_id):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="requirement_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="requirement")
 def new_requirement_item(request, requirement_id, *args, **kwargs):
     """Check to see if POST"""
     if not request.method == "POST":
@@ -122,7 +120,7 @@ def new_requirement_item(request, requirement_id, *args, **kwargs):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_user_requirement_item_permissions(min_permission_level=1)
+@check_specific_object_permissions(min_permission_level=1, object_lookup="requirement_item")
 def requirement_item_information(request, requirement_item_id, *args, **kwargs):
     """
     Loads the requirement item information.
@@ -137,12 +135,6 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
         requirement_item_id=requirement_item_id
     )
 
-    # If the requirement has been closed - send user to the read only section
-    if requirement_item_results.requirement_item_status.status_is_closed:
-        return HttpResponseRedirect(
-            reverse("requirement_readonly", args={requirement_item_id})
-        )
-
     # Load template
     t = loader.get_template(
         "NearBeach/requirement_items/requirement_item_information.html"
@@ -153,18 +145,39 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
         organisation_id=requirement_item_results.requirement.organisation_id,
     )
 
-    status_list = ListOfRequirementItemStatus.objects.filter(
+    status_options = ListOfRequirementItemStatus.objects.filter(
         is_deleted=False,
-        status_is_closed=False,
+    ).annotate(
+        value=F("requirement_item_status_id"),
+        label=F("requirement_item_status"),
+    ).values(
+        "value",
+        "label",
+        "requirement_item_higher_order_status",
     )
 
-    type_list = ListOfRequirementItemType.objects.filter(
+    type_options = ListOfRequirementItemType.objects.filter(
         is_deleted=False,
+    ).annotate(
+        value=F("requirement_item_type_id"),
+        label=F("requirement_item_type"),
+    ).values(
+        "value",
+        "label",
     )
 
     group_results = Group.objects.filter(
         is_deleted=False,
     )
+
+    # Find out if requirement item is read only
+    # Condition 1: If parent requirement is closed
+    # Condition 2: If requirement item is closed
+    condition_1 = requirement_item_results.requirement.requirement_status.requirement_higher_order_status == "Closed"
+    condition_2 = requirement_item_results.requirement_item_status.requirement_item_higher_order_status == "Closed"
+    requirement_item_is_closed = "false"
+    if condition_1 or condition_2:
+        requirement_item_is_closed = "true"
 
     # context
     c = {
@@ -172,11 +185,12 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
         "nearbeach_title": f"Requirement Item {requirement_item_id}",
         "organisation_results": serializers.serialize("json", [organisation_results]),
         "requirement_item_id": requirement_item_id,
+        "requirement_item_is_closed": requirement_item_is_closed,
         "requirement_item_results": serializers.serialize(
             "json", [requirement_item_results]
         ),
-        "status_list": serializers.serialize("json", status_list),
-        "type_list": serializers.serialize("json", type_list),
+        "status_options": json.dumps(list(status_options), cls=DjangoJSONEncoder),
+        "type_options": json.dumps(list(type_options), cls=DjangoJSONEncoder),
         "user_level": user_level,
         "need_tinymce": True,
         "theme": get_theme(request),
@@ -187,7 +201,7 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_requirement_item_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="requirement_item")
 def requirement_information_save(request, requirement_item_id, *args, **kwargs):
     """
     The following will save data

@@ -22,6 +22,7 @@
 					class="form-control"
 					:is-date-disabled="startDateDisabled"
 					:is-time-disabled="startDateDisabled"
+					:disabled="userLevel<=1 || isReadOnly"
 				></n-date-picker>
 			</div>
 		</div>
@@ -39,6 +40,7 @@
 					class="form-control"
 					:is-date-disabled="endDateDisabled"
 					:is-time-disabled="endDateDisabled"
+					:disabled="userLevel<=1 || isReadOnly"
 				></n-date-picker>
 			</div>
 		</div>
@@ -55,6 +57,9 @@ import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixin
 import disableDate from "../../mixins/datetimeMixin";
+
+//VueX
+import { mapGetters } from "vuex";
 
 export default {
 	name: "BetweenDates",
@@ -86,6 +91,10 @@ export default {
 				return temp_date.getTime();
 			},
 		},
+		isReadOnly: {
+			type: Boolean,
+			default: false,
+		},
 		noBackDating: {
 			type: Boolean,
 			default: true,
@@ -102,6 +111,11 @@ export default {
 				return temp_date.getTime();
 			},
 		},
+	},
+	computed: {
+		...mapGetters({
+			userLevel: "getUserLevel",
+		}),
 	},
 	validations: {
 		localEndDateModel: {

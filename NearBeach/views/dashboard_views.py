@@ -126,12 +126,12 @@ def get_my_objects(request):
             ).values("project_id"),
         )
         .exclude(
-            project_status="Closed",
+            project_status__project_higher_order_status="Closed",
         )
         .values(
             "project_id",
             "project_name",
-            "project_status",
+            "project_status__project_status",
             "project_end_date",
         )
     )
@@ -146,7 +146,7 @@ def get_my_objects(request):
             ).values("requirement_id"),
         )
         .exclude(
-            requirement_status__requirement_status_is_closed=True,
+            requirement_status__requirement_higher_order_status="Closed",
         )
         .values(
             "requirement_id",
@@ -165,12 +165,12 @@ def get_my_objects(request):
             ).values("task_id"),
         )
         .exclude(
-            task_status="Closed",
+            task_status__task_higher_order_status="Closed",
         )
         .values(
             "task_id",
             "task_short_description",
-            "task_status",
+            "task_status__task_status",
             "task_end_date",
         )
     )
@@ -268,7 +268,8 @@ def get_unassigned_objects(request):
         )
         .exclude(
             Q(
-                project_status="Closed",
+                # project_status="Closed",
+                project_status__project_higher_order_status="Closed",
             )
             | Q(
                 # Project has no users assigned to it
@@ -282,7 +283,7 @@ def get_unassigned_objects(request):
         .values(
             "project_id",
             "project_name",
-            "project_status",
+            "project_status__project_status",
             "project_end_date",
         )
     )
@@ -302,7 +303,7 @@ def get_unassigned_objects(request):
         )
         .exclude(
             Q(
-                requirement_status__requirement_status_is_closed=True,
+                requirement_status__requirement_higher_order_status="Closed",
             )
             | Q(
                 # Requirement has no users assigned to it
@@ -336,7 +337,8 @@ def get_unassigned_objects(request):
         )
         .exclude(
             Q(
-                task_status="Closed",
+                # task_status="Closed",
+                task_status__task_higher_order_status="Closed",
             )
             | Q(
                 # Task has no users assigned to it
@@ -350,7 +352,7 @@ def get_unassigned_objects(request):
         .values(
             "task_id",
             "task_short_description",
-            "task_status",
+            "task_status__task_status",
             "task_end_date",
         )
     )
@@ -413,11 +415,17 @@ def rfc_approvals(request):
                 group_leader=True,
             ).values("group_id"),
         ).values("request_for_change_id")
+    ).values(
+        "rfc_id",
+        "rfc_title",
+        "rfc_status",
+        "rfc_status__rfc_status",
     )
 
-    return HttpResponse(
-        serializers.serialize("json", rfc_results), content_type="application/json"
-    )
+    # Turn results into json
+    json_results = json.dumps(list(rfc_results), cls=DjangoJSONEncoder)
+
+    return HttpResponse(json_results, content_type="application/json")
 
 
 @login_required(login_url="login", redirect_field_name="")

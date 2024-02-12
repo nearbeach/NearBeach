@@ -2,6 +2,8 @@
 	<div
 		class="modal fade"
 		id="uploadDocumentModal"
+		data-bs-backdrop="static"
+		data-bs-keyboard="false"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -30,7 +32,7 @@
 							<strong>Uploading File</strong>
 							<p class="text-instructions">
 								You will be able to upload a file against this
-								{{ destination }}. It will appear in the current
+								{{ getDestination }}. It will appear in the current
 								folder.
 							</p>
 							<p v-if="documentModel.length === 0">
@@ -174,8 +176,8 @@ import {Icon} from "@iconify/vue";
 import {mapGetters} from "vuex";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
+import {Modal} from "bootstrap";
 
 export default {
 	name: "UploadDocumentWizard",
@@ -183,31 +185,16 @@ export default {
 		Icon,
 	},
 	props: {
-		acceptedDocuments: {
-			type: String,
-			default:
-				"image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-		},
-		currentFolder: {
+		overrideDestination: {
 			type: String,
 			default: "",
 		},
-		destination: {
-			type: String,
-			default: "",
-		},
-		excludeDocuments: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
-		locationId: {
+		overrideLocationId: {
 			type: Number,
 			default: 0,
 		},
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			disableUploadButton: true,
@@ -221,11 +208,23 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			acceptedDocuments: "getAcceptedDocuments",
+			currentFolder: "getCurrentFolder",
+			destination: "getDestination",
+			excludeDocuments: "getDocumentFilteredList",
+			locationId: "getLocationId",
 			staticUrl: "getStaticUrl",
 			rootUrl: "getRootUrl",
 		}),
 	},
 	methods: {
+		getDestination() {
+			return this.overrideDestination !== "" ? this.overrideDestination : this.destination;
+		},
+		getLocationId() {
+			//If there is an overrideDestination - we want to use the overrideLocationId
+			return this.overrideDestination !== "" ? this.overrideLocationId : this.locationId;
+		},
 		handleFileUploads(fileList) {
 			/*Check that the size of the fileList is not too big
 			  The boolean (0!=this.maxUploadSize) will product a 0 result when maxUploadSize is 0. Thus negating
@@ -269,7 +268,7 @@ export default {
 			);
 
 			//If there is a current/partent folder - then add it to the data to send
-			if (this.currentFolder !== "" && this.currentFolder !== null) {
+			if (this.currentFolder > 0) {
 				data_to_send.set("parent_folder", this.currentFolder);
 			}
 
@@ -284,27 +283,37 @@ export default {
 			};
 
 			//Use axios to send it to the backend
-			this.axios
-				.post(
-					`${this.rootUrl}documentation/${this.destination}/${this.locationId}/upload/`,
-					data_to_send,
-					config
-				)
-				.then((response) => {
-					//Send the data upstream
-					this.$emit("update_document_list", response.data);
-
-					//Close the modal
-					document
-						.getElementById("uploadDocumentCloseButton")
-						.click();
-
-					//Reset the document
-					this.resetForm();
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+			this.axios.post(
+				`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/upload/`,
+				data_to_send,
+				config
+			).then((response) => {
+				//Append the new document to the existing document list
+				this.$store.dispatch("appendDocumentList", {
+					documentList: response.data[0],
 				});
+
+				//Close the modal
+				document.getElementById("uploadDocumentCloseButton").click();
+
+				//Reset the document
+				this.resetForm();
+
+				//Reshow the card information modal if exists
+				let cardModal = document.getElementById("cardInformationModal");
+				if (cardModal !== null)
+				{
+					cardModal = new Modal(cardModal);
+					cardModal.show();
+				}
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to upload documentation",
+					message: `Can not upload the documentation. ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	watch: {
@@ -355,15 +364,19 @@ export default {
 		//Wait a few seconds before getting the max file upload size
 		this.$nextTick(() => {
 			//Get the max file upload size
-			this.axios
-				.post(`${this.rootUrl}documentation/get/max_upload/`)
-				.then((response) => {
-					//Set the value
-					this.maxUploadSize = response.data.max_upload_size;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+			this.axios.post(
+				`${this.rootUrl}documentation/get/max_upload/`
+			).then((response) => {
+				//Set the value
+				this.maxUploadSize = response.data.max_upload_size;
+			}).catch(() => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to get the max upload size",
+					message: `Had an issue getting data from backend. ${this.maxUploadString}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		});
 	},
 };

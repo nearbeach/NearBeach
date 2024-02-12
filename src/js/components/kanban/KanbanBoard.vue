@@ -129,6 +129,11 @@ export default {
 			const little_adjustment = 2 * (this.columnResults.length - 1)
 			const columns_width = this.columnResults.length * 400 + little_adjustment;
 			const container_element = document.getElementsByClassName("kanban-container")[0];
+
+			//If container element does not exist just return
+			if (container_element === undefined) return;
+
+			//Get the kanban container width
 			const kanban_container_width = container_element.clientWidth;
 
 			//If the columns width is smaller than the screen size
@@ -173,14 +178,6 @@ export default {
 
 			//Get the distance to the top of the page
 			const scrollTop = document.getElementById("kanban_container").scrollTop;
-			// var scrollTop =
-			// 	window.pageYOffset !== undefined
-			// 		? window.pageYOffset
-			// 		: (
-			// 			document.documentElement ||
-			// 			document.body.parentNode ||
-			// 			document.body
-			// 		).scrollTop;
 
 			//Determine if we are hidding the element or not
 			if (scrollTop < 90) {

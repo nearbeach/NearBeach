@@ -260,7 +260,6 @@ import {NSelect} from "naive-ui";
 
 //Mixins
 import iconMixin from "../../../mixins/iconMixin";
-import errorModalMixin from "../../../mixins/errorModalMixin";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -295,7 +294,7 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			isSearching: false,
@@ -343,25 +342,19 @@ export default {
 			);
 
 			// Use axios to send data
-			this.axios
-				.post(
-					`${this.rootUrl}kanban_information/${
-						this.locationId
-					}/${this.objectModel.toLowerCase()}/add_link/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Data has been successfully saved. Time to add the card to the board
-					this.$emit("new_card", response.data);
+			this.axios.post(
+				`${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel.toLowerCase()}/add_link/`,
+				data_to_send
+			).then((response) => {
+				//Data has been successfully saved. Time to add the card to the board
+				this.$emit("new_card", response.data);
 
-					//Clear the object model
-					this.objectModel = null;
+				//Clear the object model
+				this.objectModel = null;
 
-					//Click on the close button - a hack, but it should close the modal
-					document
-						.getElementById("requirementLinkCloseButton")
-						.click();
-				});
+				//Click on the close button - a hack, but it should close the modal
+				document.getElementById("requirementLinkCloseButton").click();
+			});
 		},
 	},
 	watch: {
@@ -380,24 +373,26 @@ export default {
 			this.isSearching = true;
 
 			//Now to use axios to get the data we require
-			this.axios
-				.post(
-					`${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`
-				)
-				.then((response) => {
-					//Load the data into the array
-					this.objectResults = response.data;
-					this.objectFilteredResults = response.data;
+			this.axios.post(
+				`${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`
+			).then((response) => {
+				//Load the data into the array
+				this.objectResults = response.data;
+				this.objectFilteredResults = response.data;
 
-					//Tell the user we are no longer searching
-					this.isSearching = false;
+				//Tell the user we are no longer searching
+				this.isSearching = false;
 
-					//Clear out search term model
-					this.searchTermModel = "";
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "kanban");
+				//Clear out search term model
+				this.searchTermModel = "";
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Link List",
+					message: `We had an issue getting Link List. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		searchTermModel() {
 			if (

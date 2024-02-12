@@ -2,7 +2,8 @@
 	<n-config-provider :theme="getTheme(theme)">
 		<div class="card">
 			<div class="card-body">
-				<h2>User List</h2>
+				<h2 v-if="destination === 'user'">User Permission List</h2>
+        <h2 v-else>User List</h2>
 				<hr/>
 				<div class="row">
 					<div class="col-md-4">
@@ -102,7 +103,6 @@ import {Modal} from "bootstrap";
 
 
 //Import mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 
 //Vue Components
@@ -146,7 +146,7 @@ export default {
 			permissionDeleteId: 0,
 		};
 	},
-	mixins: [errorModalMixin, getThemeMixin, iconMixin],
+	mixins: [getThemeMixin, iconMixin],
 	methods: {
 		addUser() {
 			//Show the user's modal
@@ -180,15 +180,14 @@ export default {
 			});
 		},
 		updateGroupLeader(event) {
-			//Setup modal telling user of update
-			const loadingModal = new Modal("#loadingModal");
-			loadingModal.show();
-
-			//Update the loading modal content
-			const loadingModalContent = document.getElementById(
-				"loadingModalContent"
-			);
-			loadingModalContent.innerHTML = "Updating Team Leader Status";
+			//Notify the user of updating the group leader
+			this.$store.dispatch("newToast", {
+				header: "Updating Team Leader Status",
+				message: "Currently updating team leader status. Please wait",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "update_group_leader",
+			});
 
 			//Get if the checkbox is ticked or not
 			const group_leader = event.target.checked;
@@ -211,22 +210,28 @@ export default {
 				);
 			}
 
-			this.axios
-				.post(
-					`/update_group_leader_status/${this.destination}/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Updated data
-					this.localListResults = response.data;
+			this.axios.post(
+				`/update_group_leader_status/${this.destination}/`,
+				data_to_send
+			).then((response) => {
+				//Updated data
+				this.localListResults = response.data;
 
-					//Update the loading Modal status
-					loadingModalContent.innerHTML =
-						"Updated  Team Leader Status Complete";
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+				this.$store.dispatch("newToast", {
+					header: "Updated Team Leader Status",
+					message: "Updated team leader status.",
+					extra_classes: "bg-success",
+					unique_type: "update_group_leader",
 				});
+
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error updating group leader",
+					message: `Sorry, we could not update group leader. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	mounted() {

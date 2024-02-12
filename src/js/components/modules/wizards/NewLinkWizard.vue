@@ -179,7 +179,6 @@
 
 <script>
 //JavaScript components
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
@@ -209,7 +208,7 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			isSearching: false,
@@ -251,21 +250,19 @@ export default {
 			data_to_send.set("object_relation", this.objectRelationModel);
 
 			// Use axios to send data
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_link/`,
-					data_to_send
-				)
-				.then(() => {
-					//Data has been successfully saved. Time to update the requirement links
-					this.$emit("update_link_results", {});
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_link/`,
+				data_to_send
+			).then(() => {
+				//Data has been successfully saved. Time to update the requirement links
+				this.$emit("update_link_results", {});
 
-					//Clear the data
-					this.objectModel = null;
+				//Clear the data
+				this.objectModel = null;
 
-					//Click on the close button - a hack, but it should close the modal
-					document.getElementById("linkCloseButton").click();
-				});
+				//Click on the close button - a hack, but it should close the modal
+				document.getElementById("linkCloseButton").click();
+			});
 		},
 	},
 	watch: {
@@ -284,22 +281,24 @@ export default {
 			this.isSearching = true;
 
 			//Now to use axios to get the data we require
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${
-						this.locationId
-					}/${this.objectModel.toLowerCase()}/link_list/`
-				)
-				.then((response) => {
-					//Load the data into the array
-					this.objectResults = response.data;
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${
+					this.locationId
+				}/${this.objectModel.toLowerCase()}/link_list/`
+			).then((response) => {
+				//Load the data into the array
+				this.objectResults = response.data;
 
-					//Tell the user we are no longer searching
-					this.isSearching = false;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+				//Tell the user we are no longer searching
+				this.isSearching = false;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Searching",
+					message: `We got an error searching. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 };

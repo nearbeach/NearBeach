@@ -31,7 +31,8 @@
 			<div v-if="displayGroupPermissionIssue"
 				class="alert alert-warning"
 			>
-				No user groups were included. You will not have any permissions to this object once submitted.
+				None of your user groups were included. You will not have permissions to create this object. Please
+				select one of your groups
 			</div>
 		</div>
 	</div>

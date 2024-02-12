@@ -5,6 +5,12 @@
 				<h1>Project Information</h1>
 				<hr/>
 
+				<div v-if="projectIsClosed"
+					 class="alert alert-info"
+				>
+					Project is currently closed
+				</div>
+
 				<div class="row">
 					<!-- DESCRIPTION -->
 					<div class="col-md-4">
@@ -32,6 +38,7 @@
 								type="text"
 								v-model="projectNameModel"
 								class="form-control"
+								v-bind:disabled="isReadOnly"
 							/>
 						</div>
 						<br/>
@@ -57,11 +64,8 @@
 							menubar: false,
 							paste_data_images: true,
 							plugins: ['lists', 'image', 'codesample', 'table'],
-							toolbar: [
-								'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-								'bold italic strikethrough underline backcolor | table | ' +
-									'bullist numlist outdent indent | removeformat | image codesample',
-							],
+            				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
+					 				 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
 							skin: `${this.skin}`,
 							content_css: `${this.contentCss}`,
 						}"
@@ -82,37 +86,12 @@
 							save the change.
 						</p>
 					</div>
-					<div
-						class="col-md-4"
-						v-if="!isReadOnly"
-					>
+					<div class="col-md-4">
 						<n-select
 							v-bind:options="statusOptions"
+							v-bind:disabled="userLevel<=1"
 							v-model:value="projectStatusModel"
 						></n-select>
-					</div>
-					<div
-						class="col-md-4"
-						v-if="!isReadOnly"
-					>
-						<div
-							class="alert alert-danger"
-							v-if="projectStatusModel === 'Closed'"
-						>
-							Saving the project with this status will close the
-							project.
-						</div>
-					</div>
-					<div
-						class="col-md-4"
-						v-if="isReadOnly"
-					>
-						<div
-							class="alert alert-info"
-							v-if="projectStatusModel === 'Closed'"
-						>
-							Project has been closed.
-						</div>
 					</div>
 				</div>
 
@@ -128,34 +107,24 @@
 				<between-dates
 					destination="project"
 					v-on:update_dates="updateDates($event)"
+					v-bind:is-read-only="isReadOnly"
 					v-bind:end-date-model="projectEndDateModel.getTime()"
 					v-bind:start-date-model="projectStartDateModel.getTime()"
 				></between-dates>
 
 				<!-- Submit and Close Button -->
-				<hr v-if="userLevel >= 2 && !isReadOnly"/>
+				<hr v-if="!isReadOnly"/>
 				<div
 					class="row submit-row"
 					v-if="!isReadOnly"
 				>
 					<div class="col-md-12">
-						<!-- Close Project -->
-						<a
-							href="javascript:void(0)"
-							v-if="userLevel >= 3"
-							class="btn btn-danger"
-							v-on:click="closeProject"
-						>Close Project</a
-						>
-
 						<!-- Update Project -->
-						<a
-							href="javascript:void(0)"
-							v-if="userLevel >= 2"
-							class="btn btn-primary save-changes"
+						<button class="btn btn-primary save-changes"
 							v-on:click="updateProject"
-						>Update Project</a
 						>
+							Update Project
+						</button>
 					</div>
 				</div>
 			</div>
@@ -178,9 +147,7 @@ import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 import uploadMixin from "../../mixins/uploadMixin";
 
 export default {
@@ -206,7 +173,17 @@ export default {
 				return [];
 			},
 		},
+		projectIsClosed: {
+			type: Boolean,
+			default: false,
+		},
 		projectResults: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
+		statusOptions: {
 			type: Array,
 			default: () => {
 				return [];
@@ -229,12 +206,24 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [errorModalMixin, getThemeMixin, loadingModalMixin, uploadMixin],
+	watch: {
+		async projectStatusModel() {
+			//Escape condition 1 - if the project is NOT already closed
+			if (!this.projectIsClosed) return;
+
+			//Escape condition 2 - if the NEW status is closed
+			if (this.checkStatusIsClosed()) return;
+
+			//Method - we want to resave the data and then reload
+			await this.updateProject();
+			window.location.reload();
+		},
+	},
+	mixins: [getThemeMixin, uploadMixin],
 	data() {
 		return {
 			isReadOnly: false,
-			projectDescriptionModel:
-			this.projectResults[0].fields.project_description,
+			projectDescriptionModel: this.projectResults[0].fields.project_description,
 			projectEndDateModel: new Date(
 				this.projectResults[0].fields.project_end_date
 			),
@@ -242,14 +231,7 @@ export default {
 			projectStartDateModel: new Date(
 				this.projectResults[0].fields.project_start_date
 			),
-			projectStatusModel:
-			this.projectResults[0].fields.project_status,
-			statusOptions: [
-				{value: "Backlog", label: "Backlog"},
-				{value: "Blocked", label: "Blocked"},
-				{value: "In Progress", label: "In Progress"},
-				{value: "Test/Review", label: "Test/Review"},
-			],
+			projectStatusModel: this.projectResults[0].fields.project_status,
 		};
 	},
 	validations: {
@@ -269,12 +251,29 @@ export default {
 		},
 	},
 	methods: {
-		closeProject() {
-			//Set the project status to Closed
-			this.projectStatusModel = "Closed";
+		checkStatusIsClosed() {
+			//Will filter the current status for the status - then check to see if it is closed
+			const filtered_status = this.statusOptions.filter((row) => {
+				return parseInt(row.value) === parseInt(this.projectStatusModel);
+			});
 
-			//Update the project
-			this.updateProject();
+			//If there are not matching status - return true. Assume closed
+			if (filtered_status.length === 0) return true;
+
+			//Use the first value
+			return filtered_status[0].project_higher_order_status === "Closed";
+		},
+		setReadOnly() {
+			//If the project status is closed => set the isReadOnly to true
+			if (this.checkStatusIsClosed()) {
+				this.isReadOnly = true;
+				return;
+			}
+
+			//If the user level is 1 or below
+			if (this.userLevel <= 1) {
+				this.isReadOnly = true;
+			}
 		},
 		updateDates(data) {
 			this.projectEndDateModel = new Date(data.end_date);
@@ -319,7 +318,7 @@ export default {
 					`${this.rootUrl}project_information/${this.projectResults[0].pk}/save/`,
 					data_to_send
 				)
-				.then((response) => {
+				.then(() => {
 					//Notify user of success update
 					this.$store.dispatch("newToast", {
 						header: "Project Saved",
@@ -329,11 +328,18 @@ export default {
 					});
 
 					//Reload the page IF the status is closed
-					if (this.projectStatusModel === "Closed")
-						window.location.reload(true);
+					if (this.checkStatusIsClosed()) {
+						window.location.reload();
+					}
 				})
 				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+					this.$store.dispatch("newToast", {
+						header: "Project Could not save",
+						message: `There was an error saving the project. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						unique_type: "save",
+						delay: 0,
+					});
 				});
 		},
 	},
@@ -343,14 +349,8 @@ export default {
 		});
 	},
 	mounted() {
-		//If users have enough permissions add in the "Closed" functionaly
-		if (this.userLevel >= 3) {
-			this.statusOptions.push("Closed");
-		}
-
-		//If the project status is closed => set the isReadOnly to true
-		this.isReadOnly =
-			this.projectResults[0].fields.project_status === "Closed";
+		//Set the read only status
+		this.setReadOnly();
 	},
 };
 </script>

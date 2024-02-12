@@ -155,6 +155,20 @@
 							v-bind:destination="destination"
 							v-bind:location-id="locationId"
 						></documents-module>
+
+						<upload-document-wizard></upload-document-wizard>
+
+						<add-folder-wizard
+							v-bind:destination="destination"
+							v-bind:location-id="locationId"
+						></add-folder-wizard>
+
+						<add-link-wizard
+							v-bind:destination="destination"
+							v-bind:location-id="locationId"
+						></add-link-wizard>
+
+						<confirm-file-delete-vue></confirm-file-delete-vue>
 					</div>
 					<div
 						class="tab-pane fade"
@@ -212,10 +226,15 @@ import DocumentsModule from "../modules/sub_modules/DocumentsModule.vue";
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
 import iconMixin from "../../mixins/iconMixin";
+import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
+import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
+import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
+import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
 
 export default {
 	name: "OrganisationModules",
 	components: {
+		AddFolderWizard, AddLinkWizard, UploadDocumentWizard, ConfirmFileDeleteVue,
 		AssociatedObjects,
 		CustomersListModule,
 		DocumentsModule,

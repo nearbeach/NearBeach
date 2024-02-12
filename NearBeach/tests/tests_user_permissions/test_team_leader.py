@@ -97,3 +97,40 @@ class TeamLeaderPermissionTests(TestCase):
                     )
 
                 self.assertEqual(response.status_code, data.status_code)
+
+    def test_notification_pages_redirect_to_dashboard(self):
+        """
+        The following tests will make sure the team leader can not access the notifications pages.
+        The following uses a named tuple to shorten the tests.
+        """
+        URLTest = namedtuple(
+            "URLTest",
+            ["url","expected_url", "args", "data", "status_code", "target_status_code", "method"],
+            defaults=["","", [], {}, 302, 200, "GET"],
+        )
+
+        data_list = [
+            URLTest("search_notification", "/", [], {}, 302, 200, "GET"),
+            URLTest("new_notification", "/", [], {}, 302, 200, "GET"),
+            URLTest("notification_information", "/", [1], {}, 302, 200, "GET"),
+        ]
+
+        # Loop through each url to test to make sure the decorator is applied
+        for data in data_list:
+            with self.subTest(data):
+                if data.method == "GET":
+                    response = self.client.get(
+                        reverse(data.url, args=data.args), data.data, follow=True
+                    )
+                else:
+                    response = self.client.post(
+                        reverse(data.url, args=data.args), data.data, follow=True
+                    )
+
+                self.assertRedirects(
+                    response,
+                    expected_url=data.expected_url,
+                    status_code=data.status_code,
+                    target_status_code=data.target_status_code,
+                    fetch_redirect_response=True
+                )

@@ -148,7 +148,6 @@
 
 <script>
 //JavaScript extras
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
@@ -178,7 +177,7 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			bugClientModel: "",
@@ -191,17 +190,24 @@ export default {
 	},
 	methods: {
 		loadBugClientList() {
-			this.axios
-				.post(`${this.rootUrl}object_data/bug_client_list/`)
-				.then((response) => {
-					//Clear out the bug list
-					this.bugClientList = response.data.map((row) => {
-						return {
-							value: row.pk,
-							label: row.fields.bug_client_name,
-						};
-					});
+			this.axios.post(
+				`${this.rootUrl}object_data/bug_client_list/`
+			).then((response) => {
+				//Clear out the bug list
+				this.bugClientList = response.data.map((row) => {
+					return {
+						value: row.pk,
+						label: row.fields.bug_client_name,
+					};
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error loading bug client list",
+					message: `We had an issue loading the bug client list - error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 		startSearchTimer() {
 			//Destroy the first timer if it exists
@@ -229,21 +235,23 @@ export default {
 			data_to_send.set("search", this.searchModel);
 
 			//Send the data - then wait for a response
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/query_bug_client/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Update the bug results
-					this.bugResults = response.data;
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/query_bug_client/`,
+				data_to_send
+			).then((response) => {
+				//Update the bug results
+				this.bugResults = response.data;
 
-					//Turn off the search
-					this.searchOn = false;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+				//Turn off the search
+				this.searchOn = false;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Search Failed",
+					message: `Sorry, the search for bug client has failed. Errors -> ${error}`,
+					extra_classes: "bg-warning",
+					delay: 0,
 				});
+			});
 		},
 		submitBug(bug_id) {
 			//Tell user you are adding the bug
@@ -269,21 +277,23 @@ export default {
 			data_to_send.set("bug_status", filted_bug_results[0].status);
 
 			//Send data to the backend
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_bug/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Send the updated bug list up
-					this.$emit("append_bug_list", response.data);
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_bug/`,
+				data_to_send
+			).then((response) => {
+				//Send the updated bug list up
+				this.$emit("append_bug_list", response.data);
 
-					//Update the user that the bug has been added
-					add_bug_element.innerHTML = "Done";
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+				//Update the user that the bug has been added
+				add_bug_element.innerHTML = "Done";
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Submit Bug Failed",
+					message: `Sorry, the submitting the bug failed. Errors -> ${error}`,
+					extra_classes: "bg-warning",
+					delay: 0,
 				});
+			});
 		},
 	},
 	mounted() {

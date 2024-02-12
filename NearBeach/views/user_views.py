@@ -7,8 +7,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 from django.contrib.auth import update_session_auth_hash
-
-from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
+from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
 from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm, UserRemovePermissionForm
 from NearBeach.models import UserGroup
 from NearBeach.views.tools.internal_functions import get_user_permissions
@@ -79,7 +78,7 @@ def update_password(request, *args, **kwargs):
     # Get form data
     form = PasswordResetForm(request.POST)
     if not form.is_valid():
-        return HttpResponseBadRequest(form.errors)
+        return HttpResponseBadRequest(form.errors.as_json())
 
     # Check to make sure we are updating ONLY the current user
     if not form.cleaned_data["username"] == request.user:

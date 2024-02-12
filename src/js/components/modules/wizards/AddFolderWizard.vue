@@ -79,8 +79,8 @@ import {Icon} from "@iconify/vue";
 import {mapGetters} from "vuex";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
+import {Modal} from "bootstrap";
 
 export default {
 	name: "AddFolderWizard",
@@ -88,26 +88,16 @@ export default {
 		Icon,
 	},
 	props: {
-		currentFolder: {
-			type: String,
-			default: "/",
-		},
 		destination: {
 			type: String,
 			default: "/",
-		},
-		existingFolders: {
-			type: Array,
-			default: () => {
-				return [];
-			},
 		},
 		locationId: {
 			type: Number,
 			default: 0,
 		},
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			disableAddFolderButton: true,
@@ -116,6 +106,8 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			existingFolders: "getFolderFilteredList",
+			currentFolder: "getCurrentFolder",
 			rootUrl: "getRootUrl",
 		}),
 	},
@@ -128,7 +120,7 @@ export default {
 				this.folderDescriptionModel
 			);
 
-			if (this.currentFolder !== null && this.currentFolder !== "") {
+			if (this.currentFolder > 0) {
 				data_to_send.set("parent_folder", this.currentFolder);
 			}
 
@@ -139,17 +131,32 @@ export default {
 					data_to_send
 				)
 				.then((response) => {
-					//Send the data up stream to get appended
-					this.$emit("update_folder_list", response.data);
+					//Update the Folder List in VueX
+					this.$store.dispatch("appendFolderList", {
+						folderList: response.data[0],
+					});
 
 					//Clear the model
 					this.folderDescriptionModel = "";
 
 					//Close the modal
 					document.getElementById("addFolderCloseButton").click();
+
+					//Reshow the card information modal if exists
+					let cardModal = document.getElementById("cardInformationModal");
+					if (cardModal !== null)
+					{
+						cardModal = new Modal(cardModal);
+						cardModal.show();
+					}
 				})
 				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+					this.$store.dispatch("newToast", {
+						header: "Failed to add folder",
+						message: `Failed to add folder. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 	},

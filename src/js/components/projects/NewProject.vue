@@ -61,11 +61,8 @@
 							menubar: false,
 							paste_data_images: true,
 							plugins: ['lists', 'image', 'codesample', 'table'],
-							toolbar: [
-								'undo redo | formatselect | alignleft aligncenter alignright alignjustify',
-								'bold italic strikethrough underline backcolor | table | ' +
-									'bullist numlist outdent indent | removeformat | image codesample',
-							],
+            				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
+									 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
 							skin: `${this.skin}`,
 							content_css: `${this.contentCss}`,
 						}"
@@ -130,7 +127,6 @@ import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
 
@@ -174,10 +170,14 @@ export default {
 				return [];
 			},
 		},
+		userLevel: {
+			type: Number,
+			default: 1,
+		},
 		uuid: {
 			type: String,
 			default: "",
-		}
+		},
 	},
 	computed: {
 		...mapGetters({
@@ -185,7 +185,7 @@ export default {
 			skin: "getSkin",
 		}),
 	},
-	mixins: [errorModalMixin, getThemeMixin, newObjectUploadMixin],
+	mixins: [getThemeMixin, newObjectUploadMixin],
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
@@ -255,15 +255,20 @@ export default {
 			});
 
 			//Send data to backend
-			this.axios
-				.post(`${this.rootUrl}new_project/save/`, data_to_send)
-				.then((response) => {
-					//Go to the new project
-					window.location.href = response.data;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+			this.axios.post(
+				`${this.rootUrl}new_project/save/`,
+				data_to_send
+			).then((response) => {
+				//Go to the new project
+				window.location.href = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error submitting new project",
+					message: `Sorry, we could not submit new project. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		updateDates(data) {
 			//Update both the start and end dates
@@ -292,6 +297,11 @@ export default {
 			type: "updateUrl",
 			rootUrl: this.rootUrl,
 			staticUrl: this.staticUrl,
+		});
+
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
 		});
 	},
 };

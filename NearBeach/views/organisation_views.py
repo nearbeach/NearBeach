@@ -4,9 +4,7 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import (
-    check_user_organisation_permissions,
-)
+from NearBeach.decorators.check_user_permissions.organisation_permissions import check_user_organisation_permissions
 from NearBeach.forms import OrganisationForm, ProfilePictureForm
 from NearBeach.models import Organisation, Customer, ListOfTitle
 from NearBeach.views.document_views import handle_document_permissions
@@ -209,6 +207,8 @@ def organisation_update_profile(request, organisation_id, *args, **kwargs):
         document_description,
         "organisation",
         organisation_id,
+        0,
+        True,
     )
 
     # Get the organisation object

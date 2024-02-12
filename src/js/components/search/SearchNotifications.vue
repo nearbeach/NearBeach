@@ -59,9 +59,6 @@
 </template>
 
 <script>
-//Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
-import searchMixin from "../../mixins/searchMixin";
 
 export default {
 	name: "SearchNotifications",
@@ -77,7 +74,6 @@ export default {
 			default: "/",
 		},
 	},
-	mixins: [errorModalMixin, searchMixin],
 	data() {
 		return {
 			localNotificationResults: this.notificationResults,
@@ -98,16 +94,30 @@ export default {
 			).then((response) => {
 				this.localNotificationResults = response.data;
 			}).catch((error) => {
-				this.showErrorModal(error, "Search Notification", "");
+				this.$store.dispatch("newToast", {
+					header: "Error getting search results",
+					message: `Sorry, we could not retrieve the search results. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		}
 	},
 	watch: {
 		searchModel() {
-			this.searchTrigger({
-				return_function: this.getSearchResults,
-				searchTimeout: this.searchTimeout,
-			});
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getSearchResults();
+				}, 500);
+			}
 		},
 	}
 }

@@ -8,8 +8,8 @@ import DashboardUsersWithNoGroups from "/src/js/components/dashboard/DashboardUs
 // VueX
 import { store } from "/src/js/vuex-store";
 
-//Axios
-const axios = require('axios');
+// Axios
+const axios = require("axios");
 
 describe('NewChangeTask.vue - rendering component', () => {
     //Using mount - insert data
@@ -20,6 +20,9 @@ describe('NewChangeTask.vue - rendering component', () => {
             plugins: [store],
             properties: [axios],
             axios: axios,
+            mocks: {
+                axios,
+            }
         },
     });
 

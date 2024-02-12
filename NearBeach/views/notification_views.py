@@ -64,7 +64,7 @@ def notification_information(request, notification_id):
     c = {
         "nearbeach_title": f"Notification {notification_id}",
         "need_tinymce": False,
-        "nearbeach_title": "New Notification",
+        "nearbeach_title": F"Notification {notification_id}",
         "notification_results": serializers.serialize("json",[notification_results]),
         "theme": get_theme(request),
     }

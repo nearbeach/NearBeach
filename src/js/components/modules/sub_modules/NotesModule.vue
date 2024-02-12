@@ -10,7 +10,6 @@
 		</p>
 
 		<list-notes
-			v-bind:note-history-results="noteHistoryResults"
 			v-bind:destination="destination"
 		></list-notes>
 
@@ -19,13 +18,13 @@
 		<hr/>
 		<div class="row submit-row">
 			<div class="col-md-12">
-				<a
-					href="javascript:void(0)"
+				<button
 					class="btn btn-primary save-changes"
 					v-on:click="createNewNote"
 					v-if="userLevel > 1"
-				>Add Note to {{ destination }}</a
 				>
+					Add Note to {{ destination }}
+				</button>
 			</div>
 		</div>
 
@@ -33,15 +32,15 @@
 		<new-history-note-wizard
 			v-bind:location-id="locationId"
 			v-bind:destination="destination"
-			v-on:update_note_history_results="updateNoteHistoryResults($event)"
 		></new-history-note-wizard>
+
+		<edit-history-note-wizard></edit-history-note-wizard>
 	</div>
 </template>
 
 <script>
 // JavaScript Libraries
 import {Modal} from "bootstrap";
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import ListNotes from "./ListNotes.vue";
@@ -49,20 +48,17 @@ import NewHistoryNoteWizard from "../wizards/NewHistoryNoteWizard.vue";
 
 //VueX
 import {mapGetters} from "vuex";
+import EditHistoryNoteWizard from "../wizards/EditHistoryNoteWizard.vue";
 
 export default {
 	name: "NotesModule",
 	components: {
+		EditHistoryNoteWizard,
 		Icon,
 		ListNotes,
 		NewHistoryNoteWizard,
 	},
-	mixins: [errorModalMixin, iconMixin],
-	data() {
-		return {
-			noteHistoryResults: [],
-		};
-	},
+	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -79,20 +75,22 @@ export default {
 			newNoteModal.show();
 		},
 		getNoteHistoryResults() {
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
-				)
-				.then((response) => {
-					this.noteHistoryResults = response.data;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
+			).then((response) => {
+				// this.noteHistoryResults = response.data;
+				this.$store.commit({
+					type: "initNoteList",
+					noteList: response.data,
 				});
-		},
-		updateNoteHistoryResults(data) {
-			//Add the extra data
-			this.noteHistoryResults.push(data[0]);
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Note History",
+					message: `Can not retrieve the note history. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				})
+			});
 		},
 	},
 	mounted() {

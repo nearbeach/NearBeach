@@ -1,6 +1,6 @@
 import json
 from django.contrib.auth.decorators import user_passes_test
-from django.db.models import Q
+from django.db.models import Q, F
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from NearBeach.forms import SearchObjectsForm, SearchForm
-from NearBeach.decorators.check_user_permissions import check_user_permissions
 from NearBeach.models import (
     Notification,
     ObjectAssignment,
@@ -27,8 +26,8 @@ from NearBeach.models import (
     UserGroup,
 )
 from NearBeach.views.theme_views import get_theme
-from NearBeach.decorators.check_user_permissions import check_user_admin_permissions
-
+from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
+from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 
 # Internal Function
 def get_object_search_data(search_form, request):
@@ -55,15 +54,19 @@ def get_object_search_data(search_form, request):
         "requirement_title",
         "requirement_status__requirement_status",
     )
-    project_results = Project.objects.filter(is_deleted=False,).values(
+    project_results = Project.objects.filter(is_deleted=False,).annotate(
+        project_status_text=F("project_status__project_status"),
+    ).values(
         "project_id",
         "project_name",
-        "project_status",
+        "project_status_text",
     )
-    task_results = Task.objects.filter(is_deleted=False,).values(
+    task_results = Task.objects.filter(is_deleted=False,).annotate(
+        task_status_text=F("task_status__task_status"),
+    ).values(
         "task_id",
         "task_short_description",
-        "task_status",
+        "task_status_text",
     )
     kanban_results = KanbanBoard.objects.filter(is_deleted=False,).values(
         "kanban_board_id",
@@ -123,16 +126,19 @@ def get_object_search_data(search_form, request):
         requirement_results = requirement_results.exclude(
             requirement_status__in=ListOfRequirementStatus.objects.filter(
                 is_deleted=False,
-                requirement_status_is_closed=True,
+                # requirement_status_is_closed=True,
+                requirement_higher_order_status="Closed",
             ).values("requirement_status_id")
         )
 
         project_results = project_results.exclude(
-            project_status__in=["Closed"],
+            # project_status__in=["Closed"],
+            project_status__project_higher_order_status="Closed",
         )
 
         task_results = task_results.exclude(
-            task_status__in=["Closed"],
+            # task_status__in=["Closed"],
+            task_status__task_higher_order_status="Closed",
         )
 
         kanban_results = kanban_results.exclude(
@@ -373,6 +379,7 @@ def search_notification(request):
 
     return HttpResponse(t.render(c, request))
 
+
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 def search_notification_data(request):
@@ -517,7 +524,7 @@ def search_permission_set_data(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup="tag")
+@check_specific_object_permissions(min_permission_level=1, object_lookup="tag")
 def search_tag(request, *args, **kwargs):
     # Get template
     t = loader.get_template("NearBeach/search/search_tags.html")

@@ -4,7 +4,6 @@
 		v-bind:id="`kanban_cell_${levelId}_${columnId}`"
 		v-bind:data-level="levelId"
 		v-bind:data-column="columnId"
-		v-if="!levelCollapseStatus(levelId)"
 	>
 		<div
 			class="list-group-item"
@@ -16,7 +15,8 @@
 			v-on:dblclick="doubleClickCard($event)"
 		>
 			<div
-				v-bind:class="`card-priority-line priority-${priorityList[element.fields.kanban_card_priority]}`"></div>
+				v-bind:class="`card-priority-line priority-${priorityList[element.fields.kanban_card_priority]}`">
+			</div>
 			<Icon v-if="isLinkedObject(element)"
 				  v-bind:icon="icons.linkOut"
 				  v-bind:data-sort-number="element.fields.kanban_card_sort_number"

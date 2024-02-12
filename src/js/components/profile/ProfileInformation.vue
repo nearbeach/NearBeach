@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="getTheme(currentTheme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>My Profile</h1>
@@ -110,9 +110,7 @@ import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 export default {
 	name: "ProfileInformation",
@@ -145,6 +143,7 @@ export default {
 	},
 	data() {
 		return {
+			currentTheme: this.theme,
 			emailModel: this.userResults[0].email,
 			firstNameModel: this.userResults[0].first_name,
 			lastNameModel: this.userResults[0].last_name,
@@ -167,7 +166,7 @@ export default {
 			this.showMessage = true;
 		},
 	},
-	mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
+	mixins: [getThemeMixin],
 	validations() {
 		return {
 			lastNameModel: {
@@ -181,15 +180,17 @@ export default {
 		};
 	},
 	methods: {
-		updateTheme() {
-			//Get the body
-		},
 		updateUser() {
 			//Check form validation
 			this.v$.$touch();
 
 			if (this.v$.$invalid) {
-				this.showValidationErrorModal();
+				this.$store.dispatch("newToast", {
+					header: "Please check validation",
+					message: "Sorry, but can you please fix all validation issues.",
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
 
 				//Just return - as we do not need to do the rest of this function
 				return;
@@ -202,27 +203,45 @@ export default {
 			data_to_send.set("last_name", this.lastNameModel);
 			data_to_send.set("theme", this.themeModel);
 
-			//Open up the loading modal
-			this.showLoadingModal("Project");
+			//Make the default "Please save" message disappear
 			this.showMessage = false;
 
 			//Updating the theme
 			document.documentElement.setAttribute("data-bs-theme", this.themeModel);
 
+			//Notify the user we are updating
+			this.$store.dispatch("newToast", {
+				header: "Currently Updating",
+				message: "Your Profile has been submitted. Please wait",
+				unique_type: "update",
+				extra_classes: "bg-warning",
+				delay: 0,
+			});
+
+			//Update the current theme with the one in the model
+			this.currentTheme = this.themeModel;
+
 			//Send data via axios
-			this.axios
-				.post(
-					`${this.rootUrl}profile_information/update_data/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Notify user of success update
-					this.closeLoadingModal();
-				})
-				.catch((error) => {
-					//There was an error
-					this.showErrorModal(error, "profile");
+			this.axios.post(
+				`${this.rootUrl}profile_information/update_data/`,
+				data_to_send
+			).then(() => {
+				//Notify user of success update
+				this.$store.dispatch("newToast", {
+					header: "Update Successful",
+					message: "Your Profile has been updated",
+					unique_type: "update",
+					extra_classes: "bg-success",
 				});
+			}).catch((error) => {
+				//There was an error
+				this.$store.dispatch("newToast", {
+					header: "Error updating profile",
+					message: `Can not update your profile sorry. Error -> ${error}`,
+					unique_type: "update",
+					extra_classes: "bg-danger",
+				});
+			});
 		},
 	},
 	mounted() {

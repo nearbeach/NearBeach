@@ -26,7 +26,7 @@ from ..forms import (
     Document,
     DocumentRemoveForm,
     DocumentUploadForm,
-    RequirementItem,
+    RequirementItem, FolderRemoveForm,
 )
 from ..models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
 from azure.storage.blob import BlobServiceClient
@@ -35,6 +35,27 @@ from django.conf import settings
 import boto3
 import json
 from pathlib import Path
+from botocore.config import Config
+
+
+# Internal function
+def connect_check_client_s3(botoInitValues):
+    config = Config(
+        connect_timeout=4,
+        retries=dict(
+            max_attempts=1,
+        )
+    )
+    botoInitValues.update(
+        config=config
+    )
+    client = boto3.client("s3", **botoInitValues)
+
+    # Check to see if the connection works
+    try:
+        response = client.list_buckets()
+    except Exception as e:
+        print(F"An issue has occurred trying to connect to the S3 bucket. Please see the following errors - {e}")
 
 
 @require_http_methods(["POST"])
@@ -81,8 +102,6 @@ def document_add_link(request, destination, location_id):
     :param location_id:
     :return:
     """
-    # ADD IN PERMISSION CHECKS
-
     # Get the form data
     form = AddLinkForm(request.POST)
     if not form.is_valid():
@@ -93,6 +112,7 @@ def document_add_link(request, destination, location_id):
         change_user=request.user,
         document_description=form.cleaned_data["document_description"],
         document_url_location=form.cleaned_data["document_url_location"],
+        document_upload_successfully=True,
     )
     document_submit.save()
 
@@ -142,6 +162,8 @@ def document_list_files(request, destination, location_id):
     """
     document_permission_results = DocumentPermission.objects.filter(
         is_deleted=False,
+        document_key__document_upload_successfully=True,
+        is_profile_picture=False,
     ).values(
         "document_key_id",
         "document_key__document_description",
@@ -159,14 +181,6 @@ def document_list_files(request, destination, location_id):
     json_results = json.dumps(list(document_permission_results), cls=DjangoJSONEncoder)
 
     return HttpResponse(json_results, content_type="application/json")
-
-    # # Get the document information
-    # document_results = document.objects.filter(
-    #     is_deleted=False,
-    #     document_key__in=document_permission_results.values('document_key')
-    # )
-    #
-    # return HttpResponse(serializers.serialize('json',document_results),content_type='application/json')
 
 
 @require_http_methods(["POST"])
@@ -214,6 +228,22 @@ def document_remove(request, destination, location_id):
     document_permission_update = DocumentPermission.objects.get(document_key = document_update.document_key)
     document_permission_update.is_deleted = True
     document_permission_update.save()
+
+    return HttpResponse("")
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+def document_remove_folder(request, destination, location_id):
+    # Get form data
+    form = FolderRemoveForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Get folder from the from
+    folder_update = form.cleaned_data["folder_id"]
+    folder_update.is_deleted = True
+    folder_update.save()
 
     return HttpResponse("")
 
@@ -373,6 +403,17 @@ def private_download_file(request, document_key):
         | Q(organisation__isnull=False)
     )
 
+    new_object_picture = document_permission_results.filter(
+        # If everything is empty EXCEPT the UUID new object column
+        new_object__isnull=False,
+        project_id__isnull=True,
+        request_for_change_id__isnull=True,
+        requirement_id__isnull=True,
+        requirement_item_id__isnull=True,
+        task_id__isnull=True,
+        kanban_card_id__isnull=True,
+    )
+
     user_profile_picture = UserProfilePicture.objects.filter(
         document=document_key,
         is_deleted=False,
@@ -383,6 +424,7 @@ def private_download_file(request, document_key):
         object_assignment_results.count() == 0
         and profile_picture_permission.count() == 0
         and user_profile_picture.count() == 0
+        and new_object_picture.count() == 0
         and request.user.is_superuser is False
     ):
         raise Http404
@@ -399,7 +441,7 @@ def private_download_file(request, document_key):
 
 # Internal Function
 def handle_document_permissions(
-    request, upload, file, document_description, destination, location_id, parent_folder = 0
+    request, upload, file, document_description, destination, location_id, parent_folder=0, is_profile_picture=False,
 ):
     """
     The function that handles the document permission - i.e. if user has access to the 
@@ -420,6 +462,7 @@ def handle_document_permissions(
     document_permission_submit = DocumentPermission(
         change_user=request.user,
         document_key=document_submit,
+        is_profile_picture=is_profile_picture,
     )
 
     """
@@ -437,6 +480,7 @@ def handle_document_permissions(
     if parent_folder != 0:
         document_permission_submit.folder = parent_folder
 
+
     # Save document permission
     document_permission_submit.save()
 
@@ -453,6 +497,9 @@ def handle_document_permissions(
     )
 
     FILE_HANDLER.upload(upload, document_submit, file)
+
+    document_submit.document_upload_successfully = True
+    document_submit.save()
 
     return document_submit, document_results
 
@@ -472,9 +519,8 @@ class LocalFileHandler(FileHandler):
     def fetch(self, document_results):
         # Normal setup - find document on server and serve
         # Get the Document path information
-        with (self.root / document_results.document).open("rb") as file:
-            # Send file to user
-            return FileResponse(file)
+        file = self.root / str(document_results.document)
+        return FileResponse(open(file, 'rb'))
 
     def upload(self, upload_document, document_results, file):
         """
@@ -486,7 +532,7 @@ class LocalFileHandler(FileHandler):
         """
         # Make the directory we want to save the file in. The directory will have the document_key
         file_permissions = 0o755  # Look at these permissions later
-        storage_location = self.root / document_results.document
+        storage_location = self.root / str(document_results.document)
         storage_location.parent.mkdir(mode=file_permissions, exist_ok=True)
 
         # Save the upload document in the location
@@ -515,6 +561,9 @@ class S3FileHandler(FileHandler):
                 verify=getattr(settings, "AWS_VERIFY_TLS", True),
                 **getattr(settings, "AWS_INIT_VALUES", {})
             )
+            # Log any issues for the user
+            connect_check_client_s3(botoInitValues)
+
         self._s3 = boto3.client("s3",   **botoInitValues)
         self._bucket = settings.AWS_STORAGE_BUCKET_NAME
 

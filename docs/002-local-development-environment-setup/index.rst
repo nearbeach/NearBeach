@@ -1,4 +1,4 @@
-.. _local-development-environment:
+.. _local_development_environment:
 
 =============================
 Local Development Environment

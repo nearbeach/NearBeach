@@ -122,9 +122,6 @@ import {NSelect} from "naive-ui";
 //VueX
 import {mapGetters} from "vuex";
 
-//Import Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
-
 export default {
 	name: "AdminAddUser",
 	components: {
@@ -156,7 +153,6 @@ export default {
 			userLevel: "getUserLevel",
 		}),
 	},
-	mixins: [errorModalMixin],
 	methods: {
 		addUser() {
 			//Create the data_to_send
@@ -173,15 +169,20 @@ export default {
 				data_to_send.append("permission_set", row);
 			});
 
-			this.axios
-				.post(`${this.rootUrl}admin_add_user/`, data_to_send)
-				.then((response) => {
-					//Just refresh the page (for now)
-					window.location.reload(true);
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "Admin Add user", "");
+			this.axios.post(
+				`${this.rootUrl}admin_add_user/`,
+				data_to_send
+			).then((response) => {
+				//Just refresh the page (for now)
+				window.location.reload(true);
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error adding user",
+					message: `Sorry, we could not add user. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		getData() {
 			const data_to_send = new FormData();
@@ -235,7 +236,12 @@ export default {
 						break;
 				}
 			}).catch((error) => {
-				this.showErrorModal(error, "Admin Add User", "");
+				this.$store.dispatch("newToast", {
+					header: "Error obtaining data",
+					message: `Sorry, we could not obtain the required data. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 	},

@@ -343,7 +343,6 @@ export default {
 						extra_classes: "bg-danger",
 						delay: 0,
 					});
-					//this.showErrorModal(error, 'Change Task');
 				});
 		},
 		updateStatus(new_status) {

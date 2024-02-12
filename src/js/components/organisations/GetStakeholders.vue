@@ -48,9 +48,6 @@ import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
-//Mixins
-import searchMixin from "../../mixins/searchMixin";
-
 export default {
 	name: "GetStakeholders",
 	setup() {
@@ -60,7 +57,6 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
-	mixins: [searchMixin],
 	props: {
 		isDirty: {
 			//Passes the value from the template above where the checking is done
@@ -87,12 +83,19 @@ export default {
 	},
 	methods: {
 		fetchOptions(search, loading) {
-			this.searchTrigger({
-				return_function: this.getOrganisationData,
-				searchTimeout: this.searchTimeout,
-				search: search,
-				loading: loading,
-			});
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (search.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getOrganisationData(search, loading);
+				}, 500);
+			}
 		},
 		getOrganisationData(search, loading) {
 			// Save the seach data in FormData
@@ -100,45 +103,29 @@ export default {
 			data_to_send.set("search", search);
 
 			// Now that the timer has run out, lets use AJAX to get the organisations.
-			this.axios
-				.post(
-					`${this.rootUrl}search/organisation/data/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Extract the required JSON data
-					const extracted_data = response.data;
+			this.axios.post(
+				`${this.rootUrl}search/organisation/data/`,
+				data_to_send
+			).then((response) => {
+				//Extract the required JSON data
+				const extracted_data = response.data;
 
-					//Look through the extracted data - and map the required fields into stakeholder fix list
-					this.stakeholderFixList = extracted_data.map((row) => {
-						//Create the creation object
-						return {
-							value: row.pk,
-							label: row.fields.organisation_name,
-						};
-					});
-				})
-				.catch(function (error) {
-					// Get the error modal
-					const elem_cont =
-						document.getElementById("errorModalContent");
-
-					// Update the content
-					elem_cont.innerHTML = `<strong>Search Organisation Issue:</strong><br/>${error}`;
-
-					// Show the modal
-					const errorModal = new bootstrap.Modal(
-						document.getElementById("errorModal"),
-						{
-							keyboard: false,
-						}
-					);
-					errorModal.show();
-
-					// Hide the loader
-					const loader_element = document.getElementById("loader");
-					loader_element.style.display = "none";
+				//Look through the extracted data - and map the required fields into stakeholder fix list
+				this.stakeholderFixList = extracted_data.map((row) => {
+					//Create the creation object
+					return {
+						value: row.pk,
+						label: row.fields.organisation_name,
+					};
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting organisation data",
+					message: `Error getting the organisation data. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				})
+			});
 		},
 	},
 	watch: {

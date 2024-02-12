@@ -59,9 +59,7 @@
 import { NSelect, NConfigProvider } from "naive-ui";
 
 //Load mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 export default {
 	name: "GroupInformation",
@@ -96,9 +94,9 @@ export default {
 			groupNameModel: this.groupResults[0].fields.group_name,
 			parentGroupFixList: [],
 			parentGroupModel: this.groupResults[0].fields.parent_group,
-		};
+		}
 	},
-	mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
+	mixins: [getThemeMixin],
 	methods: {
 		updateGroup() {
 			//Construct data to send
@@ -110,17 +108,34 @@ export default {
 				data_to_send.set("parent_group", this.parentGroupModel);
 			}
 
-			//Show the loading mixin
-			this.showLoadingModal("Group Information");
+			this.$store.dispatch("newToast", {
+				header: "Updated Group",
+				message: "Updated Group. Please wait.",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "update_group_leader",
+			});
 
 			//User axios to send data
 			this.axios.post(
 				`${this.rootUrl}group_information/${this.groupResults[0].pk}/save/`,
 				data_to_send
-			).then((response) => {
-				this.closeLoadingModal();
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "Updated Group",
+					message: "Successfully Update Group",
+					extra_classes: "bg-success",
+					delay: 0,
+					unique_type: "update_group_leader",
+				});
 			}).catch((error) => {
-				this.showErrorModal(error, "group_information", "");
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Group",
+					message: `We had an issue updating group. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "update_group_leader",
+				});
 			});
 		},
 	},

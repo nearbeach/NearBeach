@@ -1,0 +1,13 @@
+{% extends "NearBeach/partials/template_public.html" %}
+{% load static %}
+{% block content %}
+    <fieldset disabled="disabled">
+        <project-information v-bind:project-results="{{results}}"
+                             v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
+                             v-bind:organisation-results="{{organisation_results}}"
+                             v-bind:status-options="{{ status_options }}"
+                             v-bind:theme="`light`"
+                             v-bind:user-level="1"
+        ></project-information>
+    </fieldset>
+{% endblock %}

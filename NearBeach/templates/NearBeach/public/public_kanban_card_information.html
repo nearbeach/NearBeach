@@ -1,0 +1,21 @@
+{% extends "NearBeach/partials/template_public.html" %}
+{% load static %}
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <h1>Card Information #{{cardId}}</h1>
+            <hr>
+
+            <public-card-information
+                              v-bind:card-column="`{{ card_column }}`"
+                              v-bind:card-id="`{{ card_id }}`"
+                              v-bind:card-description="`{{ card_description }}`"
+                              v-bind:card-level="`{{ card_level }}`"
+                              v-bind:card-priority="`{{ card_priority }}`"
+                              v-bind:card-text="`{{ card_text }}`"
+                              v-bind:theme="`light`"
+                              v-bind:user-level="1"
+            ></public-card-information>
+        </div>
+    </div>
+{% endblock %}

@@ -52,6 +52,8 @@
 				</span>
 			</div>
 
+			<div v-if="changeTask.is_downtime">Downtime Scheduled</div>
+
 			<div v-if="blockedBy(changeTask.change_task_id).length > 0">
 				<div class="change-task--blocked-by">
 					Change task currently blocked by;
@@ -104,7 +106,7 @@
 
 				<!-- FAIL -->
 				<button class="btn btn-danger"
-						v-on:click="openConfirmModal(changeTask.change_task_id, 'Failure', 6)"
+						v-on:click="openConfirmModal(changeTask.change_task_id, 'Failure', 9)"
 						v-if="[4, 8].includes(changeTask.change_task_status)"
 				>
 					Set Task to Fail
@@ -176,10 +178,8 @@ import {Modal} from "bootstrap";
 import ConfirmChangeTaskClosure from "./ConfirmChangeTaskClosure.vue";
 import NewChangeTask from "../../change_task/NewChangeTask.vue";
 
-
 // Mixins
 import datetimeMixin from "../../../mixins/datetimeMixin";
-import errorModalMixin from "../../../mixins/errorModalMixin";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -214,7 +214,7 @@ export default {
 			},
 		},
 	},
-	mixins: [datetimeMixin, errorModalMixin],
+	mixins: [datetimeMixin],
 	data: () => ({
 		blockedTaskList: [],
 		changeTaskList: [],
@@ -233,7 +233,8 @@ export default {
 					const change_task_status =
 						changeTask.change_task_status;
 					return (
-						change_task_status !== 5 && change_task_status !== 6
+						//Finished, Rejected, Failed
+						change_task_status !== 5 && change_task_status !== 6 && change_task_status !== 9
 					);
 				}
 			).length;
@@ -310,38 +311,42 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("rfc_status", 5);
 
-			this.axios
-				.post(
-					`${this.rootUrl}rfc_information/${this.rfcId}/update_status/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Refresh Page
-					window.location.reload(true);
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "request_for_change");
+			this.axios.post(
+				`${this.rootUrl}rfc_information/${this.rfcId}/update_status/`,
+				data_to_send
+			).then((response) => {
+				//Refresh Page
+				window.location.reload(true);
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error closing the RFC",
+					message: `Sorry, we could not close the rfc. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		getRunSheetList() {
-			this.axios
-				.post(
-					`${this.rootUrl}rfc_information/${this.locationId}/change_task_list/`
-				)
-				.then((response) => {
-					// Update the blockedTaskList and changeTaskList
-					this.blockedTaskList = response.data.blocked_list;
-					this.changeTaskList = response.data.change_tasks;
+			this.axios.post(
+				`${this.rootUrl}rfc_information/${this.locationId}/change_task_list/`
+			).then((response) => {
+				// Update the blockedTaskList and changeTaskList
+				this.blockedTaskList = response.data.blocked_list;
+				this.changeTaskList = response.data.change_tasks;
 
-					// Update the changeTaskCount in statemanagement
-					this.$store.commit({
-						type: "updateChangeTaskCount",
-						changeTaskCount: response.data.change_tasks.length,
-					});
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "request_for_change");
+				// Update the changeTaskCount in statemanagement
+				this.$store.commit({
+					type: "updateChangeTaskCount",
+					changeTaskCount: response.data.change_tasks.length,
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting run sheet list",
+					message: `Sorry, we could not retrieve the run sheet list. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 		getStatus(status_id) {
 			switch (status_id) {
@@ -361,13 +366,16 @@ export default {
 					return "Task Finished Successfully";
 
 				case 6:
-					return "Task FAILED";
+					return "Task REJECTED";
 
 				case 7:
 					return "PAUSED Task"
 
 				case 8:
 					return "Ready for QA"
+
+				case 9:
+					return "Task FAILED";
 
 				default:
 					return "---";
@@ -418,37 +426,36 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("change_task_status", change_task_status);
 
-			this.axios
-				.post(
-					`${this.rootUrl}change_task_update_status/${change_task_id}/`,
-					data_to_send
-				)
-				.then((response) => {
-					/*
+			this.axios.post(
+				`${this.rootUrl}change_task_update_status/${change_task_id}/`,
+				data_to_send
+			).then((response) => {
+				/*
 				We are using the map function to make a single variable change without having to write a loop function.
 				The change task has been update, so we are only changing that task when mapping the results back
 				to itself.
 				 */
-					this.changeTaskList = this.changeTaskList.map(
-						(changeTask) => {
-							//The change task that we have just updated :)
-							if (changeTask.change_task_id === change_task_id) {
-								//Update the change Task Status
-								changeTask.change_task_status =
-									change_task_status;
+				this.changeTaskList = this.changeTaskList.map((changeTask) => {
+					//The change task that we have just updated :)
+					if (changeTask.change_task_id === change_task_id) {
+						//Update the change Task Status
+						changeTask.change_task_status = change_task_status;
 
-								//Send back the change task status
-								return changeTask;
-							} else {
-								// Not the change task we updated :(
-								return changeTask;
-							}
-						}
-					);
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "request_for_change");
+						//Send back the change task status
+						return changeTask;
+					} else {
+						// Not the change task we updated :(
+						return changeTask;
+					}
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting user list",
+					message: `Sorry, we could not retrieve the user user. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	mounted() {

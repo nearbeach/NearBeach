@@ -1,27 +1,24 @@
 {% extends "NearBeach/partials/template.html" %}
 {% load static %}
 {% block content %}
-    {% if user_level == 1%}
-        <fieldset disabled="true">
-    {% endif %}
 
-    <requirement-item-information v-bind:requirement-item-results="{{requirement_item_results}}"
-                             v-bind:organisation-results="{{organisation_results}}"
-                             v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
-                             v-bind:status-list="{{status_list}}"
-                             v-bind:type-list="{{type_list}}"
-                             v-bind:theme="`{{ theme }}`"
+    <requirement-item-information
+            v-bind:requirement-item-results="{{requirement_item_results}}"
+            v-bind:organisation-results="{{organisation_results}}"
+            v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
+            v-bind:requirement-item-is-closed="{{ requirement_item_is_closed }}"
+            v-bind:status-options="{{status_options}}"
+            v-bind:type-options="{{type_options}}"
+            v-bind:theme="`{{ theme }}`"
+            v-bind:user-level="{{ user_level }}"
     ></requirement-item-information>
-    
-    {% if user_level == 1%}
-        </fieldset>
-    {% endif %}
 
     <div class="spacer"></div>
 
     <parent-modules class="misc-modules"
                     v-bind:group-list="{{group_results}}"
                     v-bind:destination="'requirement_item'"
+                    v-bind:is-read-only="{{ requirement_item_is_closed }}"
                     v-bind:location-id="{{requirement_item_id}}"
                     v-bind:user-level="{{ user_level }}"
                     v-bind:root-url="`{% url 'dashboard' %}`"

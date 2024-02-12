@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<!-- Request for Change Types and Release Number -->
-		<hr/>
 		<div class="row">
 			<div class="col-md-4">
 				<h2>Type and Version</h2>
@@ -116,15 +115,9 @@
 				<div class="form-group">
 					<label>
 						LEAD:
-						<span
-							class="error"
-							v-if="
-								!v$.rfcChangeLeadModel.required &&
-								v$.rfcChangeLeadModel.$dirty
-							"
-						>
-							Please select a Change Lead.</span
-						>
+						<validation-rendering
+							v-bind:error-list="v$.rfcChangeLeadModel.$errors"
+						></validation-rendering>
 					</label>
 					<n-select
 						:options="rfcChangeLeadFixList"
@@ -155,7 +148,6 @@ import GroupPermissions from "../../permissions/GroupPermissions.vue";
 
 //Mixins
 import datetimeMixin from "../../../mixins/datetimeMixin";
-import searchMixin from "../../../mixins/searchMixin";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -194,7 +186,7 @@ export default {
 			default: "",
 		},
 	},
-	mixins: [datetimeMixin, searchMixin],
+	mixins: [datetimeMixin],
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
@@ -300,12 +292,19 @@ export default {
 			return end_date.getTime();
 		},
 		fetchOptions(search, loading) {
-			this.searchTrigger({
-				return_function: this.getChangeLeadData,
-				searchTimeout: this.searchTimeout,
-				search: search,
-				loading: loading,
-			});
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (search.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getChangeLeadData(search, loading);
+				}, 500);
+			}
 		},
 		getChangeLeadData(search, loading) {
 			// Save the seach data in FormData
@@ -313,51 +312,35 @@ export default {
 			data_to_send.set("search", search);
 
 			// Now that the timer has run out, lets use AJAX to get the organisations.
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/lead_user_list/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Clear the stakeholderFixList
-					this.rfcChangeLeadFixList = [];
+			this.axios.post(
+				`${this.rootUrl}object_data/lead_user_list/`,
+				data_to_send
+			).then((response) => {
+				//Clear the stakeholderFixList
+				this.rfcChangeLeadFixList = [];
 
-					//Extract the required JSON data
-					const extracted_data = response.data;
+				//Extract the required JSON data
+				const extracted_data = response.data;
 
-					//Look through the extracted data - and map the required fields into stakeholder fix list
-					extracted_data.forEach((row) => {
-						//Create the creation object
-						const creation_object = {
-							value: row.pk,
-							label: `${row.fields.username} - ${row.fields.first_name} ${row.fields.last_name}`,
-						};
+				//Look through the extracted data - and map the required fields into stakeholder fix list
+				extracted_data.forEach((row) => {
+					//Create the creation object
+					const creation_object = {
+						value: row.pk,
+						label: `${row.fields.username} - ${row.fields.first_name} ${row.fields.last_name}`,
+					};
 
-						//Push that object into the stakeholders
-						this.rfcChangeLeadFixList.push(creation_object);
-					});
-				})
-				.catch(function (error) {
-					// Get the error modal
-					const elem_cont =
-						document.getElementById("errorModalContent");
-
-					// Update the content
-					elem_cont.innerHTML = `<strong>Search Lead User Issue:</strong><br/>${error}`;
-
-					// Show the modal
-					const errorModal = new bootstrap.Modal(
-						document.getElementById("errorModal"),
-						{
-							keyboard: false,
-						}
-					);
-					errorModal.show();
-
-					// Hide the loader
-					const loader_element = document.getElementById("loader");
-					loader_element.style.display = "none";
+					//Push that object into the stakeholders
+					this.rfcChangeLeadFixList.push(creation_object);
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting change lead data",
+					message: `Error getting change lead data. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				})
+			});
 		},
 		updateGroupModel(data) {
 			this.groupModel = data;

@@ -8,6 +8,9 @@ import AdminAddUser from "/src/js/components/administration/AdminAddUser.vue";
 // VueX
 import { store } from "/src/js/vuex-store";
 
+// Axios
+const axios = require("axios");
+
 describe('AdminAddUser.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(AdminAddUser, {
@@ -17,6 +20,9 @@ describe('AdminAddUser.vue - rendering component', () => {
         },
         global: {
             plugins: [store],
+            mocks: {
+                axios,
+            },
         },
     });
 

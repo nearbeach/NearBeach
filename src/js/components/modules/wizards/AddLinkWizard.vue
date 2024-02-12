@@ -102,13 +102,13 @@ import {Icon} from "@iconify/vue";
 import {mapGetters} from "vuex";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, url} from "@vuelidate/validators";
 import ValidationRendering from "../../validation/ValidationRendering.vue";
+import {Modal} from "bootstrap";
 
 export default {
 	name: "AddLinkWizard",
@@ -120,32 +120,16 @@ export default {
 		ValidationRendering,
 	},
 	props: {
-		currentFolder: {
-			type: String,
-			default: "/",
-		},
 		destination: {
 			type: String,
 			default: "/",
-		},
-		excludeDocuments: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
-		existingFolders: {
-			type: Array,
-			default: () => {
-				return [];
-			},
 		},
 		locationId: {
 			type: Number,
 			default: 0,
 		},
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			linkModel: "",
@@ -166,6 +150,8 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			currentFolder: "getCurrentFolder",
+			excludeDocuments: "getDocumentFilteredList",
 			rootUrl: "getRootUrl",
 		}),
 	},
@@ -182,29 +168,41 @@ export default {
 			);
 
 			//Only set the parent folder variable if there exists a variable in current folder
-			if (this.currentFolder !== null && this.currentFolder !== "") {
+			if (this.currentFolder > 0) {
 				data_to_send.set("parent_folder", this.currentFolder);
 			}
 
-			this.axios
-				.post(
-					`${this.rootUrl}documentation/${this.destination}/${this.locationId}/add_link/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Emit the results up stream
-					this.$emit("update_document_list", response.data);
-
-					//Clear the data
-					this.documentDescriptionModel = "";
-					this.documentUrlLocationModel = "";
-
-					//Close the modal
-					document.getElementById("addLinkCloseButton").click();
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+			this.axios.post(
+				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/add_link/`,
+				data_to_send
+			).then((response) => {
+				//Append something to document List
+				this.$store.dispatch("appendDocumentList", {
+					documentList: response.data[0],
 				});
+
+				//Clear the data
+				this.documentDescriptionModel = "";
+				this.documentUrlLocationModel = "";
+
+				//Close the modal
+				document.getElementById("addLinkCloseButton").click();
+
+				//Reshow the card information modal if exists
+				let cardModal = document.getElementById("cardInformationModal");
+				if (cardModal !== null)
+				{
+					cardModal = new Modal(cardModal);
+					cardModal.show();
+				}
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Adding Link",
+					message: `Sorry, could not add the link for you. Error - ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	updated() {

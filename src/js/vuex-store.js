@@ -5,9 +5,11 @@ import {moduleArchiveCards} from "./vuex/archiveCardsVueX";
 import {moduleCard} from "./vuex/cardVueX";
 import {moduleChangeTask} from "./vuex/changeTaskVueX";
 import {moduleDestination} from "./vuex/destinationVueX";
+import {moduleDocuments} from "./vuex/documentsVueX";
 import {moduleGroupsAndUsers} from "./vuex/groupAndUsersVueX";
 import {moduleKanban} from "./vuex/kanbanVueX";
 import {moduleObjectLink} from "./vuex/objectLinkVueX";
+import {moduleNote} from "./vuex/noteVueX";
 import {moduleRfc} from "./vuex/rfcVueX";
 import {moduleToasts} from "./vuex/toastsVueX";
 import {moduleUrl} from "./vuex/urlVueX";
@@ -24,8 +26,10 @@ export const store = createStore({
         card: moduleCard,
         changeTask: moduleChangeTask,
         destination: moduleDestination,
+        documents: moduleDocuments,
         groupsAndUsers: moduleGroupsAndUsers,
         kanban: moduleKanban,
+        note: moduleNote,
         objectLink: moduleObjectLink,
         rfc: moduleRfc,
         toasts: moduleToasts,

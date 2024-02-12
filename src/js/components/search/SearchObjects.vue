@@ -75,11 +75,11 @@
 		<!-- WHEN THERE ARE NO RESULTS -->
 		<div
 			v-if="
-				localSearchResults.requirement.length +
+					localSearchResults.requirement.length +
 					localSearchResults.project.length +
 					localSearchResults.task.length +
-					localSearchResults.request_for_change ==
-				0
+					localSearchResults.kanban.length +
+					localSearchResults.request_for_change.length === 0
 			"
 			class="alert alert-warning"
 		>
@@ -90,9 +90,6 @@
 </template>
 
 <script>
-//Import mixins
-import searchMixin from "../../mixins/searchMixin";
-
 //Vue Components
 import ListSearchResults from "./ListSearchResults.vue";
 
@@ -123,7 +120,6 @@ export default {
 			},
 		},
 	},
-	mixins: [searchMixin],
 	data() {
 		return {
 			includeClosedObjectsModel: this.includeClosed,
@@ -140,7 +136,7 @@ export default {
 				prefix: "Pro",
 				id: "project_id",
 				title: "project_name",
-				status: "project_status",
+				status: "project_status_text",
 			},
 			requestForChangeVariables: {
 				header: "Request for Change",
@@ -163,7 +159,7 @@ export default {
 				prefix: "Task",
 				id: "task_id",
 				title: "task_short_description",
-				status: "task_status",
+				status: "task_status_text",
 			},
 		};
 	},
@@ -178,14 +174,19 @@ export default {
 			);
 
 			//Use axios to request data
-			this.axios
-				.post(`${this.rootUrl}search/data/`, data_to_send)
-				.then((response) => {
-					//Update the localSearchResults with the data
-					this.localSearchResults = response.data;
-				})
-				.catch((error) => {
+			this.axios.post(
+				`${this.rootUrl}search/data/`, data_to_send
+			).then((response) => {
+				//Update the localSearchResults with the data
+				this.localSearchResults = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to get search results",
+					message: `Sorry, we failed to get your search results. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 	watch: {
@@ -200,10 +201,16 @@ export default {
 			this.getSearchResults();
 		},
 		searchModel() {
-			this.searchTrigger({
-				return_function: this.getSearchResults,
-				searchTimeout: this.searchTimeout,
-			});
+			//Reset the timer if it exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock!
+				clearTimeout(this.searchTimeout);
+			}
+
+			this.searchTimeout = setTimeout(
+				this.getSearchResults,
+				500
+			);
 		},
 	},
 	mounted() {

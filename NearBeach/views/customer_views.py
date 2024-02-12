@@ -5,7 +5,7 @@ from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from NearBeach.decorators.check_user_permissions import check_user_customer_permissions
+from NearBeach.decorators.check_user_permissions.customer_permissions import check_user_customer_permissions
 from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
 from NearBeach.models import Customer, ListOfTitle, Organisation
 from NearBeach.views.document_views import handle_document_permissions
@@ -110,6 +110,8 @@ def customer_update_profile(request, customer_id, *args, **kwargs):
         document_description,
         "customer",
         customer_id,
+        0,
+        True,
     )
 
     # Update the customer
