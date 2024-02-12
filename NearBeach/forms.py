@@ -318,6 +318,15 @@ class DeleteTagForm(forms.ModelForm):
         }
 
 
+class DiagnosticUploadTestForm(forms.Form):
+    document = forms.FileField(
+        required=True,
+    )
+    uuid = forms.UUIDField(
+        required=False,
+    )
+
+
 class DocumentRemoveForm(forms.Form):
     document_key = forms.ModelChoiceField(
         queryset=Document.objects.all(),

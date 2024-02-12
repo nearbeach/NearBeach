@@ -66,6 +66,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/dashboard/DashboardUsersWithNoGroups.vue"
             )
     ),
+    DiagnosticInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "diagnostic-information" */
+            "./components/diagnostic/DiagnosticInformation.vue"
+            )
+    ),
     GroupInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "group-information" */

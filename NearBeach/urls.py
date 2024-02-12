@@ -8,6 +8,7 @@ from .views import (
     card_views,
     customer_views,
     dashboard_views,
+    diagnostic_views,
     document_views,
     error_views,
     group_views,
@@ -138,6 +139,22 @@ urlpatterns = [
         "dashboard/get/users_with_no_groups/",
         dashboard_views.users_with_no_groups,
         name="users_with_no_groups",
+    ),
+    # Diagnostic Page
+    path(
+        "diagnostic_information/",
+        diagnostic_views.diagnostic_information,
+        name="diagnostic_information",
+    ),
+    path(
+        "diagnostic_information/email_test/",
+        diagnostic_views.diagnostic_email_test,
+        name="diagnostic_information_email_test",
+    ),
+    path(
+        "diagnostic_information/upload_test/",
+        diagnostic_views.diagnostic_upload_test,
+        name="diagnostic_information_upload_test",
     ),
     # Documentation
     path(
