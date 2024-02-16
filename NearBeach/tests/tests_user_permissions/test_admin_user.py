@@ -104,7 +104,9 @@ class AdminPermissionTests(TestCase):
             URLTest("update_user_password", [], {"username": 1, "password": "Test1234$"}, 200, "POST"),
             # URLTest("update_user_password", [], {}, 400, "POST"), # Get 200 http code for some reason?
             URLTest("profile_update_data", [], {"username": 1, "first_name": "Admin", "last_name": "Admin", "theme": "dark"}, 200, "POST"),
-
+            URLTest("diagnostic_information_email_test", [], {}, 200, "POST"),
+            URLTest("diagnostic_information", [], {}, 200, "GET"),
+            # URLTest("diagnostic_information_upload_test", [], {}, 200, "POST"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied
