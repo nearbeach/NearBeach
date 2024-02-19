@@ -30,7 +30,7 @@ from .views import (
     tag_views,
     task_views,
     user_setting_views,
-    user_views,
+    user_views, object_status_editor_views,
 )
 
 # The following two imports are for the static files
@@ -329,6 +329,37 @@ urlpatterns = [
     # Authentication
     path("login", authentication_views.login, name="login"),
     path("logout", authentication_views.logout, name="logout"),
+    # Object Status
+    path(
+        "object_status_information/<destination>/",
+        object_status_editor_views.object_status_information,
+        name="object_status_information",
+    ),
+    path(
+        "object_status_information/<destination>/create/",
+        object_status_editor_views.object_status_create,
+        name="object_status_create",
+    ),
+    path(
+        "object_status_information/<destination>/delete/",
+        object_status_editor_views.object_status_delete,
+        name="object_status_delete",
+    ),
+    path(
+        "object_status_information/<destination>/reorder/",
+        object_status_editor_views.object_status_reorder,
+        name="object_status_reorder",
+    ),
+    path(
+        "object_status_information/<destination>/update/",
+        object_status_editor_views.object_status_update,
+        name="object_status_update",
+    ),
+    path(
+        "object_status_list/",
+        object_status_editor_views.object_status_list,
+        name="object_status_list"
+    ),
     # Permission Sets
     path(
         "permission_set_information/<int:permission_set_id>/",

@@ -749,7 +749,7 @@ class ListOfProjectStatus(models.Model):
         choices=OBJECT_HIGHER_ORDER_STATUS,
         default="Backlog",
     )
-    project_status_order = models.PositiveIntegerField(
+    project_status_sort_order = models.PositiveIntegerField(
         default=0,
     )
     date_created = models.DateTimeField(auto_now_add=True)
@@ -904,7 +904,7 @@ class ListOfTaskStatus(models.Model):
         choices=OBJECT_HIGHER_ORDER_STATUS,
         default="Backlog",
     )
-    task_status_order = models.PositiveIntegerField(
+    task_status_sort_order = models.PositiveIntegerField(
         default=0,
     )
     date_created = models.DateTimeField(auto_now_add=True)

@@ -17,6 +17,10 @@ from .models import (
     TagAssignment,
     KanbanCard,
     KanbanBoard,
+    ListOfRequirementItemStatus,
+    ListOfRequirementStatus,
+    ListOfProjectStatus,
+    ListOfTaskStatus,
     Notification,
     ObjectNote,
     PermissionSet,
@@ -33,6 +37,13 @@ from .models import (
     UserGroup,
     UserSetting,
 )
+
+OBJECT_STATUS_LOOKUP = {
+    "requirement_item": ListOfRequirementItemStatus,
+    "requirement": ListOfRequirementStatus,
+    "project": ListOfProjectStatus,
+    "task": ListOfTaskStatus,
+}
 
 
 # CUSTOM Fields
@@ -761,6 +772,60 @@ class NotificationForm(forms.ModelForm):
             "notification_end_date",
             "notification_start_date",
         ]
+
+
+class ObjectStatusCreateForm(forms.Form):
+    status = forms.CharField(
+        max_length=100,
+        required=True,
+    )
+    higher_order_status = forms.CharField(
+        max_length=10,
+        required=True,
+    )
+
+
+class ObjectStatusDeleteForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.destination = kwargs.pop("destination")
+        super(ObjectStatusDeleteForm, self).__init__(*args, **kwargs)
+        self.fields["status_id"] = forms.ModelChoiceField(
+            required=True,
+            queryset=OBJECT_STATUS_LOOKUP[self.destination].objects.all(),
+        )
+        self.fields["migration_status_id"] = forms.ModelChoiceField(
+            required=True,
+            queryset=OBJECT_STATUS_LOOKUP[self.destination].objects.all(),
+        )
+
+
+class ObjectStatusReorderForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.destination = kwargs.pop("destination")
+        super(ObjectStatusReorderForm, self).__init__(*args, **kwargs)
+        self.fields["status_id"] = forms.ModelMultipleChoiceField(
+            required=True,
+            queryset=OBJECT_STATUS_LOOKUP[self.destination].objects.all(),
+        )
+
+
+class ObjectStatusUpdateForm(forms.Form):
+    status = forms.CharField(
+        max_length=100,
+        required=True,
+    )
+    higher_order_status = forms.CharField(
+        max_length=10,
+        required=True,
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.destination = kwargs.pop("destination")
+        super(ObjectStatusUpdateForm, self).__init__(*args, **kwargs)
+        self.fields["status_id"] = forms.ModelChoiceField(
+            required=True,
+            queryset=OBJECT_STATUS_LOOKUP[self.destination].objects.all(),
+        )
 
 
 class OrganisationForm(forms.ModelForm):

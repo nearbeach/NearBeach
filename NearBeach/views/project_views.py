@@ -78,7 +78,7 @@ def new_project_save(request, *args, **kwargs):
     project_status = ListOfProjectStatus.objects.filter(
         is_deleted=False
     ).order_by(
-        "project_status_order",
+        "project_status_sort_order",
     )
 
     if len(project_status) == 0:
@@ -150,7 +150,7 @@ def project_information(request, project_id, *args, **kwargs):
         "label",
         "project_higher_order_status",
     ).order_by(
-        "project_status_order"
+        "project_status_sort_order"
     )
 
     # Get the organisation results

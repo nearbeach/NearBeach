@@ -81,7 +81,7 @@ def new_task_save(request, *args, **kwargs):
     # Get default task status
     task_status = ListOfTaskStatus.objects.filter(
         is_deleted=False,
-    ).order_by("task_status_order")
+    ).order_by("task_status_sort_order")
 
     if len(task_status) == 0:
         return HttpResponseBadRequest("No Task Status entered in the system. Please contact system admin")
@@ -149,7 +149,7 @@ def task_information(request, task_id, *args, **kwargs):
         "label",
         "task_higher_order_status",
     ).order_by(
-        "task_status_order",
+        "task_status_sort_order",
     )
 
     # Translate the task is closed
