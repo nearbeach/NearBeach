@@ -31,6 +31,17 @@ jobs:
       - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: ~/project/htmlcov
           destination: tr1
+      - run:
+          name: Build Local Database
+          command: |
+            . venv/bin/activate
+            python3 ./manage.py migrate
+            python3 ./manage.py loaddata ./NearBeach/fixtures/NearBeach_basic_setup.json
+      - run:
+          name: Running Django Server
+          command: |
+            . venv/bin/activate
+            python3 ./manage.py runserver
   build-and-test-frontend:
     docker:
       - image: cimg/node:21.2.0
@@ -54,9 +65,33 @@ jobs:
       - store_artifacts:
           path: ~/project/coverage
           destination: tr2
+  test-frontend-e2e:
+    docker:
+      - image: cimg/node:21.2.0
+    steps:
+      - checkout
+      - run:
+          name: Update NPM
+          command: "sudo npm install -g npm"
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install npm Dependencies
+          command: "npm install --legacy-peer-deps"
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: Playwrite Install
+          command: npx playwright install
+      - run:
+          name: Run E2E Tests
+          command: npm run e2e
 
 workflows:
   build:
     jobs:
       - build-and-test-backend
       - build-and-test-frontend
+      - test-frontend-e2e
