@@ -21,11 +21,11 @@ jobs:
       - name: Update Pip and Install Required Python Libraries
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install --upgrade build
           python3 -m pip install virtualenv
           virtualenv venv
           source ./venv/bin/activate
-          pip install requests setuptools wheel
+          pip install requests setuptools wheel build
+          pip install --upgrade build
       - name: Create __init__.py and PyProject.toml files
         run: |
           source ./venv/bin/activate
