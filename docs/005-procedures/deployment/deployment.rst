@@ -13,72 +13,71 @@ Deployment of NearBeach
     `NearBeach on Docker can be found here <https://hub.docker.com/r/robotichead/nearbeach>`_
 
 
-.. note::
+There are two release processes.
 
-    The following instructions will guide you on how to deploy NearBeach to both PyPi and Docker. Please follow the steps
-    in order.
+Process 1: should be used when there is new code for NearBeach, and any library updates
 
+Process 2: should be used when there is a security issue within any of the libraries used for NearBeach. This will
+deploy an update for those libraries without sending out any new NearBeach code. aka deploy separately from the
+NearBeach deployment cycle.
 
-.. note::
-
-    There is a current task opened to automate a lot of this process. These instructions will change in the future so please
-    reference them before each deployment.
+i.e Boto3 has a security patch, and we need to deploy
 
 
 --------------------
-Checklist and Method
+Deployment Process 1
 --------------------
 
-.. note::
-
-    Follow this list in order
-
 
 .. note::
 
-    We are making sure you are in a terminal that is in the root folder of the project
+    Please make sure you are in a terminal, that is in the root folder of the project.
 
-#. Git pull and merge in the main branch. We want any security fixes in node packages
+#. Make sure you are on the develop branch, and all required features have been finished. i.e. merged into the develop
+branch.
 
 #. Run audit tools and fix any packages
 
-#. Remove the `./build` and `./dist` folder
-
-#. Update the version numbers in the following files
-
-    * `./NearBeach/__init__.py`
-
-    * `./package.json`
-
-#. Make sure you are currently using the correct virtual environment; `source ./venv/bin/active`
-
-#. Run the unit tests for the django backend to make sure nothing is broken; `python3 ./manage.py test`
-
-#. Run the unit tests for the vue frontend to make sure nothing is broken; `npm run unit`
-
 #. Compile the JavaScript into production mode; `npm run prod`
 
-#. Implement the End to End tests using playwright; `npm run e2e`.
-    Alternatively - if you would like to see UI for the tests use `npm run e2e-ui`
+#. Implement the End to End tests using playwright; `npm run e2e`. Please note - you'll need a default instance of
+NearBeach running with the fixture "NearBeach_basic_setup.json".
 
-#. Edit the `setup.py` file if there are any new packages that need to be downloaded in the Docker File.
+#. Check all screenshots from the End to End tests
 
-#. Update any virtualenv packages using the following commands
-    `pip list --outdated`
+#. Make sure the development branch has been pushed into origin. This will include the compilation of the production
+JavaScript
 
-    `pip install --upgrade <<package_name>>`
+#. Check CircleCI's latest build status for the development branch. All tests should be passing. If there are any tests
+that have failed, they'll need to be fixed before deployment.
 
-#. Run the following command to setup the dists file
-    `python3 setup.py sdist bdist_wheel`
+#. Using gitflow, we'll create a release. `git flow release start <<version_number>>`. The version number should follow
+the format x.y.z. More information can be found at https://semver.org/
 
-#. Run the following command to upload NearBeach Application to pypi
-    `python3 -m twine upload dist/* --repository NearBeach`
+#. Using gitflow, we'll finish the release. `git flow release finish <<version_number>>`
 
-#. Push the code back upstream, remembering to FORCE PUSH the /NearBeach/static code (as this is  now in gitignore)
+#. Check the github actions for NearBeach, to see if the workflows are running correctly.
 
-#. Do a pull request to merge code back into `main` branch
 
-#. Create a new release off the new `main` branch. This process will trigger the deployment of static files to the CDN
+--------------------
+Deployment Process 1
+--------------------
 
-#. Go the the https://github.com/robotichead/nearbeach-docker and edit the github actions file. Increase the version number. Pushing the code will cause github actions to build the latest docker build and release them.
+This process should ONLY be followed when we just want to deploy a new version of NearBeach's core libraries without
+deploying any of the new code. i.e. separated from the development cycle.
 
+Example 1: Boto3 has a security patch, we need to release this library into NearBeach's docker containers and get
+everyone to use the newest versions.
+
+#. Go to https://github.com/NearBeach/NearBeach
+
+#. On the NearBeach github page, click on the "Create a new release"
+
+#. Appropriately fill out the tag using the version x.y.z - for more information please read https://semver.org/
+
+#. Fill out the rest of the information as approprately as possible. Explain why there is a release, i.e. security patch
+for external library
+
+#. Make sure the target is "main"
+
+#. Deploy the release
