@@ -13,3 +13,5 @@ The following documents cover procedures around NearBeach.
     Deployment of NearBeach </005-procedures/deployment/deployment>
 
     Python Packages </005-procedures/deployment/python-packages>
+
+    Git Flow for NearBeach </005-procedures/git-flow/git-flow>
