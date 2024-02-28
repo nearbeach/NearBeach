@@ -48,10 +48,15 @@ jobs:
           python-version: 3.12.1
       - name: Create __init__.py and PyProject.toml files
         run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install virtualenv
+          virtualenv venv
+          source ./venv/bin/activate
+          pip install requests 
           python3 ./.github/deployment_files/generate_templates.py
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
+          source ./venv/bin/activate
           pip install --editable .[dev]
       - name: Collect Static files
         env:
@@ -60,6 +65,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
         run: |
+          source ./venv/bin/activate
           python manage.py collectstatic --noinput
 
   trigger-docker-build:
