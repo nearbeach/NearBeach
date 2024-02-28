@@ -2,7 +2,6 @@
 import {createApp} from "vue/dist/vue.esm-bundler";
 
 //VueX
-// import { createStore } from 'vuex';
 import {store} from "./vuex-store";
 
 //Import Bootstrap
