@@ -2,7 +2,6 @@
 import {createApp} from "vue/dist/vue.esm-bundler";
 
 //VueX
-// import { createStore } from 'vuex';
 import {store} from "./vuex-store";
 
 //Import Bootstrap
@@ -62,6 +61,8 @@ import {
     NewTask,
     NewUser,
     NotificationInformation,
+    ObjectStatusInformation,
+    ObjectStatusList,
     OrganisationInformation,
     OrganisationModules,
     ParentModules,
@@ -125,6 +126,8 @@ const app = createApp({
         NewTask,
         NewUser,
         NotificationInformation,
+        ObjectStatusInformation,
+        ObjectStatusList,
         OrganisationInformation,
         OrganisationModules,
         ParentModules,

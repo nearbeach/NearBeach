@@ -1,16 +1,21 @@
 import json
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
+from django.views.decorators.http import require_http_methods
 
 from NearBeach.forms import DiagnosticUploadTestForm
 from NearBeach.views.document_views import handle_document_permissions
 from NearBeach.views.theme_views import get_theme
 
 
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name="")
 def diagnostic_email_test(request):
     try:
         default_email = getattr(settings, "DEFAULT_FROM_EMAIL", "error@error.com")
@@ -30,6 +35,8 @@ def diagnostic_email_test(request):
         return HttpResponseBadRequest(F"Could not send email test. Error -> {e}")
 
 
+@login_required(login_url="login", redirect_field_name="")
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name="")
 def diagnostic_information(request):
     """
 
@@ -56,6 +63,9 @@ def diagnostic_information(request):
     return HttpResponse(t.render(c, request))
 
 
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name="")
 def diagnostic_upload_test(request):
     # Get the form data
     form = DiagnosticUploadTestForm(request.POST, request.FILES)

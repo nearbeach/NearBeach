@@ -1,0 +1,10 @@
+{% extends "NearBeach/partials/template.html" %}
+{% load static %}
+{% block content %}
+
+    <object-status-list
+            v-bind:root-url="`{% url 'dashboard' %}`"
+            v-bind:theme="'{{ theme }}'"
+    ></object-status-list>
+
+{% endblock %}

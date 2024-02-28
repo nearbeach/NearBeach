@@ -142,7 +142,7 @@ def get_public_context_project(results):
         "label",
         "project_higher_order_status",
     ).order_by(
-        "project_status_order"
+        "project_status_sort_order"
     )
 
     organisation_results = getattr(
@@ -282,7 +282,7 @@ def get_public_context_task(results):
         "label",
         "task_higher_order_status",
     ).order_by(
-        "task_status_order",
+        "task_status_sort_order",
     )
 
     organisation_results = getattr(

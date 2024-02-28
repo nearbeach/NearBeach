@@ -4,7 +4,6 @@ const { VueLoaderPlugin } = require('vue-loader')
 const MiniCssExtractplugin = require('mini-css-extract-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     module: {
@@ -52,6 +51,7 @@ module.exports = {
         new VueLoaderPlugin(),
         new MiniCssExtractplugin(),
         new CompressionPlugin({
+            algorithm: "brotliCompress",
             exclude: [
                 "tinymce",
             ]
@@ -64,27 +64,12 @@ module.exports = {
 
                 //TinyMce Files
                 { from: './node_modules/tinymce/', to: './tinymce/' },
-                // { from: './node_modules/tinymce/tinymce.min.js', to: './tinymce/tinymce.min.js' },
-                // { from: './node_modules/tinymce/skins/ui/oxide/skin.min.css', to: './tinymce/skins/ui/oxide/skin.min.css' },
-                // { from: './node_modules/tinymce/skins/ui/oxide-dark/skin.min.css', to: './tinymce/skins/ui/oxide-dark/skin.min.css' },
-                // { from: './node_modules/tinymce/skins/content/default/content.min.css', to: './tinymce/skins/content/default/content.min.css' },
-                // { from: './node_modules/tinymce/skins/content/dark/content.min.css', to: './tinymce/skins/content/dark/content.min.css' },
-                // { from: './node_modules/tinymce/skins/ui/oxide/content.min.css', to: './tinymce/skins/ui/oxide/content.min.css' },
-                // { from: './node_modules/tinymce/skins/ui/oxide-dark/content.min.css', to: './tinymce/skins/ui/oxide-dark/content.min.css' },
-                // { from: './node_modules/tinymce/themes/silver/theme.min.js', to: './tinymce/themes/silver/theme.min.js' },
-                // { from: './node_modules/tinymce/icons/default/icons.min.js', to: './tinymce/icons/default/icons.min.js' },
-                // { from: './node_modules/tinymce/plugins/lists/', to: './tinymce/plugins/lists/' },
-                // { from: './node_modules/tinymce/plugins/paste/', to: './tinymce/plugins/paste/' },
-                // { from: './node_modules/tinymce/plugins/table/', to: './tinymce/plugins/table/' },
             ],
         }),
         new webpack.DefinePlugin({
             __VUE_OPTIONS_API__: true,
             __VUE_PROD_DEVTOOLS__: false,
         }),
-        // new HtmlWebpackPlugin({
-        //     title: 'Production',
-        // }),
     ],
     entry: {
         'NearBeach': './src/js/app.js',

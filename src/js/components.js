@@ -198,6 +198,18 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/notifications/NotificationInformation.vue"
             )
     ),
+    ObjectStatusInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "object-status-information" */
+            "./components/object_status/ObjectStatusInformation.vue"
+            )
+    ),
+    ObjectStatusList = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "object-status-list" */
+            "./components/object_status/ObjectStatusList.vue"
+            )
+    ),
     OrganisationInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "organisation-information" */
