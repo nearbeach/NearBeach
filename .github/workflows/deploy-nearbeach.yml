@@ -28,7 +28,7 @@ jobs:
           pip install requests setuptools wheel
       - name: Create __init__.py and PyProject.toml files
         run: |
-          source ./venv/bin/active
+          source ./venv/bin/activate
           python3 ./.github/deployment_files/generate_templates.py
       - name: Build Package
         run: |
