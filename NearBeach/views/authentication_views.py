@@ -228,6 +228,9 @@ def login(request):
 
     # POST
     if request.method == "POST" and form.is_valid():
+        # Create empty user - it will be false
+        user = False
+
         # Check if user passes recaptcha
         if check_recaptcha(request.POST) is True:
             # Looks like we can authenticate the user
@@ -248,8 +251,7 @@ def login(request):
             user_group_count = len(
                 UserGroup.objects.filter(
                     is_deleted=False,
-                    # username_id__in=User.objects.filter(username=username).values('id'),
-                    username__in=User.objects.filter(email=username).values('id') ## TODO: Will need to actually make it so this is somewhat a variable?
+                    username=user,
                 )
             )
 

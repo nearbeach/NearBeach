@@ -8,18 +8,9 @@ from django.utils.translation import gettext_lazy as _
 import uuid
 from django.conf import settings
 
-# if "OVERRIDE_AUTH_USER_MODEL" in os.environ:
-#     USER_MODEL = os.getenv("OVERRIDE_AUTH_USER_MODEL")
-# else:
-#     USER_MODEL = User
 
-USER_MODEL = settings.AUTH_USER_MODEL
-
-
-# class CustomerUser(AbstractBaseUser):
-    # objects = CustomerUserManager()
-    # objects = v
-
+# If user has overwritten the AUTH_USER_MODEL, user that. Otherwise default to User
+USER_MODEL = getattr(settings, "AUTH_USER_MODEL", User)
 
 # ENUM choices
 DISCOUNT_CHOICE = (
@@ -771,7 +762,7 @@ class ListOfProjectStatus(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
@@ -926,7 +917,7 @@ class ListOfTaskStatus(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
@@ -1398,10 +1389,10 @@ class PublicLink(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     creation_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
     )
     is_deleted = models.BooleanField(
         default=False,
