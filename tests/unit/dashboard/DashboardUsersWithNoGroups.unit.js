@@ -18,6 +18,8 @@ describe('NewChangeTask.vue - rendering component', () => {
         },
         global: {
             plugins: [store],
+            properties: [axios],
+            axios: axios,
             mocks: {
                 axios,
             }
