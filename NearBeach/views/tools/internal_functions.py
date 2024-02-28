@@ -26,7 +26,7 @@ OBJECT_DICT = {
     "kanban_card": KanbanCard.objects,
     "organisation": Organisation.objects,
     "request_for_change": RequestForChange.objects,
-    "user": get_user_model(),
+    "user": get_user_model().objects,
 }
 
 

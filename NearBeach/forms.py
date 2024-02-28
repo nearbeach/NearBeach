@@ -732,7 +732,21 @@ class NewTaskForm(forms.ModelForm):
         ]
 
 
-class NewUserForm(forms.ModelForm):
+class NewUserForm(forms.Form):
+    username = forms.CharField(
+        max_length=150,
+        required=True,
+    )
+    email = forms.CharField(
+        required=True,
+        max_length=255,
+    )
+    first_name = forms.CharField(
+        required=False,
+    )
+    last_name = forms.CharField(
+        required=False,
+    )
     password1 = forms.CharField(
         max_length=255,
         required=True,
@@ -741,16 +755,6 @@ class NewUserForm(forms.ModelForm):
         max_length=255,
         required=True,
     )
-
-    # Basic Meta data
-    class Meta:
-        model = get_user_model()
-        fields = [
-            # "username",
-            # "first_name",
-            # "last_name",
-            "email",
-        ]
 
 
 class NotificationDeleteForm(forms.Form):
