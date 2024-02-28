@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.forms import (
     NewColumnForm,
     KanbanColumn,
@@ -14,6 +14,7 @@ from NearBeach.views.tools.internal_functions import KanbanCard
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_board")
 def edit_column(request, kanban_column_id, *args, **kwargs):
     """
     Edit the column data for a kanban board
@@ -48,7 +49,7 @@ def edit_column(request, kanban_column_id, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=4, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=4, object_lookup="kanban_board")
 def delete_column(request, kanban_board_id, *args, **kwargs):
     """
     Deletes the column
@@ -90,7 +91,7 @@ def delete_column(request, kanban_board_id, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="kanban_board")
 def new_column(request, kanban_board_id, *args, **kwargs):
     """
     Adding a new column to a kanban board
@@ -124,7 +125,7 @@ def new_column(request, kanban_board_id, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=2, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_board")
 def resort_column(request, kanban_board_id, *args, **kwargs):
     """The functionality that resorts the columns in the database. So when reloading the columns are correct"""
     # Get data from form

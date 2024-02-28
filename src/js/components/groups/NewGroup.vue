@@ -77,9 +77,7 @@ import {required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 // Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
-import searchMixin from "../../mixins/searchMixin";
 
 export default {
 	name: "NewGroup",
@@ -112,10 +110,11 @@ export default {
 			groupNameModel: "",
 			groupResultsFixList: [],
 			parentGroupModel: "",
+			searchTimeout: "",
 			uniqueGroupName: true,
 		};
 	},
-	mixins: [errorModalMixin, getThemeMixin, searchMixin],
+	mixins: [getThemeMixin],
 	validations: {
 		groupNameModel: {
 			required,
@@ -126,11 +125,19 @@ export default {
 			// Tell user that we are searching for the group name
 			this.checkingGroupName = true;
 
-			// Apply the search functional mixing
-			this.searchTrigger({
-				return_function: this.checkGroupName,
-				searchTimeout: this.searchTimeout,
-			});
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.checkGroupName();
+				}, 500);
+			}
 		},
 	},
 	methods: {
@@ -140,7 +147,13 @@ export default {
 
 			if (this.v$.$invalid || !this.uniqueGroupName) {
 				//The group name is not valid, or is not unique. Show error and return
-				this.showValidationErrorModal();
+				this.$store.dispatch("newToast", {
+					header: "Please check all fields",
+					message: "Failed validation. Please check all fields are validated",
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "update_user",
+				});
 
 				//Just return
 				return;
@@ -155,15 +168,19 @@ export default {
 			}
 
 			//Use Axios to send data
-			this.axios
-				.post(`${this.rootUrl}new_group/save/`, data_to_send)
-				.then((response) => {
-					//Go to that webpage
-					window.location.href = response.data;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "New Group", "");
+			this.axios.post(
+				`${this.rootUrl}new_group/save/`, data_to_send
+			).then((response) => {
+				//Go to that webpage
+				window.location.href = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to Add New Group",
+					message: `Sorry, could not save new group. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		checkGroupName() {
 			//Send group name to backend to make sure it is not a duplicate
@@ -171,21 +188,23 @@ export default {
 			data_to_send.set("search", this.groupNameModel);
 
 			//User Axios to send data
-			this.axios
-				.post(
-					`${this.rootUrl}group_information/check_group_name/`,
-					data_to_send
-				)
-				.then((response) => {
-					// Update the uniqueGroupName
-					this.uniqueGroupName = response.data.length === 0;
+			this.axios.post(
+				`${this.rootUrl}group_information/check_group_name/`,
+				data_to_send
+			).then((response) => {
+				// Update the uniqueGroupName
+				this.uniqueGroupName = response.data.length === 0;
 
-					// Hide the checking group name
-					this.checkingGroupName = false;
+				// Hide the checking group name
+				this.checkingGroupName = false;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to Check the Group Name",
+					message: `Sorry, could not check the group name. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				})
-				.catch((error) => {
-					this.showErrorModal(error, "New Group", "");
-				});
+			});
 		},
 	},
 	mounted() {

@@ -66,7 +66,12 @@ export default {
 				"/user_information/remove_permission/",
 				data_to_send
 			).catch((error) => {
-				this.showErrorModal(error, this.destination);
+				this.$store.dispatch("newToast", {
+					header: "Error removing permission",
+					message: `Sorry, we could not remove the permission. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 
 			//Optimistic - remove data and close modal

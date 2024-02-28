@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
@@ -5,9 +6,11 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.core.serializers.json import DjangoJSONEncoder
 
-from NearBeach.forms import ProfilePictureForm, User, UpdateUserForm
+from NearBeach.forms import ProfilePictureForm, UpdateUserForm
 from NearBeach.models import UserProfilePicture
 from NearBeach.views.theme_views import get_theme, update_theme
+
+User = get_user_model()
 
 import json
 

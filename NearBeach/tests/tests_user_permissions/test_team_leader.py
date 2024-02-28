@@ -113,6 +113,9 @@ class TeamLeaderPermissionTests(TestCase):
             URLTest("search_notification", "/", [], {}, 302, 200, "GET"),
             URLTest("new_notification", "/", [], {}, 302, 200, "GET"),
             URLTest("notification_information", "/", [1], {}, 302, 200, "GET"),
+            URLTest("diagnostic_information_email_test", "/", [], {}, 302, 200, "POST"),
+            URLTest("diagnostic_information", "/", [], {}, 302, 200, "GET"),
+            URLTest("diagnostic_information_upload_test", "/", [], {}, 302, 200, "POST"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied

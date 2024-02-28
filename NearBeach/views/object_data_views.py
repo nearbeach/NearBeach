@@ -1,4 +1,6 @@
 from collections import namedtuple
+
+from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -12,6 +14,10 @@ import urllib3
 import urllib
 import json
 
+from NearBeach.decorators.check_user_permissions.object_permissions import (
+    check_specific_object_permissions,
+    check_user_generic_permissions
+)
 from NearBeach.models import (
     Bug,
     BugClient,
@@ -46,7 +52,6 @@ from NearBeach.forms import (
     AddUserForm,
     RemoveCustomerForm,
     RemoveGroupForm,
-    User,
     DeleteBugForm,
     DeleteLinkForm,
     DeleteTagForm,
@@ -55,6 +60,8 @@ from NearBeach.forms import (
     QueryBugClientForm,
     RemoveLinkForm,
 )
+
+User = get_user_model()
 
 from NearBeach.views.tools.lookup_functions import (
     lookup_project,
@@ -75,7 +82,8 @@ LOOKUP_FUNCS = {
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def add_bug(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def add_bug(request, destination, location_id, *args, **kwargs):
     """
     Function to add a bug to an object
     :param: destination: Defines what object the bug is getting added too
@@ -112,7 +120,8 @@ def add_bug(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def add_customer(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def add_customer(request, destination, location_id, *args, **kwargs):
     """
     Add customer to an object
     :param: destination: the type of object we are adding the customer too
@@ -143,7 +152,8 @@ def add_customer(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def add_group(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def add_group(request, destination, location_id, *args, **kwargs):
     # Get data from form
     form = AddGroupForm(request.POST)
     if not form.is_valid():
@@ -180,7 +190,8 @@ def add_group(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def add_link(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def add_link(request, destination, location_id, *args, **kwargs):
     """
     :param request:
     :param destination:
@@ -287,7 +298,8 @@ def add_link(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def add_notes(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def add_notes(request, destination, location_id, *args, **kwargs):
     # ADD IN PERMISSIONS HERE!
 
     # Fill out the form
@@ -334,7 +346,8 @@ def add_notes(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def add_tags(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def add_tags(request, destination, location_id, *args, **kwargs):
     # Check the data against the form
     form = AddTagsForm(request.POST)
     if not form.is_valid():
@@ -374,7 +387,8 @@ def add_tags(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def add_user(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def add_user(request, destination, location_id, *args, **kwargs):
     # Check the data against the form
     form = AddUserForm(request.POST)
     if not form.is_valid():
@@ -410,7 +424,7 @@ def add_user(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def admin_add_user(request):
+def admin_add_user(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -452,7 +466,8 @@ def admin_add_user(request):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def associated_objects(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=1)
+def associated_objects(request, destination, location_id, *args, **kwargs):
     """
     :param request:
     :param destination:
@@ -567,7 +582,7 @@ def associated_objects_organisations(location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def bug_client_list(request):
+def bug_client_list(request, *args, **kwargs):
     bug_client_results = BugClient.objects.filter(
         is_deleted=False,
     )
@@ -581,7 +596,8 @@ def bug_client_list(request):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def bug_list(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=1)
+def bug_list(request, destination, location_id, *args, **kwargs):
     # Obtain the data dependent on the destination
     bug_list_results = Bug.objects.filter(
         is_deleted=False,
@@ -660,7 +676,8 @@ def clean_users_from_object(destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def customer_list(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=1)
+def customer_list(request, destination, location_id, *args, **kwargs):
     customer_results = get_customer_list(destination, location_id)
 
     return HttpResponse(
@@ -671,7 +688,8 @@ def customer_list(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def customer_list_all(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=1)
+def customer_list_all(request, destination, location_id, *args, **kwargs):
     # Get the organisation dependant on the destination source
     if destination == "requirement":
         organisation_results = Organisation.objects.get(
@@ -720,7 +738,8 @@ def customer_list_all(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def delete_bug(request):
+@check_user_generic_permissions(min_permission_level=4)
+def delete_bug(request, *args, **kwargs):
     """
     Function will delete a bug - this will remove it from the link tab.
 
@@ -741,7 +760,8 @@ def delete_bug(request):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def delete_link(request):
+@check_user_generic_permissions(min_permission_level=4)
+def delete_link(request, *args, **kwargs):
     """
     Function will delete a link - this will remove it from the link tab.
 
@@ -762,7 +782,8 @@ def delete_link(request):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def delete_tag(request):
+@check_user_generic_permissions(min_permission_level=4)
+def delete_tag(request, *args, **kwargs):
     # Get form data
     form = DeleteTagForm(request.POST)
     if not form.is_valid():
@@ -783,7 +804,7 @@ def delete_tag(request):
 
 
 # Internal function
-def get_customer_list(destination, location_id):
+def get_customer_list(destination, location_id, *args, **kwargs):
     # Get a list of all objects assignments dependant on the destination
     object_customers = ObjectAssignment.objects.filter(
         is_deleted=False,
@@ -799,7 +820,7 @@ def get_customer_list(destination, location_id):
 
 
 # Internal function
-def get_group_and_user_list(destination, location_id):
+def get_group_and_user_list(destination, location_id, *args, **kwargs):
     # Get the data dependant on the objects lookup
     object_group_results = get_group_list(destination, location_id)
     object_user_results = get_user_list(destination, location_id)
@@ -827,7 +848,7 @@ def get_group_and_user_list(destination, location_id):
 
 
 # Internal function
-def get_group_list(destination, location_id):
+def get_group_list(destination, location_id, *args, **kwargs):
     object_results = ObjectAssignment.objects.filter(
         is_deleted=False,
     )
@@ -853,7 +874,7 @@ def get_group_list(destination, location_id):
 
 
 # Internal Function
-def get_user_list(destination, location_id):
+def get_user_list(destination, location_id, *args, **kwargs):
     # Get the data we want
     object_results = ObjectAssignment.objects.filter(
         is_deleted=False,
@@ -883,7 +904,7 @@ def get_user_list(destination, location_id):
 
 
 # Internal Function
-def get_user_list_all(destination, location_id):
+def get_user_list_all(destination, location_id, *args, **kwargs):
     # Get a list of users we want to exclude
     object_results = ObjectAssignment.objects.filter(
         is_deleted=False,
@@ -944,6 +965,7 @@ def get_user_list_all(destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
+@check_user_generic_permissions(min_permission_level=1)
 def group_and_user_data(request, destination, location_id, *args, **kwargs):
     return JsonResponse(
         get_group_and_user_list(
@@ -955,7 +977,8 @@ def group_and_user_data(request, destination, location_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def lead_user_list(request):
+@check_user_generic_permissions(min_permission_level=1)
+def lead_user_list(request, *args, **kwargs):
     """
     :param request:
     :return:
@@ -997,7 +1020,8 @@ def lead_user_list(request):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def link_list(request, destination, location_id, object_lookup):
+@check_user_generic_permissions(min_permission_level=1)
+def link_list(request, destination, location_id, object_lookup, *args, **kwargs):
     # Get user groups
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
@@ -1017,7 +1041,7 @@ def link_list(request, destination, location_id, object_lookup):
 
 
 # Internal function
-def link_object(object_assignment_submit, destination, location_id):
+def link_object(object_assignment_submit, destination, location_id, *args, **kwargs):
     """
     This is an internal function - depending on the destination, depends on what we are linking in the
     object_association_submit
@@ -1047,7 +1071,8 @@ def link_object(object_assignment_submit, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def note_list(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=1)
+def note_list(request, destination, location_id, *args, **kwargs):
     # Everyone should have access to the notes section.
 
     # Get the notes dependent on the user destination and location
@@ -1083,7 +1108,8 @@ def note_list(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def object_link_list(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=1)
+def object_link_list(request, destination, location_id, *args, **kwargs):
     """
     :param request:
     :param destination:
@@ -1204,7 +1230,8 @@ def object_link_list(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def query_bug_client(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=1)
+def query_bug_client(request, destination, location_id, *args, **kwargs):
     # Insert data into form
     form = QueryBugClientForm(request.POST)
 
@@ -1273,7 +1300,8 @@ def query_bug_client(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def remove_customer(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def remove_customer(request, destination, location_id, *args, **kwargs):
     # Get the form data
     form = RemoveCustomerForm(request.POST)
     if not form.is_valid():
@@ -1299,7 +1327,8 @@ def remove_customer(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def remove_group(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def remove_group(request, destination, location_id, *args, **kwargs):
     # Get the form data
     form = RemoveGroupForm(request.POST)
     if not form.is_valid():
@@ -1334,7 +1363,8 @@ def remove_group(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def remove_link(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def remove_link(request, destination, location_id, *args, **kwargs):
     form = RemoveLinkForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -1352,7 +1382,8 @@ def remove_link(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def remove_user(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def remove_user(request, destination, location_id, *args, **kwargs):
     # Get the form data
     form = RemoveUserForm(request.POST)
     if not form.is_valid():
@@ -1388,7 +1419,8 @@ def remove_user(request, destination, location_id):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def tag_list(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=1)
+def tag_list(request, destination, location_id, *args, **kwargs):
     # Get the data we want
     tag_results = Tag.objects.filter(
         is_deleted=False,
@@ -1407,7 +1439,7 @@ def tag_list(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def tag_list_all(request):
+def tag_list_all(request, *args, **kwargs):
     # Get the data we want
     tag_results = Tag.objects.filter(
         is_deleted=False,
@@ -1422,16 +1454,9 @@ def tag_list_all(request):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def user_list(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=1)
+def user_list(request, destination, location_id, *args, **kwargs):
     # Get the data we want
     user_results = get_user_list(destination, location_id)
 
     return HttpResponse(user_results, content_type="application/json")
-
-
-
-#     # Get Data we want
-
-#     # Send back json data
-
-#     return HttpResponse(json_results, content_type="application/json")

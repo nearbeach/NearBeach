@@ -54,9 +54,6 @@
 </template>
 
 <script>
-// Import mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
-import searchMixin from "../../mixins/searchMixin";
 
 export default {
 	name: "SearchPermissionSets",
@@ -72,7 +69,6 @@ export default {
 			default: "/",
 		},
 	},
-	mixins: [errorModalMixin, searchMixin],
 	data() {
 		return {
 			permissionSetList: this.permissionSetResults,
@@ -96,17 +92,30 @@ export default {
 					this.permissionSetList = response.data;
 				})
 				.catch((error) => {
-					//Show error
-					this.showErrorModal(error, "Search Permission Set", "");
+					this.$store.dispatch("newToast", {
+						header: "Error Getting Search Results",
+						message: `We had an issue getting search results. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 	},
 	watch: {
 		searchModel() {
-			this.searchTrigger({
-				return_function: this.getSearchResults,
-				searchTimeout: this.searchTimeout,
-			});
+			// Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getSearchResults();
+				}, 500);
+			}
 		},
 	},
 };

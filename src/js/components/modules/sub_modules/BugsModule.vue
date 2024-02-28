@@ -95,7 +95,6 @@ import {Icon} from "@iconify/vue";
 import AddBugWizard from "../wizards/AddBugWizard.vue";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 
 //VueX
@@ -107,7 +106,7 @@ export default {
 		AddBugWizard,
 		Icon,
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			bugList: [],
@@ -165,7 +164,12 @@ export default {
 					this.bugList.push(row);
 				});
 			}).catch((error) => {
-				this.showErrorModal(error, this.destination);
+				this.$store.dispatch("newToast", {
+					header: "Failed to get bug list",
+					message: `Failed to get bug list. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 		removeBug(bug_id) {

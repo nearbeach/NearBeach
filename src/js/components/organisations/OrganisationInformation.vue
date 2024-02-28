@@ -126,7 +126,6 @@ import {email, maxLength, required, url} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getToken from "../../mixins/getTokenMixin";
 
 export default {
@@ -147,7 +146,7 @@ export default {
 			},
 		},
 	},
-	mixins: [errorModalMixin, getToken],
+	mixins: [getToken],
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",
@@ -210,7 +209,12 @@ export default {
 			this.v$.$touch();
 
 			if (this.v$.$invalid) {
-				this.showValidationErrorModal();
+				this.$store.dispatch("newToast", {
+					header: "Please check validation",
+					message: "Sorry, but can you please fix all validation issues.",
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
 
 				//Just return - as we do not need to do the rest of this function
 				return;

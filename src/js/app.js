@@ -2,7 +2,6 @@
 import {createApp} from "vue/dist/vue.esm-bundler";
 
 //VueX
-// import { createStore } from 'vuex';
 import {store} from "./vuex-store";
 
 //Import Bootstrap
@@ -42,6 +41,7 @@ import {
     DashboardRfcApprovals,
     DashboardUnassignedObjects,
     DashboardUsersWithNoGroups,
+    DiagnosticInformation,
     GroupInformation,
     KanbanDangerZone,
     KanbanEditBoard,
@@ -61,6 +61,8 @@ import {
     NewTask,
     NewUser,
     NotificationInformation,
+    ObjectStatusInformation,
+    ObjectStatusList,
     OrganisationInformation,
     OrganisationModules,
     ParentModules,
@@ -104,6 +106,7 @@ const app = createApp({
         DashboardRfcApprovals,
         DashboardUnassignedObjects,
         DashboardUsersWithNoGroups,
+        DiagnosticInformation,
         GroupInformation,
         KanbanDangerZone,
         KanbanEditBoard,
@@ -123,6 +126,8 @@ const app = createApp({
         NewTask,
         NewUser,
         NotificationInformation,
+        ObjectStatusInformation,
+        ObjectStatusList,
         OrganisationInformation,
         OrganisationModules,
         ParentModules,

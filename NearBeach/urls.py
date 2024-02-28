@@ -8,6 +8,7 @@ from .views import (
     card_views,
     customer_views,
     dashboard_views,
+    diagnostic_views,
     document_views,
     error_views,
     group_views,
@@ -29,7 +30,7 @@ from .views import (
     tag_views,
     task_views,
     user_setting_views,
-    user_views,
+    user_views, object_status_editor_views,
 )
 
 # The following two imports are for the static files
@@ -138,6 +139,22 @@ urlpatterns = [
         "dashboard/get/users_with_no_groups/",
         dashboard_views.users_with_no_groups,
         name="users_with_no_groups",
+    ),
+    # Diagnostic Page
+    path(
+        "diagnostic_information/",
+        diagnostic_views.diagnostic_information,
+        name="diagnostic_information",
+    ),
+    path(
+        "diagnostic_information/email_test/",
+        diagnostic_views.diagnostic_email_test,
+        name="diagnostic_information_email_test",
+    ),
+    path(
+        "diagnostic_information/upload_test/",
+        diagnostic_views.diagnostic_upload_test,
+        name="diagnostic_information_upload_test",
     ),
     # Documentation
     path(
@@ -312,6 +329,37 @@ urlpatterns = [
     # Authentication
     path("login", authentication_views.login, name="login"),
     path("logout", authentication_views.logout, name="logout"),
+    # Object Status
+    path(
+        "object_status_information/<destination>/",
+        object_status_editor_views.object_status_information,
+        name="object_status_information",
+    ),
+    path(
+        "object_status_information/<destination>/create/",
+        object_status_editor_views.object_status_create,
+        name="object_status_create",
+    ),
+    path(
+        "object_status_information/<destination>/delete/",
+        object_status_editor_views.object_status_delete,
+        name="object_status_delete",
+    ),
+    path(
+        "object_status_information/<destination>/reorder/",
+        object_status_editor_views.object_status_reorder,
+        name="object_status_reorder",
+    ),
+    path(
+        "object_status_information/<destination>/update/",
+        object_status_editor_views.object_status_update,
+        name="object_status_update",
+    ),
+    path(
+        "object_status_list/",
+        object_status_editor_views.object_status_list,
+        name="object_status_list"
+    ),
     # Permission Sets
     path(
         "permission_set_information/<int:permission_set_id>/",
@@ -408,8 +456,8 @@ urlpatterns = [
     path("new_task/save/", task_views.new_task_save, name="new_task_save"),
     path("new_user/", user_views.new_user, name="new_user"),
     path("new_user/save/", user_views.new_user_save, name="new_user_save"),
-    path("note/delete/", note_views.delete_note, name="delete_note"),
-    path("note/update/", note_views.update_note, name="update_note"),
+    path("note/delete/<int:object_note_id>/", note_views.delete_note, name="delete_note"),
+    path("note/update/<int:object_note_id>/", note_views.update_note, name="update_note"),
     path(
         "notification_information/delete/",
         notification_views.notification_information_delete,
@@ -616,7 +664,7 @@ urlpatterns = [
         name="get_public_links",
     ),
     path(
-        "public_data/update_link/",
+        "public_data/<destination>/<int:location_id>/update_link/",
         public_views.update_public_link,
         name="update_public_link",
     ),

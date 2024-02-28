@@ -23,7 +23,7 @@ jobs:
           name: Running Tests
           command: |
             . venv/bin/activate
-            CI=true coverage run \
+            CI=true coverage run --branch \
               --omit='venv/*,NearBeach/tests/*,NearBeach/migrations/*,*/__init__.py,manage.py,settings.py,NearBeach/admin.py,NearBeach/apps.py' \
               manage.py test
             coverage report

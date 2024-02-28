@@ -174,3 +174,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MAX_FILE_SIZE_UPLOAD = 104857600
 if "MAX_FILE_SIZE_UPLOAD" in os.environ:
     MAX_FILE_SIZE_UPLOAD = os.getenv("MAX_FILE_SIZE_UPLOAD")
+
+# If user wants to use a custom auth user model
+# Requested in Issue-533
+if "OVERRIDE_AUTH_USER_MODEL" in os.environ:
+    AUTH_USER_MODEL = os.getenv("OVERRIDE_AUTH_USER_MODEL")

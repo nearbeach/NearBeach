@@ -143,9 +143,6 @@
 
 <script>
 //Vue is like "I wanna write JS in my HTML" and React is like "I wanna write my HTML as JS"
-//Import mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
@@ -181,7 +178,6 @@ export default {
 			lastNameModel: this.userResults[0]["fields"]["last_name"],
 		};
 	},
-	mixins: [errorModalMixin, loadingModalMixin],
 	validations: {
 		lastNameModel: {
 			required,
@@ -203,14 +199,26 @@ export default {
 			this.v$.$touch();
 
 			if (this.v$.$invalid) {
-				this.showValidationErrorModal();
+				this.$store.dispatch("newToast", {
+					header: "Please check all fields",
+					message: "Failed validation. Please check all fields are validated",
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "update_user",
+				});
 
 				//Just return - as we do not need to do the rest of this function
 				return;
 			}
 
 			//Start the loading modal
-			this.showLoadingModal("User Information");
+			this.$store.dispatch("newToast", {
+				header: "Updating Current User",
+				message: "Currently Updating User",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "update_user",
+			});
 
 			//Setup data to send
 			const data_to_send = new FormData();
@@ -220,22 +228,26 @@ export default {
 			data_to_send.set("first_name", this.firstNameModel);
 			data_to_send.set("last_name", this.lastNameModel);
 
-			this.axios
-				.post(
-					`${this.rootUrl}user_information/${this.userResults[0]["pk"]}/save/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Hide the loading modal
-					this.closeLoadingModal();
-				})
-				.catch((error) => {
-					this.showErrorModal(
-						error,
-						"Update User",
-						this.userResults[0]["pk"]
-					);
+			this.axios.post(
+				`${this.rootUrl}user_information/${this.userResults[0]["pk"]}/save/`,
+				data_to_send
+			).then(() => {
+				//Hide the loading modal
+				this.$store.dispatch("newToast", {
+					header: "User Updated",
+					message: "User successfully updated",
+					extra_classes: "bg-success",
+					unique_type: "update_user",
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed Updating Users",
+					message: `Sorry. Failed updating your user. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "update_user",
+				});
+			});
 		},
 	},
 	mounted() {

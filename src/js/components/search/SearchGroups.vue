@@ -55,9 +55,6 @@
 </template>
 
 <script>
-// Import mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
-import searchMixin from "../../mixins/searchMixin";
 
 export default {
 	name: "SearchGroups",
@@ -73,7 +70,6 @@ export default {
 			default: "/",
 		},
 	},
-	mixins: [errorModalMixin, searchMixin],
 	data() {
 		return {
 			groupList: this.groupResults,
@@ -88,23 +84,36 @@ export default {
 			data_to_send.set("search", this.searchModel);
 
 			//Use Axios to send data
-			this.axios
-				.post(`${this.rootUrl}search/group/data/`, data_to_send)
-				.then((response) => {
-					this.groupList = response.data;
-				})
-				.catch((error) => {
-					//Show error
-					this.showErrorModal(error, "Search Groups", "");
+			this.axios.post(
+				`${this.rootUrl}search/group/data/`,
+				data_to_send
+			).then((response) => {
+				this.groupList = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to get search results",
+					message: `Failed to get search results. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 	watch: {
 		searchModel() {
-			this.searchTrigger({
-				return_function: this.getSearchResults,
-				searchTimeout: this.searchTimeout,
-			});
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getSearchResults();
+				}, 500);
+			}
 		},
 	},
 };

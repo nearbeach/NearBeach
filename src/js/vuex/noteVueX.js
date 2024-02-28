@@ -20,7 +20,6 @@ export const moduleNote = {
     actions: {
         editSingleNote({state}, payload) {
             //Get the index of the array
-            console.log("Note Id: ", payload.noteId, " --- ", payload.noteDescription);
             const index = state.noteList.findIndex((row) => {
                 return parseInt(row.object_note_id) === parseInt(payload.noteId);
             });

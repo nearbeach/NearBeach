@@ -109,7 +109,6 @@ import {required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 
 export default {
@@ -145,9 +144,7 @@ export default {
 		},
 	},
 	mixins: [
-		errorModalMixin,
 		getThemeMixin,
-		// searchMixin,
 	],
 	data() {
 		return {
@@ -250,7 +247,12 @@ export default {
 				!this.uniqueKanbanBoardName ||
 				this.checkingKanbanBoardName
 			) {
-				this.showValidationErrorModal();
+				this.$store.dispatch("newToast", {
+					header: "Please check validation",
+					message: "Sorry, but can you please fix all validation issues.",
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
 
 				//Just return - as we do not need to do the rest of this function
 				return;
@@ -278,14 +280,20 @@ export default {
 			});
 
 			//Use axios to send the data
-			this.axios
-				.post(`${this.rootUrl}new_kanban_save/`, data_to_send)
-				.then((response) => {
-					//Go to that webpage
-					window.location.href = response.data;
-				})
-				.catch((error) => {
+			this.axios.post(
+				`${this.rootUrl}new_kanban_save/`,
+				data_to_send
+			).then((response) => {
+				//Go to that webpage
+				window.location.href = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Issue Creating new Kanban board",
+					message: `Issues creating new kanban board -> Error ${error}`,
+					extra_classes: "bg-warning",
+					delay: 0,
 				});
+			});
 		},
 		checkKanbanBoardName() {
 			//Send the Kanban board name to the backend - it will send back the results.
@@ -296,20 +304,23 @@ export default {
 			);
 
 			//Use axios to query the database
-			this.axios
-				.post(
-					`${this.rootUrl}kanban_information/check_kanban_board_name/`,
-					data_to_send
-				)
-				.then((response) => {
-					//If the data came back empty - then the kanban board name is unique
-					this.uniqueKanbanBoardName = response.data.length === 0;
+			this.axios.post(
+				`${this.rootUrl}kanban_information/check_kanban_board_name/`,
+				data_to_send
+			).then((response) => {
+				//If the data came back empty - then the kanban board name is unique
+				this.uniqueKanbanBoardName = response.data.length === 0;
 
-					//Checking kanban board name is finished
-					this.checkingKanbanBoardName = false;
-				})
-				.catch((error) => {
+				//Checking kanban board name is finished
+				this.checkingKanbanBoardName = false;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Issue checking Kanban board name",
+					message: `Issues checking kanban board name -> Error ${error}`,
+					extra_classes: "bg-warning",
+					delay: 0,
 				});
+			});
 		},
 		updateGroupModel(data) {
 			this.groupModel = data;

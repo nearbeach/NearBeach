@@ -2,13 +2,14 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.forms import NewLevelForm, KanbanLevel, DeleteLevelForm, ResortLevelForm
 from NearBeach.views.tools.internal_functions import KanbanCard
 
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_board")
 def edit_level(request, kanban_level_id, *args, **kwargs):
     """
     Edits/Updates a kanban level
@@ -41,7 +42,7 @@ def edit_level(request, kanban_level_id, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=4, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=4, object_lookup="kanban_board")
 def delete_level(request, kanban_board_id, *args, **kwargs):
     """
     Deletes a level
@@ -82,7 +83,7 @@ def delete_level(request, kanban_board_id, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="kanban_board")
 def new_level(request, kanban_board_id, *args, **kwargs):
     """
     Creates a new level for a kanban board
@@ -114,7 +115,7 @@ def new_level(request, kanban_board_id, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=2, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_board")
 def resort_level(request, kanban_board_id, *args, **kwargs):
     """
     Resorts the levels when updated

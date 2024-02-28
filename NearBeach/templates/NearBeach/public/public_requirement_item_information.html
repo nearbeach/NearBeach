@@ -1,0 +1,16 @@
+{% extends "NearBeach/partials/template.html" %}
+{% load static %}
+{% block content %}
+    <fieldset disabled="disabled">
+        <requirement-item-information
+                v-bind:requirement-item-results="{{requirement_item_results}}"
+                v-bind:organisation-results="{{organisation_results}}"
+                v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
+                v-bind:requirement-item-is-closed="{{ requirement_item_is_closed }}"
+                v-bind:status-options="{{status_options}}"
+                v-bind:type-options="{{type_options}}"
+                v-bind:theme="`light`"
+                v-bind:user-level="1"
+        ></requirement-item-information>
+    </fieldset>
+{% endblock %}

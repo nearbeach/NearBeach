@@ -15,10 +15,7 @@ from NearBeach.views.tools.internal_functions import (
     Requirement,
     Task,
 )
-from NearBeach.decorators.check_user_permissions import (
-    check_user_permissions,
-    check_user_kanban_permissions,
-)
+from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.forms import (
     AddKanbanLinkForm,
     FixCardOrderingForm,
@@ -32,7 +29,7 @@ from NearBeach.forms import (
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Max, Q
+from django.db.models import Max
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
 from django.urls import reverse
@@ -42,7 +39,7 @@ from django.views.decorators.cache import never_cache
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=2, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_board")
 def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     """
     Adds a link to an object to a kanban board
@@ -93,7 +90,7 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=2, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_board")
 def archive_kanban_cards(request, *args, **kwargs):
     """Archive the kanban cards."""
     form = KanbanCardArchiveForm(request.POST)
@@ -114,7 +111,7 @@ def archive_kanban_cards(request, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="kanban_board")
 def check_kanban_board_name(request, *args, **kwargs):
     """
     The following will get a list of all kanban boards with the same name. The idea is that each kanban board should
@@ -140,7 +137,7 @@ def check_kanban_board_name(request, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=1, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=1, object_lookup="kanban_board")
 def fix_card_ordering(request, *args, **kwargs):
     form = FixCardOrderingForm(request.POST)
     if not form.is_valid():
@@ -208,7 +205,7 @@ def get_max_sort_id(kanban_board_id, form):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="kanban_board")
 def kanban_close_board(request, kanban_board_id, *args, **kwargs):
     """Close the kanban board"""
     kanban_update = KanbanBoard.objects.get(kanban_board_id=kanban_board_id)
@@ -221,7 +218,7 @@ def kanban_close_board(request, kanban_board_id, *args, **kwargs):
 
 @never_cache
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="kanban_board")
 def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
     """Edit the permissions of the kanban board"""
     user_level = kwargs["user_level"]
@@ -246,7 +243,6 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
     else:
         c["kanban_board_is_closed"] = "false"
 
-
     # Get the template
     t = loader.get_template("NearBeach/kanban/kanban_edit_board.html")
 
@@ -256,7 +252,7 @@ def kanban_edit_board(request, kanban_board_id, *args, **kwargs):
 
 @never_cache
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=1, object_lookup="kanban_board")
 def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **kwargs,):
     """
     Renders out the kanban board information
@@ -301,7 +297,7 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=1, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=1, object_lookup="kanban_board")
 def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
     """
     Obtains the data for the kanban links
@@ -345,7 +341,7 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="kanban_board")
 def kanban_reopen_board(request, kanban_board_id, *args, **kwargs):
     """Reopen the kanban board"""
     kanban_update = KanbanBoard.objects.get(kanban_board_id=kanban_board_id)
@@ -358,7 +354,7 @@ def kanban_reopen_board(request, kanban_board_id, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_kanban_permissions(min_permission_level=2)
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_card")
 def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     """
     Updates a kanban kard when it moves
@@ -409,7 +405,7 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="kanban_card")
 def new_kanban(request, *args, **kwargs):
     """
     Renders out the new kanban page
@@ -455,7 +451,7 @@ def new_kanban(request, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=2, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_card")
 def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     """Add a new kanban card"""
     kanban_instance = KanbanBoard.objects.get(kanban_board_id=kanban_board_id)
@@ -493,7 +489,7 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="kanban_card")
 def new_kanban_save(request, *args, **kwargs):
     """
     Saves the new kanban board
@@ -564,7 +560,7 @@ def new_kanban_save(request, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_user_permissions(min_permission_level=2, object_lookup="kanban_board_id")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_card")
 def update_card(request, *args, **kwargs):
     """
     The following function will update the card information

@@ -72,7 +72,6 @@ import {NSelect} from "naive-ui";
 import {mapGetters} from "vuex";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 
 export default {
@@ -81,7 +80,7 @@ export default {
 		Icon,
 		NSelect,
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -120,17 +119,20 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}rfc_information/${this.locationId}/update_change_lead/`,
 				data_to_send
-			)
-				.then((response) => {
-					//Update the data
-					this.$emit("update_change_lead", response.data.change_lead_results);
+			).then((response) => {
+				//Update the data
+				this.$emit("update_change_lead", response.data.change_lead_results);
 
-					//Close the modal
-					document.getElementById("updateChangeLeadCloseButton").click();
-				})
-				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+				//Close the modal
+				document.getElementById("updateChangeLeadCloseButton").click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error changing the lead",
+					message: `Sorry, we could not change the lead. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 };

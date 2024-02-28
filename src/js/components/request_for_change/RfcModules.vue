@@ -296,9 +296,7 @@ import GroupsAndUsersModule from "../modules/sub_modules/GroupsAndUsersModule.vu
 import {mapGetters} from "vuex";
 
 //Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 export default {
 	name: "RfcModules",
@@ -339,7 +337,7 @@ export default {
 			},
 		},
 	},
-	mixins: [errorModalMixin, getThemeMixin, loadingModalMixin],
+	mixins: [getThemeMixin],
 	data: () => ({
 		rfcData: {
 			rfcBackoutPlan: "",
@@ -376,35 +374,36 @@ export default {
 			})
 
 			//Use axios to send the data
-			this.axios
-				.post(url, data_to_send)
-				.then(() => {
-					//Notify user of success update
-					this.$store.dispatch("newToast", {
-						header: "Successfully Updated Risk",
-						message: "Risk is now updated",
-						extra_classes: "bg-success",
-						unique_type: "save_risk",
-					});
-				})
-				.catch((error) => {
-					this.$store.dispatch("newToast", {
-						header: "Updating Risk Failed",
-						message: `Sorry, but risk has failed to update. Error -> ${error}`,
-						extra_classes: "bg-danger",
-						delay: 0,
-						unique_type: "save_risk",
-					});
+			this.axios.post(
+				url,
+				data_to_send
+			).then(() => {
+				//Notify user of success update
+				this.$store.dispatch("newToast", {
+					header: "Successfully Updated Risk",
+					message: "Risk is now updated",
+					extra_classes: "bg-success",
+					unique_type: "save_risk",
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Updating Risk Failed",
+					message: `Sorry, but risk has failed to update. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "save_risk",
+				});
+			});
 		},
 		updateBackoutPlan() {
 			if (this.validationData.tab_4 === false) {
 				//The data isn't valid. Notify the user, and do nothing else
-				this.showErrorModal(
-					"Please fill out all data",
-					"Backout Plan",
-					""
-				);
+				this.$store.dispatch("newToast", {
+					header: "Please check validation",
+					message: "Sorry, but can you please fix all validation issues.",
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
 
 				//Doing nothing else
 				return;
@@ -422,11 +421,12 @@ export default {
 		updateImplementation() {
 			if (this.validationData.tab_3 === false) {
 				//The data isn't valid. Notify the user, and do nothing else
-				this.showErrorModal(
-					"Please fill out all data",
-					"Implementation",
-					""
-				);
+				this.$store.dispatch("newToast", {
+					header: "Please check validation",
+					message: "Sorry, but can you please fix all validation issues.",
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
 
 				//Doing nothing else
 				return;
@@ -447,7 +447,12 @@ export default {
 		updateRisk() {
 			if (this.validationData.tab_2 === false) {
 				//The data isn't valid. Notify the user, and do nothing else
-				this.showErrorModal("Please fill out all data", "Risk", "");
+				this.$store.dispatch("newToast", {
+					header: "Please check validation",
+					message: "Sorry, but can you please fix all validation issues.",
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
 
 				//Doing nothing else
 				return;
@@ -482,11 +487,12 @@ export default {
 		updateTestPlan() {
 			if (this.validationData.tab_5 === false) {
 				//The data isn't valid. Notify the user, and do nothing else
-				this.showErrorModal(
-					"Please fill out all data",
-					"Test Plan",
-					""
-				);
+				this.$store.dispatch("newToast", {
+					header: "Please check validation",
+					message: "Sorry, but can you please fix all validation issues.",
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
 
 				//Doing nothing else
 				return;

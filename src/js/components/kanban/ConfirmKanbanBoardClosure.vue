@@ -67,11 +67,16 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}kanban_information/${this.locationId}/close_board/`
 			)
-			.then((response) => {
+			.then(() => {
 				window.location.href = `${this.rootUrl}`;
 			})
 			.catch((error) => {
-				// this.showErrorModal(error, this.destination);
+				this.$store.dispatch("newToast", {
+					header: "Error closing the kanban board",
+					message: `Sorry, we could not close the kanban board. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 		closeModal() {

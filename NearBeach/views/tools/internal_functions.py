@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+
 from NearBeach.models import (
     ChangeTask,
     Customer,
@@ -24,7 +26,7 @@ OBJECT_DICT = {
     "kanban_card": KanbanCard.objects,
     "organisation": Organisation.objects,
     "request_for_change": RequestForChange.objects,
-    "user": User.objects,
+    "user": get_user_model().objects,
 }
 
 

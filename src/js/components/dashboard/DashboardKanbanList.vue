@@ -18,9 +18,6 @@
 </template>
 
 <script>
-//Mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
-
 //Components
 import RenderObjectCard from "../render/RenderObjectCard.vue";
 
@@ -46,7 +43,6 @@ export default {
 			end_date: "end_date",
 		},
 	}),
-	mixins: [errorModalMixin],
 	methods: {
 		getMyKanbanList() {
 			//Use axios to get data
@@ -64,7 +60,12 @@ export default {
 					});
 				})
 				.catch((error) => {
-					this.showErrorModal(error, "Kanban List", 0);
+					this.$store.dispatch("newToast", {
+						header: "Error Getting Kanban List",
+						message: `Error getting kanban list. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 	},

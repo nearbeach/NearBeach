@@ -296,9 +296,7 @@ import {Modal} from "bootstrap";
 
 //Import mixins
 import datetimeMixin from "../../mixins/datetimeMixin";
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
@@ -412,7 +410,7 @@ export default {
 			return start_date || end_date || release_date;
 		},
 	},
-	mixins: [datetimeMixin, errorModalMixin, getThemeMixin, loadingModalMixin],
+	mixins: [datetimeMixin, getThemeMixin],
 	data() {
 		return {
 			approvalUsersList: [],
@@ -424,9 +422,6 @@ export default {
 			rfcChangeLeadModel: "",
 			rfcTitleModel: this.rfcResults[0].fields.rfc_title,
 			rfcSummaryModel: this.rfcResults[0].fields.rfc_summary,
-			// rfcImplementationStartModel: new Date(this.rfcResults[0].fields.rfc_implementation_start_date).getTime(),
-			// rfcImplementationEndModel: new Date(this.rfcResults[0].fields.rfc_implementation_end_date).getTime(),
-			// rfcReleaseModel: new Date(this.rfcResults[0].fields.rfc_implementation_release_date).getTime(),
 			rfcStatus: [
 				{label: "Draft", value: 1},
 				{label: "Waiting for approval", value: 2},
@@ -500,7 +495,7 @@ export default {
 				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/get_approval_users/`
 			).then((response) => {
 				this.approvalUsersList = response.data;
-			}).catch((error) => {
+			}).catch(() => {
 				this.$store.dispatch("newToast", {
 					header: "Error Getting Approval User List",
 					message: "Sorry, we could not get you the list of users who can approve this RFC",
@@ -548,24 +543,20 @@ export default {
 			this.sendUpdate(data_to_send);
 		},
 		sendUpdate(data_to_send) {
-			this.axios
-				.post(
-					`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/update_status/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Reload the page to get redirected to the correct place
-					window.location.reload(true);
+			this.axios.post(
+				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/update_status/`,
+				data_to_send
+			).then(() => {
+				//Reload the page to get redirected to the correct place
+				window.location.reload(true);
+			}).catch(() => {
+				this.$store.dispatch("newToast", {
+					header: "Can not update status of RFC",
+					message: "Sadly we had issues trying to update the status for the RFC.",
+					delay: 0,
+					extra_classes: "bg-warning",
 				})
-				.catch((error) => {
-					this.$store.dispatch("newToast", {
-						header: "Can not update status of RFC",
-						message: "Sadly we had issues trying to update the status for the RFC. Please consult your" +
-							" system admin",
-						delay: 0,
-						extra_classes: "bg-warning",
-					})
-				});
+			});
 		},
 		startRFCStatus() {
 			const data_to_send = new FormData();
@@ -582,7 +573,12 @@ export default {
 			const validation_results = await this.v$.$validate();
 
 			if (!validation_results) {
-				this.showValidationErrorModal();
+				this.$store.dispatch("newToast", {
+					header: "Please check validation",
+					message: "Sorry, but can you please fix all validation issues.",
+					extra_classes: "bg-warning",
+					delay: 0,
+				});
 
 				//Just return - as we do not need to do the rest of this function
 				return;
@@ -607,28 +603,25 @@ export default {
 			);
 
 			//Use Axios to send the data
-			this.axios
-				.post(
-					`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Notify user of success update
-					this.$store.dispatch("newToast", {
-						header: "Save Successfully",
-						message: "RFC Has saved",
-						delay: 10000,
-						extra_classes: "bg-success",
-					});
-				})
-				.catch((error) => {
-					this.$store.dispatch("newToast", {
-						header: "Can not save RFC",
-						message: `Sadly we've had the following error ${error}`,
-						delay: 0,
-						extra_classes: "bg-warning",
-					})
+			this.axios.post(
+				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/`,
+				data_to_send
+			).then((response) => {
+				//Notify user of success update
+				this.$store.dispatch("newToast", {
+					header: "Save Successfully",
+					message: "RFC Has saved",
+					delay: 10000,
+					extra_classes: "bg-success",
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Can not save RFC",
+					message: `Sadly we've had the following error ${error}`,
+					delay: 0,
+					extra_classes: "bg-warning",
+				})
+			});
 		},
 		updateRFCStatus() {
 			const data_to_send = new FormData();

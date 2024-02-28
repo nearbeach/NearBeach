@@ -204,9 +204,6 @@
 import Editor from "@tinymce/tinymce-vue";
 import {NSelect, NDatePicker} from "naive-ui";
 
-//Import mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
-
 //VueX
 import {mapGetters} from "vuex";
 
@@ -232,7 +229,6 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [errorModalMixin],
 	data: () => ({
 		assignedUserModel: null,
 		changeEndDateModel: 0,
@@ -302,9 +298,7 @@ export default {
 			this.submitChangeTask(event);
 
 			//Close the modal
-			document
-				.getElementById("newRunItemCloseButton")
-				.click();
+			document.getElementById("newRunItemCloseButton").click();
 		},
 		async submitChangeTask(event) {
 			//Tell modal current object is saving
@@ -352,26 +346,28 @@ export default {
 			);
 			data_to_send.set("change_task_qa_user", this.qaUserModel);
 
-			this.axios
-				.post(
-					`${this.rootUrl}rfc_information/${this.locationId}/new_change_task/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Update the runsheet variables
-					this.$emit("update_change_task_list", response.data);
+			this.axios.post(
+				`${this.rootUrl}rfc_information/${this.locationId}/new_change_task/`,
+				data_to_send
+			).then((response) => {
+				//Update the runsheet variables
+				this.$emit("update_change_task_list", response.data);
 
-					//Clear the modal
-					this.changeTitleModel = "";
-					this.assignedUserModel = "";
-					this.qaUserModel = "";
+				//Clear the modal
+				this.changeTitleModel = "";
+				this.assignedUserModel = "";
+				this.qaUserModel = "";
 
-					//Set the current status back to ready
-					this.currentStatus = 'ready';
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "Change Task");
+				//Set the current status back to ready
+				this.currentStatus = 'ready';
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error submitting change task",
+					message: `Sorry, we could not submit the change task. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		updateUserList() {
 			//Grab a map of the potential and current users

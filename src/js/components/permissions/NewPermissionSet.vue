@@ -42,7 +42,6 @@
 
 <script>
 //Import mixins
-import errorModalMixin from "../../mixins/errorModalMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
 
 export default {
@@ -62,7 +61,7 @@ export default {
 			permissionSetNameModel: "",
 		};
 	},
-	mixins: [errorModalMixin, getThemeMixin],
+	mixins: [getThemeMixin],
 	methods: {
 		addNewPermissionSet() {
 			//Data to send
@@ -72,18 +71,20 @@ export default {
 				this.permissionSetNameModel
 			);
 
-			this.axios
-				.post(
-					`${this.rootUrl}new_permission_set/save/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Go to the new location
-					window.location.href = response.data;
-				})
-				.catch((error) => {
-					this.showErrorModal(error, "New Permission Set", "");
+			this.axios.post(
+				`${this.rootUrl}new_permission_set/save/`,
+				data_to_send
+			).then((response) => {
+				//Go to the new location
+				window.location.href = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error adding permission set",
+					message: `Sorry, we could not save the permission set. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 };

@@ -106,7 +106,6 @@ import {Modal} from "bootstrap";
 import {mapGetters} from "vuex";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 
 export default {
@@ -115,7 +114,7 @@ export default {
 		Icon,
 		NSelect,
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -186,7 +185,12 @@ export default {
 					});
 				})
 				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+					this.$store.dispatch("newToast", {
+						header: "Failed to add user",
+						message: `Failed to add user. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 	},

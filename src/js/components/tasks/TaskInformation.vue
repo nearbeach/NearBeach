@@ -145,7 +145,6 @@ import {mapGetters} from "vuex";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
-import loadingModalMixin from "../../mixins/loadingModalMixin";
 import uploadMixin from "../../mixins/uploadMixin";
 
 export default {
@@ -245,7 +244,7 @@ export default {
 			taskStatusModel: this.taskResults[0].fields.task_status,
 		};
 	},
-	mixins: [getThemeMixin, loadingModalMixin, uploadMixin],
+	mixins: [getThemeMixin, uploadMixin],
 	validations: {
 		taskDescriptionModel: {
 			required,

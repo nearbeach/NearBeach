@@ -27,6 +27,7 @@ from .models import (
     ListOfTitle,
     Notification,
     ObjectAssignment,
+    ObjectNote,
     Organisation,
     PermissionSet,
     Project,
@@ -66,6 +67,7 @@ admin.site.register(ListOfTaskStatus)
 admin.site.register(ListOfTitle)
 admin.site.register(Notification)
 admin.site.register(ObjectAssignment)
+admin.site.register(ObjectNote)
 admin.site.register(Organisation)
 admin.site.register(PermissionSet)
 admin.site.register(Project)

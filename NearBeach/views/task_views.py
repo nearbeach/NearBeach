@@ -6,7 +6,7 @@ from django.template import loader
 from django.urls import reverse
 from django.db.models import F
 from django.views.decorators.http import require_http_methods
-from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.forms import NewTaskForm, TaskInformationForm
 from NearBeach.models import Group, UserGroup, ObjectAssignment, ListOfTaskStatus
 from NearBeach.views.tools.internal_functions import Task, Organisation
@@ -16,7 +16,7 @@ import json, uuid
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="task_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="task")
 def new_task(request, *args, **kwargs):
     """
     :param request:
@@ -65,7 +65,7 @@ def new_task(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="task_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="task")
 def new_task_save(request, *args, **kwargs):
     """
     :param request:
@@ -81,7 +81,7 @@ def new_task_save(request, *args, **kwargs):
     # Get default task status
     task_status = ListOfTaskStatus.objects.filter(
         is_deleted=False,
-    ).order_by("task_status_order")
+    ).order_by("task_status_sort_order")
 
     if len(task_status) == 0:
         return HttpResponseBadRequest("No Task Status entered in the system. Please contact system admin")
@@ -121,7 +121,7 @@ def new_task_save(request, *args, **kwargs):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup="task_id")
+@check_specific_object_permissions(min_permission_level=1, object_lookup="task")
 def task_information(request, task_id, *args, **kwargs):
     """
     :param request:
@@ -149,7 +149,7 @@ def task_information(request, task_id, *args, **kwargs):
         "label",
         "task_higher_order_status",
     ).order_by(
-        "task_status_order",
+        "task_status_sort_order",
     )
 
     # Translate the task is closed
@@ -182,7 +182,7 @@ def task_information(request, task_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup="task_id")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="task")
 def task_information_save(request, task_id, *args, **kwargs):
     """
     :param request:

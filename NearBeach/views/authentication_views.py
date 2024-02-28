@@ -1,5 +1,6 @@
 # Import Forms
-from ..forms import PermissionSet, Group, LoginForm, User
+from django.contrib.auth import get_user_model
+from ..forms import PermissionSet, Group, LoginForm
 from ..models import UserGroup, Notification, Organisation
 from django.contrib.auth.models import User
 
@@ -11,12 +12,14 @@ from django.template import loader
 from django.urls import reverse
 from django.db.models import Q
 from random import SystemRandom
-from NearBeach.decorators.check_user_permissions import check_permission_denied
+from NearBeach.decorators.check_user_permissions.permission_denied import check_permission_denied
 
 # Import Python Libraries
 import json
 import urllib.parse
 import datetime
+
+User = get_user_model()
 
 
 def check_first_time_login(request):
@@ -225,6 +228,9 @@ def login(request):
 
     # POST
     if request.method == "POST" and form.is_valid():
+        # Create empty user - it will be false
+        user = False
+
         # Check if user passes recaptcha
         if check_recaptcha(request.POST) is True:
             # Looks like we can authenticate the user
@@ -236,7 +242,7 @@ def login(request):
             if user is not None:
                 auth.login(request, user)
 
-        # Just double checking. :)
+        # Just double-checking. :)
         if request.user.is_authenticated:
             # Check to make sure it isn't first time login -> need to setup functionalities
             check_first_time_login(request)
@@ -245,7 +251,7 @@ def login(request):
             user_group_count = len(
                 UserGroup.objects.filter(
                     is_deleted=False,
-                    username_id__in=User.objects.filter(username=username).values('id'),
+                    username=user,
                 )
             )
 

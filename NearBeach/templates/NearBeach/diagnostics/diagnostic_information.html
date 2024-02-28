@@ -1,0 +1,17 @@
+{% extends "NearBeach/partials/template.html" %}
+{% load static %}
+{% block content %}
+    <diagnostic-information
+            v-bind:allowed-hosts="{{ allowed_hosts }}"
+            v-bind:aws-access-key-id="{{ aws_access_key_id }}"
+            v-bind:aws-secret-access-key=" {{ aws_secret_access_key }}"
+            v-bind:aws-s3-endpoint-url="{{ aws_s3_endpoint_url }}"
+            v-bind:aws-storage-bucket-name="{{ aws_storage_bucket_name }}"
+            v-bind:azure-storage-connection-string="{{ azure_storage_connection_string }}"
+            v-bind:azure-storage-container-name="{{ azure_storage_container_name }}"
+            v-bind:root-url="`{% url 'dashboard' %}`"
+            v-bind:smtp-email-host="{{ smtp_email_host }}"
+            v-bind:smtp-email-host-user="{{ smtp_email_host_user }}"
+            v-bind:theme="{{ theme }}"
+    ></diagnostic-information>
+{% endblock %}

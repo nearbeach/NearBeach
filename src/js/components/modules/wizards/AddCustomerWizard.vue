@@ -98,7 +98,6 @@ import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
 //Mixins
-import errorModalMixin from "../../../mixins/errorModalMixin";
 import iconMixin from "../../../mixins/iconMixin";
 
 //VueX
@@ -132,7 +131,7 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [errorModalMixin, iconMixin],
+	mixins: [iconMixin],
 	data() {
 		return {
 			customerModel: "",
@@ -159,12 +158,15 @@ export default {
 					this.customerModel = "";
 
 					//Close the modal
-					document
-						.getElementById("addCustomerCloseButton")
-						.click();
+					document.getElementById("addCustomerCloseButton").click();
 				})
 				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+					this.$store.dispatch("newToast", {
+						header: "Error Adding Customer",
+						message: `We had an issue adding customers. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 		getCustomerList() {
@@ -180,7 +182,12 @@ export default {
 					this.updateCustomerFixList();
 				})
 				.catch((error) => {
-					this.showErrorModal(error, this.destination);
+					this.$store.dispatch("newToast", {
+						header: "Error Getting Customer List",
+						message: `We had an issue getting customer list. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
 				});
 		},
 		updateCustomerFixList() {

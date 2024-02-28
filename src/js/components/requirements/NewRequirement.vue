@@ -289,27 +289,20 @@ export default {
 			});
 
 			// Use Axion to send the data
-			this.axios
-				.post("save/", data_to_send)
-				.then((response) => {
-					// Use the result to go to the url
-					window.location.href = response.data;
-				})
-				.catch((error) => {
-					// Get the error modal
-					const elem_cont =
-						document.getElementById("errorModalContent");
-
-					// Update the content
-					elem_cont.innerHTML = `<strong>HTML ISSUE:</strong> We could not save the new requirement<hr>${error}`;
-
-					// Show the modal
-					//var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-					const errorModal = new Modal(
-						document.getElementById("errorModal")
-					);
-					errorModal.show();
+			this.axios.post(
+				"save/",
+				data_to_send
+			).then((response) => {
+				// Use the result to go to the url
+				window.location.href = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error submitting new requirement",
+					message: `Sorry, we could not submit the new requirement. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		updateGroupModel(newGroupModel) {
 			//Update the group model

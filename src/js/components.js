@@ -66,6 +66,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/dashboard/DashboardUsersWithNoGroups.vue"
             )
     ),
+    DiagnosticInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "diagnostic-information" */
+            "./components/diagnostic/DiagnosticInformation.vue"
+            )
+    ),
     GroupInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "group-information" */
@@ -190,6 +196,18 @@ export const // BugsModule = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "notification-information" */
             "./components/notifications/NotificationInformation.vue"
+            )
+    ),
+    ObjectStatusInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "object-status-information" */
+            "./components/object_status/ObjectStatusInformation.vue"
+            )
+    ),
+    ObjectStatusList = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "object-status-list" */
+            "./components/object_status/ObjectStatusList.vue"
             )
     ),
     OrganisationInformation = defineAsyncComponent(() =>

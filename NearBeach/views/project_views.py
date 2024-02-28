@@ -9,7 +9,7 @@ from django.template import loader
 from NearBeach.forms import NewProjectForm, ProjectForm
 from NearBeach.models import Group, UserGroup, ObjectAssignment, ListOfProjectStatus
 from NearBeach.views.tools.internal_functions import Project, Organisation
-from NearBeach.decorators.check_user_permissions import check_user_permissions
+from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.document_views import transfer_new_object_uploads
 
@@ -17,7 +17,7 @@ import json, uuid
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="project_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="project")
 def new_project(request, *args, **kwargs):
     """
     :param request:
@@ -63,7 +63,7 @@ def new_project(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=3, object_lookup="project_id")
+@check_specific_object_permissions(min_permission_level=3, object_lookup="project")
 def new_project_save(request, *args, **kwargs):
     """
     :param request:
@@ -78,7 +78,7 @@ def new_project_save(request, *args, **kwargs):
     project_status = ListOfProjectStatus.objects.filter(
         is_deleted=False
     ).order_by(
-        "project_status_order",
+        "project_status_sort_order",
     )
 
     if len(project_status) == 0:
@@ -124,7 +124,7 @@ def new_project_save(request, *args, **kwargs):
 
 
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=1, object_lookup="project_id")
+@check_specific_object_permissions(min_permission_level=1, object_lookup="project")
 def project_information(request, project_id, *args, **kwargs):
     """
     :param request:
@@ -150,7 +150,7 @@ def project_information(request, project_id, *args, **kwargs):
         "label",
         "project_higher_order_status",
     ).order_by(
-        "project_status_order"
+        "project_status_sort_order"
     )
 
     # Get the organisation results
@@ -183,7 +183,7 @@ def project_information(request, project_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_permissions(min_permission_level=2, object_lookup="project_id")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="project")
 def project_information_save(request, project_id, *args, **kwargs):
     """
     :param request:

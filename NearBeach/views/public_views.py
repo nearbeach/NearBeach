@@ -11,8 +11,6 @@ from django.db.models import F
 from NearBeach.decorators.check_destination import check_destination, check_public_destination
 from NearBeach.views.object_data_views import set_object_from_destination, get_object_from_destination
 from NearBeach.models import KanbanCard, \
-    KanbanColumn, \
-    KanbanLevel, \
     PublicLink, \
     RequirementItem, \
     ListOfProjectStatus, \
@@ -23,6 +21,7 @@ from NearBeach.models import KanbanCard, \
     ListOfTaskStatus
 from NearBeach.forms import PublicLinkDeleteForm, PublicLinkUpdateForm
 from NearBeach.views.kanban_views import get_context as kanban_get_context
+from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
 
 import json
 
@@ -35,7 +34,8 @@ DICT_KANBAN_CARD_PRIORITY = dict(KANBAN_CARD_PRIORITY)
 @login_required(login_url="login", redirect_field_name="")
 @csrf_protect
 @check_destination()
-def create_public_link(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def create_public_link(request, destination, location_id, *args, **kwargs):
     # Create new public link
     submit_public_link = PublicLink(
         change_user=request.user,
@@ -61,7 +61,8 @@ def create_public_link(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def delete_public_link(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def delete_public_link(request, destination, location_id, *args, **kwargs):
     form = PublicLinkDeleteForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -81,21 +82,21 @@ def delete_public_link(request, destination, location_id):
     return HttpResponse()
 
 
-# Internal function
-def get_public_context(results):
-    organisation_results = getattr(
-        results,
-        "organisation"
-    )
-
-    # Serialise in the if statement - as None can not be serialized
-    organisation_results = serializers.serialize("json", [organisation_results])
-    results = serializers.serialize("json", [results])
-
-    return {
-        "organisation_results": organisation_results,
-        "results": results,
-    }
+# # Internal function
+# def get_public_context(results):
+#     organisation_results = getattr(
+#         results,
+#         "organisation"
+#     )
+#
+#     # Serialise in the if statement - as None can not be serialized
+#     organisation_results = serializers.serialize("json", [organisation_results])
+#     results = serializers.serialize("json", [results])
+#
+#     return {
+#         "organisation_results": organisation_results,
+#         "results": results,
+#     }
 
 
 # Internal function
@@ -141,7 +142,7 @@ def get_public_context_project(results):
         "label",
         "project_higher_order_status",
     ).order_by(
-        "project_status_order"
+        "project_status_sort_order"
     )
 
     organisation_results = getattr(
@@ -208,6 +209,66 @@ def get_public_context_requirement(results):
     }
 
 
+def get_public_context_requirement_item(results):
+    # Get the requirement information
+    requirement_item_results = RequirementItem.objects.get(
+        requirement_item_id=results.requirement_item_id
+    )
+
+    requirement_results = getattr(
+        results,
+        "requirement"
+    )
+
+    organisation_results = getattr(
+        requirement_results,
+        "organisation"
+    )
+
+    status_options = ListOfRequirementItemStatus.objects.filter(
+        is_deleted=False,
+    ).annotate(
+        value=F("requirement_item_status_id"),
+        label=F("requirement_item_status"),
+    ).values(
+        "value",
+        "label",
+        "requirement_item_higher_order_status",
+    )
+
+    type_options = ListOfRequirementItemType.objects.filter(
+        is_deleted=False,
+    ).annotate(
+        value=F("requirement_item_type_id"),
+        label=F("requirement_item_type"),
+    ).values(
+        "value",
+        "label",
+    )
+
+    # Find out if requirement item is read only
+    # Condition 1: If parent requirement is closed
+    # Condition 2: If requirement item is closed
+    condition_1 = requirement_item_results.requirement.requirement_status.requirement_higher_order_status == "Closed"
+    condition_2 = requirement_item_results.requirement_item_status.requirement_item_higher_order_status == "Closed"
+    requirement_item_is_closed = "false"
+    if condition_1 or condition_2:
+        requirement_item_is_closed = "true"
+
+    # context
+    return {
+        "results": results,
+        "organisation_results": serializers.serialize("json", [organisation_results]),
+        "requirement_item_id": requirement_item_results.requirement_item_id,
+        "requirement_item_is_closed": requirement_item_is_closed,
+        "requirement_item_results": serializers.serialize(
+            "json", [requirement_item_results]
+        ),
+        "status_options": json.dumps(list(status_options), cls=DjangoJSONEncoder),
+        "type_options": json.dumps(list(type_options), cls=DjangoJSONEncoder),
+    }
+
+
 # Internal function
 def get_public_context_task(results):
     # Get the status data
@@ -221,7 +282,7 @@ def get_public_context_task(results):
         "label",
         "task_higher_order_status",
     ).order_by(
-        "task_status_order",
+        "task_status_sort_order",
     )
 
     organisation_results = getattr(
@@ -263,7 +324,8 @@ def get_public_link_results(destination, location_id):
 
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-def get_public_links(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=1)
+def get_public_links(request, destination, location_id, *args, **kwargs):
     # Return the data we have
     public_link_results = get_public_link_results(destination, location_id)
 
@@ -309,12 +371,14 @@ def public_link(request, destination, location_id, public_link_id, *args, **kwar
         c = get_public_context_kanban_board(results)
     elif destination == "requirement":
         c = get_public_context_requirement(results)
+    elif destination == "requirement_item":
+        c = get_public_context_requirement_item(results)
     elif destination == "project":
         c = get_public_context_project(results)
     elif destination == "task":
         c = get_public_context_task(results)
-    else:
-        c = get_public_context(results)
+    # else:
+    #     c = get_public_context(results)
 
     # Add tinymce flag
     c["need_tinymce"] = True
@@ -324,7 +388,8 @@ def public_link(request, destination, location_id, public_link_id, *args, **kwar
 
 
 @login_required(login_url="login", redirect_field_name="")
-def update_public_link(request):
+@check_user_generic_permissions(min_permission_level=2)
+def update_public_link(request, destination, location_id, *args, **kwargs):
     form = PublicLinkUpdateForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -333,6 +398,7 @@ def update_public_link(request):
     uuid = str(form.cleaned_data["public_link_id"])
 
     PublicLink.objects.filter(
+        **{destination: location_id},
         public_link_id=uuid,
     ).update(
         public_link_is_active=form.cleaned_data["public_link_is_active"]
