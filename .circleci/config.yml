@@ -43,14 +43,14 @@ jobs:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install npm Dependencies
-          command: "npm install --legacy-peer-deps"
+          command: "npm install"
       - save_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - ./node_modules
       - run:
           name: Run Vitest Unit Tests for VueJS
-          command: npm run unit-test
+          command: "npm run unit-test"
       - store_artifacts:
           path: ~/project/coverage
           destination: tr2
