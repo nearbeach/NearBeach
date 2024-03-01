@@ -9,6 +9,7 @@ from .partials.request_for_change_permissions import request_for_change_permissi
 from .partials.requirement_permissions import requirement_permissions
 from .partials.requirement_item_permissions import requirement_item_permissions
 from .partials.object_note_permissions import object_note_permissions
+from .partials.organisation_permissions import organisation_permissions
 from .partials.project_permissions import project_permissions
 from .partials.tag_permissions import tag_permissions
 from .partials.task_permissions import task_permissions
@@ -23,7 +24,7 @@ FUNCTION_DICT = {
     "request_for_change": request_for_change_permissions,
     "requirement": requirement_permissions,
     "requirement_item": requirement_item_permissions,
-    # "organisation",
+    "organisation": organisation_permissions,
     "object_note": object_note_permissions,
     "project": project_permissions,
     "tag": tag_permissions,

@@ -92,6 +92,7 @@ export default {
 	computed: {
 		...mapGetters({
 			description: "getSingleNoteDescription",
+			destination: "getDestination",
 			contentCss: "getContentCss",
 			noteDescription: "getSingleNoteDescription",
 			noteId: "getSingleNoteId",
@@ -120,8 +121,14 @@ export default {
 				unique_type: "save_note",
 			});
 
+			//If the destination is organisation, we have a different url due to permissions
+			let url = `${this.rootUrl}note/update/${this.noteId}/`;
+			if (this.destination === "organisation") {
+				url = `${this.rootUrl}note/organisation/update/${this.noteId}/`;
+			}
+
 			this.axios.post(
-				`${this.rootUrl}note/update/${this.noteId}/`,
+				url,
 				data_to_send
 			).then(() => {
 				this.$store.dispatch("newToast", {

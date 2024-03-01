@@ -75,8 +75,14 @@ export default {
 			newNoteModal.show();
 		},
 		getNoteHistoryResults() {
+			//Depends if we are using note_list or organisation_note_list
+			let note_list = "note_list";
+			if (this.destination === "organisation") {
+				note_list = "organisation_note_list";
+			}
+
 			this.axios.post(
-				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/note_list/`,
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/${note_list}/`,
 			).then((response) => {
 				// this.noteHistoryResults = response.data;
 				this.$store.commit({

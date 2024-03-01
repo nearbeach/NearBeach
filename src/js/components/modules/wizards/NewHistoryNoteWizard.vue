@@ -123,9 +123,15 @@ export default {
 			data_to_send.set("location_id", `${this.locationId}`);
 			data_to_send.set("note", this.newNoteModel);
 
+			//If the destination is organisation, we have a different url due to permissions
+			let add_notes = "add_notes";
+			if (this.destination === "organisation") {
+				add_notes = "organisation_add_notes";
+			}
+
 			//Add the data to data_to_send
 			this.axios.post(
-				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_notes/`,
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/${add_notes}/`,
 				data_to_send
 			).then((response) => {
 				//Notify user of success

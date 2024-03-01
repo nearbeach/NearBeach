@@ -457,6 +457,17 @@ urlpatterns = [
     path("new_user/", user_views.new_user, name="new_user"),
     path("new_user/save/", user_views.new_user_save, name="new_user_save"),
     path("note/delete/<int:object_note_id>/", note_views.delete_note, name="delete_note"),
+    path("note/delete/<int:object_note_id>/", note_views.delete_note, name="delete_note"),
+    path(
+        "note/organisation/delete/<int:object_note_id>/",
+        note_views.organisation_delete_note,
+        name="organisation_delete_note"
+    ),
+    path(
+        "note/organisation/update/<int:object_note_id>/",
+        note_views.organisation_update_note,
+        name="organisation_update_note"
+    ),
     path("note/update/<int:object_note_id>/", note_views.update_note, name="update_note"),
     path(
         "notification_information/delete/",
@@ -501,8 +512,13 @@ urlpatterns = [
     ),
     path(
         "object_data/<destination>/<location_id>/add_notes/",
-        object_data_views.add_notes,
+        note_views.add_notes,
         name="add_notes",
+    ),
+    path(
+        "object_data/<destination>/<organisation_id>/organisation_add_notes/",
+        note_views.organisation_add_notes,
+        name="organisation_add_notes",
     ),
     path(
         "object_data/<destination>/<location_id>/add_tags/",
@@ -551,8 +567,13 @@ urlpatterns = [
     ),
     path(
         "object_data/<destination>/<location_id>/note_list/",
-        object_data_views.note_list,
+        note_views.note_list,
         name="note_list",
+    ),
+    path(
+        "object_data/<destination>/<organisation_id>/organisation_note_list/",
+        note_views.organisation_note_list,
+        name="organisation_note_list",
     ),
     path(
         "object_data/<destination>/<location_id>/object_link_list/",

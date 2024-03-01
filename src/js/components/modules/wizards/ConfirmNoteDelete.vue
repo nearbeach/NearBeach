@@ -57,6 +57,7 @@ export default {
 	props: {},
 	computed: {
 		...mapGetters({
+			destination: "getDestination",
 			noteId: "getSingleNoteId",
 			rootUrl: "getRootUrl",
 		}),
@@ -72,9 +73,15 @@ export default {
 				unique_type: "delete_note",
 			});
 
+			//If destination is an organisation, we have a slightly different URL due to permissions.
+			let url = `${this.rootUrl}note/delete/${this.noteId}/`;
+			if (this.destination) {
+				url =  `${this.rootUrl}note/organisation/delete/${this.noteId}/`;
+			}
+
 			//Send the data
 			this.axios.post(
-				`${this.rootUrl}note/delete/${this.noteId}/`,
+				url,
 			).then(() => {
 				this.$store.dispatch("newToast", {
 					header: "Note is deleted",
