@@ -504,7 +504,7 @@ export default {
 				//Item already exists - edit the item.
 				this.localPropertyList.forEach((row) => {
 					//If the id is the same - update the values
-					if (row.id === this.singleItemId) {
+					if (parseInt(row.id) === parseInt(this.singleItemId)) {
 						row.title = this.newPropertyItem;
 						row.property = this.columnPropertyModel;
 					}
