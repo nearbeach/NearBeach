@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q, CharField, Value as V, F
+from django.db.models import Q, CharField, Value as V, F, Case, When
 from django.db.models.functions import Concat
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.views.decorators.http import require_http_methods
@@ -1084,11 +1084,15 @@ def note_list(request, destination, location_id, *args, **kwargs):
     note_results = get_object_from_destination(note_results, destination, location_id)
 
     # Filter for the fields that we want
-    note_results = note_results.annotate(
+    note_results = (note_results.annotate(
         username=F('change_user'),
         first_name=F('change_user__first_name'),
         last_name=F('change_user__last_name'),
-        profile_picture=F('change_user__userprofilepicture__document_id__document_key')
+        profile_picture=F('change_user__userprofilepicture__document_id__document_key'),
+        can_edit=Case(
+            When(change_user=request.user, then=V('true')),
+            default=V('false')
+        )
     ).values(
         "object_note_id",
         "username",
@@ -1097,7 +1101,8 @@ def note_list(request, destination, location_id, *args, **kwargs):
         "profile_picture",
         "object_note",
         "date_modified",
-    )
+        "can_edit",
+    ))
 
     # Return JSON results
     note_json = json.dumps(list(note_results), cls=DjangoJSONEncoder)

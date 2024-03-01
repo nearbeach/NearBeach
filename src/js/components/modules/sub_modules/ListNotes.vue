@@ -29,7 +29,9 @@
 						{{getNiceDate(note.date_modified)}}
 					</div>
 
-					<div class="note-history--edit-button">
+					<div class="note-history--edit-button"
+						 v-if="note.can_edit === 'true'"
+					>
 						<button type="button"
 								class="btn btn-outline-secondary"
 								v-on:click="editNote(note.object_note_id)"

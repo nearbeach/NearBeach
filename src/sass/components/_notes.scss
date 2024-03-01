@@ -14,6 +14,7 @@
             flex-direction: column;
             align-items: center;
             padding-top: 2px;
+            min-width: 120px;
 
             .note-history--profile-picture {
                 height: 100px;
@@ -30,9 +31,12 @@
             .note-history--edit-button {
                 font-size: 10px;
                 width: 100%;
+                display: flex;
+                flex-direction: column;
 
                 button {
                     width: 100%;
+                    margin-bottom: 2px;
                 }
             }
         }
