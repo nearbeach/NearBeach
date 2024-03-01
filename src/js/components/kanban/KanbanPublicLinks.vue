@@ -4,6 +4,8 @@
 			<div class="card-body">
 				<list-public-links
 					v-bind:is-read-only="isReadOnly"
+					v-bind:override-destination="'kanban_board'"
+					v-bind:override-location-id="locationId"
 				></list-public-links>
 			</div>
 		</div>
@@ -21,6 +23,10 @@ export default {
 		isReadOnly: {
 			type: Boolean,
 			default: false,
+		},
+		locationId: {
+			type: Number,
+			default: 0,
 		},
 		theme: {
 			type: String,

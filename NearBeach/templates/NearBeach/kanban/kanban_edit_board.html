@@ -23,6 +23,7 @@
     <kanban-public-links
             v-bind:theme="`{{ theme }}`"
             v-bind:is-read-only="{{ kanban_board_is_closed }}"
+            v-bind:location-id="{{kanban_board_id}}"
     ></kanban-public-links>
 
     <div class="spacer"></div>
