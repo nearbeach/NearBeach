@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "NearBeach"
@@ -52,6 +52,3 @@ Homepage = "https://nearbeach.org"
 Documentation = "https://nearbeach.readthedocs.org"
 Repository = "https://github.com/NearBeach/NearBeach.git"
 "Bug Tracker" = "https://nearbeach.youtrack.cloud"
-
-[project.scripts]
-"manage.py" = "myproject:django_manage"
