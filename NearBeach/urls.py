@@ -857,6 +857,11 @@ urlpatterns = [
         search_views.search_permission_set_data,
         name="search_permission_set_data",
     ),
+    path(
+        "search/sprint",
+        search_views.search_sprint,
+        name="search_sprint",
+    ),
     path("search/tag/", search_views.search_tag, name="search_tag"),
     path("search/user/", search_views.search_user, name="search_user"),
     path("search/user/data/", search_views.search_user_data, name="search_user_data"),

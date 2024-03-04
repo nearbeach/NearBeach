@@ -21,6 +21,7 @@ from NearBeach.models import (
     Group,
     Organisation,
     PermissionSet,
+    Sprint,
     User,
     Tag,
     UserGroup,
@@ -521,6 +522,42 @@ def search_permission_set_data(request):
     json_results = serializers.serialize("json", permission_set_results)
 
     return HttpResponse(json_results, content_type="application/json")
+
+
+@login_required(login_url="login", redirect_field_name="")
+def search_sprint(request, *args, **kwargs):
+    """
+    :param request:
+    :return:
+    """
+    form = SearchObjectsForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Template
+    t = loader.get_template("NearBeach/search/search_sprints.html")
+
+    # Translate the include closed, from Python Boolean to JavaScript boolean
+    if form.cleaned_data["include_closed"]:  # If exists and true
+        include_closed = "true"
+    else:
+        include_closed = "false"
+
+    ## TODO: Fix this - add in the ability to filter and remove any closed :)
+    sprint_results = Sprint.objects.filter(
+        is_deleted=False,
+    )
+
+    # Context
+    c = {
+        "include_closed": include_closed,
+        "need_tinymce": False,
+        "nearbeach_title": "Search Sprints",
+        # "sprint_results": sprint_results,
+        "theme": get_theme(request),
+    }
+
+    return HttpResponse(t.render(c, request))
 
 
 @login_required(login_url="login", redirect_field_name="")

@@ -151,26 +151,22 @@
 						</button>
 					</li>
 
-					<!-- BUGS -->
-					<!-- This module will only appear for project, task, and requirement -->
+					<!-- SPRINTS -->
 					<li
 						class="nav-item"
 						role="presentation"
-						v-if="
-						['project', 'task', 'requirement'].includes(destination)
-					"
 					>
 						<button
 							class="nav-link"
-							id="bug-tab"
+							id="sprints-tab"
 							data-bs-toggle="tab"
-							data-bs-target="#bugs"
+							data-bs-target="#sprints"
 							type="button"
 							role="tab"
 							aria-controls="home"
 							aria-selected="false"
 						>
-							Bugs
+							Sprints
 						</button>
 					</li>
 
@@ -296,11 +292,11 @@
 					</div>
 					<div
 						class="tab-pane fade"
-						id="bugs"
+						id="sprints"
 						role="tabpanel"
-						aria-labelledby="contact-tab"
+						aria-labelledby="tabpanel"
 					>
-						<bugs-module></bugs-module>
+						<h2>Hello World - we need to implement sprints :)</h2>
 					</div>
 					<div
 						class="tab-pane fade"
@@ -333,7 +329,6 @@ import DocumentsModule from "./sub_modules/DocumentsModule.vue";
 import ObjectLinks from "./sub_modules/ObjectLinks.vue";
 import CustomersModule from "./sub_modules/CustomersModule.vue";
 import MiscModule from "./sub_modules/MiscModule.vue";
-import BugsModule from "./sub_modules/BugsModule.vue";
 import NotesModule from "./sub_modules/NotesModule.vue";
 import UploadDocumentWizard from "./wizards/UploadDocumentWizard.vue";
 import AddLinkWizard from "./wizards/AddLinkWizard.vue";
@@ -350,7 +345,6 @@ export default {
 		AddFolderWizard,
 		ConfirmFileDeleteVue,
 		AddLinkWizard,
-		BugsModule,
 		ConfirmFolderDelete,
 		CustomersModule,
 		DocumentsModule,
