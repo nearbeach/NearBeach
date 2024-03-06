@@ -1591,11 +1591,13 @@ class Sprint(models.Model):
         "Requirement",
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
     )
     project = models.ForeignKey(
         "Project",
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
     )
     total_story_points = models.IntegerField(
         default=0,
@@ -1642,16 +1644,19 @@ class SprintAuditTable(models.Model):
         "RequirementItem",
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
     )
     project = models.ForeignKey(
         "Project",
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
     )
     task = models.ForeignKey(
         "Task",
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1673,16 +1678,19 @@ class SprintObjectAssignment(models.Model):
         "RequirementItem",
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
     )
     project = models.ForeignKey(
         "Project",
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
     )
     task = models.ForeignKey(
         "Task",
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)

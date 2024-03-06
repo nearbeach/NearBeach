@@ -203,6 +203,52 @@ def get_object_search_data(search_form, request):
     }
 
 
+# Internal Function
+def get_sprint_search_data(search_form, request):
+    object_assignment_results = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        group_id__in=UserGroup.objects.filter(
+            is_deleted=False,
+            username=request.user,
+        ).values('group_id'),
+    )
+
+    # Gather the sprint results
+    sprint_results = Sprint.objects.filter(
+        Q(
+            is_deleted=False,
+        ) &
+        Q(
+            Q(
+                requirement_id__in=object_assignment_results.values('requirement_id'),
+            ) |
+            Q(
+                project_id__in=object_assignment_results.values('project_id'),
+            )
+        )
+    )
+
+    # Only include opened/current results
+    if not search_form.cleaned_data["include_closed"]:
+        sprint_results = sprint_results.filter(
+            sprint_status="Current",
+        )
+
+    # Check to see if we are filtering any names
+    for split_row in search_form.cleaned_data["search"].split(" "):
+        sprint_results = sprint_results.filter(
+            Q(sprint_name__icontains=split_row)
+        )
+
+    sprint_results = sprint_results.values(
+        "sprint_id",
+        "sprint_name",
+        "sprint_status",
+    )
+
+    return json.dumps(list(sprint_results), cls=DjangoJSONEncoder)
+
+
 @login_required(login_url="login", redirect_field_name="")
 def search(request):
     """
@@ -543,21 +589,26 @@ def search_sprint(request, *args, **kwargs):
     else:
         include_closed = "false"
 
-    ## TODO: Fix this - add in the ability to filter and remove any closed :)
-    sprint_results = Sprint.objects.filter(
-        is_deleted=False,
-    )
-
-    # Context
     c = {
         "include_closed": include_closed,
         "need_tinymce": False,
         "nearbeach_title": "Search Sprints",
-        # "sprint_results": sprint_results,
+        "sprint_results": get_sprint_search_data(form, request),
         "theme": get_theme(request),
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(['POST'])
+def search_sprint_data(request):
+    form = SearchObjectsForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Return the JSON data
+    return JsonResponse(json.loads(get_sprint_search_data(form, request)), safe=False)
 
 
 @login_required(login_url="login", redirect_field_name="")

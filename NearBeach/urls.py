@@ -27,6 +27,7 @@ from .views import (
     requirement_item_views,
     requirement_views,
     search_views,
+    sprint_views,
     tag_views,
     task_views,
     user_setting_views,
@@ -858,13 +859,23 @@ urlpatterns = [
         name="search_permission_set_data",
     ),
     path(
-        "search/sprint",
+        "search/sprint/",
         search_views.search_sprint,
         name="search_sprint",
+    ),
+    path(
+        "search/sprint/data/",
+        search_views.search_sprint_data,
+        name="search_sprint_data",
     ),
     path("search/tag/", search_views.search_tag, name="search_tag"),
     path("search/user/", search_views.search_user, name="search_user"),
     path("search/user/data/", search_views.search_user_data, name="search_user_data"),
+    path(
+        "sprint_information/<int:sprint_id>/",
+        sprint_views.sprint_information,
+        name="sprint_information"
+    ),
     # Tags
     path("tag/delete/<int:tag_id>/", tag_views.delete_tag, name="delete_tag"),
     path("tag/new/", tag_views.new_tag, name="new_tag"),
