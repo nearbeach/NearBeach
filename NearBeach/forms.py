@@ -36,7 +36,7 @@ from .models import (
     Document,
     ObjectAssignment,
     UserGroup,
-    UserSetting,
+    UserSetting, Sprint,
 )
 
 USER_MODEL = get_user_model()
@@ -693,6 +693,16 @@ class NewRequirementForm(forms.ModelForm):
             "requirement_status",
             "requirement_type",
             "organisation",
+        ]
+
+
+class NewSprintForm(forms.ModelForm):
+    class Meta:
+        model = Sprint
+        fields = [
+            "sprint_name",
+            "sprint_start_date",
+            "sprint_end_date",
         ]
 
 

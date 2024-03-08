@@ -71,8 +71,38 @@
 					</tbody>
 				</table>
 
+				<hr>
+				<div class="row submit-row">
+					<div class="col-md-12">
+						<button
+							v-on:click="confirmDeleteSprint"
+							class="btn btn-danger"
+						>
+							Delete
+						</button>
+
+						<button
+							class="btn btn-success save-changes"
+							v-if="sprintResults[0].sprint_status === 'Draft'"
+						>
+							Start Sprint
+						</button>
+						<button
+							class="btn btn-warning save-changes"
+							v-if="sprintResults[0].sprint_status === 'Current'"
+						>
+							Finish Sprint
+						</button>
+					</div>
+				</div>
+
 			</div>
 		</div>
+
+		<confirm-sprint-delete
+			v-bind:parent-object-destination="parentObjectDestination"
+			v-bind:parent-object-location-id="parentObjectLocationId"
+		></confirm-sprint-delete>
 	</n-config-provider>
 </template>
 
@@ -80,8 +110,17 @@
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
 
+//Components
+import ConfirmSprintDelete from "./ConfirmSprintDelete.vue";
+
+//Bootstrap
+import { Modal } from "bootstrap";
+
 export default {
 	name: "SprintInformation",
+	components: {
+		ConfirmSprintDelete,
+	},
 	props: {
 		rootUrl: {
 			type: String,
@@ -133,6 +172,10 @@ export default {
 		}
 	},
 	methods: {
+		confirmDeleteSprint() {
+			const modal = new Modal(document.getElementById("confirmSprintDeleteModal"));
+			modal.show();
+		},
 		getParentUrl() {
 			return `${this.rootUrl}${this.parentObjectDestination}_information/${this.parentObjectLocationId}`;
 		}

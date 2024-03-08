@@ -145,6 +145,7 @@ RFC_TYPE = (
 )
 
 SPRINT_STATUS = (
+    ("Draft", "Draft"),
     ("Current", "Current"),
     ("Finished", "Finished"),
 )
@@ -1609,10 +1610,10 @@ class Sprint(models.Model):
         max_length=10,
         choices=SPRINT_STATUS,
         blank=True,
-        default="Current",
+        default="Draft",
     )
-    sprint_start_date = models.DateTimeField(auto_now_add=True)
-    sprint_end_date = models.DateTimeField(auto_now_add=True)
+    sprint_start_date = models.DateTimeField()
+    sprint_end_date = models.DateTimeField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

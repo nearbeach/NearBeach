@@ -296,7 +296,7 @@
 						role="tabpanel"
 						aria-labelledby="tabpanel"
 					>
-						<h2>Hello World - we need to implement sprints :)</h2>
+						<list-sprints></list-sprints>
 					</div>
 					<div
 						class="tab-pane fade"
@@ -335,6 +335,7 @@ import AddLinkWizard from "./wizards/AddLinkWizard.vue";
 import ConfirmFileDeleteVue from "./wizards/ConfirmFileDelete.vue";
 import ConfirmFolderDelete from "./wizards/ConfirmFolderDelete.vue";
 import AddFolderWizard from "./wizards/AddFolderWizard.vue";
+import ListSprints from "./sub_modules/ListSprints.vue";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
@@ -349,6 +350,7 @@ export default {
 		CustomersModule,
 		DocumentsModule,
 		GroupsAndUsersModule,
+		ListSprints,
 		NotesModule,
 		ObjectLinks,
 		RequirementItemLinksModule,

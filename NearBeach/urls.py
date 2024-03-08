@@ -453,6 +453,11 @@ urlpatterns = [
         requirement_item_views.new_requirement_item,
         name="new_requirement_item",
     ),
+    path(
+        "new_sprint/<destination>/<int:location_id>/save/",
+        sprint_views.new_sprint,
+        name="new_sprint"
+    ),
     path("new_task/", task_views.new_task, name="new_task"),
     path("new_task/save/", task_views.new_task_save, name="new_task_save"),
     path("new_user/", user_views.new_user, name="new_user"),
@@ -605,6 +610,16 @@ urlpatterns = [
         "object_data/<destination>/<location_id>/remove_user/",
         object_data_views.remove_user,
         name="remove_user",
+    ),
+    path(
+        "object_data/<destination>/<location_id>/sprint_list/assigned/",
+        sprint_views.list_assigned_sprints,
+        name="list_assigned_sprints",
+    ),
+    path(
+        "object_data/<destination>/<location_id>/sprint_list/child/",
+        sprint_views.list_child_sprints,
+        name="list_child_sprints"
     ),
     path(
         "object_data/<destination>/<location_id>/tag_list/",
@@ -875,6 +890,11 @@ urlpatterns = [
         "sprint_information/<int:sprint_id>/",
         sprint_views.sprint_information,
         name="sprint_information"
+    ),
+    path(
+        "sprint_information/<int:sprint_id>/delete/",
+        sprint_views.delete_sprint,
+        name="sprint_information_delete",
     ),
     # Tags
     path("tag/delete/<int:tag_id>/", tag_views.delete_tag, name="delete_tag"),
