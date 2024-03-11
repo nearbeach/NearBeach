@@ -12,7 +12,7 @@
 <script>
 //Import components
 import ChildSprints from "./ChildSprints.vue";
-import AssignedSprints from "./AssignedSprints.vue"
+import AssignedSprints from "./AssignedSprints.vue";
 
 export default {
 	name: "ListSprints",

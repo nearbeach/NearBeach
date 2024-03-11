@@ -186,6 +186,22 @@ class AddObjectLinkForm(forms.Form):
     )
 
 
+class AddObjectToSprintForm(forms.Form):
+    project = forms.ModelMultipleChoiceField(
+        queryset=Project.objects.all(),
+        required=False,
+    )
+    requirement_item = forms.ModelMultipleChoiceField(
+        queryset=RequirementItem.objects.all(),
+        required=False,
+    )
+    task = forms.ModelMultipleChoiceField(
+        queryset=Task.objects.all(),
+        required=False,
+    )
+
+
+
 class AddRequirementLinkForm(forms.Form):
     # One external field
     project = forms.ModelMultipleChoiceField(
@@ -694,6 +710,13 @@ class NewRequirementForm(forms.ModelForm):
             "requirement_type",
             "organisation",
         ]
+
+
+class NewSprintAssignmentForm(forms.Form):
+    sprint_id = forms.ModelChoiceField(
+        queryset=Sprint.objects.all(),
+        required=True,
+    )
 
 
 class NewSprintForm(forms.ModelForm):

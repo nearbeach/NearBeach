@@ -527,6 +527,16 @@ urlpatterns = [
         name="organisation_add_notes",
     ),
     path(
+        "object_data/<destination>/<location_id>/add_object_to_sprint/",
+        sprint_views.add_object_to_sprint,
+        name="add_object_to_sprint",
+    ),
+    path(
+        "object_data/<destination>/<location_id>/add_sprint/",
+        sprint_views.add_sprint_to_object,
+        name="add_sprint_to_object",
+    ),
+    path(
         "object_data/<destination>/<location_id>/add_tags/",
         object_data_views.add_tags,
         name="add_tags",
@@ -570,6 +580,11 @@ urlpatterns = [
         "object_data/<destination>/<location_id>/<object_lookup>/link_list/",
         object_data_views.link_list,
         name="link_list",
+    ),
+    path(
+        "object_data/<destination>/<location_id>/<object_lookup>/potential_object_list/",
+        sprint_views.potential_object_list,
+        name="sprint_potential_object_list",
     ),
     path(
         "object_data/<destination>/<location_id>/note_list/",
@@ -641,6 +656,11 @@ urlpatterns = [
         "object_data/lead_user_list/",
         object_data_views.lead_user_list,
         name="lead_user_list",
+    ),
+    path(
+        "object_data/sprint_list/",
+        sprint_views.sprint_list,
+        name="sprint_list",
     ),
     # Organisation
     path(

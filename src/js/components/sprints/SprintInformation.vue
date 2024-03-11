@@ -75,6 +75,12 @@
 				<div class="row submit-row">
 					<div class="col-md-12">
 						<button
+							v-on:click="showAddObjectWizard"
+							class="btn btn-success"
+						>
+							Add Object Wizard
+						</button>
+						<button
 							v-on:click="confirmDeleteSprint"
 							class="btn btn-danger"
 						>
@@ -103,6 +109,8 @@
 			v-bind:parent-object-destination="parentObjectDestination"
 			v-bind:parent-object-location-id="parentObjectLocationId"
 		></confirm-sprint-delete>
+
+		<add-object-wizard></add-object-wizard>
 	</n-config-provider>
 </template>
 
@@ -112,6 +120,7 @@ import getThemeMixin from "../../mixins/getThemeMixin";
 
 //Components
 import ConfirmSprintDelete from "./ConfirmSprintDelete.vue";
+import AddObjectWizard from "./AddObjectWizard.vue";
 
 //Bootstrap
 import { Modal } from "bootstrap";
@@ -119,6 +128,7 @@ import { Modal } from "bootstrap";
 export default {
 	name: "SprintInformation",
 	components: {
+		AddObjectWizard,
 		ConfirmSprintDelete,
 	},
 	props: {
@@ -178,7 +188,11 @@ export default {
 		},
 		getParentUrl() {
 			return `${this.rootUrl}${this.parentObjectDestination}_information/${this.parentObjectLocationId}`;
-		}
+		},
+		showAddObjectWizard() {
+			const modal = new Modal(document.getElementById("addObjectWizardModal"));
+			modal.show();
+		},
 	},
 	async beforeMount() {
 		await this.$store.dispatch("processThemeUpdate", {
