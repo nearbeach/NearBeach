@@ -45,7 +45,7 @@
 							>
 								<div class="col-md-12">
 									<strong>Sprint Name: </strong>{{sprint.label}}<br/>
-									<strong>Sprint Start Date: </strong>{{getNiceDate(sprint.sprint_start_date)}}<br/>
+									<strong>Sprint Start Date: </strong>{{getNiceDatetime(sprint.sprint_start_date)}}<br/>
 								</div>
 							</div>
 						</div>

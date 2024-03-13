@@ -220,6 +220,8 @@ export default {
 					extra_classes: "bg-success",
 					unique_type: "add_objects_to_sprint",
 				});
+
+				window.location.reload();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error Adding Objects to Sprint",

@@ -4,19 +4,25 @@
 		Lists all sprints that contains this object.
 	</p>
 
-	<render-object-card
+	<h3
 		v-if="currentSprints.length > 0"
-		v-bind:destination="'sprint'"
-		v-bind:import-variables="currentImportVariables"
-		v-bind:search-results="currentSprints"
-	></render-object-card>
+	>
+		Current
+	</h3>
+	<render-sprint-card
+		v-bind:sprint-results="currentSprints"
+		v-on:confirm_remove_sprint="confirmRemoveSprint($event)"
+	></render-sprint-card>
 
-	<render-object-card
+	<h3
 		v-if="finishedSprints.length > 0"
-		v-bind:destination="'sprint'"
-		v-bind:import-variables="finishedImportVariables"
-		v-bind:search-results="finishedSprints"
-	></render-object-card>
+	>
+		Finished
+	</h3>
+	<render-sprint-card
+		v-bind:sprint-results="finishedSprints"
+		v-on:confirm_remove_sprint="confirmRemoveSprint($event)"
+	></render-sprint-card>
 
 	<div class="alert alert-info"
 		v-if="currentSprints.length + finishedSprints.length === 0"
@@ -37,6 +43,10 @@
 	<add-sprint-wizard
 		v-on:update_sprint_list="updateSprintList($event)"
 	></add-sprint-wizard>
+
+	<confirm-remove-sprint
+		v-bind:confirm-remove-sprint="confirmRemoveSprint"
+	></confirm-remove-sprint>
 </template>
 
 <script>
@@ -48,16 +58,27 @@ import { Modal } from "bootstrap";
 
 //Components
 import AddSprintWizard from "../wizards/AddSprintWizard.vue";
-import RenderObjectCard from "../../render/RenderObjectCard.vue";
+import RenderSprintCard from "./RenderSprintCard.vue";
+import ConfirmRemoveSprint from "../wizards/ConfirmRemoveSprint.vue";
 
 export default {
 	name: "AssignedSprints",
 	components: {
-		RenderObjectCard,
+		ConfirmRemoveSprint,
+		RenderSprintCard,
 		AddSprintWizard,
 	},
 	data() {
 		return {
+			allowedObjects: [
+				"requirement_item",
+				"project",
+				"task",
+			],
+			confirmRemoveSprint: {
+				"sprint_id": 0,
+				"sprint_name": "",
+			},
 			currentImportVariables: {
 				header: "List of Current Sprints",
 				prefix: "sprint",
@@ -88,6 +109,9 @@ export default {
 			const modal = new Modal(document.getElementById("addSprintWizardModal"));
 			modal.show();
 		},
+		confirmRemoveSprint(data) {
+			this.confirmDeleteSprint = data;
+		},
 		getAssignedSprints() {
 			this.axios.post(
 				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/sprint_list/assigned/`,
@@ -116,7 +140,9 @@ export default {
 	},
 	mounted() {
 		this.$nextTick(() => {
-			this.getAssignedSprints();
+			if (this.allowedObjects.includes(this.destination)) {
+				this.getAssignedSprints();
+			}
 		});
 	},
 }

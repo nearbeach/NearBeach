@@ -1,12 +1,11 @@
 <template>
-	<h2>List Sprints</h2>
-	<p class="text-instructions">
-		Lists out all the sprints associated with this particular object.
-	</p>
+	<child-sprints
+		v-if="childSprintsAllowedDestination.includes(destination)"
+	></child-sprints>
 
-	<child-sprints></child-sprints>
-
-	<assigned-sprints></assigned-sprints>
+	<assigned-sprints
+		v-if="assignedSprintAllowedDestination.includes(destination)"
+	></assigned-sprints>
 </template>
 
 <script>
@@ -14,11 +13,32 @@
 import ChildSprints from "./ChildSprints.vue";
 import AssignedSprints from "./AssignedSprints.vue";
 
+//vuex
+import { mapGetters } from "vuex";
+
 export default {
 	name: "ListSprints",
 	components: {
 		AssignedSprints,
 		ChildSprints,
+	},
+	data() {
+		return {
+			assignedSprintAllowedDestination: [
+				"requirement_item",
+				"project",
+				"task",
+			],
+			childSprintsAllowedDestination: [
+				"requirement",
+				"project",
+			],
+		}
+	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+		}),
 	},
 }
 </script>

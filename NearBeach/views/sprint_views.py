@@ -86,6 +86,9 @@ def get_assigned_sprints(destination, location_id):
     ).values(
         "sprint_id",
         "sprint_name",
+        "total_story_points",
+        "completed_story_points",
+        "sprint_status",
         "sprint_start_date",
         "sprint_end_date",
     )
