@@ -27,6 +27,7 @@ from .views import (
     requirement_item_views,
     requirement_views,
     search_views,
+    sprint_views,
     tag_views,
     task_views,
     user_setting_views,
@@ -452,6 +453,11 @@ urlpatterns = [
         requirement_item_views.new_requirement_item,
         name="new_requirement_item",
     ),
+    path(
+        "new_sprint/<destination>/<int:location_id>/save/",
+        sprint_views.new_sprint,
+        name="new_sprint"
+    ),
     path("new_task/", task_views.new_task, name="new_task"),
     path("new_task/save/", task_views.new_task_save, name="new_task_save"),
     path("new_user/", user_views.new_user, name="new_user"),
@@ -521,6 +527,16 @@ urlpatterns = [
         name="organisation_add_notes",
     ),
     path(
+        "object_data/<destination>/<location_id>/add_object_to_sprint/",
+        sprint_views.add_object_to_sprint,
+        name="add_object_to_sprint",
+    ),
+    path(
+        "object_data/<destination>/<location_id>/add_sprint/",
+        sprint_views.add_sprint_to_object,
+        name="add_sprint_to_object",
+    ),
+    path(
         "object_data/<destination>/<location_id>/add_tags/",
         object_data_views.add_tags,
         name="add_tags",
@@ -566,6 +582,11 @@ urlpatterns = [
         name="link_list",
     ),
     path(
+        "object_data/<destination>/<location_id>/<object_lookup>/potential_object_list/",
+        sprint_views.potential_object_list,
+        name="sprint_potential_object_list",
+    ),
+    path(
         "object_data/<destination>/<location_id>/note_list/",
         note_views.note_list,
         name="note_list",
@@ -601,9 +622,24 @@ urlpatterns = [
         name="remove_link",
     ),
     path(
+        "object_data/<destination>/<location_id>/remove_sprint/",
+        sprint_views.remove_sprint,
+        name="remove_sprint",
+    ),
+    path(
         "object_data/<destination>/<location_id>/remove_user/",
         object_data_views.remove_user,
         name="remove_user",
+    ),
+    path(
+        "object_data/<destination>/<location_id>/sprint_list/assigned/",
+        sprint_views.list_assigned_sprints,
+        name="list_assigned_sprints",
+    ),
+    path(
+        "object_data/<destination>/<location_id>/sprint_list/child/",
+        sprint_views.list_child_sprints,
+        name="list_child_sprints"
     ),
     path(
         "object_data/<destination>/<location_id>/tag_list/",
@@ -625,6 +661,11 @@ urlpatterns = [
         "object_data/lead_user_list/",
         object_data_views.lead_user_list,
         name="lead_user_list",
+    ),
+    path(
+        "object_data/sprint_list/",
+        sprint_views.sprint_list,
+        name="sprint_list",
     ),
     # Organisation
     path(
@@ -857,9 +898,39 @@ urlpatterns = [
         search_views.search_permission_set_data,
         name="search_permission_set_data",
     ),
+    path(
+        "search/sprint/",
+        search_views.search_sprint,
+        name="search_sprint",
+    ),
+    path(
+        "search/sprint/data/",
+        search_views.search_sprint_data,
+        name="search_sprint_data",
+    ),
     path("search/tag/", search_views.search_tag, name="search_tag"),
     path("search/user/", search_views.search_user, name="search_user"),
     path("search/user/data/", search_views.search_user_data, name="search_user_data"),
+    path(
+        "sprint_information/<int:sprint_id>/",
+        sprint_views.sprint_information,
+        name="sprint_information"
+    ),
+    path(
+        "sprint_information/<int:sprint_id>/delete/",
+        sprint_views.delete_sprint,
+        name="sprint_information_delete",
+    ),
+    path(
+        "sprint_information/<int:sprint_id>/finish_sprint/",
+        sprint_views.finish_sprint,
+        name="sprint_information_finish_sprint",
+    ),
+    path(
+        "sprint_information/<int:sprint_id>/start_sprint/",
+        sprint_views.start_sprint,
+        name="sprint_information_start_sprint",
+    ),
     # Tags
     path("tag/delete/<int:tag_id>/", tag_views.delete_tag, name="delete_tag"),
     path("tag/new/", tag_views.new_tag, name="new_tag"),

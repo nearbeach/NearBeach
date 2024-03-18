@@ -20,7 +20,7 @@
 					{{ result[importVariables.status] }}
 				</div>
 				<p class="small-text">
-					{{ getNiceDate(result[importVariables.end_date]) }}
+					{{ getNiceDatetime(result[importVariables.end_date]) }}
 				</p>
 			</div>
 		</div>

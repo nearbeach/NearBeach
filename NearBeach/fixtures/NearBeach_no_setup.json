@@ -2253,6 +2253,114 @@
   }
 },
 {
+  "model": "auth.permission",
+  "pk": 185,
+  "fields": {
+    "name": "Can add sprint",
+    "content_type": 47,
+    "codename": "add_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 186,
+  "fields": {
+    "name": "Can change sprint",
+    "content_type": 47,
+    "codename": "change_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 187,
+  "fields": {
+    "name": "Can delete sprint",
+    "content_type": 47,
+    "codename": "delete_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 188,
+  "fields": {
+    "name": "Can view sprint",
+    "content_type": 47,
+    "codename": "view_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 189,
+  "fields": {
+    "name": "Can add sprint object assignment",
+    "content_type": 48,
+    "codename": "add_sprintobjectassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 190,
+  "fields": {
+    "name": "Can change sprint object assignment",
+    "content_type": 48,
+    "codename": "change_sprintobjectassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 191,
+  "fields": {
+    "name": "Can delete sprint object assignment",
+    "content_type": 48,
+    "codename": "delete_sprintobjectassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 192,
+  "fields": {
+    "name": "Can view sprint object assignment",
+    "content_type": 48,
+    "codename": "view_sprintobjectassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 193,
+  "fields": {
+    "name": "Can add sprint audit table",
+    "content_type": 49,
+    "codename": "add_sprintaudittable"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 194,
+  "fields": {
+    "name": "Can change sprint audit table",
+    "content_type": 49,
+    "codename": "change_sprintaudittable"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 195,
+  "fields": {
+    "name": "Can delete sprint audit table",
+    "content_type": 49,
+    "codename": "delete_sprintaudittable"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 196,
+  "fields": {
+    "name": "Can view sprint audit table",
+    "content_type": 49,
+    "codename": "view_sprintaudittable"
+  }
+},
+{
   "model": "auth.user",
   "pk": 1,
   "fields": {
@@ -2268,374 +2376,6 @@
     "date_joined": "2023-12-28T03:13:59.086Z",
     "groups": [],
     "user_permissions": []
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 1,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "changetask"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 2,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "customer"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 3,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "document"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 4,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "group"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 5,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "kanbanboard"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 6,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "kanbancard"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 7,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofrequirementitemstatus"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 8,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofrequirementitemtype"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 9,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofrequirementstatus"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 10,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofrequirementtype"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 11,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofrfcstatus"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 12,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "organisation"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 13,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "permissionset"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 14,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "requestforchange"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 15,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "requirement"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 16,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "tag"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 17,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "task"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 18,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "userprofilepicture"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 19,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "usergroup"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 20,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "tagassignment"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 21,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "requirementitem"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 22,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "requestforchangegroupapproval"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 23,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "project"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 24,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "objectnote"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 25,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "objectassignment"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 26,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "notification"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 27,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listoftitle"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 28,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofbugclient"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 29,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "kanbanlevel"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 30,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "kanbancolumn"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 31,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "grouppermission"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 32,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "folder"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 33,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "documentpermission"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 34,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "changetaskblock"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 35,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "bugclient"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 36,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "bug"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 37,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "usersetting"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 38,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "publiclink"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 39,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofprojectstatus"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 40,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listoftaskstatus"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 41,
-  "fields": {
-    "app_label": "admin",
-    "model": "logentry"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 42,
-  "fields": {
-    "app_label": "auth",
-    "model": "permission"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 43,
-  "fields": {
-    "app_label": "auth",
-    "model": "group"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 44,
-  "fields": {
-    "app_label": "auth",
-    "model": "user"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 45,
-  "fields": {
-    "app_label": "contenttypes",
-    "model": "contenttype"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 46,
-  "fields": {
-    "app_label": "sessions",
-    "model": "session"
   }
 }
 ]

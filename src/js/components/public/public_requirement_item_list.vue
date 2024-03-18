@@ -39,7 +39,7 @@
 								{{ getStatus(result.fields.requirement_item_status) }}
 							</div>
 							<p class="small-text">
-								{{ getNiceDate(result.fields.requirement_item_end_date) }}
+								{{ getNiceDatetime(result.fields.requirement_item_end_date) }}
 							</p>
 						</div>
 					</div>

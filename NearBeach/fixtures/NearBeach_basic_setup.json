@@ -2594,6 +2594,190 @@
   }
 },
 {
+  "model": "NearBeach.sprint",
+  "pk": 1,
+  "fields": {
+    "sprint_name": "project-1 - Sprint 1 - 18 Mar 2024",
+    "requirement": null,
+    "project": 1,
+    "total_story_points": 0,
+    "completed_story_points": 0,
+    "sprint_status": "Draft",
+    "sprint_start_date": "2024-03-18T08:45:28.841Z",
+    "sprint_end_date": "2024-03-25T08:45:28.841Z",
+    "date_created": "2024-03-18T08:45:43.446Z",
+    "date_modified": "2024-03-18T08:45:43.446Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.sprint",
+  "pk": 2,
+  "fields": {
+    "sprint_name": "project-2 - Sprint 1 - 18 Mar 2024",
+    "requirement": null,
+    "project": 2,
+    "total_story_points": 0,
+    "completed_story_points": 0,
+    "sprint_status": "Draft",
+    "sprint_start_date": "2024-03-18T08:45:29.300Z",
+    "sprint_end_date": "2024-03-25T08:45:29.300Z",
+    "date_created": "2024-03-18T08:45:48.772Z",
+    "date_modified": "2024-03-18T08:45:48.772Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.sprint",
+  "pk": 3,
+  "fields": {
+    "sprint_name": "requirement-1 - Sprint 1 - 18 Mar 2024",
+    "requirement": 1,
+    "project": null,
+    "total_story_points": 0,
+    "completed_story_points": 0,
+    "sprint_status": "Draft",
+    "sprint_start_date": "2024-03-18T08:45:37.303Z",
+    "sprint_end_date": "2024-03-25T08:45:37.303Z",
+    "date_created": "2024-03-18T08:46:56.631Z",
+    "date_modified": "2024-03-18T08:46:56.631Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.sprint",
+  "pk": 4,
+  "fields": {
+    "sprint_name": "requirement-2 - Sprint 1 - 18 Mar 2024",
+    "requirement": 2,
+    "project": null,
+    "total_story_points": 0,
+    "completed_story_points": 0,
+    "sprint_status": "Draft",
+    "sprint_start_date": "2024-03-18T08:45:37.782Z",
+    "sprint_end_date": "2024-03-25T08:45:37.782Z",
+    "date_created": "2024-03-18T08:47:01.096Z",
+    "date_modified": "2024-03-18T08:47:01.096Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.sprintobjectassignment",
+  "pk": 1,
+  "fields": {
+    "sprint_id": 1,
+    "requirement_item": null,
+    "project": null,
+    "task": 1,
+    "date_created": "2024-03-18T08:48:15.226Z",
+    "date_modified": "2024-03-18T08:48:15.226Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.sprintobjectassignment",
+  "pk": 2,
+  "fields": {
+    "sprint_id": 1,
+    "requirement_item": null,
+    "project": null,
+    "task": 2,
+    "date_created": "2024-03-18T08:48:15.229Z",
+    "date_modified": "2024-03-18T08:48:15.229Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.sprintobjectassignment",
+  "pk": 3,
+  "fields": {
+    "sprint_id": 2,
+    "requirement_item": null,
+    "project": null,
+    "task": 1,
+    "date_created": "2024-03-18T08:48:26.803Z",
+    "date_modified": "2024-03-18T08:48:26.803Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.sprintobjectassignment",
+  "pk": 4,
+  "fields": {
+    "sprint_id": 2,
+    "requirement_item": null,
+    "project": null,
+    "task": 2,
+    "date_created": "2024-03-18T08:48:26.808Z",
+    "date_modified": "2024-03-18T08:48:26.808Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.sprintobjectassignment",
+  "pk": 5,
+  "fields": {
+    "sprint_id": 3,
+    "requirement_item": null,
+    "project": null,
+    "task": 1,
+    "date_created": "2024-03-18T08:48:36.349Z",
+    "date_modified": "2024-03-18T08:48:36.349Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.sprintobjectassignment",
+  "pk": 6,
+  "fields": {
+    "sprint_id": 3,
+    "requirement_item": null,
+    "project": null,
+    "task": 2,
+    "date_created": "2024-03-18T08:48:36.352Z",
+    "date_modified": "2024-03-18T08:48:36.352Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.sprintobjectassignment",
+  "pk": 7,
+  "fields": {
+    "sprint_id": 4,
+    "requirement_item": null,
+    "project": null,
+    "task": 1,
+    "date_created": "2024-03-18T08:48:42.818Z",
+    "date_modified": "2024-03-18T08:48:42.819Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.sprintobjectassignment",
+  "pk": 8,
+  "fields": {
+    "sprint_id": 4,
+    "requirement_item": null,
+    "project": null,
+    "task": 2,
+    "date_created": "2024-03-18T08:48:42.821Z",
+    "date_modified": "2024-03-18T08:48:42.821Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.tag",
   "pk": 1,
   "fields": {
@@ -4432,11 +4616,119 @@
   }
 },
 {
+  "model": "auth.permission",
+  "pk": 185,
+  "fields": {
+    "name": "Can add sprint",
+    "content_type": 47,
+    "codename": "add_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 186,
+  "fields": {
+    "name": "Can change sprint",
+    "content_type": 47,
+    "codename": "change_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 187,
+  "fields": {
+    "name": "Can delete sprint",
+    "content_type": 47,
+    "codename": "delete_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 188,
+  "fields": {
+    "name": "Can view sprint",
+    "content_type": 47,
+    "codename": "view_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 189,
+  "fields": {
+    "name": "Can add sprint audit table",
+    "content_type": 48,
+    "codename": "add_sprintaudittable"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 190,
+  "fields": {
+    "name": "Can change sprint audit table",
+    "content_type": 48,
+    "codename": "change_sprintaudittable"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 191,
+  "fields": {
+    "name": "Can delete sprint audit table",
+    "content_type": 48,
+    "codename": "delete_sprintaudittable"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 192,
+  "fields": {
+    "name": "Can view sprint audit table",
+    "content_type": 48,
+    "codename": "view_sprintaudittable"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 193,
+  "fields": {
+    "name": "Can add sprint object assignment",
+    "content_type": 49,
+    "codename": "add_sprintobjectassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 194,
+  "fields": {
+    "name": "Can change sprint object assignment",
+    "content_type": 49,
+    "codename": "change_sprintobjectassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 195,
+  "fields": {
+    "name": "Can delete sprint object assignment",
+    "content_type": 49,
+    "codename": "delete_sprintobjectassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 196,
+  "fields": {
+    "name": "Can view sprint object assignment",
+    "content_type": 49,
+    "codename": "view_sprintobjectassignment"
+  }
+},
+{
   "model": "auth.user",
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$720000$xBoXxSEeVXBdR0rm6efbo0$//JuZL1sOsIXbgd6qdboRpMTz0MgwRi9Oi5AsuaSVx8=",
-    "last_login": "2024-02-05T08:07:49.203Z",
+    "last_login": "2024-03-18T08:45:08.034Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "Admin",
@@ -4558,374 +4850,6 @@
   }
 },
 {
-  "model": "contenttypes.contenttype",
-  "pk": 1,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "changetask"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 2,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "customer"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 3,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "document"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 4,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "group"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 5,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "kanbanboard"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 6,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "kanbancard"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 7,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofrequirementitemstatus"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 8,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofrequirementitemtype"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 9,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofrequirementstatus"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 10,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofrequirementtype"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 11,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofrfcstatus"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 12,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "organisation"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 13,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "permissionset"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 14,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "requestforchange"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 15,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "requirement"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 16,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "tag"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 17,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "task"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 18,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "userprofilepicture"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 19,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "usergroup"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 20,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "tagassignment"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 21,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "requirementitem"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 22,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "requestforchangegroupapproval"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 23,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "project"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 24,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "objectnote"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 25,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "objectassignment"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 26,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "notification"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 27,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listoftitle"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 28,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofbugclient"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 29,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "kanbanlevel"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 30,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "kanbancolumn"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 31,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "grouppermission"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 32,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "folder"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 33,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "documentpermission"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 34,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "changetaskblock"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 35,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "bugclient"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 36,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "bug"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 37,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "usersetting"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 38,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "publiclink"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 39,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listofprojectstatus"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 40,
-  "fields": {
-    "app_label": "NearBeach",
-    "model": "listoftaskstatus"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 41,
-  "fields": {
-    "app_label": "admin",
-    "model": "logentry"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 42,
-  "fields": {
-    "app_label": "auth",
-    "model": "permission"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 43,
-  "fields": {
-    "app_label": "auth",
-    "model": "group"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 44,
-  "fields": {
-    "app_label": "auth",
-    "model": "user"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 45,
-  "fields": {
-    "app_label": "contenttypes",
-    "model": "contenttype"
-  }
-},
-{
-  "model": "contenttypes.contenttype",
-  "pk": 46,
-  "fields": {
-    "app_label": "sessions",
-    "model": "session"
-  }
-},
-{
   "model": "sessions.session",
   "pk": "4ihdjbrhcx7hokg3uisrpinxhca0e34d",
   "fields": {
@@ -4995,6 +4919,14 @@
   "fields": {
     "session_data": ".eJxVjDsOgzAQBe_iOrLWBptPmT5nsNa7SyCJANm4inL3gESRtG_mzVsFLNsYSpYUJla9Muryu0Wkp8wH4AfO90XTMm9pivpQ9Emzvi0sr-vp_gVGzOP-loYHdrECh-Qje0CBCtC4drDka0RjW4hkGts5Ai-NjSI8CIN0Rmrao1MOuaySjqzqt1Tk8wW8ZUBn:1pSDwg:7aeBahHYeqv4iuCmRuzXy6KRCL7lDDZm5OntHf58-jQ",
     "expire_date": "2023-03-01T09:19:22.771Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "w3iepd6fu5cfao0mpwh97dp39fgh7ujn",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1rm8cG:YKlIkAtjptFKY3cmZkt8jsVLAhI7ajhEUr0BE4D7S5Y",
+    "expire_date": "2024-04-01T08:45:08.164Z"
   }
 }
 ]
