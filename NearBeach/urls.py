@@ -622,6 +622,11 @@ urlpatterns = [
         name="remove_link",
     ),
     path(
+        "object_data/<destination>/<location_id>/remove_sprint/",
+        sprint_views.remove_sprint,
+        name="remove_sprint",
+    ),
+    path(
         "object_data/<destination>/<location_id>/remove_user/",
         object_data_views.remove_user,
         name="remove_user",

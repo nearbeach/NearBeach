@@ -6,7 +6,7 @@ from django.template import loader
 
 import json
 
-from NearBeach.forms import NewSprintAssignmentForm, NewSprintForm, AddObjectToSprintForm
+from NearBeach.forms import NewSprintAssignmentForm, NewSprintForm, AddObjectToSprintForm, RemoveSprintForm
 from NearBeach.models import Sprint, SprintObjectAssignment, RequirementItem, Project, Task, ObjectAssignment, UserGroup
 from NearBeach.views.theme_views import get_theme
 
@@ -160,6 +160,23 @@ def new_sprint(request, destination, location_id):
     sprint_submit.save()
 
     return JsonResponse({'id': sprint_submit.sprint_id, })
+
+
+def remove_sprint(request, destination, location_id):
+    form = RemoveSprintForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+
+    SprintObjectAssignment.objects.filter(
+        **{F"{destination}_id": location_id},
+        sprint_id=form.cleaned_data["sprint_id"],
+    ).update(
+        is_deleted=True,
+    )
+
+    sprint_results = get_assigned_sprints(destination, location_id)
+    return JsonResponse(json.loads(sprint_results), safe=False)
 
 
 def sprint_information(request, sprint_id, *args, **kwargs):

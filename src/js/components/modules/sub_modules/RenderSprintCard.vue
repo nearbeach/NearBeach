@@ -31,14 +31,14 @@
 			</span>
 		</div>
 
-				<!-- Object Delete -->
+		<!-- Object Delete -->
 		<div
 			class="object-link--remove"
 			v-if="userLevel >= 2 && canDelete === true"
 		>
 			<Icon
 				v-bind:icon="icons.trashCan"
-				v-on:click="confirmRemoveSprint(sprint)"
+				v-on:click="confirmRemoveSprintFunction(sprint)"
 			/>
 		</div>
 	</div>
@@ -78,8 +78,11 @@ export default {
 		datetimeMixin,
 		iconMixin,
 	],
+	emits: [
+		"confirm_remove_sprint",
+	],
 	methods: {
-		confirmRemoveSprint(sprint) {
+		confirmRemoveSprintFunction(sprint) {
 			//Send request upstream
 			this.$emit("confirm_remove_sprint", sprint);
 		}

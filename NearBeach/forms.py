@@ -951,6 +951,13 @@ class PublicLinkUpdateForm(forms.Form):
     )
 
 
+class RemoveSprintForm(forms.Form):
+    sprint_id = forms.ModelChoiceField(
+        queryset=Sprint.objects.all(),
+        required=True,
+    )
+
+
 class ResortColumnForm(forms.Form):
     item = forms.ModelMultipleChoiceField(
         queryset=KanbanColumn.objects.all(),

@@ -11,7 +11,7 @@
 	</h3>
 	<render-sprint-card
 		v-bind:sprint-results="currentSprints"
-		v-on:confirm_remove_sprint="confirmRemoveSprint($event)"
+		v-on:confirm_remove_sprint="confirmRemoveSprintFunction($event)"
 	></render-sprint-card>
 
 	<h3
@@ -21,7 +21,7 @@
 	</h3>
 	<render-sprint-card
 		v-bind:sprint-results="finishedSprints"
-		v-on:confirm_remove_sprint="confirmRemoveSprint($event)"
+		v-on:confirm_remove_sprint="confirmRemoveSprintFunction($event)"
 	></render-sprint-card>
 
 	<div class="alert alert-info"
@@ -46,6 +46,7 @@
 
 	<confirm-remove-sprint
 		v-bind:confirm-remove-sprint="confirmRemoveSprint"
+		v-on:update_sprint_list="updateSprintList($event)"
 	></confirm-remove-sprint>
 </template>
 
@@ -109,8 +110,14 @@ export default {
 			const modal = new Modal(document.getElementById("addSprintWizardModal"));
 			modal.show();
 		},
-		confirmRemoveSprint(data) {
-			this.confirmDeleteSprint = data;
+		confirmRemoveSprintFunction(data) {
+			console.log("Data: ", data);
+			//Update data
+			this.confirmRemoveSprint = data;
+
+			//Open Modal
+			const modal = new Modal(document.getElementById("confirmSprintRemoveModal"));
+			modal.show();
 		},
 		getAssignedSprints() {
 			this.axios.post(

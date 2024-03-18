@@ -77,10 +77,31 @@ export default {
 	},
 	methods: {
 		removeSprint() {
-			//ADD CODE
+			//Setup Data to Send
+			const data_to_send = new FormData();
+			data_to_send.set("sprint_id", this.confirmRemoveSprint.sprint_id);
+
+			//Axios
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_sprint/`,
+				data_to_send,
+			).then((response) => {
+				//Send the updated data upstream
+				this.$emit("update_sprint_list", response.data);
+
+				//Close the modal
+				document.getElementById("confirmSprintRemovalButton").click();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Removing Sprint",
+					message: `Sorry, we could not remove the sprint from the current object. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 		closeModal() {
-			//ADD CODE
+			document.getElementById("confirmSprintRemovalButton").click();
 		}
 	},
 }
