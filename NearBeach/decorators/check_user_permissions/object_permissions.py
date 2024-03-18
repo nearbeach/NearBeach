@@ -57,7 +57,17 @@ def check_user_generic_permissions(min_permission_level):
             else:
                 destination = args[0]
 
-            passes, user_level = generic_permissions(request, destination, kwargs)
+            # If sub object, use partials
+            if destination == "kanban_card":
+                # Setup kwargs to have kanban_card_id
+                kwargs["kanban_card_id"] = kwargs["location_id"]
+                passes, user_level = kanban_card_permissions(request, kwargs)
+            elif destination == "requirement_item":
+                # Setup kwargs to have requirement item id
+                kwargs["requirement_item_id"] = kwargs["location_id"]
+                passes, user_level = requirement_item_permissions(request, kwargs)
+            else:
+                passes, user_level = generic_permissions(request, destination, kwargs)
 
             if not passes:
                 raise PermissionDenied

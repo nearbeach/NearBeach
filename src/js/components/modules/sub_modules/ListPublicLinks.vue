@@ -232,6 +232,9 @@ export default {
 			return this.overrideDestination !== "" ? this.overrideLocationId : this.locationId;
 		},
 		getPublicLinks() {
+			//Escape if there is no location id
+			if (this.getLocationId() === 0) return;
+
 			this.axios(
 				`${this.rootUrl}public_data/${this.getDestination()}/${this.getLocationId()}/get_links/`,
 			).then((response) => {
