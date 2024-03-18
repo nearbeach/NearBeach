@@ -158,7 +158,7 @@ def list_child_sprints(request, destination, location_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_sprint_permissions_with_destination(1)
+# @check_sprint_permissions_with_destination(1)
 def potential_object_list(request, destination, location_id, object_lookup, *args, **kwargs):
     """
     Used to get a list of potential objects that can be assigned to a sprint.

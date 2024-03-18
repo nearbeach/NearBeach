@@ -2253,6 +2253,114 @@
   }
 },
 {
+  "model": "auth.permission",
+  "pk": 185,
+  "fields": {
+    "name": "Can add sprint",
+    "content_type": 47,
+    "codename": "add_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 186,
+  "fields": {
+    "name": "Can change sprint",
+    "content_type": 47,
+    "codename": "change_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 187,
+  "fields": {
+    "name": "Can delete sprint",
+    "content_type": 47,
+    "codename": "delete_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 188,
+  "fields": {
+    "name": "Can view sprint",
+    "content_type": 47,
+    "codename": "view_sprint"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 189,
+  "fields": {
+    "name": "Can add sprint object assignment",
+    "content_type": 48,
+    "codename": "add_sprintobjectassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 190,
+  "fields": {
+    "name": "Can change sprint object assignment",
+    "content_type": 48,
+    "codename": "change_sprintobjectassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 191,
+  "fields": {
+    "name": "Can delete sprint object assignment",
+    "content_type": 48,
+    "codename": "delete_sprintobjectassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 192,
+  "fields": {
+    "name": "Can view sprint object assignment",
+    "content_type": 48,
+    "codename": "view_sprintobjectassignment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 193,
+  "fields": {
+    "name": "Can add sprint audit table",
+    "content_type": 49,
+    "codename": "add_sprintaudittable"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 194,
+  "fields": {
+    "name": "Can change sprint audit table",
+    "content_type": 49,
+    "codename": "change_sprintaudittable"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 195,
+  "fields": {
+    "name": "Can delete sprint audit table",
+    "content_type": 49,
+    "codename": "delete_sprintaudittable"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 196,
+  "fields": {
+    "name": "Can view sprint audit table",
+    "content_type": 49,
+    "codename": "view_sprintaudittable"
+  }
+},
+{
   "model": "auth.user",
   "pk": 1,
   "fields": {
@@ -2636,6 +2744,30 @@
   "fields": {
     "app_label": "sessions",
     "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 47,
+  "fields": {
+    "app_label": "NearBeach",
+    "model": "sprint"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 48,
+  "fields": {
+    "app_label": "NearBeach",
+    "model": "sprintobjectassignment"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 49,
+  "fields": {
+    "app_label": "NearBeach",
+    "model": "sprintaudittable"
   }
 }
 ]
