@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
@@ -5,6 +6,8 @@ from django.http.response import HttpResponse, HttpResponseBadRequest, JsonRespo
 from django.template import loader
 
 import json
+
+from django.views.decorators.http import require_http_methods
 
 from NearBeach.forms import NewSprintAssignmentForm, NewSprintForm, AddObjectToSprintForm, RemoveSprintForm
 from NearBeach.models import Sprint, SprintObjectAssignment, RequirementItem, Project, Task, ObjectAssignment, UserGroup
@@ -16,6 +19,11 @@ from NearBeach.views.tools.lookup_functions import (
     lookup_task,
 )
 
+from NearBeach.decorators.check_user_permissions.sprint_permissions import (
+    check_sprint_permission_with_sprint,
+    check_sprint_permissions_with_destination,
+)
+
 LOOKUP_FUNCS = {
     "project": lookup_project,
     "task": lookup_task,
@@ -23,7 +31,10 @@ LOOKUP_FUNCS = {
 }
 
 
-def add_object_to_sprint(request, destination, location_id):
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permission_with_sprint(2)
+def add_object_to_sprint(request, destination, location_id, *args, **kwargs):
     if not destination == "sprint":
         return HttpResponseBadRequest("Sorry - object not allowed")
 
@@ -45,7 +56,10 @@ def add_object_to_sprint(request, destination, location_id):
     return HttpResponse("")
 
 
-def add_sprint_to_object(request, destination, location_id):
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permission_with_sprint(2)
+def add_sprint_to_object(request, destination, location_id, *args, **kwargs):
     """
     User currently on an object information page. They have selected this object be added to an existing sprint.
     """
@@ -65,7 +79,10 @@ def add_sprint_to_object(request, destination, location_id):
     return JsonResponse(json.loads(sprint_results), safe=False)
 
 
-def delete_sprint(request, sprint_id):
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permission_with_sprint(2)
+def delete_sprint(request, sprint_id, *args, **kwargs):
     Sprint.objects.filter(
         sprint_id=sprint_id
     ).update(
@@ -75,6 +92,9 @@ def delete_sprint(request, sprint_id):
     return HttpResponse("")
 
 
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permission_with_sprint(2)
 def finish_sprint(request, sprint_id):
     Sprint.objects.filter(
         sprint_id=sprint_id,
@@ -87,7 +107,7 @@ def finish_sprint(request, sprint_id):
 
 
 # Internal function
-def get_assigned_sprints(destination, location_id):
+def get_assigned_sprints(destination, location_id, *args, **kwargs):
     sprint_results = Sprint.objects.filter(
         is_deleted=False,
         sprint_id__in=SprintObjectAssignment.objects.filter(
@@ -107,11 +127,17 @@ def get_assigned_sprints(destination, location_id):
     return json.dumps(list(sprint_results), cls=DjangoJSONEncoder)
 
 
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permissions_with_destination(1)
 def list_assigned_sprints(request, destination, location_id, *args, **kwargs):
     sprint_results = get_assigned_sprints(destination, location_id)
     return JsonResponse(json.loads(sprint_results), safe=False)
 
 
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permissions_with_destination(1)
 def list_child_sprints(request, destination, location_id, *args, **kwargs):
     sprint_results = Sprint.objects.filter(
         is_deleted=False,
@@ -130,7 +156,10 @@ def list_child_sprints(request, destination, location_id, *args, **kwargs):
     return JsonResponse(json.loads(sprint_results), safe=False)
 
 
-def potential_object_list(request, destination, location_id, object_lookup):
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permissions_with_destination(1)
+def potential_object_list(request, destination, location_id, object_lookup, *args, **kwargs):
     """
     Used to get a list of potential objects that can be assigned to a sprint.
     """
@@ -155,7 +184,10 @@ def potential_object_list(request, destination, location_id, object_lookup):
     return JsonResponse(json.loads(data_results), safe=False)
 
 
-def new_sprint(request, destination, location_id):
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permissions_with_destination(2)
+def new_sprint(request, destination, location_id, *args, **kwargs):
     form = NewSprintForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -173,7 +205,10 @@ def new_sprint(request, destination, location_id):
     return JsonResponse({'id': sprint_submit.sprint_id, })
 
 
-def remove_sprint(request, destination, location_id):
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permission_with_sprint(2)
+def remove_sprint(request, destination, location_id, *args, **kwargs):
     form = RemoveSprintForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -190,6 +225,8 @@ def remove_sprint(request, destination, location_id):
     return JsonResponse(json.loads(sprint_results), safe=False)
 
 
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permission_with_sprint(1)
 def sprint_information(request, sprint_id, *args, **kwargs):
     # Get the template
     t = loader.get_template("NearBeach/sprints/sprint_information.html")
@@ -251,10 +288,7 @@ def sprint_information(request, sprint_id, *args, **kwargs):
     return HttpResponse(t.render(c, request))
 
 
-def sprint_information_save(request, sprint_id):
-    return HttpResponse("")
-
-
+@login_required(login_url="login", redirect_field_name="")
 def sprint_list(request):
     """
     Sends back a list of all potential sprints the user has access too. Designed so users can select which sprint an
@@ -296,7 +330,10 @@ def sprint_list(request):
     return JsonResponse(json.loads(sprint_results), safe=False)
 
 
-def start_sprint(request, sprint_id):
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permission_with_sprint(2)
+def start_sprint(request, sprint_id, *args, **kwargs):
     Sprint.objects.filter(
         sprint_id=sprint_id,
         sprint_status="Draft",
