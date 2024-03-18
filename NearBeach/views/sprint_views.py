@@ -75,6 +75,17 @@ def delete_sprint(request, sprint_id):
     return HttpResponse("")
 
 
+def finish_sprint(request, sprint_id):
+    Sprint.objects.filter(
+        sprint_id=sprint_id,
+        sprint_status="Current",
+    ).update(
+        sprint_status="Finished"
+    )
+
+    return HttpResponse("")
+
+
 # Internal function
 def get_assigned_sprints(destination, location_id):
     sprint_results = Sprint.objects.filter(
@@ -283,3 +294,14 @@ def sprint_list(request):
 
     sprint_results = json.dumps(list(sprint_results), cls=DjangoJSONEncoder)
     return JsonResponse(json.loads(sprint_results), safe=False)
+
+
+def start_sprint(request, sprint_id):
+    Sprint.objects.filter(
+        sprint_id=sprint_id,
+        sprint_status="Draft",
+    ).update(
+        sprint_status="Current",
+    )
+
+    return HttpResponse("")

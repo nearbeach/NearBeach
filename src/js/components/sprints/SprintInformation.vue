@@ -90,12 +90,14 @@
 						<button
 							class="btn btn-success save-changes"
 							v-if="sprintResults[0].sprint_status === 'Draft'"
+							v-on:click="startSprint"
 						>
 							Start Sprint
 						</button>
 						<button
 							class="btn btn-warning save-changes"
 							v-if="sprintResults[0].sprint_status === 'Current'"
+							v-on:click="finishSprint"
 						>
 							Finish Sprint
 						</button>
@@ -186,12 +188,40 @@ export default {
 			const modal = new Modal(document.getElementById("confirmSprintDeleteModal"));
 			modal.show();
 		},
+		finishSprint() {
+			this.axios.post(
+				`${this.rootUrl}sprint_information/${this.sprintResults[0].sprint_id}/finish_sprint/`
+			).then(() => {
+				window.location.reload();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Can not start sprint",
+					message: `Sorry, there was an error starting the sprint. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		},
 		getParentUrl() {
 			return `${this.rootUrl}${this.parentObjectDestination}_information/${this.parentObjectLocationId}`;
 		},
 		showAddObjectWizard() {
 			const modal = new Modal(document.getElementById("addObjectWizardModal"));
 			modal.show();
+		},
+		startSprint() {
+			this.axios.post(
+				`${this.rootUrl}sprint_information/${this.sprintResults[0].sprint_id}/start_sprint/`
+			).then(() => {
+				window.location.reload();
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Can not start sprint",
+					message: `Sorry, there was an error starting the sprint. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	async beforeMount() {
