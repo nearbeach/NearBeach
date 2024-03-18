@@ -36,7 +36,7 @@ from .models import (
     Document,
     ObjectAssignment,
     UserGroup,
-    UserSetting,
+    UserSetting, Sprint,
 )
 
 USER_MODEL = get_user_model()
@@ -184,6 +184,22 @@ class AddObjectLinkForm(forms.Form):
     object_relation = forms.CharField(
         max_length=20,
     )
+
+
+class AddObjectToSprintForm(forms.Form):
+    project = forms.ModelMultipleChoiceField(
+        queryset=Project.objects.all(),
+        required=False,
+    )
+    requirement_item = forms.ModelMultipleChoiceField(
+        queryset=RequirementItem.objects.all(),
+        required=False,
+    )
+    task = forms.ModelMultipleChoiceField(
+        queryset=Task.objects.all(),
+        required=False,
+    )
+
 
 
 class AddRequirementLinkForm(forms.Form):
@@ -696,6 +712,23 @@ class NewRequirementForm(forms.ModelForm):
         ]
 
 
+class NewSprintAssignmentForm(forms.Form):
+    sprint_id = forms.ModelChoiceField(
+        queryset=Sprint.objects.all(),
+        required=True,
+    )
+
+
+class NewSprintForm(forms.ModelForm):
+    class Meta:
+        model = Sprint
+        fields = [
+            "sprint_name",
+            "sprint_start_date",
+            "sprint_end_date",
+        ]
+
+
 class NewTagForm(forms.ModelForm):
     class Meta:
         model = Tag
@@ -915,6 +948,13 @@ class PublicLinkUpdateForm(forms.Form):
     )
     public_link_is_active = forms.BooleanField(
         required=False,
+    )
+
+
+class RemoveSprintForm(forms.Form):
+    sprint_id = forms.ModelChoiceField(
+        queryset=Sprint.objects.all(),
+        required=True,
     )
 
 

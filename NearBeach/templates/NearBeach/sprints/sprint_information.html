@@ -1,0 +1,13 @@
+{% extends "NearBeach/partials/template.html" %}
+{% load static %}
+{% block content %}
+    <sprint-information
+            v-bind:root-url="`{% url 'dashboard' %}`"
+            v-bind:sprint-results="{{ sprint_results }}"
+            v-bind:theme="`{{ theme }}`"
+            v-bind:user-level="{{ user_level }}"
+            v-bind:requirement-item-results="{{ requirement_item_results }}"
+            v-bind:project-results="{{ project_results }}"
+            v-bind:task-results="{{ task_results }}"
+    ></sprint-information>
+{% endblock %}

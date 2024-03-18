@@ -2,7 +2,7 @@ import {DateTime} from "luxon";
 
 export default {
     methods: {
-        getNiceDate(input_date) {
+        getNiceDatetime(input_date) {
             //If input_date is null or empty string - return empty string
             if (input_date === "" || input_date === null || input_date === undefined) {
                 return "";
@@ -12,6 +12,17 @@ export default {
 
             //Return the nice outputted date
             return new_date.toLocaleString(DateTime.DATETIME_MED);
+        },
+        getNiceDate(input_date) {
+            //If input_date is null or empty string - return empty string
+            if (input_date === "" || input_date === null || input_date === undefined) {
+                return "";
+            }
+            //Use Luxon to convert the date nicely
+            const new_date = DateTime.fromISO(input_date);
+
+            //Return the nice outputted date
+            return new_date.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY);
         },
         disableDate(timeStamp) {
             //Get date but level the time to 00:00:00

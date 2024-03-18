@@ -336,6 +336,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/search/SearchPermissionSets.vue"
             )
     ),
+    SearchSprints = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "search-sprints" */
+            "./components/search/SearchSprints.vue"
+            )
+    ),
     SearchTags = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "search-tags" */
@@ -346,6 +352,12 @@ export const // BugsModule = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "search-users" */
             "./components/search/SearchUsers.vue"
+            )
+    ),
+    SprintInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "sprint-information" */
+            "./components/sprints/SprintInformation.vue"
             )
     ),
     TaskInformation = defineAsyncComponent(() =>

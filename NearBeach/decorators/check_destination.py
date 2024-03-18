@@ -14,6 +14,7 @@ OBJECT_ARRAY = [
     "request_for_change",
     "organisation",
     "project",
+    "sprint",
     "task",
 ]
 

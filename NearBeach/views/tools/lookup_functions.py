@@ -10,6 +10,7 @@ from NearBeach.models import (
     Task,
 )
 
+
 # Internal function
 def lookup_project(user_group_results, destination, location_id):
     return Project.objects.filter(

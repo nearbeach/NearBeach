@@ -26,7 +26,7 @@
 						{{note.first_name}} {{note.last_name}}
 					</div>
 					<div class="note-history--date">
-						{{getNiceDate(note.date_modified)}}
+						{{getNiceDatetime(note.date_modified)}}
 					</div>
 
 					<div class="note-history--edit-button"

@@ -36,6 +36,9 @@ from .models import (
     RequestForChangeGroupApproval,
     Requirement,
     RequirementItem,
+    Sprint,
+    SprintAuditTable,
+    SprintObjectAssignment,
     Tag,
     TagAssignment,
     Task,
@@ -72,6 +75,9 @@ admin.site.register(Organisation)
 admin.site.register(PermissionSet)
 admin.site.register(Project)
 admin.site.register(PublicLink)
+admin.site.register(Sprint)
+admin.site.register(SprintAuditTable)
+admin.site.register(SprintObjectAssignment)
 admin.site.register(RequestForChange)
 admin.site.register(RequestForChangeGroupApproval)
 admin.site.register(Requirement)

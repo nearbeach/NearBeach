@@ -1,0 +1,9 @@
+{% extends "NearBeach/partials/template.html" %}
+{% load static %}
+{% block content %}
+    <search-sprints v-bind:search-input="'{{search_input}}'"
+                    v-bind:include-closed="{{include_closed}}"
+                    v-bind:search-results="{{sprint_results}}"
+                    v-bind:root-url="`{% url 'dashboard' %}`"
+    ></search-sprints>
+{% endblock %}

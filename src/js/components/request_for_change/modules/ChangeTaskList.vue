@@ -24,8 +24,8 @@
 			<a class="change-task--dates"
 			   v-bind:href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
 			>
-				{{ getNiceDate(changeTask.change_task_start_date) }} -
-				{{ getNiceDate(changeTask.change_task_end_date) }}
+				{{ getNiceDatetime(changeTask.change_task_start_date) }} -
+				{{ getNiceDatetime(changeTask.change_task_end_date) }}
 			</a>
 
 			<a class="change-task--responsibility"
