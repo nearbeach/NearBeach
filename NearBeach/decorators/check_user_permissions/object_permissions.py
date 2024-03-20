@@ -5,6 +5,8 @@ from .partials.change_task_permissions import change_task_permissions
 from .partials.generic_permissions import generic_permissions
 from .partials.kanban_board_permissions import kanban_board_permissions
 from .partials.kanban_card_permissions import kanban_card_permissions
+from .partials.kanban_column_permissions import kanban_column_permissions
+from .partials.kanban_level_permissions import kanban_level_permissions
 from .partials.request_for_change_permissions import request_for_change_permissions
 from .partials.requirement_permissions import requirement_permissions
 from .partials.requirement_item_permissions import requirement_item_permissions
@@ -21,6 +23,8 @@ FUNCTION_DICT = {
     "kanban": kanban_board_permissions,
     "kanban_board": kanban_board_permissions,
     "kanban_card": kanban_card_permissions,
+    "kanban_column": kanban_column_permissions,
+    "kanban_level": kanban_level_permissions,
     "request_for_change": request_for_change_permissions,
     "requirement": requirement_permissions,
     "requirement_item": requirement_item_permissions,
