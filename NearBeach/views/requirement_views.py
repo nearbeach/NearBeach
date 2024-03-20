@@ -4,6 +4,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q, F, Value as V
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
@@ -287,7 +288,8 @@ def requirement_information(request, requirement_id, *args, **kwargs):
     user_level = kwargs["user_level"]
 
     # TODO: Check if I need to have a separate read only tempalte now.
-    requirement_results = Requirement.objects.get(requirement_id=requirement_id)
+    requirement_results = Requirement.objects.filter(is_deleted=False)
+    requirement_results = get_object_or_404(requirement_results, requirement_id=requirement_id)
 
     # Load template
     t = loader.get_template("NearBeach/requirements/requirement_information.html")

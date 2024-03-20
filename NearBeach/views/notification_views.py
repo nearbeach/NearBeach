@@ -57,8 +57,12 @@ def notification_information(request, notification_id):
     # Get template
     t = loader.get_template("NearBeach/notifications/notification_information.html")
 
-    # Notification data
-    notification_results = get_object_or_404(Notification, notification_id=notification_id)
+    # Notification data - 404 if does not exist
+    notification_results = Notification.objects.filter(is_deleted=False)
+    notification_results = get_object_or_404(
+        notification_results,
+        notification_id=notification_id,
+    )
 
     # Context
     c = {

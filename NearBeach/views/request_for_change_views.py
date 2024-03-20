@@ -1,4 +1,7 @@
 import json, uuid
+
+from django.shortcuts import get_object_or_404
+
 from NearBeach.forms import (
     NewRequestForChangeForm,
     RfcModuleForm,
@@ -333,7 +336,8 @@ def rfc_information(request, rfc_id, *args, **kwargs):
     :return:
     """
     # If rfc is not in draft mode - send user away
-    rfc_results = RequestForChange.objects.get(rfc_id=rfc_id)
+    rfc_results = RequestForChange.objects.filter(is_deleted=False)
+    rfc_results = get_object_or_404(rfc_results, rfc_id=rfc_id)
     if not rfc_results.rfc_status_id == 1 or kwargs["user_level"] == 1:  # Draft
         return HttpResponseRedirect(reverse("rfc_readonly", args={rfc_id}))
 

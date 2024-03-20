@@ -1222,6 +1222,11 @@ def remove_customer(request, destination, location_id, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    # Special case - when organisation we will implement differently
+    if destination == "organisation":
+        # DELETE HERE
+        return
+
     update_object_assignment = ObjectAssignment.objects.filter(
         customer_id=form.cleaned_data["customer_id"],
     )

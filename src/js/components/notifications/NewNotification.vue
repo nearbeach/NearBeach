@@ -197,6 +197,13 @@ export default {
 			this.endDateModel = new Date(data.end_date);
 		},
 	},
+	mounted() {
+		//Update user level
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: 4,
+		});
+	},
 }
 
 </script>

@@ -1,6 +1,7 @@
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.db.models import F
+from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.serializers.json import DjangoJSONEncoder
@@ -135,7 +136,8 @@ def project_information(request, project_id, *args, **kwargs):
     t = loader.get_template("NearBeach/projects/project_information.html")
 
     # Get data
-    project_results = Project.objects.get(project_id=project_id)
+    project_results = Project.objects.filter(is_deleted=False)
+    project_results = get_object_or_404(project_results, project_id=project_id)
     user_level = kwargs["user_level"]
     project_is_closed = project_results.project_status.project_higher_order_status == "Closed"
 

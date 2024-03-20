@@ -46,6 +46,10 @@ def diagnostic_information(request):
     allowed_hosts = settings.ALLOWED_HOSTS
     csrf_trusted_urls = getattr(settings, "CSRF_TRUSTED_URLS", [])
 
+    # Try and get the attributes, with a default of "". If it is "" means it has not been setup correctly.
+    smtp_email_host = not getattr(settings, "EMAIL_HOST", None) == None
+    smtp_email_host_user = not getattr(settings, "EMAIL_HOST_USER", None) == None
+
     c = {
         "allowed_hosts": allowed_hosts,
         "aws_access_key_id": F"{hasattr(settings, 'AWS_ACCESS_KEY_ID')}".lower(),
@@ -55,8 +59,8 @@ def diagnostic_information(request):
         "azure_storage_connection_string": F"{hasattr(settings, 'AZURE_STORAGE_CONNECTION_STRING')}".lower(),
         "azure_storage_container_name": F"{hasattr(settings, 'AZURE_STORAGE_CONTAINER_NAME')}".lower(),
         "csrf_trusted_urls": csrf_trusted_urls,
-        "smtp_email_host": F"{hasattr(settings, 'SMTP_EMAIL_HOST')}".lower(),
-        "smtp_email_host_user": F"{hasattr(settings, 'SMTP_EMAIL_HOST_USER')}".lower(),
+        "smtp_email_host": F"{smtp_email_host}".lower(),
+        "smtp_email_host_user": F"{smtp_email_host_user}".lower(),
         "theme": get_theme(request),
     }
 

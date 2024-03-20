@@ -1,4 +1,7 @@
 import json
+
+from django.shortcuts import get_object_or_404
+
 from NearBeach.models import (
     KanbanColumn,
     KanbanLevel,
@@ -157,7 +160,8 @@ def fix_card_ordering(request, *args, **kwargs):
 # Internal function
 def get_context(kanban_board_id):
     # Get the kanban data
-    kanban_board_results = KanbanBoard.objects.get(kanban_board_id=kanban_board_id)
+    kanban_board_results = KanbanBoard.objects.filter(is_deleted=False)
+    kanban_board_results = get_object_or_404(kanban_board_results, kanban_board_id=kanban_board_id)
 
     column_results = KanbanColumn.objects.filter(
         is_deleted=False,

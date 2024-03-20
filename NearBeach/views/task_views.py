@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404
 from django.template import loader
 from django.urls import reverse
 from django.db.models import F
@@ -134,7 +135,8 @@ def task_information(request, task_id, *args, **kwargs):
     t = loader.get_template("NearBeach/tasks/task_information.html")
 
     # Get Data
-    task_results = Task.objects.get(task_id=task_id)
+    task_results = Task.objects.filter(is_deleted=False)
+    task_results = get_object_or_404(task_results, task_id=task_id)
     task_status = task_results.task_status
     task_is_closed = task_results.task_status.task_higher_order_status == "Closed"
 

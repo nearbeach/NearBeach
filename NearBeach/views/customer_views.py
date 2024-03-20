@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 
 from NearBeach.decorators.check_user_permissions.customer_permissions import check_user_customer_permissions
 from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
-from NearBeach.models import Customer, ListOfTitle, Organisation
+from NearBeach.models import Customer, ListOfTitle, Organisation, ObjectAssignment
 from NearBeach.views.document_views import handle_document_permissions
 from NearBeach.views.theme_views import get_theme
 
@@ -47,6 +47,30 @@ def customer_information(request, customer_id, *args, **kwargs):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_customer_permissions(min_permission_level=4)
+def customer_information_delete(request, customer_id, *args, **kwargs):
+    """
+    Delete the customer
+    """
+    Customer.objects.filter(
+        customer_id=customer_id
+    ).update(
+        is_deleted=True,
+    )
+
+    # Delete any object association with this customer
+    ObjectAssignment.objects.filter(
+        is_deleted=False,
+        customer_id=customer_id,
+    ).update(
+        is_deleted=True
+    )
+
+    return HttpResponse("")
 
 
 @require_http_methods(["POST"])

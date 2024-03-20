@@ -228,6 +228,13 @@ export default {
 			});
 		},
 	},
+	mounted() {
+		//Update user level
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: 4,
+		});
+	},
 }
 
 </script>
