@@ -24,6 +24,8 @@ from NearBeach.decorators.check_user_permissions.sprint_permissions import (
     check_sprint_permissions_with_destination,
 )
 
+from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
+
 LOOKUP_FUNCS = {
     "project": lookup_project,
     "task": lookup_task,
@@ -129,7 +131,7 @@ def get_assigned_sprints(destination, location_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_sprint_permissions_with_destination(1)
+@check_user_generic_permissions(min_permission_level=1)
 def list_assigned_sprints(request, destination, location_id, *args, **kwargs):
     sprint_results = get_assigned_sprints(destination, location_id)
     return JsonResponse(json.loads(sprint_results), safe=False)

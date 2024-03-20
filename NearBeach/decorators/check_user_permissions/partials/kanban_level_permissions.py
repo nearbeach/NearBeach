@@ -1,16 +1,16 @@
-from NearBeach.models import Group, KanbanCard, ObjectAssignment, UserGroup
+from NearBeach.models import Group, KanbanLevel, ObjectAssignment, UserGroup
 from django.db.models import Max, Q
 
 
 # Internal Function
-def kanban_board_permissions(request, kwargs):
+def kanban_level_permissions(request, kwargs):
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
         username=request.user,
     )
 
-    if "kanban_board_id" in kwargs:
+    if len(kwargs) > 0:
         # Determine if there are any cross over with user groups and object_lookup groups
         group_results = Group.objects.filter(
             Q(
@@ -18,7 +18,9 @@ def kanban_board_permissions(request, kwargs):
                 # The object_lookup groups
                 group_id__in=ObjectAssignment.objects.filter(
                     is_deleted=False,
-                    kanban_board_id=kwargs["kanban_board_id"]
+                    kanban_board_id__in=KanbanLevel.objects.filter(
+                        kanban_level_id=kwargs["kanban_level_id"],
+                    ).values("kanban_board_id"),
                 ).values("group_id"),
             )
             & Q(group_id__in=user_group_results.values("group_id"))

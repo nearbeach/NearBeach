@@ -5,6 +5,8 @@ from .partials.change_task_permissions import change_task_permissions
 from .partials.generic_permissions import generic_permissions
 from .partials.kanban_board_permissions import kanban_board_permissions
 from .partials.kanban_card_permissions import kanban_card_permissions
+from .partials.kanban_column_permissions import kanban_column_permissions
+from .partials.kanban_level_permissions import kanban_level_permissions
 from .partials.request_for_change_permissions import request_for_change_permissions
 from .partials.requirement_permissions import requirement_permissions
 from .partials.requirement_item_permissions import requirement_item_permissions
@@ -21,6 +23,8 @@ FUNCTION_DICT = {
     "kanban": kanban_board_permissions,
     "kanban_board": kanban_board_permissions,
     "kanban_card": kanban_card_permissions,
+    "kanban_column": kanban_column_permissions,
+    "kanban_level": kanban_level_permissions,
     "request_for_change": request_for_change_permissions,
     "requirement": requirement_permissions,
     "requirement_item": requirement_item_permissions,
@@ -57,7 +61,17 @@ def check_user_generic_permissions(min_permission_level):
             else:
                 destination = args[0]
 
-            passes, user_level = generic_permissions(request, destination, kwargs)
+            # If sub object, use partials
+            if destination == "kanban_card":
+                # Setup kwargs to have kanban_card_id
+                kwargs["kanban_card_id"] = kwargs["location_id"]
+                passes, user_level = kanban_card_permissions(request, kwargs)
+            elif destination == "requirement_item":
+                # Setup kwargs to have requirement item id
+                kwargs["requirement_item_id"] = kwargs["location_id"]
+                passes, user_level = requirement_item_permissions(request, kwargs)
+            else:
+                passes, user_level = generic_permissions(request, destination, kwargs)
 
             if not passes:
                 raise PermissionDenied

@@ -9,7 +9,7 @@ from NearBeach.views.tools.internal_functions import KanbanCard
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_board")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_level")
 def edit_level(request, kanban_level_id, *args, **kwargs):
     """
     Edits/Updates a kanban level

@@ -14,7 +14,7 @@ from NearBeach.views.tools.internal_functions import KanbanCard
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_board")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_column")
 def edit_column(request, kanban_column_id, *args, **kwargs):
     """
     Edit the column data for a kanban board
