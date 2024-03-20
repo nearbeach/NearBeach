@@ -179,3 +179,11 @@ if "MAX_FILE_SIZE_UPLOAD" in os.environ:
 # Requested in Issue-533
 if "OVERRIDE_AUTH_USER_MODEL" in os.environ:
     AUTH_USER_MODEL = os.getenv("OVERRIDE_AUTH_USER_MODEL")
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = os.getenv('SMTP_EMAIL_HOST')
+EMAIL_PORT = os.getenv('SMTP_EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('SMTP_EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('SMTP_EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

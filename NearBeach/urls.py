@@ -100,6 +100,11 @@ urlpatterns = [
         name="customer_information",
     ),
     path(
+        "customer_information/<int:customer_id>/delete/",
+        customer_views.customer_information_delete,
+        name="customer_information_delete",
+    ),
+    path(
         "customer_information/<int:customer_id>/get_profile_picture/",
         customer_views.get_profile_picture,
         name="customer_get_profile_image",

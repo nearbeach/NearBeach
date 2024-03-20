@@ -93,8 +93,14 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("customer_id", customer_id);
 
+			//Depending on the destination, depends on the URL
+			let url = `${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_customer/`
+			if (this.destination === "organisation") {
+				url = `${this.rootUrl}customer_information/${this.locationId}/delete/`
+			}
+
 			this.axios.post(
-				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_customer/`,
+				url,
 				data_to_send,
 			).then(() => {
 				//Filter out the delete customer
