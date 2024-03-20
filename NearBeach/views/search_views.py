@@ -416,7 +416,9 @@ def search_group_data(request):
 def search_notification(request):
     t = loader.get_template("NearBeach/search/search_notifications.html")
 
-    notification_results = Notification.objects.filter()
+    notification_results = Notification.objects.filter(
+        is_deleted=False
+    )
 
     c = {
         "need_tinymce": False,
@@ -440,7 +442,9 @@ def search_notification_data(request):
         return HttpResponseBadRequest(search_form.errors)
 
     # Get the base group results
-    notification_results = Notification.objects.filter()
+    notification_results = Notification.objects.filter(
+        is_deleted=False
+    )
 
     # Loop through the search results
     for split_row in search_form.cleaned_data["search"].split(" "):
