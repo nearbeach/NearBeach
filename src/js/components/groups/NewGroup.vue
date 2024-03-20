@@ -121,7 +121,7 @@ export default {
 		},
 	},
 	watch: {
-		groupNameModel() {
+		groupNameModel(new_value) {
 			// Tell user that we are searching for the group name
 			this.checkingGroupName = true;
 
@@ -132,7 +132,7 @@ export default {
 			}
 
 			//Setup timer if there are 3 characters or more
-			if (this.searchModel.length >= 3) {
+			if (new_value.length >= 3) {
 				//Start the potential search
 				this.searchTimeout = setTimeout(() => {
 					this.checkGroupName();
