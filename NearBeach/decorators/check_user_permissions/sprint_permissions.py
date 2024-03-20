@@ -72,8 +72,10 @@ def check_sprint_permission_with_sprint(min_permission_level):
                 return func(request, *args, **kwargs, user_level=4)
 
             # Get the sprint from the id
-            if len(args) == 0:
+            if "sprint_id" in kwargs:
                 sprint_id = kwargs["sprint_id"]
+            elif "location_id" in kwargs:
+                sprint_id = kwargs["location_id"]
             else:
                 sprint_id = args[0]
 
