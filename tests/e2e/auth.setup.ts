@@ -16,6 +16,7 @@ type credentialsType = {
 const credentials : credentialsType[] = [
 	{ username: 'admin', password: 'Test1234$', authFile: 'tests/.auth/admin.json' },
 	{ username: 'dark_admin', password: 'Test1234$', authFile: 'tests/.auth/dark_admin.json' },
+	{ username: 'team_leader', password: 'Test1234$', authFile: 'tests/.auth/team_leader.json' },
 ]
 
 
