@@ -230,8 +230,8 @@ def get_sprint_search_data(search_form, request):
 
     # Only include opened/current results
     if not search_form.cleaned_data["include_closed"]:
-        sprint_results = sprint_results.filter(
-            sprint_status="Current",
+        sprint_results = sprint_results.exclude(
+            sprint_status="Finished"
         )
 
     # Check to see if we are filtering any names

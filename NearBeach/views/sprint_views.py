@@ -97,7 +97,7 @@ def delete_sprint(request, sprint_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_sprint_permission_with_sprint(2)
-def finish_sprint(request, sprint_id):
+def finish_sprint(request, sprint_id, *args, **kwargs):
     Sprint.objects.filter(
         sprint_id=sprint_id,
         sprint_status="Current",
