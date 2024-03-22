@@ -52,6 +52,8 @@ const page_array : PageArrayType[] = [
     {test:'Dark Admin - RFC Information 1',url :'http://localhost:8000/rfc_information/1/',screenshot_path:'./test-results/shakeout/dark-admin/RFC Information.jpg'},
     {test:'Dark Admin - Search',url :'http://localhost:8000/search/',screenshot_path:'./test-results/shakeout/dark-admin/Search.jpg'},
     {test:'Dark Admin - Search Notifications',url :'http://localhost:8000/search/notification/',screenshot_path:'./test-results/shakeout/dark-admin/Search Notifications.jpg'},
+    {test:'Dark Admin - Search Sprint',url :'http://localhost:8000/search/sprint/',screenshot_path:'./test-results/shakeout/team-leader/Search Sprint.jpg'},
+    {test:'Dark Admin - Sprint Information',url :'http://localhost:8000/sprint_information/1/',screenshot_path:'./test-results/shakeout/team-leader/Sprint Information 2.jpg'},
     {test:'Dark Admin - Task Information 1',url :'http://localhost:8000/task_information/1/',screenshot_path:'./test-results/shakeout/dark-admin/Task Information.jpg'},
     {test:'Dark Admin - User Information 1',url :'http://localhost:8000/user_information/1/',screenshot_path:'./test-results/shakeout/dark-admin/User Information.jpg'},
 ];

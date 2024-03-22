@@ -9,7 +9,7 @@ test.use({
 test("Checking Team Leader Shakeout", async({ page }) : Promise<void> => {
     await page.goto("localhost:8000");
 
-    //Make sure we are on the login page
+    //Make sure we are on the dashboard page
     await expect(page).toHaveTitle("NearBeach Dashboard");
 });
 
@@ -38,6 +38,8 @@ const page_array : PageArrayType[] = [
     {test:'Team Leader - Requirement Item Information 2',url :'http://localhost:8000/requirement_item_information/2/',screenshot_path:'./test-results/shakeout/team-leader/Requirement Item Information.jpg'},
     {test:'Team Leader - RFC Information 2',url :'http://localhost:8000/rfc_information/2/',screenshot_path:'./test-results/shakeout/team-leader/RFC Information.jpg'},
     {test:'Team Leader - Search',url :'http://localhost:8000/search/',screenshot_path:'./test-results/shakeout/team-leader/Search.jpg'},
+    {test:'Team Leader - Search Sprint',url :'http://localhost:8000/search/sprint/',screenshot_path:'./test-results/shakeout/team-leader/Search Sprint.jpg'},
+    {test:'Team Leader - Sprint Information',url :'http://localhost:8000/sprint_information/2/',screenshot_path:'./test-results/shakeout/team-leader/Sprint Information 2.jpg'},
     {test:'Team Leader - Task Information 2',url :'http://localhost:8000/task_information/2/',screenshot_path:'./test-results/shakeout/team-leader/Task Information.jpg'},
 ];
 

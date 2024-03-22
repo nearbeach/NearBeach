@@ -47,23 +47,14 @@ const page_array = [
     {test:'Admin - RFC Information 1',url :'http://localhost:8000/rfc_information/1/', page_title:'RFC 1',page_heading:'Request for Change',screenshot_path:'./test-results/shakeout/admin/RFC Information.jpg'},
     {test:'Admin - Search',url :'http://localhost:8000/search/', page_title:'Search',page_heading:'Search',screenshot_path:'./test-results/shakeout/admin/Search.jpg'},
     {test:'Admin - Search Notifications',url :'http://localhost:8000/search/notification/', page_title:'Search Notifications',page_heading:'Search Notifications',screenshot_path:'./test-results/shakeout/admin/Search Notifications.jpg'},
+    {test:'Admin - Search Sprint',url :'http://localhost:8000/search/sprint/', page_title: "Search Sprints", page_heading: "Search Sprints", screenshot_path:'./test-results/shakeout/team-leader/Search Sprint.jpg'},
+    {test:'Admin - Sprint Information',url :'http://localhost:8000/sprint_information/1/', page_title: "Sprint Information 1", page_heading: "Sprint Information", screenshot_path:'./test-results/shakeout/team-leader/Sprint Information 2.jpg'},
     {test:'Admin - Task Information 1',url :'http://localhost:8000/task_information/1/', page_title:'Task Information 1',page_heading:'Task Information',screenshot_path:'./test-results/shakeout/admin/Task Information.jpg'},
     {test:'Admin - User Information 1',url :'http://localhost:8000/user_information/1/', page_title:'User Information 1',page_heading:'User Information',screenshot_path:'./test-results/shakeout/admin/User Information.jpg'},
 ]
 //Loop through page_array
 page_array.forEach((row) => {
     test(row.test, async({ page }) : Promise<void> => {
-        await page.goto(row.url);
-
-        //Make sure we are on the correct page using the title
-        await expect(page).toHaveTitle(row.page_title);
-
-        //Make sure the VueJS loaded
-        await expect(page.getByRole(
-            "heading",
-            { name: row.page_heading, exact: true }
-        )).toBeVisible();
-
         //Make sure there are no errors in the console
         page.on(
             "console",
@@ -91,6 +82,18 @@ page_array.forEach((row) => {
                 expect(message.type()).not.toBe("warning");
             }
         );
+
+        await page.goto(row.url);
+
+        //Make sure we are on the correct page using the title
+        await expect(page).toHaveTitle(row.page_title);
+
+        //Make sure the VueJS loaded
+        await expect(page.getByRole(
+            "heading",
+            { name: row.page_heading, exact: true }
+        )).toBeVisible();
+
         //await expect(locator).not.toContainText('error');
         await expect(page.locator("#loader")).toHaveCount(0);
 
