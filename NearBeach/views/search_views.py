@@ -422,6 +422,7 @@ def search_notification(request):
 
     c = {
         "need_tinymce": False,
+        "nearbeach_title": "Search Notifications",
         "notification_results": serializers.serialize("json", notification_results),
         "theme": get_theme(request),
     }

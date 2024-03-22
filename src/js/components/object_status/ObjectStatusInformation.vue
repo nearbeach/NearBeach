@@ -1,7 +1,7 @@
 <template>
 	<div class="card">
 		<div class="card-body">
-			<h1>{{ destination }} Status Editor</h1>
+			<h1>{{ nearbeachTitle }}</h1>
 			<hr>
 
 			<div class="row">
@@ -104,6 +104,10 @@ export default {
 		destination: {
 			type: String,
 			default: "",
+		},
+		nearbeachTitle: {
+			type: String,
+			default: "Status Editor",
 		},
 		objectStatusResults: {
 			type: Array,

@@ -130,7 +130,9 @@ export default {
 	},
 	mounted() {
 		this.$nextTick(() => {
-			this.updateLinkResults();
+			setTimeout(() => {
+				this.updateLinkResults();
+			}, 200);
 		});
 	},
 };

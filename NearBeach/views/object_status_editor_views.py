@@ -35,6 +35,13 @@ OBJECT_OBJECT_LOOKUP = {
     "task": Task,
 }
 
+OBJECT_NAME_LOOKUP = {
+   "requirement_item": "Requirement Item",
+   "requirement": "Requirement",
+   "project": "Project",
+   "task": "Task",
+}
+
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
@@ -139,7 +146,7 @@ def object_status_information(request, destination):
 
     c = {
         "destination": destination,
-        "nearbeach_title": F"{destination} Status Information",
+        "nearbeach_title": F"{OBJECT_NAME_LOOKUP[destination]} Status Editor",
         "need_tinymce": False,
         "object_status_results": json.dumps(list(object_status_results), cls=DjangoJSONEncoder),
         "theme": get_theme(request),
