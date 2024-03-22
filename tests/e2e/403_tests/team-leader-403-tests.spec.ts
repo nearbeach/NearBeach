@@ -58,6 +58,12 @@ page_array.forEach((row : PageArrayType): void => {
                         description: "User should not have any access to page",
                     });
                 }
+                if (data.status() !== 403) {
+                    test.info().annotations.push({
+                        type: "Status not 403",
+                        description: `Url: ${data.url()} || Status: ${data.status()}`,
+                    });
+                }
                 expect.soft(data.ok()).toBeFalsy();
             }
         });
