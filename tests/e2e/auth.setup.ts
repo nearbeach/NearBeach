@@ -17,6 +17,8 @@ const credentials : credentialsType[] = [
 	{ username: 'admin', password: 'Test1234$', authFile: 'tests/.auth/admin.json' },
 	{ username: 'dark_admin', password: 'Test1234$', authFile: 'tests/.auth/dark_admin.json' },
 	{ username: 'team_leader', password: 'Test1234$', authFile: 'tests/.auth/team_leader.json' },
+	{ username: 'team_member', password: 'Test1234$', authFile: 'tests/.auth/team_member.json' },
+	{ username: 'read_only', password: 'Test1234$', authFile: 'tests/.auth/read_only.json' },
 ]
 
 
