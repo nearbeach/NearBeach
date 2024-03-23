@@ -59,6 +59,7 @@ def diagnostic_information(request):
         "azure_storage_connection_string": F"{hasattr(settings, 'AZURE_STORAGE_CONNECTION_STRING')}".lower(),
         "azure_storage_container_name": F"{hasattr(settings, 'AZURE_STORAGE_CONTAINER_NAME')}".lower(),
         "csrf_trusted_urls": csrf_trusted_urls,
+        "nearbeach_title": "Diagnostic Information",
         "smtp_email_host": F"{smtp_email_host}".lower(),
         "smtp_email_host_user": F"{smtp_email_host_user}".lower(),
         "theme": get_theme(request),
