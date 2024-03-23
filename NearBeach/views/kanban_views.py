@@ -455,7 +455,7 @@ def new_kanban(request, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_card")
+@check_specific_object_permissions(min_permission_level=2, object_lookup="kanban_board")
 def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     """Add a new kanban card"""
     kanban_instance = KanbanBoard.objects.get(kanban_board_id=kanban_board_id)
