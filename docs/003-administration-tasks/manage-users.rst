@@ -35,7 +35,7 @@ Assigning Permissions and Groups to Users
 
 7. Scroll to the "User List" section
 
-8. Click on the "Add User" button (currently a bug, should be named "Add Group & Permissions" NB-1169)
+8. Click on the "Add User" button
 
 9. A permission modal will appear. Select the correct permission set and group. Click "Add user" to add the permission sets and groups to the user
 
@@ -63,3 +63,5 @@ Removing User from system
 7. Scroll to the "User List" section
 
 8. Remove all groups and permissions the user has. This will effectively remove them from the system. They will not be able to log into NearBeach
+
+9. Un-tick the "User Active" tick box and then save
