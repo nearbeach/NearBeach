@@ -111,7 +111,6 @@ export default {
 			modal.show();
 		},
 		confirmRemoveSprintFunction(data) {
-			console.log("Data: ", data);
 			//Update data
 			this.confirmRemoveSprint = data;
 

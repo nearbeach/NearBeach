@@ -33,15 +33,22 @@
 			>
 				<Icon
 					v-bind:icon="icons.trashCan"
-					v-on:click="removeCustomer(customer.pk)"
+					v-on:click="confirmRemoveCustomer(customer.pk)"
 				/>
 			</div>
 		</div>
 	</div>
+
+	<confirm-customer-removal
+		v-bind:customer-object="customerObject"
+		v-on:remove_customer="removeCustomer($event)"
+	></confirm-customer-removal>
 </template>
 
 <script>
+import { Modal } from "bootstrap";
 import {Icon} from "@iconify/vue";
+import ConfirmCustomerRemoval from "../wizards/ConfirmCustomerRemove.vue";
 
 //Mixins
 import iconMixin from "../../../mixins/iconMixin";
@@ -52,6 +59,7 @@ import {mapGetters} from "vuex";
 export default {
 	name: "CustomersListModule",
 	components: {
+		ConfirmCustomerRemoval,
 		Icon,
 	},
 	props: {
@@ -76,9 +84,51 @@ export default {
 	},
 	mixins: [iconMixin],
 	data() {
-		return {};
+		return {
+			customerObject: {
+				customer_id: 0,
+				customer_email: "",
+				customer_first_name: "",
+				customer_last_name: "",
+				customer_profile_picture: "",
+			},
+		};
 	},
+	emits: ["remove_customer"],
 	methods: {
+		confirmRemoveCustomer(customer_id) {
+			//Update the customer object
+			const customer_object = this.customerResults.filter((row) => {
+				return parseInt(row.pk) === parseInt(customer_id);
+			});
+
+			if (customer_object.length !== 1) {
+				//Something went wrong. Notify the user and do nothing.
+				this.$store.dispatch("newToast", {
+					header: "Error Deleting Customer",
+					message: "Could not select the correct ID of the customer. Something went wrong",
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+
+				return;
+			}
+
+			//Map the data into a flat pack. As we only require this data
+			this.customerObject = customer_object.map(row => {
+				return {
+					customer_id: row.pk,
+					customer_email: row.fields.customer_email,
+					customer_first_name: row.fields.customer_first_name,
+					customer_last_name: row.fields.customer_last_name,
+					customer_profile_picture: row.fields.customer_profile_picture,
+				};
+			})[0];
+
+			//Show the modal
+			const modal = new Modal(document.getElementById("confirmCustomerRemoveModal"));
+			modal.show();
+		},
 		getCustomerImage(customer) {
 			const image = customer.fields.customer_profile_picture;
 
@@ -89,23 +139,8 @@ export default {
 			return `${this.rootUrl}private/${image}`;
 		},
 		removeCustomer(customer_id) {
-			//Setup data_to_send
-			const data_to_send = new FormData();
-			data_to_send.set("customer_id", customer_id);
-
-			//Depending on the destination, depends on the URL
-			let url = `${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_customer/`
-			if (this.destination === "organisation") {
-				url = `${this.rootUrl}customer_information/${this.locationId}/delete/`
-			}
-
-			this.axios.post(
-				url,
-				data_to_send,
-			).then(() => {
-				//Filter out the delete customer
-				this.$emit("remove_customer", customer_id);
-			})
+			//Notify upstream
+			this.$emit("remove_customer", customer_id);
 		},
 	},
 };

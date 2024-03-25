@@ -32,7 +32,8 @@ def check_group_name(request, *args, **kwargs):
     # Check to see if the group name exists
     group_name_results = Group.objects.filter(
         is_deleted=False,
-        group_name__icontains=form.cleaned_data["search"],
+        # group_name__icontains=form.cleaned_data["search"],
+        group_name__iexact=form.cleaned_data["search"],
     )
 
     # Send back data

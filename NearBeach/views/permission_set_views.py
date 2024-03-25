@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
-from NearBeach.forms import NewPermissionSetForm, PermissionSetForm
+from NearBeach.forms import NewPermissionSetForm, PermissionSetForm, SearchForm
 from NearBeach.models import (
     PermissionSet,
     PERMISSION_BOOLEAN,
@@ -16,6 +16,26 @@ from NearBeach.views.tools.internal_functions import get_user_permissions
 from NearBeach.views.theme_views import get_theme
 
 import json
+
+
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(3, "administration_create_permission_set")
+def check_permission_set_name(request, *args, **kwargs):
+    form = SearchForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Check to see if the permission set name exists
+    permission_set_results = PermissionSet.objects.filter(
+        is_deleted=False,
+        permission_set_name__iexact=form.cleaned_data["search"],
+    )
+
+    # Send back data
+    return HttpResponse(
+        serializers.serialize("json", permission_set_results),
+        content_type="application/json",
+    )
 
 
 @login_required(login_url="login", redirect_field_name="")

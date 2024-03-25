@@ -340,6 +340,15 @@ export default {
 	mixins: [getThemeMixin],
 	methods: {
 		saveChanges() {
+			//Tell user we are updating this permission set
+			this.$store.dispatch("newToast", {
+				header: "Updating Permission Set",
+				message: "Please wait, whilst we update the permission set",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "update_permission_set",
+			});
+
 			//Setup the data we want to send to the backend
 			const data_to_send = new FormData();
 			data_to_send.set(
@@ -388,13 +397,20 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}permission_set_information/${this.permissionSetResults[0].pk}/save/`,
 				data_to_send
-			).then((response) => {
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "Updated Permission Set",
+					message: "We have updated your permission set successfully",
+					extra_classes: "bg-success",
+					unique_type: "update_permission_set",
+				});
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error saving changes",
 					message: `Sorry, we could not save your changes. Error -> ${error}`,
 					extra_classes: "bg-danger",
 					delay: 0,
+					unique_type: "update_permission_set",
 				});
 			});
 		},

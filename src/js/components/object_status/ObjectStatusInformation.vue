@@ -2,6 +2,10 @@
 	<div class="card">
 		<div class="card-body">
 			<h1>{{ nearbeachTitle }}</h1>
+			<br/>
+			<a v-bind:href="`${this.rootUrl}object_status_list/`">
+				Go back to object status list
+			</a>
 			<hr>
 
 			<div class="row">
