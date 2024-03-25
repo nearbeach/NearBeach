@@ -377,6 +377,11 @@ urlpatterns = [
         permission_set_views.permission_set_information_save,
         name="permission_set_information_save",
     ),
+    path(
+        "permission_set_information/check_permission_set_name/",
+        permission_set_views.check_permission_set_name,
+        name="check_permission_set_name",
+    ),
     # Private files
     path(
         "private/<uuid:document_key>/",
