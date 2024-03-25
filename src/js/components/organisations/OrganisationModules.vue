@@ -125,7 +125,8 @@
 							organisation.
 						</p>
 						<customers-list-module
-							v-bind:customer-results="customerResults"
+							v-bind:customer-results="localCustomerResults"
+							v-on:remove_customer="removeCustomer($event)"
 						></customers-list-module>
 
 						<!-- ADD CUSTOMER BUTTON -->
@@ -281,11 +282,17 @@ export default {
 			default: 0,
 		},
 	},
+	data() {
+		return {
+			localCustomerResults: this.customerResults,
+		}
+	},
 	computed: {
 		// ...mapGetters({
 		//     userLevel: 'getUserLevel',
 		// }),
 	},
+	emits: ["remove_customer"],
 	mixins: [getThemeMixin, iconMixin],
 	methods: {
 		addNewContact() {
@@ -293,6 +300,11 @@ export default {
 				document.getElementById("addCustomerModal")
 			);
 			new_customer_modal.show();
+		},
+		removeCustomer(customer_id) {
+			this.localCustomerResults = this.localCustomerResults.filter((row) => {
+				return parseInt(row.pk) !== parseInt(customer_id);
+			});
 		},
 	},
 	async beforeMount() {

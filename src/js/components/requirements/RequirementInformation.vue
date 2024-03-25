@@ -245,11 +245,9 @@ export default {
 	},
 	watch: {
 		async statusModel() {
-			console.log("Condition 1: ", !this.requirementIsClosed)
 			//Escape condition 1 - if the project is NOT already closed
 			if (!this.requirementIsClosed) return;
 
-			console.log("Condition 2: ", this.checkStatusIsClosed());
 			//Escape condition 2 - if the NEW status is closed
 			if (this.checkStatusIsClosed()) return;
 

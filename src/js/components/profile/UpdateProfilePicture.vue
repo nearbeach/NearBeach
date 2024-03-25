@@ -91,7 +91,6 @@ export default {
 			}
 		},
 		showErrorToast(data) {
-			console.log("Data: ", data);
 			this.$store.dispatch("newToast", {
 				header: "Can not update profile picture",
 				message: data.event.target.responseText,
