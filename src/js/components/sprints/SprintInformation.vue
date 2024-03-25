@@ -77,12 +77,14 @@
 						<button
 							v-on:click="showAddObjectWizard"
 							class="btn btn-success"
+							v-if="sprintResults[0].sprint_status !== 'Finished'"
 						>
 							Add Object Wizard
 						</button>
 						<button
 							v-on:click="confirmDeleteSprint"
 							class="btn btn-danger"
+							v-if="sprintResults[0].sprint_status !== 'Finished'"
 						>
 							Delete
 						</button>
