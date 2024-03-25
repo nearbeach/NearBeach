@@ -142,7 +142,7 @@ export default {
 	},
 	methods: {
 		addNewGroup() {
-			//Check to make sure everythign is validated
+			//Check to make sure everything is validated
 			this.v$.$touch();
 
 			if (this.v$.$invalid || !this.uniqueGroupName) {
