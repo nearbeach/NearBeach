@@ -212,7 +212,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Sort Order",
 				message: "Please wait, as we update the sort order",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "sort_order",
 			});

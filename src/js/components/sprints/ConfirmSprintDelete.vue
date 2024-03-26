@@ -78,7 +78,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Deleting Sprint",
 				message: "Please wait, whilst we delete the sprint",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "delete_sprint",
 			});
@@ -91,7 +91,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Error Deleting Sprint",
 					message: `Sorry, could not delete the sprint. Error -> ${error}`,
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 					unique_type: "delete_sprint",
 				});

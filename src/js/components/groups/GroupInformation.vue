@@ -111,7 +111,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updated Group",
 				message: "Updated Group. Please wait.",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "update_group_leader",
 			});

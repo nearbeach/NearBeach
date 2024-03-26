@@ -212,7 +212,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Please check validation",
 					message: "Sorry, but can you please fix all validation issues.",
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 
@@ -239,7 +239,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Organisation",
 				message: "Please wait whilst we update organisation",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "save",
 			});

@@ -57,7 +57,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Required By",
 				message: "Please wait, we are updating required by",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "required-save",
 			});

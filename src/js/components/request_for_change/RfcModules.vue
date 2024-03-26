@@ -368,7 +368,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: `Updating ${object}`,
 				message: `Currently updating ${object} - please wait`,
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "save_risk",
 			})
@@ -401,7 +401,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Please check validation",
 					message: "Sorry, but can you please fix all validation issues.",
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 
@@ -425,7 +425,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Please check validation",
 					message: "Sorry, but can you please fix all validation issues.",
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 
@@ -452,7 +452,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Please check validation",
 					message: "Sorry, but can you please fix all validation issues.",
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 
@@ -493,7 +493,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Please check validation",
 					message: "Sorry, but can you please fix all validation issues.",
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 

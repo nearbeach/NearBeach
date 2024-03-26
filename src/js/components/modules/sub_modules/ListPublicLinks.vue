@@ -144,7 +144,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Creating New Toast",
 				message: "Please wait whilst we create the toast",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "create_public_link",
 			});
@@ -182,7 +182,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Deleting Public Link",
 				message: "Deleting Public Link",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "public_link_delete",
 			})
@@ -260,7 +260,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Active Status for Private Link",
 				message: "Please wait - we are updating the status",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: `is_active-${uuid}`,
 			});

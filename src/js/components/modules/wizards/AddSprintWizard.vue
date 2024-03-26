@@ -118,7 +118,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Adding object to sprint",
 				message: "Adding current object to sprint, please wait.",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "add_sprint_wizard",
 			});
@@ -170,7 +170,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Error fetching Potential Sprint List",
 					message: `Can not retrieve sprint list. ${error}`,
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 			});

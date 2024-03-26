@@ -356,7 +356,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Error Saving",
 					message: "Please fill out the form appropriately",
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 					unique_type: "saving",
 				});
@@ -369,7 +369,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Saving Requirement Item",
 				message: "We are saving your requirement item. Please wait",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "saving",
 			});

@@ -220,7 +220,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "New Tag",
 				message: "Creating new Tag - please wait",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "save_tag",
 			});
@@ -275,7 +275,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Tag",
 				message: "Updating Tag - please wait",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "save_tag",
 			});

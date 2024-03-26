@@ -93,7 +93,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Error getting search results",
 					message: "Sorry, we could not retrieve your search results",
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 			});

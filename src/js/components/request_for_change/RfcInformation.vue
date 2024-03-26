@@ -554,7 +554,7 @@ export default {
 					header: "Can not update status of RFC",
 					message: "Sadly we had issues trying to update the status for the RFC.",
 					delay: 0,
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 				})
 			});
 		},
@@ -576,7 +576,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Please check validation",
 					message: "Sorry, but can you please fix all validation issues.",
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 
@@ -619,7 +619,7 @@ export default {
 					header: "Can not save RFC",
 					message: `Sadly we've had the following error ${error}`,
 					delay: 0,
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 				})
 			});
 		},

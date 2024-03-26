@@ -263,7 +263,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Current Card",
 				message: "Please wait - we are updating the card's information",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				unique_type: "update-card",
 				delay: 0,
 			});

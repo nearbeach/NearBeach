@@ -99,7 +99,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Description",
 				message: "Updating Description, please wait",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "save_description",
 			});
@@ -121,7 +121,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Failed Updating Description",
 					message: `Sorry - description failed to update. Error -> ${error}`,
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 					unique_type: "save_description",
 				});

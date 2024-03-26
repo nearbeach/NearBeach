@@ -62,7 +62,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Downtime flag",
 				message: "Please wait, we are updating the downtime flag",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "downtime-save",
 			});

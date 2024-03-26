@@ -68,7 +68,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Deleting Note",
 				message: "Currently deleting note",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "delete_note",
 			});
