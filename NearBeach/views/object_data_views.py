@@ -928,7 +928,7 @@ def group_and_user_data(request, destination, location_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_generic_permissions(min_permission_level=1)
+@check_specific_object_permissions(min_permission_level=1, object_lookup="request_for_change")
 def lead_user_list(request, *args, **kwargs):
     """
     :param request:
