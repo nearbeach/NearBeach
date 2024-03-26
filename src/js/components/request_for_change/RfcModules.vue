@@ -363,11 +363,11 @@ export default {
 		}),
 	},
 	methods: {
-		sendData(data_to_send, url) {
+		sendData(data_to_send, url, object) {
 			//Notify user of updating
 			this.$store.dispatch("newToast", {
-				header: "Updating Risk",
-				message: "Currently updating risk - please wait",
+				header: `Updating ${object}`,
+				message: `Currently updating ${object} - please wait`,
 				extra_classes: "bg-warning",
 				delay: 0,
 				unique_type: "save_risk",
@@ -380,15 +380,15 @@ export default {
 			).then(() => {
 				//Notify user of success update
 				this.$store.dispatch("newToast", {
-					header: "Successfully Updated Risk",
-					message: "Risk is now updated",
+					header: `Successfully Updated ${object}`,
+					message: `${object} is now updated`,
 					extra_classes: "bg-success",
 					unique_type: "save_risk",
 				});
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
-					header: "Updating Risk Failed",
-					message: `Sorry, but risk has failed to update. Error -> ${error}`,
+					header: `Updating ${object} Failed`,
+					message: `Sorry, but ${object} has failed to update. Error -> ${error}`,
 					extra_classes: "bg-danger",
 					delay: 0,
 					unique_type: "save_risk",
@@ -415,7 +415,8 @@ export default {
 			//Send data
 			this.sendData(
 				data_to_send,
-				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/backout/`
+				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/backout/`,
+				"Back-out plan"
 			);
 		},
 		updateImplementation() {
@@ -441,7 +442,8 @@ export default {
 			//Send data
 			this.sendData(
 				data_to_send,
-				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/implementation/`
+				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/implementation/`,
+				"Implementation"
 			);
 		},
 		updateRisk() {
@@ -477,7 +479,8 @@ export default {
 			//Send the data
 			this.sendData(
 				data_to_send,
-				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/risk/`
+				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/risk/`,
+				"Risk"
 			);
 		},
 		updateValidation(data) {
@@ -504,7 +507,8 @@ export default {
 			//Send data
 			this.sendData(
 				data_to_send,
-				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/test/`
+				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/test/`,
+				"Test Plan"
 			);
 		},
 		updateValues(data) {
