@@ -166,3 +166,20 @@
         background: linear-gradient(90deg, rgba(212, 212, 212, 1) 0%, rgb(255, 255, 255) 35%);
     }
 }
+
+.card-detail--buttons {
+    display: flex;
+    justify-content: space-between;
+
+    button:first-child {
+        display: none;
+    }
+
+    @media screen and (min-width: 767px) {
+        display: block;
+
+        button:first-child {
+            display: inline;
+        }
+    }
+}
