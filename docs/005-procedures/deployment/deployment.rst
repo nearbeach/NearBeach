@@ -34,27 +34,59 @@ Deployment Process 1
     Please make sure you are in a terminal, that is in the root folder of the project.
 
 #. Make sure you are on the develop branch, and all required features have been finished. i.e. merged into the develop
-branch.
+   branch.
 
 #. Run audit tools and fix any packages
 
-#. Compile the JavaScript into production mode; `npm run prod`
+   .. code-block:: console
 
-#. Implement the End to End tests using playwright; `npm run e2e`. Please note - you'll need a default instance of
-NearBeach running with the fixture "NearBeach_basic_setup.json".
+      npm audit
+
+
+#. Compile the JavaScript into production mode
+
+   .. code-block:: console
+
+      npm run prod
+
+
+#. Implement the End to End tests using playwright
+
+   .. code-block:: console
+
+      npm run e2e
+
+
+
+   Please note - you'll need a default instance of NearBeach running with the fixture "NearBeach_basic_setup.json".
 
 #. Check all screenshots from the End to End tests
 
 #. Make sure the development branch has been pushed into origin. This will include the compilation of the production
-JavaScript
+   JavaScript
 
 #. Check CircleCI's latest build status for the development branch. All tests should be passing. If there are any tests
-that have failed, they'll need to be fixed before deployment.
+   that have failed, they'll need to be fixed before deployment.
 
-#. Using gitflow, we'll create a release. `git flow release start <<version_number>>`. The version number should follow
-the format x.y.z. More information can be found at https://semver.org/
+#. Using gitflow, we'll create a release.
 
-#. Using gitflow, we'll finish the release. `git flow release finish <<version_number>>`
+   .. code-block:: console
+
+      git flow release start <<version_number>>
+
+
+   The version number should follow the format x.y.z. More information can be found at https://semver.org/
+
+#. Using gitflow, we'll finish the release.
+
+   .. code-block:: console
+
+      git flow release finish <<version_number>>
+
+
+#. Push both the dev and main branch into the origin.
+
+#. Go to github, and do a release in github. Currently the release from the console does not trigger the github actions.
 
 #. Check the github actions for NearBeach, to see if the workflows are running correctly.
 
@@ -76,7 +108,7 @@ everyone to use the newest versions.
 #. Appropriately fill out the tag using the version x.y.z - for more information please read https://semver.org/
 
 #. Fill out the rest of the information as approprately as possible. Explain why there is a release, i.e. security patch
-for external library
+   for external library
 
 #. Make sure the target is "main"
 
