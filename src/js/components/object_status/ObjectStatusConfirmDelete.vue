@@ -135,7 +135,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Removing Status",
 				message: "Please wait whilst we remove the status",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "remove_status",
 			});

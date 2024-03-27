@@ -250,7 +250,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Please check validation",
 					message: "Sorry, but can you please fix all validation issues.",
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 
@@ -290,7 +290,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Issue Creating new Kanban board",
 					message: `Issues creating new kanban board -> Error ${error}`,
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 			});
@@ -317,7 +317,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Issue checking Kanban board name",
 					message: `Issues checking kanban board name -> Error ${error}`,
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 			});

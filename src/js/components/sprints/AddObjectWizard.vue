@@ -190,7 +190,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Adding objects to Sprint",
 				message: "Currently adding object to sprint. Please wait",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "add_objects_to_sprint",
 			});

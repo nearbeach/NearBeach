@@ -91,7 +91,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Status",
 				message: "Updating Status. Please wait.",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "send_status",
 			});

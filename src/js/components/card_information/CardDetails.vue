@@ -91,7 +91,7 @@
 			class="row"
 			v-if="userLevel > 1"
 		>
-			<div class="col-md-12">
+			<div class="col-md-12 card-detail--buttons">
 				<button
 					class="btn btn-warning"
 					v-on:click="closeModal"

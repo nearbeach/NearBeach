@@ -124,7 +124,7 @@ export default {
 				header: "Creating New Toast",
 				message: "Please wait - we are creating the new toast. It will automatically navigate you to the " +
 							"new sprint information page",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "create_sprint",
 			});

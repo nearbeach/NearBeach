@@ -344,7 +344,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Permission Set",
 				message: "Please wait, whilst we update the permission set",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "update_permission_set",
 			});

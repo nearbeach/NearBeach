@@ -158,7 +158,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Status",
 				message: "Please wait whilst we update the status",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "update_status",
 			});
@@ -205,7 +205,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Creating New Status",
 				message: "Please wait whilst we create new status",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "create_status",
 			});

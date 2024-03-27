@@ -248,7 +248,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Search Failed",
 					message: `Sorry, the search for bug client has failed. Errors -> ${error}`,
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 			});
@@ -290,7 +290,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Submit Bug Failed",
 					message: `Sorry, the submitting the bug failed. Errors -> ${error}`,
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 			});

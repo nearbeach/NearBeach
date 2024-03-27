@@ -304,7 +304,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Please check validation",
 					message: "Sorry, but can you please fix all validation issues.",
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 
@@ -316,7 +316,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Requirement Currently Saving",
 				message: "Please wait whilst we save the requirement",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				unique_type: "save",
 				delay: 0,
 			});

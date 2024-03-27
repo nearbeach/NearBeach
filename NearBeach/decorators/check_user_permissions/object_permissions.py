@@ -16,6 +16,8 @@ from .partials.project_permissions import project_permissions
 from .partials.tag_permissions import tag_permissions
 from .partials.task_permissions import task_permissions
 
+from NearBeach.views.error_views import error_403
+
 
 FUNCTION_DICT = {
     "change_task": change_task_permissions,
@@ -118,6 +120,8 @@ def check_specific_object_permissions(min_permission_level, object_lookup):
 
             if not passes:
                 raise PermissionDenied
+                raise error_403
+                # HttpResponseRedirect()HttpResponseRedirect
 
             if user_level >= min_permission_level:
                 # Everything is fine - continue on

@@ -307,7 +307,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Project Currently Saving",
 				message: "Please wait whilst we save the project",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				unique_type: "save",
 				delay: 0,
 			});

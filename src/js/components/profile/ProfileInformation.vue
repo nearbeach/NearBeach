@@ -188,7 +188,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Please check validation",
 					message: "Sorry, but can you please fix all validation issues.",
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 
@@ -214,7 +214,7 @@ export default {
 				header: "Currently Updating",
 				message: "Your Profile has been submitted. Please wait",
 				unique_type: "update",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 			});
 

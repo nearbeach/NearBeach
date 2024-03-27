@@ -60,7 +60,7 @@ export default {
 				this.$store.dispatch("newToast", {
 					header: "Error Getting RFC Approvals list",
 					message: `We can not get the RFC Approvals List atm. Error -> ${error}`,
-					extra_classes: "bg-warning",
+					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
 			});

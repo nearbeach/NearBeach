@@ -184,7 +184,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Updating Team Leader Status",
 				message: "Currently updating team leader status. Please wait",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "update_group_leader",
 			});

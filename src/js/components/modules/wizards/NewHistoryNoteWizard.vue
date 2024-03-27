@@ -112,7 +112,7 @@ export default {
 			this.$store.dispatch("newToast", {
 				header: "Submitting new note",
 				message: "Please wait. Submitting new note",
-				extra_classes: "bg-warning",
+				extra_classes: "bg-warning text-dark",
 				delay: 0,
 				unique_type: "submit_note",
 			});
