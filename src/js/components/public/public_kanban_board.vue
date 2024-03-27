@@ -187,6 +187,14 @@ export default {
 	mixins: [
 		getThemeMixin,
 	],
+	created() {
+		window.addEventListener("resize", this.resizeProcedure);
+		window.addEventListener("scroll", this.scrollProcedure);
+	},
+	unmounted() {
+		window.removeEventListener("resize", this.resizeProcedure);
+		window.removeEventListener("scroll", this.scrollProcedure);
+	},
 	methods: {
 		cardClicked(card_id) {
 			//Filter for the card we want
@@ -248,6 +256,49 @@ export default {
 				return condition_1 && condition_2;
 			});
 		},
+		resizeProcedure() {
+			// Get the screen size and the columns width
+			const little_adjustment = 2 * (this.columnResults.length - 1)
+			const columns_width = this.columnResults.length * 400 + little_adjustment;
+			const container_element = document.getElementsByClassName("kanban-container")[0];
+
+			//If container element does not exist just return
+			if (container_element === undefined) return;
+
+			//Get the kanban container width
+			const kanban_container_width = container_element.clientWidth;
+
+			//If the columns width is smaller than the screen size
+			// - we will need to adjust the kanban-level-div to match
+			// that smaller size
+			if (columns_width < kanban_container_width) {
+				//Add in the width restrictions
+				const header_element = document.getElementsByClassName("kanban-edit-text")[0];
+				const elements = document.getElementsByClassName("kanban-level-div");
+
+				//Loop through each element
+				Array.from(elements).forEach((element) => {
+					element.style = `max-width: ${columns_width}px;`;
+				});
+
+				//Adjust the size of the header element
+				header_element.style = `max-width: ${columns_width}px`;
+			} else {
+				//The columns width is greater than the container width.
+				//So we need to use the scroll width of the container
+				const scroll_width = container_element.scrollWidth;
+				const header_element = document.getElementsByClassName("kanban-edit-text")[0];
+				let elements = document.getElementsByClassName("kanban-level-div");
+
+				//Loop through each element
+				Array.from(elements).forEach((element) => {
+					element.style = `width: ${scroll_width}px;`;
+				});
+
+				//Adjust the size of the header element
+				header_element.style = `max-width: ${scroll_width}px`;
+			}
+		},
 		scrollProcedure() {
 			//Make sure the kanban-sticky-row matches the scroll left for the kanban-container
 			const kanban_sticky =
@@ -267,6 +318,11 @@ export default {
 				kanban_sticky.style.display = "";
 			}
 		},
-	}
+	},
+	mounted() {
+		this.$nextTick(() => {
+			this.resizeProcedure();
+		});
+	},
 }
 </script>
