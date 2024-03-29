@@ -378,6 +378,11 @@ urlpatterns = [
         name="permission_set_information",
     ),
     path(
+        "permission_set_information/<int:permission_set_id>/delete/",
+        permission_set_views.permission_set_information_delete,
+        name="permission_set_information_delete",
+    ),
+    path(
         "permission_set_information/<int:permission_set_id>/save/",
         permission_set_views.permission_set_information_save,
         name="permission_set_information_save",
