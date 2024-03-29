@@ -42,21 +42,36 @@
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						<a
-							href="javascript:void(0)"
+						<button
+							class="btn btn-danger"
+							v-on:click="confirmDelete"
+							v-if="parseInt(groupResults[0].pk) !== 1"
+						>
+							Delete Group
+						</button>
+						<button
 							class="btn btn-primary save-changes"
 							v-on:click="updateGroup"
-						>Update Group</a
 						>
+							Update Group
+						</button>
 					</div>
 				</div>
 			</div>
 		</div>
+
+		<confirm-group-delete
+			v-bind:group-id="groupResults[0].pk"
+		></confirm-group-delete>
 	</n-config-provider>
 </template>
 
 <script>
 import { NSelect, NConfigProvider } from "naive-ui";
+import { Modal } from "bootstrap";
+
+//Components
+import ConfirmGroupDelete from "./ConfirmGroupDelete.vue";
 
 //Load mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
@@ -64,6 +79,7 @@ import getThemeMixin from "../../mixins/getThemeMixin";
 export default {
 	name: "GroupInformation",
 	components: {
+		ConfirmGroupDelete,
 		NConfigProvider,
 		NSelect,
 	},
@@ -98,6 +114,11 @@ export default {
 	},
 	mixins: [getThemeMixin],
 	methods: {
+		confirmDelete() {
+			//Show the modal
+			const modal = new Modal(document.getElementById("confirmGroupDeleteModal"));
+			modal.show();
+		},
 		updateGroup() {
 			//Construct data to send
 			const data_to_send = new FormData();

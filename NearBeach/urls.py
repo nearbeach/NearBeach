@@ -215,6 +215,11 @@ urlpatterns = [
         name="group_information",
     ),
     path(
+        "group_information/<int:group_id>/delete/",
+        group_views.group_information_delete,
+        name="group_information_delete",
+    ),
+    path(
         "group_information/<int:group_id>/save/",
         group_views.group_information_save,
         name="group_information_save",
