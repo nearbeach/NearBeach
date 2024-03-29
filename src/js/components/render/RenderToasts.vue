@@ -13,8 +13,8 @@
 				<small>{{ getTime(single_toast.timestamp) }}</small>
 				<button type="button"
 						class="btn-close"
-						data-bs-dismiss="toast"
 						aria-label="Close"
+						v-on:click="removeToast(single_toast.unique_uuid)"
 				></button>
 			</div>
 			<div class="toast-body">
@@ -84,6 +84,11 @@ export default {
 			//Return what we have
 			return `${hours}:${minutes} ${ampm}`;
 		},
+		removeToast(unique_uuid) {
+			this.$store.dispatch("removeToast", {
+				unique_uuid: unique_uuid,
+			});
+		}
 	},
 }
 </script>
