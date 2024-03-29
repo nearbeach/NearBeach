@@ -313,6 +313,16 @@
 						aria-labelledby="contact-tab"
 					>
 						<notes-module></notes-module>
+
+						<!-- Modals for Notes section -->
+						<edit-history-note-wizard></edit-history-note-wizard>
+
+						<new-history-note-wizard
+							v-bind:location-id="locationId"
+							v-bind:destination="destination"
+						></new-history-note-wizard>
+
+						<confirm-note-delete></confirm-note-delete>
 					</div>
 				</div>
 			</div>
@@ -336,21 +346,27 @@ import ConfirmFileDeleteVue from "./wizards/ConfirmFileDelete.vue";
 import ConfirmFolderDelete from "./wizards/ConfirmFolderDelete.vue";
 import AddFolderWizard from "./wizards/AddFolderWizard.vue";
 import ListSprints from "./sub_modules/ListSprints.vue";
+import EditHistoryNoteWizard from "./wizards/EditHistoryNoteWizard.vue";
+import NewHistoryNoteWizard from "./wizards/NewHistoryNoteWizard.vue";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
+import ConfirmNoteDelete from "./wizards/ConfirmNoteDelete.vue";
 
 export default {
 	name: "ParentModules",
 	components: {
+		ConfirmNoteDelete,
 		AddFolderWizard,
 		ConfirmFileDeleteVue,
 		AddLinkWizard,
 		ConfirmFolderDelete,
 		CustomersModule,
 		DocumentsModule,
+		EditHistoryNoteWizard,
 		GroupsAndUsersModule,
 		ListSprints,
+		NewHistoryNoteWizard,
 		NotesModule,
 		ObjectLinks,
 		RequirementItemLinksModule,

@@ -58,7 +58,7 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						data-bs-dismiss="modal"
+						v-on:click="closeModal"
 					>
 						Close
 					</button>
@@ -71,11 +71,13 @@
 <script>
 //JavaScript components
 import iconMixin from "../../../mixins/iconMixin";
+import reopenCardInformation from "../../../mixins/reopenCardInformation";
 import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
 
 //VueX
 import {mapGetters} from "vuex";
+import {Modal} from "bootstrap";
 
 export default {
 	name: "EditHistoryNoteWizard",
@@ -83,7 +85,7 @@ export default {
 		editor: Editor,
 		Icon,
 	},
-	mixins: [iconMixin],
+	mixins: [iconMixin, reopenCardInformation],
 	data() {
 		return {
 			noteModel: "",
@@ -107,6 +109,13 @@ export default {
 		},
 	},
 	methods: {
+		closeModal() {
+			//Close the current modal
+			document.getElementById("editNoteCloseButton").click();
+
+			//Open the card information modal, if it exists
+			this.reopenCardInformation();
+		},
 		updateNote() {
 			//Setup data to send
 			const data_to_send = new FormData();
@@ -147,6 +156,9 @@ export default {
 
 				//Close the modal
 				document.getElementById("editNoteCloseButton").click();
+
+				//Reshow the card information modal if exists
+				this.reopenCardInformation();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Failed Updating Note",

@@ -171,18 +171,20 @@
 
 <script>
 import {Icon} from "@iconify/vue";
+import {Modal} from "bootstrap";
 
 //VueX
 import {mapGetters} from "vuex";
 
 //Mixins
 import iconMixin from "../../../mixins/iconMixin";
-import {Modal} from "bootstrap";
+import reopenCardInformation from "../../../mixins/reopenCardInformation"
 
 export default {
 	name: "UploadDocumentWizard",
 	components: {
 		Icon,
+		reopenCardInformation,
 	},
 	props: {
 		overrideDestination: {
@@ -300,12 +302,7 @@ export default {
 				this.resetForm();
 
 				//Reshow the card information modal if exists
-				let cardModal = document.getElementById("cardInformationModal");
-				if (cardModal !== null)
-				{
-					cardModal = new Modal(cardModal);
-					cardModal.show();
-				}
+				this.reopenCardInformation();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Failed to upload documentation",

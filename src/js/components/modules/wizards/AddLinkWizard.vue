@@ -110,6 +110,9 @@ import {required, url} from "@vuelidate/validators";
 import ValidationRendering from "../../validation/ValidationRendering.vue";
 import {Modal} from "bootstrap";
 
+//Mixins
+import reopenCardInformation from "../../../mixins/reopenCardInformation"
+
 export default {
 	name: "AddLinkWizard",
 	setup() {
@@ -189,12 +192,7 @@ export default {
 				document.getElementById("addLinkCloseButton").click();
 
 				//Reshow the card information modal if exists
-				let cardModal = document.getElementById("cardInformationModal");
-				if (cardModal !== null)
-				{
-					cardModal = new Modal(cardModal);
-					cardModal.show();
-				}
+				this.reopenCardInformation();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error Adding Link",
