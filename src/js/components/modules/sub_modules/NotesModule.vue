@@ -27,14 +27,6 @@
 				</button>
 			</div>
 		</div>
-
-		<!-- Modals for Notes section -->
-		<new-history-note-wizard
-			v-bind:location-id="locationId"
-			v-bind:destination="destination"
-		></new-history-note-wizard>
-
-		<edit-history-note-wizard></edit-history-note-wizard>
 	</div>
 </template>
 
@@ -48,12 +40,10 @@ import NewHistoryNoteWizard from "../wizards/NewHistoryNoteWizard.vue";
 
 //VueX
 import {mapGetters} from "vuex";
-import EditHistoryNoteWizard from "../wizards/EditHistoryNoteWizard.vue";
 
 export default {
 	name: "NotesModule",
 	components: {
-		EditHistoryNoteWizard,
 		Icon,
 		ListNotes,
 		NewHistoryNoteWizard,

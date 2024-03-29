@@ -66,6 +66,15 @@
 				v-bind:override-location-id="cardId"
 			></upload-document-wizard>
 
+			<edit-history-note-wizard></edit-history-note-wizard>
+
+			<new-history-note-wizard
+				v-bind:location-id="cardId"
+				v-bind:destination="'kanban_card'"
+			></new-history-note-wizard>
+
+			<confirm-note-delete></confirm-note-delete>
+
 			<add-folder-wizard
 				v-bind:destination="'kanban_card'"
 				v-bind:location-id="locationId"
@@ -113,10 +122,16 @@ import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
 import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
 import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
 import ConfirmFolderDelete from "../modules/wizards/ConfirmFolderDelete.vue";
+import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
+import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
+import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
 
 export default {
 	name: "KanbanInformation",
 	components: {
+		ConfirmNoteDelete,
+		NewHistoryNoteWizard,
+		EditHistoryNoteWizard,
 		ConfirmFolderDelete,
 		ConfirmFileDeleteVue,
 		AddLinkWizard,

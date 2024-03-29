@@ -247,27 +247,43 @@
 					v-if="this.permissionSetResults[0].pk !== 1"
 				>
 					<div class="col-md-12">
-						<a
-							href="javascript:void(0)"
+						<button
+							class="btn btn-danger"
+							v-on:click="confirmDelete"
+						>
+							Delete Permission Set
+						</button>
+						<button
 							class="btn btn-primary save-changes"
 							v-on:click="saveChanges"
-						>Save Permission Set</a
 						>
+							Save Permission Set
+						</button>
 					</div>
 				</div>
 			</div>
 		</div>
+
+		<confirm-permission-set-delete
+			v-bind:permission-set-id="permissionSetResults[0].pk"
+		></confirm-permission-set-delete>
 	</n-config-provider>
 </template>
 
 <script>
 import SinglePermissionProperties from "./SinglePermissionProperties.vue";
+import ConfirmPermissionSetDelete from "./ConfirmPermissionSetDelete.vue";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
+
+//Modal
+import { Modal } from "bootstrap";
+
 export default {
 	name: "PermissionInformation",
 	components: {
+		ConfirmPermissionSetDelete,
 		SinglePermissionProperties,
 	},
 	props: {
@@ -339,6 +355,11 @@ export default {
 	},
 	mixins: [getThemeMixin],
 	methods: {
+		confirmDelete() {
+			//Open the modal
+			const modal = new Modal(document.getElementById("confirmPermissionSetDeleteModal"));
+			modal.show();
+		},
 		saveChanges() {
 			//Tell user we are updating this permission set
 			this.$store.dispatch("newToast", {

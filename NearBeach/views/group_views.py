@@ -7,7 +7,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import SearchForm, NewGroupForm
-from NearBeach.models import Group
+from NearBeach.models import Group, ObjectAssignment, UserGroup
 from NearBeach.views.tools.internal_functions import get_user_permissions
 from NearBeach.views.theme_views import get_theme
 from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
@@ -78,6 +78,38 @@ def group_information(request, group_id, *args, **kwargs):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(4, "administration_create_group")
+def group_information_delete(request, group_id, *args, **kwargs):
+    # Make sure we are not deleting the admin
+    if group_id == 1:
+        return HttpResponseBadRequest("Sorry, can't delete admin")
+
+    # Delete the group
+    Group.objects.filter(
+        group_id=group_id,
+    ).update(
+        is_deleted=True,
+    )
+
+    # Delete all assigned objects
+    ObjectAssignment.objects.filter(
+        group_id=group_id,
+    ).update(
+        is_deleted=True,
+    )
+
+    # Delete all the user groups
+    UserGroup.objects.filter(
+        group_id=group_id,
+    ).update(
+        is_deleted=True,
+    )
+
+    return HttpResponse("")
 
 
 @require_http_methods(["POST"])

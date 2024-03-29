@@ -11,6 +11,7 @@ from NearBeach.models import (
     PermissionSet,
     PERMISSION_BOOLEAN,
     PERMISSION_LEVEL,
+    UserGroup,
 )
 from NearBeach.views.tools.internal_functions import get_user_permissions
 from NearBeach.views.theme_views import get_theme
@@ -127,6 +128,30 @@ def permission_set_information(request, permission_set_id, *args, **kwargs):
     }
 
     return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_admin_permissions(4, "administration_create_permission_set")
+def permission_set_information_delete(request, permission_set_id, *args, **kwargs):
+    if permission_set_id == 1:
+        return HttpResponseBadRequest("Can not delete admin permission set")
+
+    # Delete permission set
+    PermissionSet.objects.filter(
+        permission_set_id=permission_set_id,
+    ).update(
+        is_deleted=True,
+    )
+
+    # Delete any user permissions with this permission set
+    UserGroup.objects.filter(
+        permission_set_id=permission_set_id,
+    ).update(
+        is_deleted=True,
+    )
+
+    return HttpResponse("")
 
 
 @require_http_methods(["POST"])

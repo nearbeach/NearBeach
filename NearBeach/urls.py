@@ -215,6 +215,11 @@ urlpatterns = [
         name="group_information",
     ),
     path(
+        "group_information/<int:group_id>/delete/",
+        group_views.group_information_delete,
+        name="group_information_delete",
+    ),
+    path(
         "group_information/<int:group_id>/save/",
         group_views.group_information_save,
         name="group_information_save",
@@ -371,6 +376,11 @@ urlpatterns = [
         "permission_set_information/<int:permission_set_id>/",
         permission_set_views.permission_set_information,
         name="permission_set_information",
+    ),
+    path(
+        "permission_set_information/<int:permission_set_id>/delete/",
+        permission_set_views.permission_set_information_delete,
+        name="permission_set_information_delete",
     ),
     path(
         "permission_set_information/<int:permission_set_id>/save/",

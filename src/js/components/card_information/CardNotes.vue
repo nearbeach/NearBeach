@@ -56,15 +56,12 @@
 			v-bind:note-history-results="cardNotes"
 			v-bind:destination="'card'"
 		></list-notes>
-
-		<edit-history-note-wizard></edit-history-note-wizard>
 	</div>
 </template>
 
 <script>
 import Editor from "@tinymce/tinymce-vue";
 import ListNotes from "../modules/sub_modules/ListNotes.vue";
-import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -72,7 +69,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "CardNotes",
 	components: {
-		EditHistoryNoteWizard,
 		editor: Editor,
 		ListNotes,
 	},

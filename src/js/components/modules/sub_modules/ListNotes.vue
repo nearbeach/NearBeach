@@ -63,14 +63,12 @@
 			</div>
 		</div>
 
-		<confirm-note-delete></confirm-note-delete>
 	</div>
 </template>
 
 <script>
 import Editor from "@tinymce/tinymce-vue";
 import { Modal } from "bootstrap";
-import ConfirmNoteDelete from "../wizards/ConfirmNoteDelete.vue"
 
 //VueX
 import {mapGetters} from "vuex";
@@ -82,7 +80,6 @@ import datetimeMixin from "../../../mixins/datetimeMixin";
 export default {
 	name: "ListNotes",
 	components: {
-		ConfirmNoteDelete,
 		editor: Editor,
 	},
 	mixins: [datetimeMixin],
@@ -112,6 +109,16 @@ export default {
 			//Open the modal
 			const modal = new Modal(document.getElementById("confirmNoteDeleteModal"));
 			modal.show();
+
+			if (this.destination === "card") {
+				//Close the kanban card information
+				const close_button = document.getElementById("cardInformationModalCloseButton");
+
+				//Make sure the button exists
+				if (close_button !== undefined) {
+					close_button.click();
+				}
+			}
 		},
 		editNote(object_note_id) {
 			//Tell VueX of the note id change
@@ -123,6 +130,16 @@ export default {
 			//Open the modal
 			const modal = new Modal(document.getElementById("editNoteModal"));
 			modal.show();
+
+			if (this.destination === "card") {
+				//Close the kanban card information
+				const close_button = document.getElementById("cardInformationModalCloseButton");
+
+				//Make sure the button exists
+				if (close_button !== undefined) {
+					close_button.click();
+				}
+			}
 		},
 		profilePicture(picture_uuid) {
 			if (picture_uuid !== null && picture_uuid !== "") {

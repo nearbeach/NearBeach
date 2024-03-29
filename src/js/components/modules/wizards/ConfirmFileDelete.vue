@@ -54,8 +54,14 @@
 import {mapGetters} from "vuex";
 import {Modal} from "bootstrap";
 
+//Mixins
+import reopenCardInformation from "../../../mixins/reopenCardInformation";
+
 export default {
 	name: "ConfirmFileDelete",
+	mixins: [
+		reopenCardInformation,
+	],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -113,23 +119,7 @@ export default {
 			document.getElementById("confirmFileDeleteButton").click();
 
 			//Reshow the card information modal if exists
-			let cardModal = document.getElementById("cardInformationModal");
-			if (cardModal !== null)
-			{
-				cardModal = new Modal(cardModal);
-				cardModal.show();
-
-
-			}
-
-			//Due to a bug with bootstrap, we have two divs with classes "modal-backdrop fade show"
-			//Lets remove one of them
-			setTimeout(() => {
-				const div_modal = document.getElementsByClassName("modal-backdrop fade show");
-				if (div_modal.length > 1) {
-					div_modal[0].remove();
-				}
-			}, 200);
+			this.reopenCardInformation();
 		}
 	},
 }

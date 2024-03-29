@@ -20,6 +20,7 @@ export const moduleToasts = {
                 message: "",
                 timestamp: timestamp.getTime(),
                 unique_type: "",
+                unique_uuid: crypto.randomUUID(),
             };
 
             //Loop through each keys for the payload, and update the relevant field
@@ -66,6 +67,18 @@ export const moduleToasts = {
                 toastList: update_state,
             });
         },
+        removeToast({commit, state}, payload) {
+            //Create the new data set
+            const update_state = state.toastList.filter((row) => {
+                return row.unique_uuid !== payload.unique_uuid;
+            });
+
+            //Update the state appropriately
+            commit({
+                type: "updateToastList",
+                toastList: update_state,
+            });
+        }
     },
     getters: {
         getToastList: (state) => {
