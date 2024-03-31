@@ -103,15 +103,13 @@ import {mapGetters} from "vuex";
 
 //Mixins
 import iconMixin from "../../../mixins/iconMixin";
+import reopenCardInformation from "../../../mixins/reopenCardInformation"
 
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, url} from "@vuelidate/validators";
 import ValidationRendering from "../../validation/ValidationRendering.vue";
 import {Modal} from "bootstrap";
-
-//Mixins
-import reopenCardInformation from "../../../mixins/reopenCardInformation"
 
 export default {
 	name: "AddLinkWizard",
@@ -132,7 +130,10 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [iconMixin],
+	mixins: [
+      iconMixin,
+      reopenCardInformation,
+  ],
 	data() {
 		return {
 			linkModel: "",

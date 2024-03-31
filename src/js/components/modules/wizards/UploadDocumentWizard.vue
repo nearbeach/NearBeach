@@ -184,7 +184,6 @@ export default {
 	name: "UploadDocumentWizard",
 	components: {
 		Icon,
-		reopenCardInformation,
 	},
 	props: {
 		overrideDestination: {
@@ -196,7 +195,7 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [iconMixin],
+	mixins: [iconMixin, reopenCardInformation],
 	data() {
 		return {
 			disableUploadButton: true,
