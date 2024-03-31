@@ -13,8 +13,8 @@
 	<div v-if="changeTaskList.length > 0">
 		<div v-for="changeTask in changeTaskList"
 			 v-bind:key="changeTask.change_task_id"
-			 class="row change-task--detail"
-		>
+             v-bind:class="detailClasses(changeTask.change_task_status)"
+    >
 			<a class="change-task--name"
 			   v-bind:href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
 			>
@@ -326,6 +326,14 @@ export default {
 				});
 			});
 		},
+        detailClasses(status) {
+            //If status is fail (9), then return the change-task--fail
+            if (parseInt(status) === 9) {
+                return "row change-task--detail bg-danger";
+            }
+
+            return "row change-task--detail";
+        },
 		getRunSheetList() {
 			this.axios.post(
 				`${this.rootUrl}rfc_information/${this.locationId}/change_task_list/`
