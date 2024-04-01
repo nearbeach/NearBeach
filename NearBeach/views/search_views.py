@@ -632,6 +632,7 @@ def search_tag(request, *args, **kwargs):
         "need_tinymce": False,
         "tag_results": serializers.serialize("json", tag_results),
         "theme": get_theme(request),
+        "user_level": kwargs["user_level"],
     }
 
     # Send back json data

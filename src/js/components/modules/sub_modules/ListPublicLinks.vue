@@ -41,6 +41,7 @@
 						type="checkbox"
 						v-bind:checked="link.public_link_is_active"
 						v-bind:data-public-link-id="link.public_link_id"
+						v-bind:disabled="userLevel<=1"
 						v-on:change="updateIsActive"
 					/>
 				</td>

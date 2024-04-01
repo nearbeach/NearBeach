@@ -36,8 +36,9 @@
 					  v-bind:data-card-priority="element.fields.kanban_card_priority"
 					  class="card-external-link"
 				></Icon>
-				<b>#{{ element.pk }}</b
-				><br/>
+				<b>#{{ element.pk }}</b>
+				<b v-if="!canDragCards"> - LOCKED!</b>
+				<br/>
 				{{ element.fields.kanban_card_text }}
 				<Icon
 					class="kanban-card-info-icon"
@@ -157,24 +158,29 @@ export default {
 	mixins: [iconMixin],
 	methods: {
 		addNewKanbanCard() {
-			//Update the modal's data-attributes to reflect the column ID and Level ID
-			const addKanbanCardModal =
-				document.getElementById("addKanbanCardModal");
-			addKanbanCardModal.dataset.kanbanLevel = this.levelId;
-			addKanbanCardModal.dataset.kanbanColumn = this.columnId;
+			//Update New Card VueX to use this location
+			this.$store.commit({
+				type: "updateNewCardLocation",
+				columnId: this.columnId,
+				levelId: this.levelId,
+				userCanSelectLocation: false,
+			});
 
 			//Get the Modal from the above modal
-			const modalInstance = new Modal(addKanbanCardModal);
+			const modalInstance = new Modal(document.getElementById("addKanbanCardModal"));
 			modalInstance.show();
 		},
 		addNewLink() {
-			//Update the modal's data-attributes to reflect the column ID and Level ID
-			const newLinkModal = document.getElementById("newLinkModal");
-			newLinkModal.dataset.kanbanLevel = this.levelId;
-			newLinkModal.dataset.kanbanColumn = this.columnId;
+			//Update New Card VueX to use this location
+			this.$store.commit({
+				type: "updateNewCardLocation",
+				columnId: this.columnId,
+				levelId: this.levelId,
+				userCanSelectLocation: false,
+			});
 
 			//Get the Modal from the above modal
-			const modalInstance = new Modal(newLinkModal);
+			const modalInstance = new Modal(document.getElementById("newLinkModal"));
 			modalInstance.show();
 		},
 		archiveCards() {

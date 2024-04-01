@@ -72,7 +72,10 @@
 				</table>
 
 				<hr>
-				<div class="row submit-row">
+				<div
+					v-if="userLevel >= 2"
+					class="row submit-row"
+				>
 					<div class="col-md-12">
 						<button
 							v-on:click="showAddObjectWizard"

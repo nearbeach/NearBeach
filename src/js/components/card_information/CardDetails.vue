@@ -29,6 +29,7 @@
 				<input
 					v-model="cardTitle"
 					class="form-control"
+					v-bind:disabled="userLevel<=1"
 				/>
 			</div>
 		</div>
@@ -46,7 +47,7 @@
 				<n-select
 					v-bind:options="listPriority"
 					v-model:value="cardPriority"
-					:disabled="kanbanStatus === 'Closed'"
+					:disabled="kanbanStatus === 'Closed' || userLevel <= 1"
 				></n-select>
 			</div>
 		</div>
@@ -69,7 +70,7 @@
 							v-bind:options="listColumns"
 							label="column"
 							v-model:value="cardColumn"
-							:disabled="kanbanStatus === 'Closed'"
+							:disabled="kanbanStatus === 'Closed' || userLevel <= 1"
 						></n-select>
 					</div>
 
@@ -79,7 +80,7 @@
 							v-bind:options="listLevels"
 							label="level"
 							v-model:value="cardLevel"
-							:disabled="kanbanStatus === 'Closed'"
+							:disabled="kanbanStatus === 'Closed' || userLevel <= 1"
 						></n-select>
 					</div>
 				</div>

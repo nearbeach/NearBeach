@@ -315,11 +315,11 @@ export default {
 				this.assignedUserModel
 			);
 			data_to_send.set("change_task_qa_user", this.qaUserModel);
-			data_to_send.set(
-				"change_task_required_by",
-				this.changeStakeholderModel
-			);
-			data_to_send.set("is_downtime", this.changeIsDowntimeModel);
+			// data_to_send.set(
+			// 	"change_task_required_by",
+			// 	this.changeStakeholderModel
+			// );
+			// data_to_send.set("is_downtime", this.changeIsDowntimeModel);
 
 			this.axios
 				.post(

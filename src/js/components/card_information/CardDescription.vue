@@ -23,7 +23,7 @@
 			            content_css: `${this.contentCss}`
 					}"
 					v-model="cardDescription"
-					v-bind:disabled="kanbanStatus === 'Closed'"
+					v-bind:disabled="editorIsDisabled"
 				/>
 			</div>
 		</div>
@@ -76,7 +76,9 @@ export default {
 	},
 	props: {},
 	data() {
-		return {};
+		return {
+			editorIsDisabled: true,
+		};
 	},
 	computed: {
 		...mapGetters({
@@ -110,5 +112,12 @@ export default {
 			});
 		},
 	},
+	mounted() {
+		//BUG - if we use the following condition it won't work. We need to wait at least 500ms before apply it.
+		//I hate this :'(
+		setInterval(() => {
+			this.editorIsDisabled = this.kanbanStatus === "Closed" || this.userLevel <= 1;
+		}, 500);
+	}
 };
 </script>

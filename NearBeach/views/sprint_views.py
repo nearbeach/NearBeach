@@ -278,7 +278,7 @@ def sprint_information(request, sprint_id, *args, **kwargs):
         "nearbeach_title": f"Sprint Information {sprint_id}",
         "need_tinymce": False,
         "sprint_results": json.dumps(list(sprint_results), cls=DjangoJSONEncoder),
-        "user_level": 4, #TODO: Fix this - as we need to check the permissions
+        "user_level": kwargs["user_level"],
         "theme": get_theme(request),
 
         # TEMP CODE

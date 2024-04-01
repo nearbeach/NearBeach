@@ -3,5 +3,6 @@
 {% block content %}
     <search-tags v-bind:tag-results="{{tag_results}}"
                  v-bind:root-url="`{% url 'dashboard' %}`"
+                 v-bind:user-level={{ user_level }}
     ></search-tags>
 {% endblock %}

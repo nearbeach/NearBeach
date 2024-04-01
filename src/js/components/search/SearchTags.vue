@@ -46,6 +46,7 @@
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
 							v-on:click="addTag"
+							v-if="userLevel >= 2"
 						>Add Tag</a
 						>
 					</div>
@@ -90,6 +91,10 @@ export default {
 			default: () => {
 				return [];
 			},
+		},
+		userLevel: {
+			type: Number,
+			default: 0,
 		},
 	},
 	data() {

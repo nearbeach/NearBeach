@@ -7,8 +7,6 @@
 		tabindex="-1"
 		aria-labelledby="addKanbanCardModalLabel"
 		aria-hidden="true"
-		v-bind:data-kanban-level="levelResults[0].pk"
-		v-bind:data-kanban-column="columnResults[0].pk"
 	>
 		<div class="modal-dialog modal-xl modal-fullscreen-xl-down">
 			<div class="modal-content">
@@ -44,6 +42,8 @@
 							/>
 						</div>
 					</div>
+					<hr />
+
 					<!-- CARD PRIORITY -->
 					<div class="row">
 						<div class="col-md-4">
@@ -60,6 +60,8 @@
 							></n-select>
 						</div>
 					</div>
+					<hr />
+
 					<!-- CARD DESCRIPTION -->
 					<div class="row">
 						<div class="col-md-4">
@@ -86,6 +88,43 @@
 								}"
 								v-model="kanbanCardDescriptionModel"
 							/>
+						</div>
+					</div>
+
+					<!-- CARD LOCATION -->
+					<hr
+						v-if="newCardLocation.userCanSelectLocation"
+					/>
+					<div class="row"
+						 v-if="newCardLocation.userCanSelectLocation"
+					>
+						<div class="col-md-4">
+							<strong>Card Location</strong>
+							<p class="text-instructions">
+								Select the appropriate location for this card.
+							</p>
+						</div>
+
+						<div class="col-md-8">
+							<div class="row">
+								<div class="col-md-6 mt-4">
+									<label>Card Column</label>
+									<n-select
+										v-bind:options="listColumns"
+										label="column"
+										v-model:value="localColumnId"
+									></n-select>
+								</div>
+
+								<div class="col-md-6 mt-4">
+									<label>Card Level</label>
+									<n-select
+										v-bind:options="listLevels"
+										label="level"
+										v-model:value="localLevelId"
+									></n-select>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -185,11 +224,16 @@ export default {
 					value: 4,
 				},
 			],
+			localColumnId: 0,
+			localLevelId: 0,
 		};
 	},
 	computed: {
 		...mapGetters({
 			contentCss: "getContentCss",
+			listColumns: "getListColumns",
+			listLevels: "getListLevels",
+			newCardLocation: "getNewCardLocation",
 			rootUrl: "getRootUrl",
 			skin: "getSkin",
 		}),
@@ -197,7 +241,7 @@ export default {
 	methods: {
 		addKanbanCard() {
 			//Get the modal to extract data from
-			const self_modal = document.getElementById("addKanbanCardModal");
+			// const self_modal = document.getElementById("addKanbanCardModal");
 
 			//Create the data_to_send
 			const data_to_send = new FormData();
@@ -208,11 +252,11 @@ export default {
 			);
 			data_to_send.set(
 				"kanban_level",
-				self_modal.dataset.kanbanLevel
+				this.localLevelId,
 			);
 			data_to_send.set(
 				"kanban_column",
-				self_modal.dataset.kanbanColumn
+				this.localColumnId,
 			);
 			data_to_send.set(
 				"kanban_card_priority",
@@ -269,6 +313,14 @@ export default {
 			) {
 				this.disableAddButton = true;
 			}
+		},
+		newCardLocation: {
+			handler(new_value) {
+				this.localColumnId = new_value.columnId;
+				this.localLevelId = new_value.levelId;
+			},
+			deep: true,
+			immediate: true,
 		},
 	},
 };

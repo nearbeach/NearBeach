@@ -4,26 +4,69 @@
 			<h1 class="kanban-header">
 				{{ kanbanBoardResults[0].fields.kanban_board_name }}
 			</h1>
-			<div class="kanban-edit-text"
+			<div class="btn-group kanban-menu"
+				v-if="userLevel >= 2"
 			>
-				<a v-bind:href="`${rootUrl}kanban_information/${kanbanBoardResults[0].pk}/edit_board/`"
-				   v-if="userLevel >= 3"
+				<button class="btn btn-secondary btn-sm dropdown-toggle"
+						type="button"
+						data-bs-toggle="dropdown"
+						aria-expanded="false"
 				>
-					Edit Kanban
-				</a>
-
-				<n-switch v-model:value="canDragCards"
-						  @update:value="updateCanDragCards"
-						  v-if="kanbanBoardResults[0].fields.kanban_board_status !== 'Closed' && userLevel >= 2"
-				>
-					<template #checked>
-						Can Drag Cards
-					</template>
-					<template #unchecked>
-						Card Position Locked
-					</template>
-				</n-switch>
+					Kanban Menu
+				</button>
+				<ul class="dropdown-menu">
+					<li><a class="dropdown-item" href="#">
+						<n-switch v-model:value="canDragCards"
+								  @update:value="updateCanDragCards"
+								  v-if="kanbanBoardResults[0].fields.kanban_board_status !== 'Closed' && userLevel >= 2"
+						>
+							<template #checked>
+								Can Drag Cards
+							</template>
+							<template #unchecked>
+								Card Position Locked
+							</template>
+						</n-switch>
+					</a></li>
+					<li>
+						<hr class="dropdown-divider"
+							v-if="userLevel >= 3"
+						>
+					</li>
+					<li><a
+						class="dropdown-item"
+						href="#"
+						v-on:click="addNewKanbanCard()"
+					>
+						Add New Card
+					</a></li>
+					<li><a
+						class="dropdown-item"
+						href="#"
+						v-on:click="addNewLink()"
+					>
+						Add New Link to Object
+					</a></li>
+					<li>
+						<hr class="dropdown-divider"
+							v-if="userLevel >= 3"
+						>
+					</li>
+					<li>
+						<a
+							class="dropdown-item"
+							v-bind:href="`${rootUrl}kanban_information/${kanbanBoardResults[0].pk}/edit_board/`"
+						   	v-if="userLevel >= 3"
+						>
+							Edit Kanban
+						</a>
+					</li>
+				</ul>
 			</div>
+
+			<div v-if="userLevel <= 1"
+				 style="height: 31px; width: 100%;"
+			></div>
 
 			<!-- Rendering the Kanban Container -->
 			<kanban-board
@@ -125,6 +168,7 @@ import ConfirmFolderDelete from "../modules/wizards/ConfirmFolderDelete.vue";
 import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
 import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
 import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
+import {Modal} from "bootstrap";
 
 export default {
 	name: "KanbanInformation",
@@ -237,6 +281,32 @@ export default {
 		};
 	},
 	methods: {
+		addNewKanbanCard() {
+			//Update New Card VueX to use this location
+			this.$store.commit({
+				type: "updateNewCardLocation",
+				columnId: this.columnResults[0].pk,
+				levelId: this.levelResults[0].pk,
+				userCanSelectLocation: true,
+			});
+
+			//Get the Modal from the above modal
+			const modalInstance = new Modal(document.getElementById("addKanbanCardModal"));
+			modalInstance.show();
+		},
+		addNewLink() {
+			//Update New Card VueX to use this location
+			this.$store.commit({
+				type: "updateNewCardLocation",
+				columnId: this.columnResults[0].pk,
+				levelId: this.levelResults[0].pk,
+				userCanSelectLocation: true,
+			});
+
+			//Get the Modal from the above modal
+			const modalInstance = new Modal(document.getElementById("newLinkModal"));
+			modalInstance.show();
+		},
 		doubleClickedCard(data) {
 			//Update the cardInformationId with the card id
 			this.cardInformation = data;
