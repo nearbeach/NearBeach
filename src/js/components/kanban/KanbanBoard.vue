@@ -141,7 +141,7 @@ export default {
 			// that smaller size
 			if (columns_width < kanban_container_width) {
 				//Add in the width restrictions
-				const header_element = document.getElementsByClassName("kanban-edit-text")[0];
+				// const header_element = document.getElementsByClassName("kanban-edit-text")[0];
 				const elements = document.getElementsByClassName("kanban-level-div");
 
 				//Loop through each element
@@ -150,12 +150,12 @@ export default {
 				});
 
 				//Adjust the size of the header element
-				header_element.style = `max-width: ${columns_width}px`;
+				// header_element.style = `max-width: ${columns_width}px`;
 			} else {
 				//The columns width is greater than the container width.
 				//So we need to use the scroll width of the container
 				const scroll_width = container_element.scrollWidth;
-				const header_element = document.getElementsByClassName("kanban-edit-text")[0];
+				// const header_element = document.getElementsByClassName("kanban-edit-text")[0];
 				let elements = document.getElementsByClassName("kanban-level-div");
 
 				//Loop through each element
@@ -164,7 +164,7 @@ export default {
 				});
 
 				//Adjust the size of the header element
-				header_element.style = `max-width: ${scroll_width}px`;
+				// header_element.style = `max-width: ${scroll_width}px`;
 			}
 		},
 		scrollProcedure() {

@@ -5,8 +5,6 @@
 		tabindex="-1"
 		aria-labelledby="kanbanLinkModal"
 		aria-hidden="true"
-		v-bind:data-kanban-level="levelResults[0].pk"
-		v-bind:data-kanban-column="columnResults[0].pk"
 	>
 		<div class="modal-dialog modal-lg modal-fullscreen-lg-down">
 			<div class="modal-content">
@@ -51,9 +49,46 @@
 							</div>
 						</div>
 					</div>
-					<hr/>
+					<!-- CARD LOCATION -->
+					<hr
+						v-if="newCardLocation.userCanSelectLocation"
+					/>
+					<div class="row"
+						 v-if="newCardLocation.userCanSelectLocation"
+					>
+						<div class="col-md-4">
+							<strong>Card Location</strong>
+							<p class="text-instructions">
+								Select the appropriate location for this card.
+							</p>
+						</div>
+
+						<div class="col-md-8">
+							<div class="row">
+								<div class="col-md-6 mt-4">
+									<label>Card Column</label>
+									<n-select
+										v-bind:options="listColumns"
+										label="column"
+										v-model:value="localColumnId"
+									></n-select>
+								</div>
+
+								<div class="col-md-6 mt-4">
+									<label>Card Level</label>
+									<n-select
+										v-bind:options="listLevels"
+										label="level"
+										v-model:value="localLevelId"
+									></n-select>
+								</div>
+							</div>
+						</div>
+					</div>
+
 
 					<!-- SELECTING WHICH OBJECTS TO LINK TO -->
+					<hr/>
 					<div class="row">
 						<div class="col-md-4">
 							<strong>Select Links</strong>
@@ -76,7 +111,7 @@
 
 							<div
 								v-if="
-									objectResults.length == 0 &&
+									objectResults.length === 0 &&
 									objectModel != null
 								"
 								class="alert alert-warning"
@@ -196,7 +231,7 @@
 								</tbody>
 
 								<!-- TASKS -->
-								<tbody v-if="objectModel == 'Task'">
+								<tbody v-if="objectModel === 'Task'">
 								<tr
 									v-for="result in objectFilteredResults"
 									:key="result.pk"
@@ -243,7 +278,7 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="linkModel.length == 0"
+						v-bind:disabled="linkModel.length === 0"
 						v-on:click="saveLinks"
 					>
 						Save changes
@@ -290,6 +325,9 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			listColumns: "getListColumns",
+			listLevels: "getListLevels",
+			newCardLocation: "getNewCardLocation",
 			rootUrl: "getRootUrl",
 			staticUrl: "getStaticUrl",
 		}),
@@ -299,6 +337,8 @@ export default {
 		return {
 			isSearching: false,
 			linkModel: [],
+			localColumnId: 0,
+			localLevelId: 0,
 			objectModel: null,
 			objectFilteredResults: [],
 			objectResults: [],
@@ -325,7 +365,7 @@ export default {
 			const data_to_send = new FormData();
 
 			//Get the modal to extract data from
-			const self_modal = document.getElementById("newLinkModal");
+			// const self_modal = document.getElementById("newLinkModal");
 
 			//Depending on what the object model is - depends what is sent
 			data_to_send.set(
@@ -334,11 +374,11 @@ export default {
 			);
 			data_to_send.set(
 				"kanban_level",
-				self_modal.dataset.kanbanLevel
+				this.localLevelId,
 			);
 			data_to_send.set(
 				"kanban_column",
-				self_modal.dataset.kanbanColumn
+				this.localColumnId,
 			);
 
 			// Use axios to send data
@@ -358,6 +398,14 @@ export default {
 		},
 	},
 	watch: {
+		newCardLocation: {
+			handler(new_value) {
+				this.localColumnId = new_value.columnId;
+				this.localLevelId = new_value.levelId;
+			},
+			deep: true,
+			immediate: true,
+		},
 		objectModel() {
 			//Clear data
 			this.linkModel = [];
