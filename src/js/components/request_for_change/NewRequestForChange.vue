@@ -13,7 +13,7 @@
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
 					v-bind:static-url="staticUrl"
-					v-if="currentTab===0"
+					v-bind:style="displayTab(0)"
 				></rfc-description>
 
 				<!-- Details -->
@@ -23,7 +23,7 @@
 					v-bind:user-group-results="userGroupResults"
 					v-on:update_validation="updateValidation($event)"
 					v-on:update_values="updateValues($event)"
-					v-if="currentTab===1"
+					v-bind:style="displayTab(1)"
 				></rfc-details>
 
 				<!-- Risk -->
@@ -31,7 +31,7 @@
 					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
-					v-if="currentTab===2"
+					v-bind:style="displayTab(2)"
 				></rfc-risk>
 
 				<!-- Implementation Plan -->
@@ -39,7 +39,7 @@
 					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
-					v-if="currentTab===3"
+					v-bind:style="displayTab(3)"
 				></rfc-implementation-plan>
 
 				<!-- Backout Plan -->
@@ -47,7 +47,7 @@
 					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
-					v-if="currentTab===4"
+					v-bind:style="displayTab(4)"
 				></rfc-backout-plan>
 
 				<!-- Test Plan -->
@@ -55,7 +55,7 @@
 					v-bind:uuid="uuid"
 					v-on:update_values="updateValues($event)"
 					v-on:update_validation="updateValidation($event)"
-					v-if="currentTab===5"
+					v-bind:style="displayTab(5)"
 				></rfc-test-plan>
 
 				<!-- NAVIGATIONS-->
@@ -178,6 +178,15 @@ export default {
 		},
 	}),
 	methods: {
+		displayTab(tab_id) {
+			if (parseInt(tab_id) === parseInt(this.currentTab)) {
+				//We want to display this tab
+				return "";
+			}
+
+			//We want to hide this tab
+			return "display:none;";
+		},
 		nextTab() {
 			//Do nothing if tab >= 5
 			if (this.currentTab >= 5) return;
