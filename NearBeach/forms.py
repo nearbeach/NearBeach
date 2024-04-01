@@ -243,13 +243,13 @@ class ChangeTaskForm(forms.ModelForm):
         fields = [
             "change_task_assigned_user",
             "change_task_title",
-            "change_task_description",
+            # "change_task_description",
             "change_task_start_date",
             "change_task_end_date",
             "change_task_seconds",
-            "change_task_required_by",
+            # "change_task_required_by",
             "change_task_qa_user",
-            "is_downtime",
+            # "is_downtime",
         ]
 
 
