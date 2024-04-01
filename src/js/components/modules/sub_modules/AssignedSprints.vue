@@ -34,6 +34,7 @@
 		<div class="col-md-12">
 			<button class="btn btn-primary save-changes"
 					v-on:click="addToSprint"
+					v-if="userLevel >= 2"
 			>
 				Add Object To Sprint
 			</button>
@@ -103,6 +104,7 @@ export default {
 			destination: "getDestination",
 			locationId: "getLocationId",
 			rootUrl: "getRootUrl",
+			userLevel: "getUserLevel",
 		}),
 	},
 	methods: {
