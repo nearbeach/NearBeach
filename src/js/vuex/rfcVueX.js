@@ -50,6 +50,9 @@ export const moduleRfc = {
             state.releaseDateModel = payload.releaseDateModel;
             state.startDateModel = payload.startDateModel;
         },
+        updateRfcReleaseDate(state, payload) {
+            state.releaseDateModel = payload.releaseDateModel;
+        },
     },
     actions: {},
     getters: {
@@ -59,7 +62,7 @@ export const moduleRfc = {
         getEndDate: (state) => {
             return state.endDateModel;
         },
-        getReleaseDateModel: (state) => {
+        getReleaseDate: (state) => {
             return state.releaseDateModel;
         },
         getStartDate: (state) => {

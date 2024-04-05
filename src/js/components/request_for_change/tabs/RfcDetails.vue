@@ -42,65 +42,6 @@
 			</div>
 		</div>
 
-		<!-- Implementation and Release Dates -->
-		<hr/>
-		<div class="row">
-			<div class="col-md-4">
-				<h2>Important Dates</h2>
-				<p class="text-instructions">
-					Please supply the implementation start and end dates. Please
-					also suply the release date of the change to the general
-					consumer.
-				</p>
-			</div>
-			<div class="row col-md-8">
-				<!-- Validation row -->
-				<div class="col-md-12">
-					<span
-						class="error"
-						v-if="checkDateValidation"
-					>
-						Please select an appropriate date for ALL fields.</span
-					>
-				</div>
-
-				<!-- Dates Row -->
-				<div class="col-sm-4">
-					<div class="form-group">
-						<label>Implementation Start: </label>
-						<n-date-picker
-							type="datetime"
-							v-model:value="rfcImplementationStartModel"
-							:is-date-disabled="disableDate"
-							input-class="form-control"
-						></n-date-picker>
-					</div>
-				</div>
-				<div class="col-sm-4">
-					<div class="form-group">
-						<label>Implementation End: </label>
-						<n-date-picker
-							type="datetime"
-							v-model:value="rfcImplementationEndModel"
-							:is-date-disabled="disableDate"
-							input-class="form-control"
-						></n-date-picker>
-					</div>
-				</div>
-				<div class="col-sm-4">
-					<div class="form-group">
-						<label>Release Date: </label>
-						<n-date-picker
-							type="datetime"
-							v-model:value="rfcReleaseModel"
-							:is-date-disabled="disableDate"
-							input-class="form-control"
-						></n-date-picker>
-					</div>
-				</div>
-			</div>
-		</div>
-
 		<!-- RFC Change Lead User -->
 		<hr/>
 		<div class="row">
@@ -143,11 +84,11 @@
 </template>
 
 <script>
-import {NSelect, NDatePicker} from "naive-ui";
+import {NSelect} from "naive-ui";
 import GroupPermissions from "../../permissions/GroupPermissions.vue";
 
 //Mixins
-import datetimeMixin from "../../../mixins/datetimeMixin";
+// import datetimeMixin from "../../../mixins/datetimeMixin";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -164,7 +105,6 @@ export default {
 	},
 	components: {
 		GroupPermissions,
-		NDatePicker,
 		NSelect,
 		ValidationRendering,
 	},
@@ -186,16 +126,12 @@ export default {
 			default: "",
 		},
 	},
-	mixins: [datetimeMixin],
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
 			groupModel: [],
 			rfcChangeLeadFixList: [],
 			rfcChangeLeadModel: "",
-			rfcImplementationStartModel: this.defaultStartDate(),
-			rfcImplementationEndModel: this.defaultEndDate(),
-			rfcReleaseModel: this.defaultReleaseDate(),
 			rfcStatus: [
 				{label: "Draft", value: 1},
 				{label: "Waiting for approval", value: 2},
@@ -222,15 +158,6 @@ export default {
 		rfcChangeLeadModel: {
 			required,
 		},
-		rfcImplementationStartModel: {
-			required,
-		},
-		rfcImplementationEndModel: {
-			required,
-		},
-		rfcReleaseModel: {
-			required,
-		},
 		rfcTypeModel: {
 			required,
 		},
@@ -243,54 +170,8 @@ export default {
 			rootUrl: "getRootUrl",
 			staticUrl: "getStaticUrl",
 		}),
-		checkDateValidation() {
-			//Check the validation for each date
-			const start_date =
-					!this.v$.rfcImplementationStartModel.required &&
-					this.v$.rfcImplementationStartModel.$dirty,
-				end_date =
-					!this.v$.rfcImplementationEndModel.required &&
-					this.v$.rfcImplementationEndModel.$dirty,
-				release_date =
-					!this.v$.rfcReleaseModel.required &&
-					this.v$.rfcReleaseModel.$dirty;
-
-			//If there is ONE invalidation, we send back true => invalid
-			return start_date || end_date || release_date;
-		},
 	},
 	methods: {
-		defaultStartDate: () => {
-			let start_date = new Date();
-			start_date.setHours(9);
-			start_date.setMinutes(0);
-			start_date.setSeconds(0);
-			start_date.setMilliseconds(0);
-
-			return start_date.getTime();
-		},
-		defaultEndDate: () => {
-			let end_date = new Date();
-			end_date.setHours(16);
-			end_date.setMinutes(0);
-			end_date.setSeconds(0);
-			end_date.setMilliseconds(0);
-
-			new Date(end_date.setDate(end_date.getDate() + 14));
-
-			return end_date.getTime();
-		},
-		defaultReleaseDate: () => {
-			let end_date = new Date();
-			end_date.setHours(17);
-			end_date.setMinutes(0);
-			end_date.setSeconds(0);
-			end_date.setMilliseconds(0);
-
-			new Date(end_date.setDate(end_date.getDate() + 14));
-
-			return end_date.getTime();
-		},
 		fetchOptions(search, loading) {
 			//Clear timer if it already exists
 			if (this.searchTimeout !== "") {
@@ -377,55 +258,6 @@ export default {
 			);
 			this.updateValidation();
 		},
-		rfcImplementationStartModel() {
-			//Check to make sure endModel >= startModel;
-			if (
-				this.rfcImplementationStartModel >
-				this.rfcImplementationEndModel
-			) {
-				this.rfcImplementationEndModel =
-					this.rfcImplementationStartModel;
-			}
-
-			//Send data upstream
-			this.updateValues(
-				"rfcImplementationStartModel",
-				this.rfcImplementationStartModel
-			);
-			this.updateValidation();
-		},
-		rfcImplementationEndModel() {
-			//Check to make sure the releaseModel >= endModel
-			if (this.rfcImplementationEndModel > this.rfcReleaseModel) {
-				this.rfcReleaseModel = this.rfcImplementationEndModel;
-			}
-
-			//Check to make sure endModel >= startModel;
-			if (
-				this.rfcImplementationStartModel >
-				this.rfcImplementationEndModel
-			) {
-				this.rfcImplementationEndModel =
-					this.rfcImplementationStartModel;
-			}
-
-			//Send data upstream
-			this.updateValues(
-				"rfcImplementationEndModel",
-				this.rfcImplementationEndModel
-			);
-			this.updateValidation();
-		},
-		rfcReleaseModel() {
-			//Check to make sure the releaseModel >= endModel
-			if (this.rfcImplementationEndModel > this.rfcReleaseModel) {
-				this.rfcReleaseModel = this.rfcImplementationEndModel;
-			}
-
-			//Send data upstream
-			this.updateValues("rfcReleaseModel", this.rfcReleaseModel);
-			this.updateValidation();
-		},
 		rfcStatus() {
 			this.updateValues("rfcStatus", this.rfcStatus);
 			this.updateValidation();
@@ -448,17 +280,6 @@ export default {
 		this.$nextTick(() => {
 			this.getChangeLeadData();
 		});
-
-		//Send the default date time up stream
-		this.updateValues(
-			"rfcImplementationEndModel",
-			this.rfcImplementationEndModel
-		);
-		this.updateValues("rfcReleaseModel", this.rfcReleaseModel);
-		this.updateValues(
-			"rfcImplementationStartModel",
-			this.rfcImplementationStartModel
-		);
 
 		//Just run the validations to show the error messages
 		this.v$.$touch();

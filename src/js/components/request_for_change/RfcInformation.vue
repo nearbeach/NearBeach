@@ -58,12 +58,20 @@
 					<div class="col-md-4">
 						<h2>Important Dates</h2>
 						<p class="text-instructions">
-							Please supply the implementation start and end dates.
-							Please also suply the release date of the change to the
-							general consumer.
+							Start and End date are automatically calculated from the change tasks.
+						</p>
+						<p class="text-instructions">
+							The release date can only be equal or greater than the end date. By default it will equal
+							the end date. Changing the release date will obey the time delta if the end date changes.
 						</p>
 					</div>
 					<div class="row col-md-8">
+						<!-- Start and End date row -->
+						<div class="col-md-12">
+							<strong>Start Date: </strong>{{getNiceDatetimeFromInt(rfcImplementationStartModel)}}<br/>
+							<strong>End Date: </strong>{{getNiceDatetimeFromInt(rfcImplementationEndModel)}}
+						</div>
+
 						<!-- Validation row -->
 						<div class="col-md-12">
 						<span
@@ -76,28 +84,6 @@
 						</div>
 
 						<!-- Dates Row -->
-						<div class="col-sm-4">
-							<div class="form-group">
-								<label>Implementation Start: </label>
-								<n-date-picker
-									type="datetime"
-									v-model:value="localStartDate"
-									input-class="form-control"
-									:is-date-disabled="checkDisableDate"
-								></n-date-picker>
-							</div>
-						</div>
-						<div class="col-sm-4">
-							<div class="form-group">
-								<label>Implementation End: </label>
-								<n-date-picker
-									type="datetime"
-									v-model:value="localEndDate"
-									input-class="form-control"
-									:is-date-disabled="checkDisableDate"
-								></n-date-picker>
-							</div>
-						</div>
 						<div class="col-sm-4">
 							<div class="form-group">
 								<label>Release Date: </label>
@@ -354,20 +340,6 @@ export default {
 		},
 	},
 	watch: {
-		localEndDate() {
-			//If startDate > endDate - update endDate to the start date
-			if (this.localStartDate > this.localEndDate) {
-				this.localEndDate = this.localStartDate;
-			}
-
-			//If endDate > releaseDate - update the releaseDate to the end date
-			if (this.localEndDate > this.localReleaseDate) {
-				this.localReleaseDate = this.localEndDate;
-			}
-
-			//Update State Management
-			this.updateStateManagement();
-		},
 		localReleaseDate() {
 			//If endDate > releaseDate - update the releaseDate to the end date
 			if (this.localEndDate > this.localReleaseDate) {
@@ -375,16 +347,7 @@ export default {
 			}
 
 			//Update State Management
-			this.updateStateManagement();
-		},
-		localStartDate() {
-			//If startDate > endDate - update endDate to the start date
-			if (this.localStartDate > this.localEndDate) {
-				this.localEndDate = this.localStartDate;
-			}
-
-			//Update State Management
-			this.updateStateManagement();
+			this.updateReleaseDate();
 		},
 	},
 	computed: {
@@ -392,22 +355,12 @@ export default {
 			changeTaskCount: "getChangeTaskCount",
 			rfcImplementationEndModel: "getEndDate",
 			rfcImplementationStartModel: "getStartDate",
-			rfcReleaseModel: "getReleaseDateModel",
+			rfcReleaseModel: "getReleaseDate",
 		}),
 		checkDateValidation() {
 			//Check the validation for each date
-			const start_date =
-					!this.v$.rfcImplementationStartModel.required &&
-					this.v$.rfcImplementationStartModel.$dirty,
-				end_date =
-					!this.v$.rfcImplementationEndModel.required &&
-					this.v$.rfcImplementationEndModel.$dirty,
-				release_date =
-					!this.v$.rfcReleaseModel.required &&
+			return !this.v$.rfcReleaseModel.required &&
 					this.v$.rfcReleaseModel.$dirty;
-
-			//If there is ONE invalidation, we send back true => invalid
-			return start_date || end_date || release_date;
 		},
 	},
 	mixins: [datetimeMixin, getThemeMixin],
@@ -415,9 +368,7 @@ export default {
 		return {
 			approvalUsersList: [],
 			localChangeLead: this.rfcChangeLead,
-			localEndDate: 0,
 			localReleaseDate: 0,
-			localStartDate: 0,
 			rfcChangeLeadFixList: [],
 			rfcChangeLeadModel: "",
 			rfcTitleModel: this.rfcResults[0].fields.rfc_title,
@@ -455,12 +406,6 @@ export default {
 		rfcSummaryModel: {
 			required,
 			maxLength: maxLength(630000),
-		},
-		rfcImplementationStartModel: {
-			required,
-		},
-		rfcImplementationEndModel: {
-			required,
 		},
 		rfcReleaseModel: {
 			required,
@@ -568,6 +513,13 @@ export default {
 		updateChangeLead(new_change_lead) {
 			this.localChangeLead = new_change_lead;
 		},
+		updateReleaseDate() {
+			//Update the vuex
+			this.$store.commit({
+				type: "updateRfcReleaseDate",
+				releaseDateModel: this.localReleaseDate,
+			});
+		},
 		updateRFC: async function () {
 			//Check form validation
 			const validation_results = await this.v$.$validate();
@@ -629,15 +581,6 @@ export default {
 
 			this.sendUpdate(data_to_send);
 		},
-		updateStateManagement() {
-			//Update the vuex
-			this.$store.commit({
-				type: "updateRfcDates",
-				endDateModel: this.localEndDate,
-				releaseDateModel: this.localReleaseDate,
-				startDateModel: this.localStartDate,
-			});
-		},
 		updateValues(data) {
 			//Update the value
 			this[data.modelName] = data.modelValue;
@@ -676,12 +619,16 @@ export default {
 			this.rfcResults[0].fields.rfc_implementation_start_date
 		);
 
-		this.localEndDate = end_date.getTime();
+		//Update the local release date :)
 		this.localReleaseDate = release_date.getTime();
-		this.localStartDate = start_date.getTime();
 
-		//Update State Management
-		this.updateStateManagement();
+		//Update the VueX datetimes :)
+		this.$store.commit({
+			type: "updateRfcDates",
+			endDateModel: end_date.getTime(),
+			releaseDateModel: release_date.getTime(),
+			startDateModel: start_date.getTime(),
+		})
 
 		//Get the list of users who can approve
 		this.getApprovalUserList();

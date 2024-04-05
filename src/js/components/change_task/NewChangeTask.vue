@@ -69,9 +69,9 @@
 							<strong>Between Dates</strong>
 							<p class="text-instructions">
 								Choose the start and end date of the Change Task. Please
-								note the end date can not be earlier than the start date and
-								the start time has to be between the RFC's start and end date.
-								This information is show below the dates
+								note the end date can not be earlier than the start date.
+								The release date is the datetime where users now have
+								access to what you just released.
 							</p>
 						</div>
 						<div class="col-md-8">
@@ -111,9 +111,9 @@
 								 class="row"
 							>
 								<div class="spacer"></div>
-								<div class="alert alert-danger">
-									The Start date can not be earlier than the start date of the RFC -
-									{{ formatDate(rfcStartDate) }}
+								<div class="alert alert-info">
+									Saving this change task will automatically update the start date for the RFC. The
+									RFC's new date will reflect this current date time.
 								</div>
 							</div>
 							<div v-if="changeEndDateModel > rfcEndDate"
@@ -121,8 +121,8 @@
 							>
 								<div class="spacer"></div>
 								<div class="alert alert-info">
-									The End date when saved will automatically update the End Date for the RFC -
-									{{ formatDate(rfcEndDate) }}
+									Saving this change task will automatically update the end date for the RFC. The
+									RFC's new date will reflect this current date time.
 								</div>
 							</div>
 						</div>
@@ -211,6 +211,7 @@ import {mapGetters} from "vuex";
 import useVuelidate from "@vuelidate/core";
 import {required, numeric} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
+
 
 export default {
 	name: "NewChangeTask",
@@ -358,6 +359,10 @@ export default {
 				this.assignedUserModel = "";
 				this.qaUserModel = "";
 
+				//Adjust the times
+				this.changeStartDateModel = this.changeEndDateModel;
+				this.changeEndDateModel = this.changeEndDateModel + (15 * 1000 * 60);
+
 				//Set the current status back to ready
 				this.currentStatus = 'ready';
 			}).catch((error) => {
@@ -396,8 +401,8 @@ export default {
 		});
 
 		//Update Times
-		this.changeEndDateModel = this.rfcStartDate + (15 * 1000 * 60);
-		this.changeStartDateModel = this.rfcStartDate;
+		this.changeEndDateModel = this.rfcEndDate + (15 * 1000 * 60);
+		this.changeStartDateModel = this.rfcEndDate;
 	},
 };
 </script>

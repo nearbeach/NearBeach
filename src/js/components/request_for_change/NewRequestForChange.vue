@@ -155,11 +155,8 @@ export default {
 			rfcBackoutPlan: "",
 			rfcChangeLeadModel: {},
 			rfcImpactModel: {},
-			rfcImplementationEndModel: "",
 			rfcImplementationPlanModel: "",
-			rfcImplementationStartModel: "",
 			rfcPriorityModel: {},
-			rfcReleaseModel: "",
 			rfcRiskModel: {},
 			rfcRiskSummaryModel: "",
 			rfcSummaryModel: "",
@@ -246,18 +243,6 @@ export default {
 				this.replaceIncorrectImageUrl(data.rfcSummaryModel)
 			);
 			data_to_send.set("rfc_type", data.rfcTypeModel);
-			data_to_send.set(
-				"rfc_implementation_start_date",
-				new Date(data.rfcImplementationStartModel).toISOString()
-			);
-			data_to_send.set(
-				"rfc_implementation_end_date",
-				new Date(data.rfcImplementationEndModel).toISOString()
-			);
-			data_to_send.set(
-				"rfc_implementation_release_date",
-				new Date(data.rfcReleaseModel).toISOString()
-			);
 			data_to_send.set("rfc_version_number", data.rfcVersionModel);
 			data_to_send.set("rfc_lead", data.rfcChangeLeadModel);
 			data_to_send.set("rfc_priority", data.rfcPriorityModel);
