@@ -42,6 +42,17 @@
 			</div>
 		</div>
 
+		<!-- Group Permissions -->
+		<hr/>
+		<group-permissions
+			v-bind:display-group-permission-issue="displayGroupPermissionIssue"
+			v-bind:group-results="groupResults"
+			v-bind:destination="'request_for_change'"
+			v-bind:is-dirty="v$.groupModel.$dirty"
+			v-bind:user-group-results="userGroupResults"
+			v-on:update_group_model="updateGroupModel($event)"
+		></group-permissions>
+
 		<!-- RFC Change Lead User -->
 		<hr/>
 		<div class="row">
@@ -69,17 +80,6 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- Group Permissions -->
-		<hr/>
-		<group-permissions
-			v-bind:display-group-permission-issue="displayGroupPermissionIssue"
-			v-bind:group-results="groupResults"
-			v-bind:destination="'request_for_change'"
-			v-bind:is-dirty="v$.groupModel.$dirty"
-			v-bind:user-group-results="userGroupResults"
-			v-on:update_group_model="updateGroupModel($event)"
-		></group-permissions>
 	</div>
 </template>
 
