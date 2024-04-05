@@ -133,6 +133,9 @@ export default {
 			this.rfcImplementationPlanModel =
 				this.rfcResults[0].fields.rfc_implementation_plan;
 		}
+
+		//Just run the validations to show the error messages
+		this.v$.$touch();
 	},
 };
 </script>

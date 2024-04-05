@@ -131,6 +131,9 @@ export default {
 			this.rfcBackoutPlanModel =
 				this.rfcResults[0].fields.rfc_backout_plan;
 		}
+
+		//Just run the validations to show the error messages
+		this.v$.$touch();
 	},
 };
 </script>
