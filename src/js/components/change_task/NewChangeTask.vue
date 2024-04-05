@@ -268,10 +268,20 @@ export default {
 		}),
 	},
 	watch: {
-		potentialUserList() {
-			this.updateUserList();
+		changeEndDateModel(new_value) {
+			if (new_value < this.changeStartDateModel) {
+				this.changeStartDateModel = new_value;
+			}
+		},
+		changeStartDateModel(new_value) {
+			if (new_value > this.changeEndDateModel) {
+				this.changeEndDateModel = new_value;
+			}
 		},
 		groupUserList() {
+			this.updateUserList();
+		},
+		potentialUserList() {
 			this.updateUserList();
 		},
 	},
