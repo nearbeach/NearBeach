@@ -765,6 +765,11 @@ def update_rfc_dates(rfc_id):
         request_for_change_id=rfc_id
     )
 
+    # If there are no change tasks associated with this rfc. Just return.
+    if len(change_task_results) == 0:
+        return
+
+    # Apply the dates
     start_date = change_task_results.aggregate(
         Min("change_task_start_date")
     )["change_task_start_date__min"]
