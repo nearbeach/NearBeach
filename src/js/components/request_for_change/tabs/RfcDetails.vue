@@ -70,11 +70,17 @@
 						<validation-rendering
 							v-bind:error-list="v$.rfcChangeLeadModel.$errors"
 						></validation-rendering>
+						<span
+							v-if="updatingLeadList"
+							class="error"
+						>
+							Updating List.
+						</span>
 					</label>
 					<n-select
 						:options="rfcChangeLeadFixList"
-						@search="fetchOptions"
 						v-model:value="rfcChangeLeadModel"
+						:disabled="updatingLeadList"
 					></n-select>
 					<!-- TO DO FIX THIS -->
 				</div>
@@ -149,6 +155,7 @@ export default {
 			rfcTypeModel: "",
 			rfcVersionModel: "",
 			searchTimeout: "",
+			updatingLeadList: false,
 		};
 	},
 	validations: {
@@ -172,25 +179,16 @@ export default {
 		}),
 	},
 	methods: {
-		fetchOptions(search, loading) {
-			//Clear timer if it already exists
-			if (this.searchTimeout !== "") {
-				//Stop the clock
-				clearTimeout(this.searchTimeout);
-			}
+		getChangeLeadData() {
+			//Tell user we are updating the list
+			this.updatingLeadList = true;
+			this.rfcChangeLeadModel = "";
 
-			//Setup timer if there are 3 characters or more
-			if (search.length >= 3) {
-				//Start the potential search
-				this.searchTimeout = setTimeout(() => {
-					this.getChangeLeadData(search, loading);
-				}, 500);
-			}
-		},
-		getChangeLeadData(search, loading) {
 			// Save the seach data in FormData
 			const data_to_send = new FormData();
-			data_to_send.set("search", search);
+			this.groupModel.forEach((row) => {
+				data_to_send.append("group_list", row);
+			});
 
 			// Now that the timer has run out, lets use AJAX to get the organisations.
 			this.axios.post(
@@ -214,6 +212,9 @@ export default {
 					//Push that object into the stakeholders
 					this.rfcChangeLeadFixList.push(creation_object);
 				});
+
+				//Tell user they can update now
+				this.updatingLeadList = false;
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error getting change lead data",
@@ -234,6 +235,9 @@ export default {
 			//Update up stream
 			this.updateValues("groupModel", data);
 			this.updateValidation();
+
+			//Update the lead list
+			this.getChangeLeadData();
 		},
 		updateValidation() {
 			this.v$.$touch();
