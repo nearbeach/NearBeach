@@ -935,35 +935,25 @@ def lead_user_list(request, *args, **kwargs):
     :return:
     """
     # Get the data
-    search_form = SearchForm(request.POST)
-    if not search_form.is_valid():
-        return HttpResponseBadRequest(search_form.errors)
+    form = AddGroupForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
 
-    # First we create a search string and annotate it onto our results
-    user_results = User.objects.annotate(
-        search_string=Concat(
-            "username",
-            V(" "),
-            "first_name",
-            V(" "),
-            "last_name",
-            V(" "),
-            "email",
-            output_field=CharField(),
-        )
-    ).filter(
-        is_active=True,
+    # Get the group list results
+    group_list_results = request.POST.getlist("group_list")
+
+    # Get the list of users within that group's array
+    user_results = User.objects.filter(
+        id__in=UserGroup.objects.filter(
+            is_deleted=False,
+            group_id__in=group_list_results,
+            username__isnull=False,
+        ).values("username")
     )
-
-    for split_row in search_form.cleaned_data["search"].split(" "):
-        """ """
-        user_results.filter(
-            search_string__icontains=split_row,
-        )
 
     # Return the json data
     return HttpResponse(
-        serializers.serialize("json", user_results[:25]),
+        serializers.serialize("json", user_results),
         content_type="application/json",
     )
 

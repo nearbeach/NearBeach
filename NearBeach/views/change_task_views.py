@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from NearBeach.forms import ChangeTaskIsDowntimeForm, ChangeTaskStatusForm, ChangeTaskForm, ChangeTaskDescriptionForm, ChangeTaskRequiredByForm
 from NearBeach.models import ChangeTask, RequestForChange, User
+from NearBeach.views.request_for_change_views import update_rfc_dates
 from NearBeach.views.theme_views import get_theme
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 
@@ -79,6 +80,9 @@ def change_task_delete(request, change_task_id, *args, **kwargs):
     change_task_update.is_deleted = True
     change_task_update.save()
 
+    # Update the rfc dates based off the change tasks
+    update_rfc_dates(change_task_update.request_for_change_id)
+
     # Send back success
     return HttpResponse("")
 
@@ -113,6 +117,9 @@ def change_task_save(request, change_task_id, *args, **kwargs):
     ]
 
     change_task_update.save()
+
+    # Update the rfc start and end dates based off the change tasks
+    update_rfc_dates(change_task_update.request_for_change_id)
 
     # Send back empty but successful data
     return HttpResponse("")

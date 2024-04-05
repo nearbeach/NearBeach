@@ -225,6 +225,8 @@ export default {
 	computed: {
 		...mapGetters({
 			userLevel: "getUserLevel",
+			rfcEndDate: "getEndDate",
+			rfcReleaseDate: "getReleaseDate",
 			rootUrl: "getRootUrl",
 		}),
 		isCompleted() {
@@ -425,6 +427,9 @@ export default {
 				type: "updateChangeTaskCount",
 				changeTaskCount: data.change_tasks.length,
 			});
+
+			//Update the rfc start/end/release dates based off the data
+			this.updateRfcDates();
 		},
 		updateChangeTaskStatus(
 			change_task_id,
@@ -463,6 +468,40 @@ export default {
 					extra_classes: "bg-danger",
 					delay: 0,
 				});
+			});
+		},
+		updateRfcDates() {
+			//If there is no data - do nothing
+			if (this.changeTaskList.length === 0) return;
+
+			//Get the delta between the end and release date
+			const delta = this.rfcReleaseDate - this.rfcEndDate;
+
+			//Get the minimum start date from the change task list
+			const start_object = this.changeTaskList.reduce((a, b) => {
+				const a_date = new Date(a.change_task_start_date);
+				const b_date = new Date(b.change_task_start_date);
+
+				return a_date < b_date ? a : b;
+			});
+			const start_date = new Date(start_object.change_task_start_date);
+
+			//Get the maximum end date from the change task list
+			const end_object = this.changeTaskList.reduce((a, b) => {
+				const a_date = new Date(a.change_task_end_date);
+				const b_date = new Date(b.change_task_end_date);
+
+				return a_date > b_date ? a : b;
+			});
+			const end_date = new Date(end_object.change_task_end_date);
+
+			const release_date = end_date.getTime() + delta;
+
+			this.$store.commit({
+				type: "updateRfcDates",
+				endDateModel: end_date.getTime(),
+				releaseDateModel: release_date,
+				startDateModel: start_date.getTime(),
 			});
 		},
 	},

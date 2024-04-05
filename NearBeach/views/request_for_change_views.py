@@ -1,6 +1,7 @@
-import json, uuid
+import json, uuid, datetime
 
 from django.shortcuts import get_object_or_404
+from django.db.models import Max, Min
 
 from NearBeach.forms import (
     NewRequestForChangeForm,
@@ -176,6 +177,12 @@ def new_request_for_change_save(request, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    # Setup the default dates for two weeks
+    default_date = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # Add two weeks onto each date
+    default_date = default_date + datetime.timedelta(weeks=2)
+
     # Save the data
     rfc_submit = RequestForChange(
         change_user=request.user,
@@ -184,13 +191,9 @@ def new_request_for_change_save(request, *args, **kwargs):
         rfc_title=form.cleaned_data["rfc_title"],
         rfc_summary=form.cleaned_data["rfc_summary"],
         rfc_type=form.cleaned_data["rfc_type"],
-        rfc_implementation_start_date=form.cleaned_data[
-            "rfc_implementation_start_date"
-        ],
-        rfc_implementation_end_date=form.cleaned_data["rfc_implementation_end_date"],
-        rfc_implementation_release_date=form.cleaned_data[
-            "rfc_implementation_release_date"
-        ],
+        rfc_implementation_start_date=default_date,
+        rfc_implementation_end_date=default_date,
+        rfc_implementation_release_date=default_date,
         rfc_version_number=form.cleaned_data["rfc_version_number"],
         rfc_lead=form.cleaned_data["rfc_lead"],
         rfc_priority=form.cleaned_data["rfc_priority"],
@@ -300,8 +303,6 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
     :param rfc_id:
     :return:
     """
-    # ADD IN USER PERMISSIONS
-
     # Place data into forms for validation
     form = NewChangeTaskForm(request.POST)
     if not form.is_valid():
@@ -322,6 +323,9 @@ def rfc_new_change_task(request, rfc_id, *args, **kwargs):
         creation_user=request.user,
     )
     submit_change_task.save()
+
+    # Update the RFC's start and end date, based off the change tasks
+    update_rfc_dates(rfc_id)
 
     # # Get all the change task results and send it back
     return get_rfc_change_task(rfc_id)
@@ -742,3 +746,45 @@ def rfc_update_status(request, rfc_id, *args, **kwargs):
         rfc_status_rejected(rfc_id, rfc_update)
 
     return HttpResponse("")
+
+
+# Internal function
+def update_rfc_dates(rfc_id):
+    """
+    Will look up all the change tasks associated with this rfc, and update the start and end date using the min and max
+    from the change tasks.
+    """
+    rfc_results = RequestForChange.objects.get(rfc_id=rfc_id)
+
+    # Obtain the delta between the end date and the release date
+    delta = abs(rfc_results.rfc_implementation_release_date - rfc_results.rfc_implementation_end_date)
+
+    # Obtain all the change tasks and find the min and max date of all
+    change_task_results = ChangeTask.objects.filter(
+        is_deleted=False,
+        request_for_change_id=rfc_id
+    )
+
+    # If there are no change tasks associated with this rfc. Just return.
+    if len(change_task_results) == 0:
+        return
+
+    # Apply the dates
+    start_date = change_task_results.aggregate(
+        Min("change_task_start_date")
+    )["change_task_start_date__min"]
+
+    end_date = change_task_results.aggregate(
+        Max("change_task_end_date")
+    )["change_task_end_date__max"]
+
+    release_date = end_date + delta
+
+    # Update the RFC
+    rfc_results.rfc_implementation_start_date=start_date
+    rfc_results.rfc_implementation_end_date=end_date
+    rfc_results.rfc_implementation_release_date=release_date
+
+    rfc_results.save()
+
+    return

@@ -112,7 +112,7 @@
 					changeTaskResults[0].fields.change_task_status == 1 &&
 					userLevel == 4
 				"
-					v-on:click="deleteChangeTask"
+					v-on:click="confirmDeleteChangeTask"
 				>Delete</a
 				>
 
@@ -166,6 +166,10 @@
 				>
 			</div>
 		</div>
+
+		<confirm-change-task-delete
+			v-bind:change-task-results="changeTaskResults"
+		></confirm-change-task-delete>
 	</n-config-provider>
 </template>
 
@@ -173,6 +177,7 @@
 //Widgets
 import BetweenDates from "../dates/BetweenDates.vue";
 import {NSelect} from "naive-ui";
+import {Modal} from "bootstrap";
 
 //Vuex
 import {mapGetters} from "vuex";
@@ -180,10 +185,14 @@ import {mapGetters} from "vuex";
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
 
+//Components
+import ConfirmChangeTaskDelete from "./modules/ConfirmChangeTaskDelete.vue";
+
 export default {
 	name: "ChangeTaskInformation",
 	components: {
 		BetweenDates,
+		ConfirmChangeTaskDelete,
 		NSelect,
 	},
 	props: {
@@ -260,16 +269,9 @@ export default {
 		}),
 	},
 	methods: {
-		deleteChangeTask() {
-			//Send the trigger
-			this.axios
-				.post(
-					`${this.rootUrl}change_task_information/${this.changeTaskResults[0].pk}/delete/`
-				)
-				.then((response) => {
-					//If successful, go back
-					window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0].fields.request_for_change}/`;
-				});
+		confirmDeleteChangeTask() {
+			const modal = new Modal(document.getElementById("confirmChangeTaskDeleteModal"));
+			modal.show();
 		},
 		formatDate(date) {
 			//Setup the date

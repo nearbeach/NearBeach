@@ -32,7 +32,7 @@
 			<label>
 				Request for Change Summary:
 				<validation-rendering
-					v-bind:error-list="v$.rfcTitleModel.$errors"
+					v-bind:error-list="v$.rfcSummaryModel.$errors"
 				></validation-rendering>
 			</label
 			><br/>
@@ -132,6 +132,14 @@ export default {
 			if (this.uuid === "") return this.uploadImage(blobInfo, progress);
 			return this.newObjectUploadImage(blobInfo, progress)
 		},
+		updateValidation() {
+			this.v$.$touch();
+
+			this.$emit("update_validation", {
+				tab: "tab_0",
+				value: !this.v$.$invalid,
+			});
+		},
 		updateValues(modelName, modelValue) {
 			this.$emit("update_values", {
 				modelName: modelName,
@@ -142,18 +150,12 @@ export default {
 	watch: {
 		rfcSummaryModel() {
 			this.updateValues("rfcSummaryModel", this.rfcSummaryModel);
+			this.updateValidation();
 		},
 		rfcTitleModel() {
 			this.updateValues("rfcTitleModel", this.rfcTitleModel);
+			this.updateValidation();
 		},
-	},
-	updated() {
-		this.v$.$touch();
-
-		this.$emit("update_validation", {
-			tab: "tab_0",
-			value: !this.v$.$invalid,
-		});
 	},
 	mounted() {
 		//If there is data in the rfcResults - we will update the rfcSummary and rfcTitle
