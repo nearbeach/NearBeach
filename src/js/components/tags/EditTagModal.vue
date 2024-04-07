@@ -35,7 +35,15 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							<label>Tag Name</label>
+							<label>
+                                Tag Name
+                                <span
+                                    v-if="!canSave"
+                                    class="error"
+                                >
+                                    Please use a unique name
+                                </span>
+                            </label>
 							<input
 								class="form-control"
 								v-model="tagNameModel"
