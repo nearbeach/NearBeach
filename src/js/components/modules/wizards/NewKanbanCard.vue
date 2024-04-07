@@ -34,7 +34,15 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							<label>Kanban Card Text</label>
+							<label>
+                                Kanban Card Text
+                                <span
+                                    v-if="disableAddButton"
+                                    class="error"
+                                >
+                                    Please supply a unique card name
+                                </span>
+                            </label>
 							<input
 								v-model="kanbanCardTextModel"
 								v-on:keydown.enter="addKanbanCard"

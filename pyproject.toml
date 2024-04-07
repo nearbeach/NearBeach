@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "NearBeach"
+version = "0.0.1"
+dependencies = [
+  "Django>=3.1",
+  "simplejson",
+  "pillow>=10.0.1",
+  "urllib3",
+  "boto3",
+  "azure-storage-blob",
+  "azure-identity",
+  "pip>=19.2",
+]
+requires-python = ">=3.8"
+authors = [
+  {name = "Luke Christopher Clarke", email = "luke@nearbeach.org"},
+]
+maintainers = [
+  {name = "Luke Christopher Clarke", email = "luke@nearbeach.org"},
+]
+description = "NearBeach - an open source project management tool"
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = [
+  "project",
+  "task",
+  "project management",
+  "request for change",
+  "open source"
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[project.optional-dependencies]
+dev = [
+  "black",
+  "bandit",
+  "python-dotenv",
+  "django-storages",
+]
+
+[project.urls]
+Homepage = "https://nearbeach.org"
+Documentation = "https://nearbeach.readthedocs.org"
+Repository = "https://github.com/NearBeach/NearBeach.git"
+"Bug Tracker" = "https://nearbeach.youtrack.cloud"
+
+[project.scripts]
+"manage.py" = "myproject:django_manage"
