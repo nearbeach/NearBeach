@@ -118,6 +118,8 @@
 		></confirm-sprint-delete>
 
 		<add-object-wizard></add-object-wizard>
+
+		<test-gantt-chart></test-gantt-chart>
 	</n-config-provider>
 </template>
 
@@ -132,9 +134,14 @@ import AddObjectWizard from "./AddObjectWizard.vue";
 //Bootstrap
 import { Modal } from "bootstrap";
 
+//TEMP CODE
+import TestGanttChart from "../gantt_chart/TestGanttChart.vue";
+//END TEMP CODE
+
 export default {
 	name: "SprintInformation",
 	components: {
+		TestGanttChart,
 		AddObjectWizard,
 		ConfirmSprintDelete,
 	},
