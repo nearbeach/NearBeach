@@ -45,6 +45,23 @@
             @media screen and (min-width: 767px) {
                 width: 18%;
             }
+
+            a {
+                display: block;
+                height: 100%;
+                text-decoration: none;
+            }
+
+            .object-card--status--status {
+                //color: #4f4f4f;
+                color: var(--bs-body-color);
+                font-weight: lighter;
+            }
+
+            .small-text {
+                white-space: nowrap;
+                overflow: clip;
+            }
         }
 
 
