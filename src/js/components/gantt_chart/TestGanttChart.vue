@@ -36,7 +36,11 @@
 	</div>
 
 	<!--	RENDER-->
-	<div class="gantt-row">
+	<div class="gantt-row"
+		 v-on:mouseup="mouseUp"
+		 v-on:mouseleave="mouseLeave"
+	     v-on:mousemove="mouseMove"
+	>
 		<div class="gantt-row--information">
 			<div>Information belongs here</div>
 		</div>
@@ -48,9 +52,7 @@
 				></div>
 				<div
 					class="gantt-row--bar"
-					draggable="true"
-					v-on:dragend="dragDrop($event)"
-					v-on:dragstart="dragStart($event)"
+					v-on:mousedown="mouseDown"
 				></div>
 			</div>
 			<div class="gantt-row--cells">
@@ -85,6 +87,7 @@ export default {
 				6: "S",
 			},
 			deltaDays: 0,
+			isMouseDown: false,
 			monthArray: [],
 			monthDictionary: {
 				0: "Jan",
@@ -100,10 +103,10 @@ export default {
 				10: "November",
 				11: "December",
 			},
-			mouseDown: false,
 			spacerWidth: 0,
 			startDate: 1712188800000,
 			startDateGantt: 1711929600000,
+			startDateInitial: 0,
 			endDate: 1712361600000,
 			endDateGantt: 1720396800000,
 		};
@@ -184,13 +187,49 @@ export default {
 		},
 		getDayDate(index) {
 			const delta = index * 24 * 60 * 60 * 1000;
-			const new_date = new Date(this.startDate + delta);
+			const new_date = new Date(this.startDateGantt + delta);
 			return this.dateDictionary[new_date.getDay()];
 		},
 		getDayText(index) {
 			const delta = index * 24 * 60 * 60 * 1000;
-			const new_date = new Date(this.startDate + delta);
+			const new_date = new Date(this.startDateGantt + delta);
 			return new_date.getDate();
+		},
+		mouseDown(event) {
+			//Get the initial Client X
+			this.clientXInitial = event.clientX;
+
+			//Get the inital start date
+			this.startDateInitial = this.startDate;
+
+			//Record that the mouse is down
+			this.isMouseDown = true;
+		},
+		mouseLeave() {
+			this.isMouseDown = false;
+		},
+		mouseMove(event) {
+			if (this.isMouseDown) {
+				this.clientXFinal = event.clientX;
+
+
+				//Get the number of dates from this
+				let delta = Math.floor((this.clientXFinal - this.clientXInitial) / 35) * (24 * 60 * 60 * 1000);
+
+				console.log("Delta: ", delta);
+
+				//Apply to the start date
+				const start_date = new Date(this.startDateInitial + delta);
+
+				//Adjust the start date
+				this.startDate = start_date.getTime();
+
+				//Adjust the spacer width
+				this.setSpacerWidth();
+			}
+		},
+		mouseUp() {
+			this.isMouseDown = false;
 		},
 		setSpacerWidth() {
 			let delta = Math.round((this.startDate - this.startDateGantt) / (1000 * 60 * 60 * 24));
