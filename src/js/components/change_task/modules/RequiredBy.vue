@@ -13,6 +13,7 @@
 				<input
 					type="text"
 					class="form-control"
+					v-bind:disabled="isReadOnly"
 					v-model="requiredByModel"
 				/>
 			</div>
@@ -21,9 +22,13 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
 	name: "RequiredBy",
 	computed: {
+		...mapGetters({
+			isReadOnly: "getIsChangeTaskReadOnly",
+		}),
 		requiredByModel: {
 			get() {
 				return this.$store.state.changeTask.requiredBy;
@@ -85,7 +90,7 @@ export default {
 					unique_type: "required-save",
 				});
 			})
-		}
+		},
 	}
 }
 </script>

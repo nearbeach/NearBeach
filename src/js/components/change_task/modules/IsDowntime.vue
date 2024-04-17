@@ -21,6 +21,7 @@
 					id="isDowntime"
 					class="btn-check"
 					autocomplete="off"
+					v-bind:disabled="isReadOnly"
 					v-model="isDowntimeModel"
 				/>
 				<label
@@ -34,9 +35,13 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
 	name: "IsDowntime",
 	computed: {
+		...mapGetters({
+			isReadOnly: "getIsChangeTaskReadOnly",
+		}),
 		isDowntimeModel: {
 			get() {
 				return this.$store.state.changeTask.isDowntime;
@@ -49,7 +54,7 @@ export default {
 
 				this.updateIsDowntime(isDowntime);
 			}
-		}
+		},
 	},
 	methods: {
 		isDowntime() {
@@ -93,7 +98,7 @@ export default {
 				});
 
 			})
-		}
+		},
 	},
 }
 </script>

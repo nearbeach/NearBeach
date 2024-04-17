@@ -27,6 +27,7 @@
 							<input
 								type="text"
 								class="form-control"
+								v-bind:disabled="isReadOnly"
 								v-model="changeTitleModel"
 							/>
 						</div>
@@ -57,6 +58,7 @@
 					v-bind:start-date-model="changeStartDateModel"
 					v-bind:end-date-model="changeEndDateModel"
 					v-bind:no-back-dating="false"
+					v-bind:is-read-only="isReadOnly"
 					v-on:update_dates="updateDates($event)"
 				></between-dates>
 
@@ -77,6 +79,7 @@
 									<label>Implementation User</label>
 									<n-select
 										v-bind:options="userListFixed"
+										v-bind:disabled="isReadOnly"
 										v-model:value="assignedUserModel"
 									></n-select>
 								</div>
@@ -87,6 +90,7 @@
 									<n-select
 										v-model:value="qaUserModel"
 										v-bind:options="userListFixed"
+										v-bind:disabled="isReadOnly"
 									/>
 								</div>
 							</div>
@@ -239,18 +243,16 @@ export default {
 	},
 	data() {
 		return {
-			assignedUserModel:
-			this.changeTaskResults[0].fields.change_task_assigned_user,
-			changeTitleModel:
-			this.changeTaskResults[0].fields.change_task_title,
+			assignedUserModel: this.changeTaskResults[0].fields.change_task_assigned_user,
+			changeTitleModel: this.changeTaskResults[0].fields.change_task_title,
 			changeStartDateModel: new Date(
 				this.changeTaskResults[0].fields.change_task_start_date
 			).getTime(),
 			changeEndDateModel: new Date(
 				this.changeTaskResults[0].fields.change_task_end_date
 			).getTime(),
-			qaUserModel:
-			this.changeTaskResults[0].fields.change_task_qa_user,
+			isReadOnly: false,
+			qaUserModel: this.changeTaskResults[0].fields.change_task_qa_user,
 			userListFixed: this.userList.map((row) => {
 				return {
 					label: `${row.username}: ${row.first_name} ${row.last_name}`,
@@ -347,6 +349,24 @@ export default {
 					});
 				});
 		},
+		setReadOnly() {
+			//Is user has permissions <= 1 then read only
+			if (this.userLevel <= 1) {
+				this.isReadOnly = true;
+				// this.isReadOnly = true;
+			}
+
+			//If the status is not in draft - we don't want to edit
+			if (this.rfcStatus.toLowerCase() !== "draft") {
+				this.isReadOnly = true;
+			}
+
+			//Update vuex
+			this.$store.commit({
+				type: "updateIsChangeTaskReadOnly",
+				isChangeTaskReadOnly: this.isReadOnly,
+			});
+		},
 		updateStatus(new_status) {
 			//Setup data_to_send
 			const data_to_send = new FormData();
@@ -401,7 +421,9 @@ export default {
 			startDate: this.changeTaskResults[0].fields.change_task_start_date,
 
 		});
-		// changeIsDowntimeModel:
+
+		//Set read only
+		this.setReadOnly();
 	},
 };
 </script>
