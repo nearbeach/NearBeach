@@ -18,10 +18,14 @@
             content_css: `${this.contentCss}`
         }"
 		v-model="changeDescriptionModel"
+		v-bind:disabled="isReadOnly"
 	/>
 
-	<hr/>
-	<div class="row submit-row">
+	<hr v-if="!isReadOnly"/>
+	<div
+		class="row submit-row"
+		v-if="!isReadOnly"
+	>
 		<div class="col-md-12">
 			<button
 				class="btn btn-primary save-changes"
@@ -47,6 +51,7 @@ export default {
 	computed: {
 		...mapGetters({
 			contentCss: "getContentCss",
+			isReadOnly: "getIsChangeTaskReadOnly",
 			skin: "getSkin",
 		}),
 		changeDescriptionModel: {
@@ -127,6 +132,6 @@ export default {
 				});
 			});
 		},
-	}
+	},
 }
 </script>

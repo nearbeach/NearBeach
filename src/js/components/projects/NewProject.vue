@@ -224,6 +224,14 @@ export default {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect || this.displayGroupPermissionIssue) {
+                //Tell the user to fix the validation issues
+                this.$store.dispatch("newToast", {
+                    header: "Please check all validation",
+                    message: "There are some fields that are filled in correctly. Please correct these mistakes.",
+                    extra_classes: "bg-danger",
+                    delay: 0,
+                });
+
 				return;
 			}
 

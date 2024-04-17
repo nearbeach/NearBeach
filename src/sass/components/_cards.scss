@@ -148,22 +148,22 @@
 
     &.priority-high {
         background: rgb(255, 172, 78);
-        background: linear-gradient(90deg, rgba(255, 172, 78, 1) 50%, rgb(255, 255, 255) 100%);
+        background: linear-gradient(90deg, rgba(255, 172, 78, 1) 50%, var(--bs-list-group-bg) 100%);
     }
 
     &.priority-normal {
         background: rgb(115, 223, 175);
-        background: linear-gradient(90deg, rgba(115, 223, 175, 1) 0%, rgb(255, 255, 255) 80%);
+        background: linear-gradient(90deg, rgba(115, 223, 175, 1) 0%, var(--bs-list-group-bg) 80%);
     }
 
     &.priority-low {
         background: rgb(73, 197, 238);
-        background: linear-gradient(90deg, rgba(73, 197, 238, 1) 0%, rgb(255, 255, 255) 50%);
+        background: linear-gradient(90deg, rgba(73, 197, 238, 1) 0%, var(--bs-list-group-bg) 50%);
     }
 
     &.priority-lowest {
         background: rgb(212, 212, 212);
-        background: linear-gradient(90deg, rgba(212, 212, 212, 1) 0%, rgb(255, 255, 255) 35%);
+        background: linear-gradient(90deg, rgba(212, 212, 212, 1) 0%, var(--bs-list-group-bg) 35%);
     }
 }
 

@@ -2,6 +2,7 @@ export const moduleChangeTask = {
     state: () => ({
         description: "",
         endDate: new Date(0),
+        isChangeTaskReadOnly: false,
         isDowntime: false,
         requiredBy: "",
         startDate: new Date(0),
@@ -23,6 +24,9 @@ export const moduleChangeTask = {
         updateChangeTaskRequiredBy(state, payload) {
             state.stakeholder = payload.requiredBy;
         },
+        updateIsChangeTaskReadOnly(state, payload) {
+            state.isChangeTaskReadOnly = payload.isChangeTaskReadOnly;
+        },
     },
     actions: {},
     getters: {
@@ -40,6 +44,9 @@ export const moduleChangeTask = {
         },
         getChangeTaskRequiredBy: (state) => {
             return state.requiredBy;
+        },
+        getIsChangeTaskReadOnly: (state) => {
+            return state.isChangeTaskReadOnly;
         },
     },
 };

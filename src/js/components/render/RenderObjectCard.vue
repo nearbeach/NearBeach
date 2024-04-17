@@ -16,12 +16,14 @@
 				</a>
 			</div>
 			<div class="object-card--status">
-				<div class="object-card--status--status">
-					{{ result[importVariables.status] }}
-				</div>
-				<p class="small-text">
-					{{ getNiceDatetime(result[importVariables.end_date]) }}
-				</p>
+				<a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`">
+					<div class="object-card--status--status">
+						{{ result[importVariables.status] }}
+					</div>
+					<p class="small-text">
+						{{ getNiceDatetime(result[importVariables.end_date]) }}
+					</p>
+				</a>
 			</div>
 		</div>
 	</div>

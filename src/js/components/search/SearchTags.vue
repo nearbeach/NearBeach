@@ -169,6 +169,11 @@ export default {
 			type: "updateUrl",
 			rootUrl: this.rootUrl,
 		});
+
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
+		});
 	},
 };
 </script>

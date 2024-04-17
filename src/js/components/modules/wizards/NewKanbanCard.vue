@@ -34,7 +34,15 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							<label>Kanban Card Text</label>
+							<label>
+                                Kanban Card Text
+                                <span
+                                    v-if="disableAddButton"
+                                    class="error"
+                                >
+                                    Please supply a unique card name
+                                </span>
+                            </label>
 							<input
 								v-model="kanbanCardTextModel"
 								v-on:keydown.enter="addKanbanCard"
@@ -240,8 +248,16 @@ export default {
 	},
 	methods: {
 		addKanbanCard() {
-			//Get the modal to extract data from
-			// const self_modal = document.getElementById("addKanbanCardModal");
+			//Disable the save
+			this.disableAddButton = true;
+
+			this.$store.dispatch("newToast", {
+				header: "Creating new card",
+				message: "Please wait as we create the new card",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "new_card",
+			});
 
 			//Create the data_to_send
 			const data_to_send = new FormData();
@@ -281,8 +297,22 @@ export default {
 					document
 						.getElementById("addKanbanCardCloseButton")
 						.click();
+
+					this.$store.dispatch("newToast", {
+						header: "Card created successfully",
+						message: "Card created successfully",
+						extra_classes: "bg-success",
+						unique_type: "new_card",
+					});
 				})
 				.catch((error) => {
+					this.$store.dispatch("newToast", {
+						header: "Error creating card",
+						message: `Error creating card: Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+						unique_type: "new_card",
+					});
 				});
 		},
 	},

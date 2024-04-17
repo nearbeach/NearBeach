@@ -35,9 +35,18 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							<label>Tag Name</label>
+							<label>
+                                Tag Name
+                                <span
+                                    v-if="!canSave"
+                                    class="error"
+                                >
+                                    Please use a unique name
+                                </span>
+                            </label>
 							<input
 								class="form-control"
+								v-bind:disabled="userLevel <= 1"
 								v-model="tagNameModel"
 							/>
 						</div>
@@ -55,6 +64,7 @@
 							<div class="form-group">
 								<label>Background Colour</label>
 								<n-color-picker :show-alpha="false"
+												v-bind:disabled="userLevel <= 1"
 												v-model:value="tagColourModel"
 												:modes="['hex']"
 								></n-color-picker>
@@ -64,6 +74,7 @@
 								<label>Text Colour</label>
 
 								<n-color-picker v-model:value="tagTextColourModel"
+												v-bind:disabled="userLevel <= 1"
 												:show-alpha="false"
 												:modes="['hex']"
 								/>
@@ -85,7 +96,7 @@
 						type="button"
 						class="btn btn-danger delete-tag"
 						v-on:click="deleteTag"
-						v-if="tagId !== 0"
+						v-if="tagId !== 0 && userLevel > 1"
 					>
 						Delete Tag
 					</button>
@@ -102,6 +113,7 @@
 						class="btn btn-primary"
 						v-bind:disabled="!canSave"
 						v-on:click="saveTag"
+						v-if="userLevel > 1"
 					>
 						Save Tag
 					</button>
@@ -169,6 +181,7 @@ export default {
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",
+			userLevel: "getUserLevel",
 		}),
 		canSave() {
 			//Return false if user has written a duplicate tag name

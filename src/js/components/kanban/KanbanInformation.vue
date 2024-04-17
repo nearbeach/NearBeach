@@ -355,8 +355,22 @@ export default {
 			});
 		},
 		updateKanbanSettings() {
-			//If there are no settings - just return
-			if (this.kanbanSettings.setting_data === undefined) return;
+			//If there are no settings - default to basic structure
+			if (this.kanbanSettings.setting_data === undefined) {
+                //Data is ready to upload
+                this.$store.commit({
+                    type: "initKanbanSettings",
+                    canDragCards: true,
+                    levels: this.levelResults.map((row) => {
+                        return {
+                            level_id: row.pk,
+                            is_collapsed: false,
+                        }
+                    }),
+                });
+
+                return;
+            }
 
 			//Setup the canDrag
 			let can_drag_cards = this.kanbanSettings.setting_data.canDragCards;
