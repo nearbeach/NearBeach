@@ -116,6 +116,18 @@ export default {
 			}, 500);
 		},
 	},
+	computed: {
+		isSubmitDisabled() {
+			//If we are searching, or if the name is not unique
+			//Disable if;
+			//- the name is not unique
+			//- or we are checking the permission set name
+			//- if the permission set length is 0
+			return !this.uniquePermissionSetName
+				|| this.checkingPermissionSetName
+				|| this.permissionSetNameModel.length === 0;
+		},
+	},
 	methods: {
 		addNewPermissionSet() {
 			//Check to make sure everything is validated
@@ -180,10 +192,6 @@ export default {
 				});
 			});
 		},
-		isSubmitDisabled() {
-			//If we are searching, or if the name is not unique
-			return this.uniquePermissionSetName || this.checkingPermissionSetName;
-		}
 	},
 };
 </script>
