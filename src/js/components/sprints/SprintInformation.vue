@@ -1,114 +1,61 @@
 <template>
 	<n-config-provider :theme="getTheme(theme)">
-		<div class="card">
-			<div class="card-body">
-				<h1>Sprint Information</h1>
-				<div class="spacer"></div>
-				<a v-bind:href="getParentUrl()">
-					Go to Parent Object
-				</a>
-				<hr>
-
-				<div class="row">
-					<div class="col-md-4">
-						<strong>Sprint Information</strong>
-					</div>
-					<div class="col-md-8">
-						<p><strong>Sprint Name: </strong> {{ sprintResults[0].sprint_name }}</p>
-						<p><strong>Sprint Status: </strong> {{ sprintResults[0].sprint_status }}</p>
-						<p><strong>Sprint Start Date: </strong> {{ sprintResults[0].sprint_start_date }}</p>
-						<p v-if="sprintResults[0].sprint_status === 'Finish'">
-							<strong>Sprint End Date: </strong> {{ sprintResults[0].sprint_end_date }}
-						</p>
-						<p><strong>Sprint Total Story Points: </strong> {{ sprintResults[0].total_story_points }}</p>
-						<p><strong>Sprint Completed Story Points: </strong> {{ sprintResults[0].completed_story_points }}</p>
-					</div>
-				</div>
-
-				<hr>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<td>Object</td>
-							<td>Description</td>
-							<td>Status</td>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-for="item in requirementItemResults"
-							:key="item.pk"
-						>
-							<td>
-								<a v-bind:href="`${this.rootUrl}requirement_information/${item.pk}/`">
-									Req{{item.pk}}
-								</a>
-							</td>
-							<td>{{item.fields.requirement_item_title}}</td>
-							<td>{{item.fields.requirement_item_status}}</td>
-						</tr>
-						<tr v-for="item in projectResults"
-							:key="item.pk"
-						>
-							<td>
-								<a v-bind:href="`${this.rootUrl}project_information/${item.pk}/`">
-									Pro{{item.pk}}
-								</a>
-							</td>
-							<td>{{item.fields.project_name}}</td>
-							<td>{{item.fields.project_status}}</td>
-						</tr>
-						<tr v-for="item in taskResults"
-							:key="item.pk"
-						>
-							<td>
-								<a v-bind:href="`${this.rootUrl}task_information/${item.pk}/`">
-									Task{{item.pk}}
-								</a>
-							</td>
-							<td>{{item.fields.task_short_description}}</td>
-							<td>{{item.fields.task_status}}</td>
-						</tr>
-					</tbody>
-				</table>
-
-				<hr>
-				<div
-					v-if="userLevel >= 2"
-					class="row submit-row"
+		<div class="sprint-header">
+			<h1>{{sprintResults[0].sprint_name}}</h1>
+			<a v-bind:href="getParentUrl()">
+				Go to Parent Object
+			</a>
+			<div class="spacer"></div>
+			<div class="sprint-header--information">
+				<div class="sprint-header--information-date"
+					 v-if="sprintResults[0].sprint_status === 'Finish'"
 				>
-					<div class="col-md-12">
-						<button
-							v-on:click="showAddObjectWizard"
-							class="btn btn-success"
-							v-if="sprintResults[0].sprint_status !== 'Finished'"
-						>
-							Add Object Wizard
-						</button>
-						<button
-							v-on:click="confirmDeleteSprint"
-							class="btn btn-danger"
-							v-if="sprintResults[0].sprint_status !== 'Finished'"
-						>
-							Delete
-						</button>
-
-						<button
-							class="btn btn-success save-changes"
-							v-if="sprintResults[0].sprint_status === 'Draft'"
-							v-on:click="startSprint"
-						>
-							Start Sprint
-						</button>
-						<button
-							class="btn btn-warning save-changes"
-							v-if="sprintResults[0].sprint_status === 'Current'"
-							v-on:click="finishSprint"
-						>
-							Finish Sprint
-						</button>
-					</div>
+					<strong>Finish Date:</strong> {{sprintResults[0].sprint_end_date}}
 				</div>
+				<div class="sprint-header--information-date"
+					 v-else
+				>
+					<strong>Start Date:</strong> {{sprintResults[0].sprint_start_date}}
+				</div>
+				<div class="sprint-header--information-status">
+					<strong>Sprint Status:</strong> {{ sprintResults[0].sprint_status }}
+				</div>
+			</div>
 
+			<hr v-if="userLevel >= 2" />
+			<div
+				v-if="userLevel >= 2"
+				class="sprint-header--buttons"
+			>
+				<button
+					v-on:click="showAddObjectWizard"
+					class="btn btn-primary"
+					v-if="sprintResults[0].sprint_status !== 'Finished'"
+				>
+					Add Object Wizard
+				</button>
+				<button
+					v-on:click="confirmDeleteSprint"
+					class="btn btn-danger delete-button"
+					v-if="sprintResults[0].sprint_status !== 'Finished'"
+				>
+					Delete Sprint
+				</button>
+
+				<button
+					class="btn btn-success"
+					v-if="sprintResults[0].sprint_status === 'Draft'"
+					v-on:click="startSprint"
+				>
+					Start Sprint
+				</button>
+				<button
+					class="btn btn-warning"
+					v-if="sprintResults[0].sprint_status === 'Current'"
+					v-on:click="finishSprint"
+				>
+					Finish Sprint
+				</button>
 			</div>
 		</div>
 
@@ -119,7 +66,6 @@
 
 		<add-object-wizard></add-object-wizard>
 
-		<test-gantt-chart></test-gantt-chart>
 	</n-config-provider>
 </template>
 
@@ -134,14 +80,9 @@ import AddObjectWizard from "./AddObjectWizard.vue";
 //Bootstrap
 import { Modal } from "bootstrap";
 
-//TEMP CODE
-import TestGanttChart from "../gantt_chart/TestGanttChart.vue";
-//END TEMP CODE
-
 export default {
 	name: "SprintInformation",
 	components: {
-		TestGanttChart,
 		AddObjectWizard,
 		ConfirmSprintDelete,
 	},
@@ -164,27 +105,6 @@ export default {
 			type: Number,
 			default: 1,
 		},
-
-		//TEMP CODE
-		requirementItemResults: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
-		projectResults: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
-		taskResults: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
-		//END TEMP CODE
 	},
 	mixins: [
 		getThemeMixin,

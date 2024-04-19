@@ -1,0 +1,39 @@
+.sprint-header {
+    max-width: 1020px;
+    margin: 20px auto;
+    border: var(--nb-object-card--border);
+    padding: 10px;
+    background-color: var(--nb-object-card--background-color);
+    display: flex;
+    flex-direction: column;
+
+    h1 {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .sprint-header--information {
+        display: flex;
+        flex-direction: column;
+        font-weight: lighter;
+        justify-content: space-between;
+        
+        @media screen and (min-width: 767px) {
+            flex-direction: row;
+        }
+    }
+
+    .sprint-header--buttons {
+        display: flex;
+        justify-content: space-between;
+
+        .delete-button {
+            display: none;
+
+            @media screen and (min-width: 767px) {
+                display: block;
+            }
+        }
+    }
+}

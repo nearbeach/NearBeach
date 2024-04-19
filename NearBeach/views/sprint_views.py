@@ -242,50 +242,24 @@ def sprint_information(request, sprint_id, *args, **kwargs):
         "project",
         "requirement",
         "sprint_name",
+        "sprint_end_date",
         "sprint_start_date",
         "sprint_status",
         "total_story_points",
     )
 
-    # Import all connected objects
-    sprint_object_assignment_results = SprintObjectAssignment.objects.filter(
-        is_deleted=False,
-        sprint_id=sprint_id,
-    )
-
-    requirement_item_results = RequirementItem.objects.filter(
-        is_deleted=False,
-        requirement_item_id__in=sprint_object_assignment_results.filter(
-            requirement_item__isnull=False,
-        ).values("requirement_item_id"),
-    )
-
-    project_results = Project.objects.filter(
-        is_deleted=False,
-        project_id__in=sprint_object_assignment_results.filter(
-            project_id__isnull=False,
-        ).values("project_id"),
-    )
-
-    task_results = Task.objects.filter(
-        is_deleted=False,
-        task_id__in=sprint_object_assignment_results.filter(
-            task_id__isnull=False,
-        ).values("task_id")
-    )
+    gantt_start_date = sprint_results[0]['sprint_start_date'].isoformat()
+    gantt_end_date = sprint_results[0]['sprint_end_date'].isoformat()
 
     c = {
+        "gantt_end_date": gantt_end_date,
+        "gantt_start_date": gantt_start_date,
         "nearbeach_title": f"Sprint Information {sprint_id}",
         "need_tinymce": False,
+        "sprint_id": sprint_id,
         "sprint_results": json.dumps(list(sprint_results), cls=DjangoJSONEncoder),
         "user_level": kwargs["user_level"],
         "theme": get_theme(request),
-
-        # TEMP CODE
-        "requirement_item_results": serializers.serialize("json", requirement_item_results),
-        "project_results": serializers.serialize("json", project_results),
-        "task_results": serializers.serialize("json", task_results),
-        # END TEMP CODE
     }
 
     return HttpResponse(t.render(c, request))
