@@ -37,9 +37,10 @@
 					  class="card-external-link"
 				></Icon>
 				<b>#{{ element.pk }}</b>
-				<b v-if="!canDragCards"> - LOCKED!</b>
 				<br/>
 				{{ element.fields.kanban_card_text }}
+				<br v-if="!canDragCards"/>
+				<span v-if="!canDragCards" style="font-weight: lighter">- Movement Locked!</span>
 				<Icon
 					class="kanban-card-info-icon"
 					v-bind:icon="icons.infoCircle"
