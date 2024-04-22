@@ -1225,45 +1225,45 @@ export default {
 }
 </script>
 
-<style>
-.gantt-header {
-	display: flex;
-	flex-direction: row;
-	//margin: 50px 0 0 0;
-	background-color: lightblue;
-}
+<!--<style>-->
+<!--.gantt-header {-->
+<!--	display: flex;-->
+<!--	flex-direction: row;-->
+<!--	//margin: 50px 0 0 0;-->
+<!--	background-color: lightblue;-->
+<!--}-->
 
-.gantt-header--information {
-	min-width: 200px;
-	max-width: 200px;
-	background-color: #0a7e5b;
-}
+<!--.gantt-header&#45;&#45;information {-->
+<!--	min-width: 200px;-->
+<!--	max-width: 200px;-->
+<!--	background-color: #0a7e5b;-->
+<!--}-->
 
-.gantt-row--date {
-	width: 35px;
-	//height: 35px;
-	background-color: lightgrey;
-	border: solid 1px dimgray;
-	color: black;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-}
+<!--.gantt-row&#45;&#45;date {-->
+<!--	width: 35px;-->
+<!--	//height: 35px;-->
+<!--	background-color: lightgrey;-->
+<!--	border: solid 1px dimgray;-->
+<!--	color: black;-->
+<!--	display: flex;-->
+<!--	flex-direction: column;-->
+<!--	align-items: center;-->
+<!--	justify-content: center;-->
+<!--}-->
 
-.gantt-row--month {
-	background-color: lightblue;
-	border: solid 1px lightskyblue;
-	color: black;
-}
+<!--.gantt-row&#45;&#45;month {-->
+<!--	background-color: lightblue;-->
+<!--	border: solid 1px lightskyblue;-->
+<!--	color: black;-->
+<!--}-->
 
-.gantt-row--dates {
-	display: flex;
-	flex-direction: row;
-}
+<!--.gantt-row&#45;&#45;dates {-->
+<!--	display: flex;-->
+<!--	flex-direction: row;-->
+<!--}-->
 
-.gantt-row--months {
-	display: flex;
-	flex-direction: row;
-}
-</style>
+<!--.gantt-row&#45;&#45;months {-->
+<!--	display: flex;-->
+<!--	flex-direction: row;-->
+<!--}-->
+<!--</style>-->

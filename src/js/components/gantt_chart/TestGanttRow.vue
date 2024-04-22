@@ -94,51 +94,5 @@ export default {
 </script>
 
 <style>
-.gantt-row {
-	display: flex;
-	flex-direction: row;
-	margin: 0;
-	background-color: rgb(105, 50, 50);
-	-webkit-user-select: none;
-	user-select: none;
-}
 
-.gantt-row--information {
-	min-width: 200px;
-	max-width: 200px;
-	background-color: rgb(66, 57, 57);
-	display: flex;
-  	flex-direction: column;
-  	align-items: flex-start;
-  	justify-content: center;
-}
-
-.gantt-row--cell {
-	width: 35px;
-	height: 35px;
-	background-color: lightgrey;
-	border: solid 1px dimgray;
-}
-
-.gantt-row--cells {
-	display: flex;
-	flex-direction: row;
-	-webkit-user-select: none;
-	user-select: none;
-}
-
-.gantt-row--bar {
-	background-color: hotpink;
-	min-width: 35px;
-	//width: 70px;
-	height: 20px;
-	margin-top: 7px;
-	z-index: 10;
-}
-
-.gantt-row--render-bar {
-	position: absolute;
-	display: flex;
-	flex-direction: row;
-}
 </style>

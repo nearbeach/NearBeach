@@ -1,3 +1,106 @@
 .gantt-chart {
     position: relative;
+    margin: 5px;
+    padding-bottom: 5px;
+    //overflow: scroll;
+    scrollbar-color: orange lightyellow;
+    background-color: var(--nb-object-card--background-color);
+
+    .gantt-header {
+        display: flex;
+        flex-direction: row;
+
+        .gantt-header--information {
+            width: 720px;
+            max-width: 720px;
+            min-width: 720px;
+        }
+
+        .gantt-header--dates {
+            display: flex;
+            flex-direction: row;
+
+            .gantt-header--date {
+                width: 35px;
+                //background-color: lightgrey;
+                //border: solid 1px dimgray;
+                //color: black;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        .gantt-header--months {
+            display: flex;
+            flex-direction: row;
+
+            .gantt-header--month {
+                //background-color: lightblue;
+                //border: solid 1px lightskyblue;
+                //color: black;
+            }
+        }
+    }
+
+    .gantt-row {
+        display: flex;
+        flex-direction: row;
+        margin: 0;
+        height: 35px;
+        -webkit-user-select: none;
+        user-select: none;
+
+        .gantt-row--information {
+            width: 720px;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+
+            .gantt-row--title {
+                width: 360px;
+            }
+
+            .gantt-row--start-date, .gantt-row--end-date {
+                width: 180px;
+            }
+        }
+
+        .gantt-row--render {
+
+        }
+    }
+
+
+
+
+
+    .gantt-row--cells {
+        display: flex;
+        flex-direction: row;
+        -webkit-user-select: none;
+        user-select: none;
+
+        .gantt-row--cell {
+            width: 35px;
+            height: 35px;
+            //background-color: lightgrey;
+            //border: solid 1px dimgray;
+        }
+    }
+
+    .gantt-row--bar {
+        background-color: var(--nb-kanban-level-div-background-color);
+        min-width: 35px;
+        height: 20px;
+        margin-top: 7px;
+    }
+
+    .gantt-row--render-bar {
+        position: absolute;
+        display: flex;
+        flex-direction: row;
+    }
 }

@@ -1,16 +1,40 @@
 <template>
 	<div class="gantt-chart">
+		<render-gantt-monthly-header></render-gantt-monthly-header>
+		<render-gantt-days-header></render-gantt-days-header>
+
+		<!-- RENDER EACH GANTT ROW-->
+		<render-gantt-row
+			v-for="(row, index) in ganttChartData"
+			:key="index"
+			v-bind:end-date="row.end_date"
+			v-bind:index="index"
+			v-bind:object-type="row.object_type"
+			v-bind:start-date="row.start_date"
+			v-bind:status-id="row.status_id"
+			v-bind:title="row.title"
+		></render-gantt-row>
 	</div>
 </template>
 
 <script>
 import {mapGetters} from "vuex";
-import TestGanttChart from "./TestGanttChart.vue";
 import {DateTime} from "luxon";
+
+//Components
+import RenderGanttDaysHeader from "./RenderGanttDaysHeader.vue";
+import RenderGanttMonthlyHeader from "./RenderGanttMonthlyHeader.vue";
+import TestGanttChart from "./TestGanttChart.vue";
+import RenderGanttRow from "./RenderGanttRow.vue";
 
 export default {
 	name: "GanttChart",
-	components: {TestGanttChart},
+	components: {
+		RenderGanttRow,
+		RenderGanttDaysHeader,
+		RenderGanttMonthlyHeader,
+		TestGanttChart
+	},
 	props: {
 		destination: {
 			type: String,
@@ -43,7 +67,7 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-
+			ganttChartData: "getGanttChartData",
 		}),
 	},
 	methods: {
