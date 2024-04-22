@@ -43,6 +43,7 @@
 								:options="userResults"
 								v-model:value="userModel"
 								class="form-control"
+								filterable
 							/>
 						</div>
 					</div>
@@ -67,6 +68,7 @@
 								v-model:value="groupModel"
 								class="form-control"
 								multiple
+								filterable
 							/>
 						</div>
 					</div>
@@ -91,6 +93,7 @@
 								v-model:value="permissionSetModel"
 								class="form-control"
 								multiple
+								filterable
 							/>
 						</div>
 					</div>
