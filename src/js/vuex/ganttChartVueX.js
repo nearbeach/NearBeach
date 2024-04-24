@@ -4,6 +4,11 @@ export const moduleGantChart = {
     state: () => ({
         deltaDays: 0,
         ganttChartData: [],
+        ganttStatusList: {
+            requirement_item_status: [],
+            project_status: [],
+            task_status: [],
+        },
         endDateGantt: 0,
         startDateGantt: 0,
     }),
@@ -24,6 +29,9 @@ export const moduleGantChart = {
         },
         updateGanttChartData(state, payload) {
             state.ganttChartData = payload.ganttChartData;
+        },
+        updateGanttStatusList(state, payload) {
+            state.ganttStatusList = payload.ganttStatusList;
         },
     },
     actions: {
@@ -56,16 +64,16 @@ export const moduleGantChart = {
                 startDateGantt: payload.startDateGantt,
             });
         },
-        updateSingleGanttChartRow: ({ state, commit }, payload) => {
+        updateGanttChartSingleRow: ({ state, commit }, payload) => {
             //Get the gantt chart data
-            let gantt_chart_date = state.ganttChartData;
+            let gantt_chart_data = state.ganttChartData;
 
             //Mutate the gantt chart data
-            gantt_chart_date[payload.index][payload.field] = payload.value;
+            gantt_chart_data[payload.index] = payload.value;
 
             //Update gantt chart data
             commit("updateGanttChartData", {
-                ganttChartData: gantt_chart_date,
+                ganttChartData: gantt_chart_data,
             });
         },
     },
@@ -76,9 +84,8 @@ export const moduleGantChart = {
         getGanttChartData: (state)=> {
             return state.ganttChartData;
         },
-        getGanttChartDataByIndex: (state) => (index) => {
-            console.log("INdex: ", index);
-            return state.ganttChartData[index];
+        getGanttStatusList: (state) => (object_type) => {
+            return state.ganttStatusList[object_type];
         },
         getEndDateGantt: (state) => {
             return state.endDateGantt;

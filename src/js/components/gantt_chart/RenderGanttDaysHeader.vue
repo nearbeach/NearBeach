@@ -1,6 +1,11 @@
 <template>
 	<div class="gantt-header">
-		<div class="gantt-header--information"></div>
+		<div class="gantt-header--information">
+			<div class="gantt-header--title">Object Title</div>
+			<div class="gantt-header--start-date">Start Date</div>
+			<div class="gantt-header--end-date">End Date</div>
+			<div class="gantt-header--status">Status</div>
+		</div>
 		<div class="gantt-header--dates">
 			<div
 				v-for="index in deltaDays"

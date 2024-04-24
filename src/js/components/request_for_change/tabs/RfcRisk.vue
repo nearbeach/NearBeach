@@ -181,7 +181,6 @@ export default {
 			return this.newObjectUploadImage(blobInfo, progress)
 		},
 		updateValidation() {
-			console.log("VALIDATING RISK");
 			this.v$.$touch();
 
 			this.$emit("update_validation", {

@@ -5,7 +5,7 @@
 			<div
 				v-for="month in this.monthArray"
 				:key="month.index"
-				class="gantt-row--month"
+				class="gantt-header--month"
 				v-bind:style="`width: ${month.width}px`"
 			>
 				{{month.month}} {{month.year}}
