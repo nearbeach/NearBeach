@@ -22,7 +22,7 @@
 				<n-select
 					v-model:value="localStatusId"
 					:options="statusList"
-					:on-update-value="updateGanttData"
+					:on-update-value="updateStatus"
 				></n-select>
 			</div>
 		</div>
@@ -206,6 +206,14 @@ export default {
 				});
 			});
 		},
+		updateStatus(data) {
+			//Race condition issues - we will manually update the local status id here
+			//Then run the update gantt data.
+			//In chrome we were having race conditions.
+			this.localStatusId = data;
+
+			this.updateGanttData();
+		}
 	},
 	mounted() {
 		this.getStatusList();
