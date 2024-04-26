@@ -78,7 +78,7 @@
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
 							v-on:click="addUser"
-						>Add User</a
+						>{{ addButtonText() }}</a
 						>
 					</div>
 				</div>
@@ -148,6 +148,14 @@ export default {
 	},
 	mixins: [getThemeMixin, iconMixin],
 	methods: {
+		addButtonText() {
+			//Add Group should be used on user
+			if (this.destination === "user") {
+				return "Add Group";
+			}
+
+			return "Add User";
+		},
 		addUser() {
 			//Show the user's modal
 			const addUserModal = new Modal(
