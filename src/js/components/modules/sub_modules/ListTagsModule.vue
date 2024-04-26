@@ -102,7 +102,7 @@ export default {
 		removeTag(tag_id) {
 			//If user does not have enough permissions, don't let them proceed.
 			if (this.userLevel <= 1) return;
-			
+
 			//Create data_to_send
 			const data_to_send = new FormData();
 			data_to_send.set("tag", tag_id);

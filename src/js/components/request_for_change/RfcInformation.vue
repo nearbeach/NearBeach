@@ -113,7 +113,9 @@
 							Please supply the LEAD who will be leading this Request
 							for Change.<br/>
 							<strong v-if="!isReadOnly">
-								<a v-on:click="openChangeLeadModal">Update Change Lead</a>
+								<a v-on:click="openChangeLeadModal"
+								   class="update-change-lead"
+								>Update Change Lead</a>
 							</strong>
 						</p>
 					</div>
