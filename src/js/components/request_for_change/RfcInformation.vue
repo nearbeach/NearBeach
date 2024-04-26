@@ -116,29 +116,22 @@
 							</strong>
 						</p>
 					</div>
-					<div class="col-md-4">
-						<table class="table user-table-module">
-							<tbody>
-							<tr>
-								<td>
-									<img
-										v-bind:src="getProfilePicture(localChangeLead[0].profile_picture)"
-										alt="default profile"
-										class="default-user-profile"
-									/>
-								</td>
-								<td>
-									<strong>{{ localChangeLead[0].username }}: </strong>
-									{{ localChangeLead[0].first_name }}
-									{{ localChangeLead[0].last_name }}
-									<div class="spacer"></div>
-									<p class="user-card-email">
-										{{ localChangeLead[0].email }}
-									</p>
-								</td>
-							</tr>
-							</tbody>
-						</table>
+					<div class="col-md-8 user-card-list">
+						<div class="user-card wide">
+							<img
+								v-bind:src="profilePicture(localChangeLead[0].profile_picture)"
+								alt="default profile"
+								class="user-card--profile"
+							/>
+							<div class="user-card--details">
+								<div class="user-card--name">
+									{{ localChangeLead[0].first_name }} {{ localChangeLead[0].last_name }}
+								</div>
+								<div class="user-card--email">
+									{{ localChangeLead[0].email }}
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 
