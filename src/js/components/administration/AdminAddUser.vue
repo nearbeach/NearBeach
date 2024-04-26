@@ -109,6 +109,7 @@
 					<button
 						type="button"
 						class="btn btn-primary"
+						v-bind:disabled="disableAddButton"
 						v-on:click="addUser"
 					>
 						Add User
@@ -155,6 +156,15 @@ export default {
 			rootUrl: "getRootUrl",
 			userLevel: "getUserLevel",
 		}),
+		disableAddButton() {
+			//Setup the conditions
+			const condition_1 = Number.isInteger(this.userModel) ? 1 : 0;
+			const condition_2 = this.groupModel.length > 0 ? 1 : 0;
+			const condition_3 = this.permissionSetModel.length > 0 ? 1 : 0;
+
+			//If we add all 3 conditions together, we should get 3
+			return condition_1 + condition_2 + condition_3 !== 3;
+		},
 	},
 	methods: {
 		addUser() {
@@ -187,6 +197,7 @@ export default {
 				});
 			});
 		},
+
 		getData() {
 			const data_to_send = new FormData();
 
