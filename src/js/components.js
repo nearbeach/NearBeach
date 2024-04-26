@@ -72,6 +72,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/diagnostic/DiagnosticInformation.vue"
             )
     ),
+    GanttInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "gantt-information" */
+            "./components/gantt_chart/GanttInformation.vue"
+            )
+    ),
     GroupInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "group-information" */

@@ -41,7 +41,7 @@
 .kanban-container {
     overflow: auto;
     margin: 5px 2px 0 2px;
-    max-height: calc(100vh - 150px);
+    max-height: calc(100vh - 160px);
     scrollbar-color: orange lightyellow;
 
     @media screen and (max-width: 767px) {
@@ -149,7 +149,7 @@
     overflow: hidden;
 
     @media (min-width: 576px) {
-        top: 146px;
+        top: 157px;
         width: calc(100vw - 4px);
     }
 }

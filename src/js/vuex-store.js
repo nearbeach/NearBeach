@@ -6,6 +6,7 @@ import {moduleCard} from "./vuex/cardVueX";
 import {moduleChangeTask} from "./vuex/changeTaskVueX";
 import {moduleDestination} from "./vuex/destinationVueX";
 import {moduleDocuments} from "./vuex/documentsVueX";
+import {moduleGantChart} from "./vuex/ganttChartVueX";
 import {moduleGroupsAndUsers} from "./vuex/groupAndUsersVueX";
 import {moduleKanban} from "./vuex/kanbanVueX";
 import {moduleObjectLink} from "./vuex/objectLinkVueX";
@@ -28,6 +29,7 @@ export const store = createStore({
         changeTask: moduleChangeTask,
         destination: moduleDestination,
         documents: moduleDocuments,
+        ganttChart: moduleGantChart,
         groupsAndUsers: moduleGroupsAndUsers,
         kanban: moduleKanban,
         newCard: moduleNewCard,

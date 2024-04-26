@@ -43,6 +43,7 @@
 								:options="userResults"
 								v-model:value="userModel"
 								class="form-control"
+								filterable
 							/>
 						</div>
 					</div>
@@ -67,6 +68,7 @@
 								v-model:value="groupModel"
 								class="form-control"
 								multiple
+								filterable
 							/>
 						</div>
 					</div>
@@ -91,6 +93,7 @@
 								v-model:value="permissionSetModel"
 								class="form-control"
 								multiple
+								filterable
 							/>
 						</div>
 					</div>
@@ -106,9 +109,10 @@
 					<button
 						type="button"
 						class="btn btn-primary"
+						v-bind:disabled="disableAddButton"
 						v-on:click="addUser"
 					>
-						Add User
+						{{ addButtonText() }}
 					</button>
 				</div>
 			</div>
@@ -152,8 +156,25 @@ export default {
 			rootUrl: "getRootUrl",
 			userLevel: "getUserLevel",
 		}),
+		disableAddButton() {
+			//Setup the conditions
+			const condition_1 = Number.isInteger(this.userModel) ? 1 : 0;
+			const condition_2 = this.groupModel.length > 0 ? 1 : 0;
+			const condition_3 = this.permissionSetModel.length > 0 ? 1 : 0;
+
+			//If we add all 3 conditions together, we should get 3
+			return condition_1 + condition_2 + condition_3 !== 3;
+		},
 	},
 	methods: {
+		addButtonText() {
+			//Add Group should be used on user
+			if (this.destination === "user") {
+				return "Add Group";
+			}
+
+			return "Add User";
+		},
 		addUser() {
 			//Create the data_to_send
 			const data_to_send = new FormData();
@@ -184,6 +205,7 @@ export default {
 				});
 			});
 		},
+
 		getData() {
 			const data_to_send = new FormData();
 

@@ -1,4 +1,4 @@
-{% extends "NearBeach/partials/template.html" %}
+{% extends "NearBeach/partials/template_wide.html" %}
 {% load static %}
 {% block content %}
     <sprint-information
@@ -6,8 +6,16 @@
             v-bind:sprint-results="{{ sprint_results }}"
             v-bind:theme="`{{ theme }}`"
             v-bind:user-level="{{ user_level }}"
-            v-bind:requirement-item-results="{{ requirement_item_results }}"
-            v-bind:project-results="{{ project_results }}"
-            v-bind:task-results="{{ task_results }}"
     ></sprint-information>
+
+    <gantt-information
+            v-bind:destination="'sprint'"
+            v-bind:gantt-end-date="`{{ gantt_end_date }}`"
+            v-bind:gantt-start-date="`{{ gantt_start_date }}`"
+            v-bind:location-id="{{ sprint_id }}"
+            v-bind:root-url="`{% url 'dashboard' %}`"
+            v-bind:theme="`{{ theme }}`"
+            v-bind:user-level="{{ user_level }}"
+    ></gantt-information>
+
 {% endblock %}

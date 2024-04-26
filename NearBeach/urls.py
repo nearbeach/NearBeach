@@ -11,6 +11,7 @@ from .views import (
     diagnostic_views,
     document_views,
     error_views,
+    gantt_chart_views,
     group_views,
     kanban_column_views,
     kanban_level_views,
@@ -207,6 +208,17 @@ urlpatterns = [
         "documentation/new_object_upload/",
         document_views.new_object_upload,
         name="document_new_object_upload",
+    ),
+    # Gantt
+    path(
+        "gantt_data/<destination>/<int:location_id>/get_data/",
+        gantt_chart_views.gantt_data_get_data,
+        name="gantt_chart_get_data",
+    ),
+    path(
+        "gantt_data/<destination>/<int:location_id>/update_data/",
+        gantt_chart_views.gantt_data_update_data,
+        name="gantt_chart_update_data",
     ),
     # Groups
     path(
