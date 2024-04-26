@@ -112,7 +112,7 @@
 						v-bind:disabled="disableAddButton"
 						v-on:click="addUser"
 					>
-						Add User
+						{{ addButtonText() }}
 					</button>
 				</div>
 			</div>
@@ -167,6 +167,14 @@ export default {
 		},
 	},
 	methods: {
+		addButtonText() {
+			//Add Group should be used on user
+			if (this.destination === "user") {
+				return "Add Group";
+			}
+
+			return "Add User";
+		},
 		addUser() {
 			//Create the data_to_send
 			const data_to_send = new FormData();
