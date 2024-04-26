@@ -22,7 +22,7 @@
 				<n-select
 					v-model:value="localStatusId"
 					:options="statusList"
-					v-on:change="updateGanttData"
+					:on-update-value="updateGanttData"
 				></n-select>
 			</div>
 		</div>
@@ -80,6 +80,10 @@ export default {
 			type: Number,
 			default: 0,
 		},
+		objectId: {
+			type: Number,
+			default: 0,
+		},
 		objectType: {
 			type: String,
 			default: "",
@@ -122,6 +126,7 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			rootUrl: "getRootUrl",
 			startDateGantt: "getStartDateGantt",
 		}),
 		barWidth() {
@@ -150,6 +155,7 @@ export default {
 				mdClientXInitial: event.clientX,
 				mdHigherOrderStatus: this.higherOrderStatus,
 				mdIndex: this.index,
+				mdObjectId: this.objectId,
 				mdObjectType: this.objectType,
 				mdColumn: event.target.dataset.column,
 				mdEndDateInitial: this.endDate,
@@ -160,16 +166,44 @@ export default {
 			});
 		},
 		updateGanttData() {
+			//Update the VueX with the new data
 			this.$store.dispatch("updateGanttChartSingleRow", {
 				index: this.index,
 				value: {
 					end_date: this.localEndDate,
 					higher_order_status: this.higherOrderStatus,
+					object_id: this.objectId,
 					object_type: this.objectType,
 					start_date: this.localStartDate,
-					status_id: this.statusId,
+					status_id: this.localStatusId,
 					title: this.title,
 				},
+			});
+
+			//Next tick is required - we have a race condition if this is not here. :'(
+			this.$nextTick(() => {
+				//Send updated data to the backend
+				const data_to_send = new FormData();
+				data_to_send.set('status_id', this.localStatusId);
+
+				//Handle the start and end date
+				const end_date = new Date(this.localEndDate);
+				const start_date = new Date(this.localStartDate);
+				data_to_send.set('end_date', end_date.toISOString());
+				data_to_send.set('start_date', start_date.toISOString());
+
+				//Use axios to update backend
+				this.axios.post(
+					`${this.rootUrl}gantt_data/${this.objectType}/${this.objectId}/update_data/`,
+					data_to_send
+				).catch((error) => {
+					this.$store.dispatch("newToast", {
+						header: "Error Updating the Object",
+						message: `Sorry, we could not update the object's information. Error -> ${error}`,
+						extra_classes: "bg-danger",
+						delay: 0,
+					});
+				});
 			});
 		},
 	},

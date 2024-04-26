@@ -14,6 +14,7 @@
 				:key="index"
 				v-bind:end-date="row.end_date"
 				v-bind:index="index"
+				v-bind:object-id="row.object_id"
 				v-bind:object-type="row.object_type"
 				v-bind:higher-order-status="row.higher_order_status"
 				v-bind:start-date="row.start_date"
@@ -33,7 +34,6 @@ import {NConfigProvider} from "naive-ui";
 //Components
 import RenderGanttDaysHeader from "./RenderGanttDaysHeader.vue";
 import RenderGanttMonthlyHeader from "./RenderGanttMonthlyHeader.vue";
-import TestGanttChart from "./TestGanttChart.vue";
 import RenderGanttRow from "./RenderGanttRow.vue";
 
 //Mixins
@@ -45,7 +45,6 @@ export default {
 		RenderGanttRow,
 		RenderGanttDaysHeader,
 		RenderGanttMonthlyHeader,
-		TestGanttChart
 	},
 	props: {
 		destination: {
@@ -84,6 +83,7 @@ export default {
 			//Mouse Down Variables
 			mdClientXInitial: 0,
 			mdIndex: 0,
+			mdObjectId: 0,
 			mdObjectType: "",
 			mdColumn: "",
 			mdEndDateInitial: 0,
@@ -141,6 +141,7 @@ export default {
 			this.mdClientXInitial = data.mdClientXInitial;
 			this.mdHigherOrderStatus = data.mdHigherOrderStatus;
 			this.mdIndex = data.mdIndex;
+			this.mdObjectId = data.mdObjectId;
 			this.mdObjectType = data.mdObjectType;
 			this.mdColumn = data.mdColumn;
 			this.mdEndDateInitial = data.mdEndDateInitial;
@@ -157,6 +158,14 @@ export default {
 
 			//Tell the system the mouse is no longer down
 			this.isMouseDown = false;
+
+			//Check to make sure we need to update the backend
+			if (this.mdObjectId !== 0) {
+				//Update the backend
+				this.$nextTick(() => {
+					this.updateGanttData();
+				});
+			}
 		},
 		mouseMove(event) {
 			//Prevents default
@@ -195,6 +204,13 @@ export default {
 
 			//Tell the system the mouse is no longer down
 			this.isMouseDown = false;
+
+			//Update the backend data
+			if (this.mdObjectId !== 0) {
+				this.$nextTick(() => {
+					this.updateGanttData();
+				});
+			}
 		},
 		updateEnd(delta) {
 			//Apply the delta to the dates
@@ -206,12 +222,43 @@ export default {
 				value: {
 					end_date: end_date.getTime(),
 					higher_order_status: this.mdHigherOrderStatus,
+					object_id: this.mdObjectId,
 					object_type: this.mdObjectType,
 					start_date: this.mdStartDateInitial,
 					status_id: this.mdStatusId,
 					title: this.mdTitle,
 				},
 			});
+		},
+		updateGanttData() {
+			//Get the data from VueX
+			const data = this.$store.getters.getGanttChartDataSingleRow(this.mdIndex);
+
+			//Send updated data to the backend
+			const data_to_send = new FormData();
+			data_to_send.set('status_id', data.status_id);
+
+			//Handle the start and end date
+			const end_date = new Date(data.end_date);
+			const start_date = new Date(data.start_date);
+			data_to_send.set('end_date', end_date.toISOString());
+			data_to_send.set('start_date', start_date.toISOString());
+
+			//Use axios to update backend
+			this.axios.post(
+				`${this.rootUrl}gantt_data/${data.object_type}/${data.object_id}/update_data/`,
+				data_to_send
+			).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating the Object",
+					message: `Sorry, we could not update the object's information. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				})
+			});
+
+			//Release the data
+			this.mdObjectId = 0;
 		},
 		updateMiddle(delta) {
 			//Apply the delta to the dates
@@ -224,6 +271,7 @@ export default {
 				value: {
 					end_date: end_date.getTime(),
 					higher_order_status: this.mdHigherOrderStatus,
+					object_id: this.mdObjectId,
 					object_type: this.mdObjectType,
 					start_date: start_date.getTime(),
 					status_id: this.mdStatusId,
@@ -241,6 +289,7 @@ export default {
 				value: {
 					end_date: this.mdEndDateInitial,
 					higher_order_status: this.mdHigherOrderStatus,
+					object_id: this.mdObjectId,
 					object_type: this.mdObjectType,
 					start_date: start_date.getTime(),
 					status_id: this.mdStatusId,

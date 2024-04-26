@@ -84,6 +84,9 @@ export const moduleGantChart = {
         getGanttChartData: (state)=> {
             return state.ganttChartData;
         },
+        getGanttChartDataSingleRow: (state) => (index) => {
+            return state.ganttChartData[index];
+        },
         getGanttStatusList: (state) => (object_type) => {
             return state.ganttStatusList[object_type];
         },

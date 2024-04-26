@@ -409,6 +409,16 @@ class FolderRemoveForm(forms.Form):
     )
 
 
+class GanttDataUpdateDataForm(forms.Form):
+    end_date = forms.DateTimeField(
+        input_formats=["c"],
+    )
+    start_date = forms.DateTimeField(
+        input_formats=["c"],
+    )
+    status_id = forms.IntegerField()
+
+
 class KanbanCardForm(forms.ModelForm):
     kanban_card_id = forms.ModelChoiceField(
         required=True,

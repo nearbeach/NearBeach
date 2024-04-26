@@ -2,6 +2,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.db.models import Value, F
 
+from NearBeach.forms import GanttDataUpdateDataForm
 from NearBeach.models import (
     Project,
     RequirementItem,
@@ -11,6 +12,23 @@ from NearBeach.models import (
 )
 
 import json
+
+
+GANTT_DATA_UPDATE_STRUCTURE = {
+    # REQUIREMENT ITEMS REQUIRE DATES FIRST
+    "project": {
+        "object": Project,
+        "end_date": "project_end_date",
+        "start_date": "project_start_date",
+        "status_id": "project_status_id",
+    },
+    "task": {
+        "object": Task,
+        "end_date": "task_end_date",
+        "start_date": "task_start_date",
+        "status_id": "task_status_id",
+    },
+}
 
 
 def gantt_data_get_data(request, destination, location_id, *args, **kwargs):
@@ -31,6 +49,34 @@ def gantt_data_get_data(request, destination, location_id, *args, **kwargs):
         results,
         safe=False,
     )
+
+
+def gantt_data_update_data(request, destination, location_id):
+    # Check the form data
+    form = GanttDataUpdateDataForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Check the objects - use GANTT_DATA_UPDATE_STRUCTURE dict to get the correct object
+    gantt_object_dict = GANTT_DATA_UPDATE_STRUCTURE[destination]
+    update_object = gantt_object_dict["object"].objects.filter(pk=location_id)
+
+    # If there are no results - send back bad request
+    if len(update_object) == 0:
+        return HttpResponseBadRequest("No object found. Error")
+
+    # Grab just the first object to update
+    update_object = update_object.first()
+
+    # Update the object
+    setattr(update_object, gantt_object_dict["end_date"], form.cleaned_data["end_date"])
+    setattr(update_object, gantt_object_dict["start_date"], form.cleaned_data["start_date"])
+    setattr(update_object, gantt_object_dict["status_id"], form.cleaned_data["status_id"])
+
+    # Save the updates
+    update_object.save()
+
+    return HttpResponse("")
 
 
 # Internal Function
