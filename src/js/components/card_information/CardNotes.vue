@@ -49,7 +49,7 @@
 				</button>
 			</div>
 		</div>
-		<hr/>
+		<hr v-if="userLevel > 1"/>
 
 		<!-- NOTE HISTORY -->
 		<list-notes
