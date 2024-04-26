@@ -5,6 +5,11 @@
 				<h1>Request for Change</h1>
 				<br/>
 				<h2>{{ getStatus() }}</h2>
+				<a v-if="userLevel >= 2 && isReadOnly && getStatus() === 'Draft'"
+				   v-bind:href="`${rootUrl}rfc_information/${rfcResults[0].pk}/`"
+				>
+					Edit RFC
+				</a>
 				<hr/>
 
 				<rfc-description
