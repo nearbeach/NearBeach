@@ -48,7 +48,7 @@ const page_array = [
     {test:'Admin - Search',url :'http://localhost:8000/search/', page_title:'Search',page_heading:'Search',screenshot_path:'./test-results/shakeout/admin/Search.jpg'},
     {test:'Admin - Search Notifications',url :'http://localhost:8000/search/notification/', page_title:'Search Notifications',page_heading:'Search Notifications',screenshot_path:'./test-results/shakeout/admin/Search Notifications.jpg'},
     {test:'Admin - Search Sprint',url :'http://localhost:8000/search/sprint/', page_title: "Search Sprints", page_heading: "Search Sprints", screenshot_path:'./test-results/shakeout/team-leader/Search Sprint.jpg'},
-    {test:'Admin - Sprint Information',url :'http://localhost:8000/sprint_information/1/', page_title: "Sprint Information 1", page_heading: "Sprint Information", screenshot_path:'./test-results/shakeout/team-leader/Sprint Information 2.jpg'},
+    {test:'Admin - Sprint Information',url :'http://localhost:8000/sprint_information/1/', page_title: "Sprint Information 1", page_heading: "project-1 - Sprint 1 - 18 Mar 2024", screenshot_path:'./test-results/shakeout/team-leader/Sprint Information 2.jpg'},
     {test:'Admin - Task Information 1',url :'http://localhost:8000/task_information/1/', page_title:'Task Information 1',page_heading:'Task Information',screenshot_path:'./test-results/shakeout/admin/Task Information.jpg'},
     {test:'Admin - User Information 1',url :'http://localhost:8000/user_information/1/', page_title:'User Information 1',page_heading:'User Information',screenshot_path:'./test-results/shakeout/admin/User Information.jpg'},
 ]
