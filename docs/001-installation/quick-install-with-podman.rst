@@ -1,10 +1,10 @@
-.. _quick-install-docker:
+.. _quick-install-podman:
 
 =========================
-Quick Install with Docker
+Quick Install with Podman
 =========================
 
-Copy the following code and paste it into a file called `docker-compose.yaml`
+Copy the following code and paste it into a file called `podman-compose.yaml`
 
 .. code-block:: bash
 
@@ -12,7 +12,7 @@ Copy the following code and paste it into a file called `docker-compose.yaml`
 
     services:
         db:
-            image: mariadb:10.11
+            image: docker.io/mariadb:10.11
             container_name: nearbeach-db
             ports:
             - 3306:3306
@@ -24,7 +24,7 @@ Copy the following code and paste it into a file called `docker-compose.yaml`
             volumes:
             - ./init:/docker-entrypoint-initdb.d
         nearbeach:
-            image: robotichead/nearbeach:latest
+            image: docker.io/robotichead/nearbeach:latest
             container_name: nearbeach
             environment:
             - SECRET_KEY=<<Please fill>>
@@ -60,12 +60,12 @@ Copy the following code and paste it into a file called `docker-compose.yaml`
             - db
 
 
-#. Inside the docker-compose.yaml file, edit the SECRET_KEY. This will be a large string with symbols, letters and
+#. Inside the podman-compose.yaml file, edit the SECRET_KEY. This will be a large string with symbols, letters and
    numbers. You can use a generate like https://djecrety.ir/
 
 
-#. Inside the docker-compose.yaml file, fill out the following fields appropriately. SMTP is used to send the reset
-   password functionality required to login for the first time.
+#. Inside the podman-compose.yaml file, fill out the following fields appropriately. SMTP is used to send the reset
+   password functionality. This is one of the methods required to login for the first time.
 
     - SMTP_EMAIL_HOST
     - SMTP_EMAIL_PORT
@@ -80,7 +80,7 @@ Copy the following code and paste it into a file called `docker-compose.yaml`
     - ADMIN_EMAIL
 
 
-#. Inside the docker-compose.yaml file, there are two services. One will be for setting up the Database, and the other
+#. Inside the podman-compose.yaml file, there are two services. One will be for setting up the Database, and the other
    service will setup NearBeach. You will need to fill out the database connection/details. Please note you will need the
    same variable value for the following pairs;
 
@@ -128,18 +128,19 @@ Copy the following code and paste it into a file called `docker-compose.yaml`
         - AZURE_STORAGE_CONTAINER_NAME
 
 
-#. Using a terminal, change directory to the location that you stored the docker-compose file. Run the following
-   command
+#. Using a terminal, change directory to the location that you stored the podman-compose file. Run the following
+   command:
 
     .. code-block:: bash
 
-        docker-compose up -d
+        podman-compose up -d
 
-   If you would like to specify a project name for your NearBeach instance. Run the following command instead:
+   If you would like to specify a project name for your NearBeach instance. Run the
+   following command instead:
 
     .. code-block:: bash
 
-        docker-compose up -d --project-name NearBeach
+        podman-compose up -d --project-name NearBeach
 
 
 You are now up and running NearBeach in Docker. Visiting the URL you set in the `CSRF_TRUSTED_URLS` in your browser will
@@ -153,7 +154,7 @@ For first time logins, you will need to reset your password. There are two diffe
 
     .. code-block:: bash
 
-        docker exec -it <<DOCKER-CONTAINER-NAME>> python3 ./manage.py changepassword <<ADMIN_USERNAME>>
+        podman exec -it <<PODMAN-CONTAINER-NAME>> python3 ./manage.py changepassword <<ADMIN_USERNAME>>
 
 
    This will ask for a new password.
