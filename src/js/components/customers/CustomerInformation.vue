@@ -315,6 +315,12 @@ export default {
 			staticUrl: this.staticUrl,
 		});
 
+		this.$store.commit({
+			type: "updateDestination",
+			destination: "customer",
+			locationId: this.customerResults[0].pk,
+		})
+
 		//Convert the title list data into a format NSelect can use
 		this.titleFixList = this.titleList.map((row) => {
 			return {

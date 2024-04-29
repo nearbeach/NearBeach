@@ -103,6 +103,15 @@ export default {
 	},
 	methods: {
 		getAssociatedObjectResults() {
+			if (this.locationId === 0) {
+				setTimeout(() => {
+					this.getAssociatedObjectResults();
+				}, 100);
+
+				return;
+			}
+
+			//All is good - get the data
 			this.axios
 				.post(
 					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/associated_objects/`
@@ -128,7 +137,6 @@ export default {
 		},
 	},
 	mounted() {
-		//Wait 200ms
 		this.$nextTick(() => {
 			this.getAssociatedObjectResults();
 		});
