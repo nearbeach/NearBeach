@@ -27,6 +27,16 @@
 							Include Closed Objects</label
 						>
 					</div>
+					<div class="form-group">
+						<input
+							type="checkbox"
+							id="includeAllGroups"
+							v-model="includeAllGroupsModel"
+						/>
+						<label for="includeAllGroups">
+							Include All Groups</label
+						>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -99,7 +109,15 @@ export default {
 		ListSearchResults,
 	},
 	props: {
+		includeAllGroups: {
+			type: Boolean,
+			default: false,
+		},
 		includeClosed: {
+			type: Boolean,
+			default: false,
+		},
+		isSuperUser: {
 			type: Boolean,
 			default: false,
 		},
@@ -122,6 +140,7 @@ export default {
 	},
 	data() {
 		return {
+			includeAllGroupsModel: this.includeAllGroups,
 			includeClosedObjectsModel: this.includeClosed,
 			kanbanVariables: {
 				header: "Kanban",
@@ -172,6 +191,10 @@ export default {
 				"include_closed",
 				this.includeClosedObjectsModel
 			);
+			data_to_send.set(
+				"include_all_groups",
+				this.includeAllGroupsModel
+			);
 
 			//Use axios to request data
 			this.axios.post(
@@ -190,6 +213,16 @@ export default {
 		},
 	},
 	watch: {
+		includeAllGroupsModel() {
+			//Stop the clock
+			if (this.searchTimeout !== "") {
+				//Stop the clock!
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Get the search results - we don't need to wait for this case
+			this.getSearchResults();
+		},
 		includeClosedObjectsModel() {
 			//Stop the clock
 			if (this.searchTimeout !== "") {
