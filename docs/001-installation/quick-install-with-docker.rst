@@ -1,4 +1,4 @@
-.. _quick-install:
+.. _quick-install-docker:
 
 =========================
 Quick Install with Docker
@@ -61,11 +61,11 @@ Copy the following code and paste it into a file called `docker-compose.yaml`
 
 
 #. Inside the docker-compose.yaml file, edit the SECRET_KEY. This will be a large string with symbols, letters and
-numbers. You can use a generate like https://djecrety.ir/
+   numbers. You can use a generate like https://djecrety.ir/
 
 
 #. Inside the docker-compose.yaml file, fill out the following fields appropriately. SMTP is used to send the reset
-password functionality required to login for the first time.
+   password functionality required to login for the first time.
 
     - SMTP_EMAIL_HOST
     - SMTP_EMAIL_PORT
@@ -74,15 +74,15 @@ password functionality required to login for the first time.
 
 
 #. The administration username/email will be used to log into NearBeach. This will need to be filled out appropriately
-because changing
+   because changing
 
     - ADMIN_USERNAME
     - ADMIN_EMAIL
 
 
 #. Inside the docker-compose.yaml file, there are two services. One will be for setting up the Database, and the other
-service will setup NearBeach. You will need to fill out the database connection/details. Please note you will need the
-same variable value for the following pairs;
+   service will setup NearBeach. You will need to fill out the database connection/details. Please note you will need the
+   same variable value for the following pairs;
 
     - DB_DATABASE / MARIADB_DATABASE
     - DB_USER / MARIADB_USER
@@ -120,7 +120,7 @@ same variable value for the following pairs;
 
 
 #. Use your Azure Blob storage to store uploaded files from NearBeach. If you don't require Azure Blob storage, please
-delete these two lines;
+   delete these two lines;
 
     .. code-block:: bash
 
@@ -129,10 +129,31 @@ delete these two lines;
 
 
 #. Using a terminal, change directory to the location that you stored the docker-compose file. Run the following
-command: `docker-compose up -d`. If you would like to specify a project name for your NearBeach instance. Run the
-following command instead: `docker-compose up -d --project-name NearBeach`.
+   command
+
+    .. code-block:: bash
+
+        docker-compose up -d
+
+   If you would like to specify a project name for your NearBeach instance. Run the following command instead:
+
+    .. code-block:: bash
+
+        docker-compose up -d --project-name NearBeach
 
 
 You are now up and running NearBeach in Docker. Visiting the URL you set in the `CSRF_TRUSTED_URLS` in your browser will
-take you to NearBeach. For first time logins, you will need to reset your password. Clicking "Reset" password and
-filling out your email will send you a password reset.
+take you to NearBeach.
+
+For first time logins, you will need to reset your password. There are two different methods.
+
+#. Clicking "Reset" password and filling out your email will send you a password reset.
+
+#. Using a terminal, run the following command:
+
+    .. code-block:: bash
+
+        docker exec -it <<DOCKER-CONTAINER-NAME>> python3 ./manage.py changepassword <<ADMIN_USERNAME>>
+
+
+   This will ask for a new password.
