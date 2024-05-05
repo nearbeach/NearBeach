@@ -15,6 +15,9 @@
                           v-bind:user-level="{{user_level}}"
                           v-bind:theme="'{{ theme }}'"
     ></customer-information>
+    <br/>
+
+    <customer-modules></customer-modules>
 
     {% if user_level == 1 %}
         </fieldset>

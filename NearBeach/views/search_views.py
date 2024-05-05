@@ -75,8 +75,14 @@ def get_object_search_data(search_form, request):
         "kanban_board_status",
     )
 
+    # Determine if a user is NOT being limited.
+    # A user won't be limited to groups IF they are;
+    # - An administrator
+    # - AND flagged they want all groups
+    dont_limit_by_groups = request.user.is_superuser & search_form.cleaned_data["include_all_groups"]
+
     # Check to see if not superuser - if not we limit to user's own groups
-    if not request.user.is_superuser:
+    if not dont_limit_by_groups:
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             group_id__in=UserGroup.objects.filter(
@@ -268,9 +274,22 @@ def search(request):
     else:
         include_closed = "false"
 
+    if form.cleaned_data["include_all_groups"]:
+        include_all_groups = "true"
+    else:
+        include_all_groups = "false"
+
+    # Translate the is_superuser, from Python Boolean to JavaScript boolean
+    if request.user.is_superuser:
+        is_superuser = "true"
+    else:
+        is_superuser = "false"
+
     # Context
     c = {
+        "include_all_groups": include_all_groups,
         "include_closed": include_closed,
+        "is_superuser": is_superuser,
         "need_tinymce": False,
         "nearbeach_title": "Search",
         "search_input": form.cleaned_data["search"],

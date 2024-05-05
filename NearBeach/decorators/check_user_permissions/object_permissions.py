@@ -2,6 +2,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Max, Q
 from functools import wraps
 from .partials.change_task_permissions import change_task_permissions
+from .partials.customer_permissions import customer_permissions
 from .partials.generic_permissions import generic_permissions
 from .partials.kanban_board_permissions import kanban_board_permissions
 from .partials.kanban_card_permissions import kanban_card_permissions
@@ -21,7 +22,7 @@ from NearBeach.views.error_views import error_403
 
 FUNCTION_DICT = {
     "change_task": change_task_permissions,
-    # "customer",
+    "customer": customer_permissions,
     "kanban": kanban_board_permissions,
     "kanban_board": kanban_board_permissions,
     "kanban_card": kanban_card_permissions,
@@ -78,6 +79,8 @@ def check_user_generic_permissions(min_permission_level):
                 passes, user_level = change_task_permissions(request, kwargs)
             elif destination == "organisation":
                 passes, user_level = organisation_permissions(request, kwargs)
+            elif destination == "customer":
+                passes, user_level = customer_permissions(request, kwargs)
             else:
                 passes, user_level = generic_permissions(request, destination, kwargs)
 

@@ -36,6 +36,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/customers/CustomerInformation.vue"
             )
     ),
+    CustomerModules = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "customer-modules" */
+            "./components/customers/CustomerModules.vue"
+            )
+    ),
     DashboardKanbanList = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "dashboard-kanban-list" */

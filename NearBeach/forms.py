@@ -1060,6 +1060,10 @@ class SearchObjectsForm(forms.Form):
         required=False,
         initial=False,
     )
+    include_all_groups = forms.BooleanField(
+        required=False,
+        initial=False,
+    )
     search = forms.CharField(
         max_length=250,
         required=False,
