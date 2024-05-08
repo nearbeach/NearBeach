@@ -1,0 +1,9 @@
+{% extends "NearBeach/partials/template_wide.html" %}
+{% load static %}
+{% block content %}
+    <my-planner
+            v-bind:root-url="`{% url 'dashboard' %}`"
+            v-bind:static-url="`{% static '/' %}`"
+            v-bind:object-data="{{ object_data }}"
+    ></my-planner>
+{% endblock %}

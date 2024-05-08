@@ -26,6 +26,7 @@ from NearBeach.models import (
     Requirement,
 )
 from NearBeach.views.theme_views import get_theme
+from NearBeach.views.user_job_views import get_my_planning_objects
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -234,6 +235,19 @@ def get_my_objects(request):
             "card": json.loads(card_results),
         }
     )
+
+
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
+def get_todo_today(request):
+    """
+    Function returns the user's to-do list they have setup for today.
+
+    We utilise the same function user in the my planner section
+    """
+    results = get_my_planning_objects(request, 1)
+
+    return JsonResponse(json.loads(results), safe=False)
 
 
 @login_required(login_url="login", redirect_field_name="")

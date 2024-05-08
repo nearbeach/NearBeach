@@ -43,6 +43,7 @@ from .models import (
     TagAssignment,
     Task,
     UserGroup,
+    UserJob,
 )
 
 admin.site.register(Bug)
@@ -86,3 +87,4 @@ admin.site.register(Tag)
 admin.site.register(TagAssignment)
 admin.site.register(Task)
 admin.site.register(UserGroup)
+admin.site.register(UserJob)

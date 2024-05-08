@@ -36,7 +36,7 @@ from .models import (
     Document,
     ObjectAssignment,
     UserGroup,
-    UserSetting, Sprint,
+    UserSetting, Sprint, UserJob,
 )
 
 USER_MODEL = get_user_model()
@@ -516,6 +516,54 @@ class MoveKanbanCardForm(forms.Form):
     old_destination = OrderedModelMultipleChoiceField(
         required=False,
         queryset=kanban_card_results,
+    )
+
+
+class MyPlannerAddObjectForm(forms.Form):
+    job_date = forms.DateField(
+        required=True,
+    )
+    destination = forms.CharField(
+        max_length=255,
+    )
+    kanban_card = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=KanbanCard.objects.all(),
+    )
+    project = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=Project.objects.all(),
+    )
+    task = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=Task.objects.all(),
+    )
+
+
+class MyPlannerDeleteUserJobForm(forms.Form):
+    user_job_id = forms.ModelChoiceField(
+        required=True,
+        queryset=UserJob.objects.all(),
+    )
+
+
+class MyPlannerUpdateObjectListForm(forms.Form):
+    user_job_id = forms.ModelChoiceField(
+        required=True,
+        queryset=UserJob.objects.all(),
+    )
+    job_date = forms.DateField(
+        required=True,
+    )
+
+    new_destination = OrderedModelMultipleChoiceField(
+        required=True,
+        queryset=UserJob.objects.all(),
+    )
+
+    old_destination = OrderedModelMultipleChoiceField(
+        required=False,
+        queryset=UserJob.objects.all(),
     )
 
 
