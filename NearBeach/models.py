@@ -384,7 +384,7 @@ class Document(models.Model):
     document = models.FileField(
         blank=True,
         null=True,
-        storage=FileStorage(),
+        storage=FileStorage()
     )
     document_upload_successfully = models.BooleanField(
         default=False,
@@ -1836,6 +1836,43 @@ class UserGroup(models.Model):
     is_deleted = models.BooleanField(
         default=False,
     )
+
+
+class UserJob(models.Model):
+    user_job_id = models.BigAutoField(primary_key=True)
+    username = models.ForeignKey(
+        USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    job_date = models.DateField()
+    job_sort_number = models.IntegerField()
+    kanban_card = models.ForeignKey(
+        "KanbanCard",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+    project = models.ForeignKey(
+        "Project",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+    task = models.ForeignKey(
+        "Task",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
+
 
 
 class UserProfilePicture(models.Model):

@@ -60,6 +60,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/dashboard/DashboardRfcApprovals.vue"
             )
     ),
+    DashboardTodoToday = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "dashboard-todo-today" */
+            "./components/dashboard/DashboardTodoToday.vue"
+            )
+    ),
     DashboardUnassignedObjects = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "dashboard-unassigned-objects" */
@@ -138,6 +144,12 @@ export const // BugsModule = defineAsyncComponent(() =>
     //         './components/organisations/NewOrganisation.vue'
     //     )
     // )
+    MyPlanner = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "my-planner" */
+            "./components/my_planner/MyPlanner.vue"
+            )
+    ),
     NewCustomer = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "new-customer" */

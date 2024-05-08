@@ -31,6 +31,7 @@ from .views import (
     sprint_views,
     tag_views,
     task_views,
+    user_job_views,
     user_setting_views,
     user_views, object_status_editor_views,
 )
@@ -136,6 +137,11 @@ urlpatterns = [
         "dashboard/get/rfc_approvals/",
         dashboard_views.rfc_approvals,
         name="rfc_approvals",
+    ),
+    path(
+        "dashboard/get/todo_today/",
+        dashboard_views.get_todo_today,
+        name="get_todo_today",
     ),
     path(
         "dashboard/get/unassigned_objects/",
@@ -352,6 +358,32 @@ urlpatterns = [
     # Authentication
     path("login", authentication_views.login, name="login"),
     path("logout", authentication_views.logout, name="logout"),
+    # My Planner
+    path(
+        "my_planner",
+        user_job_views.my_planner,
+        name="my_planner",
+    ),
+    path(
+        "my_planner/add_object/",
+        user_job_views.my_planner_add_object,
+        name="my_planner_add_object",
+    ),
+    path(
+        "my_planner/delete_user_job/",
+        user_job_views.my_planner_delete_user_job,
+        name="my_planner_delete_user_job",
+    ),
+    path(
+        "my_planner/get_object_list/<destination>/",
+        user_job_views.my_planner_get_object_list,
+        name="my_planner_get_object_list",
+    ),
+    path(
+        "my_planner/update_object_list/",
+        user_job_views.my_planner_update_object_list,
+        name="my_planner_update_object_list",
+    ),
     # Object Status
     path(
         "object_status_information/<destination>/",
