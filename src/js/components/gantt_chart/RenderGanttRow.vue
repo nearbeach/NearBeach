@@ -8,14 +8,14 @@
   				<n-date-picker
 					v-model:value="localStartDate"
 					type="datetime"
-					:on-update-value="updateGanttData"
+					@update:value="modifiedStartDate"
 				/>
 			</div>
 			<div class="gantt-row--end-date">
 				<n-date-picker
 					v-model:value="localEndDate"
 					type="datetime"
-					:on-update-value="updateGanttData"
+					@update:value="modifiedEndDate"
 				></n-date-picker>
 			</div>
 			<div class="gantt-row--status">
@@ -148,6 +148,22 @@ export default {
 		getStatusList() {
 			//Get the status list dependent on the object type
 			this.statusList = this.$store.getters.getGanttStatusList(this.objectType);
+		},
+		modifiedEndDate() {
+			//If the end date is before the start date - we modify the start date to be the end date minus one day
+			if (this.localEndDate < this.localStartDate) {
+				this.localStartDate = this.localEndDate - (24 * 60 * 60 * 1000);
+			}
+
+			this.updateGanttData();
+		},
+		modifiedStartDate() {
+			//If the start date is after the end date - we modify the end date to be the start date plus one day
+			if (this.localStartDate > this.localEndDate) {
+				this.localEndDate = this.localStartDate + (24 * 60 * 60 * 1000);
+			}
+
+			this.updateGanttData();
 		},
 		mouseDown(event) {
 			//Send data up stream
