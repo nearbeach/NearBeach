@@ -2,8 +2,10 @@
 	<div class="card"
 		 v-if="todoList.length > 0"
 	>
-		<div class="card-body">
+		<div class="card-body todays-todo">
 			<h1>Today's Todo</h1>
+			<br/>
+			<a v-bind:href="`${rootUrl}my_planner`">My Planner</a>
 			<hr/>
 
 			<div class="object-card-list">
