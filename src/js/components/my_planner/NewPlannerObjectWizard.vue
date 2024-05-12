@@ -103,7 +103,8 @@
 								"
 								class="alert alert-warning"
 							>
-								Sorry - there are no results.
+                                Sorry. It currently looks like there are no {{ this.objectModel }}s assigned to you.
+                                Only assigned {{ this.objectModel }}s will show up here.
 							</div>
 
 							<!-- SEARCH RESULTS -->
