@@ -24,6 +24,32 @@
 			></render-gantt-row>
 		</div>
 	</n-config-provider>
+
+    <div v-if="startDateIssues.length >= 1"
+        class="alert alert-warning"
+    >
+        The following Objects have start dates BEFORE the gantt chart's start date.
+        <ul>
+            <li v-for="(issue, index) in startDateIssues"
+                :key="index"
+            >
+                {{ issue.object_type }}{{ issue.object_id }} - {{issue.title }}
+            </li>
+        </ul>
+    </div>
+
+    <div v-if="endDateIssues.length >= 1"
+         class="alert alert-warning"
+    >
+        The following Objects have end dates AFTER the gantt chart's end date.
+        <ul>
+            <li v-for="(issue, index) in endDateIssues"
+                :key="index"
+            >
+                {{ issue.object_type }}{{ issue.object_id }} - {{issue.title }}
+            </li>
+        </ul>
+    </div>
 </template>
 
 <script>
@@ -78,7 +104,9 @@ export default {
 	},
 	data() {
 		return {
+            endDateIssues: [],
 			isMouseDown: false,
+            startDateIssues: [],
 
 			//Mouse Down Variables
 			mdClientXInitial: 0,
@@ -93,6 +121,16 @@ export default {
 			mdTitle: "",
 		}
 	},
+    watch: {
+        ganttChartData: {
+            handler() {
+                //Use the method
+                this.checkAllObjectsAreWithinDates();
+            },
+            deep: true,
+            immediate: false,
+        }
+    },
 	mixins: [
 		getThemeMixin,
 	],
@@ -102,6 +140,20 @@ export default {
 		}),
 	},
 	methods: {
+        checkAllObjectsAreWithinDates() {
+            //Setup the dates
+            const end_date = DateTime.fromISO(this.ganttEndDate);
+            const start_date = DateTime.fromISO(this.ganttStartDate);
+
+            //If any of the dates fall outside the time frame, we want to notify the user
+            this.endDateIssues = this.ganttChartData.filter((row) => {
+                return row.end_date > end_date.ts;
+            });
+
+            this.startDateIssues = this.ganttChartData.filter((row) => {
+                return row.start_date < start_date.ts;
+            });
+        },
 		initialiseData() {
 			//Escape conditions
 			if (this.destination === "") return;
