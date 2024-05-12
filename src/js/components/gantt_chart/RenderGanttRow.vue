@@ -9,6 +9,7 @@
 					v-model:value="localStartDate"
 					type="datetime"
 					@update:value="modifiedStartDate"
+                    :disabled="userLevel <= 1"
 				/>
 			</div>
 			<div class="gantt-row--end-date">
@@ -16,6 +17,7 @@
 					v-model:value="localEndDate"
 					type="datetime"
 					@update:value="modifiedEndDate"
+                    :disabled="userLevel <= 1"
 				></n-date-picker>
 			</div>
 			<div class="gantt-row--status">
@@ -23,6 +25,7 @@
 					v-model:value="localStatusId"
 					:options="statusList"
 					:on-update-value="updateStatus"
+                    :disabled="userLevel <= 1"
 				></n-select>
 			</div>
 		</div>
@@ -128,6 +131,7 @@ export default {
 		...mapGetters({
 			rootUrl: "getRootUrl",
 			startDateGantt: "getStartDateGantt",
+            userLevel: "getUserLevel",
 		}),
 		barWidth() {
 			//Calculate the delta (aka number of days)
@@ -166,6 +170,9 @@ export default {
 			this.updateGanttData();
 		},
 		mouseDown(event) {
+            //If the user does not have enough permissions, do nothing
+            if (this.userLevel <= 1) return;
+
 			//Send data up stream
 			this.$emit("mouse_down", {
 				mdClientXInitial: event.clientX,
