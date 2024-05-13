@@ -126,7 +126,6 @@ export default {
 	],
 	methods: {
 		confirmCardDelete(user_job_id, index) {
-			console.log("CONFIRM CARD DELETE: ", user_job_id)
 			//Update the confirm id
 			this.confirmIdToDelete = user_job_id;
 			this.confirmIndex = index;

@@ -236,11 +236,7 @@ export default {
 			//Get the number of dates from this
 			const delta = Math.floor((client_x_final - this.mdClientXInitial) / 35) * (24 * 60 * 60 * 1000);
 
-			//Do nothing if the start date is past the sprint's start date
-			if (this.mdStartDateInitial + delta < new Date(this.ganttStartDate).getTime()) return;
 
-			//Do nothing if the end date is past the sprint's end date
-			if (this.mdEndDateInitial + delta > new Date(this.ganttEndDate).getTime()) return;
 
 			//Depending on the column, depends what functionality we are updating.
 			switch (this.mdColumn) {
@@ -273,6 +269,9 @@ export default {
 		updateEnd(delta) {
 			//Apply the delta to the dates
 			const end_date = new Date(this.mdEndDateInitial + delta);
+
+			//Do nothing if the end date is past the sprint's end date
+			if (this.mdEndDateInitial + delta > new Date(this.ganttEndDate).getTime()) return;
 
 			//Do nothing if the end date is less than the start date
 			if (this.mdEndDateInitial + delta <= this.mdStartDateInitial) return;
@@ -322,6 +321,12 @@ export default {
 			this.mdObjectId = 0;
 		},
 		updateMiddle(delta) {
+			//Do nothing if the start date is past the sprint's start date
+			if (this.mdStartDateInitial + delta < new Date(this.ganttStartDate).getTime()) return;
+
+			//Do nothing if the end date is past the sprint's end date
+			if (this.mdEndDateInitial + delta > new Date(this.ganttEndDate).getTime()) return;
+
 			//Apply the delta to the dates
 			const end_date = new Date(this.mdEndDateInitial + delta);
 			const start_date = new Date(this.mdStartDateInitial + delta);
@@ -343,6 +348,9 @@ export default {
 		updateStart(delta) {
 			//Apply the delta to the dates
 			const start_date = new Date(this.mdStartDateInitial + delta);
+
+			//If the start date is less than the gantt start date - do nothing
+			if (this.mdStartDateInitial + delta < new Date(this.ganttStartDate).getTime()) return;
 
 			//If the start date is greater or equal to the end date. Do nothing
 			if (this.mdStartDateInitial + delta >= this.mdEndDateInitial) return;
