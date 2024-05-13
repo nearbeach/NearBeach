@@ -31,7 +31,9 @@
 		</div>
 
 		<div class="gantt-row--render">
-			<div class="gantt-row--render-bar">
+			<div class="gantt-row--render-bar"
+				 v-if="renderBar"
+			>
 				<div
 					class="gantt-row--spacer"
 					v-bind:style="`width: ${spacerWidth}px`"
@@ -129,24 +131,56 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			endDateGantt: "getEndDateGantt",
 			rootUrl: "getRootUrl",
 			startDateGantt: "getStartDateGantt",
             userLevel: "getUserLevel",
 		}),
 		barWidth() {
+			//Setup the date variables
+			let start_date = this.localStartDate;
+			let end_date = this.localEndDate;
+
+			//In the case where the bar falls outside of the timeframe, we need to adjust the start_date/end_date
+			if (start_date < this.startDateGantt) {
+				//The start date of the bar, falls outside the timeframe. Adjust to the start of the gantt chart
+				start_date = this.startDateGantt;
+			}
+
+			if (end_date > this.endDateGantt) {
+				//The end date of the bar, falls outside the timeframe. Adjust to the end of the gantt chart
+				end_date = this.endDateGantt;
+			}
+
 			//Calculate the delta (aka number of days)
-			const delta = Math.ceil((this.localEndDate - this.localStartDate) / (1000 * 60 * 60 * 24));
+			const delta = Math.ceil((end_date - start_date) / (1000 * 60 * 60 * 24));
 
 			//Return number of days multiplied by 35 pixels
 			return delta * 35;
 		},
+		renderBar() {
+			//Conditions
+			//~~~~~~~~~~
+			//Bar's end date > start date of gantt chart
+			//Bar's start date < end date of gantt chart
+			const condition_1 = this.localEndDate > this.startDateGantt;
+			const condition_2 = this.localStartDate < this.endDateGantt;
+
+			//Match both conditions
+			return condition_1 && condition_2;
+		},
 		spacerWidth() {
+			//If bar start is less than gantt start, return 0
+			if (this.localStartDate <= this.startDateGantt) {
+				return 0;
+			}
+
 			//Calculate the delta (aka number of days)
 			const delta = Math.floor((this.localStartDate - this.startDateGantt) / (1000 * 60 * 60 * 24));
 
 			//Return the number of days multiplied by 35 pixels
 			return delta * 35;
-		}
+		},
 	},
 	methods: {
 		getStatusList() {

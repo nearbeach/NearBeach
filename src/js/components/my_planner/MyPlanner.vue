@@ -1,71 +1,72 @@
 <template>
-	<h1 class="planner-header">My Planner</h1>
-	<button class="btn btn-primary planner-button"
-			v-on:click="showModal"
-	>Add Object</button>
+	<n-config-provider :theme="getTheme(theme)">
+		<h1 class="planner-header">My Planner</h1>
+		<button class="btn btn-primary planner-button"
+				v-on:click="showModal"
+		>Add Object</button>
 
-	<div class="my-planner">
-		<!-- HEADER -->
-		<div class="my-planner--header">
-			<div
-				v-for="day in dateArray"
-				:key="day.date"
-				class="my-planner--header-single-day"
-			>
-				<p>
-					{{ day.day }}<br/>
-					<span class="text-instructions">{{ day.date }}</span>
-				</p>
+		<div class="my-planner">
+			<!-- HEADER -->
+			<div class="my-planner--header">
+				<div
+					v-for="day in dateArray"
+					:key="day.date"
+					class="my-planner--header-single-day"
+				>
+					<p>
+						{{ day.day }}<br/>
+						<span class="text-instructions">{{ day.date }}</span>
+					</p>
+				</div>
+			</div>
+
+			<!-- BODY -->
+			<div class="my-planner--body">
+				<draggable
+					class="my-planner--single-day list-group"
+					group="objects"
+					ghost-class="ghost"
+					itemKey="user_job_id"
+					v-for="(day, index) in dateArray"
+					v-bind:data-job-date="day.date"
+					v-bind:data-index="index"
+					:key="day.date"
+					:list="day.data"
+					@end="onEnd($event)"
+				>
+					<template #item="{ element }">
+						<div class="list-group-item"
+							v-bind:data-user-job-id="element.user_job_id"
+						>
+							<div class="card-priority-line priority-normal"></div>
+							<div class="text-instructions">
+								  {{ formatObjectId(element) }}
+							</div>
+							<div><strong>{{ element.title }}</strong></div>
+							<div>Status: <span class="text-instructions">{{ element.status }}</span></div>
+							<Icon
+								class="kanban-card-info-icon"
+								style="color: red;"
+								v-bind:icon="icons.trashCan"
+								v-on:click="confirmCardDelete(element.user_job_id, index)"
+								v-on:dblclick="confirmCardDelete(element.user_job_id, index)"
+							></Icon>
+						</div>
+					</template>
+				</draggable>
+
 			</div>
 		</div>
 
-		<!-- BODY -->
-		<div class="my-planner--body">
-			<draggable
-				class="my-planner--single-day list-group"
-				group="objects"
-				ghost-class="ghost"
-				itemKey="user_job_id"
-				v-for="(day, index) in dateArray"
-				v-bind:data-job-date="day.date"
-				v-bind:data-index="index"
-				:key="day.date"
-				:list="day.data"
-				@end="onEnd($event)"
-			>
-				<template #item="{ element }">
-					<div class="list-group-item"
-						v-bind:data-user-job-id="element.user_job_id"
-					>
-						<div class="card-priority-line priority-normal"></div>
-						<div class="text-instructions">
-							  {{ formatObjectId(element) }}
-						</div>
-						<div><strong>{{ element.title }}</strong></div>
-						<div>Status: <span class="text-instructions">{{ element.status }}</span></div>
-						<Icon
-							class="kanban-card-info-icon"
-							style="color: red;"
-							v-bind:icon="icons.trashCan"
-							v-on:click="confirmCardDelete(element.user_job_id, index)"
-							v-on:dblclick="confirmCardDelete(element.user_job_id, index)"
-						></Icon>
-					</div>
-				</template>
-			</draggable>
+		<confirm-user-job-delete
+			v-bind:user-job-id="confirmIdToDelete"
+			v-on:remove_user_job="removeUserJob"
+		></confirm-user-job-delete>
 
-		</div>
-	</div>
-	
-	<confirm-user-job-delete
-		v-bind:user-job-id="confirmIdToDelete"
-		v-on:remove_user_job="removeUserJob"
-	></confirm-user-job-delete>
-
-	<new-planner-object-wizard
-		v-on:update_date_array="updateDateArray($event)"
-	></new-planner-object-wizard>
-
+		<new-planner-object-wizard
+			v-on:update_date_array="updateDateArray($event)"
+		></new-planner-object-wizard>
+	</n-config-provider>
 </template>
 
 <script>
@@ -76,6 +77,7 @@ import {Icon} from "@iconify/vue";
 
 //Mixins
 import datetimeMixin from "../../mixins/datetimeMixin";
+import getThemeMixin from "../../mixins/getThemeMixin";
 import iconMixin from "../../mixins/iconMixin";
 
 //Component
@@ -105,6 +107,10 @@ export default {
 			type: String,
 			default: "/",
 		},
+		theme: {
+			type: String,
+			default: "",
+		},
 	},
 	data() {
 		return {
@@ -115,11 +121,11 @@ export default {
 	},
 	mixins: [
 		datetimeMixin,
+		getThemeMixin,
 		iconMixin,
 	],
 	methods: {
 		confirmCardDelete(user_job_id, index) {
-			console.log("CONFIRM CARD DELETE: ", user_job_id)
 			//Update the confirm id
 			this.confirmIdToDelete = user_job_id;
 			this.confirmIndex = index;
