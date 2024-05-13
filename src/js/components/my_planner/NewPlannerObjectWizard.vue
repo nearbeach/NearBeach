@@ -87,13 +87,10 @@
 						<div class="col-md-8">
 							<!-- LOADING PLACEHOLDER -->
 							<div
-								id="link_wizard_results"
+								class="alert alert-info"
 								v-if="isSearching || objectModel == null"
 							>
-								<img
-									v-bind:src="`${staticUrl}/NearBeach/images/placeholder/search.svg`"
-									alt="Searching..."
-								/>
+								Please select the object type.
 							</div>
 
 							<div
