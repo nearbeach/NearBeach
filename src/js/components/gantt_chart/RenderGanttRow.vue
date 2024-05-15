@@ -153,10 +153,10 @@ export default {
 			}
 
 			//Calculate the delta (aka number of days)
-			const delta = Math.ceil((end_date - start_date) / (1000 * 60 * 60 * 24));
+			const delta = Math.ceil((end_date - start_date) / (1000 * 60 * 60));
 
 			//Return number of days multiplied by 35 pixels
-			return delta * 35;
+			return delta * 2;
 		},
 		renderBar() {
 			//Conditions
@@ -176,10 +176,10 @@ export default {
 			}
 
 			//Calculate the delta (aka number of days)
-			const delta = Math.floor((this.localStartDate - this.startDateGantt) / (1000 * 60 * 60 * 24));
+			const delta = Math.floor((this.localStartDate - this.startDateGantt) / (1000 * 60 * 60));
 
 			//Return the number of days multiplied by 35 pixels
-			return delta * 35;
+			return delta * 2;
 		},
 	},
 	methods: {
