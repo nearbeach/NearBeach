@@ -2,10 +2,6 @@
 {% load static %}
 {% block content %}
 
-    {% if user_level == 1 %}
-        <fieldset disabled="true">
-    {% endif %}
-
     <customer-information v-bind:customer-results="{{customer_results}}"
                           v-bind:title-list="{{title_list}}"
                           v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
@@ -19,7 +15,4 @@
 
     <customer-modules></customer-modules>
 
-    {% if user_level == 1 %}
-        </fieldset>
-    {% endif %}
 {% endblock %}

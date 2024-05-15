@@ -90,6 +90,15 @@ class TeamLeaderPermissionTests(TestCase):
             URLTest("my_planner_get_object_list", ["task"], {}, 200, "POST"),
             URLTest("my_planner_update_object_list", [], {"user_job_id": 1, "job_date": "2024-05-15", "new_destination": 1}, 400, "POST"),
             URLTest("my_planner_update_object_list", [], {"user_job_id": 3, "job_date": "2024-05-15", "new_destination": 3}, 200, "POST"),
+            URLTest("sprint_information", [1], {}, 403, "GET"),
+            URLTest("sprint_information", [2], {}, 200, "GET"),
+            URLTest("sprint_information", [3], {}, 403, "GET"),
+            URLTest("sprint_information", [4], {}, 200, "GET"),
+            URLTest("gantt_chart_get_data", ["sprint", 1], {}, 403, "GET"),
+            URLTest("gantt_chart_get_data", ["sprint", 2], {}, 200, "GET"),
+            URLTest("gantt_chart_get_data", ["sprint", 3], {}, 403, "GET"),
+            URLTest("gantt_chart_get_data", ["sprint", 4], {}, 200, "GET"),
+            URLTest("gantt_chart_get_data", ["project", 3], {}, 403, "GET"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied

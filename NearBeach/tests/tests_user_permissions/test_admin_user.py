@@ -112,8 +112,6 @@ class AdminPermissionTests(TestCase):
             URLTest("my_planner_get_object_list", ["project"], {}, 200, "POST"),
             URLTest("my_planner_get_object_list", ["task"], {}, 200, "POST"),
             URLTest("my_planner_update_object_list", [], {"user_job_id": 1, "job_date": "2024-05-15", "new_destination": 1}, 200, "POST"),
-            URLTest("gantt_chart_get_data", ["sprint", 3], {}, 200, "GET"),
-            URLTest("gantt_chart_get_data", ["project", 3], {}, 400, "GET"),
             # URLTest("diagnostic_information_upload_test", [], {}, 200, "POST"),
         ]
 
