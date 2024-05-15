@@ -54,6 +54,7 @@
 								</label>
 								<n-select
 									:options="titleFixList"
+									:disabled="userLevel <= 1"
 									v-model:value="customerTitleModel"
 								></n-select>
 							</div>
@@ -68,6 +69,7 @@
 									type="text"
 									class="form-control"
 									v-model="customerFirstNameModel"
+									:disabled="userLevel <= 1"
 								/>
 							</div>
 							<div class="form-group col-sm-5">
@@ -81,6 +83,7 @@
 									type="text"
 									class="form-control"
 									v-model="customerLastNameModel"
+									:disabled="userLevel <= 1"
 								/>
 							</div>
 						</div>
