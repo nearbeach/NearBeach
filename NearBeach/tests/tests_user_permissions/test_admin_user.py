@@ -106,6 +106,12 @@ class AdminPermissionTests(TestCase):
             URLTest("profile_update_data", [], {"username": 1, "first_name": "Admin", "last_name": "Admin", "theme": "dark"}, 200, "POST"),
             URLTest("diagnostic_information_email_test", [], {}, 200, "POST"),
             URLTest("diagnostic_information", [], {}, 200, "GET"),
+            URLTest("my_planner", [], {}, 200, "GET"),
+            URLTest("my_planner_add_object", [], {"job_date": "2024-05-14", "destination": "task", "task": 1}, 200, "POST"),
+            URLTest("my_planner_delete_user_job", [], {"user_job_id": 1}, 200, "POST"),
+            URLTest("my_planner_get_object_list", ["project"], {}, 200, "POST"),
+            URLTest("my_planner_get_object_list", ["task"], {}, 200, "POST"),
+            URLTest("my_planner_update_object_list", [], {"user_job_id": 1, "job_date": "2024-05-15", "new_destination": 1}, 200, "POST"),
             # URLTest("diagnostic_information_upload_test", [], {}, 200, "POST"),
         ]
 

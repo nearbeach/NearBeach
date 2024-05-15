@@ -12,17 +12,12 @@ def requirement_permissions(request, kwargs):
     if len(kwargs) > 0:
         # Get the requirement groups
         user_group_results = user_group_results.filter(
-            Q(
+            is_deleted=False,
+            group_id__in=ObjectAssignment.objects.filter(
                 is_deleted=False,
-                group_id__in=ObjectAssignment.objects.filter(
-                    is_deleted=False,
-                    group_id__isnull=False,
-                    requirement_id=kwargs["requirement_id"],
-                ).values("group_id"),
-            )
-            & Q(
-                username=request.user,
-            )
+                group_id__isnull=False,
+                requirement_id=kwargs["requirement_id"],
+            ).values("group_id"),
         )
 
         # Check to see if there are any groups associated

@@ -10,6 +10,12 @@ from NearBeach.models import (
     SprintObjectAssignment,
     Task, ListOfRequirementItemStatus, ListOfProjectStatus, ListOfTaskStatus,
 )
+from NearBeach.decorators.check_user_permissions.gantt_chart_permissions import (
+    check_gantt_chart_permissions_with_destination,
+)
+from NearBeach.decorators.check_user_permissions.object_permissions import (
+    check_user_generic_permissions,
+)
 
 import json
 
@@ -31,11 +37,8 @@ GANTT_DATA_UPDATE_STRUCTURE = {
 }
 
 
+@check_gantt_chart_permissions_with_destination(min_permission_level=1)
 def gantt_data_get_data(request, destination, location_id, *args, **kwargs):
-    # For the initial proof of concept, we are only dealing with sprints
-    if destination != "sprint":
-        return HttpResponseBadRequest("Sorry, object not supported at the moment")
-
     # Get the object results
     object_results = get_object_results(location_id)
     status_results = get_status_results()
@@ -51,7 +54,8 @@ def gantt_data_get_data(request, destination, location_id, *args, **kwargs):
     )
 
 
-def gantt_data_update_data(request, destination, location_id):
+@check_user_generic_permissions(min_permission_level=2)
+def gantt_data_update_data(request, destination, location_id, *args, **kwargs):
     # Check the form data
     form = GanttDataUpdateDataForm(request.POST)
     if not form.is_valid():

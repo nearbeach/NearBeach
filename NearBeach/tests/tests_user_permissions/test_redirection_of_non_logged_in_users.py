@@ -60,6 +60,7 @@ class CheckDashboard(TestCase):
             c.get(reverse("dashboard")),
             c.get(reverse("get_bug_list")),
             c.get(reverse("get_my_objects")),
+            c.get(reverse("my_planner")),
         ]
 
         # Check the data in the array
@@ -232,6 +233,11 @@ class CheckObjects(TestCase):
             c.get(reverse("update_note", args=[1]), data={"object_note_id": 1, "object_note": ""}),
             c.post(reverse("user_list", args=["project", 1])),
             c.post(reverse("lead_user_list")),
+            c.post(reverse("my_planner_add_object")),
+            c.post(reverse("my_planner_delete_user_job")),
+            c.post(reverse("my_planner_get_object_list", args=["project"])),
+            c.post(reverse("my_planner_get_object_list", args=["task"])),
+            c.post(reverse("my_planner_update_object_list")),
         ]
 
         # Check the array

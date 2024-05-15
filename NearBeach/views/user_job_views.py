@@ -1,7 +1,9 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
 from django.db.models import F, Value as V
 from django.core.serializers.json import DjangoJSONEncoder
+from django.views.decorators.http import require_http_methods
 
 from NearBeach.forms import MyPlannerAddObjectForm, MyPlannerUpdateObjectListForm, MyPlannerDeleteUserJobForm
 from NearBeach.models import KanbanCard, ObjectAssignment, Project, Task, UserJob
@@ -43,6 +45,7 @@ DICT_PLANNING_OBJECTS = {
 }
 
 
+# Internal Function
 def get_my_planning_objects(request, delta=7):
     # Lowest delta is a 1
     if delta < 1:
@@ -144,6 +147,7 @@ def get_my_planning_objects(request, delta=7):
     return json.dumps(list(results), cls=DjangoJSONEncoder)
 
 
+@login_required(login_url="login", redirect_field_name="")
 def my_planner(request):
     # Template
     t = loader.get_template("NearBeach/my_planner/my_planner.html")
@@ -160,6 +164,8 @@ def my_planner(request):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 def my_planner_add_object(request):
     form = MyPlannerAddObjectForm(request.POST)
     if not form.is_valid():
@@ -208,6 +214,8 @@ def my_planner_add_object(request):
     return JsonResponse(json.loads(results), safe=False)
 
 
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 def my_planner_delete_user_job(request):
     form = MyPlannerDeleteUserJobForm(request.POST)
     if not form.is_valid():
@@ -215,12 +223,19 @@ def my_planner_delete_user_job(request):
 
     # Delete the data
     user_job_update = form.cleaned_data["user_job_id"]
+
+    # Check permissions. Username should match current logged in user
+    if not user_job_update.username == request.user:
+        return HttpResponseBadRequest("Can't modify other users")
+
     user_job_update.is_deleted = True
     user_job_update.save()
 
     return HttpResponse()
 
 
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 def my_planner_get_object_list(request, destination):
     # Make sure the destination is correct
     if destination not in ["kanban_card", "project", "task"]:
@@ -264,6 +279,8 @@ def my_planner_get_object_list(request, destination):
     return JsonResponse(json.loads(results), safe=False)
 
 
+@login_required(login_url="login", redirect_field_name="")
+@require_http_methods(["POST"])
 def my_planner_update_object_list(request):
     form = MyPlannerUpdateObjectListForm(request.POST)
     if not form.is_valid():
@@ -272,6 +289,10 @@ def my_planner_update_object_list(request):
     # Update the user job
     user_job_update = form.cleaned_data["user_job_id"]
     user_job_update.job_date = form.cleaned_data["job_date"]
+
+    # Check to make sure the user job username is the request username
+    if not user_job_update.username == request.user:
+        return HttpResponseBadRequest("Can't modify other users")
 
     # Update the sort order.
     # old_destination is optional

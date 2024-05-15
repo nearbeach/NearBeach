@@ -233,8 +233,8 @@ export default {
 			//Deal with the mouse movement
 			const client_x_final = event.clientX;
 
-			//Get the number of dates from this
-			const delta = Math.floor((client_x_final - this.mdClientXInitial) / 35) * (24 * 60 * 60 * 1000);
+			//Get the number of hours from this
+			const delta = Math.floor((client_x_final - this.mdClientXInitial) / 2) * (60 * 60 * 1000);
 
 
 

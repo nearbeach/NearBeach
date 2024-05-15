@@ -1987,6 +1987,114 @@
   }
 },
 {
+  "model": "NearBeach.objectassignment",
+  "pk": 35,
+  "fields": {
+    "assigned_user": 1,
+    "group_id": null,
+    "requirement": null,
+    "requirement_item": null,
+    "project": 1,
+    "task": null,
+    "kanban_board": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "customer": null,
+    "organisation": null,
+    "change_task": null,
+    "meta_object": null,
+    "meta_object_title": "",
+    "meta_object_status": "",
+    "link_relationship": "",
+    "parent_link": "",
+    "date_created": "2024-05-13T10:29:17.681Z",
+    "date_modified": "2024-05-13T10:29:17.681Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objectassignment",
+  "pk": 36,
+  "fields": {
+    "assigned_user": 5,
+    "group_id": null,
+    "requirement": null,
+    "requirement_item": null,
+    "project": null,
+    "task": 2,
+    "kanban_board": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "customer": null,
+    "organisation": null,
+    "change_task": null,
+    "meta_object": null,
+    "meta_object_title": "",
+    "meta_object_status": "",
+    "link_relationship": "",
+    "parent_link": "",
+    "date_created": "2024-05-13T10:30:40.078Z",
+    "date_modified": "2024-05-13T10:30:40.078Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objectassignment",
+  "pk": 37,
+  "fields": {
+    "assigned_user": 3,
+    "group_id": null,
+    "requirement": null,
+    "requirement_item": null,
+    "project": null,
+    "task": 2,
+    "kanban_board": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "customer": null,
+    "organisation": null,
+    "change_task": null,
+    "meta_object": null,
+    "meta_object_title": "",
+    "meta_object_status": "",
+    "link_relationship": "",
+    "parent_link": "",
+    "date_created": "2024-05-13T10:41:58.777Z",
+    "date_modified": "2024-05-13T10:41:58.777Z",
+    "change_user": 2,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objectassignment",
+  "pk": 38,
+  "fields": {
+    "assigned_user": 2,
+    "group_id": null,
+    "requirement": null,
+    "requirement_item": null,
+    "project": null,
+    "task": 2,
+    "kanban_board": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "customer": null,
+    "organisation": null,
+    "change_task": null,
+    "meta_object": null,
+    "meta_object_title": "",
+    "meta_object_status": "",
+    "link_relationship": "",
+    "parent_link": "",
+    "date_created": "2024-05-13T10:42:14.120Z",
+    "date_modified": "2024-05-13T10:42:14.120Z",
+    "change_user": 2,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.objectnote",
   "pk": 1,
   "fields": {
@@ -2959,6 +3067,54 @@
     "date_created": "2023-09-06T09:36:33.239Z",
     "date_modified": "2023-09-06T09:36:33.239Z",
     "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.userjob",
+  "pk": 1,
+  "fields": {
+    "username": 1,
+    "job_date": "2024-05-14",
+    "job_sort_number": 0,
+    "kanban_card": null,
+    "project": 1,
+    "task": null,
+    "date_created": "2024-05-13T10:29:27.540Z",
+    "date_modified": "2024-05-13T10:32:17.413Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.userjob",
+  "pk": 2,
+  "fields": {
+    "username": 5,
+    "job_date": "2024-05-13",
+    "job_sort_number": 0,
+    "kanban_card": null,
+    "project": null,
+    "task": 2,
+    "date_created": "2024-05-13T10:30:51.400Z",
+    "date_modified": "2024-05-13T10:30:51.400Z",
+    "change_user": 5,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.userjob",
+  "pk": 3,
+  "fields": {
+    "username": 2,
+    "job_date": "2024-05-14",
+    "job_sort_number": 0,
+    "kanban_card": null,
+    "project": null,
+    "task": 2,
+    "date_created": "2024-05-13T10:42:21.906Z",
+    "date_modified": "2024-05-13T10:42:30.668Z",
+    "change_user": 2,
     "is_deleted": false
   }
 },
@@ -4862,8 +5018,8 @@
   "model": "auth.user",
   "pk": 5,
   "fields": {
-    "password": "pbkdf2_sha256$390000$wSOIKxIzbfTVG7Z6TRKQ0n$QrhNVyNQ5C3RW8rSVkxleNmyCqECJX48uqenvvBTIdQ=",
-    "last_login": null,
+    "password": "pbkdf2_sha256$720000$lme60tWetgq1EdCCjo4iPZ$tGR4stCLa56Rt/LjtHYKCff2RDtJ0RJ4pFr4fC24TXo=",
+    "last_login": "2024-05-13T10:30:22.990Z",
     "is_superuser": false,
     "username": "read_only",
     "first_name": "Read",
@@ -5314,6 +5470,14 @@
 },
 {
   "model": "sessions.session",
+  "pk": "1dxxe5glzsbvq94spcivlz28kvq8vazx",
+  "fields": {
+    "session_data": ".eJxVjEEOgyAQRe_CuiEoI4wuu-8ZyABjtTXagKya3r2SuGi3_73_3sJR2SdXMic3RzGITlx-N0_hyWsF8UHrfZNhW_c0e1kVedIsb1vk5Xq6f4GJ8nS8jUdq0IIhrbANYDmy5l5FGAMCtR1Y4xtkYgjYKd1Ab9AAe2DSBPqIztnl8uJUs2IYacn8-QK2uz9a:1s6Swp:5KDFXsDZsmVAprYtI7TP_dX-ddlKrYDYujwVQTCZbSU",
+    "expire_date": "2024-05-27T10:30:23.003Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "4ihdjbrhcx7hokg3uisrpinxhca0e34d",
   "fields": {
     "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1rWvse:lyt6TXjJYt27JiKtOvUdRIF7rY3B9FsAx6nGOaFkuVA",
@@ -5340,8 +5504,8 @@
   "model": "sessions.session",
   "pk": "922i2920gbdv4xctpizrk8pypiaysael",
   "fields": {
-    "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1s6R9f:Bnve0zi8T7R8BLUIPjW7DFbBUFWSyOuRHKDjTJhqJKw",
-    "expire_date": "2024-05-27T08:35:31.102Z"
+    "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1s6Sva:uc1eEmvvEv9_L46aDGeLvGYfSLgwPVARk6sdNAHWLGk",
+    "expire_date": "2024-05-27T10:29:06.063Z"
   }
 },
 {
