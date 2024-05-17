@@ -32,13 +32,13 @@ export default {
 	data() {
 		return {
 			dateDictionary: {
-				0: "S",
-				1: "M",
-				2: "T",
-				3: "W",
-				4: "T",
-				5: "F",
-				6: "S",
+				0: "Sun",
+				1: "Mon",
+				2: "Tue",
+				3: "Wed",
+				4: "Thu",
+				5: "Fri",
+				6: "Sat",
 			},
 		};
 	},
