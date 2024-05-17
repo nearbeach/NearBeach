@@ -53,7 +53,7 @@ export const moduleGantChart = {
                 row.start_date = start_date.toMillis();
 
                 return row;
-            })
+            });
 
             //Commit the data
             commit({

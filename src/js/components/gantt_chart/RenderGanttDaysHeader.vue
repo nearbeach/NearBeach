@@ -8,15 +8,15 @@
 		</div>
 		<div class="gantt-header--dates">
 			<div
-				v-for="index in deltaDays"
+				v-for="index in deltaDays + 1"
 				:key="index"
 				class="gantt-header--date"
 			>
 				<div class="dayDate">
-					{{getDayDate(index)}}
+					{{getDayDate(index - 1)}}
 				</div>
 				<div class="dayText">
-					{{getDayText(index)}}
+					{{getDayText(index - 1)}}
 				</div>
 			</div>
 		</div>
@@ -32,13 +32,13 @@ export default {
 	data() {
 		return {
 			dateDictionary: {
-				0: "S",
-				1: "M",
-				2: "T",
-				3: "W",
-				4: "T",
-				5: "F",
-				6: "S",
+				0: "Sun",
+				1: "Mon",
+				2: "Tue",
+				3: "Wed",
+				4: "Thu",
+				5: "Fri",
+				6: "Sat",
 			},
 		};
 	},

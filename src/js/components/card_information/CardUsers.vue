@@ -5,36 +5,38 @@
 	>
 		Sorry, there are no users currently assigned to this card.
 	</div>
-	<div v-else>
-		<table class="table">
-			<thead>
-			<tr>
-				<td scope="col">Username</td>
-				<td scope="col">Name</td>
-				<td
-					scope="col"
-					v-if="userLevel === 4"
-				>
-					Delete
-				</td>
-			</tr>
-			</thead>
-			<tbody>
-			<tr
-				v-for="user in objectUserList"
-				v-bind:key="user.id"
+	<div v-else
+	     class="user-card-list"
+	>
+		<div
+			v-for="user in objectUserList"
+			v-bind:key="user.username"
+			class="user-card"
+		>
+			<img
+				v-bind:src="profilePicture(user.profile_picture)"
+				alt="default profile"
+				class="user-card--profile"
+			/>
+			<div class="user-card--details">
+				<div class="user-card--name">
+					{{ user.first_name }} {{ user.last_name }}
+				</div>
+				<div class="user-card--email">
+					{{ user.email }}
+				</div>
+			</div>
+			<div
+				class="user-card--remove"
+				v-if="userLevel >= 3"
 			>
-				<td>{{ user.id }} - {{ user.username }}</td>
-				<td>{{ user.first_name }} {{ user.last_name }}</td>
-				<td v-if="userLevel >= 2">
-					<Icon
-						v-bind:icon="icons.trashCan"
-						v-on:click="removeUser(user.username)"
-					/>
-				</td>
-			</tr>
-			</tbody>
-		</table>
+				<Icon
+					v-bind:icon="icons.trashCan"
+					v-on:click="removeUser(user.username)"
+				/>
+			</div>
+		</div>
+
 	</div>
 	<div
 		class="row"
@@ -87,6 +89,13 @@ export default {
 			//Open the user wizard model
 			const addUserWizard = new Modal("#addUserModal");
 			addUserWizard.show();
+		},
+		profilePicture(picture_uuid) {
+			if (picture_uuid !== null && picture_uuid !== "") {
+				return `${this.rootUrl}private/${picture_uuid}/`;
+			}
+
+			return `${this.staticUrl}NearBeach/images/placeholder/people_tax.svg`;
 		},
 		removeUser(username) {
 			//Data to send

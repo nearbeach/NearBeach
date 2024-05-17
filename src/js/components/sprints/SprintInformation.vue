@@ -22,7 +22,7 @@
 				</div>
 			</div>
 
-			<hr v-if="userLevel >= 2" />
+			<hr v-if="userLevel >= 2 && sprintResults[0].sprint_status !== 'Finished'" />
 			<div
 				v-if="userLevel >= 2"
 				class="sprint-header--buttons"
