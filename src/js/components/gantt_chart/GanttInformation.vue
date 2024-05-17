@@ -164,8 +164,12 @@ export default {
 				`${this.rootUrl}gantt_data/${this.destination}/${this.locationId}/get_data/`,
 			).then((response) => {
 				//Get the dates
-				const end_date = DateTime.fromISO(this.ganttEndDate);
-				const start_date = DateTime.fromISO(this.ganttStartDate);
+				let end_date = DateTime.fromISO(this.ganttEndDate);
+				let start_date = DateTime.fromISO(this.ganttStartDate);
+
+				//Set the end/start date's times to 12:00:00AM
+				end_date = end_date.set({hour: 0, minute: 0, second: 0, millisecond: 0});
+				start_date = start_date.set({hour: 0, minute: 0, second: 0, millisecond: 0});
 
 				//Update the status lists
 				this.$store.commit({

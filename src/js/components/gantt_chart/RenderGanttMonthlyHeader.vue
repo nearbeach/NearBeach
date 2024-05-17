@@ -8,7 +8,7 @@
 				class="gantt-header--month"
 				v-bind:style="`width: ${month.width}px`"
 			>
-				{{month.month}} {{month.year}}
+				<span>{{month.month}} {{month.year}}</span>
 			</div>
 		</div>
 	</div>
@@ -73,7 +73,7 @@ export default {
 					keep_looping = false;
 
 					//Get delta then the width of the object :)
-					delta = Math.round((end_date.getTime() - point_date.getTime()) / (1000 * 60 * 60 * 24));
+					delta = Math.round((end_date.getTime() - point_date.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 				} else {
 					//Months are different. Get the point date for the first of next month
 					if (point_date.getMonth() === 11) {
@@ -90,7 +90,7 @@ export default {
 				this.monthArray.push({
 					index: index,
 					delta: delta,
-					width: delta * 35,
+					width: delta * 48,
 					month: this.monthDictionary[point_date.getMonth()],
 					year: point_date.getFullYear(),
 				});

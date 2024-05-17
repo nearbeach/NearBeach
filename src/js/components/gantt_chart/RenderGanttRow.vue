@@ -10,6 +10,7 @@
 					type="datetime"
 					@update:value="modifiedStartDate"
                     :disabled="userLevel <= 1"
+					:format="datePickerFormat"
 				/>
 			</div>
 			<div class="gantt-row--end-date">
@@ -18,6 +19,7 @@
 					type="datetime"
 					@update:value="modifiedEndDate"
                     :disabled="userLevel <= 1"
+					:format="datePickerFormat"
 				></n-date-picker>
 			</div>
 			<div class="gantt-row--status">
@@ -112,6 +114,7 @@ export default {
 	},
 	data() {
 		return {
+			datePickerFormat: "yyyy-MM-dd HH:mm",
 			localEndDate: this.endDate,
 			localStartDate: this.startDate,
 			localStatusId: this.statusId,

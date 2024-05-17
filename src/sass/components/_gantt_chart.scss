@@ -1,7 +1,7 @@
 .gantt-chart {
     position: relative;
     margin: 5px;
-    padding-bottom: 50px;
+    //padding-bottom: 50px;
     //overflow: scroll;
     overflow: auto;
     scrollbar-color: orange lightyellow;
@@ -21,6 +21,7 @@
             align-items: flex-end;
             font-weight: bold;
             padding: 0 0 0 5px;
+            border-right: 1px solid lightgray;
 
             .gantt-header--title {
                 width: 360px;
@@ -45,6 +46,7 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
+                border-right: solid lightgray 1px;
 
                 .dayText {
                     font-weight: lighter;
@@ -62,6 +64,10 @@
                 //border: solid 1px lightskyblue;
                 //color: black;
                 font-weight: bold;
+                border-right: 1px solid lightgray;
+                padding-left: 15px;
+                overflow: hidden;
+                white-space: nowrap;
             }
         }
     }
@@ -70,7 +76,6 @@
         display: flex;
         flex-direction: row;
         margin: 0;
-        height: 40px;
         -webkit-user-select: none;
         user-select: none;
 
@@ -81,10 +86,14 @@
             justify-content: flex-start;
             align-items: center;
             padding: 0 0 0 5px;
+            border-right: 1px solid lightgray;
 
             .gantt-row--title {
                 width: 360px;
                 font-weight: lighter;
+                white-space: nowrap;
+                overflow: clip;
+                text-overflow: ellipsis;
             }
 
             .gantt-row--start-date, .gantt-row--end-date, .gantt-row--status {
@@ -121,6 +130,12 @@
                     }
 
                 }
+            }
+        }
+
+        &:last-child {
+            .gantt-row--information {
+                padding-bottom: 50px;
             }
         }
     }

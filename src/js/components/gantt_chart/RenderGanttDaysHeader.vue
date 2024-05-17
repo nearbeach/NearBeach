@@ -8,15 +8,15 @@
 		</div>
 		<div class="gantt-header--dates">
 			<div
-				v-for="index in deltaDays"
+				v-for="index in deltaDays + 1"
 				:key="index"
 				class="gantt-header--date"
 			>
 				<div class="dayDate">
-					{{getDayDate(index)}}
+					{{getDayDate(index - 1)}}
 				</div>
 				<div class="dayText">
-					{{getDayText(index)}}
+					{{getDayText(index - 1)}}
 				</div>
 			</div>
 		</div>
