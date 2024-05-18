@@ -77,7 +77,7 @@ export default {
 	props: {},
 	data() {
 		return {
-			editorIsDisabled: true,
+			editorIsDisabled: false,
 		};
 	},
 	computed: {
@@ -115,7 +115,7 @@ export default {
 	mounted() {
 		//BUG - if we use the following condition it won't work. We need to wait at least 500ms before apply it.
 		//I hate this :'(
-		setInterval(() => {
+		setTimeout(() => {
 			this.editorIsDisabled = this.kanbanStatus === "Closed" || this.userLevel <= 1;
 		}, 500);
 	}
