@@ -10,12 +10,16 @@
 				<div class="sprint-header--information-date"
 					 v-if="sprintResults[0].sprint_status === 'Finish'"
 				>
-					<strong>Finish Date:</strong> {{sprintResults[0].sprint_end_date}}
+					<strong>Finish Date:</strong>
+					{{getNiceDatetime(sprintResults[0].sprint_end_date)}}
 				</div>
 				<div class="sprint-header--information-date"
 					 v-else
 				>
-					<strong>Start Date:</strong> {{sprintResults[0].sprint_start_date}}
+					<strong>Start Date:</strong>
+					{{getNiceDatetime(sprintResults[0].sprint_start_date)}}<br/>
+					<strong>End Date:</strong>
+					{{getNiceDatetime(sprintResults[0].sprint_end_date)}}
 				</div>
 				<div class="sprint-header--information-status">
 					<strong>Sprint Status:</strong> {{ sprintResults[0].sprint_status }}
@@ -72,6 +76,7 @@
 <script>
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
+import datetimeMixin from "../../mixins/datetimeMixin";
 
 //Components
 import ConfirmSprintDelete from "./ConfirmSprintDelete.vue";
@@ -107,6 +112,7 @@ export default {
 		},
 	},
 	mixins: [
+		datetimeMixin,
 		getThemeMixin,
 	],
 	data() {
