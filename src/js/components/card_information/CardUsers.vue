@@ -1,43 +1,9 @@
 <template>
-	<div
-		class="alert alert-secondary"
-		v-if="objectUserList.length === 0"
-	>
-		Sorry, there are no users currently assigned to this card.
-	</div>
-	<div v-else
-	     class="user-card-list"
-	>
-		<div
-			v-for="user in objectUserList"
-			v-bind:key="user.username"
-			class="user-card"
-		>
-			<img
-				v-bind:src="profilePicture(user.profile_picture)"
-				alt="default profile"
-				class="user-card--profile"
-			/>
-			<div class="user-card--details">
-				<div class="user-card--name">
-					{{ user.first_name }} {{ user.last_name }}
-				</div>
-				<div class="user-card--email">
-					{{ user.email }}
-				</div>
-			</div>
-			<div
-				class="user-card--remove"
-				v-if="userLevel >= 3"
-			>
-				<Icon
-					v-bind:icon="icons.trashCan"
-					v-on:click="removeUser(user.username)"
-				/>
-			</div>
-		</div>
+	<render-user-card-list
+		v-bind:object-user-list="objectUserList"
+		v-on:remove_user="removeUser"
+	></render-user-card-list>
 
-	</div>
 	<div
 		class="row"
 		v-if="userLevel > 1 && kanbanBoardStatus !== 'Closed'"
@@ -59,6 +25,7 @@ import {Icon} from "@iconify/vue";
 
 //Vuex components
 import {mapGetters} from "vuex";
+import RenderUserCardList from "../render/RenderUserCardList.vue";
 
 //Mixins
 import iconMixin from "../../mixins/iconMixin";
@@ -67,6 +34,7 @@ export default {
 	name: "CardUsers",
 	components: {
 		Icon,
+		RenderUserCardList,
 	},
 	computed: {
 		...mapGetters({
@@ -74,6 +42,7 @@ export default {
 			kanbanBoardStatus: "getKanbanStatus",
 			locationId: "getLocationId",
 			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
 			userLevel: "getUserLevel",
 			objectUserList: "getObjectUserList",
 		}),
