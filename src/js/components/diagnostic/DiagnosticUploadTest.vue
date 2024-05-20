@@ -47,6 +47,9 @@
 //VueX
 import { mapGetters } from "vuex";
 
+//Mixins
+import { getRandomID } from "../../mixins/randomMixin";
+
 export default {
 	name: "DiagnosticUpload",
 	data() {
@@ -68,7 +71,8 @@ export default {
 			this.uploadState = "sending";
 
 			//Create a simple uuid
-			const uuid = crypto.randomUUID();
+			console.log("GET RANDOM ID: ", getRandomID());
+			const uuid = getRandomID();
 
 			//Create the file we are uploading
 			const document = new Blob([uuid], { type: "text/plain"});
