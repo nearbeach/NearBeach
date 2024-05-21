@@ -30,7 +30,7 @@ pygments==2.17.2
     # via sphinx
 readthedocs-sphinx-search==0.3.2
     # via -r requirements.in
-requests==2.31.0
+requests==2.32.0
     # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
