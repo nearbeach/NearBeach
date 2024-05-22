@@ -114,13 +114,14 @@
                     min-width: 24px;
                     height: 20px;
                     margin-top: 10px;
-                    border-left: 2px var(--nb-kanban-cell-background-color) dashed;
-                    border-right: 2px var(--nb-kanban-cell-background-color) dashed;
+                    //border-left: 2px var(--nb-kanban-cell-background-color) dashed;
+                    //border-right: 2px var(--nb-kanban-cell-background-color) dashed;
 
                     .gantt-row--bar-start, .gantt-row--bar-end {
                         height: inherit;
                         width: 7px;
                         cursor: col-resize;
+                        background-color: rgba(0, 0, 0, 0.45);
                     }
 
                     .gantt-row--bar-middle {

@@ -73,55 +73,13 @@
 			{{ destinationTitle }}. Please note - users have to be a part of the
 			groups list above.
 		</p>
-		<div v-if="loadingData"
-			class="alert alert-info"
-		>
-			Currently loading User Data.
-		</div>
-		<div
-			v-else-if="objectUserList.length === 0 && !addingUserStatus"
-			class="alert alert-dark"
-		>
-			Sorry - there are no current users active.
-		</div>
-		<div
-			v-else
-			class="user-card-list"
-		>
-			<div
-				v-for="user in objectUserList"
-				v-bind:key="user.username"
-				class="user-card"
-			>
-				<img
-					v-bind:src="profilePicture(user.profile_picture)"
-					alt="default profile"
-					class="user-card--profile"
-				/>
-				<div class="user-card--details">
-					<div class="user-card--name">
-						{{ user.first_name }} {{ user.last_name }}
-					</div>
-					<div class="user-card--email">
-						{{ user.email }}
-					</div>
-				</div>
-				<div
-					class="user-card--remove"
-					v-if="userLevel >= 3"
-				>
-					<Icon
-						v-bind:icon="icons.trashCan"
-						v-on:click="removeUser(user.username)"
-					/>
-				</div>
-			</div>
-			<div v-if="addingUserStatus"
-				 class="user-card"
-			>
-				<div class="user-card--details">++ Adding User(s) ++</div>
-			</div>
-		</div>
+
+		<render-user-card-list
+			v-bind:adding-user-status="addingUserStatus"
+			v-bind:loading-data="loadingData"
+			v-bind:object-user-list="objectUserList"
+			v-on:remove_user="removeUser"
+		></render-user-card-list>
 
 		<div class="spacer"></div>
 
@@ -160,6 +118,9 @@ import ConfirmUserDelete from "../wizards/ConfirmUserDelete.vue";
 //VueX
 import {mapGetters} from "vuex";
 
+//Components
+import RenderUserCardList from "../../render/RenderUserCardList.vue";
+
 export default {
 	name: "GroupsAndUsersModule",
 	components: {
@@ -168,6 +129,7 @@ export default {
 		ConfirmGroupDelete,
 		ConfirmUserDelete,
 		Icon,
+		RenderUserCardList,
 	},
 	props: {
 		isReadOnly: {
@@ -232,13 +194,6 @@ export default {
 					delay: 0,
 				});
 			})
-		},
-		profilePicture(picture_uuid) {
-			if (picture_uuid !== null && picture_uuid !== "") {
-				return `${this.rootUrl}private/${picture_uuid}/`;
-			}
-
-			return `${this.staticUrl}NearBeach/images/placeholder/people_tax.svg`;
 		},
 		removeGroup(group_id) {
 			//Tell the confirmation modal what group id is being deleted

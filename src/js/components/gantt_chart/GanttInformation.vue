@@ -240,8 +240,6 @@ export default {
 			//Get the number of hours from this
 			const delta = Math.floor((client_x_final - this.mdClientXInitial) / 2) * (60 * 60 * 1000);
 
-
-
 			//Depending on the column, depends what functionality we are updating.
 			switch (this.mdColumn) {
 				case "end":
@@ -275,7 +273,15 @@ export default {
 			const end_date = new Date(this.mdEndDateInitial + delta);
 
 			//Do nothing if the end date is past the sprint's end date
-			if (this.mdEndDateInitial + delta > new Date(this.ganttEndDate).getTime()) return;
+			const g_e_d = DateTime.fromISO(
+				this.ganttEndDate
+			).set({
+				hour: 23,
+				minute: 59,
+				second: 59,
+				millisecond: 999,
+			});
+			if (this.mdEndDateInitial + delta > g_e_d.ts) return;
 
 			//Do nothing if the end date is less than the start date
 			if (this.mdEndDateInitial + delta <= this.mdStartDateInitial) return;
@@ -326,10 +332,26 @@ export default {
 		},
 		updateMiddle(delta) {
 			//Do nothing if the start date is past the sprint's start date
-			if (this.mdStartDateInitial + delta < new Date(this.ganttStartDate).getTime()) return;
+			const g_s_d = DateTime.fromISO(
+				this.ganttStartDate
+			).set({
+				hour: 0,
+				minute: 0,
+				second: 0,
+				millisecond: 0
+			});
+			if (this.mdStartDateInitial + delta < g_s_d.ts) return;
 
 			//Do nothing if the end date is past the sprint's end date
-			if (this.mdEndDateInitial + delta > new Date(this.ganttEndDate).getTime()) return;
+			const g_e_d = DateTime.fromISO(
+				this.ganttEndDate
+			).set({
+				hour: 23,
+				minute: 59,
+				second: 59,
+				millisecond: 999,
+			});
+			if (this.mdEndDateInitial + delta > g_e_d.ts) return;
 
 			//Apply the delta to the dates
 			const end_date = new Date(this.mdEndDateInitial + delta);
@@ -354,7 +376,15 @@ export default {
 			const start_date = new Date(this.mdStartDateInitial + delta);
 
 			//If the start date is less than the gantt start date - do nothing
-			if (this.mdStartDateInitial + delta < new Date(this.ganttStartDate).getTime()) return;
+			const g_s_d = DateTime.fromISO(
+				this.ganttStartDate
+			).set({
+				hour: 0,
+				minute: 0,
+				second: 0,
+				millisecond: 0
+			});
+			if (this.mdStartDateInitial + delta < g_s_d.ts) return;
 
 			//If the start date is greater or equal to the end date. Do nothing
 			if (this.mdStartDateInitial + delta >= this.mdEndDateInitial) return;

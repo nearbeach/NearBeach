@@ -72,6 +72,9 @@ import { mapGetters } from "vuex";
 //Components
 import { NDatePicker, NSelect } from "naive-ui";
 
+//Datetime
+import { DateTime } from "luxon";
+
 export default {
 	name: "RenderGanttRow",
 	props: {
@@ -150,9 +153,16 @@ export default {
 				start_date = this.startDateGantt;
 			}
 
-			if (end_date > this.endDateGantt) {
+			//Adjust the end date to the END of that particular day
+			const g_e_d = DateTime.fromMillis(this.endDateGantt).set({
+				hour: 23,
+				minute: 59,
+				second: 59,
+				millisecond: 999,
+			});
+			if (end_date > g_e_d.ts) {
 				//The end date of the bar, falls outside the timeframe. Adjust to the end of the gantt chart
-				end_date = this.endDateGantt;
+				end_date = g_e_d.ts;
 			}
 
 			//Calculate the delta (aka number of days)
