@@ -74,7 +74,7 @@ export default {
 			//Axios
 			this.axios
 				.post(
-					`${this.rootUrl}object_data/kanban_card/${this.locationId}/remove_user/`,
+					`${this.rootUrl}object_data/kanban_card/${this.cardId}/remove_user/`,
 					data_to_send
 				)
 				.then((response) => {
