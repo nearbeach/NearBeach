@@ -51,6 +51,11 @@ OBJECT_HIGHER_ORDER_STATUS = (
     ("Closed", "Closed"),
 )
 
+OBJECT_TEMPLATE_TYPE = (
+    (0, "project"),
+    (1, "task"),
+)
+
 PAGE_LAYOUT = (
     ("Landscape", "Landscape"),
     ("Portrait", "Portrait"),
@@ -142,6 +147,19 @@ RFC_TYPE = (
     (3, "High"),
     (2, "Medium"),
     (1, "Low"),
+)
+
+SCHEDULED_OBJECT_FREQUENCY = (
+    ("Daily", "Daily"),
+    ("Set Day of the Week", "Set Day of the Week"),
+    ("Weekly", "Weekly"),
+    ("Fortnightly", "Fortnightly"),
+    ("Monthly", "Monthly"),
+    ("Start of the Month", "Start of the Month"),
+    ("End of the Month", "End of the Month"),
+    ("X Days before End of the Month", "X Days before End of the Month"),
+    # ("First Business Day of the Month", "First Business Day of the Month"),
+    # ("Last Business Day of the Month", "Last Business Day of the Month"),
 )
 
 SPRINT_STATUS = (
@@ -1079,6 +1097,12 @@ class ObjectAssignment(models.Model):
         blank=True,
         null=True,
     )
+    object_template = models.ForeignKey(
+        "ObjectTemplate",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     change_task = models.ForeignKey(
         "ChangeTask",
         on_delete=models.CASCADE,
@@ -1172,6 +1196,22 @@ class ObjectNote(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
+
+
+class ObjectTemplate(models.Model):
+    object_template_id = models.BigAutoField(primary_key=True)
+    object_template_type = models.IntegerField(
+        choices=OBJECT_TEMPLATE_TYPE,
+    )
+    object_template_json = models.JSONField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -1579,6 +1619,38 @@ class RequirementItem(models.Model):
 
     def __str__(self):
         return str(self.requirement_item_title)
+
+
+class ScheduledObject(models.Model):
+    schedule_object_id = models.BigAutoField(primary_key=True)
+    last_run = models.DateField(
+        blank=True,
+        null=True,
+    )
+    next_scheduled_run = models.DateField()
+    number_of_repeats = models.IntegerField(default=-1)
+    run_count = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    frequency = models.CharField(
+        choices=SCHEDULED_OBJECT_FREQUENCY,
+        max_length=50,
+    )
+    frequency_attribute = models.JSONField(
+        null=True,
+        blank=True,
+    )
+    object_template = models.ForeignKey(
+        "ObjectTemplate",
+        on_delete=models.CASCADE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
 
 
 class Sprint(models.Model):
