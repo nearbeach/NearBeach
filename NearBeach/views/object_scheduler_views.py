@@ -6,6 +6,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.models import ObjectAssignment, ScheduledObject, ObjectTemplate, UserGroup, Group
 from NearBeach.views.theme_views import get_theme
+from NearBeach.views.tools.internal_functions import lookup_choice_from_key
+from NearBeach.forms import NewScheduledObjectForm
+from NearBeach.models import OBJECT_TEMPLATE_TYPE
 
 import json
 import uuid
@@ -70,6 +73,41 @@ def new_scheduled_object(request):
 
 
 def new_scheduled_object_save(request):
+    form = NewScheduledObjectForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Prepare the group list
+    group_list = []
+    for group in form.cleaned_data["group_list"]:
+        group_list.append(
+            group.group_id,
+        )
+
+    # Setup the object_json
+    organisation = form.cleaned_data["organisation"]
+    object_json = json.dumps({
+        "object_type": lookup_choice_from_key(
+            OBJECT_TEMPLATE_TYPE,
+            int(form.cleaned_data["object_type"]),
+        ),
+        "object_title": form.cleaned_data["object_title"],
+        "object_description": form.cleaned_data["object_description"],
+        "organisation": organisation.organisation_id,
+        "object_start_date": form.cleaned_data["object_start_date"],
+        "object_end_date": form.cleaned_data["object_end_date"],
+        "uuid": form.cleaned_data["uuid"],
+        "group_list": group_list,
+    }, cls=DjangoJSONEncoder)
+
+    # Save data
+    submit_object_template = ObjectTemplate(
+        object_template_type=form.cleaned_data["object_type"],
+        object_template_json=json.loads(object_json),
+        change_user=request.user,
+    )
+    submit_object_template.save()
+
     return HttpResponse("Setup view")
 
 

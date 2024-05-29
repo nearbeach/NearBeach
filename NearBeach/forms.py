@@ -23,6 +23,7 @@ from .models import (
     ListOfProjectStatus,
     ListOfTaskStatus,
     Notification,
+    OBJECT_TEMPLATE_TYPE,
     ObjectNote,
     PermissionSet,
     Project,
@@ -765,6 +766,37 @@ class NewRequirementForm(forms.ModelForm):
             "requirement_type",
             "organisation",
         ]
+
+
+class NewScheduledObjectForm(forms.Form):
+    object_type = forms.ChoiceField(
+        choices=OBJECT_TEMPLATE_TYPE,
+        required=True,
+    )
+    object_title = forms.CharField(
+        required=True,
+        max_length=255,
+    )
+    object_description = forms.CharField()
+    organisation = forms.ModelChoiceField(
+        queryset=Organisation.objects.all(),
+        required=True,
+    )
+    object_start_date = forms.DateTimeField(
+        input_formats=["c"],
+    )
+    object_end_date = forms.DateTimeField(
+        input_formats=["c"],
+    )
+    group_list = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=Group.objects.filter(
+            is_deleted=False,
+        ),
+    )
+    uuid = forms.UUIDField(
+        required=False,
+    )
 
 
 class NewSprintAssignmentForm(forms.Form):

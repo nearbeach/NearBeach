@@ -150,7 +150,7 @@ RFC_TYPE = (
 )
 
 SCHEDULED_OBJECT_FREQUENCY = (
-    ("Daily", "Daily"),
+    # ("Daily", "Daily"),
     ("Set Day of the Week", "Set Day of the Week"),
     ("Weekly", "Weekly"),
     ("Fortnightly", "Fortnightly"),

@@ -13,7 +13,12 @@
 						</p>
 					</div>
 					<div class="col-md-8">
-						<label>Object Type</label>
+						<label>
+							Object Type
+							<validation-rendering
+								v-bind:error-list="v$.objectTypeModel.$errors"
+							></validation-rendering>
+						</label>
 						<n-select
 							v-model:value="objectTypeModel"
 							:options="objectTypeOptions"
@@ -92,7 +97,7 @@
 				<!-- START DATE & END DATE -->
 				<hr/>
 				<between-dates
-					destination="project"
+					destination="object"
 					v-on:update_dates="updateDates($event)"
 				></between-dates>
 
@@ -101,12 +106,27 @@
 				<group-permissions
 					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
-					v-bind:destination="'project'"
+					v-bind:destination="'object'"
 					v-bind:user-group-results="userGroupResults"
 					v-on:update_group_model="updateGroupModel($event)"
 					v-bind:is-dirty="v$.groupModel.$dirty"
 				></group-permissions>
 
+				<!-- Scheduler Frequency -->
+				<hr/>
+				<scheduler-frequency></scheduler-frequency>
+
+				<!-- Submit Button -->
+				<hr/>
+				<div class="row submit-row">
+					<div class="col-md-12">
+						<button class="btn btn-primary save-changes"
+								v-on:click="submitNewScheduledObject"
+						>
+							Create new Project
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</n-config-provider>
@@ -119,6 +139,7 @@ import { NSelect, NConfigProvider } from "naive-ui";
 import BetweenDates from "../dates/BetweenDates.vue";
 import GetStakeholders from "../organisations/GetStakeholders.vue";
 import GroupPermissions from "../permissions/GroupPermissions.vue";
+import SchedulerFrequency from "./SchedulerFrequency.vue";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
@@ -144,6 +165,7 @@ export default {
 		GroupPermissions,
 		NConfigProvider,
 		NSelect,
+		SchedulerFrequency,
 		ValidationRendering,
 	},
 	props: {
@@ -177,21 +199,28 @@ export default {
 				return [];
 			},
 		},
+		uuid: {
+			type: String,
+			default: "",
+		},
 	},
 	data() {
 		return {
 			groupModel: {},
+			groupModelValidation: true,
 			displayGroupPermissionIssue: false,
 			objectDescriptionModel: "",
+			objectEndDateModel: "",
+			objectStartDateModel: "",
 			objectTitleModel: "",
 			objectTypeModel: "",
 			objectTypeOptions: [
 				{
-					value: "project",
+					value: 0,
 					label: "Project",
 				},
 				{
-					value: "task",
+					value: 1,
 					label: "Task",
 				},
 			],
@@ -226,10 +255,94 @@ export default {
 		uploadMixin,
 	],
 	methods: {
+		calculateUserLevel(data) {
+			//If there is no data to crunch, just return.
+			if (data.length === 0) return 0;
+
+			//Inside list we have two fields; project, and tasks. We want to grab the highest value from
+			//both of those fields. Then we want to grab the highest values out of those two results. This will be our
+			//user level.
+			const user_level_project = data.reduce((prev, current) => {
+				return (prev && prev.project_permission > current.project_permission) ? prev : current;
+			}).project_permission;
+
+			const user_level_task = data.reduce((prev, current) => {
+				return (prev && prev.task_permission > current.task_permission) ? prev : current;
+			}).task_permission;
+
+			if (user_level_task > user_level_project) {
+				return user_level_task;
+			}
+			return user_level_project;
+		},
+		submitNewScheduledObject: async function() {
+			const isFormCorrect = await this.v$.$validate();
+			if (!isFormCorrect || this.displayGroupPermissionIssue) {
+                //Tell the user to fix the validation issues
+                this.$store.dispatch("newToast", {
+                    header: "Please check all validation",
+                    message: "There are some fields that are filled in correctly. Please correct these mistakes.",
+                    extra_classes: "bg-danger",
+                    delay: 0,
+                });
+
+				return;
+			}
+
+			if (!this.groupModelValidation) {
+				this.$store.dispatch("newToast", {
+					header: "No CREATE permission for groups",
+					message: "Please note - for the current groups selected, you do not have create permissions. Please add in a group you have create permission with.",
+					extra_classes: "bg-danger",
+					delay: 5000,
+				});
+
+				return;
+			}
+
+			//Create form data
+			const data_to_send = new FormData()
+			data_to_send.set("object_type", this.objectTypeModel);
+			data_to_send.set("object_title", this.objectTitleModel);
+			data_to_send.set("object_description", this.objectDescriptionModel);
+			data_to_send.set("organisation", this.stakeholderModel);
+			data_to_send.set(
+				"object_start_date",
+				this.objectStartDateModel.toISOString()
+			);
+			data_to_send.set(
+				"object_end_date",
+				this.objectEndDateModel.toISOString()
+			);
+			data_to_send.set(
+				"uuid",
+				this.uuid,
+			);
+
+			// Insert a new row for each group list item
+			this.groupModel.forEach((row, index) => {
+				data_to_send.append("group_list", row);
+			});
+
+			this.axios.post(
+				`${this.rootUrl}new_scheduled_object/save/`,
+				data_to_send,
+			).then(() => {
+				//ADD CODE
+				console.log("DONE WELL");
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error creating new scheduled object",
+					message: `Sorry, we could not create this scheduled object for you. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		},
 		updateDates(data) {
 			//Update both the start and end dates
-			this.projectStartDateModel = new Date(data.start_date);
-			this.projectEndDateModel = new Date(data.end_date);
+			this.objectStartDateModel = new Date(data.start_date);
+			this.objectEndDateModel = new Date(data.end_date);
 		},
 		updateGroupModel(data) {
 			this.groupModel = data;
@@ -238,6 +351,25 @@ export default {
 			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
 				return this.groupModel.includes(row.group_id);
 			}).length === 0;
+
+			//Calculate to see if the user has create permission for any of the selected groups
+			const filtered_user_and_group_level = this.userGroupAndLevel.filter((row) => {
+				return data.includes(row.group_id);
+			});
+
+			//Calulate the boolean result. We need to make sure the user can create (3 - create)
+			this.groupModelValidation = this.calculateUserLevel(filtered_user_and_group_level) >= 3;
+
+			//As there is no validation yet, we'll use a toast to notify the user
+			if (!this.groupModelValidation) {
+				this.$store.dispatch("newToast", {
+					header: "No CREATE permission for groups",
+					message: "Please note - for the current groups selected, you do not have create permissions. Please add in a group you have create permission with.",
+					extra_classes: "bg-danger",
+					delay: 5000,
+					unique_type: "group-model-validation",
+				});
+			}
 		},
 		updateStakeholderModel(data) {
 			this.stakeholderModel = data;
@@ -253,6 +385,13 @@ export default {
 			type: "updateUrl",
 			rootUrl: this.rootUrl,
 			staticUrl: this.staticUrl,
+		});
+
+		//Update user level
+		const user_level = this.calculateUserLevel(this.userGroupAndLevel);
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: user_level,
 		});
 	},
 }
