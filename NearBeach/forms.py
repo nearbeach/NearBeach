@@ -769,6 +769,46 @@ class NewRequirementForm(forms.ModelForm):
 
 
 class NewScheduledObjectForm(forms.Form):
+    days_before = forms.IntegerField(
+        required=False,
+    )
+    day = forms.MultipleChoiceField(
+        choices=[
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+        ],
+        required=False,
+    )
+    number_of_repeats = forms.IntegerField(
+        required=False,
+    )
+    scheduler_frequency = forms.ChoiceField(
+        choices=[
+            "Set Day of the Week",
+            "Weekly",
+            "Fortnightly",
+            "Monthly",
+            "Start of the Month",
+            "End of the Month",
+            "X Days before End of the Month",
+        ],
+        required=True,
+    )
+    scheduler_end_date = forms.DateField(
+        input_formats=["c"],
+    )
+    scheduler_start_date = forms.DateField(
+        input_formats=["c"],
+    )
+    single_day = forms.CharField(
+        required=False,
+        max_length=50,
+    )
     object_type = forms.ChoiceField(
         choices=OBJECT_TEMPLATE_TYPE,
         required=True,

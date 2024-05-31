@@ -16,16 +16,133 @@
 				></n-select>
 			</div>
 
-			<br/>
-			<div>
-				<label>Start Date</label>
-				<n-date-picker
-					type="date"
-					v-model:value="startDateModel"
-					v-bind:actions="[]"
-					class="form-control"
-					:is-date-disabled="startDateDisabled"
-				></n-date-picker>
+			<!-- START DATE -->
+			<div class="row mt-4">
+				<div class="col-md-6">
+					<label>
+						Start Date
+						<span class="error"
+							  v-if="startDateModel === null || startDateModel === ''"
+						>
+							Please select a date
+						</span>
+					</label>
+					<n-date-picker
+						v-bind:type="calendarType"
+						v-model:value="startDateModel"
+						v-bind:actions="[]"
+						v-bind:format="calendarFormat"
+						:is-date-disabled="startDateDisabled"
+						month-format="MMM"
+					></n-date-picker>
+				</div>
+				<div class="col-md-6">
+					<label>End Date Condition</label>
+					<n-select
+						v-bind:options="endDateConditionList"
+						v-model:value="endDateConditionModel"
+					></n-select>
+				</div>
+			</div>
+
+			<div class="row mt-4"
+				 v-if="endDateConditionModel === 'end-date'"
+			>
+				<div class="col-md-6">
+					<label>
+						End Date
+						<span class="error"
+							  v-if="endDateModel === null"
+						>
+							Please select a date
+						</span>
+					</label>
+					<n-date-picker
+						v-bind:type="calendarType"
+						v-model:value="endDateModel"
+						v-bind:actions="[]"
+						v-bind:format="calendarFormat"
+						:is-date-disabled="endDateDisabled"
+					></n-date-picker>
+				</div>
+			</div>
+
+			<div class="row mt-4"
+				 v-if="endDateConditionModel === 'number-of-repeats'"
+			>
+				<div class="col-md-6">
+					<label>
+						Number of Repeats
+						<span v-if="numberOfRepeats === null"
+							  class="error"
+						>
+							Please fill out
+						</span>
+					</label>
+					<n-input-number
+						v-model:value="numberOfRepeats"
+						min="0"
+					></n-input-number>
+				</div>
+			</div>
+
+			<!-- Day picker -->
+			<div class="row mt-4"
+				v-if="schedulerFrequencyModel === 'Set Day of the Week'"
+			>
+				<div class="text-center col-md-1"
+					v-for="day in dayOfTheWeekArray"
+				>
+					<label v-bind:for="`checkbox_${day.value}`">{{ day.shortLabel }}</label>
+					<input type="checkbox"
+						   v-bind:value="day.value"
+						   v-bind:id="`checkbox_${day.value}`"
+						   v-model="dayModel"
+					/>
+				</div>
+				<div class="col-md-5">
+					<label
+						class="error"
+						v-if="dayModel.length === 0"
+					>
+						Please select at least one day.
+					</label>
+				</div>
+			</div>
+
+			<!-- Weekly picker -->
+			<div class="row mt-4"
+				 v-if="['Weekly','Fortnightly'].includes(schedulerFrequencyModel)"
+			>
+				<div class="col-md-3">
+					<label>Day of Week</label>
+					<n-select
+						:options="dayOfTheWeekArray"
+						v-model:value="singleDayModel"
+						class="form-group"
+					></n-select>
+				</div>
+			</div>
+
+			<!-- X Days before End of the Month -->
+			<div class="row mt-4"
+				 v-if="schedulerFrequencyModel === 'X Days before End of the Month'"
+			>
+				<div class="col-md-3">
+					<label>
+						Days Before
+						<span class="error"
+							  v-if="daysBeforeModel === null"
+						>
+							Please fill
+						</span>
+					</label>
+					<n-input-number
+						v-model:value="daysBeforeModel"
+						min="0"
+						max="14"
+					></n-input-number>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -33,17 +150,38 @@
 
 <script>
 //Components
-import { NDatePicker, NSelect } from "naive-ui";
+import { NDatePicker, NInputNumber, NSelect } from "naive-ui";
 
 export default {
 	name: "SchedulerFrequency",
 	components: {
 		NDatePicker,
+		NInputNumber,
 		NSelect,
 	},
 	props: {},
 	data() {
 		return {
+			daysBeforeModel: 0,
+			dayModel: [],
+			dayOfTheWeekArray: [
+				{ value: "monday", shortLabel: "Mon", label: "Monday" },
+				{ value: "tuesday", shortLabel: "Tue", label: "Tuesday" },
+				{ value: "wednesday", shortLabel: "Wed", label: "Wednesday" },
+				{ value: "thursday", shortLabel: "Thur", label: "Thursday" },
+				{ value: "friday", shortLabel: "Fri", label: "Friday" },
+				{ value: "saturday", shortLabel: "Sat", label: "Saturday" },
+				{ value: "sunday", shortLabel: "Sun", label: "Sunday" },
+			],
+			endDateConditionList: [
+				{ value: "no-end-date", label: "No End Date" },
+				{ value: "number-of-repeats", label: "Number of Repeats" },
+				{ value: "end-date", label: "End Date" },
+			],
+			endDateConditionModel: "no-end-date",
+			endDateModel: 0,
+			isFormValid: false,
+			numberOfRepeats: 0,
 			schedulerFrequencyModel: "Set Day of the Week",
 			schedulerFrequencyOptions: [
 				{ value: "Set Day of the Week", label: "Set Day of the Week" },
@@ -54,10 +192,65 @@ export default {
 				{ value: "End of the Month", label: "End of the Month"},
 				{ value: "X Days before End of the Month", label: "X Days before End of the Month"},
 			],
+			singleDayModel: "monday",
 			startDateModel: 0,
 		}
 	},
+	computed: {
+		calendarType() {
+			if (['Start of the Month', 'End of the Month'].includes(this.schedulerFrequencyModel)) {
+				return "month";
+			}
+
+			return "date";
+		},
+		calendarFormat() {
+			if (['Start of the Month', 'End of the Month'].includes(this.schedulerFrequencyModel)) {
+				return "y-MMM";
+			}
+
+			return "y-MM-dd";
+		},
+	},
+	watch: {
+		dayModel() {
+			this.updateIsValid();
+		},
+		endDateConditionModel() {
+			this.updateIsValid();
+		},
+		endDateModel() {
+			this.updateIsValid();
+		},
+		numberOfRepeats() {
+			this.updateIsValid();
+		},
+		schedulerFrequencyModel() {
+			this.updateIsValid();
+		},
+		singleDayModel() {
+			this.updateIsValid();
+		},
+		startDateModel() {
+			this.updateIsValid();
+		},
+	},
 	methods: {
+		endDateDisabled(end_date) {
+			return this.startDateModel >= end_date;
+		},
+		sendDataUpstream() {
+			this.$emit("update_scheduler_frequency", {
+				dayModel: this.dayModel,
+				endDateConditionModel: this.endDateConditionModel,
+				endDateModel: this.endDateModel,
+				isFormValid: this.isFormValid,
+				numberOfRepeats: this.numberOfRepeats,
+				schedulerFrequencyModel: this.schedulerFrequencyModel,
+				singleDayModel: this.singleDayModel,
+				startDateModel: this.startDateModel,
+			});
+		},
 		startDateDisabled(start_date) {
             //Get date but level the time to 23:59:59
             const date = new Date();
@@ -68,7 +261,41 @@ export default {
 
             //Return anything that is less than today
             return start_date <= date.getTime();
-        }
+        },
+		updateIsValid() {
+			//Assume the best
+			let is_valid = true;
+
+			//Common
+			if (this.startDateModel === null || this.startDateModel === "") {
+				is_valid = false;
+			}
+
+			//Conditional Validation
+			if (this.endDateConditionModel === "number-of-repeats" && this.numberOfRepeats === null) {
+				this.numberOfRepeats = 0;
+			}
+
+			if (this.endDateConditionModel === "end-date" && this.endDateModel === null) {
+				this.endDateModel = this.startDateModel;
+			}
+
+			//Specific Validation
+			if (this.schedulerFrequencyModel === "Set Day of the Week" && this.dayModel.length === 0) {
+				is_valid = false;
+			}
+
+			if (this.schedulerFrequencyModel === "X Days before End of the Month" && this.daysBeforeModel === null) {
+				//Go default
+				this.daysBeforeModel = 0;
+			}
+
+			//Update the value
+			this.isFormValid = is_valid;
+
+			//Send data upstream
+			this.sendDataUpstream();
+		},
 	},
 	mounted() {
 		//Update start date
@@ -79,6 +306,7 @@ export default {
 		temp_date.setMilliseconds(0);
 
 		this.startDateModel = temp_date.getTime() + (1000 * 60 * 60 * 24);
+		this.endDateModel = temp_date.getTime() + (1000 * 60 * 60 * 24 * 7);
 	}
 
 }

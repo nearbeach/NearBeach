@@ -114,7 +114,9 @@
 
 				<!-- Scheduler Frequency -->
 				<hr/>
-				<scheduler-frequency></scheduler-frequency>
+				<scheduler-frequency
+					v-on:update_scheduler_frequency="updateSchedulerFrequency"
+				></scheduler-frequency>
 
 				<!-- Submit Button -->
 				<hr/>
@@ -225,6 +227,17 @@ export default {
 				},
 			],
 			stakeholderModel: "",
+
+			//Scheduler Frequency Data
+			daysBeforeModel: 0,
+			dayModel: [],
+			endDateConditionModel: "no-end-date",
+			endDateModel: 0,
+			isFormValid: false,
+			numberOfRepeats: 0,
+			schedulerFrequencyModel: "Set Day of the Week",
+			singleDayModel: "monday",
+			startDateModel: 0,
 		};
 	},
 	computed: {
@@ -277,7 +290,7 @@ export default {
 		},
 		submitNewScheduledObject: async function() {
 			const isFormCorrect = await this.v$.$validate();
-			if (!isFormCorrect || this.displayGroupPermissionIssue) {
+			if (!isFormCorrect || this.displayGroupPermissionIssue || !this.isFormValid) {
                 //Tell the user to fix the validation issues
                 this.$store.dispatch("newToast", {
                     header: "Please check all validation",
@@ -323,6 +336,15 @@ export default {
 			this.groupModel.forEach((row, index) => {
 				data_to_send.append("group_list", row);
 			});
+
+			//Send the scheduler data
+			data_to_send.set("days_before", this.daysBeforeModel);
+			data_to_send.set("day", this.dayModel);
+			data_to_send.set("number_of_repeats", this.numberOfRepeats);
+			data_to_send.set("scheduler_frequency", this.schedulerFrequencyModel);
+			data_to_send.set("scheduler_end_date", this.endDateModel);
+			data_to_send.set("scheduler_start_date", this.startDateModel);
+			data_to_send.set("single_day", this.singleDayModel);
 
 			this.axios.post(
 				`${this.rootUrl}new_scheduled_object/save/`,
@@ -370,6 +392,17 @@ export default {
 					unique_type: "group-model-validation",
 				});
 			}
+		},
+		updateSchedulerFrequency(data) {
+			this.daysBeforeModel = data.daysBeforeModel;
+			this.dayModel = data.dayModel;
+			this.endDateConditionModel = data.endDateConditionModel;
+			this.endDateModel = data.endDateModel;
+			this.isFormValid = data.isFormValid;
+			this.numberOfRepeats = data.numberOfRepeats;
+			this.schedulerFrequencyModel = data.schedulerFrequencyModel;
+			this.singleDayModel = data.singleDayModel;
+			this.startDateModel = data.startDateModel;
 		},
 		updateStakeholderModel(data) {
 			this.stakeholderModel = data;
