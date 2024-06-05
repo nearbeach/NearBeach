@@ -31,6 +31,7 @@ from .models import (
     RequestForChange,
     RequirementItem,
     Requirement,
+    SCHEDULED_OBJECT_FREQUENCY,
     Task,
     Organisation,
     BugClient,
@@ -773,41 +774,39 @@ class NewScheduledObjectForm(forms.Form):
         required=False,
     )
     day = forms.MultipleChoiceField(
-        choices=[
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',
-        ],
         required=False,
+        choices=(
+            ("monday", "monday"),
+            ("tuesday", "tuesday"),
+            ("wednesday", "wednesday"),
+            ("thursday", "thursday"),
+            ("friday", "friday"),
+            ("saturday", "saturday"),
+            ("sunday", "sunday"),
+        ),
     )
     number_of_repeats = forms.IntegerField(
         required=False,
     )
     scheduler_frequency = forms.ChoiceField(
-        choices=[
-            "Set Day of the Week",
-            "Weekly",
-            "Fortnightly",
-            "Monthly",
-            "Start of the Month",
-            "End of the Month",
-            "X Days before End of the Month",
-        ],
+        choices=SCHEDULED_OBJECT_FREQUENCY,
         required=True,
     )
     scheduler_end_date = forms.DateField(
-        input_formats=["c"],
+        required=False,
     )
-    scheduler_start_date = forms.DateField(
-        input_formats=["c"],
-    )
+    scheduler_start_date = forms.DateField()
     single_day = forms.CharField(
         required=False,
         max_length=50,
+    )
+    end_date_condition = forms.ChoiceField(
+        choices=(
+            ("no-end-date", "no-end-date"),
+            ("number-of-repeats", "number-of-repeats"),
+            ("end-date", "end-date"),
+        ),
+        required=True,
     )
     object_type = forms.ChoiceField(
         choices=OBJECT_TEMPLATE_TYPE,

@@ -216,6 +216,9 @@ export default {
 		dayModel() {
 			this.updateIsValid();
 		},
+		daysBeforeModel() {
+			this.updateIsValid();
+		},
 		endDateConditionModel() {
 			this.updateIsValid();
 		},
@@ -242,6 +245,7 @@ export default {
 		sendDataUpstream() {
 			this.$emit("update_scheduler_frequency", {
 				dayModel: this.dayModel,
+				daysBeforeModel: this.daysBeforeModel,
 				endDateConditionModel: this.endDateConditionModel,
 				endDateModel: this.endDateModel,
 				isFormValid: this.isFormValid,

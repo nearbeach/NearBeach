@@ -1627,7 +1627,15 @@ class ScheduledObject(models.Model):
         blank=True,
         null=True,
     )
-    next_scheduled_run = models.DateField()
+    start_date = models.DateField()
+    end_date = models.DateField(
+        blank=True,
+        null=True,
+    )
+    next_scheduled_run = models.DateField(
+        blank=True,
+        null=True,
+    )
     number_of_repeats = models.IntegerField(default=-1)
     run_count = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)

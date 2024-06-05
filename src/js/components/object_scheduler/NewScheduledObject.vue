@@ -337,21 +337,35 @@ export default {
 				data_to_send.append("group_list", row);
 			});
 
+			//Convert the dates
+			const offset = new Date().getTimezoneOffset();
+			let scheduler_end_date = new Date(this.endDateModel - (offset * 60 * 1000));
+			let scheduler_start_date = new Date(this.startDateModel - (offset * 60 * 1000));
+
+			scheduler_end_date = scheduler_end_date.toISOString().split("T")[0];
+			scheduler_start_date = scheduler_start_date.toISOString().split("T")[0];
+
 			//Send the scheduler data
 			data_to_send.set("days_before", this.daysBeforeModel);
-			data_to_send.set("day", this.dayModel);
 			data_to_send.set("number_of_repeats", this.numberOfRepeats);
 			data_to_send.set("scheduler_frequency", this.schedulerFrequencyModel);
-			data_to_send.set("scheduler_end_date", this.endDateModel);
-			data_to_send.set("scheduler_start_date", this.startDateModel);
+			data_to_send.set("scheduler_end_date", scheduler_end_date);
+			data_to_send.set("scheduler_start_date", scheduler_start_date);
 			data_to_send.set("single_day", this.singleDayModel);
+			data_to_send.set("end_date_condition", this.endDateConditionModel);
+
+			//Loop through dayModel and append to data to send
+			this.dayModel.forEach((single_day) => {
+				data_to_send.append("day", single_day);
+			});
 
 			this.axios.post(
 				`${this.rootUrl}new_scheduled_object/save/`,
 				data_to_send,
-			).then(() => {
-				//ADD CODE
-				console.log("DONE WELL");
+			).then((response) => {
+				//Redirect to the scheduled object information page
+				const id = response.data.scheduled_object_id;
+				window.location.href = `${this.rootUrl}scheduled_object_information/${id}`;
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error creating new scheduled object",

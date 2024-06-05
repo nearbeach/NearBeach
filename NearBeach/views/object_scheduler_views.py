@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
 from django.db.models import F, Max
 from django.core import serializers
@@ -108,7 +108,57 @@ def new_scheduled_object_save(request):
     )
     submit_object_template.save()
 
-    return HttpResponse("Setup view")
+    # Create the scheduled object
+    scheduler_frequency = form.cleaned_data["scheduler_frequency"]
+
+    submit_scheduled_object = ScheduledObject(
+        change_user=request.user,
+        frequency=scheduler_frequency,
+        start_date=form.cleaned_data["scheduler_start_date"],
+        object_template=submit_object_template,
+    )
+
+    if scheduler_frequency == "Set Day of the Week":
+        json_frequency_attribute = json.dumps(
+            {
+                "days_of_the_week": form.cleaned_data["day"],
+            },
+            cls=DjangoJSONEncoder,
+        )
+        submit_scheduled_object.frequency_attribute = json.loads(json_frequency_attribute)
+    elif scheduler_frequency == "Weekly" or scheduler_frequency == "Fortnightly":
+        json_frequency_attribute = json.dumps(
+            {
+                "day_of_the_week": form.cleaned_data["single_day"],
+            },
+            cls=DjangoJSONEncoder,
+        )
+        submit_scheduled_object.frequency_attribute = json.loads(json_frequency_attribute)
+
+    elif form.cleaned_data["scheduler_frequency"] == "X Days before End of the Month":
+        json_frequency_attribute = json.dumps(
+            {
+                "days_before": form.cleaned_data["days_before"],
+            },
+            cls=DjangoJSONEncoder,
+        )
+        submit_scheduled_object.frequency_attribute = json.loads(json_frequency_attribute)
+
+    # Handle number of repeats
+    if form.cleaned_data["end_date_condition"] == "number-of-repeats":
+        submit_scheduled_object.number_of_repeats = form.cleaned_data["number_of_repeats"]
+    elif form.cleaned_data["end_date_condition"] == "end-date":
+        submit_scheduled_object.end_date = form.cleaned_data["scheduler_end_date"]
+
+    # Save
+    submit_scheduled_object.save()
+
+    return JsonResponse(
+        {
+            "scheduled_object_id": submit_scheduled_object.schedule_object_id,
+        },
+        safe=True
+    )
 
 
 def scheduled_objects(request):
