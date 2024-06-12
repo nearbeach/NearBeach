@@ -106,7 +106,7 @@
 
 							<!-- SEARCH RESULTS -->
 							<div
-								class="form-group mt-4"
+								class="form-group mb-4"
 								v-if="
 									!isSearching &&
 									objectResults.length > 0 &&
