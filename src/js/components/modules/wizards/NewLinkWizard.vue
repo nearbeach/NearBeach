@@ -61,8 +61,9 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							Current object <br/>
+							<label for="object-relation">Current object</label>
 							<n-select
+								id="object-relation"
 								:options="objectRelation"
 								v-model:value="objectRelationModel"
 								class="object-selection"

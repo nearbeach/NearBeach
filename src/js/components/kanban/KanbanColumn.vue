@@ -23,8 +23,8 @@
 				  v-bind:data-card-id="element.pk"
 				  class="card-external-link"
 			></Icon>
-			<b>#{{ element.pk }}</b
-			><br/>
+			<b>#{{ element.pk }}</b>
+			<br/>
 			{{ element.fields.kanban_card_text }}
 			<Icon
 				class="kanban-card-info-icon"

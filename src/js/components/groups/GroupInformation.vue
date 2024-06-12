@@ -3,8 +3,8 @@
 		<div class="card">
 			<div class="card-body">
 				<h1>Group Information</h1>
-				<br/>
 				<a v-bind:href="`${this.rootUrl}search/group/`"
+				   class="mt-4"
 				>Back to group list</a
 				>
 				<hr/>

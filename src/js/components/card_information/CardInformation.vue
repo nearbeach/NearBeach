@@ -25,9 +25,8 @@
 					>
 						<span aria-hidden="true"></span>
 					</button>
-					<br/>
 				</div>
-				<div class="modal-body">
+				<div class="modal-body mt-4">
 					<!-- TAB MENU -->
 					<ul
 						id="card_information_tabs"

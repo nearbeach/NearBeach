@@ -35,8 +35,9 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							Current change task <br/>
+							<label for="change-task-relation">Current change task</label>
 							<n-select
+								id="change-task-relation"
 								:options="changeTaskRelation"
 								v-model:value="changeTaskRelationModel"
 								class="object-selection"

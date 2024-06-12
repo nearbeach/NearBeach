@@ -2,11 +2,10 @@
 	<div class="card">
 		<div class="card-body">
 			<!-- HEADING -->
-			<h1>Search Organisations</h1>
-			<br/>
+			<h1 class="mb-4">Search Organisations</h1>
 
 			<!-- SEARCH FIELD -->
-			<div class="form-group">
+			<div class="form-group mt-4">
 				<label>Search:</label>
 				<input
 					type="text"
