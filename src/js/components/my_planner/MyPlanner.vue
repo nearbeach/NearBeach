@@ -38,11 +38,14 @@
 						<div class="list-group-item"
 							v-bind:data-user-job-id="element.user_job_id"
 						>
-							<div class="card-priority-line priority-normal"></div>
+							<div v-if="element.higher_order_status !== 'Closed'"
+								class="card-priority-line priority-normal"></div>
 							<div class="text-instructions">
 								  {{ formatObjectId(element) }}
 							</div>
-							<div><strong>{{ element.title }}</strong></div>
+							<div><strong v-bind:class="getClass(element.higher_order_status)">
+								{{ element.title }}
+							</strong></div>
 							<div>Status: <span class="text-instructions">{{ element.status }}</span></div>
 							<Icon
 								class="kanban-card-info-icon"
@@ -133,6 +136,13 @@ export default {
 			//Open the modal
 			const modal = new Modal(document.getElementById("confirmUserJobDeleteModal"));
 			modal.show();
+		},
+		getClass(closed_status) {
+			if (closed_status === "Closed") {
+				return "text-decoration-line-through";
+			}
+
+			return "";
 		},
 		formatObjectId(element) {
 			const end_date = this.getNiceDatetime(element.end_date);

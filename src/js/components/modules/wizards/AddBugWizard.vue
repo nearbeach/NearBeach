@@ -47,10 +47,9 @@
 									v-model:value="bugClientModel"
 								></n-select>
 							</div>
-							<br/>
 
 							<!-- Search Keywords -->
-							<div class="form-group">
+							<div class="form-group mt-4">
 								<label>Search Keywords</label>
 								<input
 									type="text"
@@ -61,15 +60,14 @@
 									maxlength="50"
 								/>
 							</div>
-							<br/>
 
 							<!-- The Search Results -->
 							<div
 								v-if="searchOn"
-								class="no-search"
+								class="no-search mt-4"
 							>
-								<strong>Currently Searching for Bugs</strong
-								><br/>
+								<strong>Currently Searching for Bugs</strong>
+								<br/>
 								<img
 									:src="`${staticUrl}/NearBeach/images/placeholder/online_connection.svg`"
 									alt="Placeholder Search Image"
@@ -79,7 +77,8 @@
 								v-else-if="bugResults.length == 0"
 								class="no-search"
 							>
-								<strong>No Search Results Sorry</strong><br/>
+								<strong>No Search Results Sorry</strong>
+								<br/>
 								<img
 									:src="`${staticUrl}/NearBeach/images/placeholder/road_to_knowledge.svg`"
 									alt="Placeholder Search Image"

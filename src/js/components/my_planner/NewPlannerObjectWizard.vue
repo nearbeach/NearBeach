@@ -106,7 +106,7 @@
 
 							<!-- SEARCH RESULTS -->
 							<div
-								class="form-group"
+								class="form-group mb-4"
 								v-if="
 									!isSearching &&
 									objectResults.length > 0 &&
@@ -121,56 +121,40 @@
 									type="text"
 								/>
 							</div>
-							<br/>
 
-							<!-- TABLE CONTAINING RESULTS -->
-							<table
-								class="table"
-								v-if="
-									!isSearching &&
-									objectFilteredResults.length > 0 &&
-									objectModel != null
-								"
+							<div class="wizard-results"
+								 v-if="!isSearching &&
+										objectFilteredResults.length > 0 &&
+										objectModel != null"
 							>
-								<thead>
-								<tr>
-									<td>{{ objectModel }} Description</td>
-									<td>Status</td>
-								</tr>
-								</thead>
-
-								<!-- PROJECTS -->
-								<tbody>
-								<tr
-									v-for="result in objectFilteredResults"
-									:key="result.location_id"
+								<div class="wizard-results--card"
+									 v-for="result in objectFilteredResults"
+									 :key="result.location_id"
 								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="checkbox"
-												name="link-option"
-												v-bind:value="result.location_id"
-												v-bind:id="`checkbox_${result.location_id}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`radio_project_${result.location_id}`"
-											>
-												{{ result.title }}
-											</label>
+									<div class="wizard-results--card--tick">
+										<input
+											class="form-check-input"
+											type="checkbox"
+											name="link-option"
+											v-bind:value="result.location_id"
+											v-bind:id="`checkbox_${result.location_id}`"
+											v-model="linkModel"
+										/>
+									</div>
+									<div class="wizard-results--card--content">
+										<div class="text-instructions">
+											{{ renderObjectId(result) }}
 										</div>
-										<div class="spacer"></div>
-										<p class="small-text">{{ renderObjectId(result) }}</p>
-									</td>
-									<td>
-										{{ result.status }}
-									</td>
-								</tr>
-								</tbody>
-							</table>
+										<div>
+											<strong>{{ result.title }}</strong>
+										</div>
+										<div>
+											Status:
+											<span class="text-instructions">{{ result.status }}</span>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

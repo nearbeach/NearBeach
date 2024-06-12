@@ -42,7 +42,6 @@
 							<n-select
 								:options="userResults"
 								v-model:value="userModel"
-								class="form-control"
 								filterable
 							/>
 						</div>

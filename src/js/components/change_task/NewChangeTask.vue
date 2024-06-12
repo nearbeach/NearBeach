@@ -87,7 +87,6 @@
 										<n-date-picker
 											type="datetime"
 											v-model:value="changeStartDateModel"
-											class="form-control"
 										></n-date-picker>
 									</div>
 								</div>
@@ -102,7 +101,6 @@
 										<n-date-picker
 											type="datetime"
 											v-model:value="changeEndDateModel"
-											class="form-control"
 										></n-date-picker>
 									</div>
 								</div>

@@ -1,8 +1,7 @@
 <template>
 	<div class="card">
 		<div class="card-body">
-			<h1>User Information</h1>
-			<br/>
+			<h1 class="mb-4">User Information</h1>
 			<a v-bind:href="`${this.rootUrl}search/user/`"
 			>Go back to user list</a
 			>
@@ -41,42 +40,42 @@
 				<div class="col-md-8">
 					<div class="row">
 						<div class="col-md-6">
-							<label>
+							<label for="first-name">
 								First Name:
 								<validation-rendering
 									v-bind:error-list="v$.firstNameModel.$errors"
 								></validation-rendering>
-								<br/>
 							</label>
 							<input
+								id="first-name"
 								type="text"
 								v-model="firstNameModel"
 								class="form-control"
 							/>
 						</div>
 						<div class="col-md-6">
-							<label>
+							<label for="last-name">
 								Last Name:
 								<validation-rendering
 									v-bind:error-list="v$.lastNameModel.$errors"
 								></validation-rendering>
-								<br/>
 							</label>
 							<input
+								id="last-name"
 								type="text"
 								v-model="lastNameModel"
 								class="form-control"
 							/>
 						</div>
-						<div class="col-md-6">
-							<label>
+						<div class="col-md-6 mt-4">
+							<label for="email">
 								Email:
 								<validation-rendering
 									v-bind:error-list="v$.emailModel.$errors"
 								></validation-rendering>
-								<br/>
 							</label>
 							<input
+								id="email"
 								type="email"
 								v-model="emailModel"
 								class="form-control"

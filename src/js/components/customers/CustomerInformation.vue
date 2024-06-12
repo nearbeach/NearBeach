@@ -4,8 +4,8 @@
 			<div class="card-body">
 				<!-- TITLE -->
 				<h1>Customer Information</h1>
-				<br/>
 				<a v-bind:href="`${rootUrl}search/customer/`"
+				   class="mt-4"
 				>Go back to customer search</a
 				>
 				<hr/>
@@ -97,11 +97,11 @@
 					v-if="organisationResults.length > 0"
 				></stakeholder-information>
 
-				<br/>
-
 				<!-- NEED TO APPLY PERMISSIONS -->
 				<!-- Submit Button -->
-				<hr v-if="userLevel > 1"/>
+				<hr v-if="userLevel > 1"
+					class="mt-4"
+				/>
 				<div
 					v-if="userLevel > 1"
 					class="row submit-row"

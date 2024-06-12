@@ -2,8 +2,7 @@
 	<div class="card">
 		<div class="card-body">
 			<!-- Search bar and heading -->
-			<h1>Search Users</h1>
-			<br/>
+			<h1 class="mb-4">Search Users</h1>
 			<div class="form-group">
 				<label>Search:</label>
 				<input
