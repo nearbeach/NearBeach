@@ -13,10 +13,6 @@
 							To create a new project, fill out the form and submit at
 							the bottom of the page.
 						</p>
-						<p class="text-instructions">
-							<strong>Note: </strong>Media files can not be uploaded
-							until AFTER you save. This is a security feature.
-						</p>
 					</div>
 
 					<!-- PROJECT FORM -->
