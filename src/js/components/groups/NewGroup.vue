@@ -45,7 +45,6 @@
 								:options="groupResultsFixList"
 								v-model:value="parentGroupModel"
 								label="group_name"
-								class="form-control"
 							/>
 						</div>
 					</div>

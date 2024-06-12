@@ -4,7 +4,6 @@
 		<n-select
 			:options="fixListOfChoices"
 			v-model:value="propertyModel"
-			class="form-group"
 		></n-select>
 	</div>
 </template>
