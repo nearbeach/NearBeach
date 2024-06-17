@@ -35,6 +35,7 @@
 					</p>
 					<editor
 						:init="{
+							license_key: 'gpl',
 							height: 300,
 							menubar: false,
 							plugins: ['lists', 'codesample', 'table'],

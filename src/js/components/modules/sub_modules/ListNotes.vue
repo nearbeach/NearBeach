@@ -49,6 +49,7 @@
 				<div class="note-history--note">
 					<editor
 						:init="{
+						license_key: 'gpl',
 						height: 250,
 						menubar: false,
 						plugins: ['lists', 'image', 'codesample', 'table'],

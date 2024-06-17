@@ -15,6 +15,7 @@
 				<label>Note Box</label>
 				<editor
 					:init="{
+						license_key: 'gpl',
 						height: 250,
 						menubar: false,
 						plugins: ['lists', 'codesample', 'table'],
