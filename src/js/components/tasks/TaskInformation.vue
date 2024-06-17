@@ -58,6 +58,7 @@
 						/>
 						<editor
 							:init="{
+							license_key: 'gpl',
 							file_picker_types: 'image',
 							height: 500,
 							images_upload_handler: uploadImage,

@@ -61,6 +61,7 @@
 							<br/>
 							<editor
 								:init="{
+									license_key: 'gpl',
 									height: 500,
 									menubar: false,
 									plugins: ['lists', 'codesample', 'table'],
