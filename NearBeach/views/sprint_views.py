@@ -254,6 +254,7 @@ def sprint_information(request, sprint_id, *args, **kwargs):
     c = {
         "gantt_end_date": gantt_end_date,
         "gantt_start_date": gantt_start_date,
+        "sprint_status": sprint_results[0]['sprint_status'],
         "nearbeach_title": f"Sprint Information {sprint_id}",
         "need_tinymce": False,
         "sprint_id": sprint_id,

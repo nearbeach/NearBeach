@@ -3,9 +3,8 @@
 		<div class="card">
 			<div class="card-body">
 				<!-- TITLE -->
-				<h1>Customer Information</h1>
+				<h1 class="mb-4">Customer Information</h1>
 				<a v-bind:href="`${rootUrl}search/customer/`"
-				   class="mt-4"
 				>Go back to customer search</a
 				>
 				<hr/>

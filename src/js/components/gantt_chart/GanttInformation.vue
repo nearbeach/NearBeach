@@ -14,6 +14,7 @@
 				:key="index"
 				v-bind:end-date="row.end_date"
 				v-bind:index="index"
+				v-bind:is-closed="isParentClosed()"
 				v-bind:object-id="row.object_id"
 				v-bind:object-type="row.object_type"
 				v-bind:higher-order-status="row.higher_order_status"
@@ -88,6 +89,10 @@ export default {
 		locationId: {
 			type: Number,
 			default: 0,
+		},
+		parentStatus: {
+			type: String,
+			default: "",
 		},
 		rootUrl: {
 			type: String,
@@ -192,6 +197,14 @@ export default {
 				});
 			})
 		},
+		isParentClosed() {
+			const closed_status = [
+				'finished',
+				'closed',
+			];
+
+			return closed_status.includes(this.parentStatus.toLowerCase());
+		},
 		mouseDown(data) {
 			//Update the mouse down variables
 			this.mdClientXInitial = data.mdClientXInitial;
@@ -226,6 +239,9 @@ export default {
 		mouseMove(event) {
 			//Prevents default
 			event.preventDefault();
+
+			//If closed do nothing
+			if (this.isParentClosed()) return;
 
 			//Make sure not on a touch device
 			const touch = matchMedia('(hover: none)').matches;
