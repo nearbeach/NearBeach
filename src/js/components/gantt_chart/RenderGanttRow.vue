@@ -9,7 +9,7 @@
 					v-model:value="localStartDate"
 					type="datetime"
 					@update:value="modifiedStartDate"
-                    :disabled="userLevel <= 1"
+                    :disabled="userLevel <= 1 || isClosed"
 					:format="datePickerFormat"
 				/>
 			</div>
@@ -18,7 +18,7 @@
 					v-model:value="localEndDate"
 					type="datetime"
 					@update:value="modifiedEndDate"
-                    :disabled="userLevel <= 1"
+                    :disabled="userLevel <= 1 || isClosed"
 					:format="datePickerFormat"
 				></n-date-picker>
 			</div>
@@ -27,7 +27,7 @@
 					v-model:value="localStatusId"
 					:options="statusList"
 					:on-update-value="updateStatus"
-                    :disabled="userLevel <= 1"
+                    :disabled="userLevel <= 1 || isClosed"
 				></n-select>
 			</div>
 		</div>
@@ -89,6 +89,10 @@ export default {
 		index: {
 			type: Number,
 			default: 0,
+		},
+		isClosed: {
+			type: Boolean,
+			default: false,
 		},
 		objectId: {
 			type: Number,
