@@ -130,6 +130,7 @@
 					<button
 						class="btn btn-primary save-changes"
 						v-on:click="uploadOrganisationData"
+						v-bind:disabled="disableSubmitButton"
 					>
 						Submit Organisation
 					</button>
@@ -165,6 +166,7 @@ export default {
 	},
 	data() {
 		return {
+			disableSubmitButton: false,
 			duplicateOrganisations: [],
 			organisationNameModel: "",
 			organisationWebsiteModel: "",
@@ -244,6 +246,9 @@ export default {
 			return data_to_send;
 		},
 		uploadOrganisationData() {
+			//Disable the upload button
+			this.disableSubmitButton = true;
+
 			//Use Axios to send the data
 			//Get the data to send
 			this.axios.post(
@@ -259,6 +264,9 @@ export default {
 					extra_classes: "bg-danger",
 					delay: 0,
 				});
+
+				//Enable the submit button
+				this.disableSubmitButton = false;
 			});
 		},
 	},
