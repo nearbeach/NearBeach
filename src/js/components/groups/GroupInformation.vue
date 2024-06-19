@@ -2,9 +2,8 @@
 	<n-config-provider :theme="getTheme(theme)">
 		<div class="card">
 			<div class="card-body">
-				<h1>Group Information</h1>
+				<h1 class="mb-4">Group Information</h1>
 				<a v-bind:href="`${this.rootUrl}search/group/`"
-				   class="mt-4"
 				>Back to group list</a
 				>
 				<hr/>
