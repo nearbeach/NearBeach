@@ -1951,6 +1951,14 @@ body.tox-dialog__disable-scroll {
 .tox[dir=rtl] .tox-control-wrap__status-icon-wrap {
   left: 4px;
 }
+.tox .tox-custom-preview {
+  border-color: #eeeeee;
+  border-radius: 6px;
+  border-style: solid;
+  border-width: 1px;
+  flex: 1;
+  padding: 8px;
+}
 .tox .tox-autocompleter {
   max-width: 25em;
 }
@@ -3194,14 +3202,19 @@ body.tox-dialog__disable-scroll {
 }
 .tox .tox-statusbar__branding svg {
   fill: rgba(34, 47, 62, 0.8);
-  height: 1.14em;
-  vertical-align: -0.28em;
-  width: 3.6em;
+  height: 1em;
+  margin-left: 0.3em;
+  width: auto;
 }
 @media (forced-colors: active) {
   .tox .tox-statusbar__branding svg {
     fill: currentColor;
   }
+}
+.tox .tox-statusbar__branding a {
+  /* stylelint-disable-line no-descending-specificity */
+  align-items: center;
+  display: inline-flex;
 }
 .tox .tox-statusbar__branding a:hover:not(:disabled):not([aria-disabled=true]) svg,
 .tox .tox-statusbar__branding a:focus:not(:disabled):not([aria-disabled=true]) svg {
@@ -3262,6 +3275,10 @@ body.tox-dialog__disable-scroll {
 }
 .tox[dir=rtl] .tox-statusbar__path > * {
   margin-left: 4px;
+}
+.tox[dir=rtl] .tox-statusbar__branding svg {
+  margin-left: 0;
+  margin-right: 0.3em;
 }
 .tox .tox-throbber {
   z-index: 1299;
