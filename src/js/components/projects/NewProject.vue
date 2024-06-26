@@ -97,11 +97,12 @@
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						<a
+						<button
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
 							v-on:click="submitNewProject"
-						>Create new Project</a
+							v-bind:disabled="disableSubmitButton"
+						>Create new Project</button
 						>
 					</div>
 				</div>
@@ -186,6 +187,7 @@ export default {
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
+			disableSubmitButton: false,
 			groupModel: {},
 			projectDescriptionModel: "",
 			projectEndDateModel: "",
@@ -232,6 +234,8 @@ export default {
 				return;
 			}
 
+			this.disableSubmitButton = true;
+
 			//Create data_to_send
 			const data_to_send = new FormData();
 			data_to_send.set("project_name", this.projectNameModel);
@@ -273,6 +277,8 @@ export default {
 					extra_classes: "bg-danger",
 					delay: 0,
 				});
+
+				this.disableSubmitButton = false;
 			});
 		},
 		updateDates(data) {

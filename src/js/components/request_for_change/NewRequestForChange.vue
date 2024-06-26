@@ -82,6 +82,7 @@
 						<button class="btn btn-primary save-changes"
 								v-on:click="submitRfc"
 								v-if="currentTab===5"
+								v-bind:disabled="disableSubmitButton"
 						>
 							Create new Request for Change
 						</button>
@@ -150,6 +151,7 @@ export default {
 	mixins: [getThemeMixin, newObjectUploadMixin],
 	data: () => ({
 		currentTab: 0,
+		disableSubmitButton: false,
 		rfcData: {
 			groupModel: [],
 			rfcBackoutPlan: "",
@@ -233,6 +235,8 @@ export default {
 				return;
 			}
 
+			this.disableSubmitButton = true;
+
 			// Setup the new data form
 			const data_to_send = new FormData();
 			const data = this.rfcData;
@@ -277,6 +281,8 @@ export default {
 					extra_classes: "bg-danger",
 					delay: 0,
 				});
+
+				this.disableSubmitButton = false;
 			});
 		},
 		updateValidation(data) {

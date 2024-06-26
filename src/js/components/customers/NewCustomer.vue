@@ -46,11 +46,12 @@
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						<a
+						<button
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
 							v-on:click="submitNewCustomer"
-						>Submit Customer</a
+							v-bind:disabled="disableSubmitButton"
+						>Submit Customer</button
 						>
 					</div>
 				</div>
@@ -60,8 +61,6 @@
 </template>
 
 <script>
-import {Modal} from "bootstrap";
-
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, email} from "@vuelidate/validators";
@@ -108,6 +107,7 @@ export default {
 			customerEmailModel: "",
 			customerFirstNameModel: "",
 			customerLastNameModel: "",
+			disableSubmitButton: false,
 			flagValidationCheck: false,
 			organisationFixList: [],
 			organisationModel: "",
@@ -208,6 +208,9 @@ export default {
 				return;
 			}
 
+			//Disble submit button
+			this.disableSubmitButton = true;
+
 			//Create the data_to_send
 			const data_to_send = new FormData();
 			data_to_send.set("customer_title", this.titleModel);
@@ -243,6 +246,9 @@ export default {
 						extra_classes: "bg-danger",
 						delay: 0,
 					});
+
+					//Enable users to submit again
+					this.disableSubmitButton = false;
 				});
 		},
 		updateCustomerData(data) {
