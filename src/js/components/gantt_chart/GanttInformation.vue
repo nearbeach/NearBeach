@@ -1,6 +1,7 @@
 <template>
 	<n-config-provider :theme="getTheme(theme)">
 		<div class="gantt-chart"
+			 v-bind:style="ganttStyle"
 			 v-on:mouseup="mouseUp"
 			 v-on:mouseleave="mouseLeave"
 			 v-on:mousemove="mouseMove"
@@ -110,6 +111,7 @@ export default {
 	data() {
 		return {
             endDateIssues: [],
+			ganttStyle: "",
 			isMouseDown: false,
             startDateIssues: [],
 
@@ -127,6 +129,11 @@ export default {
 		}
 	},
     watch: {
+		deltaDays: {
+			handler() {
+				this.updateGanttStyle();
+			}
+		},
         ganttChartData: {
             handler() {
                 //Use the method
@@ -134,13 +141,20 @@ export default {
             },
             deep: true,
             immediate: false,
-        }
+        },
     },
+	created() {
+		window.addEventListener("resize", this.updateGanttStyle);
+	},
+	unmounted() {
+		window.removeEventListener("resize", this.updateGanttStyle);
+	},
 	mixins: [
 		getThemeMixin,
 	],
 	computed: {
 		...mapGetters({
+			deltaDays: "getDeltaDays",
 			ganttChartData: "getGanttChartData",
 		}),
 	},
@@ -345,6 +359,26 @@ export default {
 
 			//Release the data
 			this.mdObjectId = 0;
+		},
+		updateGanttStyle() {
+			//Function used to determine the size and margin of the gantt chart.
+			//Get the max width of the gantt chart
+			const gantt_max_width = 900 + ((this.deltaDays + 1) * 48);
+
+			//Get the width of the screen
+			const container_element = document.getElementsByClassName("container-wide")[0];
+
+			//If there is no container - RUN
+			if (container_element === undefined) return;
+
+			const screen_width = container_element.clientWidth;
+
+			//If screen width > gantt_max_width, we want to specify the gantt chart size, and margin
+			if (parseInt(screen_width) > parseInt(gantt_max_width)) {
+				this.ganttStyle = `width:${gantt_max_width}px; margin: 0 auto;`;
+			} else {
+				this.ganttStyle = "width: calc(100vw - 10px);";
+			}
 		},
 		updateMiddle(delta) {
 			//Do nothing if the start date is past the sprint's start date
