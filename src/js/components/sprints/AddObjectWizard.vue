@@ -96,6 +96,11 @@
 									</div>
 								</div>
 							</div>
+							<div class="alert alert-info"
+								 v-if="searchResults.length === 0 && objectModel != null"
+							>
+								Sorry, could not find any applicable {{ objectModel }}s
+							</div>
 						</div>
 					</div>
 				</div>
