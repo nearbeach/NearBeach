@@ -169,6 +169,15 @@ def potential_object_list(request, destination, location_id, object_lookup, *arg
     if not destination == "sprint":
         return HttpResponseBadRequest("Object has to be a sprint")
 
+    # Excluded objects
+    exclude_objects = SprintObjectAssignment.objects.filter(
+        sprint_id=location_id,
+        **{F"{object_lookup}_id__isnull": False},
+        is_deleted=False,
+    ).values(
+        F"{object_lookup}_id",
+    )
+
     # Get user groups
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
@@ -181,6 +190,11 @@ def potential_object_list(request, destination, location_id, object_lookup, *arg
 
     # Get the data dependent on the object lookup
     data_results = LOOKUP_FUNCS[object_lookup](user_group_results, "object_assignment_id", 0)
+
+    # Exclude the data from data results
+    data_results = data_results.filter().exclude(
+        **{F"{object_lookup}_id__in": exclude_objects},
+    )
 
     # Send the data to the user
     data_results = json.dumps(list(data_results), cls=DjangoJSONEncoder)
