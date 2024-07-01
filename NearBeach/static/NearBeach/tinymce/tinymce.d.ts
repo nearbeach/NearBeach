@@ -560,9 +560,7 @@ interface GridSpec {
 interface HtmlPanelSpec {
     type: 'htmlpanel';
     html: string;
-    onInit?: (el: HTMLElement) => void;
     presets?: 'presentation' | 'document';
-    stretched?: boolean;
 }
 interface IframeSpec extends FormComponentWithLabelSpec {
     type: 'iframe';
@@ -588,7 +586,6 @@ interface LabelSpec {
     label: string;
     items: BodyComponentSpec[];
     align?: Alignment;
-    for?: string;
 }
 interface ListBoxSingleItemSpec {
     text: string;
@@ -2665,7 +2662,6 @@ interface Options {
     set: <K extends string, T>(name: K, value: K extends keyof NormalizedEditorOptions ? NormalizedEditorOptions[K] : T) => boolean;
     unset: (name: string) => boolean;
     isSet: (name: string) => boolean;
-    debug: () => void;
 }
 interface UploadResult$1 {
     element: HTMLImageElement;
