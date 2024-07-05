@@ -14,8 +14,7 @@
 		></list-notes>
 
 		<!-- ADD NOTE HISTORY -->
-		<!-- TO DO - limit it to certain users -->
-		<hr/>
+		<hr v-if="userLevel > 1" />
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<button
