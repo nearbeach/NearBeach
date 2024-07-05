@@ -29,7 +29,7 @@
 				</button>
 			</div>
 		</div>
-		<hr>
+		<hr v-if="destination === 'project'" class="mt-4">
 	</div>
 
 	<new-sprint-wizard

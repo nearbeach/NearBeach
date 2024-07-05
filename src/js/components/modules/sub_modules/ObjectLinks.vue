@@ -70,6 +70,7 @@
 		</div>
 
 		<!-- Submit Button -->
+		<hr v-if="userLevel > 1" />
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<a
@@ -81,7 +82,6 @@
 				>
 			</div>
 		</div>
-		<hr/>
 
 		<!-- MODAL FOR NEW OBJECT LINKS -->
 		<new-link-wizard
