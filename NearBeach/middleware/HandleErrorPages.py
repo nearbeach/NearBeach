@@ -1,6 +1,8 @@
-from django.http import HttpResponseNotFound, HttpResponseBadRequest
-from django.template.loader import get_template
+from django.http import HttpResponse
+from django.template.loader import get_template, TemplateDoesNotExist
+from django.conf import settings
 from NearBeach.views.theme_views import get_theme
+
 
 
 class TemplateErrorMiddleware:
@@ -11,26 +13,27 @@ class TemplateErrorMiddleware:
         # Response
         response = self.get_response(request)
 
-        if response.status_code == 404:
-            # Get template
-            template = get_template('404.html')
+        # On debug send back response
+        if settings.DEBUG:
+            return response
+
+        try:
+            # Error Template
+            t = get_template(f"{response.status_code}.html")
 
             # Context
             c = {
+                "nearbeach_title": "error",
+                "need_tinymce": False,
                 "theme": get_theme(request),
             }
 
-            response = HttpResponseNotFound(template.render(c))
-
-        if response.status_code == 500:
-            # Get template
-            template = get_template('500.html')
-
-            # Content
-            c = {
-                "theme": get_theme(request),
-            }
-
-            response = HttpResponseBadRequest(template.render(c))
-
+            # Return
+            response = HttpResponse(
+                t.render(c, request),
+                status=response.status_code,
+            )
+        except TemplateDoesNotExist:
+            pass
         return response
+
