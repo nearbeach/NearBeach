@@ -53,6 +53,7 @@
 						/>
 						<editor
 							:init="{
+							license_key: 'gpl',
 							file_picker_types: 'image',
 							height: 500,
 							images_upload_handler: newObjectUploadImage,
@@ -132,11 +133,12 @@
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						<a
+						<button
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
 							v-on:click="submitNewRequirement"
-						>Create new Requirement</a
+							v-bind:disabled="disableSubmitButton"
+						>Create new Requirement</button
 						>
 					</div>
 				</div>
@@ -222,6 +224,7 @@ export default {
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
+			disableSubmitButton: false,
 			groupModel: "",
 			requirementScopeModel: "",
 			requirementTitleModel: "",
@@ -268,6 +271,8 @@ export default {
 				return;
 			}
 
+			this.disableSubmitButton = true;
+
 			// Set up the data object to send
 			const data_to_send = new FormData();
 			data_to_send.set(
@@ -302,6 +307,8 @@ export default {
 					extra_classes: "bg-danger",
 					delay: 0,
 				});
+
+				this.disableSubmitButton = false;
 			});
 		},
 		updateGroupModel(newGroupModel) {

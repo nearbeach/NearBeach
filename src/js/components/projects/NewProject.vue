@@ -13,10 +13,6 @@
 							To create a new project, fill out the form and submit at
 							the bottom of the page.
 						</p>
-						<p class="text-instructions">
-							<strong>Note: </strong>Media files can not be uploaded
-							until AFTER you save. This is a security feature.
-						</p>
 					</div>
 
 					<!-- PROJECT FORM -->
@@ -55,6 +51,7 @@
 						/>
 						<editor
 							:init="{
+							license_key: 'gpl',
 							file_picker_types: 'image',
 							height: 500,
 							images_upload_handler: newObjectUploadImage,
@@ -100,11 +97,12 @@
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						<a
+						<button
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
 							v-on:click="submitNewProject"
-						>Create new Project</a
+							v-bind:disabled="disableSubmitButton"
+						>Create new Project</button
 						>
 					</div>
 				</div>
@@ -189,6 +187,7 @@ export default {
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
+			disableSubmitButton: false,
 			groupModel: {},
 			projectDescriptionModel: "",
 			projectEndDateModel: "",
@@ -235,6 +234,8 @@ export default {
 				return;
 			}
 
+			this.disableSubmitButton = true;
+
 			//Create data_to_send
 			const data_to_send = new FormData();
 			data_to_send.set("project_name", this.projectNameModel);
@@ -276,6 +277,8 @@ export default {
 					extra_classes: "bg-danger",
 					delay: 0,
 				});
+
+				this.disableSubmitButton = false;
 			});
 		},
 		updateDates(data) {

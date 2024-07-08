@@ -32,6 +32,7 @@
 						<div class="col-md-8">
 							<editor
 								:init="{
+									license_key: 'gpl',
 									file_picker_types: 'image',
 									height: 250,
 									menubar: false,

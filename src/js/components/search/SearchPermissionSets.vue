@@ -3,8 +3,7 @@
 		<div class="card-body">
 			<!-- Search bar and heading -->
 			<h1>Search Permission Sets</h1>
-			<br/>
-			<div class="form-group">
+			<div class="form-group mt-4">
 				<label>Search:</label>
 				<input
 					class="form-control search-groups"

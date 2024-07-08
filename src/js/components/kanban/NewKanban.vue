@@ -89,6 +89,7 @@
 						<button
 							class="btn btn-primary save-changes"
 							v-on:click="addNewKanban"
+							v-bind:disabled="disableSubmitButton"
 						>
 							Add Kanban
 						</button>
@@ -176,6 +177,7 @@ export default {
 					title: "Completed",
 				},
 			],
+			disableSubmitButton: false,
 			groupModel: [],
 			kanbanBoardNameModel: "",
 			levelModel: [
@@ -258,6 +260,9 @@ export default {
 				return;
 			}
 
+			//Disable submit button
+			this.disableSubmitButton = true;
+
 			//Create the data_to_send
 			const data_to_send = new FormData();
 			data_to_send.set(
@@ -293,6 +298,8 @@ export default {
 					extra_classes: "bg-warning text-dark",
 					delay: 0,
 				});
+
+				this.disableSubmitButton = false;
 			});
 		},
 		checkKanbanBoardName() {

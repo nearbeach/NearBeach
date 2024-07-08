@@ -56,10 +56,9 @@
 					/>
 				</div>
 			</div>
-			<br/>
 
 			<!-- Customer Email -->
-			<div class="form-group col-sm-8">
+			<div class="form-group col-sm-8 mt-4 mb-4">
 				<label>
 					Email:
 					<validation-rendering
@@ -72,7 +71,6 @@
 					v-model="customerEmailModel"
 				/>
 			</div>
-			<br/>
 		</div>
 	</div>
 </template>

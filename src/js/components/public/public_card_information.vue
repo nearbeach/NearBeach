@@ -95,6 +95,7 @@
 		<div class="col-md-8">
 			<editor
 				:init="{
+					license_key: 'gpl',
 					height: 300,
 					menubar: false,
 					plugins: ['lists', 'image', 'codesample', 'table'],

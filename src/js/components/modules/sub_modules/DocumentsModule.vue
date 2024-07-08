@@ -103,7 +103,7 @@
 		</div>
 
 		<!-- ADD DOCUMENTS AND FOLDER BUTTON -->
-		<hr/>
+		<hr v-if="userLevel > 1" />
 		<div class="btn-group save-changes"
 			 v-if="readOnly === false"
 		>

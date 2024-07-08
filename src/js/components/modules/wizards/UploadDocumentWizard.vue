@@ -99,8 +99,7 @@
 								</div>
 
 								<!-- RESET FORM BUTTON -->
-								<br/>
-								<div class="form-row">
+								<div class="form-row mt-4">
 									<button
 										v-on:click="resetForm"
 										class="btn btn-warning"

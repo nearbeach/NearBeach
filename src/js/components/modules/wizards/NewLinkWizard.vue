@@ -61,8 +61,9 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							Current object <br/>
+							<label for="object-relation">Current object</label>
 							<n-select
+								id="object-relation"
 								:options="objectRelation"
 								v-model:value="objectRelationModel"
 								class="object-selection"
@@ -103,55 +104,39 @@
 								Sorry - there are no results.
 							</div>
 
-							<!-- TABLE CONTAINING RESULTS -->
-							<table
-								class="table"
-								v-if="
-									!isSearching &&
-									objectResults.length > 0 &&
-									objectModel != null
-								"
+							<div class="wizard-results"
+								 v-if="!isSearching &&
+										objectResults.length > 0 &&
+										objectModel != null"
 							>
-								<thead>
-								<tr>
-									<td>{{ objectModel }} Description</td>
-									<td>Status</td>
-								</tr>
-								</thead>
-
-								<!-- RENDER RESULTS -->
-								<tbody>
-								<tr
-									v-for="result in objectResults"
-									:key="result.id"
+								<div class="wizard-results--card"
+									 v-for="result in objectResults"
+									 :key="result.id"
 								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="checkbox"
-												v-bind:value="result.id"
-												v-bind:id="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
-											>
-												{{ result.description }}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
+									<div class="wizard-results--card--tick">
+										<input
+											class="form-check-input"
+											type="checkbox"
+											name="link-option"
+											v-bind:value="result.id"
+											v-bind:id="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
+											v-model="linkModel"
+										/>
+									</div>
+									<div class="wizard-results--card--content">
+										<div class="text-instructions">
 											{{objectModel}} {{ result.id }}
-										</p>
-									</td>
-									<td>
-										{{ result.status }}
-									</td>
-								</tr>
-								</tbody>
-							</table>
+										</div>
+										<div>
+											<strong>{{ result.description }}</strong>
+										</div>
+										<div>
+											Status:
+											<span class="text-instructions">{{ result.status }}</span>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

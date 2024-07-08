@@ -96,7 +96,6 @@
 									type="datetime"
 									v-model:value="localReleaseDate"
 									v-bind:disabled="isReadOnly"
-									input-class="form-control"
 									:is-date-disabled="checkDisableDate"
 								></n-date-picker>
 							</div>

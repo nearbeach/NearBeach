@@ -19,9 +19,6 @@
 				<n-date-picker
 					type="datetime"
 					v-model:value="localStartDateModel"
-					class="form-control"
-					:is-date-disabled="startDateDisabled"
-					:is-time-disabled="startDateDisabled"
 					:disabled="userLevel<=1 || isReadOnly"
 				></n-date-picker>
 			</div>
@@ -37,9 +34,6 @@
 				<n-date-picker
 					type="datetime"
 					v-model:value="localEndDateModel"
-					class="form-control"
-					:is-date-disabled="endDateDisabled"
-					:is-time-disabled="endDateDisabled"
 					:disabled="userLevel<=1 || isReadOnly"
 				></n-date-picker>
 			</div>
@@ -139,48 +133,23 @@ export default {
 				end_date: this.localEndDateModel,
 			});
 		},
-		endDateDisabled(endDate) {
-			//If user has flagged they want to remove any dates prior to today - we will
-			let disable_date = false;
-			if (!this.noBackDating) {
-				disable_date = this.disableDate(endDate);
-			}
-
-			//Return the results
-			return (
-				endDate <= this.startDateModel - 1000 * 60 * 60 * 24 ||
-				disable_date
-			);
-		},
-		startDateDisabled(startDate) {
-			//If user has flagged they want to remove any dates prior to today - we will
-			let disable_date = false;
-			if (!this.noBackDating) {
-				disable_date = this.disableDate(startDate);
-			}
-
-			//Return the results
-			return startDate > this.endDateModel || disable_date;
-		},
 	},
 	watch: {
 		localEndDateModel() {
-			//Makes sure the end date is not less than the start date
-			// - if it is, turn it into the start date
+			//If the user update the end date to appear BEFORE the start date, we should update the start date to be
+			// 1 day BEFORE the end date
 			if (this.localEndDateModel < this.localStartDateModel) {
-				//The Start date is larger than the end date - make it the same
-				this.localEndDateModel = this.localStartDateModel();
+				this.localStartDateModel = this.localEndDateModel - (24 * 60 * 60 * 1000);
 			}
 
 			//Send the new results up steam
 			this.emitDates();
 		},
 		localStartDateModel() {
-			//Makes sure the start date is not greater than the end date
-			// - if it is, turn it into the end date
-			if (this.localEndDateModel < this.localStartDateModel) {
-				//The Start date is larger than the end date - make it the same
-				this.localStartDateModel = this.localEndDateModel();
+			//If the user updates the start date to appear AFTER the end date, we should update the end date to be
+			// 1 day AFTER the start date
+			if (this.localStartDateModel > this.localEndDateModel) {
+				this.localEndDateModel = this.localStartDateModel + (24 * 60 * 60 * 1000);
 			}
 
 			//Send the new results up stream

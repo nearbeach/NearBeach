@@ -13,11 +13,6 @@
 							To create a new task, fill out the form and submit at
 							the bottom of the page.
 						</p>
-
-						<p class="text-instructions">
-							<strong>Note: </strong>Media files can not be uploaded
-							until AFTER you save. This is a security feature.
-						</p>
 					</div>
 
 					<!-- Task FORM -->
@@ -56,6 +51,7 @@
 						/>
 						<editor
 							:init="{
+							license_key: 'gpl',
 							file_picker_types: 'image',
 							height: 500,
 							images_upload_handler: newObjectUploadImage,
@@ -100,11 +96,12 @@
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						<a
+						<button
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
 							v-on:click="submitNewTask"
-						>Create new Task</a
+							v-bind:disabled="disableSubmitButton"
+						>Create new Task</button
 						>
 					</div>
 				</div>
@@ -177,6 +174,7 @@ export default {
 	},
 	data() {
 		return {
+			disableSubmitButton: false,
 			displayGroupPermissionIssue: false,
 			groupModel: {},
 			stakeholderModel: "",
@@ -222,6 +220,8 @@ export default {
 				return;
 			}
 
+			this.disableSubmitButton = true;
+
 			//Create the data_to_send array
 			const data_to_send = new FormData();
 			data_to_send.set("organisation", this.stakeholderModel);
@@ -264,6 +264,8 @@ export default {
 					extra_classes: "bg-danger",
 					delay: 0,
 				});
+
+				this.disableSubmitButton = false;
 			});
 		},
 		updateDates(data) {

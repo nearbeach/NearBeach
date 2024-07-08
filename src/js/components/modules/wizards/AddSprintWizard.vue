@@ -43,9 +43,9 @@
 								:key="sprint.value"
 								class="row"
 							>
-								<div class="col-md-12">
+								<div class="col-md-12 mb-4">
 									<strong>Sprint Name: </strong>{{sprint.label}}<br/>
-									<strong>Sprint Start Date: </strong>{{getNiceDatetime(sprint.sprint_start_date)}}<br/>
+									<strong>Sprint Start Date: </strong>{{getNiceDatetime(sprint.sprint_start_date)}}
 								</div>
 							</div>
 						</div>

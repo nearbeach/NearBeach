@@ -128,23 +128,9 @@ def get_my_planning_objects(request, delta=7):
         "job_sort_number",
     )
 
-    results = project_results.union(
-        task_results
-    ).union(
-        card_results
-    ).values(
-        "user_job_id",
-        "object_type",
-        "location_id",
-        "title",
-        "end_date",
-        "status",
-        "higher_order_status",
-        "job_date",
-        "job_sort_number",
-    ).order_by("job_sort_number")
+    results = list(project_results) + list(task_results) + list(card_results)
 
-    return json.dumps(list(results), cls=DjangoJSONEncoder)
+    return json.dumps(results, cls=DjangoJSONEncoder)
 
 
 @login_required(login_url="login", redirect_field_name="")

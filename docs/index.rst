@@ -45,6 +45,7 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
     :caption: 💡 Installation
 
     Quick Install with Docker </001-installation/quick-install-with-docker>
+    Quick Install with Podman </001-installation/quick-install-with-podman>
     Different Databases </001-installation/different-databases/index>
     Different Blob Storage </001-installation/different-blob-storage/index>
     Old Installation Process </001-installation/old-installation-process/index>

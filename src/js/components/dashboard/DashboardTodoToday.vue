@@ -3,8 +3,7 @@
 		 v-if="todoList.length > 0"
 	>
 		<div class="card-body todays-todo">
-			<h1>Today's Todo</h1>
-			<br/>
+			<h1 class="mb-4">Today's Todo</h1>
 			<a v-bind:href="`${rootUrl}my_planner`">My Planner</a>
 			<hr/>
 

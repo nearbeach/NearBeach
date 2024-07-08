@@ -7,7 +7,6 @@
 		>
 			Please create at least one {{ propertyName }}.</span
 		>
-		<br/>
 
 		<!-- The column of data where you can sort the properties -->
 		<draggable
@@ -16,6 +15,7 @@
 			item-key="pk"
 			ghost-class="ghost"
 			@change="sendPropertyListUp"
+			class="mt-4"
 		>
 			<template
 				#item="{ element }"
@@ -145,7 +145,7 @@
 							v-bind:id="`deleteItemClose${propertyName}`"
 						></button>
 					</div>
-					<div class="modal-body">
+					<div class="modal-body pb-4">
 						<!-- WARNING -->
 						<div class="alert alert-warning">
 							<h4>WARNING</h4>
@@ -193,9 +193,6 @@
 								class="new-card-destination"
 							></n-select>
 						</div>
-						<br/>
-
-
 					</div>
 					<div class="modal-footer">
 						<button

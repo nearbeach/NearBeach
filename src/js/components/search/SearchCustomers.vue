@@ -3,10 +3,9 @@
 		<div class="card-body">
 			<!-- HEADING -->
 			<h1>Search Customers</h1>
-			<br/>
 
 			<!-- SEARCH FIELD -->
-			<div class="form-group">
+			<div class="form-group mt-4">
 				<label>Search:</label>
 				<input
 					type="text"

@@ -3,8 +3,7 @@
 		<div class="card">
 			<div class="card-body">
 				<!-- TITLE -->
-				<h1>Customer Information</h1>
-				<br/>
+				<h1 class="mb-4">Customer Information</h1>
 				<a v-bind:href="`${rootUrl}search/customer/`"
 				>Go back to customer search</a
 				>
@@ -97,11 +96,11 @@
 					v-if="organisationResults.length > 0"
 				></stakeholder-information>
 
-				<br/>
-
 				<!-- NEED TO APPLY PERMISSIONS -->
 				<!-- Submit Button -->
-				<hr v-if="userLevel > 1"/>
+				<hr v-if="userLevel > 1"
+					class="mt-4"
+				/>
 				<div
 					v-if="userLevel > 1"
 					class="row submit-row"
