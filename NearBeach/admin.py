@@ -28,6 +28,7 @@ from .models import (
     Notification,
     ObjectAssignment,
     ObjectNote,
+    ObjectTemplate,
     Organisation,
     PermissionSet,
     Project,
@@ -36,6 +37,7 @@ from .models import (
     RequestForChangeGroupApproval,
     Requirement,
     RequirementItem,
+    ScheduledObject,
     Sprint,
     SprintAuditTable,
     SprintObjectAssignment,
@@ -72,10 +74,12 @@ admin.site.register(ListOfTitle)
 admin.site.register(Notification)
 admin.site.register(ObjectAssignment)
 admin.site.register(ObjectNote)
+admin.site.register(ObjectTemplate)
 admin.site.register(Organisation)
 admin.site.register(PermissionSet)
 admin.site.register(Project)
 admin.site.register(PublicLink)
+admin.site.register(ScheduledObject)
 admin.site.register(Sprint)
 admin.site.register(SprintAuditTable)
 admin.site.register(SprintObjectAssignment)

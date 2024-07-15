@@ -204,6 +204,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/requirements/NewRequirement.vue"
             )
     ),
+    NewScheduledObject = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "new-scheduled-object" */
+            "./components/object_scheduler/NewScheduledObject.vue"
+            )
+    ),
     NewTask = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "new-task" */
@@ -322,6 +328,12 @@ export const // BugsModule = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "requirement-item-information" */
             "./components/requirement_items/RequirementItemInformation.vue"
+            )
+    ),
+    ScheduleObjects = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "schedule-objects" */
+            "./components/object_scheduler/ScheduleObjects.vue"
             )
     ),
     SearchCustomers = defineAsyncComponent(() =>

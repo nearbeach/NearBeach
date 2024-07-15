@@ -75,6 +75,15 @@ def get_user_permissions(field, value):
 
 
 # Internal function
+def lookup_choice_from_key(choices, key):
+    for k, v in choices:
+        if k == key:
+            return v
+
+    raise KeyError(f"Missing entry for {key}")
+
+
+# Internal function
 def set_object_from_destination(input_object, destination, location_id):
     """
     This function is used to set data against an object using the destination and location data.
