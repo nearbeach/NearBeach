@@ -2,8 +2,24 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 
-from NearBeach.models import ObjectAssignment, ScheduledObject, ObjectTemplate, Task, Project, OBJECT_TEMPLATE_TYPE
 from NearBeach.views.tools.internal_functions import lookup_choice_from_key
+from NearBeach.models import (
+    OBJECT_TEMPLATE_TYPE,
+    ObjectAssignment,
+    ObjectTemplate,
+    Project,
+    SCH_SET_DAY_OF_THE_WEEK,
+    SCH_WEEKLY,
+    SCH_FORTNIGHTLY,
+    SCH_MONTHLY,
+    SCH_START_OF_THE_MONTH,
+    SCH_END_OF_THE_MONTH,
+    SCH_X_DAYS_BEFORE_END_OF_THE_MONTH,
+    SCH_FIRST_BUSINESS_DAY_OF_THE_MONTH,
+    SCH_LAST_BUSINESS_DAY_OF_THE_MONTH,
+    ScheduledObject,
+    Task,
+)
 
 User = get_user_model()
 
@@ -29,20 +45,32 @@ OBJECT_DICT = {
     }
 }
 
+
 class Command(BaseCommand):
     help = "Run this command to run the scheduled jobs within NearBeach"
 
     def handle(self, *args, **kwargs):
-        # Run the functions in this particular order
-        self.run_set_day_of_the_week()
-        self.run_weekly()
-        self.run_fortnightly()
-        self.run_monthly()
-        self.run_start_of_the_month()
-        self.run_end_of_the_month()
-        self.run_x_days_before_end_of_the_month()
+        scheduled_objects = []
+        #
+        # # Run the functions in this particular order
+        # scheduled_objects.extend(self.run_set_day_of_the_week())
+        # scheduled_objects.extend(self.run_weekly())
+        # scheduled_objects.extend(self.run_fortnightly())
+        # scheduled_objects.extend(self.run_monthly())
+        # scheduled_objects.extend(self.run_start_of_the_month())
+        # scheduled_objects.extend(self.run_end_of_the_month())
+        # scheduled_objects.extend(self.run_x_days_before_end_of_the_month())
+        #
+        # print(scheduled_objects)
+        #
+        # # Create the scheduled objects
+        # for scheduled_object in scheduled_objects:
+        #     self.create_object(scheduled_object=scheduled_object)
+
 
     def create_object(self, scheduled_object, *args, **kwargs):
+        #TODO: Print off a log when creating these tasks/projects
+
         # Get the template
         template = ObjectTemplate.objects.get(object_template_id=scheduled_object.object_template_id)
 
@@ -59,7 +87,7 @@ class Command(BaseCommand):
             **{
                 object_dict["object_title"]: template.object_template_json["object_title"],
                 object_dict["object_description"]: template.object_template_json["object_description"],
-                object_dict["object_organisation"]: template.object_template_json["object_organisation"],
+                object_dict["object_organisation_id"]: template.object_template_json["object_organisation"],
                 object_dict["object_start_date"]: template.object_template_json["object_start_date"],
                 object_dict["object_end_date"]: template.object_template_json["object_end_date"]
            },
@@ -73,8 +101,10 @@ class Command(BaseCommand):
                 group_id_id=group_id,
                 **{F"{object_string}_id": submit_object.pk }
             )
+            submit_object_assignment.save()
 
         return
+
 
     def run_set_day_of_the_week(self):
         # Get today's date and day of the week
@@ -82,12 +112,13 @@ class Command(BaseCommand):
         todays_day = calendar.day_name[todays_date.weekday()].lower()
 
         # Get data and process
-        scheduled_objects = ScheduledObject.objects.filter(
+        return ScheduledObject.objects.filter(
             Q(
                 is_deleted=False,
-                frequency="Weekly",
+                frequency=SCH_SET_DAY_OF_THE_WEEK,
                 start_date__lte=todays_date,
                 is_active=True,
+                # frequency_attribute__icontains=todays_day,
             ) & Q(
                 Q(
                     end_date__gte=todays_date,
@@ -97,22 +128,23 @@ class Command(BaseCommand):
             )
         )
 
-        for scheduled_object in scheduled_objects:
-            # Check to make sure our day is within the scheduled Object
-            if todays_day in scheduled_object.frequency_attribute["days_of_the_week"]:
-                self.create_object(scheduled_object=scheduled_object)
+        # return [
+        #     scheduled_object
+        #     for scheduled_object in scheduled_objects
+        #     # Check to make sure our day is within the scheduled Object
+        #     if todays_day in scheduled_object.frequency_attribute["days_of_the_week"]
+        # ]
 
-        return
 
     def run_weekly(self):
         todays_date = datetime.date.today()
         day_of_the_week = calendar.day_name[todays_date.weekday()]
 
         # Get data and process
-        scheduled_objects = ScheduledObject.objects.filter(
+        return ScheduledObject.objects.filter(
             Q(
                 is_deleted=False,
-                frequency="Weekly",
+                frequency=SCH_WEEKLY,
                 frequency_attribute__day_of_the_week=day_of_the_week,
                 start_date__lte=todays_date,
                 is_active=True,
@@ -125,11 +157,6 @@ class Command(BaseCommand):
             )
         )
 
-        # Create the objects
-        for scheduled_object in scheduled_objects:
-            self.create_object(scheduled_object=scheduled_object)
-
-        return
 
     def run_fortnightly(self):
         todays_date = datetime.date.today()
@@ -137,10 +164,10 @@ class Command(BaseCommand):
         last_run = todays_date - datetime.timedelta(days=14)
 
         # Get data and process
-        scheduled_objects = ScheduledObject.objects.filter(
+        return ScheduledObject.objects.filter(
             Q(
                 is_deleted=False,
-                frequency="Fortnightly",
+                frequency=SCH_FORTNIGHTLY,
                 frequency_attribute__day_of_the_week=day_of_the_week,
                 last_run__gte=last_run,
                 start_date__lte=todays_date,
@@ -154,21 +181,16 @@ class Command(BaseCommand):
             )
         )
 
-        # Create the objects
-        for scheduled_object in scheduled_objects:
-            self.create_object(scheduled_object=scheduled_object)
-
-        return
 
     def run_monthly(self):
         todays_date = datetime.date.today()
         last_run = todays_date - datetime.timedelta(days=14)
 
         # Get data and process
-        scheduled_objects = ScheduledObject.objects.filter(
+        return ScheduledObject.objects.filter(
             Q(
                 is_deleted=False,
-                frequency="Monthly",
+                frequency=SCH_MONTHLY,
                 last_run__gte=last_run,
                 start_date__lte=todays_date,
                 is_active=True,
@@ -181,25 +203,18 @@ class Command(BaseCommand):
             )
         )
 
-        # Create the objects
-        for scheduled_object in scheduled_objects:
-            # Check to make sure the monthly day matches today's day
-            if scheduled_object.start_date.day == todays_date.day:
-                self.create_object(scheduled_object=scheduled_object)
-
-        return
 
     def run_start_of_the_month(self):
         # If today is not the 1st - we will just leave
         todays_date = datetime.date.today()
         if todays_date.day != 1:
-            return
+            return []
 
         # Get data and process
-        scheduled_objects = ScheduledObject.objects.filter(
+        return ScheduledObject.objects.filter(
             Q(
                 is_deleted=False,
-                frequency="Start of the Month",
+                frequency=SCH_START_OF_THE_MONTH,
                 start_date__lte=todays_date,
                 is_active=True,
             ) & Q(
@@ -211,24 +226,19 @@ class Command(BaseCommand):
             )
         )
 
-        # Create the objects
-        for scheduled_object in scheduled_objects:
-            self.create_object(scheduled_object=scheduled_object)
-
-        return
 
     def run_end_of_the_month(self):
         # If today is not the end of the month - we will just leave
         todays_date = datetime.date.today()
         end_month_date = calendar.monthrange(todays_date.year, todays_date.month)[1]
         if todays_date.day != end_month_date:
-            return
+            return []
 
         # Get data and process
-        scheduled_objects = ScheduledObject.objects.filter(
+        return ScheduledObject.objects.filter(
             Q(
                 is_deleted=False,
-                frequency="End of the Month",
+                frequency=SCH_END_OF_THE_MONTH,
                 start_date__lte=todays_date,
                 is_active=True,
             ) & Q(
@@ -240,27 +250,22 @@ class Command(BaseCommand):
             )
         )
 
-        # Create the objects
-        for scheduled_object in scheduled_objects:
-            self.create_object(scheduled_object=scheduled_object)
-
-        return
 
     def run_x_days_before_end_of_the_month(self):
         # If today's date is earlier than the 14th, just leave
         todays_date = datetime.date.today()
         if todays_date.day < 14:
-            return
+            return []
 
         # Get the end date
         end_month_date = calendar.monthrange(todays_date.year, todays_date.month)[1]
         days_before = end_month_date - todays_date.day
 
         # Get data and process
-        scheduled_objects = ScheduledObject.objects.filter(
+        return ScheduledObject.objects.filter(
             Q(
                 is_deleted=False,
-                frequency="X Days before End of the Month",
+                frequency=SCH_X_DAYS_BEFORE_END_OF_THE_MONTH,
                 frequency_attribute__days_before=days_before,
                 start_date__lte=todays_date,
                 is_active=True,
@@ -272,9 +277,3 @@ class Command(BaseCommand):
                 )
             )
         )
-
-        # Loop through the data and see if the conditions are met
-        for scheduled_object in scheduled_objects:
-            self.create_object(scheduled_object=scheduled_object)
-
-        return
