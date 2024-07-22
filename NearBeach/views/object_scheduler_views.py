@@ -4,7 +4,7 @@ from django.db.models import F, Max
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
-from NearBeach.models import ObjectAssignment, ScheduledObject, ObjectTemplate, UserGroup, Group
+from NearBeach.models import ObjectAssignment, ScheduledObject, ObjectTemplate, UserGroup, Group, ObjectTemplateGroup
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.tools.internal_functions import lookup_choice_from_key
 from NearBeach.forms import NewScheduledObjectForm
@@ -77,13 +77,6 @@ def new_scheduled_object_save(request):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # Prepare the group list
-    group_list = []
-    for group in form.cleaned_data["group_list"]:
-        group_list.append(
-            group.group_id,
-        )
-
     # Setup the object_json
     organisation = form.cleaned_data["organisation"]
     object_json = json.dumps({
@@ -97,7 +90,7 @@ def new_scheduled_object_save(request):
         "object_start_date": form.cleaned_data["object_start_date"],
         "object_end_date": form.cleaned_data["object_end_date"],
         "uuid": form.cleaned_data["uuid"],
-        "group_list": group_list,
+        # "group_list": group_list,
     }, cls=DjangoJSONEncoder)
 
     # Save data
@@ -107,6 +100,15 @@ def new_scheduled_object_save(request):
         change_user=request.user,
     )
     submit_object_template.save()
+
+    # Save all groups against the tempalte
+    for group in form.cleaned_data["group_list"]:
+        submit_object_template_group = ObjectTemplateGroup(
+            group=group,
+            object_template=submit_object_template,
+            change_user=request.user,
+        )
+        submit_object_template_group.save()
 
     # Create the scheduled object
     scheduler_frequency = form.cleaned_data["scheduler_frequency"]
@@ -170,19 +172,26 @@ def scheduled_objects(request):
     t = loader.get_template("NearBeach/object_scheduler/scheduled_objects.html")
 
     # Grab all object assignments for the object template
-    object_assignments = ObjectAssignment.objects.filter(
+    # object_assignments = ObjectAssignment.objects.filter(
+    #     is_deleted=False,
+    #     object_template__isnull=False,
+    #     group_id__in=UserGroup.objects.filter(
+    #         is_deleted=False,
+    #         username=request.user,
+    #     ).values("group_id")
+    # )
+    object_template_group_results = ObjectTemplateGroup.objects.filter(
         is_deleted=False,
-        object_template__isnull=False,
         group_id__in=UserGroup.objects.filter(
             is_deleted=False,
             username=request.user,
-        ).values("group_id")
+        ).values("group_id"),
     )
 
     # Grab the scheduled objects that the user has access too
     scheduled_object_results = ScheduledObject.objects.filter(
         is_deleted=False,
-        object_template__in=object_assignments.values("object_template_id"),
+        object_template__in=object_template_group_results.values("object_template_id"),
     ).annotate(
         object_template_type=F('object_template__object_template_type'),
         object_template_json=F('object_template__object_template_json'),

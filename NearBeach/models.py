@@ -1106,12 +1106,6 @@ class ObjectAssignment(models.Model):
         blank=True,
         null=True,
     )
-    object_template = models.ForeignKey(
-        "ObjectTemplate",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
     change_task = models.ForeignKey(
         "ChangeTask",
         on_delete=models.CASCADE,
@@ -1221,6 +1215,26 @@ class ObjectTemplate(models.Model):
         choices=OBJECT_TEMPLATE_TYPE,
     )
     object_template_json = models.JSONField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
+
+
+class ObjectTemplateGroup(models.Model):
+    object_template_group_id = models.BigAutoField(primary_key=True)
+    object_template = models.ForeignKey(
+        "ObjectTemplate",
+        on_delete=models.CASCADE,
+    )
+    group = models.ForeignKey(
+        "Group",
+        on_delete=models.CASCADE,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
