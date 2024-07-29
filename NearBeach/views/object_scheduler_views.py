@@ -1,10 +1,18 @@
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.template import loader
 from django.db.models import F, Max
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
-from NearBeach.models import ObjectAssignment, ScheduledObject, ObjectTemplate, UserGroup, Group, ObjectTemplateGroup
+from NearBeach.models import (
+    Group,
+    ObjectTemplate,
+    ObjectTemplateGroup,
+    Organisation,
+    ScheduledObject,
+    UserGroup,
+)
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.tools.internal_functions import lookup_choice_from_key
 from NearBeach.forms import NewScheduledObjectForm
@@ -239,5 +247,72 @@ def scheduled_objects(request):
     return HttpResponse(t.render(c, request))
 
 
-def scheduled_object_information(request, scheduled_object_id):
-    return HttpResponse("Setup view")
+def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
+    # Template
+    t = loader.get_template("NearBeach/object_scheduler/scheduled_object_information.html")
+
+    # Get data
+    scheduled_object_results = ScheduledObject.objects.filter(schedule_object_id=schedule_object_id)
+    scheduled_object_results = get_object_or_404(scheduled_object_results, schedule_object_id=schedule_object_id)
+
+    object_template_results = ObjectTemplate.objects.filter(
+        object_template_id=scheduled_object_results.object_template_id
+    )
+    object_template_results = get_object_or_404(
+        object_template_results,
+        object_template_id=scheduled_object_results.object_template_id
+    )
+
+    organisation_information = Organisation.objects.get(
+        organisation_id=object_template_results.object_template_json["organisation"],
+    )
+
+    group_results = Group.objects.filter(
+        is_deleted=False,
+    )
+
+    # User group and level results
+    user_group_and_level = UserGroup.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    ).values(
+        "group_id",
+        "group__group_name",
+    ).annotate(
+        project_permission=Max("permission_set__project"),
+    ).annotate(
+        task_permission=Max("permission_set__task"),
+    )
+
+    # Get the USER groups
+    user_group_results = (
+        UserGroup.objects.filter(
+            is_deleted=False,
+            username=request.user,
+        )
+        .values(
+            "group_id",
+            "group__group_name",
+        ).distinct()
+    )
+
+    c = {
+        "group_results": serializers.serialize("json", group_results),
+        "nearbeach_title": f"Scheduled Object {schedule_object_id}",
+        "need_tinymce": True,
+        "object_template_results": serializers.serialize("json", [object_template_results]),
+        "organisation_results": serializers.serialize("json", [organisation_information]),
+        "scheduled_object_id": schedule_object_id,
+        "scheduled_object_results": serializers.serialize("json", [scheduled_object_results]),
+        "user_group_and_level": json.dumps(
+            list(user_group_and_level),
+            cls=DjangoJSONEncoder,
+        ),
+        "user_group_results": json.dumps(
+            list(user_group_results),
+            cls=DjangoJSONEncoder
+        ),
+        "theme": get_theme(request),
+    }
+
+    return HttpResponse(t.render(c, request))

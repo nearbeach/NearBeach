@@ -336,6 +336,12 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/object_scheduler/ScheduleObjects.vue"
             )
     ),
+    ScheduleObjectInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "schedule-object-information" */
+            "./components/object_scheduler/ScheduledObjectInformation.vue"
+            )
+    ),
     SearchCustomers = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "search-customers" */

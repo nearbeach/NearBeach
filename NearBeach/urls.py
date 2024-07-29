@@ -937,7 +937,7 @@ urlpatterns = [
         name="scheduled_objects",
     ),
     path(
-        "scheduled_object_information/<int:scheduled_object_id>/",
+        "scheduled_object_information/<int:schedule_object_id>/",
         object_scheduler_views.scheduled_object_information,
         name="schedule_object_information",
     ),
