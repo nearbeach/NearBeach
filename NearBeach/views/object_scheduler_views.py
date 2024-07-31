@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template import loader
@@ -122,6 +123,7 @@ def new_scheduled_object_save(request):
     scheduler_frequency = form.cleaned_data["scheduler_frequency"]
 
     submit_scheduled_object = ScheduledObject(
+        schedule_object_title=form.cleaned_data['object_title'],
         change_user=request.user,
         frequency=scheduler_frequency,
         start_date=form.cleaned_data["scheduler_start_date"],
@@ -247,6 +249,7 @@ def scheduled_objects(request):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url="login", redirect_field_name="")
 def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
     # Template
     t = loader.get_template("NearBeach/object_scheduler/scheduled_object_information.html")
@@ -257,18 +260,33 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
 
     object_template_results = ObjectTemplate.objects.filter(
         object_template_id=scheduled_object_results.object_template_id
-    )
-    object_template_results = get_object_or_404(
-        object_template_results,
-        object_template_id=scheduled_object_results.object_template_id
+    ).values(
+        'object_template_json',
+        'object_template_type',
     )
 
     organisation_information = Organisation.objects.get(
-        organisation_id=object_template_results.object_template_json["organisation"],
+        organisation_id=object_template_results[0]["object_template_json"]["organisation"],
     )
 
     group_results = Group.objects.filter(
         is_deleted=False,
+    ).annotate(
+        value=F("group_id"),
+        label=F("group_name"),
+    ).values(
+        "value",
+        "label",
+    )
+
+    template_group_results = ObjectTemplateGroup.objects.filter(
+        object_template_id=scheduled_object_results.object_template_id,
+        is_deleted=False,
+    ).values(
+        "group_id",
+    ).values_list(
+        'group_id',
+        flat=True
     )
 
     # User group and level results
@@ -296,14 +314,19 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
         ).distinct()
     )
 
+    group_results = json.dumps(list(group_results), cls=DjangoJSONEncoder)
+    object_template_results = json.dumps(list(object_template_results), cls=DjangoJSONEncoder)
+    template_group_results = json.dumps(list(template_group_results), cls=DjangoJSONEncoder)
+
     c = {
-        "group_results": serializers.serialize("json", group_results),
+        "group_results": group_results,
         "nearbeach_title": f"Scheduled Object {schedule_object_id}",
         "need_tinymce": True,
-        "object_template_results": serializers.serialize("json", [object_template_results]),
+        "object_template_results": object_template_results,
         "organisation_results": serializers.serialize("json", [organisation_information]),
         "scheduled_object_id": schedule_object_id,
         "scheduled_object_results": serializers.serialize("json", [scheduled_object_results]),
+        "template_group_results": template_group_results,
         "user_group_and_level": json.dumps(
             list(user_group_and_level),
             cls=DjangoJSONEncoder,
