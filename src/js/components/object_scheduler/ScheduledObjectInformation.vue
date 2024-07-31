@@ -98,23 +98,61 @@
 				<hr/>
 				<between-dates
 					destination="object"
+					v-bind:end-date-model="objectEndDateModel.getTime()"
+					v-bind:start-date-model="objectStartDateModel.getTime()"
 					v-on:update_dates="updateDates($event)"
 				></between-dates>
 
 				<!-- Group Permissions -->
 				<hr/>
-				<group-permissions
-					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
-					v-bind:group-results="groupResults"
-					v-bind:destination="'object'"
-					v-bind:user-group-results="userGroupResults"
-					v-on:update_group_model="updateGroupModel($event)"
-					v-bind:is-dirty="v$.groupModel.$dirty"
-				></group-permissions>
+				<div class="row">
+					<div class="col-md-4">
+						<h2>Group Permissions</h2>
+						<p class="text-instructions">
+							Add or remove groups from this scheduled object. Adding a group
+							will allow users from that group to access the constructed object.
+						</p>
+						<p class="text-instructions">
+							Users who do not have access to this scheduled object, won't be able
+							to edit/view this object, nor it's constructed object.
+						</p>
+					</div>
+					<div class="col-md-8">
+						<label>
+							Group List
+							<validation-rendering v-bind:error-list="v$.objectGroupModel.$errors"
+							></validation-rendering>
+						</label>
+						<n-select
+							:options="groupResults"
+							label="group"
+							v-model:value="objectGroupModel"
+							v-on:update-value="checkObjectGroupModel"
+							multiple
+						></n-select>
+
+<!--						 ALERT FOR WHEN USER GROUPS ARE NOT INCLUDED -->
+						<br/>
+						<div v-if="displayGroupPermissionIssue"
+							 class="alert alert-warning"
+						>
+							None of your user groups were included. You will not have permissions to create this object. Please
+							select one of your groups
+						</div>
+					</div>
+				</div>
 
 				<!-- Scheduler Frequency -->
 				<hr/>
 				<scheduler-frequency
+					v-bind:days-before="daysBeforeModel"
+					v-bind:day="dayModel"
+					v-bind:end-date-condition="endDateConditionModel"
+					v-bind:end-date="endDateModel"
+					v-bind:number-of-repeats="numberOfRepeats"
+					v-bind:scheduler-frequency="schedulerFrequencyModel"
+					v-bind:single-day="singleDayModel"
+					v-bind:start-date="startDateModel"
 					v-on:update_scheduler_frequency="updateSchedulerFrequency"
 				></scheduler-frequency>
 
@@ -209,6 +247,12 @@ export default {
 			type: String,
 			default: "/",
 		},
+		templateGroupResults: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
 		theme: {
 			type: String,
 			default: "light",
@@ -231,11 +275,12 @@ export default {
 			groupModel: {},
 			groupModelValidation: true,
 			displayGroupPermissionIssue: false,
-			objectDescriptionModel: "",
-			objectEndDateModel: "",
-			objectStartDateModel: "",
-			objectTitleModel: "",
-			objectTypeModel: "",
+			objectDescriptionModel: this.objectTemplateResults[0].object_template_json.object_description,
+			objectEndDateModel: new Date(this.objectTemplateResults[0].object_template_json.object_end_date),
+			objectGroupModel: this.templateGroupResults,
+			objectStartDateModel: new Date(this.objectTemplateResults[0].object_template_json.object_start_date),
+			objectTitleModel: this.objectTemplateResults[0].object_template_json.object_title,
+			objectTypeModel: this.objectTemplateResults[0].object_template_type,
 			objectTypeOptions: [
 				{
 					value: 0,
@@ -272,6 +317,9 @@ export default {
 		objectDescriptionModel: {
 			required,
 		},
+		objectGroupModel: {
+			required,
+		},
 		objectTitleModel: {
 			required,
 		},
@@ -304,22 +352,15 @@ export default {
 			}
 			return user_level_project;
 		},
-		updateDates(data) {
-			//Update both the start and end dates
-			this.objectStartDateModel = new Date(data.start_date);
-			this.objectEndDateModel = new Date(data.end_date);
-		},
-		updateGroupModel(data) {
-			this.groupModel = data;
-
-			//Calculate to see if the user's groups exist in the groupModel
+		checkObjectGroupModel() {
+			//Calculate to see if the user's groups exist in the objectGroupModel
 			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
-				return this.groupModel.includes(row.group_id);
+				return this.objectGroupModel.includes(row.group_id);
 			}).length === 0;
 
 			//Calculate to see if the user has create permission for any of the selected groups
 			const filtered_user_and_group_level = this.userGroupAndLevel.filter((row) => {
-				return data.includes(row.group_id);
+				return this.objectGroupModel.includes(row.group_id);
 			});
 
 			//Calulate the boolean result. We need to make sure the user can create (3 - create)
@@ -336,8 +377,10 @@ export default {
 				});
 			}
 		},
-		updateScheduledObject() {
-			//ADD CODE
+		updateDates(data) {
+			//Update both the start and end dates
+			this.objectStartDateModel = new Date(data.start_date);
+			this.objectEndDateModel = new Date(data.end_date);
 		},
 		updateSchedulerFrequency(data) {
 			this.daysBeforeModel = data.daysBeforeModel;

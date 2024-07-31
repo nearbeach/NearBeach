@@ -73,14 +73,14 @@
 				<div class="col-md-6">
 					<label>
 						Number of Repeats
-						<span v-if="numberOfRepeats === null"
+						<span v-if="numberOfRepeatsModel === null"
 							  class="error"
 						>
 							Please fill out
 						</span>
 					</label>
 					<n-input-number
-						v-model:value="numberOfRepeats"
+						v-model:value="numberOfRepeatsModel"
 						min="0"
 					></n-input-number>
 				</div>
@@ -159,11 +159,46 @@ export default {
 		NInputNumber,
 		NSelect,
 	},
-	props: {},
+	props: {
+		daysBefore: {
+			type: Number,
+			default: 0,
+		},
+		day: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
+		endDateCondition: {
+			type: String,
+			default: "no-end-date"
+		},
+		endDate: {
+			type: Number,
+			default: 0,
+		},
+		numberOfRepeats: {
+			type: Number,
+			default: 0,
+		},
+		schedulerFrequency: {
+			type: String,
+			default: "Set Day of the Week",
+		},
+		singleDay: {
+			type: String,
+			default: "monday",
+		},
+		startDate: {
+			type: Number,
+			default: 0,
+		},
+	},
 	data() {
 		return {
-			daysBeforeModel: 0,
-			dayModel: [],
+			daysBeforeModel: this.daysBefore,
+			dayModel: this.day,
 			dayOfTheWeekArray: [
 				{ value: "monday", shortLabel: "Mon", label: "Monday" },
 				{ value: "tuesday", shortLabel: "Tue", label: "Tuesday" },
@@ -178,11 +213,11 @@ export default {
 				{ value: "number-of-repeats", label: "Number of Repeats" },
 				{ value: "end-date", label: "End Date" },
 			],
-			endDateConditionModel: "no-end-date",
-			endDateModel: 0,
+			endDateConditionModel: this.endDateCondition,
+			endDateModel: this.endDate,
 			isFormValid: false,
-			numberOfRepeats: 0,
-			schedulerFrequencyModel: "Set Day of the Week",
+			numberOfRepeatsModel: this.numberOfRepeats,
+			schedulerFrequencyModel: this.schedulerFrequency,
 			schedulerFrequencyOptions: [
 				{ value: "Set Day of the Week", label: "Set Day of the Week" },
 				{ value: "Weekly", label: "Weekly"},
@@ -192,8 +227,8 @@ export default {
 				{ value: "End of the Month", label: "End of the Month"},
 				{ value: "X Days before End of the Month", label: "X Days before End of the Month"},
 			],
-			singleDayModel: "monday",
-			startDateModel: 0,
+			singleDayModel: this.singleDay,
+			startDateModel: this.startDate,
 		}
 	},
 	computed: {
@@ -225,7 +260,7 @@ export default {
 		endDateModel() {
 			this.updateIsValid();
 		},
-		numberOfRepeats() {
+		numberOfRepeatsModel() {
 			this.updateIsValid();
 		},
 		schedulerFrequencyModel() {
@@ -249,7 +284,7 @@ export default {
 				endDateConditionModel: this.endDateConditionModel,
 				endDateModel: this.endDateModel,
 				isFormValid: this.isFormValid,
-				numberOfRepeats: this.numberOfRepeats,
+				numberOfRepeatsModel: this.numberOfRepeatsModel,
 				schedulerFrequencyModel: this.schedulerFrequencyModel,
 				singleDayModel: this.singleDayModel,
 				startDateModel: this.startDateModel,
@@ -276,8 +311,8 @@ export default {
 			}
 
 			//Conditional Validation
-			if (this.endDateConditionModel === "number-of-repeats" && this.numberOfRepeats === null) {
-				this.numberOfRepeats = 0;
+			if (this.endDateConditionModel === "number-of-repeats" && this.numberOfRepeatsModel === null) {
+				this.numberOfRepeatsModel = 0;
 			}
 
 			if (this.endDateConditionModel === "end-date" && this.endDateModel === null) {
