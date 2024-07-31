@@ -1646,6 +1646,7 @@ class RequirementItem(models.Model):
 
 class ScheduledObject(models.Model):
     schedule_object_id = models.BigAutoField(primary_key=True)
+    schedule_object_title = models.CharField(max_length=255)
     last_run = models.DateField(
         blank=True,
         null=True,
