@@ -238,9 +238,17 @@ export default {
 			default: 0,
 		},
 		scheduledObjectResults: {
-			type: Array,
+			type: Object,
 			default: () => {
-				return [];
+				return {
+					"schedule_object_id": 0,
+					"object_template_id": 0,
+					"end_date": null,
+					"frequency": "Set Day of the Week",
+					"frequency_attribute": null,
+					"is_active": true,
+					"number_of_repeats": -1
+				};
 			},
 		},
 		staticUrl: {
@@ -294,14 +302,14 @@ export default {
 
 			//Scheduler Frequency Data
 			daysBeforeModel: 0,
-			dayModel: [],
-			endDateConditionModel: "no-end-date",
-			endDateModel: 0,
+			dayModel: this.getDayModel(),
+			endDateConditionModel: this.getEndDateConditionModel(),
+			endDateModel: this.getEndDateModel(),
 			isFormValid: false,
 			numberOfRepeats: 0,
-			schedulerFrequencyModel: "Set Day of the Week",
+			schedulerFrequencyModel: this.scheduledObjectResults.frequency,
 			singleDayModel: "monday",
-			startDateModel: 0,
+			startDateModel: new Date(this.scheduledObjectResults.start_date).getTime(),
 		};
 	},
 	computed: {
@@ -376,6 +384,28 @@ export default {
 					unique_type: "group-model-validation",
 				});
 			}
+		},
+		getEndDateConditionModel() {
+			//If number of repeats
+			if (this.scheduledObjectResults.number_of_repeats >= 0) return "number-of-repeats";
+
+			//If end date
+			if (this.scheduledObjectResults.end_date !== null) return "end-date";
+
+			return "no-end-date";
+		},
+		getDayModel() {
+			//Default date is []
+			if (this.scheduledObjectResults.frequency_attribute === undefined) return [];
+			if (this.scheduledObjectResults.frequency_attribute.days_of_the_week === undefined) return [];
+
+			console.log("DATA: ", this.scheduledObjectResults.frequency_attribute.days_of_the_week);
+			return this.scheduledObjectResults.frequency_attribute.days_of_the_week;
+		},
+		getEndDateModel() {
+			if (this.scheduledObjectResults.end_date === null) return 0;
+
+			return this.scheduledObjectResults.end_date;
 		},
 		updateDates(data) {
 			//Update both the start and end dates

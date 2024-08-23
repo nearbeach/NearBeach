@@ -413,7 +413,7 @@ export default {
 			this.endDateConditionModel = data.endDateConditionModel;
 			this.endDateModel = data.endDateModel;
 			this.isFormValid = data.isFormValid;
-			this.numberOfRepeats = data.numberOfRepeats;
+			this.numberOfRepeats = data.numberOfRepeatsModel;
 			this.schedulerFrequencyModel = data.schedulerFrequencyModel;
 			this.singleDayModel = data.singleDayModel;
 			this.startDateModel = data.startDateModel;

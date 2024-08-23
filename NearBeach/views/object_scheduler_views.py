@@ -255,11 +255,27 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
     t = loader.get_template("NearBeach/object_scheduler/scheduled_object_information.html")
 
     # Get data
-    scheduled_object_results = ScheduledObject.objects.filter(schedule_object_id=schedule_object_id)
-    scheduled_object_results = get_object_or_404(scheduled_object_results, schedule_object_id=schedule_object_id)
+    scheduled_object_results = ScheduledObject.objects.filter(
+        schedule_object_id=schedule_object_id
+    ).values(
+        "schedule_object_id",
+        "object_template_id",
+        "end_date",
+        "start_date",
+        "frequency",
+        "frequency_attribute",
+        "is_active",
+        "number_of_repeats",
+    )
+
+    # Check to make sure there is a scheduled object results
+    if len(scheduled_object_results) == 0:
+        return HttpResponseBadRequest("Sorry, no object")
+
+    scheduled_object_results = scheduled_object_results.first()
 
     object_template_results = ObjectTemplate.objects.filter(
-        object_template_id=scheduled_object_results.object_template_id
+        object_template_id=scheduled_object_results["object_template_id"]
     ).values(
         'object_template_json',
         'object_template_type',
@@ -280,7 +296,7 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
     )
 
     template_group_results = ObjectTemplateGroup.objects.filter(
-        object_template_id=scheduled_object_results.object_template_id,
+        object_template_id=scheduled_object_results["object_template_id"],
         is_deleted=False,
     ).values(
         "group_id",
@@ -317,6 +333,7 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
     group_results = json.dumps(list(group_results), cls=DjangoJSONEncoder)
     object_template_results = json.dumps(list(object_template_results), cls=DjangoJSONEncoder)
     template_group_results = json.dumps(list(template_group_results), cls=DjangoJSONEncoder)
+    scheduled_object_results = json.dumps(scheduled_object_results, cls=DjangoJSONEncoder)
 
     c = {
         "group_results": group_results,
@@ -325,7 +342,7 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
         "object_template_results": object_template_results,
         "organisation_results": serializers.serialize("json", [organisation_information]),
         "scheduled_object_id": schedule_object_id,
-        "scheduled_object_results": serializers.serialize("json", [scheduled_object_results]),
+        "scheduled_object_results": scheduled_object_results,
         "template_group_results": template_group_results,
         "user_group_and_level": json.dumps(
             list(user_group_and_level),
