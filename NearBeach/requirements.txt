@@ -2,22 +2,10 @@
 Django>=3.1
 simplejson
 pillow>=10.0.1
-urllib3
+urllib3>2.2.2
 boto3
 azure-storage-blob
-azure-identity
-
-# geolocation-python
-# django-tinymce4-lite
-# weasyprint
-# pyperclip
-# python-docx
-# BeautifulSoup4
-# pandoc
-# pypandoc
-# django_select2
-# django-phonenumber-field
-# phonenumbers
-
+azure-identity>=1.16.1
 
 pip>=19.2 # not directly required, pinned by Snyk to avoid a vulnerability
+requests>=2.32.2 # not directly required, pinned by Snyk to avoid a vulnerability
