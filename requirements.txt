@@ -1,5 +1,5 @@
 # requirement.txt
-Django>=3.1
+Django>=4.2.15
 simplejson
 pillow>=10.0.1
 urllib3>=2.2.2
