@@ -1,0 +1,19 @@
+{% extends "NearBeach/partials/template.html" %}
+{% load static %}
+{% block content %}
+
+    <schedule-object-information
+            v-bind:default-stakeholder-image="`{% static 'NearBeach/images/placeholder/product_tour.svg' %}`"
+            v-bind:group-results="{{ group_results }}"
+            v-bind:object-template-results="{{ object_template_results }}"
+            v-bind:organisation-results="{{ organisation_results }}"
+            v-bind:root-url="`{% url 'dashboard' %}`"
+            v-bind:scheduled-object-id="{{ scheduled_object_id }}"
+            v-bind:scheduled-object-results="{{ scheduled_object_results }}"
+            v-bind:static-url="`{% static '' %}`"
+            v-bind:template-group-results="{{ template_group_results }}"
+            v-bind:theme="'{{ theme }}'"
+            v-bind:user-group-and-level="{{ user_group_and_level }}"
+            v-bind:user-group-results="{{ user_group_results }}"
+    ></schedule-object-information>
+{% endblock %}

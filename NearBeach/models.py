@@ -51,6 +51,11 @@ OBJECT_HIGHER_ORDER_STATUS = (
     ("Closed", "Closed"),
 )
 
+OBJECT_TEMPLATE_TYPE = (
+    (0, "project"),
+    (1, "task"),
+)
+
 PAGE_LAYOUT = (
     ("Landscape", "Landscape"),
     ("Portrait", "Portrait"),
@@ -142,6 +147,28 @@ RFC_TYPE = (
     (3, "High"),
     (2, "Medium"),
     (1, "Low"),
+)
+
+SCH_SET_DAY_OF_THE_WEEK = "Set Day of the Week"
+SCH_WEEKLY = "Weekly"
+SCH_FORTNIGHTLY = "Fortnightly"
+SCH_MONTHLY = "Monthly"
+SCH_START_OF_THE_MONTH = "Start of the Month"
+SCH_END_OF_THE_MONTH = "End of the Month"
+SCH_X_DAYS_BEFORE_END_OF_THE_MONTH = "X Days before End of the Month"
+SCH_FIRST_BUSINESS_DAY_OF_THE_MONTH = "First Business Day of the Month"
+SCH_LAST_BUSINESS_DAY_OF_THE_MONTH = "Last Business Day of the Month"
+
+SCHEDULED_OBJECT_FREQUENCY = (
+    (SCH_SET_DAY_OF_THE_WEEK, SCH_SET_DAY_OF_THE_WEEK),
+    (SCH_WEEKLY, SCH_WEEKLY),
+    (SCH_FORTNIGHTLY, SCH_FORTNIGHTLY),
+    (SCH_MONTHLY, SCH_MONTHLY),
+    (SCH_START_OF_THE_MONTH, SCH_START_OF_THE_MONTH),
+    (SCH_END_OF_THE_MONTH, SCH_END_OF_THE_MONTH),
+    (SCH_X_DAYS_BEFORE_END_OF_THE_MONTH, SCH_X_DAYS_BEFORE_END_OF_THE_MONTH),
+    # ("First Business Day of the Month", "First Business Day of the Month"),
+    # ("Last Business Day of the Month", "Last Business Day of the Month"),
 )
 
 SPRINT_STATUS = (
@@ -1182,6 +1209,42 @@ class ObjectNote(models.Model):
     )
 
 
+class ObjectTemplate(models.Model):
+    object_template_id = models.BigAutoField(primary_key=True)
+    object_template_type = models.IntegerField(
+        choices=OBJECT_TEMPLATE_TYPE,
+    )
+    object_template_json = models.JSONField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
+
+
+class ObjectTemplateGroup(models.Model):
+    object_template_group_id = models.BigAutoField(primary_key=True)
+    object_template = models.ForeignKey(
+        "ObjectTemplate",
+        on_delete=models.CASCADE,
+    )
+    group = models.ForeignKey(
+        "Group",
+        on_delete=models.CASCADE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
+
+
 class Organisation(models.Model):
     organisation_id = models.BigAutoField(primary_key=True)
     organisation_name = models.CharField(max_length=255)
@@ -1579,6 +1642,47 @@ class RequirementItem(models.Model):
 
     def __str__(self):
         return str(self.requirement_item_title)
+
+
+class ScheduledObject(models.Model):
+    schedule_object_id = models.BigAutoField(primary_key=True)
+    schedule_object_title = models.CharField(max_length=255)
+    last_run = models.DateField(
+        blank=True,
+        null=True,
+    )
+    start_date = models.DateField()
+    end_date = models.DateField(
+        blank=True,
+        null=True,
+    )
+    next_scheduled_run = models.DateField(
+        blank=True,
+        null=True,
+    )
+    number_of_repeats = models.IntegerField(default=-1)
+    run_count = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    frequency = models.CharField(
+        choices=SCHEDULED_OBJECT_FREQUENCY,
+        max_length=50,
+    )
+    frequency_attribute = models.JSONField(
+        null=True,
+        blank=True,
+    )
+    object_template = models.ForeignKey(
+        "ObjectTemplate",
+        on_delete=models.CASCADE,
+    )
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    change_user = models.ForeignKey(
+        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+    )
 
 
 class Sprint(models.Model):

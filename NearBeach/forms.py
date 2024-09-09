@@ -23,6 +23,7 @@ from .models import (
     ListOfProjectStatus,
     ListOfTaskStatus,
     Notification,
+    OBJECT_TEMPLATE_TYPE,
     ObjectNote,
     PermissionSet,
     Project,
@@ -30,6 +31,7 @@ from .models import (
     RequestForChange,
     RequirementItem,
     Requirement,
+    SCHEDULED_OBJECT_FREQUENCY,
     Task,
     Organisation,
     BugClient,
@@ -765,6 +767,75 @@ class NewRequirementForm(forms.ModelForm):
             "requirement_type",
             "organisation",
         ]
+
+
+class NewScheduledObjectForm(forms.Form):
+    days_before = forms.IntegerField(
+        required=False,
+    )
+    day = forms.MultipleChoiceField(
+        required=False,
+        choices=(
+            ("monday", "monday"),
+            ("tuesday", "tuesday"),
+            ("wednesday", "wednesday"),
+            ("thursday", "thursday"),
+            ("friday", "friday"),
+            ("saturday", "saturday"),
+            ("sunday", "sunday"),
+        ),
+    )
+    number_of_repeats = forms.IntegerField(
+        required=False,
+    )
+    scheduler_frequency = forms.ChoiceField(
+        choices=SCHEDULED_OBJECT_FREQUENCY,
+        required=True,
+    )
+    scheduler_end_date = forms.DateField(
+        required=False,
+    )
+    scheduler_start_date = forms.DateField()
+    single_day = forms.CharField(
+        required=False,
+        max_length=50,
+    )
+    end_date_condition = forms.ChoiceField(
+        choices=(
+            ("no-end-date", "no-end-date"),
+            ("number-of-repeats", "number-of-repeats"),
+            ("end-date", "end-date"),
+        ),
+        required=True,
+    )
+    object_type = forms.ChoiceField(
+        choices=OBJECT_TEMPLATE_TYPE,
+        required=True,
+    )
+    object_title = forms.CharField(
+        required=True,
+        max_length=255,
+    )
+    object_description = forms.CharField()
+    organisation = forms.ModelChoiceField(
+        queryset=Organisation.objects.all(),
+        required=True,
+    )
+    object_start_date = forms.DateTimeField(
+        input_formats=["c"],
+    )
+    object_end_date = forms.DateTimeField(
+        input_formats=["c"],
+    )
+    group_list = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=Group.objects.filter(
+            is_deleted=False,
+        ),
+    )
+    uuid = forms.UUIDField(
+        required=False,
+    )
 
 
 class NewSprintAssignmentForm(forms.Form):

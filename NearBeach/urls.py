@@ -19,6 +19,7 @@ from .views import (
     note_views,
     notification_views,
     object_data_views,
+    object_scheduler_views,
     organisation_views,
     permission_set_views,
     profile_views,
@@ -518,6 +519,16 @@ urlpatterns = [
         name="new_requirement_item",
     ),
     path(
+        "new_scheduled_object/",
+        object_scheduler_views.new_scheduled_object,
+        name="new_scheduled_object"
+    ),
+    path(
+        "new_scheduled_object/save/",
+        object_scheduler_views.new_scheduled_object_save,
+        name="new_scheduled_object_save",
+    ),
+    path(
         "new_sprint/<destination>/<int:location_id>/save/",
         sprint_views.new_sprint,
         name="new_sprint"
@@ -918,6 +929,17 @@ urlpatterns = [
         "rfc_readonly/<int:rfc_id>/",
         request_for_change_views.rfc_readonly,
         name="rfc_readonly",
+    ),
+    # Scheduled Objects
+    path(
+        "scheduled_objects/",
+        object_scheduler_views.scheduled_objects,
+        name="scheduled_objects",
+    ),
+    path(
+        "scheduled_object_information/<int:schedule_object_id>/",
+        object_scheduler_views.scheduled_object_information,
+        name="schedule_object_information",
     ),
     # Search Items
     path("search/", search_views.search, name="search"),

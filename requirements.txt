@@ -2,9 +2,10 @@
 Django>=4.2.15
 simplejson
 pillow>=10.0.1
-urllib3>=1.26.19
+urllib3>=2.2.2
 boto3
 azure-storage-blob
-azure-identity
+azure-identity>=1.16.1
 
 pip>=19.2
+requests>=2.32.2
