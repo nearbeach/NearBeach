@@ -49,12 +49,6 @@ Copy the following code and paste it into a file called `docker-compose.yaml`
             ports:
             - 8000:8000
             - 2525:2525
-            command: >
-                sh -c "python manage.py wait_for_database &&
-                    ls -al &&
-                    python manage.py migrate &&
-                    python manage.py initadmin &&
-                    python manage.py runserver 0.0.0.0:8000"
             restart: unless-stopped
             depends_on:
             - db

@@ -12,10 +12,12 @@ What is NearBeach?
 
 NearBeach is an Open Source Project Management system built using VueJS and the Django framework. `NearBeach.org <https://nearbeach.org/>`_. You can;
 
-* Create projects/tasks
-* Gather requirements
+* Record basic Organisation and customer data
+* Gather user requirements for tracking purposes
 * Build Kanban Boards
-* Setup Request for Changes (RFC)
+* Create projects/tasks for deliverying
+* Plan out your development using Sprints
+* Setup Request for Changes (RFC) for deployments
 
 
 
@@ -23,13 +25,14 @@ NearBeach is an Open Source Project Management system built using VueJS and the 
 
 .. note:: If you want to setup a local development environment, please view our :ref:`local_development_environment`.
 
+.. note:: If you want to deploy a docker build of NearBeach, please view our :ref:`quick-install-docker`.
 
 -----------
 Who are we?
 -----------
 
 Welcome to NearBeach. We are a small community of developers trying to make tools to help you manage your projects. Why not 
-[join our community](https://discord.gg/64uhRztS6n) and we can build the tools that you require.
+`join our community <https://discord.gg/fbhSjdnv>`_ and we can build the tools that you require.
 
 .. toctree::
     :maxdepth: 2
@@ -76,14 +79,21 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
 .. toctree::
     :maxdepth: 2
     :hidden:
+    :caption: 🤕 Comman Usage
+
+    Common Usage </005-common-usage/index>
+
+.. toctree::
+    :maxdepth: 2
+    :hidden:
     :caption: 🛝 Procedure
 
-    Procedures </005-procedures/index>
+    Procedures </006-procedures/index>
 
 .. toctree::
     :maxdepth: 2
     :hidden:
     :caption: 🥋 Misc
 
-    Misc </006-misc/index>
+    Misc </007-misc/index>
 
