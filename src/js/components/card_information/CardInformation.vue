@@ -305,7 +305,7 @@ export default {
 					kanban_card_id: all_data.cardId,
 					kanban_card_text: all_data.cardTitle,
 					kanban_card_description:
-					all_data.cardDescriptionModel,
+					all_data.cardDescription,
 					// kanban_column: all_data.cardColumn,
 					// kanban_level: all_data.cardLevel,
 					// kanban_card_priority: all_data.cardPriority,
