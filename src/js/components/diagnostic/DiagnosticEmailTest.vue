@@ -8,12 +8,12 @@
 			</p>
 			<p class="text-instructions">
 				Potential Issues
-				<ul>
-					<li>Spam Blocking Email</li>
-					<li>Server not sending</li>
-					<li>Email Credentials Incorrect</li>
-				</ul>
 			</p>
+			<ul>
+				<li>Spam Blocking Email</li>
+				<li>Server not sending</li>
+				<li>Email Credentials Incorrect</li>
+			</ul>
 		</div>
 		<div class="col-md-8">
 			<button class="btn btn-warning"
