@@ -33,7 +33,7 @@ Setup User Infrastructure
 
 .. note:: Users will need to be connected to both a Group and Permission set before being able to log in.
 
-Best method of setting NearBeach up for new users is to;
+To setup new users in NearBeach, please follow the following process;
 
 1. Create the required permission sets - please see :ref:`manage-permission-sets`.
 
