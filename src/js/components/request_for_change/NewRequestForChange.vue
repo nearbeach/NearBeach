@@ -20,7 +20,7 @@
 				<rfc-details
 					v-bind:uuid="uuid"
 					v-bind:group-results="groupResults"
-					v-bind:user-group-results="userGroupResults"
+					v-bind:user-group-permissions="userGroupPermissions"
 					v-on:update_validation="updateValidation($event)"
 					v-on:update_values="updateValues($event)"
 					v-bind:style="displayTab(1)"
@@ -136,7 +136,7 @@ export default {
 			type: String,
 			default: "",
 		},
-		userGroupResults: {
+		userGroupPermissions: {
 			type: Array,
 			default: () => {
 				return [];

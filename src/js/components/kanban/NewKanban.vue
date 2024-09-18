@@ -75,9 +75,10 @@
 				<!-- Group Permissions -->
 				<hr/>
 				<group-permissions
+					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
 					v-bind:destination="'kanban_board'"
-					v-bind:user-group-results="userGroupResults"
+					v-bind:user-group-permissions="userGroupPermissions"
 					v-on:update_group_model="updateGroupModel($event)"
 					v-bind:is-dirty="v$.groupModel.$dirty"
 				></group-permissions>
@@ -137,7 +138,7 @@ export default {
 			type: String,
 			default: "",
 		},
-		userGroupResults: {
+		userGroupPermissions: {
 			type: Array,
 			default: () => {
 				return [];
@@ -178,6 +179,7 @@ export default {
 				},
 			],
 			disableSubmitButton: false,
+			displayGroupPermissionIssue: false,
 			groupModel: [],
 			kanbanBoardNameModel: "",
 			levelModel: [
@@ -247,7 +249,8 @@ export default {
 			if (
 				this.v$.$invalid ||
 				!this.uniqueKanbanBoardName ||
-				this.checkingKanbanBoardName
+				this.checkingKanbanBoardName ||
+				this.displayGroupPermissionIssue
 			) {
 				this.$store.dispatch("newToast", {
 					header: "Please check validation",
@@ -331,6 +334,17 @@ export default {
 		},
 		updateGroupModel(data) {
 			this.groupModel = data;
+
+			//Calculate to see if the user's groups exist in the groupModel AND
+			//Make sure the user has ENOUGH permissions.
+			this.displayGroupPermissionIssue = this.userGroupPermissions.filter(row => {
+				//Condition 1 - group model includes current group
+				//Condition 2 - user has create permissions on group
+				const condition_1 = this.groupModel.includes(row.group_id);
+				const condition_2 = row.object_permission_value >= 3;
+
+				return condition_1 && condition_2;
+			}).length === 0;
 		},
 		updatePropertyList(data) {
 			this[data.source] = data.data;

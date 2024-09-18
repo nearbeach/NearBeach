@@ -9,7 +9,7 @@
 		aria-hidden="true"
 	>
 		<div
-			class="modal-dialog modal-lg"
+			class="modal-dialog modal-lg modal-fullscreen-lg-down"
 			role="document"
 		>
 			<div class="modal-content">
