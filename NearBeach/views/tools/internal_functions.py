@@ -1,8 +1,11 @@
 from django.contrib.auth import get_user_model
+from django.db.models import F, Value as V, Max
+from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.models import (
     ChangeTask,
     Customer,
+    Group,
     KanbanBoard,
     KanbanCard,
     Organisation,
@@ -14,6 +17,8 @@ from NearBeach.models import (
     User,
     UserGroup,
 )
+
+import json
 
 OBJECT_DICT = {
     "change_task": ChangeTask.objects,
@@ -31,6 +36,19 @@ OBJECT_DICT = {
 
 
 # Internal function
+def get_all_groups():
+    group_results = Group.objects.filter(
+        is_deleted=False,
+    ).values(
+        "group_id",
+        "group_name",
+        "parent_group_id",
+    )
+
+    return json.dumps(list(group_results), cls=DjangoJSONEncoder)
+
+
+# Internal function
 def get_object_from_destination(input_object, destination, location_id):
     """
     To stop the repeat code of finding specific objects using destination and location_id - we will import
@@ -44,6 +62,38 @@ def get_object_from_destination(input_object, destination, location_id):
 
     # Just send back the array
     return input_object
+
+
+# Internal Function
+def get_user_group_permission(username, object_types):
+    """
+    Function will get a list of ALL current groups assigned to the user. It will then gather the permissions for each
+    of the object types and groups.
+
+    :param username: This is the username for the user. Please use request.user
+    :param object_types: This is an array of types that you want to look up. Example. ["project"] or ["project", "task"]
+
+    :return: returns json ready to be placed within the CONTEXT
+    """
+    results = UserGroup.objects.none()
+    # object_types = object_types + ["document", "kanban_comment", "project_history", "task_history"]
+
+    for single_type in object_types:
+        results = results.union(UserGroup.objects.filter(
+            is_deleted=False,
+            username_id=username,
+        ).annotate(
+            object_type=V(single_type),
+            group_name=F("group__group_name"),
+        ).values(
+            "group_id",
+            "group_name",
+            "object_type",
+        ).annotate(
+            object_permission_value=Max(F"permission_set__{single_type}")
+        ))
+
+    return json.dumps(list(results), cls=DjangoJSONEncoder)
 
 
 # Internal Function

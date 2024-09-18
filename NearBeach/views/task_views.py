@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.forms import NewTaskForm, TaskInformationForm
 from NearBeach.models import Group, UserGroup, ObjectAssignment, ListOfTaskStatus
-from NearBeach.views.tools.internal_functions import Task, Organisation
+from NearBeach.views.tools.internal_functions import Task, Organisation, get_all_groups, get_user_group_permission
 from NearBeach.views.theme_views import get_theme
 
 import json, uuid
@@ -20,41 +20,21 @@ import json, uuid
 @check_specific_object_permissions(min_permission_level=3, object_lookup="task")
 def new_task(request, *args, **kwargs):
     """
-    :param request:
-    :return:
-    """
-    # ADD IN PERMISSIONS CHECKER
+    Controller for the "/new_task" route
 
+    :param request: Django variable
+    :return: Http Response
+    """
     # Template
     t = loader.get_template("NearBeach/tasks/new_task.html")
-
-    # Get data
-    group_results = Group.objects.filter(
-        is_deleted=False,
-    )
-
-    # Get list of user groups
-    user_group_results = (
-        UserGroup.objects.filter(
-            is_deleted=False,
-            username=request.user,
-        )
-        .values(
-            "group_id",
-            "group__group_name",
-        )
-        .distinct()
-    )
 
     user_level = kwargs["user_level"]
 
     # Context
     c = {
         "nearbeach_title": "New Task",
-        "group_results": serializers.serialize("json", group_results),
-        "user_group_results": json.dumps(
-            list(user_group_results), cls=DjangoJSONEncoder
-        ),
+        "group_results": get_all_groups(),
+        "user_group_permissions": get_user_group_permission(request.user, ["task"]),
         "need_tinymce": True,
         "uuid": str(uuid.uuid4()),
         "user_level": user_level,

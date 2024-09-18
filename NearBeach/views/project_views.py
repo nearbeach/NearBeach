@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.template import loader
 from NearBeach.forms import NewProjectForm, ProjectForm
 from NearBeach.models import Group, UserGroup, ObjectAssignment, ListOfProjectStatus
-from NearBeach.views.tools.internal_functions import Project, Organisation
+from NearBeach.views.tools.internal_functions import Project, Organisation, get_user_group_permission, get_all_groups
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.document_views import transfer_new_object_uploads
@@ -21,40 +21,22 @@ import json, uuid
 @check_specific_object_permissions(min_permission_level=3, object_lookup="project")
 def new_project(request, *args, **kwargs):
     """
-    :param request:
-    :return:
+    The controller for the "/new_project" route
+
+    :param request: Django Variable
+    :return: Http Response
     """
     t = loader.get_template("NearBeach/projects/new_project.html")
-
-    # Get data we require
-    group_results = Group.objects.filter(
-        is_deleted=False,
-    )
-
-    # Get the USER groups
-    user_group_results = (
-        UserGroup.objects.filter(
-            is_deleted=False,
-            username=request.user,
-        )
-        .values(
-            "group_id",
-            "group__group_name",
-        )
-        .distinct()
-    )
 
     user_level = kwargs["user_level"]
 
     # Context
     c = {
-        "group_results": serializers.serialize("json", group_results),
+        "group_results": get_all_groups(),
         "need_tinymce": True,
         "nearbeach_title": "New Project",
         "theme": get_theme(request),
-        "user_group_results": json.dumps(
-            list(user_group_results), cls=DjangoJSONEncoder
-        ),
+        "user_group_permissions": get_user_group_permission(request.user, ["project"]),
         "user_level": user_level,
         "uuid": str(uuid.uuid4()),
     }

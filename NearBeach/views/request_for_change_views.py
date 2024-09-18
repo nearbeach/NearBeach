@@ -12,6 +12,7 @@ from NearBeach.forms import (
     UpdateRFCStatus,
 )
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
+from NearBeach.views.tools.internal_functions import get_all_groups, get_user_group_permission
 from NearBeach.models import (
     RequestForChange,
     User,
@@ -128,33 +129,12 @@ def new_request_for_change(request, *args, **kwargs):
     # Get template
     t = loader.get_template("NearBeach/request_for_change/new_request_for_change.html")
 
-    # Get data
-    group_results = Group.objects.filter(
-        is_deleted=False,
-    )
-
-    # Get list of user groups
-    user_group_results = (
-        UserGroup.objects.filter(
-            is_deleted=False,
-            username=request.user,
-        )
-        .values(
-            "group_id",
-            "group__group_name",
-        )
-        .distinct()
-    )
-
-    # Convert ORM to JSON
-    user_group_results = json.dumps(list(user_group_results), cls=DjangoJSONEncoder)
-
     # Context
     c = {
         "need_tinymce": True,
-        "group_results": serializers.serialize("json", group_results),
+        "group_results": get_all_groups(),
         "nearbeach_title": "New RFC",
-        "user_group_results": user_group_results,
+        "user_group_permissions": get_user_group_permission(request.user, ["request_for_change"]),
         "theme": get_theme(request),
         "uuid": uuid.uuid4,
     }

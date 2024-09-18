@@ -427,7 +427,7 @@ def associated_objects(request, destination, location_id, *args, **kwargs):
     """
     # Organisations have a special method. We will return the results directly from this method to the user.
     if destination == "organisation":
-        return associated_objects_organisations(location_id)
+        return associated_objects_organisations(location_id, request.user)
 
     # Get the data
     object_assignment_results = ObjectAssignment.objects.filter(
@@ -437,25 +437,40 @@ def associated_objects(request, destination, location_id, *args, **kwargs):
         object_assignment_results, destination, location_id
     )
 
+    # User Group Permissions
+    user_group_assignment = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        group_id__in=UserGroup.objects.filter(
+            is_deleted=False,
+            username=request.user,
+        ).values("group_id"),
+    )
+
     project_results = Project.objects.filter(
         is_deleted=False,
         project_id__in=object_assignment_results.filter(
-            project_id__isnull=False
+            project_id__in=user_group_assignment.filter(
+                project_id__isnull=False,
+            ).values("project_id"),
         ).values("project_id"),
     ).values()
 
     requirement_results = Requirement.objects.filter(
         is_deleted=False,
         requirement_id__in=object_assignment_results.filter(
-            requirement_id__isnull=False
+            requirement_id__in=user_group_assignment.filter(
+                requirement_id__isnull=False,
+            ).values("requirement_id"),
         ).values("requirement_id"),
     ).values()
 
     task_results = Task.objects.filter(
         is_deleted=False,
-        task_id__in=object_assignment_results.filter(task_id__isnull=False).values(
-            "task_id"
-        ),
+        task_id__in=object_assignment_results.filter(
+            task_id__in=user_group_assignment.filter(
+                task_id__isnull=False,
+            ).values("task_id")
+        ).values("task_id"),
     ).values()
 
     # Return the JSON Response back - which will return strait to the user
@@ -469,7 +484,7 @@ def associated_objects(request, destination, location_id, *args, **kwargs):
 
 
 # Internal Functions
-def associated_objects_organisations(location_id):
+def associated_objects_organisations(location_id, username):
     """
     Due to organisation's links being connected to the objects directly. We will need to query all the objects that
     can be related to an organisation, and combine them into one JSON output.
@@ -479,10 +494,22 @@ def associated_objects_organisations(location_id):
     :param location_id:
     :return:
     """
+    # Get association table
+    object_assignment_results = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        group_id__in=UserGroup.objects.filter(
+            is_deleted=False,
+            username=username
+        ).values("group_id")
+    )
+
     # Get the data
     project_results = Project.objects.filter(
         is_deleted=False,
         organisation=location_id,
+        project_id__in=object_assignment_results.filter(
+            project_id__isnull=False,
+        ).values("project_id"),
     ).annotate(
         project_status_text=F("project_status__project_status"),
     ).exclude(
@@ -497,6 +524,9 @@ def associated_objects_organisations(location_id):
     requirement_results = Requirement.objects.filter(
         is_deleted=False,
         organisation=location_id,
+        requirement_id__in=object_assignment_results.filter(
+            requirement_id__isnull=False
+        ).values("requirement_id"),
     ).annotate(
         requirement_status_text=F("requirement_status__requirement_status"),
     ).exclude(
@@ -510,6 +540,9 @@ def associated_objects_organisations(location_id):
     task_results = Task.objects.filter(
         is_deleted=False,
         organisation=location_id,
+        task_id__in=object_assignment_results.filter(
+            task_id__isnull=False,
+        ).values("task_id"),
     ).annotate(
         task_status_text=F("task_status__task_status"),
     ).exclude(

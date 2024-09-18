@@ -124,7 +124,7 @@
 					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
 					v-bind:destination="'requirement'"
-					v-bind:user-group-results="userGroupResults"
+					v-bind:user-group-permissions="userGroupPermissions"
 					v-on:update_group_model="updateGroupModel($event)"
 					v-bind:is-dirty="v$.groupModel.$dirty"
 				></group-permissions>
@@ -210,7 +210,7 @@ export default {
 				return [];
 			},
 		},
-		userGroupResults: {
+		userGroupPermissions: {
 			type: Array,
 			default: () => {
 				return [];
@@ -268,6 +268,14 @@ export default {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect || this.displayGroupPermissionIssue) {
+				//Tell the user to fix the validation issues
+				this.$store.dispatch("newToast", {
+					header: "Please check all validation",
+					message: "There are some fields that are filled in incorrectly. Please correct these mistakes.",
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+
 				return;
 			}
 
@@ -315,9 +323,15 @@ export default {
 			//Update the group model
 			this.groupModel = newGroupModel;
 
-			//Calculate to see if the user's groups exist in the groupModel
-			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
-				return this.groupModel.includes(row.group_id);
+			//Calculate to see if the user's groups exist in the groupModel AND
+			//Make sure the user has ENOUGH permissions.
+			this.displayGroupPermissionIssue = this.userGroupPermissions.filter(row => {
+				//Condition 1 - group model includes current group
+				//Condition 2 - user has create permissions on group
+				const condition_1 = this.groupModel.includes(row.group_id);
+				const condition_2 = row.object_permission_value >= 3;
+
+				return condition_1 && condition_2;
 			}).length === 0;
 		},
 		updateStakeholderModel(newStakeholderModel) {

@@ -12,6 +12,8 @@ from NearBeach.models import (
 )
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.tools.internal_functions import (
+    get_all_groups,
+    get_user_group_permission,
     KanbanCard,
     KanbanBoard,
     Project,
@@ -412,41 +414,20 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
 @check_specific_object_permissions(min_permission_level=3, object_lookup="kanban_card")
 def new_kanban(request, *args, **kwargs):
     """
-    Renders out the new kanban page
-    :param request:
-    :return:
+    Controller for the "/new_kanban" route
+
+    :param request: Django variable
+    :return: Http Request
     """
-    # Check user permissions
-
-    # Get data
-    group_results = Group.objects.filter(
-        is_deleted=False,
-    )
-
-    # Get list of user groups
-    user_group_results = (
-        UserGroup.objects.filter(
-            is_deleted=False,
-            username=request.user,
-        )
-        .values(
-            "group_id",
-            "group__group_name",
-        )
-        .distinct()
-    )
-
     # Get tempalte
     t = loader.get_template("NearBeach/kanban/new_kanban.html")
 
     # Context
     c = {
-        "group_results": serializers.serialize("json", group_results),
+        "group_results": get_all_groups(),
         "need_tinymce": False,
         "nearbeach_title": "New Kanban",
-        "user_group_results": json.dumps(
-            list(user_group_results), cls=DjangoJSONEncoder
-        ),
+        "user_group_permissions": get_user_group_permission(request.user, ["kanban_board"]),
         "theme": get_theme(request),
     }
 

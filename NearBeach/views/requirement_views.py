@@ -15,6 +15,7 @@ from NearBeach.forms import (
     Organisation,
     UpdateRequirementForm,
 )
+from NearBeach.views.tools.internal_functions import get_all_groups, get_user_group_permission
 from NearBeach.models import (
     Requirement,
     ObjectAssignment,
@@ -194,23 +195,6 @@ def new_requirement(request, *args, **kwargs):
         is_deleted=False,
     )
 
-    group_results = Group.objects.filter(
-        is_deleted=False,
-    )
-
-    # Get list of user groups
-    user_group_results = (
-        UserGroup.objects.filter(
-            is_deleted=False,
-            username=request.user,
-        )
-        .values(
-            "group_id",
-            "group__group_name",
-        )
-        .distinct()
-    )
-
     # Load template
     t = loader.get_template("NearBeach/requirements/new_requirements.html")
 
@@ -220,10 +204,8 @@ def new_requirement(request, *args, **kwargs):
         "nearbeach_title": "New Requirements",
         "status_list": serializers.serialize("json", status_list),
         "type_list": serializers.serialize("json", type_list),
-        "group_results": serializers.serialize("json", group_results),
-        "user_group_results": json.dumps(
-            list(user_group_results), cls=DjangoJSONEncoder
-        ),
+        "group_results": get_all_groups(),
+        "user_group_permissions": get_user_group_permission(request.user, ["requirement"]),
         "uuid": str(uuid.uuid4()),
         "theme": get_theme(request),
     }

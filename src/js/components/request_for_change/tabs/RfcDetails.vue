@@ -49,7 +49,7 @@
 			v-bind:group-results="groupResults"
 			v-bind:destination="'request_for_change'"
 			v-bind:is-dirty="v$.groupModel.$dirty"
-			v-bind:user-group-results="userGroupResults"
+			v-bind:user-group-permissions="userGroupPermissions"
 			v-on:update_group_model="updateGroupModel($event)"
 		></group-permissions>
 
@@ -121,7 +121,7 @@ export default {
 				return [];
 			},
 		},
-		userGroupResults: {
+		userGroupPermissions: {
 			type: Array,
 			default: () => {
 				return [];
@@ -184,6 +184,14 @@ export default {
 			this.updatingLeadList = true;
 			this.rfcChangeLeadModel = "";
 
+			//If there are no group results - blank out the options for rfcChangeLead, and just return
+			if (this.groupModel.length === 0) {
+				this.rfcChangeLeadFixList = [];
+				this.updatingLeadList = false;
+
+				return;
+			}
+
 			// Save the seach data in FormData
 			const data_to_send = new FormData();
 			this.groupModel.forEach((row) => {
@@ -227,9 +235,15 @@ export default {
 		updateGroupModel(data) {
 			this.groupModel = data;
 
-			//Calculate to see if the user's groups exist in the groupModel
-			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
-				return this.groupModel.includes(row.group_id);
+			//Calculate to see if the user's groups exist in the groupModel AND
+			//Make sure the user has ENOUGH permissions.
+			this.displayGroupPermissionIssue = this.userGroupPermissions.filter(row => {
+				//Condition 1 - group model includes current group
+				//Condition 2 - user has create permissions on group
+				const condition_1 = this.groupModel.includes(row.group_id);
+				const condition_2 = row.object_permission_value >= 3;
+
+				return condition_1 && condition_2;
 			}).length === 0;
 
 			//Update up stream
@@ -242,9 +256,12 @@ export default {
 		updateValidation() {
 			this.v$.$touch();
 
+			//Condtions 1: this.v$.$invalid === false
+			//Condition 2: displayGroupPermissions === false
+			//Both conditions have to be met to let the user pass
 			this.$emit("update_validation", {
 				tab: "tab_1",
-				value: !this.v$.$invalid,
+				value: !this.v$.$invalid && !this.displayGroupPermissionIssue,
 			});
 		},
 		updateValues(modelName, modelValue) {
