@@ -5,7 +5,7 @@
 	></render-user-card-list>
 
 	<div
-		class="row"
+		class="row mt-3"
 		v-if="userLevel > 1 && kanbanBoardStatus !== 'Closed'"
 	>
 		<div class="col-md-12">
