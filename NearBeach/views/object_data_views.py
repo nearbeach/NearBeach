@@ -437,25 +437,40 @@ def associated_objects(request, destination, location_id, *args, **kwargs):
         object_assignment_results, destination, location_id
     )
 
+    # User Group Permissions
+    user_group_assignment = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        group_id__in=UserGroup.objects.filter(
+            is_deleted=False,
+            username=request.user,
+        ).values("group_id"),
+    )
+
     project_results = Project.objects.filter(
         is_deleted=False,
         project_id__in=object_assignment_results.filter(
-            project_id__isnull=False
+            project_id__in=user_group_assignment.filter(
+                project_id__isnull=False,
+            ).values("project_id"),
         ).values("project_id"),
     ).values()
 
     requirement_results = Requirement.objects.filter(
         is_deleted=False,
         requirement_id__in=object_assignment_results.filter(
-            requirement_id__isnull=False
+            requirement_id__in=user_group_assignment.filter(
+                requirement_id__isnull=False,
+            ).values("requirement_id"),
         ).values("requirement_id"),
     ).values()
 
     task_results = Task.objects.filter(
         is_deleted=False,
-        task_id__in=object_assignment_results.filter(task_id__isnull=False).values(
-            "task_id"
-        ),
+        task_id__in=object_assignment_results.filter(
+            task_id__in=user_group_assignment.filter(
+                task_id__isnull=False,
+            ).values("task_id")
+        ).values("task_id"),
     ).values()
 
     # Return the JSON Response back - which will return strait to the user
