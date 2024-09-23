@@ -103,7 +103,7 @@
 		</div>
 
 		<!-- ADD DOCUMENTS AND FOLDER BUTTON -->
-		<hr v-if="userLevel > 1" />
+		<hr v-if="userLevel > 1 || hasDocumentPermission" />
 		<div class="btn-group save-changes"
 			 v-if="readOnly === false"
 		>
@@ -112,7 +112,7 @@
 				type="button"
 				data-bs-toggle="dropdown"
 				aria-expanded="false"
-				v-if="userLevel > 1"
+				v-if="userLevel > 1 || hasDocumentPermission"
 			>
 				New Document/File
 			</button>
@@ -187,9 +187,15 @@ export default {
 			documentObjectCount: "getDocumentObjectCount",
 			folderFilteredList: "getFolderFilteredList",
 			locationId: "getLocationId",
-			userLevel: "getUserLevel",
 			rootUrl: "getRootUrl",
+			userLevel: "getUserLevel",
 		}),
+		...mapGetters([
+			"getUserExtraPermission",
+		]),
+		hasDocumentPermission() {
+      		return this.getUserExtraPermission("document");
+    	},
 	},
 	watch: {
 		overrideLocationId() {

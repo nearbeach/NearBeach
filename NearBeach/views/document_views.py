@@ -19,6 +19,7 @@ from NearBeach.views.tools.internal_functions import (
     set_object_from_destination,
     get_object_from_destination,
 )
+from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
 from ..forms import (
     AddFolderForm,
     Folder,
@@ -250,7 +251,8 @@ def document_remove_folder(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_upload(request, destination, location_id):
+@check_user_generic_permissions(1, "document")
+def document_upload(request, destination, location_id, *args, **kwargs):
     """
     The following function will deal with the uploaded document. It will first;
     1. Check user's permission

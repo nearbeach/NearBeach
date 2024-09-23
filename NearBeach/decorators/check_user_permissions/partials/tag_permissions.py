@@ -2,7 +2,7 @@ from django.db.models import Max, Q
 from NearBeach.models import UserGroup
 
 
-def tag_permissions(request, kwargs):
+def tag_permissions(request, kwargs, extra_permissions=""):
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
@@ -14,4 +14,4 @@ def tag_permissions(request, kwargs):
         Max("permission_set__tag")
     )["permission_set__tag__max"]
 
-    return True, user_level
+    return True, user_level, False

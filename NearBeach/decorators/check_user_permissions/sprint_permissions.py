@@ -39,7 +39,7 @@ def check_sprint_permissions_with_destination(min_permission_level):
 
             # User the FUNCTION_DICT to determine which partial permissions we need
             # to reference
-            passes, user_level = FUNCTION_DICT[destination](request, kwargs)
+            passes, user_level, _ = FUNCTION_DICT[destination](request, kwargs)
 
             if not passes:
                 raise PermissionDenied
@@ -84,10 +84,10 @@ def check_sprint_permission_with_sprint(min_permission_level):
             if sprint_results.project is not None:
                 # We can assume this is a project
                 kwargs["project_id"] = sprint_results.project_id
-                passes, user_level = FUNCTION_DICT["project"](request, kwargs)
+                passes, user_level, _ = FUNCTION_DICT["project"](request, kwargs)
             else:
                 kwargs["requirement_id"] = sprint_results.requirement_id
-                passes, user_level = FUNCTION_DICT["requirement"](request, kwargs)
+                passes, user_level, _ = FUNCTION_DICT["requirement"](request, kwargs)
 
             # Check to see if it passes
             if not passes:

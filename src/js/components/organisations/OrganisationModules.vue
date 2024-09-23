@@ -198,6 +198,15 @@
 							v-bind:location-id="locationId"
 							v-bind:destination="destination"
 						></notes-module>
+
+						<edit-history-note-wizard></edit-history-note-wizard>
+
+						<new-history-note-wizard
+							v-bind:location-id="locationId"
+							v-bind:destination="destination"
+						></new-history-note-wizard>
+
+						<confirm-note-delete></confirm-note-delete>
 					</div>
 				</div>
 			</div>
@@ -231,18 +240,27 @@ import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
 import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
 import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
 import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
+import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
+import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
+import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
 
 export default {
 	name: "OrganisationModules",
 	components: {
-		AddFolderWizard, AddLinkWizard, UploadDocumentWizard, ConfirmFileDeleteVue,
+		AddFolderWizard,
+		AddLinkWizard,
 		AssociatedObjects,
+		ConfirmFileDeleteVue,
+		ConfirmNoteDelete,
 		CustomersListModule,
 		DocumentsModule,
+		EditHistoryNoteWizard,
 		Icon,
 		ListTagsModule,
 		NewCustomerModal,
+		NewHistoryNoteWizard,
 		NotesModule,
+		UploadDocumentWizard,
 	},
 	props: {
 		customerResults: {

@@ -45,7 +45,7 @@ def check_gantt_chart_permissions_with_destination(min_permission_level):
 
             # User the FUNCTION_DICT to determine which partial permissions we need
             # to reference
-            passes, user_level = FUNCTION_DICT[destination](request, kwargs)
+            passes, user_level, _ = FUNCTION_DICT[destination](request, kwargs)
 
             if not passes:
                 raise PermissionDenied

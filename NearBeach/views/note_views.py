@@ -18,7 +18,7 @@ from NearBeach.views.tools.internal_functions import set_object_from_destination
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-@check_user_generic_permissions(min_permission_level=2)
+@check_user_generic_permissions(min_permission_level=2, extra_permissions="history")
 def add_notes(request, destination, location_id, *args, **kwargs):
     # Add the note, and get the results back
     note_json = generic_add_note(request, destination, location_id)
