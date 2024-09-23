@@ -1359,6 +1359,10 @@ class PermissionSet(models.Model):
         choices=PERMISSION_BOOLEAN,
         default=0,
     )
+    organisation_note = models.IntegerField(
+        choices=PERMISSION_BOOLEAN,
+        default=0,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

@@ -52,9 +52,9 @@ def requirement_item_permissions(request, kwargs, extra_permissions=""):
             permission_set__document=1,
         ).count() > 0
 
-    # if extra_permissions == "history":
-    #     extra_level = user_group_results.filter(
-    #         permission_set__requirement_item_history=1
-    #     ).count() > 0
+    if extra_permissions == "note":
+        extra_level = user_group_results.filter(
+            permission_set__requirement_item_note=1
+        ).count() > 0
 
     return True, user_level, extra_level

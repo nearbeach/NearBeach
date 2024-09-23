@@ -189,23 +189,47 @@
 
 						<single-permission-properties
 							v-bind:property="'kanbanNoteModel'"
-							v-bind:property-label="'Grants comments on Kanban Boards'"
+							v-bind:property-label="'Grants notes on Kanban Boards'"
 							v-bind:property-value="kanbanNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
+							v-bind:property="'organisationNoteModel'"
+							v-bind:property-label="'Grants notes on Organisations'"
+							v-bind:property-value="organisationNoteModel"
+							v-bind:list-of-choices="permissionBoolean"
+							v-on:update_property_value="updatePropertyValue($event)"
+						></single-permission-properties>
+
+						<single-permission-properties
 							v-bind:property="'projectNoteModel'"
-							v-bind:property-label="'Grants comments on Projects'"
+							v-bind:property-label="'Grants notes on Projects'"
 							v-bind:property-value="projectNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
+							v-bind:property="'requirementNoteModel'"
+							v-bind:property-label="'Grants notes on Requirements'"
+							v-bind:property-value="requirementNoteModel"
+							v-bind:list-of-choices="permissionBoolean"
+							v-on:update_property_value="updatePropertyValue($event)"
+						></single-permission-properties>
+
+						<single-permission-properties
+							v-bind:property="'requirementItemNoteModel'"
+							v-bind:property-label="'Grants notes on Requirement Items'"
+							v-bind:property-value="requirementItemNoteModel"
+							v-bind:list-of-choices="permissionBoolean"
+							v-on:update_property_value="updatePropertyValue($event)"
+						></single-permission-properties>
+
+						<single-permission-properties
 							v-bind:property="'taskNoteModel'"
-							v-bind:property-label="'Grants comments on Tasks'"
+							v-bind:property-label="'Grants notes on Tasks'"
 							v-bind:property-value="taskNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
 							v-on:update_property_value="updatePropertyValue($event)"
@@ -335,6 +359,10 @@ export default {
 			kanbanNoteModel: this.permissionSetResults[0].fields.kanban_note,
 			projectNoteModel: this.permissionSetResults[0].fields.project_note,
 			taskNoteModel: this.permissionSetResults[0].fields.task_note,
+			requirementNoteModel: this.permissionSetResults[0].fields.requirement_note,
+			requirementItemNoteModel: this.permissionSetResults[0].fields.requirement_item_note,
+			organisationNoteModel: this.permissionSetResults[0].fields.organisation_note,
+
 		};
 	},
 	mixins: [getThemeMixin],

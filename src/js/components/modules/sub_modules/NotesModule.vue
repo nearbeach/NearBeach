@@ -59,7 +59,7 @@ export default {
 			"getUserExtraPermission",
 		]),
 		hasNotePermission() {
-			return this.getUserExtraPermission(`${this.destination}_history`);
+			return this.getUserExtraPermission(`${this.destination}_note`);
 		},
 	},
 	methods: {
