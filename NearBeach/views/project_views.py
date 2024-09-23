@@ -158,7 +158,7 @@ def project_information(request, project_id, *args, **kwargs):
         "project_is_closed": project_is_closed,
         "project_results": serializers.serialize("json", [project_results]),
         "status_options": json.dumps(list(status_options), cls=DjangoJSONEncoder),
-        "user_extra_permissions": get_user_group_permission(request.user, ["document", "project_history"]),
+        "user_extra_permissions": get_user_group_permission(request.user, ["document", "project_note"]),
         "user_level": user_level,
         "theme": get_theme(request),
     }

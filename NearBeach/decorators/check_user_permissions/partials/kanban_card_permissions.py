@@ -45,7 +45,7 @@ def kanban_card_permissions(request, kwargs, extra_permissions):
 
     if extra_permissions == "history":
         extra_level = user_group_results.filter(
-            permission_set__kanban_comment=1,
+            permission_set__kanban_note=1,
         ).count() > 0
 
     return True, user_level, extra_level
