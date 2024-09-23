@@ -14,4 +14,4 @@ def customer_permissions(request, kwargs):
         Max("permission_set__customer")
     )["permission_set__customer__max"]
 
-    return True, user_level
+    return True, user_level, False

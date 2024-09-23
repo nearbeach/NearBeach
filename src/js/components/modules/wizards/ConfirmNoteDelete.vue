@@ -82,7 +82,7 @@ export default {
 
 			//If destination is an organisation, we have a slightly different URL due to permissions.
 			let url = `${this.rootUrl}note/delete/${this.noteId}/`;
-			if (this.destination) {
+			if (this.destination === "organisation") {
 				url =  `${this.rootUrl}note/organisation/delete/${this.noteId}/`;
 			}
 

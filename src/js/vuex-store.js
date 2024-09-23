@@ -15,6 +15,7 @@ import {moduleNote} from "./vuex/noteVueX";
 import {moduleRfc} from "./vuex/rfcVueX";
 import {moduleToasts} from "./vuex/toastsVueX";
 import {moduleUrl} from "./vuex/urlVueX";
+import {moduleUserExtraPermissions} from "./vuex/userExtraPermissionsVueX";
 import {moduleUserLevel} from "./vuex/userLevelVueX";
 
 
@@ -38,6 +39,7 @@ export const store = createStore({
         rfc: moduleRfc,
         toasts: moduleToasts,
         url: moduleUrl,
+        userExtraPermissions: moduleUserExtraPermissions,
         userLevel: moduleUserLevel,
 
         //User Settings

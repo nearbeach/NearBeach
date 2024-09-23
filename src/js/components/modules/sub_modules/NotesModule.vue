@@ -14,13 +14,13 @@
 		></list-notes>
 
 		<!-- ADD NOTE HISTORY -->
-		<hr v-if="userLevel > 1" />
+		<hr v-if="userLevel > 1 || hasNotePermission" />
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<button
 					class="btn btn-primary save-changes"
 					v-on:click="createNewNote"
-					v-if="userLevel > 1"
+					v-if="userLevel > 1 || hasNotePermission"
 				>
 					Add Note to {{ destination }}
 				</button>
@@ -55,6 +55,12 @@ export default {
 			userLevel: "getUserLevel",
 			rootUrl: "getRootUrl",
 		}),
+		...mapGetters([
+			"getUserExtraPermission",
+		]),
+		hasNotePermission() {
+			return this.getUserExtraPermission(`${this.destination}_history`);
+		},
 	},
 	methods: {
 		createNewNote() {

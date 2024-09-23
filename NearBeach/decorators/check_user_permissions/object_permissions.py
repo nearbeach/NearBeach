@@ -39,7 +39,7 @@ FUNCTION_DICT = {
 }
 
 
-def check_user_generic_permissions(min_permission_level):
+def check_user_generic_permissions(min_permission_level, extra_permissions=""):
     """
     Checks the user's generic permissions. It will gather both the
     - destination
@@ -68,26 +68,26 @@ def check_user_generic_permissions(min_permission_level):
             if destination == "kanban_card":
                 # Setup kwargs to have kanban_card_id
                 kwargs["kanban_card_id"] = kwargs["location_id"]
-                passes, user_level = kanban_card_permissions(request, kwargs)
+                passes, user_level, extra_level = kanban_card_permissions(request, kwargs, extra_permissions)
             elif destination == "requirement_item":
                 # Setup kwargs to have requirement item id
                 kwargs["requirement_item_id"] = kwargs["location_id"]
-                passes, user_level = requirement_item_permissions(request, kwargs)
+                passes, user_level, extra_level = requirement_item_permissions(request, kwargs, extra_permissions)
             elif destination == "change_task":
                 # Setup kwargs to have change task id
                 kwargs["change_task_id"] = kwargs["location_id"]
-                passes, user_level = change_task_permissions(request, kwargs)
+                passes, user_level, extra_level = change_task_permissions(request, kwargs, extra_permissions)
             elif destination == "organisation":
-                passes, user_level = organisation_permissions(request, kwargs)
+                passes, user_level, extra_level = organisation_permissions(request, kwargs, extra_permissions)
             elif destination == "customer":
-                passes, user_level = customer_permissions(request, kwargs)
+                passes, user_level, extra_level = customer_permissions(request, kwargs)
             else:
-                passes, user_level = generic_permissions(request, destination, kwargs)
+                passes, user_level, extra_level = generic_permissions(request, destination, kwargs, extra_permissions)
 
             if not passes:
                 raise PermissionDenied
 
-            if user_level >= min_permission_level:
+            if user_level >= min_permission_level or extra_level:
                 # Everything is fine - continue on
                 return func(request, *args, **kwargs, user_level=user_level)
 
@@ -119,7 +119,7 @@ def check_specific_object_permissions(min_permission_level, object_lookup):
 
             # Use the FUNCTION_DICT to determine which partial permissions we need to
             # reference
-            passes, user_level = FUNCTION_DICT[object_lookup](request, kwargs)
+            passes, user_level, _ = FUNCTION_DICT[object_lookup](request, kwargs, "")
 
             if not passes:
                 raise PermissionDenied

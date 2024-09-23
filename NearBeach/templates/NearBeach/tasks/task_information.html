@@ -15,6 +15,7 @@
     <parent-modules v-bind:destination="'task'"
                     v-bind:is-read-only="{{ task_is_closed }}"
                     v-bind:location-id="{{task_id}}"
+                    v-bind:user-extra-permissions="{{ user_extra_permissions }}"
                     v-bind:user-level="{{ user_level }}"
                     v-bind:root-url="`{% url 'dashboard' %}`"
                     v-bind:static-url="`{% static '/' %}`"

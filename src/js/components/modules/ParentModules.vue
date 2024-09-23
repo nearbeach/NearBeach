@@ -403,6 +403,12 @@ export default {
 			type: String,
 			default: "",
 		},
+		userExtraPermissions: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
 		userLevel: {
 			type: Number,
 			default: 0,
@@ -431,6 +437,7 @@ export default {
 		});
 
 		//If is read only is true, we drop the user level to 1.
+		//If not read only, we send the correct userLevel up to VueX, as well as the extra permissions
 		if (this.isReadOnly) {
 			//Set everything as read only :)
 			this.$store.commit({
@@ -442,6 +449,12 @@ export default {
 			this.$store.commit({
 				type: "updateUserLevel",
 				userLevel: this.userLevel,
+			});
+
+			//Send extra permissions upstream
+			this.$store.commit({
+				type: "updateUserExtraPermissions",
+				userExtraPermissions: this.userExtraPermissions,
 			});
 		}
 	},

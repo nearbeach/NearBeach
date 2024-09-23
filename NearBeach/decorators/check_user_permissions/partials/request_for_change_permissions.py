@@ -3,7 +3,7 @@ from django.db.models import Max, Q
 
 
 # Internal Function
-def request_for_change_permissions(request, kwargs):
+def request_for_change_permissions(request, kwargs, extra_permissions=""):
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
@@ -28,11 +28,11 @@ def request_for_change_permissions(request, kwargs):
 
         # Check to make sure the user groups intersect
         if len(group_results) == 0:
-            return False, 0
+            return False, 0, False
 
     # Get the max permission value from user_group_results
     user_level = user_group_results.aggregate(
         Max("permission_set__request_for_change")
     )["permission_set__request_for_change__max"]
 
-    return True, user_level
+    return True, user_level, False
