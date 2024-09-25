@@ -2345,11 +2345,11 @@
     "kanban_note": 1,
     "project_note": 1,
     "task_note": 1,
-    "requirement_note": 0,
-    "requirement_item_note": 0,
+    "requirement_note": 1,
+    "requirement_item_note": 1,
     "organisation_note": 0,
     "date_created": "2023-02-15T09:03:06.209Z",
-    "date_modified": "2023-05-24T11:23:42.894Z",
+    "date_modified": "2024-09-25T09:10:03.005Z",
     "change_user": 1,
     "is_deleted": false
   }
@@ -3085,6 +3085,21 @@
     "date_created": "2023-09-06T09:36:33.239Z",
     "date_modified": "2023-09-06T09:36:33.239Z",
     "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.usergroup",
+  "pk": 8,
+  "fields": {
+    "username": 8,
+    "group": 2,
+    "permission_set": 6,
+    "report_to": null,
+    "group_leader": false,
+    "date_created": "2024-09-25T09:10:37.683Z",
+    "date_modified": "2024-09-25T09:10:37.683Z",
+    "change_user": 7,
     "is_deleted": false
   }
 },
@@ -5180,8 +5195,8 @@
   "model": "auth.user",
   "pk": 7,
   "fields": {
-    "password": "pbkdf2_sha256$600000$mm3IyCbjcofqWTSssaWcu6$dmbngBObwSr8Glv4jKyL1LandqtPNJ3epNfTT9dTs4U=",
-    "last_login": "2023-09-06T09:37:03.266Z",
+    "password": "pbkdf2_sha256$720000$LOuvwqm0i7IMvesslGvt4K$+3wQ/JnweVgmEYIffzyS3kv+HMWx2jrw+xkSrqm/u4o=",
+    "last_login": "2024-09-25T09:04:26.472Z",
     "is_superuser": true,
     "username": "dark_admin",
     "first_name": "Dark",
@@ -5190,6 +5205,24 @@
     "is_staff": false,
     "is_active": true,
     "date_joined": "2023-09-06T09:36:15.453Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 8,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$NWvmRMCfh3D6qWbNgpnVDA$F5fic/7kUyUHxLhDfBPJ8WjR82S233RGCJO61KNJpyQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "read_only_extra",
+    "first_name": "Read",
+    "last_name": "Only",
+    "email": "support@nearbeach.org",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-09-25T09:10:28.168Z",
     "groups": [],
     "user_permissions": []
   }
@@ -5720,6 +5753,14 @@
   "fields": {
     "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1rm8cG:YKlIkAtjptFKY3cmZkt8jsVLAhI7ajhEUr0BE4D7S5Y",
     "expire_date": "2024-04-01T08:45:08.164Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "w453g709b692nhazunuecnfofjhuunc9",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hBLgYEu3XsGMjCDrZrWQFkZ726bdKHb_95_bxGwrWNolUuYSAwCxOl3i5gePO-A7jjfFpmWeS1TlLsiD1rldSF-Xg73LzBiHbe3AYuWLHcZbEq-d2CdBuNVZtKgQQGyJ9tpb8AZh4bOPlM0kFH1KastOtVQ24vLnhXDWhp_vm-8PxQ:1stNwg:MDEmEu3ELWw44tH7DKm_nXI8QNDrElLBynYQvxAVnIA",
+    "expire_date": "2024-10-09T09:04:26.484Z"
   }
 }
 ]
