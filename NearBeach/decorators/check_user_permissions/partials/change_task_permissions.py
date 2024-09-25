@@ -2,7 +2,12 @@ from NearBeach.models import ChangeTask, Group, ObjectAssignment, UserGroup
 from django.db.models import Max, Q
 
 
-def change_task_permissions(request, kwargs, extra_permissions=""):
+def change_task_permissions(request, kwargs):
+    # Extra Permissions
+    extra_permissions = ""
+    if "extra_permissions" in kwargs:
+        extra_permissions = kwargs.get("extra_permissions")
+
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
@@ -46,11 +51,6 @@ def change_task_permissions(request, kwargs, extra_permissions=""):
         extra_level = user_group_results.filter(
             permission_set__document=1,
         ).count() > 0
-
-    # if extra_permissions == "history":
-    #     extra_level = user_group_results.filter(
-    #         permission_set__rfc_history=1,
-    #     ).count() > 0
 
     # Return
     return True, user_level, extra_level

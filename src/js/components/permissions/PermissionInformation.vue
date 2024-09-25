@@ -188,25 +188,49 @@
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'kanbanCommentModel'"
-							v-bind:property-label="'Grants comments on Kanban Boards'"
-							v-bind:property-value="kanbanCommentModel"
+							v-bind:property="'kanbanNoteModel'"
+							v-bind:property-label="'Grants notes on Kanban Boards'"
+							v-bind:property-value="kanbanNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'projectHistoryModel'"
-							v-bind:property-label="'Grants comments on Projects'"
-							v-bind:property-value="projectHistoryModel"
+							v-bind:property="'organisationNoteModel'"
+							v-bind:property-label="'Grants notes on Organisations'"
+							v-bind:property-value="organisationNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'taskHistoryModel'"
-							v-bind:property-label="'Grants comments on Tasks'"
-							v-bind:property-value="taskHistoryModel"
+							v-bind:property="'projectNoteModel'"
+							v-bind:property-label="'Grants notes on Projects'"
+							v-bind:property-value="projectNoteModel"
+							v-bind:list-of-choices="permissionBoolean"
+							v-on:update_property_value="updatePropertyValue($event)"
+						></single-permission-properties>
+
+						<single-permission-properties
+							v-bind:property="'requirementNoteModel'"
+							v-bind:property-label="'Grants notes on Requirements'"
+							v-bind:property-value="requirementNoteModel"
+							v-bind:list-of-choices="permissionBoolean"
+							v-on:update_property_value="updatePropertyValue($event)"
+						></single-permission-properties>
+
+						<single-permission-properties
+							v-bind:property="'requirementItemNoteModel'"
+							v-bind:property-label="'Grants notes on Requirement Items'"
+							v-bind:property-value="requirementItemNoteModel"
+							v-bind:list-of-choices="permissionBoolean"
+							v-on:update_property_value="updatePropertyValue($event)"
+						></single-permission-properties>
+
+						<single-permission-properties
+							v-bind:property="'taskNoteModel'"
+							v-bind:property-label="'Grants notes on Tasks'"
+							v-bind:property-value="taskNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
@@ -316,41 +340,29 @@ export default {
 	},
 	data() {
 		return {
-			permissionSetNameModel:
-			this.permissionSetResults[0].fields.permission_set_name,
-			administrationAssignUserToGroupModel:
-			this.permissionSetResults[0].fields
-				.administration_assign_user_to_group,
-			administrationCreateGroupModel:
-			this.permissionSetResults[0].fields
-				.administration_create_group,
-			administrationCreatePermissionSetModel:
-			this.permissionSetResults[0].fields
-				.administration_create_permission_set,
-			administrationCreateUserModel:
-			this.permissionSetResults[0].fields
-				.administration_create_user,
+			permissionSetNameModel: this.permissionSetResults[0].fields.permission_set_name,
+			administrationAssignUserToGroupModel: this.permissionSetResults[0].fields.administration_assign_user_to_group,
+			administrationCreateGroupModel: this.permissionSetResults[0].fields.administration_create_group,
+			administrationCreatePermissionSetModel: this.permissionSetResults[0].fields.administration_create_permission_set,
+			administrationCreateUserModel: this.permissionSetResults[0].fields.administration_create_user,
 			bugClientModel: this.permissionSetResults[0].fields.bug_client,
 			customerModel: this.permissionSetResults[0].fields.customer,
 			kanbanModel: this.permissionSetResults[0].fields.kanban_board,
-			kanbanCardModel:
-			this.permissionSetResults[0].fields.kanban_card,
-			organisationModel:
-			this.permissionSetResults[0].fields.organisation,
-			projectModel: this.permissionSetResults[0].fields.project,
-			requestForChangeModel:
-			this.permissionSetResults[0].fields.request_for_change,
-			requirementModel:
-			this.permissionSetResults[0].fields.requirement,
+			kanbanCardModel: this.permissionSetResults[0].fields.kanban_card,
+			organisationModel: this.permissionSetResults[0].fields.organisation,
+			projectModel: this.permissionSetResults[0].fields.project, 
+			requestForChangeModel: this.permissionSetResults[0].fields.request_for_change,
+			requirementModel: this.permissionSetResults[0].fields.requirement,
 			tagModel: this.permissionSetResults[0].fields.tag,
 			taskModel: this.permissionSetResults[0].fields.task,
 			documentModel: this.permissionSetResults[0].fields.document,
-			kanbanCommentModel:
-			this.permissionSetResults[0].fields.kanban_comment,
-			projectHistoryModel:
-			this.permissionSetResults[0].fields.project_history,
-			taskHistoryModel:
-			this.permissionSetResults[0].fields.task_history,
+			kanbanNoteModel: this.permissionSetResults[0].fields.kanban_note,
+			projectNoteModel: this.permissionSetResults[0].fields.project_note,
+			taskNoteModel: this.permissionSetResults[0].fields.task_note,
+			requirementNoteModel: this.permissionSetResults[0].fields.requirement_note,
+			requirementItemNoteModel: this.permissionSetResults[0].fields.requirement_item_note,
+			organisationNoteModel: this.permissionSetResults[0].fields.organisation_note,
+
 		};
 	},
 	mixins: [getThemeMixin],
@@ -409,9 +421,12 @@ export default {
 			);
 			data_to_send.set("task", this.taskModel);
 			data_to_send.set("document", this.documentModel);
-			data_to_send.set("kanban_comment", this.kanbanCommentModel);
-			data_to_send.set("project_history", this.projectHistoryModel);
-			data_to_send.set("task_history", this.taskHistoryModel);
+			data_to_send.set("kanban_note", this.kanbanNoteModel);
+			data_to_send.set("project_note", this.projectNoteModel);
+			data_to_send.set("task_note", this.taskNoteModel);
+			data_to_send.set("requirement_note", this.requirementNoteModel);
+			data_to_send.set("requirement_item_note", this.requirementItemNoteModel);
+			data_to_send.set("organisation_note", this.organisationNoteModel);
 			data_to_send.set("tag", this.tagModel);
 
 			//Send data

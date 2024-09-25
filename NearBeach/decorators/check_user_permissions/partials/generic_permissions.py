@@ -5,7 +5,12 @@ from functools import wraps
 from NearBeach.models import Group, ObjectAssignment, UserGroup
 
 
-def generic_permissions(request, object_lookup, kwargs, extra_permissions):
+def generic_permissions(request, object_lookup, kwargs):
+    # Extra Permissions
+    extra_permissions = ""
+    if "extra_permissions" in kwargs:
+        extra_permissions = kwargs.get("extra_permissions")
+
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
@@ -43,11 +48,9 @@ def generic_permissions(request, object_lookup, kwargs, extra_permissions):
             permission_set__document=1,
         ).count() > 0
 
-    # TODO: Implement a more generic version, so we can include other objects like requirements, organisations, customers etc.
-    if object_lookup in ["project", "task"]:
-        if extra_permissions == "history":
-            extra_level = user_group_results.filter(
-                **{F"permission_set__{object_lookup}_history": 1}
-            ).count() > 0
+    if extra_permissions == "note":
+        extra_level = user_group_results.filter(
+            **{F"permission_set__{object_lookup}_note": 1}
+        ).count() > 0
 
     return True, user_level, extra_level

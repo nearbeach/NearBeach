@@ -112,7 +112,7 @@ class AdminPermissionTests(TestCase):
             URLTest("my_planner_get_object_list", ["project"], {}, 200, "POST"),
             URLTest("my_planner_get_object_list", ["task"], {}, 200, "POST"),
             URLTest("my_planner_update_object_list", [], {"user_job_id": 1, "job_date": "2024-05-15", "new_destination": 1}, 200, "POST"),
-            # URLTest("diagnostic_information_upload_test", [], {}, 200, "POST"),
+            URLTest("diagnostic_information_upload_test", [], {}, 200, "POST"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied

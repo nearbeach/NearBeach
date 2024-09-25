@@ -202,9 +202,12 @@ def permission_set_information_save(request, permission_set_id, *args, **kwargs)
     update_permission_set.task = form.cleaned_data["task"]
     update_permission_set.tag = form.cleaned_data["tag"]
     update_permission_set.document = form.cleaned_data["document"]
-    update_permission_set.kanban_comment = form.cleaned_data["kanban_comment"]
-    update_permission_set.project_history = form.cleaned_data["project_history"]
-    update_permission_set.task_history = form.cleaned_data["task_history"]
+    update_permission_set.kanban_note = form.cleaned_data["kanban_note"]
+    update_permission_set.project_note = form.cleaned_data["project_note"]
+    update_permission_set.task_note = form.cleaned_data["task_note"]
+    update_permission_set.requirement_note = form.cleaned_data["requirement_note"]
+    update_permission_set.requirement_item_note = form.cleaned_data["requirement_item_note"]
+    update_permission_set.organisation_note = form.cleaned_data["organisation_note"]
 
     update_permission_set.save()
 

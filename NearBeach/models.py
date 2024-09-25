@@ -1339,15 +1339,27 @@ class PermissionSet(models.Model):
         choices=PERMISSION_BOOLEAN,
         default=0,
     )
-    kanban_comment = models.IntegerField(
+    kanban_note = models.IntegerField(
         choices=PERMISSION_BOOLEAN,
         default=0,
     )
-    project_history = models.IntegerField(
+    project_note = models.IntegerField(
         choices=PERMISSION_BOOLEAN,
         default=0,
     )
-    task_history = models.IntegerField(
+    task_note = models.IntegerField(
+        choices=PERMISSION_BOOLEAN,
+        default=0,
+    )
+    requirement_note = models.IntegerField(
+        choices=PERMISSION_BOOLEAN,
+        default=0,
+    )
+    requirement_item_note = models.IntegerField(
+        choices=PERMISSION_BOOLEAN,
+        default=0,
+    )
+    organisation_note = models.IntegerField(
         choices=PERMISSION_BOOLEAN,
         default=0,
     )

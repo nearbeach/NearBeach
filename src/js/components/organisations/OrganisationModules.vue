@@ -295,6 +295,12 @@ export default {
 				return [];
 			},
 		},
+		userExtraPermissions: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
 		userLevel: {
 			type: Number,
 			default: 0,
@@ -349,7 +355,12 @@ export default {
 			type: "updateDestination",
 			destination: this.destination,
 			locationId: this.locationId,
-		})
+		});
+
+		this.$store.commit({
+			type: "updateUserExtraPermissions",
+			userExtraPermissions: this.userExtraPermissions,
+		});
 	},
 };
 </script>

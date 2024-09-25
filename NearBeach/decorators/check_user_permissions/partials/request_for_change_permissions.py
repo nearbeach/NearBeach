@@ -3,7 +3,7 @@ from django.db.models import Max, Q
 
 
 # Internal Function
-def request_for_change_permissions(request, kwargs, extra_permissions=""):
+def request_for_change_permissions(request, kwargs):
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
