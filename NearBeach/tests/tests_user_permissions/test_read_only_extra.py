@@ -3,7 +3,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 # Declaration of Username and Password
-username = "read_only"
+username = "read_only_extra"
 password = "Test1234$"
 
 
@@ -85,11 +85,11 @@ class ReadOnlyPermissionTests(TestCase):
             URLTest("my_planner", [], {}, 200, "GET"),
             URLTest("my_planner_add_object", [], {"job_date": "2024-05-14", "destination": "task", "task": 1}, 200, "POST"),
             URLTest("my_planner_delete_user_job", [], {"user_job_id": 1}, 400, "POST"),
-            URLTest("my_planner_delete_user_job", [], {"user_job_id": 4}, 200, "POST"),
+            URLTest("my_planner_delete_user_job", [], {"user_job_id": 5}, 200, "POST"),
             URLTest("my_planner_get_object_list", ["project"], {}, 200, "POST"),
             URLTest("my_planner_get_object_list", ["task"], {}, 200, "POST"),
             URLTest("my_planner_update_object_list", [], {"user_job_id": 1, "job_date": "2024-05-15", "new_destination": 1}, 400, "POST"),
-            URLTest("my_planner_update_object_list", [], {"user_job_id": 4, "job_date": "2024-05-15", "new_destination": 3}, 200, "POST"),
+            URLTest("my_planner_update_object_list", [], {"user_job_id": 5, "job_date": "2024-05-15", "new_destination": 3}, 200, "POST"),
             URLTest("sprint_information", [1], {}, 403, "GET"),
             URLTest("sprint_information", [2], {}, 200, "GET"),
             URLTest("sprint_information", [3], {}, 403, "GET"),
@@ -104,7 +104,7 @@ class ReadOnlyPermissionTests(TestCase):
             URLTest("gantt_chart_update_data", ["task", 1], {"end_date": "2024-05-10", "start_date": "2024-05-01", "status_id": 1}, 403, "POST"),
             URLTest("gantt_chart_update_data", ["task", 2], {"end_date": "2024-05-10", "start_date": "2024-05-01", "status_id": 1}, 403, "POST"),
             URLTest("add_notes", ["project", 1], {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z", "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "", "can_edit": "true"}, 403, "POST"),
-            URLTest("add_notes", ["project", 2], {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z", "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "", "can_edit": "true"}, 403, "POST"),
+            URLTest("add_notes", ["project", 2], {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z", "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "", "can_edit": "true"}, 200, "POST"),
             URLTest("add_notes", ["task", 1],
                     {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
                      "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
@@ -112,11 +112,11 @@ class ReadOnlyPermissionTests(TestCase):
             URLTest("add_notes", ["task", 2],
                     {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
                      "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
-                     "can_edit": "true"}, 403, "POST"),
+                     "can_edit": "true"}, 200, "POST"),
             URLTest("organisation_add_notes", ["organisation", 1],
                     {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
                      "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
-                     "can_edit": "true"}, 403, "POST"),
+                     "can_edit": "true"}, 200, "POST"),
             URLTest("add_notes", ["kanban_card", 1],
                     {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
                      "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
@@ -124,7 +124,7 @@ class ReadOnlyPermissionTests(TestCase):
             URLTest("add_notes", ["kanban_card", 2],
                     {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
                      "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
-                     "can_edit": "true"}, 403, "POST"),
+                     "can_edit": "true"}, 200, "POST"),
             URLTest("add_notes", ["requirement", 1],
                     {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
                      "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
@@ -132,7 +132,7 @@ class ReadOnlyPermissionTests(TestCase):
             URLTest("add_notes", ["requirement", 2],
                     {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
                      "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
-                     "can_edit": "true"}, 403, "POST"),
+                     "can_edit": "true"}, 200, "POST"),
             URLTest("add_notes", ["requirement_item", 1],
                     {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
                      "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
@@ -140,8 +140,7 @@ class ReadOnlyPermissionTests(TestCase):
             URLTest("add_notes", ["requirement_item", 2],
                     {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
                      "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
-                     "can_edit": "true"}, 403, "POST"),
-
+                     "can_edit": "true"}, 200, "POST"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied

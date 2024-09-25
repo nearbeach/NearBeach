@@ -4,9 +4,7 @@ from NearBeach.models import UserGroup
 
 def organisation_permissions(request, kwargs):
     # Extra Permissions
-    extra_permissions = ""
-    if "extra_permissions" in kwargs:
-        extra_permissions = kwargs.get("extra_permissions")
+    extra_permissions = kwargs.get("extra_permissions", "")
 
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
@@ -26,7 +24,7 @@ def organisation_permissions(request, kwargs):
             permission_set__document=1,
         ).count() > 0
 
-    if extra_permissions == "note":
+    if extra_permissions == "organisation_note":
         extra_level = user_group_results.filter(
             permission_set__organisation_note=1,
         ).count() > 0

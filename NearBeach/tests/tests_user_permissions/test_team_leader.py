@@ -103,6 +103,20 @@ class TeamLeaderPermissionTests(TestCase):
             URLTest("gantt_chart_update_data", ["project", 2], {"end_date": "2024-05-10", "start_date": "2024-05-01", "status_id": 1}, 200, "POST"),
             URLTest("gantt_chart_update_data", ["task", 1], {"end_date": "2024-05-10", "start_date": "2024-05-01", "status_id": 1}, 403, "POST"),
             URLTest("gantt_chart_update_data", ["task", 2], {"end_date": "2024-05-10", "start_date": "2024-05-01", "status_id": 1}, 200, "POST"),
+            URLTest("add_notes", ["project", 1], {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z", "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "", "can_edit": "true"}, 403, "POST"),
+            URLTest("add_notes", ["project", 2], {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z", "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "", "can_edit": "true"}, 200, "POST"),
+            URLTest("add_notes", ["task", 1],
+                    {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
+                     "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
+                     "can_edit": "true"}, 403, "POST"),
+            URLTest("add_notes", ["task", 2],
+                    {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
+                     "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
+                     "can_edit": "true"}, 200, "POST"),
+            URLTest("organisation_add_notes", ["organisation", 1],
+                    {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
+                     "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
+                     "can_edit": "true"}, 200, "POST"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied

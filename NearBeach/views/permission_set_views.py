@@ -207,6 +207,7 @@ def permission_set_information_save(request, permission_set_id, *args, **kwargs)
     update_permission_set.task_note = form.cleaned_data["task_note"]
     update_permission_set.requirement_note = form.cleaned_data["requirement_note"]
     update_permission_set.requirement_item_note = form.cleaned_data["requirement_item_note"]
+    update_permission_set.organisation_note = form.cleaned_data["organisation_note"]
 
     update_permission_set.save()
 

@@ -34,7 +34,7 @@ def kanban_card_permissions(request, kwargs):
         # Check to make sure the user groups intersect
         if len(group_results) == 0:
             # There are no matching groups - i.e. the user does not have any permission
-            return False, 0
+            return False, 0, False
 
     # Get the max permission value from user_group_results
     user_level = user_group_results.aggregate(

@@ -424,6 +424,9 @@ export default {
 			data_to_send.set("kanban_note", this.kanbanNoteModel);
 			data_to_send.set("project_note", this.projectNoteModel);
 			data_to_send.set("task_note", this.taskNoteModel);
+			data_to_send.set("requirement_note", this.requirementNoteModel);
+			data_to_send.set("requirement_item_note", this.requirementItemNoteModel);
+			data_to_send.set("organisation_note", this.organisationNoteModel);
 			data_to_send.set("tag", this.tagModel);
 
 			//Send data

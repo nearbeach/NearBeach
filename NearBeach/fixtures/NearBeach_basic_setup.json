@@ -2095,6 +2095,33 @@
   }
 },
 {
+  "model": "NearBeach.objectassignment",
+  "pk": 39,
+  "fields": {
+    "assigned_user": 8,
+    "group_id": null,
+    "requirement": null,
+    "requirement_item": null,
+    "project": null,
+    "task": 2,
+    "kanban_board": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "customer": null,
+    "organisation": null,
+    "change_task": null,
+    "meta_object": null,
+    "meta_object_title": "",
+    "meta_object_status": "",
+    "link_relationship": "",
+    "parent_link": "",
+    "date_created": "2024-09-25T09:46:04.567Z",
+    "date_modified": "2024-09-25T09:46:04.567Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.objectnote",
   "pk": 1,
   "fields": {
@@ -2347,9 +2374,9 @@
     "task_note": 1,
     "requirement_note": 1,
     "requirement_item_note": 1,
-    "organisation_note": 0,
+    "organisation_note": 1,
     "date_created": "2023-02-15T09:03:06.209Z",
-    "date_modified": "2024-09-25T09:10:03.005Z",
+    "date_modified": "2024-09-25T10:00:38.360Z",
     "change_user": 1,
     "is_deleted": false
   }
@@ -3152,10 +3179,53 @@
   }
 },
 {
+  "model": "NearBeach.userjob",
+  "pk": 4,
+  "fields": {
+    "username": 5,
+    "job_date": "2024-09-26",
+    "job_sort_number": 0,
+    "kanban_card": null,
+    "project": null,
+    "task": 2,
+    "date_created": "2024-09-25T09:42:44.248Z",
+    "date_modified": "2024-09-25T09:42:47.033Z",
+    "change_user": 5,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.userjob",
+  "pk": 5,
+  "fields": {
+    "username": 8,
+    "job_date": "2024-09-25",
+    "job_sort_number": 0,
+    "kanban_card": null,
+    "project": null,
+    "task": 2,
+    "date_created": "2024-09-25T09:46:15.465Z",
+    "date_modified": "2024-09-25T09:46:15.465Z",
+    "change_user": 8,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.usersetting",
   "pk": 1,
   "fields": {
     "username": 7,
+    "setting_type": "theme",
+    "setting_data": {
+      "theme": "dark"
+    }
+  }
+},
+{
+  "model": "NearBeach.usersetting",
+  "pk": 2,
+  "fields": {
+    "username": 8,
     "setting_type": "theme",
     "setting_data": {
       "theme": "dark"
@@ -5160,7 +5230,7 @@
   "pk": 5,
   "fields": {
     "password": "pbkdf2_sha256$720000$lme60tWetgq1EdCCjo4iPZ$tGR4stCLa56Rt/LjtHYKCff2RDtJ0RJ4pFr4fC24TXo=",
-    "last_login": "2024-05-13T10:30:22.990Z",
+    "last_login": "2024-09-25T09:42:33.989Z",
     "is_superuser": false,
     "username": "read_only",
     "first_name": "Read",
@@ -5214,11 +5284,11 @@
   "pk": 8,
   "fields": {
     "password": "pbkdf2_sha256$720000$NWvmRMCfh3D6qWbNgpnVDA$F5fic/7kUyUHxLhDfBPJ8WjR82S233RGCJO61KNJpyQ=",
-    "last_login": null,
+    "last_login": "2024-09-25T09:57:29.464Z",
     "is_superuser": false,
     "username": "read_only_extra",
     "first_name": "Read",
-    "last_name": "Only",
+    "last_name": "Only Extra",
     "email": "support@nearbeach.org",
     "is_staff": false,
     "is_active": true,
@@ -5661,6 +5731,14 @@
 },
 {
   "model": "sessions.session",
+  "pk": "41t2bmdty3irkugyv45mcq9p5oivovhk",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGln-xJ-kpOcM1nq9xoEoQXZSIe5OIqWA9s28ebMA21rC1qiGMbGBeXb53SLgk-YDpAfM94XjMq91jPxQ-Ekbvy2Jpuvp_gUKtLK_IyhByXuZrdFkCSlKp5JDJT1pFNmoHnTMgL1Ba0AILRwo23e-U4ncHh1baNuL6pFlQ4ap0ecL5aQ_3g:1stOm1:fa0fhnVS-zfJqt2mgTTqYgfLfrIyY4E6bpQsk8l_HIU",
+    "expire_date": "2024-10-09T09:57:29.474Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "4ihdjbrhcx7hokg3uisrpinxhca0e34d",
   "fields": {
     "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1rWvse:lyt6TXjJYt27JiKtOvUdRIF7rY3B9FsAx6nGOaFkuVA",
@@ -5681,6 +5759,14 @@
   "fields": {
     "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1rW4H5:z0s-sSFp5Omsk3ltbIEgBmp6Ll-0CCRZo0oHPsZgHl4",
     "expire_date": "2024-02-17T00:52:51.968Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "8xecpyshecbti7r0jtu61ns4ftp1hkcb",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGln-xJ-kpOcM1nq9xoEoQXZSIe5OIqWA9s28ebMA21rC1qiGMbGBeXb53SLgk-YDpAfM94XjMq91jPxQ-Ekbvy2Jpuvp_gUKtLK_IyhByXuZrdFkCSlKp5JDJT1pFNmoHnTMgL1Ba0AILRwo23e-U4ncHh1baNuL6pFlQ4ap0ecL5aQ_3g:1stOlp:CFFmBxjIwkRdgoxtQs4dd2YXNfoTI5d9QLb6acm0d70",
+    "expire_date": "2024-10-09T09:57:17.595Z"
   }
 },
 {
