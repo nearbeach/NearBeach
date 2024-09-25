@@ -2,7 +2,7 @@ from NearBeach.models import ObjectAssignment, Project, UserGroup
 from django.db.models import Max, Q
 
 
-def project_permissions(request, kwargs, extra_permissions=""):
+def project_permissions(request, kwargs):
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,

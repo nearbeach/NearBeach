@@ -9,6 +9,7 @@ from NearBeach.forms import EditNoteForm, AddNoteForm
 from NearBeach.models import ObjectNote
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions, \
     check_user_generic_permissions
+from NearBeach.decorators.check_user_permissions.organisation_permissions import check_user_organisation_note_permissions
 
 import json
 
@@ -18,7 +19,7 @@ from NearBeach.views.tools.internal_functions import set_object_from_destination
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-@check_user_generic_permissions(min_permission_level=2, extra_permissions="history")
+@check_user_generic_permissions(min_permission_level=2, extra_permissions="note")
 def add_notes(request, destination, location_id, *args, **kwargs):
     # Add the note, and get the results back
     note_json = generic_add_note(request, destination, location_id)
@@ -148,7 +149,7 @@ def note_list(request, destination, location_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
-@check_specific_object_permissions(min_permission_level=1, object_lookup="organisation")
+@check_user_organisation_note_permissions()
 def organisation_add_notes(request, _, organisation_id, *args, **kwargs):
     # Add the note, and get the results
     note_json = generic_add_note(request, "organisation", organisation_id)

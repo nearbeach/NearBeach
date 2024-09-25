@@ -156,7 +156,7 @@ def task_information(request, task_id, *args, **kwargs):
         "task_results": serializers.serialize("json", [task_results]),
         "task_status": task_status,
         "theme": get_theme(request),
-        "user_extra_permissions": get_user_group_permission(request.user, ["document", "task_history"]),
+        "user_extra_permissions": get_user_group_permission(request.user, ["document", "task_note"]),
         "user_level": user_level,
     }
 

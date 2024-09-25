@@ -9,6 +9,7 @@ from NearBeach.forms import OrganisationForm, ProfilePictureForm
 from NearBeach.models import Organisation, Customer, ListOfTitle
 from NearBeach.views.document_views import handle_document_permissions
 from NearBeach.views.theme_views import get_theme
+from NearBeach.views.tools.internal_functions import get_user_group_permission
 
 
 @require_http_methods(["POST"])
@@ -146,6 +147,7 @@ def organisation_information(request, organisation_id, *args, **kwargs):
         "need_tinymce": True,
         "theme": get_theme(request),
         "title_list": serializers.serialize("json", title_list),
+        "user_extra_permissions": get_user_group_permission(request.user, ["document", "organisation_note"]),
         "user_level": user_level,
     }
 

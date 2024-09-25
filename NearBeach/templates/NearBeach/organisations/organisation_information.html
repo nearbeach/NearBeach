@@ -5,13 +5,15 @@
     ></organisation-information>
     <br/>
 
-    <organisation-modules v-bind:destination="'organisation'"
-                          v-bind:location-id="{{organisation_id}}"
-                          v-bind:customer-results="{{customer_results}}"
-                          v-bind:title-list="{{title_list}}"
-                          v-bind:user-level="{{user_level}}"
-                          v-bind:root-url="`{% url 'dashboard' %}`"
-                          v-bind:static-url="`{% static '/' %}`"
-                          v-bind:theme="`{{ theme }}`"
+    <organisation-modules
+            v-bind:customer-results="{{customer_results}}"
+            v-bind:destination="'organisation'"
+            v-bind:location-id="{{organisation_id}}"
+            v-bind:root-url="`{% url 'dashboard' %}`"
+            v-bind:static-url="`{% static '/' %}`"
+            v-bind:theme="`{{ theme }}`"
+            v-bind:title-list="{{title_list}}"
+            v-bind:user-extra-permissions="{{ user_extra_permissions }}"
+            v-bind:user-level="{{user_level}}"
     ></organisation-modules>
 {% endblock %}

@@ -56,9 +56,11 @@ def check_first_time_login(request):
             task=4,
             tag=4,
             document=1,
-            kanban_comment=1,
-            project_history=1,
-            task_history=1,
+            kanban_note=1,
+            project_note=1,
+            task_note=1,
+            requirement_note=1,
+            requirement_item_note=1,
             change_user=request.user,
         )
         submit_permission_set_1.save()
@@ -78,9 +80,11 @@ def check_first_time_login(request):
             task=4,
             tag=4,
             document=1,
-            kanban_comment=1,
-            project_history=1,
-            task_history=1,
+            kanban_note=1,
+            project_note=1,
+            task_note=1,
+            requirement_note=1,
+            requirement_item_note=1,
             change_user=request.user,
         )
         submit_permission_set_2.save()
@@ -100,9 +104,11 @@ def check_first_time_login(request):
             task=3,
             tag=3,
             document=1,
-            kanban_comment=1,
-            project_history=1,
-            task_history=1,
+            kanban_note=1,
+            project_note=1,
+            task_note=1,
+            requirement_note=1,
+            requirement_item_note=1,
             change_user=request.user,
         )
         submit_permission_set_3.save()
@@ -122,9 +128,11 @@ def check_first_time_login(request):
             task=1,
             tag=1,
             document=1,
-            kanban_comment=1,
-            project_history=1,
-            task_history=1,
+            kanban_note=1,
+            project_note=1,
+            task_note=1,
+            requirement_note=1,
+            requirement_item_note=1,
             change_user=request.user,
         )
         submit_permission_set_3.save()

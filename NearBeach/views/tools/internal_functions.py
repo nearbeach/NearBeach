@@ -76,7 +76,6 @@ def get_user_group_permission(username, object_types):
     :return: returns json ready to be placed within the CONTEXT
     """
     results = UserGroup.objects.none()
-    # object_types = object_types + ["document", "kanban_comment", "project_history", "task_history"]
 
     for single_type in object_types:
         results = results.union(UserGroup.objects.filter(

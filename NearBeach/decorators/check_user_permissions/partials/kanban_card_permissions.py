@@ -3,7 +3,12 @@ from django.db.models import Max, Q
 
 
 # Internal Function
-def kanban_card_permissions(request, kwargs, extra_permissions):
+def kanban_card_permissions(request, kwargs):
+    # Extra Permissions
+    extra_permissions = ""
+    if "extra_permissions" in kwargs:
+        extra_permissions = kwargs.get("extra_permissions")
+
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
@@ -29,7 +34,7 @@ def kanban_card_permissions(request, kwargs, extra_permissions):
         # Check to make sure the user groups intersect
         if len(group_results) == 0:
             # There are no matching groups - i.e. the user does not have any permission
-            return False, 0
+            return False, 0, False
 
     # Get the max permission value from user_group_results
     user_level = user_group_results.aggregate(
@@ -43,9 +48,9 @@ def kanban_card_permissions(request, kwargs, extra_permissions):
             permission_set__document=1,
         ).count() > 0
 
-    if extra_permissions == "history":
+    if extra_permissions == "note":
         extra_level = user_group_results.filter(
-            permission_set__kanban_comment=1,
+            permission_set__kanban_note=1,
         ).count() > 0
 
     return True, user_level, extra_level

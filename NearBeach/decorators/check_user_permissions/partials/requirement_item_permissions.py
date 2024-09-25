@@ -2,7 +2,12 @@ from NearBeach.models import ObjectAssignment, Requirement, RequirementItem, Use
 from django.db.models import Max, Q
 
 
-def requirement_item_permissions(request, kwargs, extra_permissions=""):
+def requirement_item_permissions(request, kwargs):
+    # Extra Permissions
+    extra_permissions = ""
+    if "extra_permissions" in kwargs:
+        extra_permissions = kwargs.get("extra_permissions")
+
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
@@ -52,9 +57,9 @@ def requirement_item_permissions(request, kwargs, extra_permissions=""):
             permission_set__document=1,
         ).count() > 0
 
-    # if extra_permissions == "history":
-    #     extra_level = user_group_results.filter(
-    #         permission_set__requirement_item_history=1
-    #     ).count() > 0
+    if extra_permissions == "note":
+        extra_level = user_group_results.filter(
+            permission_set__requirement_item_note=1
+        ).count() > 0
 
     return True, user_level, extra_level
