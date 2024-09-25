@@ -2,7 +2,7 @@ from NearBeach.models import ObjectAssignment, ObjectNote, UserGroup
 from django.db.models import Max, Q
 
 
-def object_note_permissions(request, kwargs, extra_permissions=""):
+def object_note_permissions(request, kwargs):
     """
     Checks the user's permission to determine if they have permission to delete this note.
     Currently only;

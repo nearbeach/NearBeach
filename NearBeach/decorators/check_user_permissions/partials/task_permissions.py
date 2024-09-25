@@ -2,7 +2,7 @@ from NearBeach.models import ObjectAssignment, Task, UserGroup
 from django.db.models import Max, Q
 
 
-def task_permissions(request, kwargs, extra_permissions=""):
+def task_permissions(request, kwargs):
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,

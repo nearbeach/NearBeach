@@ -5,7 +5,12 @@ from functools import wraps
 from NearBeach.models import Group, ObjectAssignment, UserGroup
 
 
-def generic_permissions(request, object_lookup, kwargs, extra_permissions):
+def generic_permissions(request, object_lookup, kwargs):
+    # Extra Permissions
+    extra_permissions = ""
+    if "extra_permissions" in kwargs:
+        extra_permissions = kwargs.get("extra_permissions")
+
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,

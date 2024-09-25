@@ -2,7 +2,12 @@ from django.db.models import Max, Q
 from NearBeach.models import UserGroup
 
 
-def organisation_permissions(request, kwargs, extra_permissions=""):
+def organisation_permissions(request, kwargs):
+    # Extra Permissions
+    extra_permissions = ""
+    if "extra_permissions" in kwargs:
+        extra_permissions = kwargs.get("extra_permissions")
+
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
