@@ -1142,7 +1142,8 @@ def object_link_list(request, destination, location_id, *args, **kwargs):
     if destination in ["project", "task", "requirement"]:
         data_results.extend(KanbanCard.objects.filter(
             # **{data_point.non_null_field + "__isnull": False},
-            **{destination + "_id": location_id}
+            **{destination + "_id": location_id},
+            is_archived=False,
         ).annotate(
             object_id=F("kanban_card_id"),
             object_title=F("kanban_card_text"),
