@@ -45,7 +45,7 @@
     scrollbar-color: orange lightyellow;
 
     @media screen and (max-width: 767px) {
-        max-height: calc(100vh - 145px);
+        max-height: calc(100dvh - 145px);
         //margin: 5px 5px 0 5px;
         margin: 5px 0 0 0;
     }
