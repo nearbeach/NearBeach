@@ -316,21 +316,44 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
         kanban_board_id=kanban_board_id,
     )
 
+    object_assignment_results = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        group_id__in=UserGroup.objects.filter(
+            is_deleted=False,
+            username=request.user,
+        ).values("group_id"),
+    )
+
     # Get the results we require
     if object_lookup == "Project":
-        object_results = Project.objects.filter(is_deleted=False,).exclude(
+        object_results = Project.objects.filter(
+            is_deleted=False,
+            project_id__in=object_assignment_results.filter(
+                project_id__isnull=False,
+            ).values("project_id")
+        ).exclude(
             project_id__in=existing_objects.exclude(project_id__isnull=True).values(
                 "project_id"
             )
         )
     elif object_lookup == "Requirement":
-        object_results = Requirement.objects.filter(is_deleted=False,).exclude(
+        object_results = Requirement.objects.filter(
+            is_deleted=False,
+            requirement_id__in=object_assignment_results.filter(
+                requirement_id__isnull=False,
+            ).values("requirement_id"),
+        ).exclude(
             requirement_id__in=existing_objects.exclude(
                 requirement_id__isnull=True
             ).values("requirement_id")
         )
     elif object_lookup == "Task":
-        object_results = Task.objects.filter(is_deleted=False,).exclude(
+        object_results = Task.objects.filter(
+            is_deleted=False,
+            task_id__in=object_assignment_results.filter(
+                task_id__isnull=False,
+            ).values("task_id")
+        ).exclude(
             task_id__in=existing_objects.exclude(
                 task_id__isnull=True,
             ).values("task_id")
