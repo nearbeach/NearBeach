@@ -87,7 +87,7 @@
 											{{objectModel}} {{ result.id }}
 										</div>
 										<div>
-											<strong>{{ result.title }}</strong>
+											<strong>{{ result.description }}</strong>
 										</div>
 										<div>
 											Status:

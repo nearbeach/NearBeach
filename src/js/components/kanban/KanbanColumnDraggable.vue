@@ -173,6 +173,12 @@ export default {
 			//Get the Modal from the above modal
 			const modalInstance = new Modal(document.getElementById("addKanbanCardModal"));
 			modalInstance.show();
+
+			//Focus on the card title
+			setTimeout(() => {
+				const focus_element = document.getElementById("kanbanCardText");
+				focus_element.focus();
+			}, 250);
 		},
 		addNewLink() {
 			//Update New Card VueX to use this location
