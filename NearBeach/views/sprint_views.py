@@ -11,6 +11,7 @@ from django.views.decorators.http import require_http_methods
 
 from NearBeach.forms import NewSprintAssignmentForm, NewSprintForm, AddObjectToSprintForm, RemoveSprintForm
 from NearBeach.models import Sprint, SprintObjectAssignment, RequirementItem, Project, Task, ObjectAssignment, UserGroup
+from NearBeach.views.gantt_chart_views import get_object_results
 from NearBeach.views.theme_views import get_theme
 
 from NearBeach.views.tools.lookup_functions import (
@@ -55,7 +56,16 @@ def add_object_to_sprint(request, destination, location_id, *args, **kwargs):
             )
             submit_object_assignment.save()
 
-    return HttpResponse("")
+    object_results = get_object_results(location_id)
+
+    results = {
+        "gantt_chart_data": json.loads(object_results),
+    }
+
+    return JsonResponse(
+        results,
+        safe=False,
+    )
 
 
 @require_http_methods(["POST"])

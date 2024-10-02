@@ -87,7 +87,7 @@
 											{{objectModel}} {{ result.id }}
 										</div>
 										<div>
-											<strong>{{ result.title }}</strong>
+											<strong>{{ result.description }}</strong>
 										</div>
 										<div>
 											Status:
@@ -132,6 +132,7 @@ import { NSelect } from "naive-ui";
 
 //VueX
 import { mapGetters } from "vuex";
+import {DateTime} from "luxon";
 
 export default {
 	name: "AddObjectWizard",
@@ -202,8 +203,28 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}object_data/sprint/${this.locationId}/add_object_to_sprint/`,
 				data_to_send,
-			).then(() => {
+			).then((response) => {
 				//ADD CODE
+				//Get the gantt chart data
+				let gantt_chart_data = response.data.gantt_chart_data.map((row) => {
+					//Convert the dates
+					const end_date = DateTime.fromISO(row.end_date);
+					const start_date = DateTime.fromISO(row.start_date);
+
+					//Mutate the row
+					row.end_date = end_date.toMillis();
+					row.start_date = start_date.toMillis();
+
+					return row;
+				});
+
+				console.log("Gantt Chart Data: ", gantt_chart_data);
+
+				//Update Gantt Chart Data
+				this.$store.commit({
+					type: "updateGanttChartData",
+					ganttChartData: gantt_chart_data,
+				});
 
 				//Update user of status
 				this.$store.dispatch("newToast", {
@@ -211,9 +232,11 @@ export default {
 					message: "Objects successfully added to Sprint",
 					extra_classes: "bg-success",
 					unique_type: "add_objects_to_sprint",
+					delay: 600,
 				});
 
-				window.location.reload();
+				//Close the modal
+				document.getElementById("addObjectWizardButton").click();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error Adding Objects to Sprint",

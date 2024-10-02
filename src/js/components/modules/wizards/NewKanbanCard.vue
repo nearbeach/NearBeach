@@ -44,6 +44,7 @@
                                 </span>
                             </label>
 							<input
+								id="kanbanCardText"
 								v-model="kanbanCardTextModel"
 								v-on:keydown.enter="addKanbanCard"
 								class="form-control"
