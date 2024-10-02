@@ -15,7 +15,7 @@ dependencies = [
   "azure-identity",
   "pip>=19.2",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [
   {name = "Luke Christopher Clarke", email = "luke@nearbeach.org"},
 ]
