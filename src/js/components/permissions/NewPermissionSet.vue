@@ -62,7 +62,6 @@
 //Import mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
 import ValidationRendering from "../validation/ValidationRendering.vue";
-import editor from "@tinymce/tinymce-vue";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 
@@ -72,7 +71,6 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
-		editor,
 		ValidationRendering
 	},
 	props: {
