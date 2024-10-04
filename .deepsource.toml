@@ -1,29 +1,25 @@
 version = 1
 
 test_patterns = [
-    "NearBeach/tests/**",
-    "test_*.py"
+  "NearBeach/tests/**",
+  "test_*.py"
 ]
 
 exclude_patterns = [
-    "browserstack/**",
-    "cypress/**",
-    "NearBeach/static/**",
-    "Nearbeach/migrations/**"
+  "browserstack/**",
+  "cypress/**",
+  "NearBeach/static/**",
+  "Nearbeach/migrations/**"
 ]
 
 [[analyzers]]
 name = "javascript"
-enabled = true
 
   [analyzers.meta]
   plugins = ["vue"]
 
 [[analyzers]]
 name = "python"
-enabled = true
 
   [analyzers.meta]
   runtime_version = "3.x.x"
-  max_line_length = 120
-  skip_doc_coverage = ["module", "magic", "init", "class"]
