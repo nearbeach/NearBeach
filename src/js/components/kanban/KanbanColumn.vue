@@ -45,12 +45,10 @@ import iconMixin from "../../mixins/iconMixin";
 
 //VUEX MAP GETTERS
 import {mapGetters} from "vuex";
-import draggable from "vuedraggable";
 
 export default {
 	name: "KanbanColumn",
 	components: {
-		draggable,
 		Icon,
 	},
 	props: {
