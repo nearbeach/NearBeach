@@ -92,17 +92,6 @@ def get_object_results(location_id):
         sprint_id=location_id,
     )
 
-    # requirement_item_results = RequirementItem.objects.filter(
-    #     is_deleted=False,
-    #     requirement_item_id__in=sprint_object_assignment_results.filter(
-    #         requirement_item__isnull=False,
-    #     ).values("requirement_item_id"),
-    # ).annotate(
-    #     title=requirement_item_title,
-    #     status=requirement_item_status,
-    #     status_id=requirement_item_status_id,
-    #     start_date=requirement_item_
-    # )
 
     project_results = Project.objects.filter(
         is_deleted=False,

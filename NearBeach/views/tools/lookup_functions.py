@@ -96,16 +96,8 @@ def lookup_requirement(user_group_results, *args, **kwargs):
 def lookup_requirement_item(user_group_results, *args, **kwargs):
     return RequirementItem.objects.filter(
         is_deleted=False,
-        # requirement_item_status_id__in=ListOfRequirementItemStatus.objects.filter(
-        #     is_deleted=False,
-        #     status_is_closed=False,
-        # ).values("requirement_item_status_id"),
         requirement_id__in=Requirement.objects.filter(
             is_deleted=False,
-            # requirement_status_id__in=ListOfRequirementStatus.objects.filter(
-            #     is_deleted=False,
-            #     requirement_status_is_closed=False,
-            # ).values("requirement_status_id"),
             requirement_id__in=ObjectAssignment.objects.filter(
                 is_deleted=False,
                 requirement_id__isnull=False,

@@ -133,18 +133,15 @@ def get_object_search_data(search_form, request):
         requirement_results = requirement_results.exclude(
             requirement_status__in=ListOfRequirementStatus.objects.filter(
                 is_deleted=False,
-                # requirement_status_is_closed=True,
                 requirement_higher_order_status="Closed",
             ).values("requirement_status_id")
         )
 
         project_results = project_results.exclude(
-            # project_status__in=["Closed"],
             project_status__project_higher_order_status="Closed",
         )
 
         task_results = task_results.exclude(
-            # task_status__in=["Closed"],
             task_status__task_higher_order_status="Closed",
         )
 
