@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db.models import Q
 
 from NearBeach.views.tools.internal_functions import lookup_choice_from_key
@@ -15,8 +15,6 @@ from NearBeach.models import (
     SCH_START_OF_THE_MONTH,
     SCH_END_OF_THE_MONTH,
     SCH_X_DAYS_BEFORE_END_OF_THE_MONTH,
-    SCH_FIRST_BUSINESS_DAY_OF_THE_MONTH,
-    SCH_LAST_BUSINESS_DAY_OF_THE_MONTH,
     ScheduledObject,
     Task,
 )

@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
@@ -10,7 +9,7 @@ import json
 from django.views.decorators.http import require_http_methods
 
 from NearBeach.forms import NewSprintAssignmentForm, NewSprintForm, AddObjectToSprintForm, RemoveSprintForm
-from NearBeach.models import Sprint, SprintObjectAssignment, RequirementItem, Project, Task, ObjectAssignment, UserGroup
+from NearBeach.models import Sprint, SprintObjectAssignment, ObjectAssignment, UserGroup
 from NearBeach.views.gantt_chart_views import get_object_results
 from NearBeach.views.theme_views import get_theme
 

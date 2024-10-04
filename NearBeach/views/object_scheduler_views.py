@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import get_object_or_404
 from django.template import loader
 from django.db.models import F, Max
 from django.core import serializers

@@ -1,8 +1,6 @@
 from django.db.models import Q, F
 
 from NearBeach.models import (
-    ListOfRequirementItemStatus,
-    ListOfRequirementStatus,
     ObjectAssignment,
     Project,
     Requirement,

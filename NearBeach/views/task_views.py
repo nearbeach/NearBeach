@@ -9,7 +9,7 @@ from django.db.models import F
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.forms import NewTaskForm, TaskInformationForm
-from NearBeach.models import Group, UserGroup, ObjectAssignment, ListOfTaskStatus
+from NearBeach.models import Group, ObjectAssignment, ListOfTaskStatus
 from NearBeach.views.tools.internal_functions import Task, Organisation, get_all_groups, get_user_group_permission
 from NearBeach.views.theme_views import get_theme
 
