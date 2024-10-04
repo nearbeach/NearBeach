@@ -104,7 +104,7 @@
 					skin: `${this.skin}`,
 					content_css: `${this.contentCss}`
 				}"
-				v-bind:initial-value="cardDescription"
+				v-model="localCardDescription"
 				v-bind:disabled="true"
 			/>
 		</div>
@@ -159,6 +159,16 @@ export default {
 			contentCss: "getContentCss",
 			skin: "getSkin",
 		})
-	}
+	},
+	data() {
+		return {
+			localCardDescription: this.cardDescription,
+		};
+	},
+	watch: {
+		cardDescription(new_value) {
+			this.localCardDescription = new_value;
+		},
+	},
 }
 </script>

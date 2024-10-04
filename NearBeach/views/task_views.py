@@ -9,7 +9,7 @@ from django.db.models import F
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.forms import NewTaskForm, TaskInformationForm
-from NearBeach.models import Group, ObjectAssignment, ListOfTaskStatus
+from NearBeach.models import Group, ObjectAssignment, ListOfTaskStatus, KanbanCard
 from NearBeach.views.tools.internal_functions import Task, Organisation, get_all_groups, get_user_group_permission
 from NearBeach.views.theme_views import get_theme
 
@@ -188,5 +188,14 @@ def task_information_save(request, task_id, *args, **kwargs):
     update_task.task_status = form.cleaned_data["task_status"]
 
     update_task.save()
+
+    # Find any linked cards, and update the description
+    KanbanCard.objects.filter(
+        is_deleted=False,
+        is_archived=False,
+        task_id=task_id
+    ).update(
+        kanban_card_description=update_task.task_long_description,
+    )
 
     return HttpResponse("")

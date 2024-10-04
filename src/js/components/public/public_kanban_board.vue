@@ -208,6 +208,8 @@ export default {
 			//Grab the first result
 			card_results = card_results[0];
 
+			console.log("CARD RESULTS: ", card_results.fields.kanban_card_description);
+
 			this.cardColumn = this.getColumn(card_results.fields.kanban_column);
 			this.cardId = `${card_id}`;
 			this.cardDescription = card_results.fields.kanban_card_description;
@@ -281,6 +283,9 @@ export default {
 					element.style = `max-width: ${columns_width}px;`;
 				});
 
+				//If header element does not exist, escape
+				if (header_element === undefined) return;
+
 				//Adjust the size of the header element
 				header_element.style = `max-width: ${columns_width}px`;
 			} else {
@@ -294,6 +299,9 @@ export default {
 				Array.from(elements).forEach((element) => {
 					element.style = `width: ${scroll_width}px;`;
 				});
+
+				//If header element does not exist, escape
+				if (header_element === undefined) return;
 
 				//Adjust the size of the header element
 				header_element.style = `max-width: ${scroll_width}px`;
