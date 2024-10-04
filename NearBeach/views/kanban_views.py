@@ -312,6 +312,7 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
     """
     existing_objects = KanbanCard.objects.filter(
         is_deleted=False,
+        is_archived=False,
         kanban_board_id=kanban_board_id,
     )
 
