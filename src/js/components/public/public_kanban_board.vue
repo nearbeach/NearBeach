@@ -103,11 +103,9 @@ import { Modal } from "bootstrap";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
-import KanbanRow from "../kanban/KanbanRow.vue";
 export default {
 	name: "PublicKanbanBoard",
 	components: {
-		KanbanRow,
 		NConfigProvider,
 		PublicCardInformation,
 		PublicKanbanColumn,
