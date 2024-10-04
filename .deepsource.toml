@@ -9,7 +9,8 @@ exclude_patterns = [
   "browserstack/**",
   "cypress/**",
   "NearBeach/static/**",
-  "Nearbeach/migrations/**"
+  "Nearbeach/migrations/**",
+  "tests/**",
 ]
 
 [[analyzers]]
