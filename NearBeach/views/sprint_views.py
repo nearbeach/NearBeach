@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
@@ -10,7 +9,7 @@ import json
 from django.views.decorators.http import require_http_methods
 
 from NearBeach.forms import NewSprintAssignmentForm, NewSprintForm, AddObjectToSprintForm, RemoveSprintForm
-from NearBeach.models import Sprint, SprintObjectAssignment, RequirementItem, Project, Task, ObjectAssignment, UserGroup
+from NearBeach.models import Sprint, SprintObjectAssignment, ObjectAssignment, UserGroup
 from NearBeach.views.gantt_chart_views import get_object_results
 from NearBeach.views.theme_views import get_theme
 
@@ -170,7 +169,6 @@ def list_child_sprints(request, destination, location_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-# @check_sprint_permissions_with_destination(1)
 @check_sprint_permission_with_sprint(min_permission_level=1)
 def potential_object_list(request, destination, location_id, object_lookup, *args, **kwargs):
     """
@@ -250,6 +248,34 @@ def remove_sprint(request, destination, location_id, *args, **kwargs):
 
     sprint_results = get_assigned_sprints(destination, location_id)
     return JsonResponse(json.loads(sprint_results), safe=False)
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permission_with_sprint(2)
+def remove_object_from_sprint(request, destination, location_id, *args, **kwargs):
+    if not destination == "sprint":
+        return HttpResponseBadRequest("Sorry - object not allowed")
+
+    form = AddObjectToSprintForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Soft delete the data
+    for object_type in ["requirement_item", "project", "task"]:
+        data = form.cleaned_data[object_type]
+
+        # If there is data we'll have a set of one
+        if len(data) == 1:
+            SprintObjectAssignment.objects.filter(
+                is_deleted=False,
+                sprint_id=location_id,
+                **{ F"{object_type}_id__in": data.values(F"{object_type}_id") }
+            ).update(
+                is_deleted=True,
+            )
+
+    return HttpResponse("")
 
 
 @login_required(login_url="login", redirect_field_name="")

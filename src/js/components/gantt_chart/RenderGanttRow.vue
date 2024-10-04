@@ -2,6 +2,12 @@
 	<div class="gantt-row">
 		<div class="gantt-row--information">
 			<div class="gantt-row--title">
+				<span style="margin-right:10px;">
+					<Icon
+						v-bind:icon="icons.trashCan"
+						v-on:click="confirmRemoval()"
+					/>
+				</span>
 				{{title}}
 			</div>
 			<div class="gantt-row--start-date">
@@ -70,10 +76,15 @@
 import { mapGetters } from "vuex";
 
 //Components
+import {Icon} from "@iconify/vue";
 import { NDatePicker, NSelect } from "naive-ui";
+import { Modal } from "bootstrap";
 
 //Datetime
 import { DateTime } from "luxon";
+
+//Mixins
+import iconMixin from "../../mixins/iconMixin";
 
 export default {
 	name: "RenderGanttRow",
@@ -116,9 +127,13 @@ export default {
 		},
 	},
 	components: {
+		Icon,
 		NDatePicker,
 		NSelect,
 	},
+	mixins: [
+		iconMixin,
+	],
 	data() {
 		return {
 			datePickerFormat: "yyyy-MM-dd HH:mm",
@@ -200,6 +215,18 @@ export default {
 		},
 	},
 	methods: {
+		confirmRemoval() {
+			//Add this location into the confirm delete store
+			this.$store.commit({
+				type: "updateConfirmDelete",
+				objectType: this.objectType,
+				objectId: this.objectId,
+			});
+
+			//Open the modal
+			const modal = new Modal(document.getElementById("confirmObjectRemoveModal"));
+			modal.show();
+		},
 		getStatusList() {
 			//Get the status list dependent on the object type
 			this.statusList = this.$store.getters.getGanttStatusList(this.objectType);

@@ -33,7 +33,6 @@ from NearBeach.forms import (
 )
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Max
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
@@ -70,12 +69,16 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     )
 
     # Check the data
+    data = form.cleaned_data[object_lookup]
     if object_lookup == "project":
-        kanban_card_submit.project = form.cleaned_data[object_lookup]
+        kanban_card_submit.project = data
+        kanban_card_submit.kanban_card_description = data.project_description
     elif object_lookup == "task":
-        kanban_card_submit.task = form.cleaned_data[object_lookup]
+        kanban_card_submit.task = data
+        kanban_card_submit.kanban_card_description = data.task_long_description
     elif object_lookup == "requirement":
-        kanban_card_submit.requirement = form.cleaned_data[object_lookup]
+        kanban_card_submit.requirement = data
+        kanban_card_submit.kanban_card_description = data.requirement_scope
 
     kanban_card_submit.kanban_card_text = form.cleaned_data[object_lookup]
 
@@ -313,6 +316,7 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
     """
     existing_objects = KanbanCard.objects.filter(
         is_deleted=False,
+        is_archived=False,
         kanban_board_id=kanban_board_id,
     )
 
@@ -401,7 +405,6 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     # Update the card data
     kanban_card_update.kanban_column = form.cleaned_data["new_card_column"]
     kanban_card_update.kanban_level = form.cleaned_data["new_card_level"]
-    # kanban_card_update.save()
 
     """
     Update the sort order

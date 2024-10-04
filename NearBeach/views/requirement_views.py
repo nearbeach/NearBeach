@@ -26,8 +26,7 @@ from NearBeach.models import (
     ListOfRequirementItemType,
     ListOfRequirementStatus,
     ListOfRequirementType,
-    Group,
-    UserGroup,
+    Group, KanbanCard,
 )
 from NearBeach.views.theme_views import get_theme
 
@@ -61,6 +60,7 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
             requirement=requirement_instance,
             task=Task.objects.get(task_id=row),
             change_user=request.user,
+            link_relationship="Relate"
         )
         submit_object_assignment.save()
 
@@ -368,6 +368,15 @@ def requirement_information_save(request, requirement_id, *args, **kwargs):
     requirement_result.requirement_type = form.cleaned_data["requirement_type"]
 
     requirement_result.save()
+
+    # Find any linked cards, and update the description
+    KanbanCard.objects.filter(
+        is_deleted=False,
+        is_archived=False,
+        requirement_id=requirement_id,
+    ).update(
+        kanban_card_description=requirement_result.requirement_scope,
+    )
 
     # Return a success
     return HttpResponse("Requirement Saved")

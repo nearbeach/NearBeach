@@ -1,5 +1,4 @@
 from django.core.exceptions import PermissionDenied
-from django.db.models import Max
 from functools import wraps
 
 from NearBeach.models import Sprint

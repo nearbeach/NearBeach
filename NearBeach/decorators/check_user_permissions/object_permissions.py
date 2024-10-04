@@ -1,5 +1,4 @@
 from django.core.exceptions import PermissionDenied
-from django.db.models import Max, Q
 from functools import wraps
 from .partials.change_task_permissions import change_task_permissions
 from .partials.customer_permissions import customer_permissions
@@ -16,8 +15,6 @@ from .partials.organisation_permissions import organisation_permissions
 from .partials.project_permissions import project_permissions
 from .partials.tag_permissions import tag_permissions
 from .partials.task_permissions import task_permissions
-
-from NearBeach.views.error_views import error_403
 
 
 FUNCTION_DICT = {

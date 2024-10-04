@@ -102,7 +102,6 @@ class AdminPermissionTests(TestCase):
             URLTest("update_group_leader_status", ["user"],
                     {"group": 1, "permission_set": 1, "username": 1, "group_leader": "false"}, 200, "POST"),
             URLTest("update_user_password", [], {"username": 1, "password": "Test1234$"}, 200, "POST"),
-            # URLTest("update_user_password", [], {}, 400, "POST"), # Get 200 http code for some reason?
             URLTest("profile_update_data", [], {"username": 1, "first_name": "Admin", "last_name": "Admin", "theme": "dark"}, 200, "POST"),
             URLTest("diagnostic_information_email_test", [], {}, 200, "POST"),
             URLTest("diagnostic_information", [], {}, 200, "GET"),

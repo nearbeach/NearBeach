@@ -1,5 +1,4 @@
-from NearBeach.models import ObjectAssignment, ObjectNote, UserGroup
-from django.db.models import Max, Q
+from NearBeach.models import ObjectNote
 
 
 def object_note_permissions(request, kwargs):

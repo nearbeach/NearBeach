@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_protect
@@ -83,20 +83,6 @@ def delete_public_link(request, destination, location_id, *args, **kwargs):
 
 
 # # Internal function
-# def get_public_context(results):
-#     organisation_results = getattr(
-#         results,
-#         "organisation"
-#     )
-#
-#     # Serialise in the if statement - as None can not be serialized
-#     organisation_results = serializers.serialize("json", [organisation_results])
-#     results = serializers.serialize("json", [results])
-#
-#     return {
-#         "organisation_results": organisation_results,
-#         "results": results,
-#     }
 
 
 # Internal function
@@ -377,8 +363,6 @@ def public_link(request, destination, location_id, public_link_id, *args, **kwar
         c = get_public_context_project(results)
     elif destination == "task":
         c = get_public_context_task(results)
-    # else:
-    #     c = get_public_context(results)
 
     # Add tinymce flag
     c["need_tinymce"] = True
