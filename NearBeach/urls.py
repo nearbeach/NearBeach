@@ -627,6 +627,11 @@ urlpatterns = [
         name="associated_objects",
     ),
     path(
+        "object_data/<destination>/<location_id>/remove_object_from_sprint/",
+        sprint_views.remove_object_from_sprint,
+        name="remove_object_from_sprint",
+    ),
+    path(
         "object_data/bug_client_list/",
         object_data_views.bug_client_list,
         name="bug_client_list",

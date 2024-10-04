@@ -4,6 +4,7 @@ import {createStore} from "vuex";
 import {moduleArchiveCards} from "./vuex/archiveCardsVueX";
 import {moduleCard} from "./vuex/cardVueX";
 import {moduleChangeTask} from "./vuex/changeTaskVueX";
+import {moduleConfirmDelete} from "./vuex/confirmDeleteVueX";
 import {moduleDestination} from "./vuex/destinationVueX";
 import {moduleDocuments} from "./vuex/documentsVueX";
 import {moduleGantChart} from "./vuex/ganttChartVueX";
@@ -28,6 +29,7 @@ export const store = createStore({
         archiveCards: moduleArchiveCards,
         card: moduleCard,
         changeTask: moduleChangeTask,
+        confirmDelete: moduleConfirmDelete,
         destination: moduleDestination,
         documents: moduleDocuments,
         ganttChart: moduleGantChart,

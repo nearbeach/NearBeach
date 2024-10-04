@@ -250,6 +250,34 @@ def remove_sprint(request, destination, location_id, *args, **kwargs):
     return JsonResponse(json.loads(sprint_results), safe=False)
 
 
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permission_with_sprint(2)
+def remove_object_from_sprint(request, destination, location_id, *args, **kwargs):
+    if not destination == "sprint":
+        return HttpResponseBadRequest("Sorry - object not allowed")
+
+    form = AddObjectToSprintForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Soft delete the data
+    for object_type in ["requirement_item", "project", "task"]:
+        data = form.cleaned_data[object_type]
+
+        # If there is data we'll have a set of one
+        if len(data) == 1:
+            SprintObjectAssignment.objects.filter(
+                is_deleted=False,
+                sprint_id=location_id,
+                **{ F"{object_type}_id__in": data.values(F"{object_type}_id") }
+            ).update(
+                is_deleted=True,
+            )
+
+    return HttpResponse("")
+
+
 @login_required(login_url="login", redirect_field_name="")
 @check_sprint_permission_with_sprint(1)
 def sprint_information(request, sprint_id, *args, **kwargs):

@@ -52,6 +52,8 @@
             </li>
         </ul>
     </div>
+
+	<confirm-object-remove></confirm-object-remove>
 </template>
 
 <script>
@@ -60,6 +62,7 @@ import {DateTime} from "luxon";
 import {NConfigProvider} from "naive-ui";
 
 //Components
+import ConfirmObjectRemove from "../modules/wizards/ConfirmObjectRemove.vue";
 import RenderGanttDaysHeader from "./RenderGanttDaysHeader.vue";
 import RenderGanttMonthlyHeader from "./RenderGanttMonthlyHeader.vue";
 import RenderGanttRow from "./RenderGanttRow.vue";
@@ -70,6 +73,7 @@ import getThemeMixin from "../../mixins/getThemeMixin";
 export default {
 	name: "GanttChart",
 	components: {
+		ConfirmObjectRemove,
 		RenderGanttRow,
 		RenderGanttDaysHeader,
 		RenderGanttMonthlyHeader,

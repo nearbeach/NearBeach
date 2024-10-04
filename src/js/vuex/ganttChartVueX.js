@@ -64,6 +64,21 @@ export const moduleGantChart = {
                 startDateGantt: payload.startDateGantt,
             });
         },
+        removeGanttChartSingleRow: ({ state, commit }, payload) => {
+            //Simple remove that row using the id and object type
+            const gantt_chart_data = state.ganttChartData.filter(row => {
+                const condition1 = payload.objectType !== row.object_type;
+                const condition2 = parseInt(payload.objectId) !== parseInt(row.object_id)
+
+                //To keep, at least one of the conditions have to be true
+                return condition1 || condition2
+            });
+
+            //Remove from the front end :)
+            commit("updateGanttChartData", {
+                ganttChartData: gantt_chart_data,
+            });
+        },
         updateGanttChartSingleRow: ({ state, commit }, payload) => {
             //Get the gantt chart data
             let gantt_chart_data = state.ganttChartData;
