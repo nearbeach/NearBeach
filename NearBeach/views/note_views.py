@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 
 from NearBeach.decorators.check_destination import check_destination
 from NearBeach.forms import EditNoteForm, AddNoteForm
-from NearBeach.models import ObjectNote
+from NearBeach.models import ObjectNote, KanbanCard
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions, \
     check_user_generic_permissions
 from NearBeach.decorators.check_user_permissions.organisation_permissions import check_user_organisation_note_permissions
@@ -49,11 +49,28 @@ def generic_add_note(request, destination, location_id):
 
     # SAVE DATA
     submit_object_note = ObjectNote(
-        change_user=request.user, object_note=form.cleaned_data["note"]
+        change_user=request.user,
+        object_note=form.cleaned_data["note"],
     )
     submit_object_note = set_object_from_destination(
-        submit_object_note, destination, location_id
+        submit_object_note,
+        destination,
+        location_id
     )
+
+    # When we have a kanban_card as a destination, we want to make sure it isn't a linked object. If it is, we'll need
+    # to link the object to the same note
+    if destination == "kanban_card":
+        kanban_card_results = KanbanCard.objects.get(kanban_card_id=location_id)
+
+        # Go through each potential object connection
+        for object_type in ["project", "task", "requirement"]:
+            if not getattr(kanban_card_results, F"{object_type}_id") is None:
+                submit_object_note = set_object_from_destination(
+                    submit_object_note,
+                    object_type,
+                    getattr(kanban_card_results, F"{object_type}_id"),
+                )
 
     submit_object_note.save()
 
