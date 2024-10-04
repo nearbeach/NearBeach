@@ -188,7 +188,7 @@ export default {
 				this.loadingData = false;
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
-					header: `Error fetching group and user data`,
+					header: "Error fetching group and user data",
 					message: `Sorry we could not get any group or user data. Error -> ${error}`,
 					extra_classes: "bd-danger",
 					delay: 0,
