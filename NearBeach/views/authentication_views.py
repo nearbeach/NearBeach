@@ -1,4 +1,3 @@
-# Import Forms
 from django.contrib.auth import get_user_model
 from ..forms import PermissionSet, Group, LoginForm
 from ..models import UserGroup, Notification, Organisation
@@ -265,8 +264,6 @@ def login(request):
                 )
             )
 
-            # if user_group_count == 0:
-            #     return HttpResponseRedirect(reverse('logout'))
             if user_group_count > 0:
                 return HttpResponseRedirect(reverse("dashboard"))
 

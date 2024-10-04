@@ -401,7 +401,6 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     # Update the card data
     kanban_card_update.kanban_column = form.cleaned_data["new_card_column"]
     kanban_card_update.kanban_level = form.cleaned_data["new_card_level"]
-    # kanban_card_update.save()
 
     """
     Update the sort order

@@ -51,21 +51,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         scheduled_objects = []
-        #
-        # # Run the functions in this particular order
-        # scheduled_objects.extend(self.run_set_day_of_the_week())
-        # scheduled_objects.extend(self.run_weekly())
-        # scheduled_objects.extend(self.run_fortnightly())
-        # scheduled_objects.extend(self.run_monthly())
-        # scheduled_objects.extend(self.run_start_of_the_month())
-        # scheduled_objects.extend(self.run_end_of_the_month())
-        # scheduled_objects.extend(self.run_x_days_before_end_of_the_month())
-        #
-        # print(scheduled_objects)
-        #
-        # # Create the scheduled objects
-        # for scheduled_object in scheduled_objects:
-        #     self.create_object(scheduled_object=scheduled_object)
 
 
     def create_object(self, scheduled_object, *args, **kwargs):
@@ -118,7 +103,6 @@ class Command(BaseCommand):
                 frequency=SCH_SET_DAY_OF_THE_WEEK,
                 start_date__lte=todays_date,
                 is_active=True,
-                # frequency_attribute__icontains=todays_day,
             ) & Q(
                 Q(
                     end_date__gte=todays_date,
@@ -128,12 +112,6 @@ class Command(BaseCommand):
             )
         )
 
-        # return [
-        #     scheduled_object
-        #     for scheduled_object in scheduled_objects
-        #     # Check to make sure our day is within the scheduled Object
-        #     if todays_day in scheduled_object.frequency_attribute["days_of_the_week"]
-        # ]
 
 
     def run_weekly(self):

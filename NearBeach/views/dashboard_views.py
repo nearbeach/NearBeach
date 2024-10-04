@@ -1,4 +1,3 @@
-# Import Forms
 from ..forms import *
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
@@ -282,7 +281,6 @@ def get_unassigned_objects(request):
         )
         .exclude(
             Q(
-                # project_status="Closed",
                 project_status__project_higher_order_status="Closed",
             )
             | Q(
@@ -351,7 +349,6 @@ def get_unassigned_objects(request):
         )
         .exclude(
             Q(
-                # task_status="Closed",
                 task_status__task_higher_order_status="Closed",
             )
             | Q(
