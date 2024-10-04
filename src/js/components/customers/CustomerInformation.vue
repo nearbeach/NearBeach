@@ -218,7 +218,7 @@ export default {
 		showErrorToast() {
 			this.$store.dispatch("newToast", {
 				header: "Error uploading profile picture",
-				message: `Sorry, we had an issue uploading the profile image.`,
+				message: "Sorry, we had an issue uploading the profile image.",
 				extra_classes: "bg-danger",
 				delay: 0,
 			});

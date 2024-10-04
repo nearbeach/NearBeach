@@ -236,7 +236,7 @@ export default {
 				case "task":
 					return `Task${data.location_id}`;
 				default:
-					return `----`;
+					return "----";
 			}
 		},
 		saveLinks() {

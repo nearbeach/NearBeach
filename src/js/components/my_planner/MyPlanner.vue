@@ -154,7 +154,7 @@ export default {
 				case "task":
 					return `Task${element.location_id} - ${end_date}`;
 				default:
-					return `----`;
+					return "----";
 			}
 		},
 		removeUserJob() {
