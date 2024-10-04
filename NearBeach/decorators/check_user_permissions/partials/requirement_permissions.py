@@ -1,5 +1,5 @@
-from NearBeach.models import ObjectAssignment, Requirement, UserGroup
-from django.db.models import Max, Q
+from NearBeach.models import ObjectAssignment, UserGroup
+from django.db.models import Max
 
 
 def requirement_permissions(request, kwargs):

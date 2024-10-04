@@ -8,7 +8,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.template import loader
 from NearBeach.forms import NewProjectForm, ProjectForm
-from NearBeach.models import Group, UserGroup, ObjectAssignment, ListOfProjectStatus
+from NearBeach.models import Group, ObjectAssignment, ListOfProjectStatus
 from NearBeach.views.tools.internal_functions import Project, Organisation, get_user_group_permission, get_all_groups
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.views.theme_views import get_theme

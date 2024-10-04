@@ -1,6 +1,4 @@
-from django.core.exceptions import PermissionDenied
 from django.db.models import Max, Q
-from functools import wraps
 
 from NearBeach.models import Group, ObjectAssignment, UserGroup
 

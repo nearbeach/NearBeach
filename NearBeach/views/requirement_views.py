@@ -27,8 +27,7 @@ from NearBeach.models import (
     ListOfRequirementStatus,
     ListOfRequirementType,
     Group,
-    UserGroup,
-)
+    )
 from NearBeach.views.theme_views import get_theme
 
 import uuid

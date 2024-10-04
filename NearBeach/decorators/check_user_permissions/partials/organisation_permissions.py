@@ -1,4 +1,4 @@
-from django.db.models import Max, Q
+from django.db.models import Max
 from NearBeach.models import UserGroup
 
 

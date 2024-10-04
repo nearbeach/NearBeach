@@ -14,7 +14,6 @@ from NearBeach.models import (
     Requirement,
     RequirementItem,
     Task,
-    User,
     UserGroup,
 )
 

@@ -5,8 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q, CharField, Value as V, F, Case, When
-from django.db.models.functions import Concat
+from django.db.models import Q, Value as V, F
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.views.decorators.http import require_http_methods
 
@@ -46,7 +45,6 @@ from NearBeach.forms import (
     AddCustomerForm,
     AddGroupForm,
     AddObjectLinkForm,
-    AddNoteForm,
     AddTagsForm,
     AddUserForm,
     RemoveCustomerForm,
@@ -55,7 +53,6 @@ from NearBeach.forms import (
     DeleteLinkForm,
     DeleteTagForm,
     RemoveUserForm,
-    SearchForm,
     QueryBugClientForm,
     RemoveLinkForm,
 )

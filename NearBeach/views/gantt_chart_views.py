@@ -5,8 +5,6 @@ from django.db.models import Value, F
 from NearBeach.forms import GanttDataUpdateDataForm
 from NearBeach.models import (
     Project,
-    RequirementItem,
-    Sprint,
     SprintObjectAssignment,
     Task, ListOfRequirementItemStatus, ListOfProjectStatus, ListOfTaskStatus,
 )

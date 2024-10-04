@@ -33,7 +33,6 @@ from NearBeach.forms import (
 )
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Max
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import loader
