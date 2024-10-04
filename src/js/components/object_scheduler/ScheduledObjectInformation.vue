@@ -173,7 +173,6 @@
 import editor from "@tinymce/tinymce-vue";
 import { NSelect, NConfigProvider } from "naive-ui";
 import BetweenDates from "../dates/BetweenDates.vue";
-import GetStakeholders from "../organisations/GetStakeholders.vue";
 import SchedulerFrequency from "./SchedulerFrequency.vue";
 
 //Mixins
@@ -198,7 +197,6 @@ export default {
 		StakeholderInformation,
 		BetweenDates,
 		editor,
-		GetStakeholders,
 		NConfigProvider,
 		NSelect,
 		SchedulerFrequency,
