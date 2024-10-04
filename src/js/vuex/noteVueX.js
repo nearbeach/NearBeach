@@ -18,37 +18,37 @@ export const moduleNote = {
         },
     },
     actions: {
-        editSingleNote({state}, payload) {
-            //Get the index of the array
+        editSingleNote({ state }, payload) {
+            // Get the index of the array
             const index = state.noteList.findIndex((row) => {
                 return parseInt(row.object_note_id) === parseInt(payload.noteId);
             });
 
-            //If there are no indexes, escape
-            if (index < 0 ) return;
+            // If there are no indexes, escape
+            if (index < 0) return;
 
-            //Update the note description
+            // Update the note description
             let mutate_data = state.noteList;
             mutate_data[index].object_note = payload.noteDescription;
 
-            //Update state
+            // Update state
             state.noteList = mutate_data;
         },
-        updateNoteId({commit, state}, payload) {
-            //Update the node id
+        updateNoteId({ commit, state }, payload) {
+            // Update the note id
             state.noteId = payload.noteId;
 
             const filtered_data = state.noteList.filter((row) => {
                 return parseInt(row.object_note_id) === parseInt(payload.noteId);
-            })
+            });
 
             if (filtered_data.length === 0) {
-                //Set description to empty and return
+                // Set description to empty and return
                 state.noteDescription = "";
                 return;
             }
 
-            //Update note description
+            // Update note description
             state.noteDescription = filtered_data[0].object_note;
         },
     },
@@ -56,11 +56,11 @@ export const moduleNote = {
         getNoteList: (state) => {
             return state.noteList;
         },
-        getSingleNoteDescription: (state)  => {
+        getSingleNoteDescription: (state) => {
             return state.noteDescription;
         },
         getSingleNoteId: (state) => {
             return state.noteId;
         },
     },
-}
+};
