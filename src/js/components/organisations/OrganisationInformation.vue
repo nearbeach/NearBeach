@@ -189,7 +189,7 @@ export default {
 			});
 		},
 		setProfilePicture() {
-			let profile_picture =
+			const profile_picture =
 				this.organisationResults[0].fields
 					.organisation_profile_picture;
 

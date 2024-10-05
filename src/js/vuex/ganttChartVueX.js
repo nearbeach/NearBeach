@@ -1,4 +1,4 @@
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
 
 export const moduleGantChart = {
     state: () => ({
@@ -14,12 +14,9 @@ export const moduleGantChart = {
     }),
     mutations: {
         updateGanttChart(state, payload) {
-            //Defining int keys
             const int_keys = ["deltaDays", "startDateGantt", "endDateGantt"];
 
-            //Loop through the payload and update the results according to the keys
             Object.keys(payload).forEach((key) => {
-                //Update the results
                 if (int_keys.includes(key)) {
                     state[key] = parseInt(payload[key]);
                 } else {
@@ -35,27 +32,27 @@ export const moduleGantChart = {
         },
     },
     actions: {
-        initialiseGanttChartData: ({state, commit}, payload) => {
-            //Calculate the delta
-            let delta_days =  Math.floor((payload.endDateGantt - payload.startDateGantt) / (1000 * 60 * 60 * 24));
+        initialiseGanttChartData: ({ state, commit }, payload) => {
+            // Calculate the delta
+            let delta_days = Math.floor((payload.endDateGantt - payload.startDateGantt) / (1000 * 60 * 60 * 24));
 
-            //If deltaDays == 0, we add 1
+            // If deltaDays == 0, we add 1
             if (delta_days === 0) delta_days = 1;
 
-            //Convert some of the gantt data into the correct format
-            let gant_chart_data = payload.ganttChartData.map((row) => {
-                //Convert the dates
+            // Convert some of the gantt data into the correct format
+            const gant_chart_data = payload.ganttChartData.map((row) => {
+                // Convert the dates
                 const end_date = DateTime.fromISO(row.end_date);
                 const start_date = DateTime.fromISO(row.start_date);
 
-                //Mutate the row
+                // Mutate the row
                 row.end_date = end_date.toMillis();
                 row.start_date = start_date.toMillis();
 
                 return row;
             });
 
-            //Commit the data
+            // Commit the data
             commit({
                 type: "updateGanttChart",
                 deltaDays: delta_days,
@@ -65,28 +62,28 @@ export const moduleGantChart = {
             });
         },
         removeGanttChartSingleRow: ({ state, commit }, payload) => {
-            //Simple remove that row using the id and object type
+            // Simple remove that row using the id and object type
             const gantt_chart_data = state.ganttChartData.filter(row => {
                 const condition1 = payload.objectType !== row.object_type;
-                const condition2 = parseInt(payload.objectId) !== parseInt(row.object_id)
+                const condition2 = parseInt(payload.objectId) !== parseInt(row.object_id);
 
-                //To keep, at least one of the conditions have to be true
-                return condition1 || condition2
+                // To keep, at least one of the conditions have to be true
+                return condition1 || condition2;
             });
 
-            //Remove from the front end :)
+            // Remove from the front end :)
             commit("updateGanttChartData", {
                 ganttChartData: gantt_chart_data,
             });
         },
         updateGanttChartSingleRow: ({ state, commit }, payload) => {
-            //Get the gantt chart data
-            let gantt_chart_data = state.ganttChartData;
+            // Get the gantt chart data
+            const gantt_chart_data = state.ganttChartData.slice(); // Create a copy to maintain immutability
 
-            //Mutate the gantt chart data
+            // Mutate the gantt chart data
             gantt_chart_data[payload.index] = payload.value;
 
-            //Update gantt chart data
+            // Update gantt chart data
             commit("updateGanttChartData", {
                 ganttChartData: gantt_chart_data,
             });
@@ -96,7 +93,7 @@ export const moduleGantChart = {
         getDeltaDays: (state) => {
             return state.deltaDays;
         },
-        getGanttChartData: (state)=> {
+        getGanttChartData: (state) => {
             return state.ganttChartData;
         },
         getGanttChartDataSingleRow: (state) => (index) => {
@@ -112,4 +109,4 @@ export const moduleGantChart = {
             return state.startDateGantt;
         },
     },
-}
+};

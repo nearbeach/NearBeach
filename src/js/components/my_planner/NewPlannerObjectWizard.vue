@@ -361,9 +361,9 @@ export default {
 
 		//For loop
 		for (let i = 0; i < 7; i++) {
-			let new_day = today.plus({days: i});
-			let new_day_date = new_day.toFormat("yyyy-LL-dd");
-			let new_day_day = new_day.toFormat("cccc");
+			const new_day = today.plus({days: i});
+			const new_day_date = new_day.toFormat("yyyy-LL-dd");
+			cosnt new_day_day = new_day.toFormat("cccc");
 
 			this.listOfDays.push({
 				label: `${new_day_day} - ${new_day_date}`,

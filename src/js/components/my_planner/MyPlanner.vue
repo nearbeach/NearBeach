@@ -235,7 +235,7 @@ export default {
 		//Loop for the days
 		for (let i = 0; i < 7; i++) {
 			//Getting the day information
-			let new_day = today.plus({days: i})
+			const new_day = today.plus({days: i})
 
 			//Filter for the data for this specific day
 			const data = this.objectData.filter((row) => {

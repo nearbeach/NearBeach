@@ -174,10 +174,10 @@ export default {
 		}),
 		disableButton() {
 			//Both passwords have to be the same
-			let condition_1 = this.password1Model === this.password2Model;
+			const condition_1 = this.password1Model === this.password2Model;
 
 			//Passwords can not be less than 8 character
-			let condition_2 = this.password1Model.length >= 8;
+			const condition_2 = this.password1Model.length >= 8;
 
 			//If all conditions are true, send back false (to enable the button)
 			return !(condition_1 && condition_2 === true);
@@ -194,7 +194,7 @@ export default {
 		},
 		passwordResetClicked() {
 			//Opens the password reset modal
-			let passwordResetModal = new Modal(
+			const passwordResetModal = new Modal(
 				document.getElementById("passwordResetModal")
 			);
 			passwordResetModal.show();

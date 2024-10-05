@@ -129,7 +129,7 @@ export default {
 		},
 		appendBugList(data) {
 			//Create object for the data
-			let data_object = data[0].fields;
+			const data_object = data[0].fields;
 
 			//Add the bug id
 			data_object.bug_id = data[0].pk;
