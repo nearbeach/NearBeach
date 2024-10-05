@@ -8,7 +8,7 @@ Local Development Environment
 | If you are want to have a demo or deploy this project. Please head over to :ref:`quick-install-docker`.
 
 .. warning:: 
-  This setup is not intended for production environments and do not follow these steps in UAT, DEV, PROD or any other non local environments. The local/settings.py file contains a secret_key which will be a security concern.
+  This setup is not intended for production environments and do not follow these steps in UAT, DEV, PROD or any other non local environments. The :code:`local/settings.py` file contains a secret_key which will be a security concern.
 
 
 Contents: 
@@ -160,8 +160,8 @@ Setting up the project
 
     .. attention::
       
-      If you see an error message like "DisallowedHost at /", you need to add 127.0.0.1 to the allowed hosts in the local/settings.py file. 
-      Open local/settings.py file and add `127.0.0.1` to the ALLOWED_HOSTS list
+      If you see an error message like "DisallowedHost at /", you need to add 127.0.0.1 to the allowed hosts in the :code:`local/settings.py` file. 
+      Open :code:`local/settings.py` file and add :code:`127.0.0.1` to the ALLOWED_HOSTS list
 
       .. code-block:: python
 
@@ -211,10 +211,11 @@ Whats next
   
   Now the road is clear for you to start contributing.
   
-  Head over to `local/NearBeach` folder. This is where all the python code is stored.
+  Head over to :code:`local/NearBeach` folder. This is where all the python code is stored.
 
   .. warning::
-    Do not edit the settings.py file. Even if you did, Plesae revert back the changes before commiting the code to github.
+    | DO NOT modify :code:`local/settings.py`! 
+    | Before commiting the code please revert back the changes that are made to :code:`local/settings.py` file.
 
 
   .. seealso:: 
