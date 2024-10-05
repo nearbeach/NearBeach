@@ -32,7 +32,7 @@ export const moduleGantChart = {
         },
     },
     actions: {
-        initialiseGanttChartData: ({ state, commit }, payload) => {
+        initialiseGanttChartData: ({ commit }, payload) => { // Removed state
             // Calculate the delta
             let delta_days = Math.floor((payload.endDateGantt - payload.startDateGantt) / (1000 * 60 * 60 * 24));
 
