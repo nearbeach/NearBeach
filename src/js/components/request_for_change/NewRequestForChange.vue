@@ -264,7 +264,7 @@ export default {
 			data_to_send.set("rfc_test_plan", this.replaceIncorrectImageUrl(data.rfcTestPlanModel));
 
 			// Insert a new row for each group list item
-			data.groupModel.forEach((row, index) => {
+			data.groupModel.forEach((row) => {
 				data_to_send.append("group_list", row);
 			});
 

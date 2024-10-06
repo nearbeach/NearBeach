@@ -148,7 +148,7 @@ export default {
 				}, 500);
 			}
 		},
-		getOrganisationData(search, loading) {
+		getOrganisationData(search) {
 			// Save the seach data in FormData
 			const data_to_send = new FormData();
 			data_to_send.set("search", search);

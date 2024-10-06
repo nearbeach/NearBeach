@@ -192,7 +192,7 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}admin_add_user/`,
 				data_to_send
-			).then((response) => {
+			).then(() => {
 				//Just refresh the page (for now)
 				window.location.reload(true);
 			}).catch((error) => {

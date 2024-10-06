@@ -330,7 +330,7 @@ export default {
 					`${this.rootUrl}change_task_information/${this.changeTaskResults[0].pk}/save/`,
 					data_to_send
 				)
-				.then((response) => {
+				.then(() => {
 					//If successful, go back
 					this.$store.dispatch("newToast", {
 						header: "Saved Change Task",
@@ -340,7 +340,7 @@ export default {
 					});
 					//window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0].fields.request_for_change}/`;
 				})
-				.catch((error) => {
+				.catch(() => {
 					this.$store.dispatch("newToast", {
 						header: "Can not save",
 						message: "Sorry, we could not save your change task",
@@ -378,11 +378,11 @@ export default {
 					`${this.rootUrl}change_task_update_status/${this.changeTaskResults[0].pk}/`,
 					data_to_send
 				)
-				.then((response) => {
+				.then(() => {
 					//Reload the page
 					window.location.reload(true);
 				})
-				.catch((error) => {
+				.catch(() => {
 					this.$store.dispatch("newToast", {
 						header: "Can not save",
 						message: "Sorry, we could not save your change task",

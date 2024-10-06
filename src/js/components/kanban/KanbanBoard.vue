@@ -62,7 +62,7 @@ import KanbanRow from "./KanbanRow.vue";
 
 //VueX
 import {mapGetters} from "vuex";
-import {nextTick} from 'vue';
+
 
 export default {
 	name: "KanbanBoard",

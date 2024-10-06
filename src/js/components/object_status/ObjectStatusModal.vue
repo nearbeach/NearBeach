@@ -173,7 +173,7 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}object_status_information/${this.destination}/update/`,
 				data_to_send,
-			).then((response) => {
+			).then(() => {
 				this.$emit("update_status", {
 					statusId: this.statusId,
 					status: this.localStatusModel,

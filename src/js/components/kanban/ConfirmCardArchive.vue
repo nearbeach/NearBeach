@@ -95,7 +95,7 @@ export default {
 					`${this.rootUrl}kanban_information/archive_kanban_cards/`,
 					data_to_send
 				)
-				.catch((error) => {
+				.catch(() => {
 					//TODO: show card error
 				});
 		},

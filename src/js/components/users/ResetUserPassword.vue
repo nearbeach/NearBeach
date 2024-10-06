@@ -123,7 +123,7 @@ import iconMixin from "../../mixins/iconMixin";
 
 //Validation
 import useVuelidate from "@vuelidate/core"
-import {required, minLength, sameAs} from "@vuelidate/validators";
+import {required, minLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 export default {

@@ -183,7 +183,7 @@ import uploadMixin from "../../mixins/uploadMixin";
 
 //Validations
 import useVuelidate from "@vuelidate/core";
-import {required, maxLength} from "@vuelidate/validators";
+import {required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //VueX

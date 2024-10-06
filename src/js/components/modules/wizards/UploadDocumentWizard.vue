@@ -170,7 +170,7 @@
 
 <script>
 import {Icon} from "@iconify/vue";
-import {Modal} from "bootstrap";
+
 
 //VueX
 import {mapGetters} from "vuex";

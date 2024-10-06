@@ -100,7 +100,7 @@ export default {
 		}
 	},
 	watch: {
-		permissionSetNameModel(new_value) {
+		permissionSetNameModel() {
 			// Tell user we are verifying the unqiue name
 			this.checkingPermissionSetName = true;
 

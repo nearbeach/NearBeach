@@ -129,7 +129,7 @@ import {mapGetters} from "vuex";
 
 //Naive UI
 import {NColorPicker} from "naive-ui";
-import {reactive} from "vue";
+
 
 export default {
 	name: "EditTagModal",
@@ -202,7 +202,7 @@ export default {
 			//Use axios to send the request
 			this.axios.post(
 				`${this.rootUrl}tag/delete/${this.tagId}/`
-			).then((response) => {
+			).then(() => {
 				//Tell the component up stream that we removed this tag
 				this.$emit("delete_tag", {
 					tag_id: this.tagId,

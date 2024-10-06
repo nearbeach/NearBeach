@@ -121,7 +121,7 @@ export default {
 					this.requirementResults = response.data.requirement;
 					this.taskResults = response.data.task;
 				})
-				.catch((error) => {
+				.catch(() => {
 				});
 		},
 		getFriendlyDate(input_date) {

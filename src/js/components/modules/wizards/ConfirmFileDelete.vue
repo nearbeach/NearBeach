@@ -52,7 +52,7 @@
 
 <script>
 import {mapGetters} from "vuex";
-import {Modal} from "bootstrap";
+
 
 //Mixins
 import reopenCardInformation from "../../../mixins/reopenCardInformation";
