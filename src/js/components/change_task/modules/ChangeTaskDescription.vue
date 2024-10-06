@@ -96,7 +96,7 @@ export default {
 			).then((response) => {
 				//Just send the location to the success
 				success(`/private/${response.data[0].document_key_id}`);
-			}).catch(() => {
+			
 			});
 		},
 		updateDescription() {

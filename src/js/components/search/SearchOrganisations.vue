@@ -90,8 +90,7 @@ export default {
 				)
 				.then((response) => {
 					this.localOrganisationResults = response.data;
-				})
-				.catch(() => {
+					
 				});
 		},
 	},

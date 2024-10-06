@@ -120,8 +120,7 @@ export default {
 					this.projectResults = response.data.project;
 					this.requirementResults = response.data.requirement;
 					this.taskResults = response.data.task;
-				})
-				.catch(() => {
+				
 				});
 		},
 		getFriendlyDate(input_date) {

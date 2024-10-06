@@ -108,7 +108,7 @@ export default {
 
 				//Clear the card note model
 				this.cardNoteModel = "";
-			}).catch(() => {
+			
 			});
 		},
 		closeModal() {

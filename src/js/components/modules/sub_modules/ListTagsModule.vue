@@ -95,8 +95,7 @@ export default {
 				)
 				.then((response) => {
 					this.tagList = response.data;
-				})
-				.catch(() => {
+				
 				});
 		},
 		removeTag(tag_id) {
@@ -120,8 +119,7 @@ export default {
 					this.tagList = this.tagList.filter((row) => {
 						return row.pk !== tag_id;
 					});
-				})
-				.catch(() => {
+				
 				});
 		},
 	},
