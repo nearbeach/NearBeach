@@ -51,7 +51,8 @@ class Command(BaseCommand):
         scheduled_objects = []
 
 
-    def create_object(self, scheduled_object, *args, **kwargs):
+    @staticmethod
+    def create_object(scheduled_object, *args, **kwargs):
         #TODO: Print off a log when creating these tasks/projects
 
         # Get the template
@@ -89,7 +90,8 @@ class Command(BaseCommand):
         return
 
 
-    def run_set_day_of_the_week(self):
+    @staticmethod
+    def run_set_day_of_the_week():
         # Get today's date and day of the week
         todays_date = datetime.date.today()
         todays_day = calendar.day_name[todays_date.weekday()].lower()
@@ -112,7 +114,8 @@ class Command(BaseCommand):
 
 
 
-    def run_weekly(self):
+    @staticmethod
+    def run_weekly():
         todays_date = datetime.date.today()
         day_of_the_week = calendar.day_name[todays_date.weekday()]
 
@@ -134,7 +137,8 @@ class Command(BaseCommand):
         )
 
 
-    def run_fortnightly(self):
+    @staticmethod
+    def run_fortnightly():
         todays_date = datetime.date.today()
         day_of_the_week = calendar.day_name[todays_date.weekday()]
         last_run = todays_date - datetime.timedelta(days=14)
@@ -158,7 +162,8 @@ class Command(BaseCommand):
         )
 
 
-    def run_monthly(self):
+    @staticmethod
+    def run_monthly():
         todays_date = datetime.date.today()
         last_run = todays_date - datetime.timedelta(days=14)
 
@@ -180,7 +185,8 @@ class Command(BaseCommand):
         )
 
 
-    def run_start_of_the_month(self):
+    @staticmethod
+    def run_start_of_the_month():
         # If today is not the 1st - we will just leave
         todays_date = datetime.date.today()
         if todays_date.day != 1:
@@ -203,7 +209,8 @@ class Command(BaseCommand):
         )
 
 
-    def run_end_of_the_month(self):
+    @staticmethod
+    def run_end_of_the_month():
         # If today is not the end of the month - we will just leave
         todays_date = datetime.date.today()
         end_month_date = calendar.monthrange(todays_date.year, todays_date.month)[1]
@@ -227,7 +234,8 @@ class Command(BaseCommand):
         )
 
 
-    def run_x_days_before_end_of_the_month(self):
+    @staticmethod
+    def run_x_days_before_end_of_the_month():
         # If today's date is earlier than the 14th, just leave
         todays_date = datetime.date.today()
         if todays_date.day < 14:
