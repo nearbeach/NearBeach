@@ -112,16 +112,20 @@ export default {
 			}
 
 			//All is good - get the data
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/associated_objects/`
-				)
-				.then((response) => {
-					this.projectResults = response.data.project;
-					this.requirementResults = response.data.requirement;
-					this.taskResults = response.data.task;
-				
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/associated_objects/`
+			).then((response) => {
+				this.projectResults = response.data.project;
+				this.requirementResults = response.data.requirement;
+				this.taskResults = response.data.task;
+			}).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Associated Objects",
+					message: `Sorry, we could not get associated objects. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		getFriendlyDate(input_date) {
 			const options = {

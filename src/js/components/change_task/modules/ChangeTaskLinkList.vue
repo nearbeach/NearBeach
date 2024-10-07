@@ -125,7 +125,14 @@ export default {
 					//Return results
 					return results;
 				})
-      		});
+      		}).catch((error) => {
+				  this.$store.dispatch("newToast", {
+					header: "Error updating link results",
+					message: `Sorry, we could not update the link results. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	mounted() {

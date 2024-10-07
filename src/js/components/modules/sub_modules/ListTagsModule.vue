@@ -89,14 +89,18 @@ export default {
 			newTagModal.show();
 		},
 		getAssignedTags() {
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${this.locationId}/tag_list/`
-				)
-				.then((response) => {
-					this.tagList = response.data;
-				
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/tag_list/`
+			).then((response) => {
+				this.tagList = response.data;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Assigned Tags",
+					message: `Error getting assigned tags. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 		removeTag(tag_id) {
 			//If user does not have enough permissions, don't let them proceed.
@@ -109,18 +113,23 @@ export default {
 			data_to_send.set("object_id", this.locationId);
 
 			//Send data using axios
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/delete_tag/`,
-					data_to_send
-				)
-				.then(() => {
-					//Remove data from tagList
-					this.tagList = this.tagList.filter((row) => {
-						return row.pk !== tag_id;
-					});
-				
+			this.axios.post(
+				`${this.rootUrl}object_data/delete_tag/`,
+				data_to_send
+			).then(() => {
+				//Remove data from tagList
+				this.tagList = this.tagList.filter((row) => {
+					return row.pk !== tag_id;
 				});
+
+			}).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Error Removing Tag",
+					message: `Sorry, we could not remove the tag. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	mounted() {

@@ -108,7 +108,13 @@ export default {
 
 				//Clear the card note model
 				this.cardNoteModel = "";
-			
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Can't add Note",
+					message: `Sorry, we could not add a note for you. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 		closeModal() {
