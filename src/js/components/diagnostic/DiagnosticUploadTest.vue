@@ -37,7 +37,7 @@
 			</p>
 		</div>
 		<div class="col-md-8">
-			<p><a v-bind:href="downloadLocation" target="_blank">Please click here to download the file.</a></p>
+			<p><a v-bind:href="downloadLocation" target="_blank" rel="noopener noreferrer">Please click here to download the file.</a></p>
 			<p>It's contents should match the UUID: {{ uuidVerification }}</p>
 		</div>
 	</div>

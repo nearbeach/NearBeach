@@ -32,6 +32,7 @@
 							<a
 								v-bind:href="`${rootUrl}customer_information/${customerObject.customer_id}/`"
 								target="_blank"
+								rel="noopener noreferrer"
 							>
 								{{ customerObject.customer_first_name }}
 								{{ customerObject.customer_last_name }}
