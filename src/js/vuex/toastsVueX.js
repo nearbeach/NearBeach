@@ -15,7 +15,7 @@ export const moduleToasts = {
             const timestamp = new Date();
 
             //Setup new toast object with default values
-            let new_toast = {
+            const new_toast = {
                 delay: 20000,
                 extra_classes: "",
                 header: "",
