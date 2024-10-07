@@ -218,8 +218,6 @@ export default {
 					return row;
 				});
 
-				console.log("Gantt Chart Data: ", gantt_chart_data);
-
 				//Update Gantt Chart Data
 				this.$store.commit({
 					type: "updateGanttChartData",

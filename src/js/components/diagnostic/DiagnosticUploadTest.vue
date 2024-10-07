@@ -71,7 +71,6 @@ export default {
 			this.uploadState = "sending";
 
 			//Create a simple uuid
-			console.log("GET RANDOM ID: ", getRandomID());
 			const uuid = getRandomID();
 
 			//Create the file we are uploading

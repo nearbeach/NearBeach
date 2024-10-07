@@ -395,7 +395,6 @@ export default {
 			if (this.scheduledObjectResults.frequency_attribute === undefined) return [];
 			if (this.scheduledObjectResults.frequency_attribute.days_of_the_week === undefined) return [];
 
-			console.log("DATA: ", this.scheduledObjectResults.frequency_attribute.days_of_the_week);
 			return this.scheduledObjectResults.frequency_attribute.days_of_the_week;
 		},
 		getEndDateModel() {
