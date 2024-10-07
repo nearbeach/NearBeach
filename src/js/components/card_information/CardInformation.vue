@@ -226,7 +226,6 @@ import {mapGetters} from "vuex";
 
 //Mixins
 import iconMixin from "../../mixins/iconMixin";
-import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
 
 export default {
 	name: "CardInformation",
@@ -238,7 +237,6 @@ export default {
 		DocumentsModule,
 		Icon,
 		ListPublicLinks,
-		UploadDocumentWizard,
 	},
 	mixins: [iconMixin],
 	data() {

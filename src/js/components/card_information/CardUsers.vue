@@ -21,7 +21,6 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //Vuex components
 import {mapGetters} from "vuex";
@@ -33,7 +32,6 @@ import iconMixin from "../../mixins/iconMixin";
 export default {
 	name: "CardUsers",
 	components: {
-		Icon,
 		RenderUserCardList,
 	},
 	computed: {

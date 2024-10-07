@@ -160,7 +160,6 @@
 <script>
 import {Icon} from "@iconify/vue";
 import editor from "@tinymce/tinymce-vue";
-import ValidationRendering from "../validation/ValidationRendering.vue";
 import { NSelect } from "naive-ui";
 
 //VueX
@@ -175,7 +174,6 @@ export default {
 		editor,
 		Icon,
 		NSelect,
-		ValidationRendering,
 	},
 	props: {
 		requirementItemResults: {

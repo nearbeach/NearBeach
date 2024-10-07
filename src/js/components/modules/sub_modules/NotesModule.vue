@@ -35,7 +35,6 @@ import {Modal} from "bootstrap";
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import ListNotes from "./ListNotes.vue";
-import NewHistoryNoteWizard from "../wizards/NewHistoryNoteWizard.vue";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -45,7 +44,6 @@ export default {
 	components: {
 		Icon,
 		ListNotes,
-		NewHistoryNoteWizard,
 	},
 	mixins: [iconMixin],
 	computed: {
