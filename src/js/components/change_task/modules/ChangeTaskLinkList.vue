@@ -117,7 +117,7 @@ export default {
       		).then((response) => {
 				this.linkResults = response.data.map((row) => {
 					//Get results
-					let results = row;
+					const results = row;
 
 					//Mutate the object_status
 					results.object_status = this.translateStatus[row.object_status];

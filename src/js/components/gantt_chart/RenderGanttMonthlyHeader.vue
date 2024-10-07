@@ -57,8 +57,8 @@ export default {
 			this.monthArray = [];
 
 			//Setup local variables
-			let start_date = new Date(this.startDateGantt);
-			let end_date = new Date(this.endDateGantt);
+			const start_date = new Date(this.startDateGantt);
+			const end_date = new Date(this.endDateGantt);
 			let point_date = start_date;
 			let next_date = end_date;
 

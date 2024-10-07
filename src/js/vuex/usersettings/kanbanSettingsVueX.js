@@ -30,7 +30,7 @@ export const kanbanSettings = {
         },
         async updateLevelCollapse({dispatch, commit, state}, payload) {
             //Map in the changes
-            let current_levels = state.levels.map((row) => {
+            const current_levels = state.levels.map((row) => {
                 //If the payload.level_id != row.level_id, just return the data
                 if (payload.level_id !== row.level_id) return row;
 

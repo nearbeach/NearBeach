@@ -206,7 +206,7 @@ export default {
 			).then((response) => {
 				//ADD CODE
 				//Get the gantt chart data
-				let gantt_chart_data = response.data.gantt_chart_data.map((row) => {
+				const gantt_chart_data = response.data.gantt_chart_data.map((row) => {
 					//Convert the dates
 					const end_date = DateTime.fromISO(row.end_date);
 					const start_date = DateTime.fromISO(row.start_date);

@@ -28,7 +28,7 @@ export const moduleNote = {
             if (index < 0 ) return;
 
             //Update the note description
-            let mutate_data = state.noteList;
+            const mutate_data = state.noteList;
             mutate_data[index].object_note = payload.noteDescription;
 
             //Update state

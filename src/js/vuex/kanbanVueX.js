@@ -78,7 +78,7 @@ export const moduleKanban = {
                 card_priorty = event.item.dataset.cardPriority;
 
             //Setup variables (for shorthand)
-            let new_card_column = new_elem.dataset.column,
+            const new_card_column = new_elem.dataset.column,
                 new_card_level = new_elem.dataset.level,
                 new_card_sort_number = event.newIndex,
                 old_card_column = old_elem.dataset.column,
@@ -147,7 +147,7 @@ export const moduleKanban = {
                 card_id = event.item.dataset.cardId;
 
             //Setup variables (for shorthand)
-            let new_card_column = new_elem.dataset.column,
+            const new_card_column = new_elem.dataset.column,
                 new_card_level = new_elem.dataset.level,
                 new_card_sort_number = event.newDraggableIndex,
                 old_card_sort_number = event.oldDraggableIndex;
@@ -157,10 +157,10 @@ export const moduleKanban = {
             //For example, if we move a card from a higher position to a lower
             //position, all cards inbetween will have a delta change of -1. i.e.
             //a lower position on the sort order.
-            let delta = 1 - 2 * (old_card_sort_number < new_card_sort_number);
+            const delta = 1 - 2 * (old_card_sort_number < new_card_sort_number);
 
             //Get the largest and smallest values
-			let largest =
+			const largest =
 					(new_card_sort_number >= old_card_sort_number) * new_card_sort_number +
 					(new_card_sort_number < old_card_sort_number) * old_card_sort_number,
 				smallest =
@@ -212,7 +212,7 @@ export const moduleKanban = {
                 old_elem = event.from;
 
             //Setup variables (for shorthand)
-            let new_card_column = new_elem.dataset.column,
+            const new_card_column = new_elem.dataset.column,
                 new_card_level = new_elem.dataset.level,
                 old_card_column = old_elem.dataset.column,
                 old_card_level = old_elem.dataset.level;

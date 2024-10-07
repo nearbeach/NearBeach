@@ -41,7 +41,7 @@ export default {
 			//Wait until AFTER rendering happens
 			this.$nextTick(() => {
 				// let toastList = document.getElementsByClassName("toast");
-				let toastList = [].slice.call(document.querySelectorAll('.toast'))
+				const toastList = [].slice.call(document.querySelectorAll('.toast'))
 
 				//Loop through each toast item and deploy :)
 				toastList.forEach((row) => {
@@ -49,13 +49,13 @@ export default {
 					var delay = row.dataset.delay;
 
 					//Setup the options
-					let options = {
+					const options = {
 						delay: parseInt(delay),
 						autohide: parseInt(delay) > 0,
 					};
 
 					//Create the new toast
-					let toast = new Toast(row, options);
+					const toast = new Toast(row, options);
 
 					//Show the toast
 					toast.show();
@@ -72,14 +72,14 @@ export default {
 			let hours = timestamp.getHours();
 
 			//Determine if hours are AM or PM
-			let ampm = hours >= 12 ? 'PM' : 'AM';
+			const ampm = hours >= 12 ? 'PM' : 'AM';
 
 			//Reset hours into non 24 format
 			hours = hours % 12;
 			hours = hours ? hours : 12;
 
 			//Get minutes in the 00 format
-			let minutes = timestamp.getMinutes() < 10 ? `0${timestamp.getMinutes()}` : timestamp.getMinutes();
+			const minutes = timestamp.getMinutes() < 10 ? `0${timestamp.getMinutes()}` : timestamp.getMinutes();
 
 			//Return what we have
 			return `${hours}:${minutes} ${ampm}`;

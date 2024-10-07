@@ -199,7 +199,6 @@
 </template>
 
 <script>
-import Editor from "@tinymce/tinymce-vue";
 import {NSelect, NDatePicker} from "naive-ui";
 
 //VueX
@@ -217,7 +216,6 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
-		editor: Editor,
 		NDatePicker,
 		NSelect,
 		ValidationRendering,

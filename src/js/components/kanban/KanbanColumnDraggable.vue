@@ -299,7 +299,7 @@ export default {
 				card_id = event.item.dataset.cardId;
 
 			//Setup variables (for shorthand)
-			let new_card_column = new_elem.dataset.column,
+			const new_card_column = new_elem.dataset.column,
 				new_card_level = new_elem.dataset.level,
 				
 				old_card_column = old_elem.dataset.column,
