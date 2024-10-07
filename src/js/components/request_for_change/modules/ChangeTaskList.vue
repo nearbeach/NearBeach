@@ -316,7 +316,7 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}rfc_information/${this.rfcId}/update_status/`,
 				data_to_send
-			).then((response) => {
+			).then(() => {
 				//Refresh Page
 				window.location.reload(true);
 			}).catch((error) => {
@@ -442,7 +442,7 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}change_task_update_status/${change_task_id}/`,
 				data_to_send
-			).then((response) => {
+			).then(() => {
 				/*
 				We are using the map function to make a single variable change without having to write a loop function.
 				The change task has been update, so we are only changing that task when mapping the results back

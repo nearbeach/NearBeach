@@ -125,7 +125,7 @@ export default {
 					//Return results
 					return results;
 				})
-      		}).catch((error) => {});
+      		});
 		},
 	},
 	mounted() {

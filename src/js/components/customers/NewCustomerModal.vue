@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import {Modal} from "bootstrap";
+
 import {Icon} from "@iconify/vue";
 import NewCustomerForm from "./NewCustomerForm.vue";
 

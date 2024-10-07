@@ -169,10 +169,10 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}notification_information/delete/`,
 				data_to_send,
-			).then(response => {
+			).then(() => {
 				//Go back to search
 				window.location.href = `${this.rootUrl}search/notification/`;
-			}).catch((error) => {
+			}).catch(() => {
 				this.$store.dispatch("newToast", {
 					header: "Can not delete",
 					message: "Sorry, we are having issues deleting this notification. Please contact your system admin",
@@ -210,7 +210,7 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}notification_information/${this.notificationResults[0].pk}/save/`,
 				data_to_send,
-			).then((response) => {
+			).then(() => {
 				//Tell user that this was successful
 				this.$store.dispatch("newToast", {
 					header: "Saved Notification",

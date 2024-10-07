@@ -88,7 +88,7 @@ export default {
 				data_to_send
 			).then((response) => {
 				this.localCustomerResults = response.data;
-			}).catch((error) => {
+			}).catch(() => {
 				this.$store.dispatch("newToast", {
 					header: "Error getting search results",
 					message: "Sorry, we could not retrieve your search results",

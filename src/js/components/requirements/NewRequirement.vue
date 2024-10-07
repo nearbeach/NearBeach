@@ -149,7 +149,7 @@
 
 <script>
 //JavaScript Libraries
-import {Modal} from "bootstrap";
+
 import Editor from "@tinymce/tinymce-vue";
 import GetStakeholders from "../organisations/GetStakeholders.vue";
 import GroupPermissions from "../permissions/GroupPermissions.vue";
@@ -297,7 +297,7 @@ export default {
 			data_to_send.set("uuid", this.uuid);
 
 			// Insert a new row for each group list item
-			this.groupModel.forEach((row, index) => {
+			this.groupModel.forEach((row) => {
 				data_to_send.append("group_list", row);
 			});
 

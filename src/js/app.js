@@ -5,8 +5,8 @@ import {createApp} from "vue/dist/vue.esm-bundler";
 import {store} from "./vuex-store";
 
 //Import Bootstrap
-import {createPopper} from "@popperjs/core";
-import bootstrap from "bootstrap";
+
+
 
 //SCSS Library
 import "../sass/main.scss";
@@ -23,7 +23,7 @@ const axiosInstance = axios.create({
 });
 
 //nextTick
-import {nextTick} from 'vue';
+
 
 //Naive-ui
 import {NConfigProvider} from "naive-ui";

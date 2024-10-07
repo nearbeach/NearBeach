@@ -68,7 +68,7 @@ export const moduleKanban = {
         },
     },
     actions: {
-        async dragDifferentColumn({dispatch, commit, state}, payload) {
+        async dragDifferentColumn({commit, state}, payload) {
             //Required Data
             const event = payload.event;
 
@@ -138,12 +138,12 @@ export const moduleKanban = {
                 });
             });
         },
-        async dragSameColumn({dispatch, commit, state}, payload) {
+        async dragSameColumn({commit, state}, payload) {
             //Required Data
             const event = payload.event;
 
             var new_elem = event.to,
-                old_elem = event.from,
+                
                 card_id = event.item.dataset.cardId;
 
             //Setup variables (for shorthand)

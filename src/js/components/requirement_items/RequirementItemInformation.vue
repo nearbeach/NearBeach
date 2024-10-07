@@ -202,7 +202,7 @@ import uploadMixin from "../../mixins/uploadMixin";
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
-import {isReadOnly} from "vuedraggable/src/core/sortableEvents";
+
 
 export default {
 	name: "RequirementItemInformation.vue",
@@ -392,7 +392,7 @@ export default {
 			this.axios.post(
 				"save/",
 				data_to_send
-			).then((response) => {
+			).then(() => {
 				//Tell user of successfull update
 				this.$store.dispatch("newToast", {
 					header: "Saved Requirement Item",

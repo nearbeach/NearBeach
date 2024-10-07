@@ -100,7 +100,7 @@
 <script>
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
-import {Modal} from "bootstrap";
+
 
 //VueX
 import {mapGetters} from "vuex";

@@ -100,7 +100,7 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/update_status/`,
 				data_to_send
-			).then((response) => {
+			).then(() => {
 				//Reload the page to get redirected to the correct place
 				window.location.reload(true);
 			}).catch((error) => {

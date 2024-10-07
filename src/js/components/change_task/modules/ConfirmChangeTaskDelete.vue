@@ -75,7 +75,7 @@ export default {
 			//Send the trigger
 			this.axios.post(
 				`${this.rootUrl}change_task_information/${this.changeTaskResults[0].pk}/delete/`
-			).then((response) => {
+			).then(() => {
 				//If successful, go back
 				window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0].fields.request_for_change}/`;
 			});

@@ -255,7 +255,7 @@ export default {
 			)
 
 			// Insert a new row for each group list item
-			this.groupModel.forEach((row, index) => {
+			this.groupModel.forEach((row) => {
 				data_to_send.append("group_list", row);
 			});
 

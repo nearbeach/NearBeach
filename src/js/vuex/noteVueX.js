@@ -34,7 +34,7 @@ export const moduleNote = {
             //Update state
             state.noteList = mutate_data;
         },
-        updateNoteId({commit, state}, payload) {
+        updateNoteId({state}, payload) {
             //Update the node id
             state.noteId = payload.noteId;
 

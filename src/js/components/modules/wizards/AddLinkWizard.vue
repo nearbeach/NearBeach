@@ -109,7 +109,7 @@ import reopenCardInformation from "../../../mixins/reopenCardInformation"
 import useVuelidate from "@vuelidate/core";
 import {required, url} from "@vuelidate/validators";
 import ValidationRendering from "../../validation/ValidationRendering.vue";
-import {Modal} from "bootstrap";
+
 
 export default {
 	name: "AddLinkWizard",

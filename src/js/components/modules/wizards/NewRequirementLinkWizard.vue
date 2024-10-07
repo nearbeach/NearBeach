@@ -282,7 +282,7 @@ export default {
 					//Clear the search term results
 					this.searchTermModel = "";
 				})
-				.catch((error) => {
+				.catch(() => {
 					this.$store.dispatch("newToast", {
 						header: "Error retrieving links",
 						message: "We are currently having issues obtaining data",

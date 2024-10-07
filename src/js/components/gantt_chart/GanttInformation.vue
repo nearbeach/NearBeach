@@ -59,7 +59,7 @@
 <script>
 import {mapGetters} from "vuex";
 import {DateTime} from "luxon";
-import {NConfigProvider} from "naive-ui";
+
 
 //Components
 import ConfirmObjectRemove from "../modules/wizards/ConfirmObjectRemove.vue";

@@ -95,8 +95,7 @@ export default {
 				)
 				.then((response) => {
 					this.tagList = response.data;
-				})
-				.catch((error) => {
+				
 				});
 		},
 		removeTag(tag_id) {
@@ -115,13 +114,12 @@ export default {
 					`${this.rootUrl}object_data/delete_tag/`,
 					data_to_send
 				)
-				.then((response) => {
+				.then(() => {
 					//Remove data from tagList
 					this.tagList = this.tagList.filter((row) => {
 						return row.pk !== tag_id;
 					});
-				})
-				.catch((error) => {
+				
 				});
 		},
 	},

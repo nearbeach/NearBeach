@@ -301,10 +301,10 @@ export default {
 			//Setup variables (for shorthand)
 			const new_card_column = new_elem.dataset.column,
 				new_card_level = new_elem.dataset.level,
-				new_card_sort_number = event.newIndex,
+				
 				old_card_column = old_elem.dataset.column,
 				old_card_level = old_elem.dataset.level,
-				old_card_sort_number = event.oldIndex,
+				
 				column_property = new_elem.dataset.columnProperty;
 
 			//Data to send

@@ -363,7 +363,7 @@ export default {
 			this.axios.post(
 				url,
 				data_to_send
-			).then((response) => {
+			).then(() => {
 				//Filter out the id we want to remove
 				this.localPropertyList = this.localPropertyList.filter(
 					(row) => {
@@ -576,7 +576,7 @@ export default {
 				const data_to_send = new FormData();
 
 				// Insert a new row for each group list item
-				this.localPropertyList.forEach((row, index) => {
+				this.localPropertyList.forEach((row) => {
 					data_to_send.append("item", row.id);
 				});
 

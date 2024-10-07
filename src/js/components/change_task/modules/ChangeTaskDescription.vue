@@ -68,7 +68,7 @@ export default {
 		}
 	},
 	methods: {
-		customUploadImage(blobInfo, success, failure, progress) {
+		customUploadImage(blobInfo, success) {
 			//Create the form
 			const data_to_send = new FormData();
 			data_to_send.set(
@@ -80,11 +80,9 @@ export default {
 
 			//Configuration for axios
 			const config = {
-				onUploadProgress: (progressEvent) => {
+				onUploadProgress: () => {
 					//As the document gets uploaded - we want to update the upload Percentage
-					progress =
-						parseFloat(progressEvent.loaded) /
-						parseFloat(progressEvent.total);
+					
 				},
 			};
 
@@ -98,7 +96,7 @@ export default {
 			).then((response) => {
 				//Just send the location to the success
 				success(`/private/${response.data[0].document_key_id}`);
-			}).catch((error) => {
+			
 			});
 		},
 		updateDescription() {

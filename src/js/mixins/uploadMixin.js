@@ -13,7 +13,7 @@ export default {
         }),
     },
     methods: {
-        uploadImage(blobInfo, progress) {
+        uploadImage(blobInfo) {
             //Create the form
             const data_to_send = new FormData();
             data_to_send.set("document", blobInfo.blob(), blobInfo.filename());
@@ -21,11 +21,9 @@ export default {
 
             //Configuration for axios
             const config = {
-                onUploadProgress: (progressEvent) => {
+                onUploadProgress: () => {
                     //As the document gets uploaded - we want to update the upload Percentage
-                    progress =
-                        parseFloat(progressEvent.loaded) /
-                        parseFloat(progressEvent.total);
+                    
                 },
             };
 
@@ -46,7 +44,7 @@ export default {
                 });
             });
         },
-        newObjectUploadImage(blobInfo, progress) {
+        newObjectUploadImage(blobInfo) {
             //Create the form
             const data_to_send = new FormData();
             data_to_send.set("document", blobInfo.blob(), blobInfo.filename());
@@ -55,11 +53,9 @@ export default {
 
             //Configuration for axios
             const config = {
-                onUploadProgress: (progressEvent) => {
+                onUploadProgress: () => {
                     //As the document gets uploaded - we want to update the upload Percentage
-                    progress =
-                        parseFloat(progressEvent.loaded) /
-                        parseFloat(progressEvent.total);
+                    
                 },
             };
 

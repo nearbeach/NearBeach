@@ -229,7 +229,7 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}object_status_information/${this.destination}/reorder/`,
 				data_to_send,
-			).then((response) => {
+			).then(() => {
 				this.$store.dispatch("newToast", {
 					header: "Updated Sort Order",
 					message: "Sort Order has been updated",

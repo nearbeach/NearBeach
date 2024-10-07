@@ -558,7 +558,7 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}rfc_information/${this.rfcResults[0].pk}/save/`,
 				data_to_send
-			).then((response) => {
+			).then(() => {
 				//Notify user of success update
 				this.$store.dispatch("newToast", {
 					header: "Save Successfully",

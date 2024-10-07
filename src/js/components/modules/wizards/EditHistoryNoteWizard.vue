@@ -78,7 +78,7 @@ import Editor from "@tinymce/tinymce-vue";
 
 //VueX
 import {mapGetters} from "vuex";
-import {Modal} from "bootstrap";
+
 
 export default {
 	name: "EditHistoryNoteWizard",

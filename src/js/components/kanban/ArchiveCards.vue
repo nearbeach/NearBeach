@@ -122,7 +122,7 @@ export default {
 					`${this.rootUrl}kanban_information/archive_kanban_cards/`,
 					data_to_send
 				)
-				.catch((error) => {
+				.catch(() => {
 					//TODO: Return cards back into state management. They errored out.
 				});
 		},
