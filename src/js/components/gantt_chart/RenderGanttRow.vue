@@ -12,6 +12,7 @@
 			</div>
 			<div class="gantt-row--start-date">
   				<n-date-picker
+					v-if="objectType !== 'requirement_item'"
 					v-model:value="localStartDate"
 					type="datetime"
 					@update:value="modifiedStartDate"
@@ -21,6 +22,7 @@
 			</div>
 			<div class="gantt-row--end-date">
 				<n-date-picker
+					v-if="objectType !== 'requirement_item'"
 					v-model:value="localEndDate"
 					type="datetime"
 					@update:value="modifiedEndDate"

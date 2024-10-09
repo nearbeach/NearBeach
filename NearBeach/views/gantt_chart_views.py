@@ -6,7 +6,7 @@ from NearBeach.forms import GanttDataUpdateDataForm
 from NearBeach.models import (
     Project,
     SprintObjectAssignment,
-    Task, ListOfRequirementItemStatus, ListOfProjectStatus, ListOfTaskStatus,
+    Task, ListOfRequirementItemStatus, ListOfProjectStatus, ListOfTaskStatus, RequirementItem,
 )
 from NearBeach.decorators.check_user_permissions.gantt_chart_permissions import (
     check_gantt_chart_permissions_with_destination,
@@ -31,6 +31,12 @@ GANTT_DATA_UPDATE_STRUCTURE = {
         "end_date": "task_end_date",
         "start_date": "task_start_date",
         "status_id": "task_status_id",
+    },
+    "requirement_item": {
+        "object": RequirementItem,
+        "end_date": "",
+        "start_date": "",
+        "status_id": "requirement_item_status_id",
     },
 }
 
@@ -71,9 +77,10 @@ def gantt_data_update_data(request, destination, location_id, *args, **kwargs):
     update_object = update_object.first()
 
     # Update the object
-    setattr(update_object, gantt_object_dict["end_date"], form.cleaned_data["end_date"])
-    setattr(update_object, gantt_object_dict["start_date"], form.cleaned_data["start_date"])
     setattr(update_object, gantt_object_dict["status_id"], form.cleaned_data["status_id"])
+    if destination != "requirement_item":
+        setattr(update_object, gantt_object_dict["end_date"], form.cleaned_data["end_date"])
+        setattr(update_object, gantt_object_dict["start_date"], form.cleaned_data["start_date"])
 
     # Save the updates
     update_object.save()
@@ -136,10 +143,20 @@ def get_object_results(location_id):
         'object_type',
         'object_id',
     )
-
-    # Union the data and send back to user
-    object_results = project_results.union(
-        task_results
+    
+    requirement_item_results = RequirementItem.objects.filter(
+        is_deleted=False,
+        requirement_item_id__in=sprint_object_assignment_results.filter(
+            requirement_item_id__isnull=False,
+        ).values("requirement_item_id")
+    ).annotate(
+        title=F('requirement_item_title'),
+        status_id=F('requirement_item_status_id'),
+        higher_order_status=F('requirement_item_status__requirement_item_higher_order_status'),
+        start_date=Value("1970-01-01T00:00:0Z"),
+        end_date=Value("1970-01-01T00:00:0Z"),
+        object_type=Value("requirement_item"),
+        object_id=F("requirement_item_id")
     ).values(
         'title',
         'status_id',
@@ -148,6 +165,23 @@ def get_object_results(location_id):
         'end_date',
         'object_type',
         'object_id',
+    )
+
+    # Union the data and send back to user
+    object_results = project_results.union(
+        task_results,
+        requirement_item_results
+    ).values(
+        'title',
+        'status_id',
+        'higher_order_status',
+        'start_date',
+        'end_date',
+        'object_type',
+        'object_id',
+    ).order_by(
+        'start_date',
+        'end_date',
     )
 
     # Just return the json dumps
