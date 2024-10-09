@@ -83,15 +83,19 @@ export default {
 			data_to_send.set("search", this.searchModel);
 
 			//Use axios to obtain the data we require
-			this.axios
-				.post(
-					`${this.rootUrl}search/organisation/data/`,
-					data_to_send
-				)
-				.then((response) => {
-					this.localOrganisationResults = response.data;
-					
+			this.axios.post(
+				`${this.rootUrl}search/organisation/data/`,
+				data_to_send
+			).then((response) => {
+				this.localOrganisationResults = response.data;
+			}).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Search Results",
+					message: `Sorry, we could not get search results. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
 				});
+			});
 		},
 	},
 	watch: {
@@ -121,4 +125,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+

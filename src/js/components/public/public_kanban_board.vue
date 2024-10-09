@@ -206,8 +206,6 @@ export default {
 			//Grab the first result
 			card_results = card_results[0];
 
-			console.log("CARD RESULTS: ", card_results.fields.kanban_card_description);
-
 			this.cardColumn = this.getColumn(card_results.fields.kanban_column);
 			this.cardId = `${card_id}`;
 			this.cardDescription = card_results.fields.kanban_card_description;

@@ -62,6 +62,7 @@ export default {
 		},
 	},
 	data: () => ({
+		fileList: [],
 		profilePicture: "",
 	}),
 	computed: {

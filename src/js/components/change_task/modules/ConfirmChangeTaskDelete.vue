@@ -78,6 +78,13 @@ export default {
 			).then(() => {
 				//If successful, go back
 				window.location.href = `${this.rootUrl}rfc_information/${this.changeTaskResults[0].fields.request_for_change}/`;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error deleting change task",
+					message: `Sorry, we could not delete the change task. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 		closeModal() {
