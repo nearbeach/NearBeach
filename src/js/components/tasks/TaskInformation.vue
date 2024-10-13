@@ -171,12 +171,6 @@ export default {
 				return [];
 			},
 		},
-		stakeholderModel: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
 		taskResults: {
 			type: Array,
 			default: () => {
