@@ -206,12 +206,6 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		csrfTrustedUrls: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
 		rootUrl: {
 			type: String,
 			default: "/",
