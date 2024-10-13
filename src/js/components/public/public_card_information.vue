@@ -145,10 +145,6 @@ export default {
 			type: String,
 			default: "",
 		},
-		theme: {
-			type: String,
-			default: "light",
-		},
 	},
 	computed: {
 		...mapGetters({
