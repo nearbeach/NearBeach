@@ -147,10 +147,6 @@ export default {
 			type: String,
 			default: "",
 		},
-		userLevel: {
-			type: Number,
-			default: 0,
-		},
 	},
 	data: () => ({
 		cardColumn: "",
