@@ -117,10 +117,6 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		isSuperUser: {
-			type: Boolean,
-			default: false,
-		},
 		rootUrl: {
 			type: String,
 			default: "/",
