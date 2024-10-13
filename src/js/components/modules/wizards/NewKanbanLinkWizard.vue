@@ -306,12 +306,6 @@ export default {
 		NSelect,
 	},
 	props: {
-		columnResults: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
 		locationId: {
 			type: Number,
 			default: 0,
