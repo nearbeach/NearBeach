@@ -139,10 +139,6 @@ export default {
 			type: String,
 			default: "/",
 		},
-		staticUrl: {
-			type: String,
-			default: "/",
-		},
 		theme: {
 			type: String,
 			default: "",
