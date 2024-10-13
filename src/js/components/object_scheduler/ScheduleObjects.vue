@@ -73,10 +73,6 @@ export default {
 				return [];
 			},
 		},
-		staticUrl: {
-			type: String,
-			default: "/",
-		},
 		userLevel: {
 			type: Object,
 			default: () => {
