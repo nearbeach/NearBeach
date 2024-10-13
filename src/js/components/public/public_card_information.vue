@@ -129,10 +129,6 @@ export default {
 			type: String,
 			default: "",
 		},
-		cardId: {
-			type: String,
-			default: "",
-		},
 		cardLevel: {
 			type: String,
 			default: "",
