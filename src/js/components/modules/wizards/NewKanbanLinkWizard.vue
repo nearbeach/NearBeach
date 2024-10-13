@@ -312,12 +312,6 @@ export default {
 				return [];
 			},
 		},
-		levelResults: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
 		locationId: {
 			type: Number,
 			default: 0,
