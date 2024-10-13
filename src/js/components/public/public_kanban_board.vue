@@ -135,10 +135,6 @@ export default {
 				return [];
 			},
 		},
-		rootUrl: {
-			type: String,
-			default: "/",
-		},
 		theme: {
 			type: String,
 			default: "",
