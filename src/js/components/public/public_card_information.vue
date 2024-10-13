@@ -149,10 +149,6 @@ export default {
 			type: String,
 			default: "light",
 		},
-		userLevel: {
-			type: Number,
-			default: 1,
-		},
 	},
 	computed: {
 		...mapGetters({
