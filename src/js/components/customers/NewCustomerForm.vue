@@ -97,10 +97,6 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		organisationName: {
-			type: String,
-			default: "",
-		},
 		titleList: {
 			type: Array,
 			default() {
