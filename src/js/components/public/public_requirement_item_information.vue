@@ -198,10 +198,6 @@ export default {
 				return [];
 			},
 		},
-		theme: {
-			type: String,
-			default: ""
-		},
 		typeList: {
 			type: Array,
 			default: () => {
