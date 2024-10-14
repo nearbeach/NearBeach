@@ -107,10 +107,6 @@ export default {
 			type: String,
 			default: "light",
 		},
-		userLevel: {
-			type: Number,
-			default: 0,
-		},
 	},
 	data() {
 		return {

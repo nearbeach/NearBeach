@@ -135,21 +135,9 @@ export default {
 				return [];
 			},
 		},
-		rootUrl: {
-			type: String,
-			default: "/",
-		},
-		staticUrl: {
-			type: String,
-			default: "/",
-		},
 		theme: {
 			type: String,
 			default: "",
-		},
-		userLevel: {
-			type: Number,
-			default: 0,
 		},
 	},
 	data: () => ({

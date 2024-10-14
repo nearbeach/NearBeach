@@ -58,11 +58,6 @@ export default {
 		ValidationRendering,
 	},
 	props: {
-		isDirty: {
-			//Passes the value from the template above where the checking is done
-			type: Boolean,
-			default: false,
-		},
 	},
 	data() {
 		return {

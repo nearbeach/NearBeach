@@ -89,10 +89,6 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		noBackDating: {
-			type: Boolean,
-			default: true,
-		},
 		startDateModel: {
 			type: Number,
 			default: () => {

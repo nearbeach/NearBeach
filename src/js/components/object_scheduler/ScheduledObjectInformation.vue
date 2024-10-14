@@ -229,10 +229,6 @@ export default {
 			type: String,
 			default: "/",
 		},
-		scheduledObjectId: {
-			type: Number,
-			default: 0,
-		},
 		scheduledObjectResults: {
 			type: Object,
 			default: () => {

@@ -72,10 +72,6 @@ export default {
 				return [];
 			},
 		},
-		isDirty: {
-			type: Boolean,
-			default: true,
-		}, //Passes the value from the template above where the checking is done
 		userGroupPermissions: {
 			type: Array,
 			default: () => {
