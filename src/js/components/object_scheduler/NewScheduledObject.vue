@@ -3,6 +3,7 @@
 		<div class="card">
 			<div class="card card-body">
 				<h1>New Scheduled Object</h1>
+				<a v-bind:href="`${rootUrl}scheduled_objects/`">Back to Scheduled Object list</a>
 				<hr>
 
 				<div class="row">
@@ -107,7 +108,7 @@
 					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
 					v-bind:destination="'object'"
-					v-bind:user-group-results="userGroupResults"
+					v-bind:user-group-permissions="userGroupPermissions"
 					v-on:update_group_model="updateGroupModel($event)"
 					v-bind:is-dirty="v$.groupModel.$dirty"
 				></group-permissions>
@@ -189,13 +190,7 @@ export default {
 			type: String,
 			default: "light",
 		},
-		userGroupAndLevel: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
-		userGroupResults: {
+		userGroupPermissions: {
 			type: Array,
 			default: () => {
 				return [];
@@ -383,29 +378,16 @@ export default {
 		updateGroupModel(data) {
 			this.groupModel = data;
 
-			//Calculate to see if the user's groups exist in the groupModel
-			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
-				return this.groupModel.includes(row.group_id);
+			//Calculate to see if the user's groups exist in the groupModel AND
+			//Make sure the user has ENOUGH permissions.
+			this.displayGroupPermissionIssue = this.userGroupPermissions.filter(row => {
+				//Condition 1 - group model includes current group
+				//Condition 2 - user has create permissions on group
+				const condition_1 = this.groupModel.includes(row.group_id);
+				const condition_2 = row.object_permission_value >= 3;
+
+				return condition_1 && condition_2;
 			}).length === 0;
-
-			//Calculate to see if the user has create permission for any of the selected groups
-			const filtered_user_and_group_level = this.userGroupAndLevel.filter((row) => {
-				return data.includes(row.group_id);
-			});
-
-			//Calulate the boolean result. We need to make sure the user can create (3 - create)
-			this.groupModelValidation = this.calculateUserLevel(filtered_user_and_group_level) >= 3;
-
-			//As there is no validation yet, we'll use a toast to notify the user
-			if (!this.groupModelValidation) {
-				this.$store.dispatch("newToast", {
-					header: "No CREATE permission for groups",
-					message: "Please note - for the current groups selected, you do not have create permissions. Please add in a group you have create permission with.",
-					extra_classes: "bg-danger",
-					delay: 5000,
-					unique_type: "group-model-validation",
-				});
-			}
 		},
 		updateSchedulerFrequency(data) {
 			this.daysBeforeModel = data.daysBeforeModel;
@@ -435,7 +417,7 @@ export default {
 		});
 
 		//Update user level
-		const user_level = this.calculateUserLevel(this.userGroupAndLevel);
+		const user_level = this.calculateUserLevel(this.userGroupPermissions);
 		this.$store.commit({
 			type: "updateUserLevel",
 			userLevel: user_level,

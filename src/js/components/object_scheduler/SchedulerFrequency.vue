@@ -90,7 +90,7 @@
 			<div class="row mt-4"
 				v-if="schedulerFrequencyModel === 'Set Day of the Week'"
 			>
-				<div class="text-center col-md-1"
+				<div class="text-center col-md-1 d-flex flex-column justify-content-between px-0"
 					v-for="day in dayOfTheWeekArray"
 				>
 					<label v-bind:for="`checkbox_${day.value}`">{{ day.shortLabel }}</label>
@@ -344,8 +344,13 @@ export default {
 		temp_date.setSeconds(0);
 		temp_date.setMilliseconds(0);
 
-		this.startDateModel = temp_date.getTime() + (1000 * 60 * 60 * 24);
-		this.endDateModel = temp_date.getTime() + (1000 * 60 * 60 * 24 * 7);
+		if (this.startDateModel === 0) {
+			this.startDateModel = temp_date.getTime() + (1000 * 60 * 60 * 24);
+		}
+
+		if (this.endDateModel === 0) {
+			this.endDateModel = temp_date.getTime() + (1000 * 60 * 60 * 24 * 7);
+		}
 	}
 
 }
