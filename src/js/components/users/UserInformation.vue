@@ -228,7 +228,7 @@ export default {
 			data_to_send.set("last_name", this.lastNameModel);
 
 			this.axios.post(
-				`${this.rootUrl}user_information/${this.userResults[0]["pk"]}/save/`,
+				`${this.rootUrl}user_information/${this.userResults[0].pk}/save/`,
 				data_to_send
 			).then(() => {
 				//Hide the loading modal
