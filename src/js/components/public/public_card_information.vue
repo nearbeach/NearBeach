@@ -129,10 +129,6 @@ export default {
 			type: String,
 			default: "",
 		},
-		cardId: {
-			type: String,
-			default: "",
-		},
 		cardLevel: {
 			type: String,
 			default: "",
@@ -144,14 +140,6 @@ export default {
 		cardText: {
 			type: String,
 			default: "",
-		},
-		theme: {
-			type: String,
-			default: "light",
-		},
-		userLevel: {
-			type: Number,
-			default: 1,
 		},
 	},
 	computed: {

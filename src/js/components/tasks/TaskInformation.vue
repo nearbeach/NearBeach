@@ -165,18 +165,6 @@ export default {
 			type: String,
 			default: "/",
 		},
-		groupResults: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
-		stakeholderModel: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
 		taskResults: {
 			type: Array,
 			default: () => {
