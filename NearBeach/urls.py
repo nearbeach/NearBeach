@@ -946,6 +946,11 @@ urlpatterns = [
         object_scheduler_views.scheduled_object_information,
         name="schedule_object_information",
     ),
+    path(
+        "scheduled_object_information/<int:schedule_object_id>/save/",
+        object_scheduler_views.scheduled_object_information_save,
+        name="schedule_object_information_save",
+    ),
     # Search Items
     path("search/", search_views.search, name="search"),
     path("search/data/", search_views.search_data, name="search_data"),

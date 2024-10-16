@@ -3,6 +3,7 @@
 		<div class="card">
 			<div class="card card-body">
 				<h1>Scheduled Object Information</h1>
+				<a v-bind:href="`${rootUrl}scheduled_objects/`">Back to Scheduled Object list</a>
 				<hr>
 
 				<div class="row">
@@ -156,11 +157,36 @@
 					v-on:update_scheduler_frequency="updateSchedulerFrequency"
 				></scheduler-frequency>
 
+				<!-- Is Active -->
+				<hr/>
+				<div class="row">
+					<div class="col-md-4">
+						<h2>Is Active</h2>
+						<p class="text-instructions">
+							Toggle this scheduled object on or off. Please remember to save after toggling.
+						</p>
+					</div>
+					<div class="col-md-8">
+						<n-switch v-model:value="isActiveModel">
+							<template #checked>
+								Currently Active
+							</template>
+							<template #unchecked>
+								Disabled
+							</template>
+						</n-switch>
+					</div>
+				</div>
+
 				<!-- Submit Button -->
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						ADD CODE - BUTTONS
+						<button class="btn btn-primary save-changes"
+								v-on:click="updateSchedulerObject"
+						>
+							Update Scheduled Object
+						</button>
 					</div>
 				</div>
 			</div>
@@ -171,7 +197,7 @@
 <script>
 //Components
 import editor from "@tinymce/tinymce-vue";
-import { NSelect, NConfigProvider } from "naive-ui";
+import { NSelect, NConfigProvider, NSwitch } from "naive-ui";
 import BetweenDates from "../dates/BetweenDates.vue";
 import SchedulerFrequency from "./SchedulerFrequency.vue";
 
@@ -199,6 +225,7 @@ export default {
 		editor,
 		NConfigProvider,
 		NSelect,
+		NSwitch,
 		SchedulerFrequency,
 		ValidationRendering,
 	},
@@ -276,7 +303,6 @@ export default {
 	},
 	data() {
 		return {
-			groupModel: {},
 			groupModelValidation: true,
 			displayGroupPermissionIssue: false,
 			objectDescriptionModel: this.objectTemplateResults[0].object_template_json.object_description,
@@ -297,14 +323,15 @@ export default {
 			],
 
 			//Scheduler Frequency Data
-			daysBeforeModel: 0,
+			daysBeforeModel: this.getDaysBeforeModel(),
 			dayModel: this.getDayModel(),
 			endDateConditionModel: this.getEndDateConditionModel(),
 			endDateModel: this.getEndDateModel(),
-			isFormValid: false,
-			numberOfRepeats: 0,
+			isActiveModel: this.scheduledObjectResults.is_active,
+			isFormValid: true,
+			numberOfRepeats: this.scheduledObjectResults.number_of_repeats,
 			schedulerFrequencyModel: this.scheduledObjectResults.frequency,
-			singleDayModel: "monday",
+			singleDayModel: this.getSingleDayModel(),
 			startDateModel: new Date(this.scheduledObjectResults.start_date).getTime(),
 		};
 	},
@@ -315,9 +342,6 @@ export default {
 		}),
 	},
 	validations: {
-		groupModel: {
-			required,
-		},
 		objectDescriptionModel: {
 			required,
 		},
@@ -397,10 +421,24 @@ export default {
 
 			return this.scheduledObjectResults.frequency_attribute.days_of_the_week;
 		},
+		getDaysBeforeModel() {
+			if (this.scheduledObjectResults.frequency_attribute === undefined) return 0;
+			if (this.scheduledObjectResults.frequency_attribute.days_before === undefined) return 0;
+
+			return this.scheduledObjectResults.frequency_attribute.days_before;
+		},
 		getEndDateModel() {
 			if (this.scheduledObjectResults.end_date === null) return 0;
 
-			return this.scheduledObjectResults.end_date;
+			//Convert the end date
+			const convert_date = new Date(this.scheduledObjectResults.end_date);
+			return convert_date.getTime();
+		},
+		getSingleDayModel() {
+			if (this.scheduledObjectResults.frequency_attribute === undefined) return "Monday";
+			if (this.scheduledObjectResults.frequency_attribute.day_of_the_week === undefined) return "Monday";
+
+			return this.scheduledObjectResults.frequency_attribute.day_of_the_week;
 		},
 		updateDates(data) {
 			//Update both the start and end dates
@@ -413,10 +451,96 @@ export default {
 			this.endDateConditionModel = data.endDateConditionModel;
 			this.endDateModel = data.endDateModel;
 			this.isFormValid = data.isFormValid;
-			this.numberOfRepeats = data.numberOfRepeats;
+			this.numberOfRepeats = data.numberOfRepeatsModel;
 			this.schedulerFrequencyModel = data.schedulerFrequencyModel;
 			this.singleDayModel = data.singleDayModel;
 			this.startDateModel = data.startDateModel;
+		},
+		updateSchedulerObject: async function() {
+			//Validate the data before sending
+			const isFormCorrect = await this.v$.$validate();
+			if (!isFormCorrect || this.displayGroupPermissionIssue || !this.isFormValid) {
+                //Tell the user to fix the validation issues
+                this.$store.dispatch("newToast", {
+                    header: "Please check all validation",
+                    message: "There are some fields that are filled in correctly. Please correct these mistakes.",
+                    extra_classes: "bg-danger",
+                    delay: 0,
+                });
+
+				return;
+			}
+
+			if (!this.groupModelValidation) {
+				this.$store.dispatch("newToast", {
+					header: "No CREATE permission for groups",
+					message: "Please note - for the current groups selected, you do not have create permissions. Please add in a group you have create permission with.",
+					extra_classes: "bg-danger",
+					delay: 5000,
+				});
+
+				return;
+			}
+
+			//Create form data
+			const data_to_send = new FormData()
+			data_to_send.set("object_type", this.objectTypeModel);
+			data_to_send.set("object_title", this.objectTitleModel);
+			data_to_send.set("object_description", this.objectDescriptionModel);
+			data_to_send.set(
+				"object_start_date",
+				this.objectStartDateModel.toISOString()
+			);
+			data_to_send.set(
+				"object_end_date",
+				this.objectEndDateModel.toISOString()
+			);
+
+			// Insert a new row for each group list item
+			this.objectGroupModel.forEach((row) => {
+				data_to_send.append("group_list", row);
+			});
+
+			//Convert the dates
+			const offset = new Date().getTimezoneOffset();
+			let scheduler_end_date = new Date(this.endDateModel - (offset * 60 * 1000));
+			let scheduler_start_date = new Date(this.startDateModel - (offset * 60 * 1000));
+
+			scheduler_end_date = scheduler_end_date.toISOString().split("T")[0];
+			scheduler_start_date = scheduler_start_date.toISOString().split("T")[0];
+
+			//Send the scheduler data
+			data_to_send.set("days_before", this.daysBeforeModel);
+			data_to_send.set("number_of_repeats", this.numberOfRepeats);
+			data_to_send.set("scheduler_frequency", this.schedulerFrequencyModel);
+			data_to_send.set("scheduler_end_date", scheduler_end_date);
+			data_to_send.set("scheduler_start_date", scheduler_start_date);
+			data_to_send.set("single_day", this.singleDayModel);
+			data_to_send.set("end_date_condition", this.endDateConditionModel);
+			data_to_send.set("is_active", this.isActiveModel);
+
+			//Loop through dayModel and append to data to send
+			this.dayModel.forEach((single_day) => {
+				data_to_send.append("day", single_day);
+			});
+
+			this.axios.post(
+				`${this.rootUrl}scheduled_object_information/${this.scheduledObjectId}/save/`,
+				data_to_send,
+			).then((response) => {
+				this.$store.dispatch("newToast", {
+					header: "Saved Scheduled Object",
+					message: "Scheduled Object has been updated",
+					extra_classes: "bg-success",
+				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error creating new scheduled object",
+					message: `Sorry, we could not create this scheduled object for you. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 	},
 	async beforeMount() {

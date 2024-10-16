@@ -16,7 +16,7 @@ from NearBeach.models import (
     SCH_END_OF_THE_MONTH,
     SCH_X_DAYS_BEFORE_END_OF_THE_MONTH,
     ScheduledObject,
-    Task,
+    Task, Organisation, ListOfTaskStatus, ListOfProjectStatus, ObjectTemplateGroup,
 )
 
 User = get_user_model()
@@ -32,6 +32,8 @@ OBJECT_DICT = {
         "object_organisation": "organisation",
         "object_start_date": "task_start_date",
         "object_end_date": "task_end_date",
+        "object_status": "task_status",
+        "status": ListOfTaskStatus,
     },
     "project": {
         "object": Project,
@@ -40,16 +42,30 @@ OBJECT_DICT = {
         "object_organisation": "organisation",
         "object_start_date": "project_start_date",
         "object_end_date": "project_end_date",
+        "object_status": "project_status",
+        "status": ListOfProjectStatus,
     }
 }
 
 
 class Command(BaseCommand):
-    help = "Run this command to run the scheduled jobs within NearBeach"
+    help = "Run this command to run the scheduled jobs within NearBeach. Setup a daily cron job"
 
     def handle(self, *args, **kwargs):
-        scheduled_objects = []
+        scheduled_objects = ScheduledObject.objects.none()
 
+        # Run each part
+        scheduled_objects = scheduled_objects.union(self.run_set_day_of_the_week())
+        scheduled_objects = scheduled_objects.union(self.run_weekly())
+        scheduled_objects = scheduled_objects.union(self.run_fortnightly())
+        scheduled_objects = scheduled_objects.union(self.run_monthly())
+        scheduled_objects = scheduled_objects.union(self.run_start_of_the_month())
+        scheduled_objects = scheduled_objects.union(self.run_end_of_the_month())
+        scheduled_objects = scheduled_objects.union(self.run_x_days_before_end_of_the_month())
+
+        # Loop through all objects and create them
+        for single_object in scheduled_objects:
+            self.create_object(single_object)
 
     @staticmethod
     def create_object(scheduled_object, *args, **kwargs):
@@ -59,48 +75,93 @@ class Command(BaseCommand):
         template = ObjectTemplate.objects.get(object_template_id=scheduled_object.object_template_id)
 
         # Get the correct dictionary
-        object_string = lookup_choice_from_key(
-            OBJECT_TEMPLATE_TYPE,  # Choices
-            template.object_template_id,  # Key
-        )
+        object_string = template.object_template_json["object_type"]
         object_dict = OBJECT_DICT[object_string]
+
+        # Get the start and end date from the template
+        template_start_date = datetime.datetime.strptime(
+            template.object_template_json["object_start_date"],
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
+        template_end_date = datetime.datetime.strptime(
+            template.object_template_json["object_end_date"],
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
+
+        # Setup the start date for the object
+        object_start_date = datetime.datetime.today()
+        object_start_date = object_start_date.replace(
+            hour=template_start_date.hour,
+            minute=template_start_date.minute,
+            second=template_start_date.second,
+            microsecond=0,
+        )
+
+        object_end_date = object_start_date + abs(template_end_date - template_start_date)
+
+        # Organisation
+        organisation_instance = Organisation.objects.get(
+            organisation_id=template.object_template_json["object_organisation"],
+        )
+
+        # Status
+        status = object_dict["status"].objects.filter(
+            is_deleted=False,
+        ).order_by(
+            F"{object_string}_status_sort_order",
+        ).first()
 
         # Setup the new template
         submit_object = object_dict["object"](
-            create_user=User.objects.get(pk=1),
+            change_user=User.objects.get(pk=1),
+            creation_user=User.objects.get(pk=1),
             **{
                 object_dict["object_title"]: template.object_template_json["object_title"],
                 object_dict["object_description"]: template.object_template_json["object_description"],
-                object_dict["object_organisation_id"]: template.object_template_json["object_organisation"],
-                object_dict["object_start_date"]: template.object_template_json["object_start_date"],
-                object_dict["object_end_date"]: template.object_template_json["object_end_date"]
+                object_dict["object_organisation"]: organisation_instance,
+                object_dict["object_start_date"]: object_start_date,
+                object_dict["object_end_date"]: object_end_date,
+                object_dict["object_status"]: status,
            },
         )
         submit_object.save()
 
         # Loop through the group list and add them
-        for group_id in template.object_template_json["group_list"]:
+        object_template_groups = ObjectTemplateGroup.objects.filter(
+            is_deleted=False,
+            object_template_id=template.object_template_id,
+        )
+        for group in object_template_groups:
             submit_object_assignment = ObjectAssignment(
-                create_user=User.objects.get(pk=1),
-                group_id_id=group_id,
+                change_user=User.objects.get(pk=1),
+                group_id_id=group.group_id,
                 **{F"{object_string}_id": submit_object.pk }
             )
             submit_object_assignment.save()
 
-        return
+        # Update the database for the last run
+        scheduled_object.last_run = datetime.date.today()
+        scheduled_object.save()
 
+        return
 
     @staticmethod
     def run_set_day_of_the_week():
         # Get today's date and day of the week
         todays_date = datetime.date.today()
         todays_day = calendar.day_name[todays_date.weekday()].lower()
+        last_run = todays_date - datetime.timedelta(days=1)
+
+        # Setup blank return query set
+        query_set_results = ScheduledObject.objects.none()
 
         # Get data and process
-        return ScheduledObject.objects.filter(
+        potential_scheduled_objects = ScheduledObject.objects.filter(
             Q(
                 is_deleted=False,
                 frequency=SCH_SET_DAY_OF_THE_WEEK,
+                frequency_attribute__isnull=False,
+                frequency_attribute__days_of_the_week__isnull=False,
                 start_date__lte=todays_date,
                 is_active=True,
             ) & Q(
@@ -109,15 +170,36 @@ class Command(BaseCommand):
                 ) | Q(
                     end_date__isnull=True,
                 )
+            ) & Q(
+                Q(
+                    last_run__isnull=True,
+                ) | Q(
+                    last_run__gte=last_run,
+                )
             )
         )
 
+        # Loop through the potential and then deterine if they should be added to the return results
+        for scheduled_object in potential_scheduled_objects:
+            # Get JSON value
+            frequency_attribute = scheduled_object.frequency_attribute
+            days_of_the_week = frequency_attribute['days_of_the_week']
 
+            if todays_day in days_of_the_week:
+                # Using the union, we union on a query set of this results
+                # I don't like this :'(
+                # Refer to this -
+                # https://stackoverflow.com/questions/29587382/how-to-add-an-model-instance-to-a-django-queryset
+                query_set_results |= ScheduledObject.objects.filter(pk=scheduled_object.pk)
+
+        # Return
+        return query_set_results
 
     @staticmethod
     def run_weekly():
         todays_date = datetime.date.today()
         day_of_the_week = calendar.day_name[todays_date.weekday()]
+        last_run = todays_date - datetime.timedelta(days=7)
 
         # Get data and process
         return ScheduledObject.objects.filter(
@@ -133,9 +215,14 @@ class Command(BaseCommand):
                 ) | Q(
                     end_date__isnull=True,
                 )
+            ) & Q(
+                Q(
+                    last_run__isnull=True,
+                ) | Q(
+                    last_run__gte=last_run,
+                )
             )
         )
-
 
     @staticmethod
     def run_fortnightly():
@@ -149,7 +236,7 @@ class Command(BaseCommand):
                 is_deleted=False,
                 frequency=SCH_FORTNIGHTLY,
                 frequency_attribute__day_of_the_week=day_of_the_week,
-                last_run__gte=last_run,
+                # last_run__gte=last_run,
                 start_date__lte=todays_date,
                 is_active=True,
             ) & Q(
@@ -158,9 +245,14 @@ class Command(BaseCommand):
                 ) | Q(
                     end_date__isnull=True,
                 )
+            ) & Q(
+                Q(
+                    last_run__isnull=True
+                ) | Q(
+                    last_run__gte=last_run
+                )
             )
         )
-
 
     @staticmethod
     def run_monthly():
@@ -172,7 +264,6 @@ class Command(BaseCommand):
             Q(
                 is_deleted=False,
                 frequency=SCH_MONTHLY,
-                last_run__gte=last_run,
                 start_date__lte=todays_date,
                 is_active=True,
             ) & Q(
@@ -181,16 +272,22 @@ class Command(BaseCommand):
                 ) | Q(
                     end_date__isnull=True,
                 )
+            ) & Q(
+                Q(
+                    last_run__isnull=True
+                ) | Q(
+                    last_run__gte=last_run
+                )
             )
         )
-
 
     @staticmethod
     def run_start_of_the_month():
         # If today is not the 1st - we will just leave
         todays_date = datetime.date.today()
+        last_run = todays_date - datetime.timedelta(days=14)
         if todays_date.day != 1:
-            return []
+            return ScheduledObject.objects.none()
 
         # Get data and process
         return ScheduledObject.objects.filter(
@@ -205,17 +302,23 @@ class Command(BaseCommand):
                 ) | Q(
                     end_date__isnull=True,
                 )
+            ) & Q(
+                Q(
+                    last_run__isnull=True,
+                ) | Q(
+                    last_run__gte=last_run,
+                )
             )
         )
-
 
     @staticmethod
     def run_end_of_the_month():
         # If today is not the end of the month - we will just leave
         todays_date = datetime.date.today()
         end_month_date = calendar.monthrange(todays_date.year, todays_date.month)[1]
+        last_run = todays_date - datetime.timedelta(days=14)
         if todays_date.day != end_month_date:
-            return []
+            return ScheduledObject.objects.none()
 
         # Get data and process
         return ScheduledObject.objects.filter(
@@ -230,16 +333,22 @@ class Command(BaseCommand):
                 ) | Q(
                     end_date__isnull=True,
                 )
+            ) & Q(
+                Q(
+                    last_run__isnull=True,
+                ) | Q(
+                    last_run__gte=last_run,
+                )
             )
         )
-
 
     @staticmethod
     def run_x_days_before_end_of_the_month():
         # If today's date is earlier than the 14th, just leave
         todays_date = datetime.date.today()
+        last_run = todays_date - datetime.timedelta(days=14)
         if todays_date.day < 14:
-            return []
+            return ScheduledObject.objects.none()
 
         # Get the end date
         end_month_date = calendar.monthrange(todays_date.year, todays_date.month)[1]
@@ -258,6 +367,12 @@ class Command(BaseCommand):
                     end_date__gte=todays_date,
                 ) | Q(
                     end_date__isnull=True,
+                )
+            ) & Q(
+                Q(
+                    last_run__isnull=True,
+                ) | Q(
+                    last_run__gte=last_run,
                 )
             )
         )
