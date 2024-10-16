@@ -173,7 +173,7 @@ export default {
 			emailModel: this.userResults[0]["fields"]["email"],
 			isActiveModel: this.userResults[0]["fields"]["is_active"],
 			isSuperuserModel: this.userResults[0]["fields"]["is_superuser"],
-			firstNameModel: this.userResults[0]["fields"]["first_name"],
+			firstNameModel: this.userResults[0]["fields"].first_name,
 			lastNameModel: this.userResults[0]["fields"]["last_name"],
 		};
 	},
