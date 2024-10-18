@@ -521,7 +521,7 @@ export default {
 			});
 
 			this.axios.post(
-				`${this.rootUrl}scheduled_object_information/${this.scheduledObjectId}/save/`,
+				`${this.rootUrl}scheduled_object_information/${this.scheduledObjectResults.schedule_object_id}/save/`,
 				data_to_send,
 			).then((response) => {
 				this.$store.dispatch("newToast", {

@@ -2176,6 +2176,426 @@
   }
 },
 {
+  "model": "NearBeach.objecttemplate",
+  "pk": 1,
+  "fields": {
+    "object_template_type": 1,
+    "object_template_json": {
+      "object_type": "task",
+      "object_title": "App Pool Recycle",
+      "object_description": "<p>Can someone please run an app pool recycle</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "ce8c05db-20df-4ada-b064-c8e9d72fc3eb"
+    },
+    "date_created": "2024-10-18T08:41:37.261Z",
+    "date_modified": "2024-10-18T10:44:34.053Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 2,
+  "fields": {
+    "object_template_type": 1,
+    "object_template_json": {
+      "object_type": "task",
+      "object_title": "Weekly Monday Report",
+      "object_description": "<p>Weekly Monday Report</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "76f61f6a-67f8-4c99-bd7c-cad352a78165"
+    },
+    "date_created": "2024-10-18T08:42:25.245Z",
+    "date_modified": "2024-10-18T11:16:23.382Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 3,
+  "fields": {
+    "object_template_type": 1,
+    "object_template_json": {
+      "object_type": "task",
+      "object_title": "Trim Beard",
+      "object_description": "<p>Trim beard and go to parents place</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "24ee3bd1-591c-44d7-8292-401d487ca4a3"
+    },
+    "date_created": "2024-10-18T08:49:33.486Z",
+    "date_modified": "2024-10-18T10:47:12.799Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 4,
+  "fields": {
+    "object_template_type": 0,
+    "object_template_json": {
+      "object_type": "project",
+      "object_title": "Monthly Budgeting Report",
+      "object_description": "<p>Monthly Budgeting Report</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "22d50f6a-9df0-402b-86ff-f9e02980c841"
+    },
+    "date_created": "2024-10-18T08:50:08.220Z",
+    "date_modified": "2024-10-18T11:16:34.613Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 5,
+  "fields": {
+    "object_template_type": 0,
+    "object_template_json": {
+      "object_type": "project",
+      "object_title": "End of Month Report",
+      "object_description": "<p>End of Month Report</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "fbc54001-f78e-4ae6-ba75-374dfa801160"
+    },
+    "date_created": "2024-10-18T08:50:37.061Z",
+    "date_modified": "2024-10-18T11:16:12.833Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 6,
+  "fields": {
+    "object_template_type": 0,
+    "object_template_json": {
+      "object_type": "project",
+      "object_title": "Close off all unwanted tickets",
+      "object_description": "<p>Close off all unwanted tickets</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "ebccb2f7-e2a1-42e7-8e22-cad83786d383"
+    },
+    "date_created": "2024-10-18T08:51:18.928Z",
+    "date_modified": "2024-10-18T10:47:33.091Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 7,
+  "fields": {
+    "object_template_type": 1,
+    "object_template_json": {
+      "object_type": "task",
+      "object_title": "Inactive Task",
+      "object_description": "<p>Inactive Task</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "d4469011-acad-42a5-9a37-8f61d6338f7e"
+    },
+    "date_created": "2024-10-18T08:53:57.137Z",
+    "date_modified": "2024-10-18T08:54:11.990Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 8,
+  "fields": {
+    "object_template_type": 1,
+    "object_template_json": {
+      "object_type": "task",
+      "object_title": "Set day of the week - repeat 5 times - run time 5",
+      "object_description": "<p>Set day of the week - repeat 5 times - run time 5</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "ed89bd54-30a7-4202-909c-ebe58b2d1899"
+    },
+    "date_created": "2024-10-18T11:24:25.719Z",
+    "date_modified": "2024-10-18T11:27:24.767Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 9,
+  "fields": {
+    "object_template_type": 1,
+    "object_template_json": {
+      "object_type": "task",
+      "object_title": "Weekly - repeat 5 times - run time 5",
+      "object_description": "<p>Weekly - repeat 5 times - run time 5</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "e21ff151-ae89-4cf7-ab05-9d9bb17be46e"
+    },
+    "date_created": "2024-10-18T11:24:52.111Z",
+    "date_modified": "2024-10-18T11:24:52.111Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 10,
+  "fields": {
+    "object_template_type": 1,
+    "object_template_json": {
+      "object_type": "task",
+      "object_title": "Future Task",
+      "object_description": "<p>Future Task</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "2022f753-fe93-4b1c-9366-d8dd85d15c37"
+    },
+    "date_created": "2024-10-18T11:43:14.944Z",
+    "date_modified": "2024-10-18T11:43:14.944Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 11,
+  "fields": {
+    "object_template_type": 1,
+    "object_template_json": {
+      "object_type": "task",
+      "object_title": "Future Weekly Task",
+      "object_description": "<p>Future Weekly Task</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "15ec9f7a-2c05-42e6-b66a-632c3e1f8337"
+    },
+    "date_created": "2024-10-18T11:45:05.854Z",
+    "date_modified": "2024-10-18T11:45:05.854Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 12,
+  "fields": {
+    "object_template_type": 1,
+    "object_template_json": {
+      "object_type": "task",
+      "object_title": "Fortnightly Task Run on the 2024-01-06",
+      "object_description": "<p>Fortnightly Task Run on the 2024-01-06</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-17T22:00:00Z",
+      "object_end_date": "2024-11-01T05:00:00Z",
+      "uuid": "18067c9c-047d-4085-ba52-1daa392b37a5"
+    },
+    "date_created": "2024-10-18T12:01:43.694Z",
+    "date_modified": "2024-10-18T12:01:43.694Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 14,
+  "fields": {
+    "object_template": 7,
+    "group": 1,
+    "date_created": "2024-10-18T08:54:12.002Z",
+    "date_modified": "2024-10-18T08:54:12.002Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 15,
+  "fields": {
+    "object_template": 1,
+    "group": 1,
+    "date_created": "2024-10-18T10:44:34.058Z",
+    "date_modified": "2024-10-18T10:44:34.058Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 16,
+  "fields": {
+    "object_template": 1,
+    "group": 2,
+    "date_created": "2024-10-18T10:44:34.059Z",
+    "date_modified": "2024-10-18T10:44:34.059Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 19,
+  "fields": {
+    "object_template": 3,
+    "group": 1,
+    "date_created": "2024-10-18T10:47:12.803Z",
+    "date_modified": "2024-10-18T10:47:12.803Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 21,
+  "fields": {
+    "object_template": 6,
+    "group": 1,
+    "date_created": "2024-10-18T10:47:33.094Z",
+    "date_modified": "2024-10-18T10:47:33.094Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 22,
+  "fields": {
+    "object_template": 5,
+    "group": 1,
+    "date_created": "2024-10-18T11:16:12.836Z",
+    "date_modified": "2024-10-18T11:16:12.836Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 23,
+  "fields": {
+    "object_template": 2,
+    "group": 1,
+    "date_created": "2024-10-18T11:16:23.385Z",
+    "date_modified": "2024-10-18T11:16:23.385Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 24,
+  "fields": {
+    "object_template": 2,
+    "group": 2,
+    "date_created": "2024-10-18T11:16:23.387Z",
+    "date_modified": "2024-10-18T11:16:23.387Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 25,
+  "fields": {
+    "object_template": 4,
+    "group": 1,
+    "date_created": "2024-10-18T11:16:34.617Z",
+    "date_modified": "2024-10-18T11:16:34.617Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 28,
+  "fields": {
+    "object_template": 9,
+    "group": 1,
+    "date_created": "2024-10-18T11:24:52.112Z",
+    "date_modified": "2024-10-18T11:24:52.112Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 31,
+  "fields": {
+    "object_template": 8,
+    "group": 1,
+    "date_created": "2024-10-18T11:27:24.771Z",
+    "date_modified": "2024-10-18T11:27:24.771Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 32,
+  "fields": {
+    "object_template": 8,
+    "group": 2,
+    "date_created": "2024-10-18T11:27:24.772Z",
+    "date_modified": "2024-10-18T11:27:24.772Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 33,
+  "fields": {
+    "object_template": 10,
+    "group": 1,
+    "date_created": "2024-10-18T11:43:14.946Z",
+    "date_modified": "2024-10-18T11:43:14.946Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 34,
+  "fields": {
+    "object_template": 11,
+    "group": 1,
+    "date_created": "2024-10-18T11:45:05.856Z",
+    "date_modified": "2024-10-18T11:45:05.856Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 35,
+  "fields": {
+    "object_template": 12,
+    "group": 1,
+    "date_created": "2024-10-18T12:01:43.704Z",
+    "date_modified": "2024-10-18T12:01:43.704Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.organisation",
   "pk": 1,
   "fields": {
@@ -2774,6 +3194,304 @@
   }
 },
 {
+  "model": "NearBeach.scheduledobject",
+  "pk": 1,
+  "fields": {
+    "schedule_object_title": "App Pool Recycle",
+    "last_run": null,
+    "start_date": "2024-01-01",
+    "end_date": "2024-02-01",
+    "next_scheduled_run": null,
+    "number_of_repeats": -1,
+    "run_count": 0,
+    "is_active": true,
+    "frequency": "Set Day of the Week",
+    "frequency_attribute": {
+      "days_of_the_week": [
+        "friday",
+        "wednesday",
+        "monday"
+      ]
+    },
+    "object_template": 1,
+    "date_created": "2024-10-18T08:41:37.268Z",
+    "date_modified": "2024-10-18T10:44:50.067Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 2,
+  "fields": {
+    "schedule_object_title": "Weekly Monday Report",
+    "last_run": null,
+    "start_date": "2024-01-01",
+    "end_date": "2024-02-01",
+    "next_scheduled_run": null,
+    "number_of_repeats": -1,
+    "run_count": 0,
+    "is_active": true,
+    "frequency": "Weekly",
+    "frequency_attribute": {
+      "day_of_the_week": "monday"
+    },
+    "object_template": 2,
+    "date_created": "2024-10-18T08:42:25.251Z",
+    "date_modified": "2024-10-18T11:17:02.929Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 3,
+  "fields": {
+    "schedule_object_title": "Trim Beard",
+    "last_run": "2023-12-22",
+    "start_date": "2024-01-01",
+    "end_date": "2024-01-12",
+    "next_scheduled_run": null,
+    "number_of_repeats": -1,
+    "run_count": 0,
+    "is_active": true,
+    "frequency": "Fortnightly",
+    "frequency_attribute": {
+      "day_of_the_week": "saturday"
+    },
+    "object_template": 3,
+    "date_created": "2024-10-18T08:49:33.490Z",
+    "date_modified": "2024-10-18T12:13:23.409Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 4,
+  "fields": {
+    "schedule_object_title": "Monthly Budgeting Report",
+    "last_run": null,
+    "start_date": "2024-01-01",
+    "end_date": "2024-02-01",
+    "next_scheduled_run": null,
+    "number_of_repeats": -1,
+    "run_count": 0,
+    "is_active": true,
+    "frequency": "Start of the Month",
+    "frequency_attribute": {},
+    "object_template": 4,
+    "date_created": "2024-10-18T08:50:08.224Z",
+    "date_modified": "2024-10-18T11:17:27.265Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 5,
+  "fields": {
+    "schedule_object_title": "End of Month Report",
+    "last_run": null,
+    "start_date": "2024-01-01",
+    "end_date": "2024-02-01",
+    "next_scheduled_run": null,
+    "number_of_repeats": -1,
+    "run_count": 0,
+    "is_active": true,
+    "frequency": "End of the Month",
+    "frequency_attribute": {},
+    "object_template": 5,
+    "date_created": "2024-10-18T08:50:37.068Z",
+    "date_modified": "2024-10-18T11:17:12.277Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 6,
+  "fields": {
+    "schedule_object_title": "Close off all unwanted tickets",
+    "last_run": null,
+    "start_date": "2024-01-01",
+    "end_date": "2024-04-01",
+    "next_scheduled_run": null,
+    "number_of_repeats": -1,
+    "run_count": 0,
+    "is_active": true,
+    "frequency": "X Days before End of the Month",
+    "frequency_attribute": {
+      "days_before": 5
+    },
+    "object_template": 6,
+    "date_created": "2024-10-18T08:51:18.932Z",
+    "date_modified": "2024-10-18T10:48:34.774Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 7,
+  "fields": {
+    "schedule_object_title": "Inactive Task",
+    "last_run": null,
+    "start_date": "2024-01-01",
+    "end_date": null,
+    "next_scheduled_run": null,
+    "number_of_repeats": -1,
+    "run_count": 0,
+    "is_active": false,
+    "frequency": "Set Day of the Week",
+    "frequency_attribute": {
+      "days_of_the_week": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ]
+    },
+    "object_template": 7,
+    "date_created": "2024-10-18T08:53:57.141Z",
+    "date_modified": "2024-10-18T08:54:33.113Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 8,
+  "fields": {
+    "schedule_object_title": "Set day of the week - repeat 5 times - run time 5",
+    "last_run": null,
+    "start_date": "2024-10-19",
+    "end_date": null,
+    "next_scheduled_run": null,
+    "number_of_repeats": 5,
+    "run_count": 6,
+    "is_active": true,
+    "frequency": "Set Day of the Week",
+    "frequency_attribute": {
+      "days_of_the_week": [
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "monday",
+        "friday",
+        "saturday",
+        "sunday"
+      ]
+    },
+    "object_template": 8,
+    "date_created": "2024-10-18T11:24:25.724Z",
+    "date_modified": "2024-10-18T11:39:54.889Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 9,
+  "fields": {
+    "schedule_object_title": "Weekly - repeat 5 times - run time 5",
+    "last_run": null,
+    "start_date": "2023-12-01",
+    "end_date": null,
+    "next_scheduled_run": null,
+    "number_of_repeats": 5,
+    "run_count": 6,
+    "is_active": true,
+    "frequency": "Weekly",
+    "frequency_attribute": {
+      "day_of_the_week": "monday"
+    },
+    "object_template": 9,
+    "date_created": "2024-10-18T11:24:52.114Z",
+    "date_modified": "2024-10-18T11:39:51.765Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 10,
+  "fields": {
+    "schedule_object_title": "Future Task",
+    "last_run": null,
+    "start_date": "2024-10-19",
+    "end_date": null,
+    "next_scheduled_run": null,
+    "number_of_repeats": -1,
+    "run_count": 0,
+    "is_active": true,
+    "frequency": "Set Day of the Week",
+    "frequency_attribute": {
+      "days_of_the_week": [
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday"
+      ]
+    },
+    "object_template": 10,
+    "date_created": "2024-10-18T11:43:14.948Z",
+    "date_modified": "2024-10-18T11:43:14.948Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 11,
+  "fields": {
+    "schedule_object_title": "Future Weekly Task",
+    "last_run": null,
+    "start_date": "2024-10-19",
+    "end_date": null,
+    "next_scheduled_run": null,
+    "number_of_repeats": -1,
+    "run_count": 0,
+    "is_active": true,
+    "frequency": "Weekly",
+    "frequency_attribute": {
+      "day_of_the_week": "wednesday"
+    },
+    "object_template": 11,
+    "date_created": "2024-10-18T11:45:05.858Z",
+    "date_modified": "2024-10-18T11:45:05.858Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 12,
+  "fields": {
+    "schedule_object_title": "Fortnightly Task Run on the 2024-01-06",
+    "last_run": "2024-01-06",
+    "start_date": "2024-01-01",
+    "end_date": "2024-01-26",
+    "next_scheduled_run": null,
+    "number_of_repeats": -1,
+    "run_count": 0,
+    "is_active": true,
+    "frequency": "Fortnightly",
+    "frequency_attribute": {
+      "day_of_the_week": "saturday"
+    },
+    "object_template": 12,
+    "date_created": "2024-10-18T12:01:43.706Z",
+    "date_modified": "2024-10-18T12:14:31.353Z",
+    "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.sprint",
   "pk": 1,
   "fields": {
@@ -3243,6 +3961,344 @@
     "object_repr": "NearBeach Bugzilla",
     "action_flag": 1,
     "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2024-10-18T08:51:55.883Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "6",
+    "object_repr": "ScheduledObject object (6)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Start date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2024-10-18T08:52:01.448Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "5",
+    "object_repr": "ScheduledObject object (5)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Start date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2024-10-18T08:52:05.626Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "4",
+    "object_repr": "ScheduledObject object (4)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Start date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2024-10-18T08:52:09.264Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "3",
+    "object_repr": "ScheduledObject object (3)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Start date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2024-10-18T08:52:13.259Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "2",
+    "object_repr": "ScheduledObject object (2)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Start date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2024-10-18T08:52:17.793Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "1",
+    "object_repr": "ScheduledObject object (1)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Start date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2024-10-18T08:54:33.114Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "7",
+    "object_repr": "ScheduledObject object (7)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Start date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2024-10-18T10:44:50.068Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "1",
+    "object_repr": "ScheduledObject object (1)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2024-10-18T10:48:14.805Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "3",
+    "object_repr": "ScheduledObject object (3)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2024-10-18T10:48:34.774Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "6",
+    "object_repr": "ScheduledObject object (6)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2024-10-18T11:17:02.929Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "2",
+    "object_repr": "ScheduledObject object (2)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2024-10-18T11:17:12.277Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "5",
+    "object_repr": "ScheduledObject object (5)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2024-10-18T11:17:27.265Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "4",
+    "object_repr": "ScheduledObject object (4)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2024-10-18T11:25:12.922Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "9",
+    "object_repr": "ScheduledObject object (9)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Run count\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2024-10-18T11:25:30.432Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "8",
+    "object_repr": "ScheduledObject object (8)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Start date\", \"Run count\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2024-10-18T11:25:37.261Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "9",
+    "object_repr": "ScheduledObject object (9)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Start date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2024-10-18T11:39:48.892Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "9",
+    "object_repr": "ScheduledObject object (9)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Run count\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 19,
+  "fields": {
+    "action_time": "2024-10-18T11:39:51.765Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "9",
+    "object_repr": "ScheduledObject object (9)",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 20,
+  "fields": {
+    "action_time": "2024-10-18T11:39:54.889Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "8",
+    "object_repr": "ScheduledObject object (8)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Run count\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 21,
+  "fields": {
+    "action_time": "2024-10-18T12:00:47.154Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "3",
+    "object_repr": "ScheduledObject object (3)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Last run\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 22,
+  "fields": {
+    "action_time": "2024-10-18T12:02:22.581Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "12",
+    "object_repr": "ScheduledObject object (12)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Last run\", \"Start date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 23,
+  "fields": {
+    "action_time": "2024-10-18T12:03:29.057Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "3",
+    "object_repr": "ScheduledObject object (3)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 24,
+  "fields": {
+    "action_time": "2024-10-18T12:06:44.884Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "12",
+    "object_repr": "ScheduledObject object (12)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 25,
+  "fields": {
+    "action_time": "2024-10-18T12:10:29.996Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "3",
+    "object_repr": "ScheduledObject object (3)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Last run\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 26,
+  "fields": {
+    "action_time": "2024-10-18T12:13:23.409Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "3",
+    "object_repr": "ScheduledObject object (3)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 27,
+  "fields": {
+    "action_time": "2024-10-18T12:14:31.353Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "12",
+    "object_repr": "ScheduledObject object (12)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
   }
 },
 {
@@ -5158,7 +6214,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$720000$xBoXxSEeVXBdR0rm6efbo0$//JuZL1sOsIXbgd6qdboRpMTz0MgwRi9Oi5AsuaSVx8=",
-    "last_login": "2024-05-13T08:35:31.081Z",
+    "last_login": "2024-10-18T08:51:34.369Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "Admin",
@@ -5266,7 +6322,7 @@
   "pk": 7,
   "fields": {
     "password": "pbkdf2_sha256$720000$LOuvwqm0i7IMvesslGvt4K$+3wQ/JnweVgmEYIffzyS3kv+HMWx2jrw+xkSrqm/u4o=",
-    "last_login": "2024-09-25T09:04:26.472Z",
+    "last_login": "2024-10-18T08:40:49.701Z",
     "is_superuser": true,
     "username": "dark_admin",
     "first_name": "Dark",
@@ -5731,6 +6787,14 @@
 },
 {
   "model": "sessions.session",
+  "pk": "2d0a7wnqmtllewu86yqgf4hncwjaxqtk",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hBLgYEu3XsGMjCDrZrWQFkZ726bdKHb_95_bxGwrWNolUuYSAwCxOl3i5gePO-A7jjfFpmWeS1TlLsiD1rldSF-Xg73LzBiHbe3AYuWLHcZbEq-d2CdBuNVZtKgQQGyJ9tpb8AZh4bOPlM0kFH1KastOtVQ24vLnhXDWhp_vm-8PxQ:1t1iXR:1mJ_IjjkqHzL47CqIE8fjOqFnqLXt52NO69kRTLBhx4",
+    "expire_date": "2024-11-01T08:40:49.734Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "41t2bmdty3irkugyv45mcq9p5oivovhk",
   "fields": {
     "session_data": ".eJxVjDsOwjAQBe_iGln-xJ-kpOcM1nq9xoEoQXZSIe5OIqWA9s28ebMA21rC1qiGMbGBeXb53SLgk-YDpAfM94XjMq91jPxQ-Ekbvy2Jpuvp_gUKtLK_IyhByXuZrdFkCSlKp5JDJT1pFNmoHnTMgL1Ba0AILRwo23e-U4ncHh1baNuL6pFlQ4ap0ecL5aQ_3g:1stOm1:fa0fhnVS-zfJqt2mgTTqYgfLfrIyY4E6bpQsk8l_HIU",
@@ -5823,6 +6887,14 @@
   "fields": {
     "session_data": ".eJxVjEEOgyAQRe_CuiEIo4jL7nsGMjBDtW3UgKya3r2auGi3_73_3sJj3UZfC2c_kRiEFZffLWB88nwAeuB8X2Rc5i1PQR6KPGmRt4X4dT3dv8CIZdzfOnZsnU5Guw6MSx0y9GwILTrVABIF2yvqGSIlpU1yChib1DK3FgLs0an4UlfOR1YMW678-QKagj_Z:1qdoy7:ikguhaQ5OjgCpnqvgjdUBVUxwwsYoewvRLjwf1Cl2SA",
     "expire_date": "2023-09-20T09:37:03.276Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "qs3salfoousndtiocd7snght5kg0w4zb",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQRf-FtSEwPHXpvt9AmAGkaiAp7cr479qkC93ec859sRC3tYZt5CXMiV2YZKffDSM9cttBusd265x6W5cZ-a7wgw4-9ZSf18P9O6hx1G9tAIm0AxOzST7FjMbnIjBpIFekAiHIKaFQaQsSAM8orS3aa6mVEcTeH-4FN1E:1t1ihq:IhZElxEL5_UhrrJwvkcWz0nMMSAXd-vJyqJtH3JhxHc",
+    "expire_date": "2024-11-01T08:51:34.371Z"
   }
 },
 {
