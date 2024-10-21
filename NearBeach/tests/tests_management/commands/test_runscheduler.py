@@ -18,7 +18,6 @@ SCHEDULETest = namedtuple(
 class RunSchedulerTest(TestCase):
     fixtures = ["NearBeach_basic_setup.json"]
 
-    # @mock.patch(Command.get_today)
     @mock.patch('NearBeach.management.commands.runscheduler.Command.get_today')
     def test_run_set_day_of_the_week(self, mock_get_today):
         # Data Array for loop
@@ -67,7 +66,6 @@ class RunSchedulerTest(TestCase):
                 list(results.values("pk")),
                 F"Run set day of the week: Date: {data.year}-{data.month}-{data.day}"
             )
-            # self.assertTrue(False)
 
     @mock.patch('NearBeach.management.commands.runscheduler.Command.get_today')
     def test_run_weekly(self, mock_get_today):
@@ -117,7 +115,6 @@ class RunSchedulerTest(TestCase):
                 list(results.values("pk")),
                 F"Run Weekly: Date: {data.year}-{data.month}-{data.day}. Expected: {data.expected_ids}"
             )
-            # self.assertTrue(False)
             
             
 
@@ -224,7 +221,6 @@ class RunSchedulerTest(TestCase):
                 list(results.values("pk")),
                 F"Run Fortnightly: Date: {data.year}-{data.month}-{data.day}. Expected: {data.expected_ids}"
             )
-            # self.assertTrue(False)
 
     @mock.patch('NearBeach.management.commands.runscheduler.Command.get_today')
     def test_run_monthly(self, mock_get_today):
@@ -398,7 +394,6 @@ class RunSchedulerTest(TestCase):
                 list(results.values("pk")),
                 F"Run Monthly: Date: {data.year}-{data.month}-{data.day}. Expected: {data.expected_ids}"
             )
-            # self.assertTrue(False)
 
     @mock.patch('NearBeach.management.commands.runscheduler.Command.get_today')
     def test_run_start_of_the_month(self, mock_get_today):
@@ -572,7 +567,6 @@ class RunSchedulerTest(TestCase):
                 list(results.values("pk")),
                 F"Run Start of the Month: Date: {data.year}-{data.month}-{data.day}. Expected: {data.expected_ids}"
             )
-            # self.assertTrue(False)
 
     @mock.patch('NearBeach.management.commands.runscheduler.Command.get_today')
     def test_run_end_of_the_month(self, mock_get_today):
@@ -746,7 +740,6 @@ class RunSchedulerTest(TestCase):
                 list(results.values("pk")),
                 F"Run End of the Month: Date: {data.year}-{data.month}-{data.day}. Expected: {data.expected_ids}"
             )
-            # self.assertTrue(False)
 
 
     @mock.patch('NearBeach.management.commands.runscheduler.Command.get_today')
@@ -921,5 +914,4 @@ class RunSchedulerTest(TestCase):
                 list(results.values("pk")),
                 F"Run End of the Month: Date: {data.year}-{data.month}-{data.day}. Expected: {data.expected_ids}"
             )
-            # self.assertTrue(False)
 
