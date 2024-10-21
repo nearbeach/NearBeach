@@ -869,7 +869,7 @@ class RunSchedulerTest(TestCase):
             SCHEDULETest(2024, 3, 23, []),
             SCHEDULETest(2024, 3, 24, []),
             SCHEDULETest(2024, 3, 25, []),
-            SCHEDULETest(2024, 3, 26, []),
+            SCHEDULETest(2024, 3, 26, [6]),
             SCHEDULETest(2024, 3, 27, []),
             SCHEDULETest(2024, 3, 28, []),
             SCHEDULETest(2024, 3, 29, []),
