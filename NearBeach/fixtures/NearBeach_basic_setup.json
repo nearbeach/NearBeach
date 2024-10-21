@@ -2416,6 +2416,46 @@
   }
 },
 {
+  "model": "NearBeach.objecttemplate",
+  "pk": 13,
+  "fields": {
+    "object_template_type": 1,
+    "object_template_json": {
+      "object_type": "task",
+      "object_title": "Monthly Task",
+      "object_description": "<p>Monthly Task</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-20T22:00:00Z",
+      "object_end_date": "2024-11-04T05:00:00Z",
+      "uuid": "91fe23fd-ac6e-409f-9779-9b858d276510"
+    },
+    "date_created": "2024-10-21T07:44:35.127Z",
+    "date_modified": "2024-10-21T07:44:35.127Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplate",
+  "pk": 14,
+  "fields": {
+    "object_template_type": 1,
+    "object_template_json": {
+      "object_type": "task",
+      "object_title": "Test",
+      "object_description": "<p>Test</p>",
+      "object_organisation": 1,
+      "object_start_date": "2024-10-20T22:00:00Z",
+      "object_end_date": "2024-11-04T05:00:00Z",
+      "uuid": "852e785f-7245-45d9-baa2-aa3549c51389"
+    },
+    "date_created": "2024-10-21T08:28:00.645Z",
+    "date_modified": "2024-10-21T08:28:00.645Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.objecttemplategroup",
   "pk": 14,
   "fields": {
@@ -2592,6 +2632,54 @@
     "date_created": "2024-10-18T12:01:43.704Z",
     "date_modified": "2024-10-18T12:01:43.704Z",
     "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 36,
+  "fields": {
+    "object_template": 13,
+    "group": 1,
+    "date_created": "2024-10-21T07:44:35.130Z",
+    "date_modified": "2024-10-21T07:44:35.130Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 37,
+  "fields": {
+    "object_template": 13,
+    "group": 2,
+    "date_created": "2024-10-21T07:44:35.132Z",
+    "date_modified": "2024-10-21T07:44:35.132Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 38,
+  "fields": {
+    "object_template": 14,
+    "group": 1,
+    "date_created": "2024-10-21T08:28:00.648Z",
+    "date_modified": "2024-10-21T08:28:00.648Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objecttemplategroup",
+  "pk": 39,
+  "fields": {
+    "object_template": 14,
+    "group": 2,
+    "date_created": "2024-10-21T08:28:00.650Z",
+    "date_modified": "2024-10-21T08:28:00.650Z",
+    "change_user": 1,
     "is_deleted": false
   }
 },
@@ -3294,7 +3382,7 @@
     "schedule_object_title": "End of Month Report",
     "last_run": null,
     "start_date": "2024-01-01",
-    "end_date": "2024-02-01",
+    "end_date": "2024-02-29",
     "next_scheduled_run": null,
     "number_of_repeats": -1,
     "run_count": 0,
@@ -3303,7 +3391,7 @@
     "frequency_attribute": {},
     "object_template": 5,
     "date_created": "2024-10-18T08:50:37.068Z",
-    "date_modified": "2024-10-18T11:17:12.277Z",
+    "date_modified": "2024-10-21T08:37:29.371Z",
     "change_user": 7,
     "is_deleted": false
   }
@@ -3488,6 +3576,27 @@
     "date_created": "2024-10-18T12:01:43.706Z",
     "date_modified": "2024-10-18T12:14:31.353Z",
     "change_user": 7,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.scheduledobject",
+  "pk": 13,
+  "fields": {
+    "schedule_object_title": "Monthly Task",
+    "last_run": null,
+    "start_date": "2024-01-22",
+    "end_date": "2024-03-31",
+    "next_scheduled_run": null,
+    "number_of_repeats": -1,
+    "run_count": 0,
+    "is_active": true,
+    "frequency": "Monthly",
+    "frequency_attribute": {},
+    "object_template": 13,
+    "date_created": "2024-10-21T07:44:35.135Z",
+    "date_modified": "2024-10-21T08:35:33.895Z",
+    "change_user": 1,
     "is_deleted": false
   }
 },
@@ -4297,6 +4406,84 @@
     "content_type": 47,
     "object_id": "12",
     "object_repr": "ScheduledObject object (12)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 28,
+  "fields": {
+    "action_time": "2024-10-21T07:45:32.023Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "13",
+    "object_repr": "ScheduledObject object (13)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Start date\", \"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 29,
+  "fields": {
+    "action_time": "2024-10-21T08:22:38.881Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "5",
+    "object_repr": "ScheduledObject object (5)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 30,
+  "fields": {
+    "action_time": "2024-10-21T08:33:46.593Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "13",
+    "object_repr": "ScheduledObject object (13)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 31,
+  "fields": {
+    "action_time": "2024-10-21T08:33:51.787Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "14",
+    "object_repr": "ScheduledObject object (14)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 32,
+  "fields": {
+    "action_time": "2024-10-21T08:35:33.896Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "13",
+    "object_repr": "ScheduledObject object (13)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 33,
+  "fields": {
+    "action_time": "2024-10-21T08:37:29.373Z",
+    "user": 1,
+    "content_type": 47,
+    "object_id": "5",
+    "object_repr": "ScheduledObject object (5)",
     "action_flag": 2,
     "change_message": "[{\"changed\": {\"fields\": [\"End date\"]}}]"
   }
@@ -6893,8 +7080,8 @@
   "model": "sessions.session",
   "pk": "qs3salfoousndtiocd7snght5kg0w4zb",
   "fields": {
-    "session_data": ".eJxVjMsOwiAQRf-FtSEwPHXpvt9AmAGkaiAp7cr479qkC93ec859sRC3tYZt5CXMiV2YZKffDSM9cttBusd265x6W5cZ-a7wgw4-9ZSf18P9O6hx1G9tAIm0AxOzST7FjMbnIjBpIFekAiHIKaFQaQsSAM8orS3aa6mVEcTeH-4FN1E:1t1ihq:IhZElxEL5_UhrrJwvkcWz0nMMSAXd-vJyqJtH3JhxHc",
-    "expire_date": "2024-11-01T08:51:34.371Z"
+    "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1t2n2j:YDC2Cf0jBM0mhlVVku3Qfo9aFHRcqtH62SD0b3-aheE",
+    "expire_date": "2024-11-04T07:41:33.144Z"
   }
 },
 {

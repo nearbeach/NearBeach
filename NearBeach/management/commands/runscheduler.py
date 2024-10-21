@@ -190,7 +190,7 @@ class Command(BaseCommand):
             )
         )
 
-        # Loop through the potential and then deterine if they should be added to the return results
+        # Loop through the potential and then deterine if they should be added to the return result
         for scheduled_object in potential_scheduled_objects:
             # Get JSON value
             frequency_attribute = scheduled_object.frequency_attribute
@@ -279,6 +279,7 @@ class Command(BaseCommand):
                 is_deleted=False,
                 frequency=SCH_MONTHLY,
                 start_date__lte=todays_date,
+                start_date__day=todays_date.day,
                 is_active=True,
             ) & Q(
                 Q(
@@ -290,7 +291,7 @@ class Command(BaseCommand):
                 Q(
                     last_run__isnull=True
                 ) | Q(
-                    last_run__gte=last_run
+                    last_run__lte=last_run
                 )
             )
         )
@@ -319,7 +320,7 @@ class Command(BaseCommand):
                 Q(
                     last_run__isnull=True,
                 ) | Q(
-                    last_run__gte=last_run,
+                    last_run__lte=last_run,
                 )
             )
         )
@@ -341,7 +342,8 @@ class Command(BaseCommand):
                 is_active=True,
             ) & Q(
                 Q(
-                    end_date__gte=todays_date,
+                    end_date__year__gte=todays_date.year,
+                    end_date__month__gte=todays_date.month,
                 ) | Q(
                     end_date__isnull=True,
                 )
@@ -349,7 +351,7 @@ class Command(BaseCommand):
                 Q(
                     last_run__isnull=True,
                 ) | Q(
-                    last_run__gte=last_run,
+                    last_run__lte=last_run,
                 )
             )
         )
@@ -383,7 +385,7 @@ class Command(BaseCommand):
                 Q(
                     last_run__isnull=True,
                 ) | Q(
-                    last_run__gte=last_run,
+                    last_run__lte=last_run,
                 )
             )
         )
