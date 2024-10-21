@@ -48,8 +48,7 @@ DICT_PLANNING_OBJECTS = {
 # Internal Function
 def get_my_planning_objects(request, delta=7):
     # Lowest delta is a 1
-    if delta < 1:
-        delta = 1
+    delta = max(delta, 1)
 
     # Get todays date
     today = datetime.date.today()
