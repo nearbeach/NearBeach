@@ -305,6 +305,7 @@ export default {
 		Icon,
 		NSelect,
 	},
+	emits: ['new_card'],
 	props: {
 		locationId: {
 			type: Number,

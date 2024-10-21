@@ -92,6 +92,9 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
+	emits: [
+		'update_customer_data',
+	],
 	props: {
 		flagValidationCheck: {
 			type: Boolean,

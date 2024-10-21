@@ -179,6 +179,9 @@ export default {
 		Icon,
 		NSelect,
 	},
+	emits: [
+		'new_card',
+	],
 	props: {
 		columnResults: {
 			type: Array,

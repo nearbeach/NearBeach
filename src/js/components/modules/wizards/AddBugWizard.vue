@@ -160,6 +160,9 @@ export default {
 		Icon,
 		NSelect,
 	},
+	emits: [
+		'append_bug_list',
+	],
 	props: {
 		destination: {
 			type: String,

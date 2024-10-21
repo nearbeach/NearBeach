@@ -111,6 +111,10 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
+	emits: [
+		'update_values',
+		'update_validation',
+	],
 	props: {
 		isReadOnly: {
 			type: Boolean,

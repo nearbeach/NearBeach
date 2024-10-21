@@ -238,6 +238,9 @@ export default {
 		Icon,
 		ListPublicLinks,
 	},
+	emits: [
+		'update_card',
+	],
 	mixins: [iconMixin],
 	data() {
 		return {

@@ -177,6 +177,9 @@ export default {
 		Icon,
 		NSelect,
 	},
+	emits: [
+		'update_link_results',
+	],
 	props: {
 		destination: {
 			type: String,

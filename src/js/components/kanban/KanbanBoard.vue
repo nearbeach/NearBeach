@@ -69,6 +69,7 @@ export default {
 	components: {
 		KanbanRow,
 	},
+	emits: ['double_clicked_card'],
 	props: {
 		kanbanBoardResults: {
 			type: Array,

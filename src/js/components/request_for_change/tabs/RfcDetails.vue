@@ -114,6 +114,10 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
+	emits: [
+		'update_values',
+		'update_validation',
+	],
 	props: {
 		groupResults: {
 			type: Array,

@@ -80,6 +80,9 @@ export default {
 		Icon,
 		NSelect,
 	},
+	emits: [
+		'update_change_lead'
+	],
 	mixins: [iconMixin],
 	computed: {
 		...mapGetters({

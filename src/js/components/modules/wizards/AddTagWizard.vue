@@ -80,6 +80,9 @@ export default {
 		Icon,
 		NSelect,
 	},
+	emits: [
+		'add_tags',
+	],
 	props: {
 		assignedTags: {
 			type: Array,

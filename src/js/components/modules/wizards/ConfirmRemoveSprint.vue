@@ -56,6 +56,7 @@ import {mapGetters} from "vuex";
 
 export default {
 	name: "ConfirmRemoveSprint",
+	emits: ['update_sprint_list'],
 	props: {
 		confirmRemoveSprint: {
 			type: Object,

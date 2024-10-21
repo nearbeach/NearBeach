@@ -122,6 +122,9 @@ export default {
 		Icon,
 		NSelect,
 	},
+	emits: [
+		'update_link_results',
+	],
 	data() {
 		return {
 			changeTaskRelation: [

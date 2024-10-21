@@ -64,6 +64,7 @@ export default {
 		NDatePicker,
 		ValidationRendering,
 	},
+	emits: ['update_dates'],
 	mixins: [disableDate],
 	props: {
 		destination: {

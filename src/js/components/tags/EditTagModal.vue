@@ -136,6 +136,11 @@ export default {
 	components: {
 		NColorPicker,
 	},
+	emits: [
+		'update_tags',
+		'new_tag',
+		'delete_tag',
+	],
 	props: {
 		existingTags: {
 			type: Array,

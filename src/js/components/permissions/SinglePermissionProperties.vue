@@ -16,6 +16,9 @@ export default {
 	components: {
 		NSelect,
 	},
+	emits: [
+		'update_property_value',
+	],
 	props: {
 		property: {
 			type: String,

@@ -192,6 +192,7 @@ export default {
 	components: {
 		NSelect,
 	},
+	emits: ['update_date_array'],
 	props: {},
 	computed: {
 		...mapGetters({

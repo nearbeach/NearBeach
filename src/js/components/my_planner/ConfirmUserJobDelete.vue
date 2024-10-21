@@ -54,6 +54,9 @@ import {mapGetters} from "vuex";
 
 export default {
 	name: "confirmUserJobDelete",
+	emits: [
+		'remove_user_job'
+	],
 	props: {
 		userJobId: {
 			type: Number,

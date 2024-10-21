@@ -56,6 +56,9 @@
 
 export default {
 	name: "ConfirmChangeTaskClosure",
+	emits: [
+		'close_change_task',
+	],
 	props: {
 		closureId: {
 			type: Number,

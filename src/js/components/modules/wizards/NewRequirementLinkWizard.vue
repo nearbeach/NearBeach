@@ -186,6 +186,7 @@ export default {
 		Icon,
 		NSelect,
 	},
+	emits: ['update_module'],
 	props: {
 		destination: {
 			type: String,
