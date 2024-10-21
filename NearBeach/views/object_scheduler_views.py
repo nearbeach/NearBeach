@@ -344,9 +344,6 @@ def scheduled_object_information_save(request, schedule_object_id, *args, **kwar
 
     # Get the object template and scheduled object
     update_scheduled_object = ScheduledObject.objects.get(schedule_object_id=schedule_object_id)
-    # update_object_template = ObjectTemplate.objects.get(
-    #     object_template_id=update_scheduled_object.object_template_id
-    # )
     update_object_template = update_scheduled_object.object_template
 
     # Update the object template
