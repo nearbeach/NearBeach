@@ -189,7 +189,7 @@
 							aria-labelledby="user-tab"
 						>
 							<documents-module
-								v-bind:override-destination="'kanban_card'"
+								override-destination="kanban_card"
 								v-bind:override-location-id="cardId"
 								v-bind:read-only="kanbanStatus === 'Closed'"
 							></documents-module>
@@ -200,7 +200,7 @@
 							role="tabpanel"
 							aria-labelledby="user-tab"
 						>
-							<list-public-links v-bind:override-destination="'kanban_card'"
+							<list-public-links override-destination="kanban_card"
 											   v-bind:override-location-id="cardId"
 											   v-bind:is-read-only="kanbanStatus === 'Closed'"
 							></list-public-links>

@@ -4,7 +4,7 @@
 			<div class="card-body">
 				<list-public-links
 					v-bind:is-read-only="isReadOnly"
-					v-bind:override-destination="'kanban_board'"
+					override-destination="kanban_board"
 					v-bind:override-location-id="locationId"
 				></list-public-links>
 			</div>

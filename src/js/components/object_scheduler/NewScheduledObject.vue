@@ -107,10 +107,10 @@
 				<group-permissions
 					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
-					v-bind:destination="'object'"
 					v-bind:user-group-permissions="userGroupPermissions"
 					v-on:update_group_model="updateGroupModel($event)"
 					v-bind:is-dirty="v$.groupModel.$dirty"
+					destination="object"
 				></group-permissions>
 
 				<!-- Scheduler Frequency -->

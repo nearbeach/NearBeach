@@ -21,49 +21,49 @@
 		</div>
 		<div v-else>
 			<!-- Relates To -->
-			<sub-object-links v-bind:title="'Relates To'"
+			<sub-object-links title="Relates To"
 							  v-bind:link-results="relatesTo"
 							  v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Kanban Cards -->
-			<sub-object-links v-bind:title="'Kanban Cards'"
+			<sub-object-links title="Kanban Cards"
 							  v-bind:link-results="kanbanCard"
 							  v-bind:can-delete="false"
 			></sub-object-links>
 
 			<!-- Is Blocked By -->
-			<sub-object-links v-bind:title="'Is Blocked By'"
+			<sub-object-links title="Is Blocked By"
 							  v-bind:link-results="isBlockedBy"
 							  v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Currently Blocking -->
-			<sub-object-links v-bind:title="'Is Currently Blocking'"
+			<sub-object-links title="Is Currently Blocking"
 							  v-bind:link-results="isCurrentlyBlocking"
 							  v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Sub Object Of -->
-			<sub-object-links v-bind:title="'Is Subobject Of'"
+			<sub-object-links title="Is Subobject Of"
 							  v-bind:link-results="isSubObjectOf"
 							  v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Parent Object Of -->
-			<sub-object-links v-bind:title="'Is Parent Object Of'"
+			<sub-object-links title="Is Parent Object Of"
 							  v-bind:link-results="isParentOf"
 							  v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Has Duplicate Object Of -->
-			<sub-object-links v-bind:title="'Has Duplicate Object Of'"
+			<sub-object-links title="Has Duplicate Object Of"
 							  v-bind:link-results="hasDuplicateObjectOf"
 							  v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Duplicate Object Of -->
-			<sub-object-links v-bind:title="'Is Duplicate Object Of'"
+			<sub-object-links title="Is Duplicate Object Of"
 							  v-bind:link-results="isDuplicateObjectOf"
 							  v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>

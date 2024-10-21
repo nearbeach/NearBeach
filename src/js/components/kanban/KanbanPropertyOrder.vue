@@ -168,10 +168,10 @@
 							<n-radio-group v-model:value="removeCardsModel" name="radiogroup">
 								<n-space>
 									<n-radio v-bind:value="true"
-											 v-bind:label="'Yes - please remove cards'"
+											 label="Yes - please remove cards"
 									/>
 									<n-radio v-bind:value="false"
-											 v-bind:label="'No - please MOVE cards'"
+											 label="No - please MOVE cards"
 									/>
 								</n-space>
 							</n-radio-group>

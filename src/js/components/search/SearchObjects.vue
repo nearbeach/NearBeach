@@ -47,7 +47,7 @@
 			v-if="localSearchResults.request_for_change.length > 0"
 			v-bind:search-results="localSearchResults.request_for_change"
 			v-bind:import-variables="requestForChangeVariables"
-			v-bind:destination="'rfc'"
+			destination="rfc"
 		></list-search-results>
 
 		<!-- REQUIREMENTS RESULTS -->
@@ -55,7 +55,7 @@
 			v-if="localSearchResults.requirement.length > 0"
 			v-bind:search-results="localSearchResults.requirement"
 			v-bind:import-variables="requirementVariables"
-			v-bind:destination="'requirement'"
+			destination="requirement"
 		></list-search-results>
 
 		<!-- PROJECT RESULTS -->
@@ -63,7 +63,7 @@
 			v-if="localSearchResults.project.length > 0"
 			v-bind:search-results="localSearchResults.project"
 			v-bind:import-variables="projectVariables"
-			v-bind:destination="'project'"
+			destination="project"
 		></list-search-results>
 
 		<!-- TASK RESULTS -->
@@ -71,7 +71,7 @@
 			v-if="localSearchResults.task.length > 0"
 			v-bind:search-results="localSearchResults.task"
 			v-bind:import-variables="taskVariables"
-			v-bind:destination="'task'"
+			destination="task"
 		></list-search-results>
 
 		<!-- KANBAN RESULTS -->
@@ -79,7 +79,7 @@
 			v-if="localSearchResults.kanban.length > 0"
 			v-bind:search-results="localSearchResults.kanban"
 			v-bind:import-variables="kanbanVariables"
-			v-bind:destination="'kanban'"
+			destination="kanban"
 		></list-search-results>
 
 		<!-- WHEN THERE ARE NO RESULTS -->

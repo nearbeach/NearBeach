@@ -16,7 +16,7 @@
 				v-if="objectResults.requirement.length > 0"
 				v-bind:search-results="objectResults.requirement"
 				v-bind:import-variables="requirementVariables"
-				v-bind:destination="'requirement'"
+				destination="requirement"
 			></render-object-card>
 
 			<!-- Projects -->
@@ -24,7 +24,7 @@
 				v-if="objectResults.project.length > 0"
 				v-bind:search-results="objectResults.project"
 				v-bind:import-variables="projectVariables"
-				v-bind:destination="'project'"
+				destination="project"
 			></render-object-card>
 
 			<!-- Tasks -->
@@ -32,7 +32,7 @@
 				v-if="objectResults.task.length > 0"
 				v-bind:search-results="objectResults.task"
 				v-bind:import-variables="taskVariables"
-				v-bind:destination="'task'"
+				destination="task"
 			></render-object-card>
 
 			<!-- If there are no objects -->

@@ -47,38 +47,34 @@
 					</div>
 					<div class="col-md-8">
 						<single-permission-properties
-							v-bind:property="'administrationAssignUserToGroupModel'"
-							v-bind:property-label="'Assign User To Group Model'"
-							v-bind:property-value="
-							administrationAssignUserToGroupModel
-						"
+							v-bind:property-value="administrationAssignUserToGroupModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="administrationAssignUserToGroupModel"
+							property-label="Assign User To Group Model"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'administrationCreateGroupModel'"
-							v-bind:property-label="'Create Groups'"
 							v-bind:property-value="administrationCreateGroupModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="administrationCreateGroupModel"
+							property-label="Create Groups"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'administrationCreatePermissionSetModel'"
-							v-bind:property-label="'Create Permission Sets'"
-							v-bind:property-value="
-							administrationCreatePermissionSetModel
-						"
+							v-bind:property-value="administrationCreatePermissionSetModel"
 							v-bind:list-of-choices="permissionLevel"
+							property-label="Create Permission Sets"
+							property="administrationCreatePermissionSetModel"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'administrationCreateUserModel'"
-							v-bind:property-label="'Create Users'"
 							v-bind:property-value="administrationCreateUserModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="administrationCreateUserModel"
+							property-label="Create Users"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 					</div>
@@ -92,18 +88,18 @@
 					</div>
 					<div class="col-md-8">
 						<single-permission-properties
-							v-bind:property="'customerModel'"
-							v-bind:property-label="'Customers'"
 							v-bind:property-value="customerModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="customerModel"
+							property-label="Customers"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'organisationModel'"
-							v-bind:property-label="'Organisations'"
 							v-bind:property-value="organisationModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="organisationModel"
+							property-label="Organisations"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 					</div>
@@ -117,50 +113,50 @@
 					</div>
 					<div class="col-md-8">
 						<single-permission-properties
-							v-bind:property="'kanbanModel'"
-							v-bind:property-label="'Kanban Boards'"
 							v-bind:property-value="kanbanModel"
 							v-bind:list-of-choices="permissionLevel"
-							v-on:update_property_value="updatePropertyValue($event)"
+							property="kanbanModel"
+							property-label="Kanban Boards"
+							v-on:update_property_valu="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'kanbanCardModel'"
-							v-bind:property-label="'Kanban Cards'"
 							v-bind:property-value="kanbanCardModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="kanbanCardModel"
+							property-label="Kanban Cards"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'projectModel'"
-							v-bind:property-label="'Projects'"
 							v-bind:property-value="projectModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="projectModel"
+							property-label="Projects"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'taskModel'"
-							v-bind:property-label="'Tasks'"
 							v-bind:property-value="taskModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="taskModel"
+							property-label="Tasks"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'requestForChangeModel'"
-							v-bind:property-label="'Request for Change'"
 							v-bind:property-value="requestForChangeModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="requestForChangeModel"
+							property-label="Request for Change"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'requirementModel'"
-							v-bind:property-label="'Requirements'"
 							v-bind:property-value="requirementModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="requirementModel"
+							property-label="Requirements"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 					</div>
@@ -180,58 +176,58 @@
 					</div>
 					<div class="col-md-8">
 						<single-permission-properties
-							v-bind:property="'documentModel'"
-							v-bind:property-label="'Grants upload ability'"
 							v-bind:property-value="documentModel"
 							v-bind:list-of-choices="permissionBoolean"
 							v-on:update_property_value="updatePropertyValue($event)"
+							property="documentModel"
+							property-label="Grants upload ability"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'kanbanNoteModel'"
-							v-bind:property-label="'Grants notes on Kanban Boards'"
 							v-bind:property-value="kanbanNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
+							property="kanbanNoteModel"
+							property-label="Grants notes on Kanban Boards"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'organisationNoteModel'"
-							v-bind:property-label="'Grants notes on Organisations'"
 							v-bind:property-value="organisationNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
+							property="organisationNoteModel"
+							property-label="Grants notes on Organisations"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'projectNoteModel'"
-							v-bind:property-label="'Grants notes on Projects'"
 							v-bind:property-value="projectNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
+							property="projectNoteModel"
+							property-label="Grants notes on Projects"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'requirementNoteModel'"
-							v-bind:property-label="'Grants notes on Requirements'"
 							v-bind:property-value="requirementNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
+							property="requirementNoteModel"
+							property-label="Grants notes on Requirements"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'requirementItemNoteModel'"
-							v-bind:property-label="'Grants notes on Requirement Items'"
 							v-bind:property-value="requirementItemNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
+							property="requirementItemNoteModel"
+							property-label="Grants notes on Requirement Items"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'taskNoteModel'"
-							v-bind:property-label="'Grants notes on Tasks'"
 							v-bind:property-value="taskNoteModel"
 							v-bind:list-of-choices="permissionBoolean"
+							property="taskNoteModel"
+							property-label="Grants notes on Tasks"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 					</div>
@@ -246,18 +242,18 @@
 					</div>
 					<div class="col-md-8">
 						<single-permission-properties
-							v-bind:property="'bugClientModel'"
-							v-bind:property-label="'Configure bug clients'"
 							v-bind:property-value="bugClientModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="bugClientModel"
+							property-label="Configure bug clients"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
-							v-bind:property="'tagModel'"
-							v-bind:property-label="'Configure tags'"
 							v-bind:property-value="tagModel"
 							v-bind:list-of-choices="permissionLevel"
+							property="tagModel"
+							property-label="Configure tags"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 					</div>

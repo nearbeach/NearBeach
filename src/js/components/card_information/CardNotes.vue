@@ -55,7 +55,7 @@
 		<!-- NOTE HISTORY -->
 		<list-notes
 			v-bind:note-history-results="cardNotes"
-			v-bind:destination="'card'"
+			destination="card"
 		></list-notes>
 	</div>
 </template>

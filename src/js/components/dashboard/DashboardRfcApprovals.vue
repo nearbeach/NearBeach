@@ -15,7 +15,7 @@
 
 			<render-object-card v-bind:search-results="rfcApprovalsList"
 								v-bind:import-variables="rfcVariables"
-								v-bind:destination="'rfc'"
+								destination="rfc"
 			></render-object-card>
 		</div>
 	</div>

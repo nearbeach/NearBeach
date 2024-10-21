@@ -20,8 +20,8 @@
 		</div>
 		<div v-else>
 			<render-object-card v-bind:import-variables="requirementItemVariables"
-								v-bind:destination="'requirement_item'"
 								v-bind:search-results="itemResults"
+								destination="requirement_item"
 			></render-object-card>
 		</div>
 

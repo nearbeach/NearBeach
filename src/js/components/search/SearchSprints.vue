@@ -37,7 +37,7 @@
 			v-if="localSearchResults.length > 0"
 			v-bind:search-results="localSearchResults"
 			v-bind:import-variables="sprintVariables"
-			v-bind:destination="'sprint'"
+			destination="sprint"
 		></list-search-results>
 
 		<!-- WHEN THERE ARE NO RESULTS -->
