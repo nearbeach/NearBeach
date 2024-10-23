@@ -40,6 +40,17 @@
 				<br/>
 				{{ element.kanban_card_text }}
 				<br />
+				<div v-if="element.tag_list.length > 0"
+					 class="tag-list"
+				>
+					<div v-for="single_tag in element.tag_list"
+						 :key="single_tag.tag_assignment_id"
+						 v-bind:style="`background-color:${single_tag.tag_colour};color:${single_tag.tag_text_colour};`"
+						 class="single-tag-thin"
+					>
+						{{ single_tag.tag_name }}
+					</div>
+				</div>
 				<span v-if="!canDragCards" style="font-weight: lighter">- Movement Locked!</span>
 				<span v-else style="font-weight: lighter">
 					&nbsp;

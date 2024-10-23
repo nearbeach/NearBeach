@@ -63,10 +63,25 @@ export default {
 		AddTagWizard,
 		Icon,
 	},
+	props: {
+		overrideDestination: {
+			type: String,
+			default: "",
+		},
+		overrideLocationId: {
+			type: Number,
+			default: 0,
+		},
+	},
 	data() {
 		return {
 			tagList: [],
 		};
+	},
+	watch: {
+		overrideLocationId() {
+			this.getAssignedTags();
+		}
 	},
 	mixins: [iconMixin],
 	computed: {
@@ -89,8 +104,10 @@ export default {
 			newTagModal.show();
 		},
 		getAssignedTags() {
+			if (this.locationId === 0) return;
+			
 			this.axios.post(
-				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/tag_list/`
+				`${this.rootUrl}object_data/${this.getDestination()}/${this.getLocationId()}/tag_list/`
 			).then((response) => {
 				this.tagList = response.data;
 			}).catch((error) => {
@@ -102,6 +119,13 @@ export default {
 				});
 			});
 		},
+		getDestination() {
+			return this.overrideDestination !== "" ? this.overrideDestination : this.destination;
+		},
+		getLocationId() {
+			//If there is an overrideDestination - we want to use the overrideLocationId
+			return this.overrideDestination !== "" ? this.overrideLocationId : this.locationId;
+		},
 		removeTag(tag_id) {
 			//If user does not have enough permissions, don't let them proceed.
 			if (this.userLevel <= 1) return;
@@ -109,8 +133,8 @@ export default {
 			//Create data_to_send
 			const data_to_send = new FormData();
 			data_to_send.set("tag", tag_id);
-			data_to_send.set("object_enum", this.destination);
-			data_to_send.set("object_id", this.locationId);
+			data_to_send.set("object_enum", this.getDestination());
+			data_to_send.set("object_id", this.getLocationId());
 
 			//Send data using axios
 			this.axios.post(
@@ -135,7 +159,7 @@ export default {
 	mounted() {
 		//If the location is inside the array - don't bother getting the data
 		const escape_array = ["requirement_item"];
-		if (escape_array.indexOf(this.destination) >= 0) return;
+		if (escape_array.indexOf(this.getDestination()) >= 0) return;
 
 		//Wait 200ms before getting the data
 		this.$nextTick(() => {
