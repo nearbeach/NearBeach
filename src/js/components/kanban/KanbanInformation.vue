@@ -249,6 +249,12 @@ export default {
 			type: String,
 			default: "/",
 		},
+		tagResults: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
 		theme: {
 			type: String,
 			default: "",
@@ -342,21 +348,14 @@ export default {
 			//Loop through the results - when the id's match. Update the data.
 			this.localKanbanCardResults.forEach((row, index) => {
 				//Check to see if the primary keys match - if they do update the data
-				if (row.pk === data.kanban_card_id) {
+				if (row.kanban_card_id === data.kanban_card_id) {
 					this.localKanbanCardResults[
 						index
-						].fields.kanban_card_text = data.kanban_card_text;
+						].kanban_card_text = data.kanban_card_text;
 					this.localKanbanCardResults[
 						index
-						].fields.kanban_card_description =
+						].kanban_card_description =
 						data.kanban_card_description;
-					// this.localKanbanCardResults[
-					// 	index
-					// 	].fields.kanban_column = data.kanban_column;
-					// this.localKanbanCardResults[index].fields.kanban_level =
-					// 	data.kanban_level;
-					// this.localKanbanCardResults[index].fields.kanban_card_priority =
-					// 	data.kanban_card_priority;
 				}
 			});
 		},

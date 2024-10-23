@@ -253,8 +253,8 @@ export default {
 				},
 				from: {
 					dataset: {
-						column: old_card.fields.kanban_column,
-						level: old_card.fields.kanban_level,
+						column: old_card.kanban_column,
+						level: old_card.kanban_level,
 					}
 				},
 				item: {
@@ -275,8 +275,8 @@ export default {
 			//Now we get the new destination and old destination
 			const new_destination = this.$store.getters.getCardsOrder(this.cardColumn, this.cardLevel);
 			const old_destination = this.$store.getters.getCardsOrder(
-				old_card.fields.kanban_column,
-				old_card.fields.kanban_level
+				old_card.kanban_column,
+				old_card.kanban_level
 			).filter((row) => {
 				//We don't want the old destination to have the card id...
 				return parseInt(row.pk) !== parseInt(this.cardId);
@@ -315,8 +315,8 @@ export default {
 			const old_card = this.$store.getters.getCard(this.cardId);
 
 			//Determine if we are changing levels or columns
-			const condition_1 = parseInt(this.cardColumn) === parseInt(old_card.fields.kanban_column);
-			const condition_2 = parseInt(this.cardLevel) === parseInt(old_card.fields.kanban_level);
+			const condition_1 = parseInt(this.cardColumn) === parseInt(old_card.kanban_column);
+			const condition_2 = parseInt(this.cardLevel) === parseInt(old_card.kanban_level);
 
 			//If there are no changes - just send the data upstream
 			if (condition_1 && condition_2) {

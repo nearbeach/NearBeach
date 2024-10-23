@@ -333,7 +333,7 @@ export default {
 			//Check to make sure it does not exist
 			const filtered_results = this.kanbanCardResults.filter((row) => {
 				return (
-					row.fields.kanban_card_text === this.kanbanCardTextModel
+					row.kanban_card_text === this.kanbanCardTextModel
 				);
 			});
 
