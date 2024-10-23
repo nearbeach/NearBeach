@@ -21,13 +21,13 @@
 		</div>
 		<div v-else>
 			<!-- Project Links -->
-			<sub-object-links v-bind:title="'Project Links'"
+			<sub-object-links title="Project Links"
 							  v-bind:link-results="linkProject"
 							  v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Task Links -->
-			<sub-object-links v-bind:title="'Task Links'"
+			<sub-object-links title="Task Links"
 							  v-bind:link-results="linkTask"
 							  v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
@@ -67,13 +67,13 @@
 		</div>
 		<div v-else>
 			<!-- Project Links -->
-			<sub-object-links v-bind:title="'Project Links'"
+			<sub-object-links title="Project Links"
 							  v-bind:link-results="itemLinkProject"
 							  v-bind:can-delete="false"
 			></sub-object-links>
 
 			<!-- Task Links -->
-			<sub-object-links v-bind:title="'Task Links'"
+			<sub-object-links title="Task Links"
 							  v-bind:link-results="itemLinkTask"
 							  v-bind:can-delete="false"
 			></sub-object-links>
@@ -82,7 +82,7 @@
 		<!-- LINKING MODAL -->
 		<new-requirement-link-wizard
 			v-bind:location-id="locationId"
-			v-bind:destination="'requirement'"
+			destination="requirement"
 			v-on:update_module="updateLinkResults"
 		></new-requirement-link-wizard>
 

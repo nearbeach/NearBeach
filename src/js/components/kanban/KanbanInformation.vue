@@ -77,9 +77,9 @@
 
 			<!-- MODALS -->
 			<add-user-to-card
-				v-bind:destination="'kanban_card'"
 				v-bind:location-id="cardId"
 				v-bind:refresh-user-list="refreshUserList"
+				destination="kanban_card"
 				v-on:reset_refresh_user_list="resetRefreshUserList"
 			></add-user-to-card>
 
@@ -105,7 +105,7 @@
 			></card-information>
 
 			<upload-document-wizard
-				v-bind:override-destination="'kanban_card'"
+				override-destination="kanban_card"
 				v-bind:override-location-id="cardId"
 			></upload-document-wizard>
 
@@ -113,19 +113,19 @@
 
 			<new-history-note-wizard
 				v-bind:location-id="cardId"
-				v-bind:destination="'kanban_card'"
+				destination="kanban_card"
 			></new-history-note-wizard>
 
 			<confirm-note-delete></confirm-note-delete>
 
 			<add-folder-wizard
-				v-bind:destination="'kanban_card'"
 				v-bind:location-id="locationId"
+				destination="kanban_card"
 			></add-folder-wizard>
 
 			<add-link-wizard
-				v-bind:destination="'kanban_card'"
 				v-bind:location-id="locationId"
+				destination="kanban_card"
 			></add-link-wizard>
 
 			<!-- CONFIRM DOCUMENT DELETE -->

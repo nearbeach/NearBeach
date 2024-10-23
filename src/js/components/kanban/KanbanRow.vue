@@ -41,6 +41,9 @@ export default {
 		KanbanColumn,
 		KanbanColumnDraggable,
 	},
+	emits: [
+		'double_clicked_card',
+	],
 	props: {
 		levelId: {
 			type: Number,

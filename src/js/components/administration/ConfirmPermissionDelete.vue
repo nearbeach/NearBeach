@@ -50,6 +50,9 @@
 
 export default {
 	name: "ConfirmPermissionDelete",
+	emits: [
+		'remove_permission',
+	],
 	props: {
 		permissionDeleteId: {
 			type: Number,

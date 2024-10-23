@@ -66,6 +66,9 @@ export default {
 	components: {
 		Icon,
 	},
+	emits: [
+		'remove_user',
+	],
 	props: {
 		addingUserStatus: {
 			type: Boolean,

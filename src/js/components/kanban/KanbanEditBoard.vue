@@ -32,25 +32,25 @@
 					<div class="col-md-4">
 						<kanban-property-order
 							v-bind:is-read-only="isReadOnly"
-							v-bind:property-name="'Column'"
 							v-bind:property-list="columnModel"
-							v-bind:source="'columnModel'"
 							v-bind:is-dirty="v$.columnModel.$dirty"
 							v-bind:is-new-mode="false"
 							v-bind:kanban-board-id="kanbanBoardResults[0].pk"
+							property-name="Column"
+							source="columnModel"
 							v-on:update_property_list="updatePropertyList($event)"
 						></kanban-property-order>
 					</div>
 					<div class="col-md-4">
 						<kanban-property-order
 							v-bind:is-read-only="isReadOnly"
-							v-bind:property-name="'Level'"
 							v-bind:property-list="levelModel"
-							v-bind:source="'levelModel'"
 							v-bind:is-dirty="v$.columnModel.$dirty"
 							v-bind:is-new-mode="false"
 							v-bind:kanban-board-id="kanbanBoardResults[0].pk"
-							v-on:update_property_list="updatePropertyList($event)"
+							property-name="Level"
+							source="levelModel"
+							v-on:update_propety_list="udatePropertyList($event)"
 						></kanban-property-order>
 					</div>
 				</div>

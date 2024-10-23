@@ -90,6 +90,7 @@ import iconMixin from "../../mixins/iconMixin";
 
 export default {
 	name: "RenderGanttRow",
+	emits: ['mouse_down'],
 	props: {
 		endDate: {
 			type: Number,

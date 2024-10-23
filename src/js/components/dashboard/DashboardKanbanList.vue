@@ -11,7 +11,7 @@
 			<render-object-card
 				v-bind:search-results="kanbanList"
 				v-bind:import-variables="kanbanVariables"
-				v-bind:destination="'kanban'"
+				destination="kanban"
 			></render-object-card>
 		</div>
 	</div>

@@ -57,6 +57,7 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
+	emits: ['update_stakeholder_model'],
 	props: {
 	},
 	data() {

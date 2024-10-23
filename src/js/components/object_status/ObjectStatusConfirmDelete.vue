@@ -80,6 +80,9 @@ export default {
 	components: {
 		NSelect,
 	},
+	emits: [
+		'delete_status',
+	],
 	props: {
 		statusData: {
 			type: Object,

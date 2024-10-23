@@ -86,10 +86,10 @@
 				<group-permissions
 					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
-					v-bind:destination="'task'"
 					v-bind:user-group-permissions="userGroupPermissions"
 					v-on:update_group_model="updateGroupModel($event)"
 					v-bind:is-dirty="v$.groupModel.$error.length > 0"
+					destination="task"
 				></group-permissions>
 
 				<!-- Submit Button -->

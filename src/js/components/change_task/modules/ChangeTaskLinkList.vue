@@ -21,12 +21,12 @@
 		</div>
 		<div v-else>
 			<!-- Is Blocked By -->
-			<sub-object-links v-bind:title="'Is Blocked By'"
+			<sub-object-links title="Is Blocked By"
 							  v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Block' && row.parent_link !== destination})"
 			></sub-object-links>
 
 			<!-- Is Currently Blocking -->
-			<sub-object-links v-bind:title="'Is Currently Blocking'"
+			<sub-object-links title="Is Currently Blocking"
 							  v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Block' && row.parent_link === destination})"
 			></sub-object-links>
 		</div>

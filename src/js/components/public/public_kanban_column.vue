@@ -39,6 +39,9 @@ export default {
 	components: {
 		Icon,
 	},
+	emits: [
+		'card_clicked',
+	],
 	props: {
 		masterList: {
 			type: Array,

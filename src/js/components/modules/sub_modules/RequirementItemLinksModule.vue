@@ -17,13 +17,13 @@
 		</div>
 		<div v-else>
 			<!-- Project Links -->
-			<sub-object-links v-bind:title="'Project Links'"
+			<sub-object-links title="Project Links"
 							  v-bind:link-results="itemLinkProject"
 							  v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Task Links -->
-			<sub-object-links v-bind:title="'Task Links'"
+			<sub-object-links title="Task Links"
 							  v-bind:link-results="itemLinkTask"
 							  v-on:update_link_results="updateLinkResults($event)"
 			></sub-object-links>

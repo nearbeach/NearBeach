@@ -54,19 +54,19 @@
 					</div>
 					<div class="col-md-4">
 						<kanban-property-order
-							v-bind:property-name="'Column'"
 							v-bind:property-list="columnModel"
-							v-bind:source="'columnModel'"
 							v-bind:is-dirty="v$.columnModel.$dirty"
+							property-name="Column"
+							source="columnModel"
 							v-on:update_property_list="updatePropertyList($event)"
 						></kanban-property-order>
 					</div>
 					<div class="col-md-4">
 						<kanban-property-order
-							v-bind:property-name="'Level'"
 							v-bind:property-list="levelModel"
-							v-bind:source="'levelModel'"
 							v-bind:is-dirty="v$.columnModel.$dirty"
+							property-name="Level"
+							source="levelModel"
 							v-on:update_property_list="updatePropertyList($event)"
 						></kanban-property-order>
 					</div>
@@ -77,10 +77,10 @@
 				<group-permissions
 					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 					v-bind:group-results="groupResults"
-					v-bind:destination="'kanban_board'"
 					v-bind:user-group-permissions="userGroupPermissions"
 					v-on:update_group_model="updateGroupModel($event)"
 					v-bind:is-dirty="v$.groupModel.$dirty"
+					destination="kanban_board"
 				></group-permissions>
 
 				<!-- SAVE -->

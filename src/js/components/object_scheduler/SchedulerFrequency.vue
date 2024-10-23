@@ -159,6 +159,9 @@ export default {
 		NInputNumber,
 		NSelect,
 	},
+	emits: [
+		'update_scheduler_frequency',
+	],
 	props: {
 		daysBefore: {
 			type: Number,

@@ -87,6 +87,10 @@ export default {
 		editor: Editor,
 		ValidationRendering,
 	},
+	emits: [
+		'update_validation',
+		'update_values'
+	],
 	props: {
 		isReadOnly: {
 			type: Boolean,

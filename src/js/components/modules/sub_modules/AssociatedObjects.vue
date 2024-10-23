@@ -12,7 +12,7 @@
 		<!-- Project Results -->
 		<render-object-card v-bind:search-results="projectResults"
 							v-bind:import-variables="projectVariables"
-							v-bind:destination="'project'"
+							destination="project"
 							v-if="projectResults.length > 0"
 		></render-object-card>
 
@@ -20,7 +20,7 @@
 		<!-- Requirement Results -->
 		<render-object-card v-bind:search-results="requirementResults"
 							v-bind:import-variables="requirementVariables"
-							v-bind:destination="'requirement'"
+							destination="requirement"
 							v-if="requirementResults.length > 0"
 		></render-object-card>
 
@@ -28,7 +28,7 @@
 		<!-- Task Results -->
 		<render-object-card v-bind:search-results="taskResults"
 							v-bind:import-variables="taskVariables"
-							v-bind:destination="'task'"
+							destination="task"
 							v-if="taskResults.length > 0"
 		></render-object-card>
 

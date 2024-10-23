@@ -43,7 +43,7 @@
 								<n-select
 									:options="bugClientList"
 									label="bug_client_name"
-									:option="'bug_client_id'"
+									option="bug_client_id"
 									v-model:value="bugClientModel"
 								></n-select>
 							</div>
@@ -160,6 +160,9 @@ export default {
 		Icon,
 		NSelect,
 	},
+	emits: [
+		'append_bug_list',
+	],
 	props: {
 		destination: {
 			type: String,

@@ -55,6 +55,9 @@ import {mapGetters} from "vuex";
 
 export default {
 	name: "ConfirmLinkDelete",
+	emits: [
+		'update_link_results',
+	],
 	props: {},
 	computed: {
 		...mapGetters({

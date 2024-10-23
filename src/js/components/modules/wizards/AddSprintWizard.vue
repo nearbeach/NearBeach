@@ -88,6 +88,9 @@ export default {
 	components: {
 		NSelect,
 	},
+	emits: [
+		'update_sprint_list',
+	],
 	data() {
 		return {
 			selectedSprintObject: {},

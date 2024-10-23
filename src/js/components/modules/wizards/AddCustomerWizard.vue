@@ -109,6 +109,9 @@ export default {
 		Icon,
 		NSelect,
 	},
+	emits: [
+		'update_customer_results',
+	],
 	props: {
 		destination: {
 			type: String,

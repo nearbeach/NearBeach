@@ -85,6 +85,10 @@ export default {
 	components: {
 		NSelect,
 	},
+	emits: [
+		'add_status',
+		'update_status',
+	],
 	props: {
 		statusData: {
 			type: Object,

@@ -1,8 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
-from django.db.models import Q
+from django.db.models import Q, F
 
-from NearBeach.views.tools.internal_functions import lookup_choice_from_key
 from NearBeach.models import (
     OBJECT_TEMPLATE_TYPE,
     ObjectAssignment,
@@ -50,7 +49,7 @@ OBJECT_DICT = {
 
 class Command(BaseCommand):
     help = "Run this command to run the scheduled jobs within NearBeach. Setup a daily cron job"
-
+    
     def handle(self, *args, **kwargs):
         scheduled_objects = ScheduledObject.objects.none()
 
@@ -66,6 +65,10 @@ class Command(BaseCommand):
         # Loop through all objects and create them
         for single_object in scheduled_objects:
             self.create_object(single_object)
+            
+    @staticmethod
+    def get_today():
+        return datetime.datetime.today()
 
     @staticmethod
     def create_object(scheduled_object, *args, **kwargs):
@@ -143,12 +146,13 @@ class Command(BaseCommand):
         scheduled_object.last_run = datetime.date.today()
         scheduled_object.save()
 
+        # TODO: For those repeat tasks, we might need to add the run count :)
+
         return
 
-    @staticmethod
-    def run_set_day_of_the_week():
+    def run_set_day_of_the_week(self):
         # Get today's date and day of the week
-        todays_date = datetime.date.today()
+        todays_date = self.get_today()
         todays_day = calendar.day_name[todays_date.weekday()].lower()
         last_run = todays_date - datetime.timedelta(days=1)
 
@@ -176,10 +180,17 @@ class Command(BaseCommand):
                 ) | Q(
                     last_run__gte=last_run,
                 )
+            ) & Q(
+                Q(
+                    number_of_repeats=-1,
+                ) | Q(
+                    number_of_repeats__gte=0,
+                    run_count__lte=F('number_of_repeats'),
+                )
             )
         )
 
-        # Loop through the potential and then deterine if they should be added to the return results
+        # Loop through the potential and then deterine if they should be added to the return result
         for scheduled_object in potential_scheduled_objects:
             # Get JSON value
             frequency_attribute = scheduled_object.frequency_attribute
@@ -195,9 +206,8 @@ class Command(BaseCommand):
         # Return
         return query_set_results
 
-    @staticmethod
-    def run_weekly():
-        todays_date = datetime.date.today()
+    def run_weekly(self):
+        todays_date = self.get_today()
         day_of_the_week = calendar.day_name[todays_date.weekday()]
         last_run = todays_date - datetime.timedelta(days=7)
 
@@ -206,7 +216,7 @@ class Command(BaseCommand):
             Q(
                 is_deleted=False,
                 frequency=SCH_WEEKLY,
-                frequency_attribute__day_of_the_week=day_of_the_week,
+                frequency_attribute__day_of_the_week=day_of_the_week.lower(),
                 start_date__lte=todays_date,
                 is_active=True,
             ) & Q(
@@ -221,12 +231,18 @@ class Command(BaseCommand):
                 ) | Q(
                     last_run__gte=last_run,
                 )
+            ) & Q(
+                Q(
+                    number_of_repeats=-1,
+                ) | Q(
+                    number_of_repeats__gte=0,
+                    run_count__lte=F('number_of_repeats'),
+                )
             )
         )
 
-    @staticmethod
-    def run_fortnightly():
-        todays_date = datetime.date.today()
+    def run_fortnightly(self):
+        todays_date = self.get_today()
         day_of_the_week = calendar.day_name[todays_date.weekday()]
         last_run = todays_date - datetime.timedelta(days=14)
 
@@ -235,8 +251,7 @@ class Command(BaseCommand):
             Q(
                 is_deleted=False,
                 frequency=SCH_FORTNIGHTLY,
-                frequency_attribute__day_of_the_week=day_of_the_week,
-                # last_run__gte=last_run,
+                frequency_attribute__day_of_the_week=day_of_the_week.lower(),
                 start_date__lte=todays_date,
                 is_active=True,
             ) & Q(
@@ -249,14 +264,13 @@ class Command(BaseCommand):
                 Q(
                     last_run__isnull=True
                 ) | Q(
-                    last_run__gte=last_run
+                    last_run__lte=last_run
                 )
             )
         )
 
-    @staticmethod
-    def run_monthly():
-        todays_date = datetime.date.today()
+    def run_monthly(self):
+        todays_date = self.get_today()
         last_run = todays_date - datetime.timedelta(days=14)
 
         # Get data and process
@@ -265,6 +279,7 @@ class Command(BaseCommand):
                 is_deleted=False,
                 frequency=SCH_MONTHLY,
                 start_date__lte=todays_date,
+                start_date__day=todays_date.day,
                 is_active=True,
             ) & Q(
                 Q(
@@ -276,15 +291,14 @@ class Command(BaseCommand):
                 Q(
                     last_run__isnull=True
                 ) | Q(
-                    last_run__gte=last_run
+                    last_run__lte=last_run
                 )
             )
         )
 
-    @staticmethod
-    def run_start_of_the_month():
+    def run_start_of_the_month(self):
         # If today is not the 1st - we will just leave
-        todays_date = datetime.date.today()
+        todays_date = self.get_today()
         last_run = todays_date - datetime.timedelta(days=14)
         if todays_date.day != 1:
             return ScheduledObject.objects.none()
@@ -306,15 +320,14 @@ class Command(BaseCommand):
                 Q(
                     last_run__isnull=True,
                 ) | Q(
-                    last_run__gte=last_run,
+                    last_run__lte=last_run,
                 )
             )
         )
 
-    @staticmethod
-    def run_end_of_the_month():
+    def run_end_of_the_month(self):
         # If today is not the end of the month - we will just leave
-        todays_date = datetime.date.today()
+        todays_date = self.get_today()
         end_month_date = calendar.monthrange(todays_date.year, todays_date.month)[1]
         last_run = todays_date - datetime.timedelta(days=14)
         if todays_date.day != end_month_date:
@@ -329,7 +342,8 @@ class Command(BaseCommand):
                 is_active=True,
             ) & Q(
                 Q(
-                    end_date__gte=todays_date,
+                    end_date__year__gte=todays_date.year,
+                    end_date__month__gte=todays_date.month,
                 ) | Q(
                     end_date__isnull=True,
                 )
@@ -337,15 +351,14 @@ class Command(BaseCommand):
                 Q(
                     last_run__isnull=True,
                 ) | Q(
-                    last_run__gte=last_run,
+                    last_run__lte=last_run,
                 )
             )
         )
 
-    @staticmethod
-    def run_x_days_before_end_of_the_month():
+    def run_x_days_before_end_of_the_month(self):
         # If today's date is earlier than the 14th, just leave
-        todays_date = datetime.date.today()
+        todays_date = self.get_today()
         last_run = todays_date - datetime.timedelta(days=14)
         if todays_date.day < 14:
             return ScheduledObject.objects.none()
@@ -372,7 +385,7 @@ class Command(BaseCommand):
                 Q(
                     last_run__isnull=True,
                 ) | Q(
-                    last_run__gte=last_run,
+                    last_run__lte=last_run,
                 )
             )
         )

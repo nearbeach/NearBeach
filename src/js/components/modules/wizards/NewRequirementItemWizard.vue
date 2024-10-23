@@ -166,6 +166,9 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
+	emits: [
+		'new_item_added',
+	],
 	mixins: [iconMixin],
 	data() {
 		return {

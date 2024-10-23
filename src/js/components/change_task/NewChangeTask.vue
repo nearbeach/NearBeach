@@ -220,6 +220,7 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
+	emits: ['update_change_task_list'],
 	props: {
 		locationId: {
 			type: Number,

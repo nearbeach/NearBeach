@@ -47,7 +47,7 @@
 		<group-permissions
 			v-bind:display-group-permission-issue="displayGroupPermissionIssue"
 			v-bind:group-results="groupResults"
-			v-bind:destination="'request_for_change'"
+			destination="request_for_change"
 			v-bind:is-dirty="v$.groupModel.$dirty"
 			v-bind:user-group-permissions="userGroupPermissions"
 			v-on:update_group_model="updateGroupModel($event)"
@@ -114,6 +114,10 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
+	emits: [
+		'update_values',
+		'update_validation',
+	],
 	props: {
 		groupResults: {
 			type: Array,

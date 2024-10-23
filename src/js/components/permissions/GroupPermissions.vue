@@ -57,6 +57,7 @@ export default {
 		NSelect,
 		ValidationRendering,
 	},
+	emits: ['update_group_model'],
 	props: {
 		destination: {
 			type: String,
