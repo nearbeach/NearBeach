@@ -8,7 +8,7 @@ export const moduleKanban = {
     mutations: {
         //CRUD Operations
         addCard(state, payload) {
-            state.kanbanCardResults.push(payload.newCard[0]);
+            state.kanbanCardResults.push(payload.newCard);
         },
         archiveCard(state, payload) {
             const cardId = payload.cardId;
