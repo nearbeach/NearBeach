@@ -91,12 +91,12 @@ export default {
 			this.allCards
 				.filter((card) => {
 					return (
-						parseInt(card.fields.kanban_column) === column &&
-						parseInt(card.fields.kanban_level) === level
+						parseInt(card.kanban_column) === column &&
+						parseInt(card.kanban_level) === level
 					);
 				})
 				.forEach((card) => {
-					data_to_send.append("kanban_card_id", card.pk);
+					data_to_send.append("kanban_card_id", card.kanban_card_id);
 				});
 
 			//Mutate the data to exclude the archived cards
