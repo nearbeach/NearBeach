@@ -170,11 +170,11 @@ export default {
 	},
 	data() {
 		return {
-			emailModel: this.userResults[0]["fields"]["email"],
-			isActiveModel: this.userResults[0]["fields"]["is_active"],
-			isSuperuserModel: this.userResults[0]["fields"]["is_superuser"],
-			firstNameModel: this.userResults[0]["fields"]["first_name"],
-			lastNameModel: this.userResults[0]["fields"]["last_name"],
+			emailModel: this.userResults[0].fields.email,
+			isActiveModel: this.userResults[0].fields.is_active,
+			isSuperuserModel: this.userResults[0].fields.is_superuser,
+			firstNameModel: this.userResults[0].fields.first_name,
+			lastNameModel: this.userResults[0].fields.last_name,
 		};
 	},
 	validations: {
@@ -228,7 +228,7 @@ export default {
 			data_to_send.set("last_name", this.lastNameModel);
 
 			this.axios.post(
-				`${this.rootUrl}user_information/${this.userResults[0]["pk"]}/save/`,
+				`${this.rootUrl}user_information/${this.userResults[0].pk}/save/`,
 				data_to_send
 			).then(() => {
 				//Hide the loading modal
