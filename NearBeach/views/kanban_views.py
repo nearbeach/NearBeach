@@ -88,15 +88,24 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     # Save the data
     kanban_card_submit.save()
 
-    # Send back the data we just created
-    kanban_card_results = KanbanCard.objects.get(
+    # Send back the kanban card data
+    kanban_card_results = KanbanCard.objects.filter(
         kanban_card_id=kanban_card_submit.kanban_card_id
+    ).values(
+       "kanban_card_description",
+       "kanban_card_id",
+       "kanban_card_priority",
+       "kanban_card_sort_number",
+       "kanban_card_text",
+       "kanban_column",
+       "kanban_level",
+       "project",
+       "requirement",
+       "task",
     )
+    kanban_card_results = json.dumps(list(kanban_card_results), cls=DjangoJSONEncoder)
 
-    return HttpResponse(
-        serializers.serialize("json", [kanban_card_results]),
-        content_type="application/json",
-    )
+    return JsonResponse(json.loads(kanban_card_results), safe=False)
 
 
 @login_required(login_url="login", redirect_field_name="")

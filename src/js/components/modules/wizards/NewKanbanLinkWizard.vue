@@ -375,8 +375,12 @@ export default {
 				`${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel.toLowerCase()}/add_link/`,
 				data_to_send
 			).then((response) => {
+				//Get the response data
+				let new_link = response.data[0];
+				new_link.tag_list = [];
+
 				//Data has been successfully saved. Time to add the card to the board
-				this.$emit("new_card", response.data);
+				this.$emit("new_card", new_link);
 
 				//Clear the object model
 				this.objectModel = null;
