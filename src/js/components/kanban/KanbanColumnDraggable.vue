@@ -11,34 +11,34 @@
 		ghost-class="ghost"
 		@end="onEnd($event)"
 		v-model="masterList"
-		item-key="pk"
+		item-key="kanban_card_id"
 		v-if="!levelCollapseStatus(levelId)"
 	>
 		<template #item="{ element }">
 			<div
 				class="list-group-item"
-				:key="element.pk"
-				:id="element.pk"
-				v-bind:data-sort-number="element.fields.kanban_card_sort_number"
-				v-bind:data-card-id="element.pk"
-				v-bind:data-card-priority="element.fields.kanban_card_priority"
+				:key="element.kanban_card_id"
+				:id="element.kanban_card_id"
+				v-bind:data-sort-number="element.kanban_card_sort_number"
+				v-bind:data-card-id="element.kanban_card_id"
+				v-bind:data-card-priority="element.kanban_card_priority"
 				v-on:dblclick="doubleClickCard($event)"
 			>
-				<div v-bind:class="`card-priority-line priority-${priorityList[element.fields.kanban_card_priority]}`"
-					 v-bind:data-card-id="element.pk"
-					 v-bind:data-sort-number="element.fields.kanban_card_sort_number"
-					 v-bind:data-card-priority="element.fields.kanban_card_priority"
+				<div v-bind:class="`card-priority-line priority-${priorityList[element.kanban_card_priority]}`"
+					 v-bind:data-card-id="element.kanban_card_id"
+					 v-bind:data-sort-number="element.kanban_card_sort_number"
+					 v-bind:data-card-priority="element.kanban_card_priority"
 				></div>
 				<Icon v-if="isLinkedObject(element).length > 0"
 					  v-bind:icon="icons.linkOut"
-					  v-bind:data-card-id="element.pk"
-					  v-bind:data-sort-number="element.fields.kanban_card_sort_number"
-					  v-bind:data-card-priority="element.fields.kanban_card_priority"
+					  v-bind:data-card-id="element.kanban_card_id"
+					  v-bind:data-sort-number="element.kanban_card_sort_number"
+					  v-bind:data-card-priority="element.kanban_card_priority"
 					  class="card-external-link"
 				></Icon>
-				<b>#{{ element.pk }}</b>
+				<b>#{{ element.kanban_card_id }}</b>
 				<br/>
-				{{ element.fields.kanban_card_text }}
+				{{ element.kanban_card_text }}
 				<br />
 				<span v-if="!canDragCards" style="font-weight: lighter">- Movement Locked!</span>
 				<span v-else style="font-weight: lighter">
@@ -47,8 +47,8 @@
 				<Icon
 					class="kanban-card-info-icon"
 					v-bind:icon="icons.infoCircle"
-					v-on:click="singleClickCard(element.pk)"
-					v-on:dblclick="singleClickCard(element.pk)"
+					v-on:click="singleClickCard(element.kanban_card_id)"
+					v-on:dblclick="singleClickCard(element.kanban_card_id)"
 				></Icon>
 			</div>
 		</template>
@@ -221,7 +221,7 @@ export default {
 
 			//Get the list of values for sort array
 			const sort_array = this.masterList.map((row) => {
-				return row.fields.kanban_card_sort_number;
+				return row.kanban_card_sort_number;
 			});
 
 			//Get the min and max
@@ -244,12 +244,12 @@ export default {
 
 			this.masterList.forEach((row, index) => {
 				//Set the form data
-				data_to_send.append("kanban_cards", row.pk);
+				data_to_send.append("kanban_cards", row.kanban_card_id);
 
 				//Update the VueX with the new sort ordering
 				this.$store.commit({
 					type: "updateKanbanCard",
-					card_id: row.pk,
+					card_id: row.kanban_card_id,
 					kanban_card_sort_number: index,
 				});
 			});
@@ -272,7 +272,7 @@ export default {
 		doubleClickCard(data) {
 			//Filter out the data we want to send up stream
 			const filtered_data = this.masterList.filter((row) => {
-				return parseInt(row.pk) === parseInt(data.target.dataset.cardId);
+				return parseInt(row.kanban_card_id) === parseInt(data.target.dataset.cardId);
 			})[0];
 
 			//Setup data to send upstream
@@ -281,9 +281,9 @@ export default {
 		isLinkedObject(object) {
 			let results = "";
 
-			if (object.fields.project !== null) results = "project";
-			if (object.fields.requirement !== null) results = "requirement";
-			if (object.fields.task !== null) results = "task";
+			if (object.project !== null && object.project !== undefined) results = "project";
+			if (object.requirement !== null && object.requirement !== undefined) results = "requirement";
+			if (object.task !== null && object.requirement !== undefined) results = "task";
 
 			return results;
 		},
@@ -317,7 +317,7 @@ export default {
 				new_card_column,
 				new_card_level
 			).forEach((row) => {
-				data_to_send.append("new_destination", row.pk);
+				data_to_send.append("new_destination", row.kanban_card_id);
 			});
 
 			//Set the old destination
@@ -325,7 +325,7 @@ export default {
 				old_card_column,
 				old_card_level
 			).forEach((row) => {
-				data_to_send.append("old_destination", row.pk);
+				data_to_send.append("old_destination", row.kanban_card_id);
 			});
 
 			//Use axios to send the data to the database
@@ -359,7 +359,7 @@ export default {
 			const is_link = this.isLinkedObject(filtered_data);
 			if (is_link.length > 0) {
 				//Open a new tab with that linked object
-				const url = `${this.rootUrl}${is_link}_information/${filtered_data.fields[is_link]}/`;
+				const url = `${this.rootUrl}${is_link}_information/${filtered_data[is_link]}/`;
 
 				window.open(
 					url,
@@ -374,14 +374,14 @@ export default {
 			// Update VueX ACTION
 			this.$store.dispatch({
 				type: "updateCard",
-				cardId: filtered_data.pk,
-				cardTitle: filtered_data.fields.kanban_card_text,
+				cardId: filtered_data.kanban_card_id,
+				cardTitle: filtered_data.kanban_card_text,
 				cardDescription:
-				filtered_data.fields.kanban_card_description,
-				cardColumn: filtered_data.fields.kanban_column,
-				cardLevel: filtered_data.fields.kanban_level,
+				filtered_data.kanban_card_description,
+				cardColumn: filtered_data.kanban_column,
+				cardLevel: filtered_data.kanban_level,
 				cardLink: {},
-				cardPriority: filtered_data.fields.kanban_card_priority,
+				cardPriority: filtered_data.kanban_card_priority,
 			});
 
 			//Show the modal
@@ -393,7 +393,7 @@ export default {
 		singleClickCard(data) {
 			//Filter out the data we want to send up stream
 			const filtered_data = this.masterList.filter((row) => {
-				return row.pk === data;
+				return row.kanban_card_id === data;
 			})[0];
 
 			//Setup data to send upstream
@@ -404,8 +404,8 @@ export default {
 		newCardInfo() {
 			//Only add the card if the column and the level match
 			if (
-				this.columnId === this.newCardInfo[0].fields.kanban_column &&
-				this.levelId === this.newCardInfo[0].fields.kanban_level
+				this.columnId === this.newCardInfo[0].kanban_column &&
+				this.levelId === this.newCardInfo[0].kanban_level
 			) {
 				//The new card is for this level and column. Add it to the masterList
 				this.masterList.push(this.newCardInfo[0]);
@@ -420,7 +420,7 @@ export default {
 			//Conditions
 			// 1 row primary key is the same as openCardOnLoad value
 			// 2 row is not a linked object, i.e. not value under project, task, or requirement field
-			const condition_1 = row.pk === this.openCardOnLoad;
+			const condition_1 = row.kanban_card_id === this.openCardOnLoad;
 			const condition_2 = this.isLinkedObject(row).length === 0;
 
 			return condition_1 && condition_2;
