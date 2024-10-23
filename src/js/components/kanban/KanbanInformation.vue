@@ -431,10 +431,20 @@ export default {
 		//Send the settings up stream
 		this.updateKanbanSettings();
 
+		//Map the tags onto "tag_list" field for the kanbanCardResults
+		const kanban_card_results = this.kanbanCardResults.map((row) => {
+			//Add the field
+			row.tag_list = this.tagResults.filter((tag_row) => {
+				return parseInt(tag_row.kanban_card_id) === parseInt(row.kanban_card_id);
+			});
+
+			return row;
+		})
+
 		//Send data to VueX
 		this.$store.commit({
 			type: "initPayload",
-			kanbanCardResults: this.kanbanCardResults,
+			kanbanCardResults: kanban_card_results,
 			levelResults: this.levelResults,
 			columnResults: this.columnResults,
 			openCardOnLoad: this.openCardOnLoad,

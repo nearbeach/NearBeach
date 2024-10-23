@@ -37,7 +37,7 @@ from NearBeach.forms import (
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.db.models import Max
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
@@ -527,13 +527,23 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     submit_kanban_card.save()
 
     # Send back the kanban card data
-    kanban_card_results = KanbanCard.objects.get(
+    kanban_card_results = KanbanCard.objects.filter(
         kanban_card_id=submit_kanban_card.kanban_card_id
+    ).values(
+       "kanban_card_description",
+       "kanban_card_id",
+       "kanban_card_priority",
+       "kanban_card_sort_number",
+       "kanban_card_text",
+       "kanban_column",
+       "kanban_level",
+       "project",
+       "requirement",
+       "task",
     )
-    return HttpResponse(
-        serializers.serialize("json", [kanban_card_results]),
-        content_type="application/json",
-    )
+    kanban_card_results = json.dumps(list(kanban_card_results), cls=DjangoJSONEncoder)
+
+    return JsonResponse(json.loads(kanban_card_results), safe=False)
 
 
 @require_http_methods(["POST"])
