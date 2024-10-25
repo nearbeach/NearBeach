@@ -200,7 +200,9 @@
 							role="tabpanel"
 							aria-labelledby="user-tab"
 						>
-							<list-tags-module override-destination="kanban_card"></list-tags-module>
+							<list-tags-module override-destination="kanban_card"
+											  v-bind:override-location-id="cardId"
+							></list-tags-module>
 
 							<list-public-links override-destination="kanban_card"
 											   v-bind:override-location-id="cardId"

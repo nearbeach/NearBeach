@@ -38,8 +38,8 @@
 
 		<!-- ADD TAG MODULE -->
 		<add-tag-wizard
-			v-bind:destination="destination"
-			v-bind:location-id="locationId"
+			v-bind:destination="getDestination()"
+			v-bind:location-id="getLocationId()"
 			v-bind:assigned-tags="tagList"
 			v-on:add_tags="addTags($event)"
 		></add-tag-wizard>
@@ -104,7 +104,7 @@ export default {
 			newTagModal.show();
 		},
 		getAssignedTags() {
-			if (this.locationId === 0) return;
+			if (this.getLocationId() === 0) return;
 			
 			this.axios.post(
 				`${this.rootUrl}object_data/${this.getDestination()}/${this.getLocationId()}/tag_list/`
@@ -124,7 +124,7 @@ export default {
 		},
 		getLocationId() {
 			//If there is an overrideDestination - we want to use the overrideLocationId
-			return this.overrideDestination !== "" ? this.overrideLocationId : this.locationId;
+			return this.overrideDestination !== 0 ? this.overrideLocationId : this.locationId;
 		},
 		removeTag(tag_id) {
 			//If user does not have enough permissions, don't let them proceed.

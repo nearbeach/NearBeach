@@ -306,7 +306,7 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
 
     tag_results = TagAssignment.objects.filter(
         is_deleted=False,
-        object_enum="KanbanCard",
+        object_enum="kanban_card",
         object_id__in=kanban_card_results.values("kanban_card_id"),
     ).annotate(
         kanban_card_id=F("object_id"),
