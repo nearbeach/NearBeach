@@ -201,12 +201,9 @@
 							aria-labelledby="user-tab"
 						>
 							<list-tags-module override-destination="kanban_card"
+											  close-modal-before="cardInformationModalCloseButton"
 											  v-bind:override-location-id="cardId"
 							></list-tags-module>
-
-							<add-tag-wizard override-destination="kanban_card"
-											v-bind:override-location-id="cardId"
-							></add-tag-wizard>
 
 							<list-public-links override-destination="kanban_card"
 											   v-bind:override-location-id="cardId"

@@ -70,6 +70,7 @@
 import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
+import {Modal} from "bootstrap";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -88,6 +89,10 @@ export default {
 		overrideLocationId: {
 			type: Number,
 			default: 0,
+		},
+		reopenModal: {
+			type: String,
+			default: "",
 		},
 	},
 	mixins: [iconMixin],
@@ -134,6 +139,24 @@ export default {
 
 				//Clear the results
 				this.tagModel = [];
+
+				//If there is anything in reopenModal, we reopen that modal
+				if (this.reopenModal !== "") {
+					const modal = new Modal(
+						document.getElementById(this.reopenModal)
+					);
+					modal.show();
+				}
+
+				//Check to see if we have added a tag to a kanban card - if so, update that kanban card
+				if (this.getDestination() === "kanban_card") {
+					//Update the kanban card's tags
+					this.$store.commit({
+						type: "updateKanbanCard",
+						card_id: this.getLocationId(),
+						tag_list: response.data,
+					});
+				}
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Failed to add tag",

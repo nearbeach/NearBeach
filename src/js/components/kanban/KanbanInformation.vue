@@ -138,6 +138,11 @@
 				v-bind:level-results="levelResults"
 				v-on:new_card="newCard($event)"
 			></new-kanban-link-wizard>
+
+			<add-tag-wizard override-destination="kanban_card"
+							reopen-modal="cardInformationModal"
+							v-bind:override-location-id="cardId"
+			></add-tag-wizard>
 		</div>
 	</n-config-provider>
 </template>
@@ -169,10 +174,12 @@ import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue"
 import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
 import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
 import {Modal} from "bootstrap";
+import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
 
 export default {
 	name: "KanbanInformation",
 	components: {
+		AddTagWizard,
 		ConfirmNoteDelete,
 		NewHistoryNoteWizard,
 		EditHistoryNoteWizard,

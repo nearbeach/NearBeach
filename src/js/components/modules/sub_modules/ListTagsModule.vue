@@ -56,6 +56,10 @@ export default {
 		Icon,
 	},
 	props: {
+		closeModalBefore: {
+			type: String,
+			default: "",
+		},
 		overrideDestination: {
 			type: String,
 			default: "",
@@ -108,6 +112,12 @@ export default {
 			return this.overrideDestination !== "" ? this.overrideLocationId : this.locationId;
 		},
 		openNewTagModal() {
+			//Close any modals that exist
+			if (this.closeModalBefore !== "") {
+				//Click on the close button :)
+				document.getElementById(this.closeModalBefore).click();
+			}
+
 			//Open up modal
 			const newTagModal = new Modal(
 				document.getElementById("addTagModal")
@@ -133,6 +143,15 @@ export default {
 				this.$store.dispatch("removeAssignedTag", {
 					tag_id: tag_id,
 				});
+
+				//If destination is a kanban card, we update the card's tag list
+				if (this.getDestination() === "kanban_card") {
+					this.$store.commit({
+						type: "updateKanbanCard",
+						card_id: this.getLocationId(),
+						tag_list: this.assignedTags,
+					});
+				}
 			}).catch(error => {
 				this.$store.dispatch("newToast", {
 					header: "Error Removing Tag",
