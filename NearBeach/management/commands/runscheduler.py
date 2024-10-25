@@ -146,10 +146,6 @@ class Command(BaseCommand):
         scheduled_object.last_run = datetime.date.today()
         scheduled_object.save()
 
-        # TODO: For those repeat tasks, we might need to add the run count :)
-
-        return
-
     def run_set_day_of_the_week(self):
         # Get today's date and day of the week
         todays_date = self.get_today()

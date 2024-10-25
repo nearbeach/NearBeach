@@ -1,5 +1,7 @@
 import json
 
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Subquery, OuterRef, Value, F
 from django.shortcuts import get_object_or_404
 
 from NearBeach.models import (
@@ -7,6 +9,7 @@ from NearBeach.models import (
     KanbanLevel,
     ObjectAssignment,
     Group,
+    TagAssignment,
     UserGroup,
     UserSetting,
 )
@@ -34,7 +37,7 @@ from NearBeach.forms import (
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.db.models import Max
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
@@ -85,15 +88,24 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     # Save the data
     kanban_card_submit.save()
 
-    # Send back the data we just created
-    kanban_card_results = KanbanCard.objects.get(
+    # Send back the kanban card data
+    kanban_card_results = KanbanCard.objects.filter(
         kanban_card_id=kanban_card_submit.kanban_card_id
+    ).values(
+       "kanban_card_description",
+       "kanban_card_id",
+       "kanban_card_priority",
+       "kanban_card_sort_number",
+       "kanban_card_text",
+       "kanban_column",
+       "kanban_level",
+       "project",
+       "requirement",
+       "task",
     )
+    kanban_card_results = json.dumps(list(kanban_card_results), cls=DjangoJSONEncoder)
 
-    return HttpResponse(
-        serializers.serialize("json", [kanban_card_results]),
-        content_type="application/json",
-    )
+    return JsonResponse(json.loads(kanban_card_results), safe=False)
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -277,7 +289,41 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
         is_archived=False,
         is_deleted=False,
         kanban_board_id=kanban_board_id,
-    ).order_by("kanban_card_sort_number")
+    ).values(
+        "kanban_card_id",
+        "kanban_card_description",
+        "kanban_card_priority",
+        "kanban_card_sort_number",
+        "kanban_card_text",
+        "kanban_column",
+        "kanban_level",
+        "project",
+        "requirement",
+        "task",
+    ).order_by(
+        "kanban_card_sort_number"
+    )
+
+    tag_results = TagAssignment.objects.filter(
+        is_deleted=False,
+        object_enum="kanban_card",
+        object_id__in=kanban_card_results.values("kanban_card_id"),
+    ).annotate(
+        kanban_card_id=F("object_id"),
+        tag_name=F("tag__tag_name"),
+        tag_colour=F("tag__tag_colour"),
+        tag_text_colour=F("tag__tag_text_colour"),
+    ).values(
+        "kanban_card_id",
+        "tag_assignment_id",
+        "tag_id",
+        "tag_name",
+        "tag_colour",
+        "tag_text_colour",
+    )
+
+    kanban_card_results = json.dumps(list(kanban_card_results), cls=DjangoJSONEncoder)
+    tag_results = json.dumps(list(tag_results), cls=DjangoJSONEncoder)
 
     # Get kanban user settings
     kanban_settings = UserSetting.objects.filter(
@@ -294,9 +340,10 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
     c["theme"] = get_theme(request)
     c["need_tinymce"] = True
     c["user_level"] = user_level
-    c["kanban_card_results"] = serializers.serialize("json", kanban_card_results)
+    c["kanban_card_results"] = json.loads(kanban_card_results)
     c["kanban_settings"] = json.dumps(kanban_settings)
     c["open_card_on_load"] = open_card_on_load
+    c["tag_results"] = json.loads(tag_results)
 
     # Get the template
     t = loader.get_template("NearBeach/kanban/kanban_information.html")
@@ -489,13 +536,23 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     submit_kanban_card.save()
 
     # Send back the kanban card data
-    kanban_card_results = KanbanCard.objects.get(
+    kanban_card_results = KanbanCard.objects.filter(
         kanban_card_id=submit_kanban_card.kanban_card_id
+    ).values(
+       "kanban_card_description",
+       "kanban_card_id",
+       "kanban_card_priority",
+       "kanban_card_sort_number",
+       "kanban_card_text",
+       "kanban_column",
+       "kanban_level",
+       "project",
+       "requirement",
+       "task",
     )
-    return HttpResponse(
-        serializers.serialize("json", [kanban_card_results]),
-        content_type="application/json",
-    )
+    kanban_card_results = json.dumps(list(kanban_card_results), cls=DjangoJSONEncoder)
+
+    return JsonResponse(json.loads(kanban_card_results), safe=False)
 
 
 @require_http_methods(["POST"])

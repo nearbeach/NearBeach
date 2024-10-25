@@ -124,15 +124,15 @@
 						>
 							<button
 								class="nav-link"
-								id="public-link-tab"
+								id="misc-tab"
 								data-bs-toggle="tab"
-								data-bs-target="#public-links"
+								data-bs-target="#misc"
 								type="button"
 								role="tab"
 								aria-controls="contact"
 								aria-selected="false"
 							>
-								Public Links
+								Misc
 							</button>
 						</li>
 					</ul>
@@ -196,10 +196,15 @@
 						</div>
 						<div
 							class="tab-pane fade"
-							id="public-links"
+							id="misc"
 							role="tabpanel"
 							aria-labelledby="user-tab"
 						>
+							<list-tags-module override-destination="kanban_card"
+											  close-modal-before="cardInformationModalCloseButton"
+											  v-bind:override-location-id="cardId"
+							></list-tags-module>
+
 							<list-public-links override-destination="kanban_card"
 											   v-bind:override-location-id="cardId"
 											   v-bind:is-read-only="kanbanStatus === 'Closed'"
@@ -226,10 +231,14 @@ import {mapGetters} from "vuex";
 
 //Mixins
 import iconMixin from "../../mixins/iconMixin";
+import ListTagsModule from "../modules/sub_modules/ListTagsModule.vue";
+import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
 
 export default {
 	name: "CardInformation",
 	components: {
+		AddTagWizard,
+		ListTagsModule,
 		CardDescription,
 		CardDetails,
 		CardNotes,

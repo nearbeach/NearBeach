@@ -79,7 +79,7 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						data-bs-dismiss="modal"
+						v-on:click="closeModal"
 					>
 						Close
 					</button>
@@ -185,6 +185,16 @@ export default {
 				});
 			});
 		},
+		closeModal() {
+			//Close the modal
+			document.getElementById("addUserCloseButton").click();
+
+			//Reshow the card information modal
+			const cardModal = new Modal(
+				document.getElementById("cardInformationModal")
+			);
+			cardModal.show();
+		}
 	},
 };
 </script>

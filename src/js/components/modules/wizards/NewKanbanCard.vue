@@ -291,8 +291,12 @@ export default {
 					data_to_send
 				)
 				.then((response) => {
+					//Get the first value from the response
+					let new_card = response.data[0];
+					new_card.tag_list = [];
+
 					//Emit the data upstream
-					this.$emit("new_card", response.data);
+					this.$emit("new_card", new_card);
 
 					//Blank the model
 					this.kanbanCardTextModel = "";
@@ -333,7 +337,7 @@ export default {
 			//Check to make sure it does not exist
 			const filtered_results = this.kanbanCardResults.filter((row) => {
 				return (
-					row.fields.kanban_card_text === this.kanbanCardTextModel
+					row.kanban_card_text === this.kanbanCardTextModel
 				);
 			});
 

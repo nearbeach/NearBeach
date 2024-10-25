@@ -324,12 +324,16 @@ def add_tags(request, destination, location_id, *args, **kwargs):
             object_enum=destination,
             object_id=location_id,
         ).values("tag_id"),
+    ).values(
+        "tag_id",
+        "tag_name",
+        "tag_colour",
+        "tag_text_colour",
     )
 
-    return HttpResponse(
-        serializers.serialize("json", tag_results),
-        content_type="application/json",
-    )
+    tag_results = json.dumps(list(tag_results), cls=DjangoJSONEncoder)
+
+    return JsonResponse(json.loads(tag_results), safe=False)
 
 
 @require_http_methods(["POST"])
@@ -1370,12 +1374,16 @@ def tag_list(request, destination, location_id, *args, **kwargs):
             object_enum=destination,
             object_id=location_id,
         ).values("tag_id"),
+    ).values(
+        "tag_id",
+        "tag_name",
+        "tag_colour",
+        "tag_text_colour",
     )
 
-    return HttpResponse(
-        serializers.serialize("json", tag_results),
-        content_type="application/json",
-    )
+    tag_results = json.dumps(list(tag_results), cls=DjangoJSONEncoder)
+
+    return JsonResponse(json.loads(tag_results), safe=False)
 
 
 @require_http_methods(["POST"])
@@ -1384,12 +1392,17 @@ def tag_list_all(request, *args, **kwargs):
     # Get the data we want
     tag_results = Tag.objects.filter(
         is_deleted=False,
+    ).annotate(
+        value=F("tag_id"),
+        label=F("tag_name"),
+    ).values(
+        "value",
+        "label",
     )
 
-    return HttpResponse(
-        serializers.serialize("json", tag_results),
-        content_type="application/json",
-    )
+    tag_results = json.dumps(list(tag_results), cls=DjangoJSONEncoder)
+
+    return JsonResponse(json.loads(tag_results), safe=False)
 
 
 @require_http_methods(["POST"])

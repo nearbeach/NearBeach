@@ -8,14 +8,14 @@ export const moduleKanban = {
     mutations: {
         //CRUD Operations
         addCard(state, payload) {
-            state.kanbanCardResults.push(payload.newCard[0]);
+            state.kanbanCardResults.push(payload.newCard);
         },
         archiveCard(state, payload) {
             const cardId = payload.cardId;
 
             //Filter out the card with the card id
             state.kanbanCardResults = state.kanbanCardResults.filter((row) => {
-                return row.pk !== parseInt(cardId, 10);
+                return row.kanban_card_id !== parseInt(cardId, 10);
             });
         },
         archiveCards(state, payload) {
@@ -27,9 +27,9 @@ export const moduleKanban = {
             state.kanbanCardResults = state.kanbanCardResults.filter((row) => {
                 //Check to see if the column and level match
                 const boolean_column =
-                        parseInt(row.fields.kanban_column, 10) === column,
+                        parseInt(row.kanban_column, 10) === column,
                     boolean_level =
-                        parseInt(row.fields.kanban_level, 10) === level;
+                        parseInt(row.kanban_level, 10) === level;
 
                 //If they both match - exclude them from the data;
                 return !(boolean_column && boolean_level);
@@ -38,7 +38,7 @@ export const moduleKanban = {
         updateKanbanCard(state, payload) {
             //Get the index location
             const index_location = state.kanbanCardResults.findIndex((row) => {
-                return row.pk === parseInt(payload.card_id, 10);
+                return row.kanban_card_id === parseInt(payload.card_id, 10);
             });
 
             //Loop through each keys for the payload, and update the relevant field
@@ -53,9 +53,9 @@ export const moduleKanban = {
                 //Update the results
                 //Check to see if we need to parse as int.
                 if (int_keys.includes(key)) {
-                    state.kanbanCardResults[index_location].fields[key] = parseInt(payload[key]);
+                    state.kanbanCardResults[index_location][key] = parseInt(payload[key]);
                 } else {
-                    state.kanbanCardResults[index_location].fields[key] = payload[key];
+                    state.kanbanCardResults[index_location][key] = payload[key];
                 }
             });
         },
@@ -87,18 +87,18 @@ export const moduleKanban = {
             // 1. Grab all old column/level location cards - and reorder
             const reorder_old_cards = state.kanbanCardResults.filter(row => {
                 //The columns, levels match. And the primary key is NOT the card id
-                const condition_1 = parseInt(row.fields.kanban_column) === parseInt(old_card_column);
-                const condition_2 = parseInt(row.fields.kanban_level) === parseInt(old_card_level);
-                const condition_3 = parseInt(row.pk) !== parseInt(card_id);
+                const condition_1 = parseInt(row.kanban_column) === parseInt(old_card_column);
+                const condition_2 = parseInt(row.kanban_level) === parseInt(old_card_level);
+                const condition_3 = parseInt(row.kanban_card_id) !== parseInt(card_id);
 
                 return condition_1 && condition_2 && condition_3;
-            }).sort((a, b) => a.fields.kanban_card_sort_number - b.fields.kanban_card_sort_number);
+            }).sort((a, b) => a.kanban_card_sort_number - b.kanban_card_sort_number);
 
             // 2. Update the ordering
             reorder_old_cards.forEach((row, index) => {
                 commit({
                     type: "updateKanbanCard",
-                    card_id: row.pk,
+                    card_id: row.kanban_card_id,
                     kanban_card_sort_number: index,
                 });
             });
@@ -118,12 +118,12 @@ export const moduleKanban = {
             // We want to increase by 1
             const reorder_new_cards = state.kanbanCardResults.filter(row => {
                 //The columns, levels match. And the primary key is NOT the card id
-                const condition_1 = parseInt(row.fields.kanban_column) === parseInt(new_card_column);
-                const condition_2 = parseInt(row.fields.kanban_level) === parseInt(new_card_level);
-                const condition_3 = parseInt(row.pk) !== parseInt(card_id);
+                const condition_1 = parseInt(row.kanban_column) === parseInt(new_card_column);
+                const condition_2 = parseInt(row.kanban_level) === parseInt(new_card_level);
+                const condition_3 = parseInt(row.kanban_card_id) !== parseInt(card_id);
 
                 return condition_1 && condition_2 && condition_3;
-            }).sort((a, b) => a.fields.kanban_card_sort_number - b.fields.kanban_card_sort_number);
+            }).sort((a, b) => a.kanban_card_sort_number - b.kanban_card_sort_number);
 
             // 2. Update the ordering
             reorder_new_cards.forEach((row, index) => {
@@ -133,7 +133,7 @@ export const moduleKanban = {
 
                 commit({
                     type: "updateKanbanCard",
-                    card_id: row.pk,
+                    card_id: row.kanban_card_id,
                     kanban_card_sort_number: i,
                 });
             });
@@ -183,11 +183,11 @@ export const moduleKanban = {
 
             // Filter for the cards we require to move
             const reorder_cards = state.kanbanCardResults.filter((row) => {
-                const condition_1 = parseInt(row.fields.kanban_column) === parseInt(new_card_column);
-                const condition_2 = parseInt(row.fields.kanban_level) === parseInt(new_card_level);
-                const condition_3 = row.fields.kanban_card_sort_number >= smallest;
-                const condition_4 = row.fields.kanban_card_sort_number <= largest;
-                const condition_5 = parseInt(row.pk) !== parseInt(card_id);
+                const condition_1 = parseInt(row.kanban_column) === parseInt(new_card_column);
+                const condition_2 = parseInt(row.kanban_level) === parseInt(new_card_level);
+                const condition_3 = row.kanban_card_sort_number >= smallest;
+                const condition_4 = row.kanban_card_sort_number <= largest;
+                const condition_5 = parseInt(row.kanban_card_id) !== parseInt(card_id);
 
                 return condition_1 && condition_2 && condition_3 && condition_4 && condition_5;
             });
@@ -197,8 +197,8 @@ export const moduleKanban = {
             reorder_cards.forEach((row) => {
                 commit({
                     type: "updateKanbanCard",
-                    card_id: row.pk,
-                    kanban_card_sort_number: parseInt(row.fields.kanban_card_sort_number) + delta,
+                    card_id: row.kanban_card_id,
+                    kanban_card_sort_number: parseInt(row.kanban_card_sort_number) + delta,
                 });
             });
         },
@@ -231,7 +231,7 @@ export const moduleKanban = {
     getters: {
         getCard: (state) => (card_id) => {
             return state.kanbanCardResults.filter((row) => {
-                return parseInt(row.pk) === parseInt(card_id);
+                return parseInt(row.kanban_card_id) === parseInt(card_id);
             })[0];
         },
         getCards: (state) => {
@@ -239,21 +239,26 @@ export const moduleKanban = {
         },
         getCardsOrder: (state) => (column_id, level_id) => {
             return state.kanbanCardResults.filter((row) => {
-                const condition_1 = parseInt(row.fields.kanban_column) === parseInt(column_id);
-                const condition_2 = parseInt(row.fields.kanban_level) === parseInt(level_id);
+                const condition_1 = parseInt(row.kanban_column) === parseInt(column_id);
+                const condition_2 = parseInt(row.kanban_level) === parseInt(level_id);
 
                 return condition_1 && condition_2;
-            }).sort((a, b) => a.fields.kanban_card_sort_number - b.fields.kanban_card_sort_number);
+            }).sort((a, b) => a.kanban_card_sort_number - b.kanban_card_sort_number);
         },
         getColumnResults: (state) => {
             return state.columnResults;
+        },
+        getColumnCount: (state) => (column_id) => {
+            return state.kanbanCardResults.filter((row) => {
+                return parseInt(row.kanban_column) === parseInt(column_id);
+            }).length;
         },
         getLevelResults: (state) => {
             return state.levelResults;
         },
         getLevelCardCount: (state) => (level_id) => {
             return state.kanbanCardResults.filter((row) => {
-                return row.fields.kanban_level === level_id;
+                return row.kanban_level === level_id;
             }).length;
         },
         getOpenCardOnLoad: (state) => {

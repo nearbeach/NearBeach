@@ -1846,12 +1846,12 @@ class Tag(models.Model):
 class TagAssignment(models.Model):
     class ObjectEnum(models.TextChoices):
         REQUIREMENT = "requirement", _("Requirement")
-        REQUIREMENT_ITEM = "RequirementItem", _("Requirement Item")
+        REQUIREMENT_ITEM = "requirement_item", _("Requirement Item")
         PROJECT = "project", _("Project")
         TASK = "task", _("Task")
-        KANBAN = "KanbanBoard", _("Kanban Board")
-        CARD = "KanbanCard", _("Kanban Card")
-        REQUEST_FOR_CHANGE = "RequestForChange", _("Request for Change")
+        KANBAN = "kanban_board", _("Kanban Board")
+        CARD = "kanban_card", _("Kanban Card")
+        REQUEST_FOR_CHANGE = "request_for_change", _("Request for Change")
         CUSTOMER = "customer", _("Customer")
         ORGANISATION = "organisation", _("Organisation")
 

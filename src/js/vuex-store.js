@@ -14,6 +14,7 @@ import {moduleObjectLink} from "./vuex/objectLinkVueX";
 import {moduleNewCard} from "./vuex/newCardVueX";
 import {moduleNote} from "./vuex/noteVueX";
 import {moduleRfc} from "./vuex/rfcVueX";
+import {moduleTags} from "./vuex/tagsVueX";
 import {moduleToasts} from "./vuex/toastsVueX";
 import {moduleUrl} from "./vuex/urlVueX";
 import {moduleUserExtraPermissions} from "./vuex/userExtraPermissionsVueX";
@@ -39,6 +40,7 @@ export const store = createStore({
         note: moduleNote,
         objectLink: moduleObjectLink,
         rfc: moduleRfc,
+        tags: moduleTags,
         toasts: moduleToasts,
         url: moduleUrl,
         userExtraPermissions: moduleUserExtraPermissions,

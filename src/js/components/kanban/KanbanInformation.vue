@@ -138,6 +138,11 @@
 				v-bind:level-results="levelResults"
 				v-on:new_card="newCard($event)"
 			></new-kanban-link-wizard>
+
+			<add-tag-wizard override-destination="kanban_card"
+							reopen-modal="cardInformationModal"
+							v-bind:override-location-id="cardId"
+			></add-tag-wizard>
 		</div>
 	</n-config-provider>
 </template>
@@ -169,10 +174,12 @@ import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue"
 import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
 import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
 import {Modal} from "bootstrap";
+import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
 
 export default {
 	name: "KanbanInformation",
 	components: {
+		AddTagWizard,
 		ConfirmNoteDelete,
 		NewHistoryNoteWizard,
 		EditHistoryNoteWizard,
@@ -248,6 +255,12 @@ export default {
 		staticUrl: {
 			type: String,
 			default: "/",
+		},
+		tagResults: {
+			type: Array,
+			default: () => {
+				return [];
+			},
 		},
 		theme: {
 			type: String,
@@ -342,21 +355,14 @@ export default {
 			//Loop through the results - when the id's match. Update the data.
 			this.localKanbanCardResults.forEach((row, index) => {
 				//Check to see if the primary keys match - if they do update the data
-				if (row.pk === data.kanban_card_id) {
+				if (row.kanban_card_id === data.kanban_card_id) {
 					this.localKanbanCardResults[
 						index
-						].fields.kanban_card_text = data.kanban_card_text;
+						].kanban_card_text = data.kanban_card_text;
 					this.localKanbanCardResults[
 						index
-						].fields.kanban_card_description =
+						].kanban_card_description =
 						data.kanban_card_description;
-					// this.localKanbanCardResults[
-					// 	index
-					// 	].fields.kanban_column = data.kanban_column;
-					// this.localKanbanCardResults[index].fields.kanban_level =
-					// 	data.kanban_level;
-					// this.localKanbanCardResults[index].fields.kanban_card_priority =
-					// 	data.kanban_card_priority;
 				}
 			});
 		},
@@ -432,10 +438,20 @@ export default {
 		//Send the settings up stream
 		this.updateKanbanSettings();
 
+		//Map the tags onto "tag_list" field for the kanbanCardResults
+		const kanban_card_results = this.kanbanCardResults.map((row) => {
+			//Add the field
+			row.tag_list = this.tagResults.filter((tag_row) => {
+				return parseInt(tag_row.kanban_card_id) === parseInt(row.kanban_card_id);
+			});
+
+			return row;
+		})
+
 		//Send data to VueX
 		this.$store.commit({
 			type: "initPayload",
-			kanbanCardResults: this.kanbanCardResults,
+			kanbanCardResults: kanban_card_results,
 			levelResults: this.levelResults,
 			columnResults: this.columnResults,
 			openCardOnLoad: this.openCardOnLoad,

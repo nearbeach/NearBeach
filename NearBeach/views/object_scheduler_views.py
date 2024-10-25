@@ -31,7 +31,7 @@ def get_frequency_attribute(scheduler_frequency, form):
             cls=DjangoJSONEncoder,
         )
         return json.loads(json_frequency_attribute)
-    elif scheduler_frequency == "Weekly" or scheduler_frequency == "Fortnightly":
+    elif scheduler_frequency in ("Weekly", "Fortnightly"):
         json_frequency_attribute = json.dumps(
             {
                 "day_of_the_week": form.cleaned_data["single_day"],
