@@ -11,7 +11,7 @@
 				v-for="column in columnResults"
 				:key="column.pk"
 			>
-				{{ column.fields.kanban_column_name }}
+				{{ column.fields.kanban_column_name }} - [{{ getColumnCount(column.pk) }}]
 			</div>
 		</div>
 
@@ -25,7 +25,7 @@
 				v-for="column in columnResults"
 				:key="column.pk"
 			>
-				{{ column.fields.kanban_column_name }}
+				{{ column.fields.kanban_column_name }} - [{{ getColumnCount(column.pk) }}]
 			</div>
 		</div>
 
@@ -113,6 +113,9 @@ export default {
 			this.$store.dispatch("updateLevelCollapse", {
 				level_id: level_id,
 			});
+		},
+		getColumnCount(column_id) {
+			return this.$store.getters.getColumnCount(column_id);
 		},
 		getExpandClass(level_id) {
 			//Get the required results from vuex

@@ -248,6 +248,11 @@ export const moduleKanban = {
         getColumnResults: (state) => {
             return state.columnResults;
         },
+        getColumnCount: (state) => (column_id) => {
+            return state.kanbanCardResults.filter((row) => {
+                return parseInt(row.kanban_column) === parseInt(column_id);
+            }).length;
+        },
         getLevelResults: (state) => {
             return state.levelResults;
         },
