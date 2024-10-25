@@ -31,7 +31,6 @@ from ..forms import (
 )
 from ..models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
 from azure.storage.blob import BlobServiceClient
-from django.conf import settings
 
 import boto3
 import json
