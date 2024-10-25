@@ -204,6 +204,10 @@
 											  v-bind:override-location-id="cardId"
 							></list-tags-module>
 
+							<add-tag-wizard override-destination="kanban_card"
+											v-bind:override-location-id="cardId"
+							></add-tag-wizard>
+
 							<list-public-links override-destination="kanban_card"
 											   v-bind:override-location-id="cardId"
 											   v-bind:is-read-only="kanbanStatus === 'Closed'"
@@ -231,10 +235,12 @@ import {mapGetters} from "vuex";
 //Mixins
 import iconMixin from "../../mixins/iconMixin";
 import ListTagsModule from "../modules/sub_modules/ListTagsModule.vue";
+import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
 
 export default {
 	name: "CardInformation",
 	components: {
+		AddTagWizard,
 		ListTagsModule,
 		CardDescription,
 		CardDetails,

@@ -2,12 +2,12 @@
 	<div>
 		<h2>Assigned Tags</h2>
 		<p class="text-instructions">
-			Here are all tags associated with this {{ destination }}. You can
+			Here are all tags associated with this {{ getDestination() }}. You can
 			add more tags by clicking on the "Add Tag" button.
 		</p>
 		<div class="tag-list">
 			<div
-				v-for="tag in tagList"
+				v-for="tag in assignedTags"
 				:key="tag.pk"
 				class="single-tag"
 				v-bind:style="`background-color: ${tag.fields.tag_colour};color: ${tag.fields.tag_text_colour};`"
@@ -29,20 +29,12 @@
 				<a
 					href="javascript:void(0)"
 					class="btn btn-primary save-changes"
-					v-on:click="createNewTag"
+					v-on:click="openNewTagModal"
 					v-if="userLevel > 1"
-				>Add Tag to {{ destination }}</a
+				>Add Tag to {{ getDestination() }}</a
 				>
 			</div>
 		</div>
-
-		<!-- ADD TAG MODULE -->
-		<add-tag-wizard
-			v-bind:destination="getDestination()"
-			v-bind:location-id="getLocationId()"
-			v-bind:assigned-tags="tagList"
-			v-on:add_tags="addTags($event)"
-		></add-tag-wizard>
 	</div>
 </template>
 
@@ -73,11 +65,6 @@ export default {
 			default: 0,
 		},
 	},
-	data() {
-		return {
-			tagList: [],
-		};
-	},
 	watch: {
 		overrideLocationId() {
 			this.getAssignedTags();
@@ -86,6 +73,7 @@ export default {
 	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
+			assignedTags: "getAssignedTags",
 			destination: "getDestination",
 			locationId: "getLocationId",
 			rootUrl: "getRootUrl",
@@ -93,23 +81,16 @@ export default {
 		}),
 	},
 	methods: {
-		addTags(data) {
-			this.tagList = data;
-		},
-		createNewTag() {
-			//Open up modal
-			const newTagModal = new Modal(
-				document.getElementById("addTagModal")
-			);
-			newTagModal.show();
-		},
 		getAssignedTags() {
 			if (this.getLocationId() === 0) return;
 			
 			this.axios.post(
 				`${this.rootUrl}object_data/${this.getDestination()}/${this.getLocationId()}/tag_list/`
 			).then((response) => {
-				this.tagList = response.data;
+				this.$store.commit({
+					type: "updateAssignedTags",
+					assignedTags: response.data,
+				});
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error Getting Assigned Tags",
@@ -124,7 +105,14 @@ export default {
 		},
 		getLocationId() {
 			//If there is an overrideDestination - we want to use the overrideLocationId
-			return this.overrideDestination !== 0 ? this.overrideLocationId : this.locationId;
+			return this.overrideDestination !== "" ? this.overrideLocationId : this.locationId;
+		},
+		openNewTagModal() {
+			//Open up modal
+			const newTagModal = new Modal(
+				document.getElementById("addTagModal")
+			);
+			newTagModal.show();
 		},
 		removeTag(tag_id) {
 			//If user does not have enough permissions, don't let them proceed.
@@ -142,10 +130,9 @@ export default {
 				data_to_send
 			).then(() => {
 				//Remove data from tagList
-				this.tagList = this.tagList.filter((row) => {
-					return row.pk !== tag_id;
+				this.$store.dispatch("removeAssignedTag", {
+					tag_id: tag_id,
 				});
-
 			}).catch(error => {
 				this.$store.dispatch("newToast", {
 					header: "Error Removing Tag",

@@ -30,7 +30,7 @@
 							<strong>Add Tag</strong>
 							<p class="text-instructions">
 								Use the dropdown to select one or many lables to
-								add to the {{ destination }}.
+								add to the {{ getDestination() }}.
 							</p>
 						</div>
 						<div class="col-md-8">
@@ -38,7 +38,7 @@
 							<n-select
 								label="tag"
 								multiple
-								:options="tagList"
+								:options="availableTagList"
 								v-model:value="tagModel"
 							></n-select>
 						</div>
@@ -80,21 +80,12 @@ export default {
 		Icon,
 		NSelect,
 	},
-	emits: [
-		'add_tags',
-	],
 	props: {
-		assignedTags: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
-		destination: {
+		overrideDestination: {
 			type: String,
 			default: "",
 		},
-		locationId: {
+		overrideLocationId: {
 			type: Number,
 			default: 0,
 		},
@@ -102,26 +93,23 @@ export default {
 	mixins: [iconMixin],
 	data() {
 		return {
-			allTagList: [],
 			tagModel: [],
 		};
 	},
 	computed: {
 		...mapGetters({
+			allTagList: "getAllTagList",
+			availableTagList: "getAvailableTagList",
+			assignedTags: "getAssignedTags",
+			destination: "getDestination",
+			locationId: "getLocationId",
 			rootUrl: "getRootUrl",
 		}),
-		tagList() {
-			return this.allTagList.filter((row) => {
-				return (
-					this.assignedTags.findIndex((tag) => {
-						return tag.pk === parseInt(row.value);
-					}) < 0
-				);
-			});
-		},
 	},
 	methods: {
 		addTag() {
+			if (this.getLocationId() === 0) return;
+
 			//Construct data_to_send
 			const data_to_send = new FormData();
 
@@ -132,11 +120,14 @@ export default {
 
 			//Use Axios to send data to backend
 			this.axios.post(
-				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_tags/`,
+				`${this.rootUrl}object_data/${this.getDestination()}/${this.getLocationId()}/add_tags/`,
 				data_to_send
 			).then((response) => {
 				//Emit data up
-				this.$emit("add_tags", response.data);
+				this.$store.commit({
+					type: "updateAssignedTags",
+					assignedTags: response.data,
+				});
 
 				//Close the modal
 				document.getElementById("addTagsCloseButton").click();
@@ -152,16 +143,21 @@ export default {
 				});
 			});
 		},
+		getDestination() {
+			return this.overrideDestination !== "" ? this.overrideDestination : this.destination;
+		},
+		getLocationId() {
+			//If there is an overrideDestination - we want to use the overrideLocationId
+			return this.overrideDestination !== "" ? this.overrideLocationId : this.locationId;
+		},
 		getTagList() {
 			this.axios.post(
 				`${this.rootUrl}object_data/tag_list_all/`
 			).then((response) => {
 				//Map data to the preferred data format for vue-select
-				this.allTagList = response.data.map((row) => {
-					return {
-						value: row.pk,
-						label: row.fields.tag_name,
-					};
+				this.$store.commit({
+					type: "updateAllTagList",
+					allTagList: response.data,
 				});
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
@@ -176,7 +172,7 @@ export default {
 	mounted() {
 		//If the location is inside the array - don't bother getting the data
 		const escape_array = ["requirement_item"];
-		if (escape_array.indexOf(this.destination) >= 0) return;
+		if (escape_array.indexOf(this.getDestination()) >= 0) return;
 
 		this.$nextTick(() => {
 			//Get the tag list
