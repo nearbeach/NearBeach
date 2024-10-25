@@ -8,13 +8,13 @@
 		<div class="tag-list">
 			<div
 				v-for="tag in assignedTags"
-				:key="tag.pk"
+				:key="tag.tag_id"
 				class="single-tag"
-				v-bind:style="`background-color: ${tag.fields.tag_colour};color: ${tag.fields.tag_text_colour};`"
+				v-bind:style="`background-color: ${tag.tag_colour};color: ${tag.tag_text_colour};`"
 			>
-				{{ tag.fields.tag_name }}
+				{{ tag.tag_name }}
 				<span
-					v-on:click="removeTag(tag.pk)"
+					v-on:click="removeTag(tag.tag_id)"
 				>
 					<Icon v-bind:icon="icons.xCircle"
 						  v-if="userLevel > 1"

@@ -14,7 +14,7 @@ export const moduleTags = {
     actions: {
         removeAssignedTag: ({commit, state}, payload) => {
             const assigned_tags = state.assignedTags.filter((row) => {
-                return row.pk !== payload.tag_id;
+                return row.tag_id !== payload.tag_id;
             });
 
             commit({
@@ -33,7 +33,7 @@ export const moduleTags = {
         getAvailableTagList: (state) => {
             return state.allTagList.filter((row) => {
                 return !state.assignedTags.some((tag) =>
-                    tag.pk === parseInt(row.value));
+                    tag.tag_id === parseInt(row.value));
             });
         },
     },
