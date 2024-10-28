@@ -768,7 +768,7 @@ def delete_link(request, *args, **kwargs):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_user_generic_permissions(min_permission_level=4)
-def delete_tag(request, *args, **kwargs):
+def delete_tag(request, destination, location_id, *args, **kwargs):
     # Get form data
     form = DeleteTagForm(request.POST)
     if not form.is_valid():
@@ -778,8 +778,8 @@ def delete_tag(request, *args, **kwargs):
     TagAssignment.objects.filter(
         is_deleted=False,
         tag_id=form.cleaned_data["tag"],
-        object_enum=form.cleaned_data["object_enum"],
-        object_id=form.cleaned_data["object_id"],
+        object_enum=destination,
+        object_id=location_id,
     ).update(
         is_deleted=True,
     )

@@ -345,8 +345,6 @@ class DeleteTagForm(forms.ModelForm):
         model = TagAssignment
         fields = {
             "tag",
-            "object_enum",
-            "object_id",
         }
 
 
