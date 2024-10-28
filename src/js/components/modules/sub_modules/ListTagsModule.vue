@@ -131,12 +131,10 @@ export default {
 			//Create data_to_send
 			const data_to_send = new FormData();
 			data_to_send.set("tag", tag_id);
-			data_to_send.set("object_enum", this.getDestination());
-			data_to_send.set("object_id", this.getLocationId());
 
 			//Send data using axios
 			this.axios.post(
-				`${this.rootUrl}object_data/delete_tag/`,
+				`${this.rootUrl}object_data/${this.getDestination()}/${this.getLocationId()}/delete_tag/`,
 				data_to_send
 			).then(() => {
 				//Remove data from tagList
@@ -163,10 +161,6 @@ export default {
 		},
 	},
 	mounted() {
-		//If the location is inside the array - don't bother getting the data
-		const escape_array = ["requirement_item"];
-		if (escape_array.indexOf(this.getDestination()) >= 0) return;
-
 		//Wait 200ms before getting the data
 		this.$nextTick(() => {
 			this.getAssignedTags();

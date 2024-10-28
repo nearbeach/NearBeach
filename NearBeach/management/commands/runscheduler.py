@@ -144,6 +144,11 @@ class Command(BaseCommand):
 
         # Update the database for the last run
         scheduled_object.last_run = datetime.date.today()
+
+        # If scheduled object has number of repetes, we increase the run count
+        if scheduled_object.number_of_repeates >= 0:
+            scheduled_object.run_count = scheduled_object.run_count + 1
+
         scheduled_object.save()
 
     def run_set_day_of_the_week(self):

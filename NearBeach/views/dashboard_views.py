@@ -175,6 +175,25 @@ def get_my_objects(request):
         )
     )
 
+    kanban_board_results = (
+        KanbanBoard.objects.filter(
+            is_deleted=False,
+            kanban_board_id__in=ObjectAssignment.objects.filter(
+                is_deleted=False,
+                kanban_board_id__isnull=False,
+                assigned_user=request.user,
+            ).values("kanban_board_id")
+        )
+        .exclude(
+            kanban_board_status="Closed",
+        )
+        .values(
+            "kanban_board_id",
+            "kanban_board_name",
+            "kanban_board_status",
+        )
+    )
+
     card_results = (
         KanbanCard.objects.filter(
             is_deleted=False,
@@ -223,6 +242,7 @@ def get_my_objects(request):
     requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
     project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
     task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
+    kanban_board_results = json.dumps(list(kanban_board_results), cls=DjangoJSONEncoder)
     card_results = json.dumps(list(card_results), cls=DjangoJSONEncoder)
 
     # Send back a JSON array with JSON arrays inside
@@ -231,6 +251,7 @@ def get_my_objects(request):
             "requirement": json.loads(requirement_results),
             "project": json.loads(project_results),
             "task": json.loads(task_results),
+            "kanban_board": json.loads(kanban_board_results),
             "card": json.loads(card_results),
         }
     )
