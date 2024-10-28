@@ -35,6 +35,14 @@
 				destination="task"
 			></render-object-card>
 
+			<!-- Kanban Boards -->
+			<render-object-card
+				v-if="objectResults.kanban_board.length > 0"
+				v-bind:search-results="objectResults.kanban_board"
+				v-bind:import-variables="kanbanBoardVariables"
+				destination="kanban"
+			></render-object-card>
+
 			<!-- Kanban Cards -->
 			<render-object-card
 				v-if="objectResults.card.length > 0"
@@ -74,6 +82,7 @@ export default {
 			isLoaded: false,
 			objectResults: {
 				card: [],
+				kanban_board: [],
 				requirement: [],
 				project: [],
 				task: [],
@@ -84,6 +93,14 @@ export default {
 				id: "kanban_card_id",
 				title: "kanban_card_text",
 				status: "kanban_column__kanban_column_name",
+				end_date: "",
+			},
+			kanbanBoardVariables: {
+				header: "Kanban Boards",
+				prefix: "Kanban",
+				id: "kanban_board_id",
+				title: "kanban_board_name",
+				status: "kanban_board_status",
 				end_date: "",
 			},
 			projectVariables: {
