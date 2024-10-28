@@ -295,13 +295,13 @@ export default {
 			//If there is new_destination or old_destination, we want to send that data into the backend too
 			if (data.new_destination !== undefined) {
 				data.new_destination.forEach((row) => {
-					data_to_send.append("new_destination", row.pk);
+					data_to_send.append("new_destination", row.kanban_card_id);
 				});
 			}
 
 			if (data.old_destination !== undefined) {
 				data.old_destination.forEach((row) => {
-					data_to_send.append("old_destination", row.pk);
+					data_to_send.append("old_destination", row.kanban_card_id);
 				});
 			}
 
