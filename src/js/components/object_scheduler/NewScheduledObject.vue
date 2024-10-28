@@ -126,7 +126,7 @@
 						<button class="btn btn-primary save-changes"
 								v-on:click="submitNewScheduledObject"
 						>
-							Create new Project
+							Create New Scheduled Object
 						</button>
 					</div>
 				</div>
