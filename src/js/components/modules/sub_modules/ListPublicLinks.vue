@@ -47,10 +47,9 @@
 				</td>
 				<td v-if="userLevel > 1">
 					<span class="remove-link">
-						<Icon
-							v-bind:icon="icons.trashCan"
+						<carbon-trash-can
 							v-on:click="deletePublicLink(link.public_link_id)"
-						/>
+						></carbon-trash-can>
 					</span>
 				</td>
 			</tr>
@@ -75,7 +74,7 @@ import { mapGetters } from "vuex";
 
 //Icon
 import {Icon} from "@iconify/vue";
-import iconMixin from "../../../mixins/iconMixin";
+import {CarbonTrashCan} from "../../../components";
 
 export default {
 	name: "ListPublicLinks",
@@ -105,6 +104,7 @@ export default {
 		},
 	},
 	components: {
+		CarbonTrashCan,
 		Icon,
 	},
 	computed: {
@@ -115,7 +115,6 @@ export default {
 			userLevel: "getUserLevel",
 		})
 	},
-	mixins: [iconMixin],
 	methods: {
 		async copyPublicLink(public_link_id) {
 			//Get the URL

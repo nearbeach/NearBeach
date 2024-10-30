@@ -17,21 +17,21 @@
 			<div
 				v-bind:class="`card-priority-line priority-${priorityList[element.kanban_card_priority]}`">
 			</div>
-			<Icon v-if="isLinkedObject(element)"
-				  v-bind:icon="icons.linkOut"
+			<carbon-link v-if="isLinkedObject(element)"
 				  v-bind:data-sort-number="element.kanban_card_sort_number"
 				  v-bind:data-card-id="element.kanban_card_id"
 				  class="card-external-link"
-			></Icon>
+			></carbon-link>
 			<b>#{{ element.kanban_card_id }}</b>
 			<br/>
 			{{ element.kanban_card_text }}
-			<Icon
+			<carbon-information
 				class="kanban-card-info-icon"
-				v-bind:icon="icons.infoCircle"
+				width="25px"
+				height="25px"
 				v-on:click="singleClickCard(element.kanban_card_id)"
 				v-on:dblclick="singleClickCard(element.kanban_card_id)"
-			></Icon>
+			></carbon-information>
 		</div>
 	</div>
 </template>
@@ -40,8 +40,10 @@
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
+//Components
+import CarbonInformation from "../icons/CarbonInformation.vue"
+import CarbonLink from "../icons/CarbonLink.vue"
+
 
 //VUEX MAP GETTERS
 import {mapGetters} from "vuex";
@@ -49,6 +51,8 @@ import {mapGetters} from "vuex";
 export default {
 	name: "KanbanColumn",
 	components: {
+		CarbonInformation,
+		CarbonLink,
 		Icon,
 	},
 	props: {
@@ -107,7 +111,6 @@ export default {
 			return return_array;
 		},
 	},
-	mixins: [iconMixin],
 	methods: {
 		checkCardOrder() {
 			/* Due to an issue - sometimes some of the cards will contain a -1 for the sort order. This sadly

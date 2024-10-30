@@ -29,13 +29,12 @@
 					 v-bind:data-sort-number="element.kanban_card_sort_number"
 					 v-bind:data-card-priority="element.kanban_card_priority"
 				></div>
-				<Icon v-if="isLinkedObject(element).length > 0"
-					  v-bind:icon="icons.linkOut"
+				<carbon-link v-if="isLinkedObject(element).length > 0"
 					  v-bind:data-card-id="element.kanban_card_id"
 					  v-bind:data-sort-number="element.kanban_card_sort_number"
 					  v-bind:data-card-priority="element.kanban_card_priority"
 					  class="card-external-link"
-				></Icon>
+				></carbon-link>
 				<b>#{{ element.kanban_card_id }}</b>
 				<br/>
 				{{ element.kanban_card_text }}
@@ -55,12 +54,13 @@
 				<span v-else style="font-weight: lighter">
 					&nbsp;
 				</span>
-				<Icon
+				<carbon-information
 					class="kanban-card-info-icon"
-					v-bind:icon="icons.infoCircle"
+					width="25px"
+					height="25px"
 					v-on:click="singleClickCard(element.kanban_card_id)"
 					v-on:dblclick="singleClickCard(element.kanban_card_id)"
-				></Icon>
+				></carbon-information>
 			</div>
 		</template>
 
@@ -101,11 +101,10 @@
 <script>
 import {Icon} from "@iconify/vue";
 import draggable from "vuedraggable";
-
 import {Modal} from "bootstrap";
 
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
+//Components
+import {CarbonInformation, CarbonLink} from "../../components";
 
 //VUEX MAP GETTERS
 import {mapGetters} from "vuex";
@@ -113,6 +112,8 @@ import {mapGetters} from "vuex";
 export default {
 	name: "kanbanColumnDraggable",
 	components: {
+		CarbonInformation,
+		CarbonLink,
 		Icon,
 		draggable,
 	},
@@ -170,7 +171,6 @@ export default {
 			return this.$store.getters.getCardsOrder(this.columnId, this.levelId);
 		},
 	},
-	mixins: [iconMixin],
 	methods: {
 		addNewKanbanCard() {
 			//Update New Card VueX to use this location

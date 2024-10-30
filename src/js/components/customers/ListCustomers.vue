@@ -17,7 +17,7 @@
 			</a>
 		</div>
 		<div class="customer-email">
-			<Icon v-bind:icon="icons.mailIcon"></Icon>
+			<carbon-email></carbon-email>
 			Email:
 			<a v-bind:href="`mailto:${customer.fields.customer_email}`">
 				{{ customer.fields.customer_email }}
@@ -28,15 +28,16 @@
 
 <script>
 //Mixin
-import iconMixin from "../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 
 //VueX
 import {mapGetters} from "vuex";
+import {CarbonEmail} from "../../components";
 
 export default {
 	name: "ListCustomers",
 	components: {
+		CarbonEmail,
 		Icon,
 	},
 	props: {
@@ -53,7 +54,6 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [iconMixin],
 	methods: {
 		getProfilePicture(customer) {
 			const image = customer.fields.customer_profile_picture;

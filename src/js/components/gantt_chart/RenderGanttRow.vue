@@ -3,10 +3,9 @@
 		<div class="gantt-row--information">
 			<div class="gantt-row--title">
 				<span style="margin-right:10px;">
-					<Icon
-						v-bind:icon="icons.trashCan"
+					<carbon-trash-can
 						v-on:click="confirmRemoval()"
-					/>
+					></carbon-trash-can>
 				</span>
 				{{title}}
 			</div>
@@ -86,7 +85,7 @@ import { Modal } from "bootstrap";
 import { DateTime } from "luxon";
 
 //Mixins
-import iconMixin from "../../mixins/iconMixin";
+import {CarbonTrashCan} from "../../components";
 
 export default {
 	name: "RenderGanttRow",
@@ -130,13 +129,11 @@ export default {
 		},
 	},
 	components: {
+		CarbonTrashCan,
 		Icon,
 		NDatePicker,
 		NSelect,
 	},
-	mixins: [
-		iconMixin,
-	],
 	data() {
 		return {
 			datePickerFormat: "yyyy-MM-dd HH:mm",

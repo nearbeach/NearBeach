@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.objectStorage"></Icon>
 			Associated Objects
 		</h2>
 		<p class="text-instructions">
@@ -56,7 +55,6 @@ import {Icon} from "@iconify/vue";
 import {mapGetters} from "vuex";
 
 //Mixins
-import iconMixin from "../../../mixins/iconMixin";
 import RenderObjectCard from "../../render/RenderObjectCard.vue";
 
 export default {
@@ -65,7 +63,6 @@ export default {
 		RenderObjectCard,
 		Icon,
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			projectResults: [],

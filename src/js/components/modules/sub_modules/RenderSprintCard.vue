@@ -36,10 +36,9 @@
 			class="object-link--remove"
 			v-if="userLevel >= 2 && canDelete === true"
 		>
-			<Icon
-				v-bind:icon="icons.trashCan"
+			<carbon-trash-can
 				v-on:click="confirmRemoveSprintFunction(sprint)"
-			/>
+			></carbon-trash-can>
 		</div>
 	</div>
 </template>
@@ -47,15 +46,15 @@
 <script>
 //Mixins
 import datetimeMixin from "../../../mixins/datetimeMixin";
-import iconMixin from "../../../mixins/iconMixin";
 
 //Vuex
 import { mapGetters } from "vuex";
 import {Icon} from "@iconify/vue";
+import {CarbonTrashCan} from "../../../components";
 
 export default {
 	name: "RenderSprintCard",
-	components: {Icon},
+	components: {CarbonTrashCan, Icon},
 	props: {
 		canDelete: {
 			type: Boolean,
@@ -76,7 +75,6 @@ export default {
 	},
 	mixins: [
 		datetimeMixin,
-		iconMixin,
 	],
 	emits: [
 		"confirm_remove_sprint",

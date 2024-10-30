@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.clipboardIcon"></Icon>
 			Requirement Items
 		</h2>
 		<p class="text-instructions">
@@ -64,9 +63,6 @@ import RenderObjectCard from "../../render/RenderObjectCard.vue";
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
-
 export default {
 	name: "RequirementItemsModule",
 	components: {
@@ -74,7 +70,6 @@ export default {
 		Icon,
 		NewRequirementItemWizard,
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			requirementItemVariables: {

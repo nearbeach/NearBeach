@@ -12,9 +12,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.usersIcon"></Icon>
-						Card
-						Information - {{ cardId }}
+						Card Information - {{ cardId }}
 					</h2>
 					<button
 						type="button"
@@ -230,7 +228,6 @@ import ListPublicLinks from "../modules/sub_modules/ListPublicLinks.vue";
 import {mapGetters} from "vuex";
 
 //Mixins
-import iconMixin from "../../mixins/iconMixin";
 import ListTagsModule from "../modules/sub_modules/ListTagsModule.vue";
 import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
 
@@ -250,7 +247,6 @@ export default {
 	emits: [
 		'update_card',
 	],
-	mixins: [iconMixin],
 	data() {
 		return {
 			cardDescriptionModel: "",

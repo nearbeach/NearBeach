@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.noteAdd"></Icon>
 			Note History
 		</h2>
 		<p class="text-instructions">
@@ -32,7 +31,6 @@
 <script>
 // JavaScript Libraries
 import {Modal} from "bootstrap";
-import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import ListNotes from "./ListNotes.vue";
 
@@ -45,7 +43,6 @@ export default {
 		Icon,
 		ListNotes,
 	},
-	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",

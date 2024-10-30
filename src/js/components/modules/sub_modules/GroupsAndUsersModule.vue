@@ -2,7 +2,6 @@
 	<div>
 		<!-- GROUPS -->
 		<h2>
-			<Icon v-bind:icon="icons.groupPresentation"></Icon>
 			Groups
 		</h2>
 		<p class="text-instructions">
@@ -33,10 +32,9 @@
 				<div class="group-card--remove"
 					 v-if="userLevel >= 3 && objectGroupList.length > 1"
 				>
-					<Icon
-						v-bind:icon="icons.trashCan"
+					<carbon-trash-can
 						v-on:click="removeGroup(group.group_id)"
-					/>
+					></carbon-trash-can>
 				</div>
 			</div>
 			<div v-if="addingGroupStatus"
@@ -65,7 +63,6 @@
 
 		<!-- USERS -->
 		<h2>
-			<Icon v-bind:icon="icons.userIcon"></Icon>
 			Users
 		</h2>
 		<p class="text-instructions">
@@ -107,7 +104,6 @@
 
 <script>
 //JavaScript extras
-import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import {Modal} from "bootstrap";
 import AddGroupWizard from "../wizards/AddGroupWizard.vue";
@@ -120,10 +116,12 @@ import {mapGetters} from "vuex";
 
 //Components
 import RenderUserCardList from "../../render/RenderUserCardList.vue";
+import {CarbonTrashCan} from "../../../components";
 
 export default {
 	name: "GroupsAndUsersModule",
 	components: {
+		CarbonTrashCan,
 		AddGroupWizard,
 		AddUserWizard,
 		ConfirmGroupDelete,
@@ -158,7 +156,6 @@ export default {
 			userLevel: "getUserLevel",
 		}),
 	},
-	mixins: [iconMixin],
 	methods: {
 		addNewGroup() {
 			const addGroupModal = new Modal(

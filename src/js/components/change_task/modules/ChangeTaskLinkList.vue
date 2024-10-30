@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.linkOut"></Icon>
 			Change Task Links
 		</h2>
 		<p class="text-instructions">
@@ -60,9 +59,6 @@ import {Icon} from "@iconify/vue";
 import NewChangeTaskLinkWizardVue from "../../modules/wizards/NewChangeTaskLinkWizard.vue";
 import SubObjectLinks from "../../modules/sub_modules/SubObjectLinks.vue";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
-
 //VueX
 import {mapGetters} from "vuex";
 
@@ -73,7 +69,6 @@ export default {
 		Icon,
 		SubObjectLinks,
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			linkResults: [],

@@ -15,7 +15,6 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.noteAdd"></Icon>
 						Edit Note
 					</h2>
 					<button
@@ -71,7 +70,6 @@
 
 <script>
 //JavaScript components
-import iconMixin from "../../../mixins/iconMixin";
 import reopenCardInformation from "../../../mixins/reopenCardInformation";
 import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
@@ -86,7 +84,7 @@ export default {
 		editor: Editor,
 		Icon,
 	},
-	mixins: [iconMixin, reopenCardInformation],
+	mixins: [reopenCardInformation],
 	data() {
 		return {
 			noteModel: "",

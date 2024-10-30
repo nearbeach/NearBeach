@@ -59,10 +59,9 @@
 									<span
 										class="remove-link"
 									>
-										<Icon
-											v-bind:icon="icons.trashCan"
+										<carbon-trash-can
 											v-on:click="deletePermission(user.user_group_id)"
-										/>
+										></carbon-trash-can>
 									</span>
 								</td>
 							</tr>
@@ -111,11 +110,12 @@ import ConfirmPermissionDelete from "./ConfirmPermissionDelete.vue"
 
 //Icon
 import {Icon} from "@iconify/vue";
-import iconMixin from "../../mixins/iconMixin";
+import {CarbonTrashCan} from "../../components";
 
 export default {
 	name: "UserList",
 	components: {
+		CarbonTrashCan,
 		AdminAddUser,
 		ConfirmPermissionDelete,
 		Icon,
@@ -146,7 +146,7 @@ export default {
 			permissionDeleteId: 0,
 		};
 	},
-	mixins: [getThemeMixin, iconMixin],
+	mixins: [getThemeMixin],
 	methods: {
 		addButtonText() {
 			//Add Group should be used on user

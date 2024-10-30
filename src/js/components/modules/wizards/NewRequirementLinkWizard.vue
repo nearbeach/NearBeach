@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.linkOut"></Icon>
-						New
-						Requirement Link Wizard
+						New Requirement Link Wizard
 					</h2>
 					<button
 						type="button"
@@ -173,7 +171,6 @@
 
 <script>
 //JavaScript components
-import iconMixin from "../../../mixins/iconMixin";
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
@@ -203,7 +200,6 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			isSearching: false,

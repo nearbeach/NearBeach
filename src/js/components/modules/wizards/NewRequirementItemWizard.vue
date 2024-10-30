@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.clipboardIcon"></Icon>
-						New
-						Requirement Item Wizard
+						New Requirement Item Wizard
 					</h2>
 					<button
 						type="button"
@@ -144,9 +142,6 @@ import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 import Editor from "@tinymce/tinymce-vue";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
-
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
@@ -169,7 +164,6 @@ export default {
 	emits: [
 		'new_item_added',
 	],
-	mixins: [iconMixin],
 	data() {
 		return {
 			requirementItemScopeModel: "",

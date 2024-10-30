@@ -13,7 +13,7 @@
 
 					<p class="text-instructions">
 						Click on the icon
-						<Icon v-bind:icon="icons.infoCircle"></Icon>
+						<carbon-information></carbon-information>
 						to edit the tag.
 					</p>
 
@@ -33,7 +33,7 @@
 					>
 						{{ tag.fields.tag_name }}
 						<span v-on:click="editTag(tag.pk)">
-							<Icon v-bind:icon="icons.infoCircle"></Icon>
+							<carbon-information></carbon-information>
 						</span>
 					</div>
 				</div>
@@ -69,15 +69,18 @@
 </template>
 
 <script>
-//MIXINS
-import iconMixin from "../../mixins/iconMixin";
+//Imports
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
+
+//Components
 import EditTagModal from "../tags/EditTagModal.vue";
+import CarbonInformation from "../icons/CarbonInformation.vue";
 
 export default {
 	name: "SearchTags",
 	components: {
+		CarbonInformation,
 		EditTagModal,
 		Icon,
 	},
@@ -110,7 +113,6 @@ export default {
 			localTagResults: this.tagResults,
 		};
 	},
-	mixins: [iconMixin],
 	methods: {
 		addTag() {
 			//Send data down to the modal

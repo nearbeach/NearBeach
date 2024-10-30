@@ -40,9 +40,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h2>
-							<Icon v-bind:icon="icons.passwordIcon"></Icon>
-							Reset
-							User Password
+							Reset User Password
 						</h2>
 						<button
 							type="button"
@@ -118,9 +116,6 @@ import {Icon} from "@iconify/vue";
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
-
 //Validation
 import useVuelidate from "@vuelidate/core"
 import {required, minLength} from "@vuelidate/validators";
@@ -145,7 +140,6 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			password1Model: "",

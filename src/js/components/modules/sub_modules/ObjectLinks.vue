@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.linkOut"></Icon>
 			{{ destination }} Links
 		</h2>
 		<p class="text-instructions">
@@ -105,9 +104,6 @@ import NewLinkWizard from "../wizards/NewLinkWizard.vue";
 import SubObjectLinks from "./SubObjectLinks.vue";
 import ConfirmLinkDelete from "../wizards/ConfirmLinkDelete.vue";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
-
 //VueX
 import {mapGetters} from "vuex";
 
@@ -119,7 +115,6 @@ export default {
 		NewLinkWizard,
 		SubObjectLinks,
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			hasDuplicateObjectOf: [],

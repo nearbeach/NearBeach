@@ -57,7 +57,6 @@
 
 <script>
 //Mixins
-import iconMixin from "../../mixins/iconMixin";
 import KanbanRow from "./KanbanRow.vue";
 
 //VueX
@@ -91,7 +90,6 @@ export default {
 			levelResults: "getLevelResults",
 		}),
 	},
-	mixins: [iconMixin],
 	data() {
 		return {};
 	},

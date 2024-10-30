@@ -47,13 +47,12 @@
 								{{ element.title }}
 							</strong></div>
 							<div>Status: <span class="text-instructions">{{ element.status }}</span></div>
-							<Icon
+							<carbon-trash-can
 								class="kanban-card-info-icon"
 								style="color: red;"
-								v-bind:icon="icons.trashCan"
 								v-on:click="confirmCardDelete(element.user_job_id, index)"
 								v-on:dblclick="confirmCardDelete(element.user_job_id, index)"
-							></Icon>
+							></carbon-trash-can>
 						</div>
 					</template>
 				</draggable>
@@ -81,15 +80,16 @@ import {Icon} from "@iconify/vue";
 //Mixins
 import datetimeMixin from "../../mixins/datetimeMixin";
 import getThemeMixin from "../../mixins/getThemeMixin";
-import iconMixin from "../../mixins/iconMixin";
 
 //Component
 import ConfirmUserJobDelete from "./ConfirmUserJobDelete.vue";
 import NewPlannerObjectWizard from "./NewPlannerObjectWizard.vue";
+import {CarbonTrashCan} from "../../components";
 
 export default {
 	name: "MyPlanner",
 	components: {
+		CarbonTrashCan,
 		ConfirmUserJobDelete,
 		draggable,
 		Icon,
@@ -125,7 +125,6 @@ export default {
 	mixins: [
 		datetimeMixin,
 		getThemeMixin,
-		iconMixin,
 	],
 	methods: {
 		confirmCardDelete(user_job_id, index) {

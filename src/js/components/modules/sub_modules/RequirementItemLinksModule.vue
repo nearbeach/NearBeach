@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.linkIcon2"></Icon>
 			Requirement Item Links
 		</h2>
 		<p class="text-instructions">
@@ -70,7 +69,6 @@ import ConfirmLinkDelete from "../wizards/ConfirmLinkDelete.vue";
 import {mapGetters} from "vuex";
 
 //Mixins
-import iconMixin from "../../../mixins/iconMixin";
 import SubObjectLinks from "./SubObjectLinks.vue";
 
 export default {
@@ -81,7 +79,6 @@ export default {
 		NewRequirementLinkWizard,
     SubObjectLinks,
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			// itemLinkResults: [],

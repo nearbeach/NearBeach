@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.bugIcon"></Icon>
 			Bugs List
 		</h2>
 		<p class="text-instructions">
@@ -53,10 +52,9 @@
 							class="remove-link"
 							v-if="userLevel >= 2"
 						>
-								<Icon
-									v-bind:icon="icons.trashCan"
+								<carbon-trash-can
 									v-on:click="removeBug(bug.bug_id)"
-								/>
+								></carbon-trash-can>
 							</span>
 					</td>
 				</tr>
@@ -94,19 +92,17 @@ import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 import AddBugWizard from "../wizards/AddBugWizard.vue";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
-
 //VueX
 import {mapGetters} from "vuex";
+import {CarbonTrashCan} from "../../../components";
 
 export default {
 	name: "BugsModule",
 	components: {
+		CarbonTrashCan,
 		AddBugWizard,
 		Icon,
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			bugList: [],

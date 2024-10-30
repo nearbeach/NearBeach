@@ -15,7 +15,7 @@
 			</a>
 		</div>
 		<div class="organisation-link">
-			<Icon v-bind:icon="icons.linkOut"></Icon>
+			<carbon-link></carbon-link>
 			Website:
 			<a
 				v-bind:href="organisation.fields.organisation_website"
@@ -26,7 +26,7 @@
 			</a>
 		</div>
 		<div class="organisation-email">
-			<Icon v-bind:icon="icons.mailIcon"></Icon>
+			<carbon-email></carbon-email>
 			Email:
 			<a
 				v-bind:href="`mailto:${organisation.fields.organisation_email}`"
@@ -43,11 +43,13 @@ import {mapGetters} from "vuex";
 import {Icon} from "@iconify/vue";
 
 //Mixins
-import iconMixin from "../../mixins/iconMixin";
+import {CarbonEmail, CarbonLink} from "../../components";
 
 export default {
 	name: "ListOrganisations",
 	components: {
+		CarbonEmail,
+		CarbonLink,
 		Icon,
 	},
 	props: {
@@ -64,7 +66,6 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [iconMixin],
 	methods: {
 		getProfilePicture(organisation) {
 			const image = organisation.fields.organisation_profile_picture;

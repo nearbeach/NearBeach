@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon>
-						Add Link
-						Wizard
+						Add Link Wizard
 					</h2>
 					<button
 						type="button"
@@ -100,9 +98,6 @@ import {Icon} from "@iconify/vue";
 
 //VueX
 import {mapGetters} from "vuex";
-
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
 import reopenCardInformation from "../../../mixins/reopenCardInformation"
 
 //Validation
@@ -131,7 +126,6 @@ export default {
 		},
 	},
 	mixins: [
-      iconMixin,
       reopenCardInformation,
   ],
 	data() {

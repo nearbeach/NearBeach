@@ -44,7 +44,7 @@
 						v-on:click="removeItem(element.id)"
 						v-if="localPropertyList.length > 1"
 					>
-						<Icon v-bind:icon="icons.xCircle"></Icon>
+						<carbon-close-outline></carbon-close-outline>
 					</span>
 				</div>
 			</template>
@@ -230,7 +230,7 @@ import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 
 //Mixins
-import iconMixin from "../../mixins/iconMixin";
+import {CarbonCloseOutline} from "../../components";
 
 export default {
 	name: "KanbanPropertyOrder",
@@ -238,6 +238,7 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
+		CarbonCloseOutline,
 		draggable,
 		Icon,
 		NRadio,
@@ -307,7 +308,6 @@ export default {
 			singleItemId: "",
 		};
 	},
-	mixins: [iconMixin],
 	validations: {
 		localPropertyList: {
 			required,

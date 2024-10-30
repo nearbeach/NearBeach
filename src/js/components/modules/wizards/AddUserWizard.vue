@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon>
-						Add User
-						Wizard
+						Add User Wizard
 					</h2>
 					<button
 						type="button"
@@ -105,16 +103,12 @@ import {NSelect} from "naive-ui";
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
-
 export default {
 	name: "AddUserWizard",
 	components: {
 		Icon,
 		NSelect,
 	},
-	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",

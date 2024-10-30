@@ -117,7 +117,6 @@
 						aria-labelledby="profile-tab"
 					>
 						<h2>
-							<Icon v-bind:icon="icons.userIcon"></Icon>
 							Contacts
 						</h2>
 						<p class="text-instructions">
@@ -235,7 +234,6 @@ import DocumentsModule from "../modules/sub_modules/DocumentsModule.vue";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
-import iconMixin from "../../mixins/iconMixin";
 import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
 import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
 import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
@@ -317,7 +315,7 @@ export default {
 		// }),
 	},
 	emits: ["remove_customer"],
-	mixins: [getThemeMixin, iconMixin],
+	mixins: [getThemeMixin],
 	methods: {
 		addNewContact() {
 			const new_customer_modal = new Modal(

@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.usersIcon"></Icon>
-						Add
-						Customers Wizard
+						Add Customers Wizard
 					</h2>
 					<button
 						type="button"
@@ -97,9 +95,6 @@
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
-
 //VueX
 import {mapGetters} from "vuex";
 
@@ -134,7 +129,6 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			customerModel: "",

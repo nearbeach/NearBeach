@@ -100,7 +100,7 @@
 							{{ stakeholderModel.organisation_name }}
 						</div>
 						<div class="organisation-link">
-							<Icon v-bind:icon="icons.linkOut"></Icon>
+							<carbon-link></carbon-link>
 							Website:
 							<a
 								v-bind:href="stakeholderModel.organisation_website"
@@ -111,7 +111,7 @@
 							</a>
 						</div>
 						<div class="organisation-email">
-							<Icon v-bind:icon="icons.mailIcon"></Icon>
+							<carbon-email></carbon-email>
 							Email:
 							<a
 								v-bind:href="`mailto:${stakeholderModel.organisation_email}`"
@@ -195,13 +195,13 @@ import {mapGetters} from "vuex";
 
 //Mixins
 import getThemeMixin from "../../mixins/getThemeMixin";
-import iconMixin from "../../mixins/iconMixin";
 import uploadMixin from "../../mixins/uploadMixin";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
+import {CarbonEmail, CarbonLink} from "../../components";
 
 
 export default {
@@ -210,6 +210,8 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
+		CarbonEmail,
+		CarbonLink,
 		editor: Editor,
 		Icon,
 		NSelect,
@@ -274,7 +276,7 @@ export default {
 			return `${this.rootUrl}private/${this.stakeholderModel.organisation_profile_picture}`;
 		},
 	},
-	mixins: [getThemeMixin, iconMixin, uploadMixin],
+	mixins: [getThemeMixin, uploadMixin],
 	data() {
 		return {
 			isReadOnly: false,

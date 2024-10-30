@@ -12,9 +12,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon>
-						Upload
-						Document Wizard
+						Upload Document Wizard
 					</h2>
 					<button
 						type="button"
@@ -176,7 +174,6 @@ import {Icon} from "@iconify/vue";
 import {mapGetters} from "vuex";
 
 //Mixins
-import iconMixin from "../../../mixins/iconMixin";
 import reopenCardInformation from "../../../mixins/reopenCardInformation"
 
 export default {
@@ -194,7 +191,7 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [iconMixin, reopenCardInformation],
+	mixins: [reopenCardInformation],
 	data() {
 		return {
 			disableUploadButton: true,

@@ -88,7 +88,7 @@
 								{{ stakeholderModel.organisation_name }}
 							</div>
 							<div class="organisation-link">
-								<Icon v-bind:icon="icons.linkOut"></Icon>
+								<carbon-link></carbon-link>
 								Website:
 								<a
 									v-bind:href="stakeholderModel.organisation_website"
@@ -99,7 +99,7 @@
 								</a>
 							</div>
 							<div class="organisation-email">
-								<Icon v-bind:icon="icons.mailIcon"></Icon>
+								<carbon-email></carbon-email>
 								Email:
 								<a
 									v-bind:href="`mailto:${stakeholderModel.organisation_email}`"
@@ -166,11 +166,13 @@ import { NSelect } from "naive-ui";
 import { mapGetters } from "vuex";
 
 //Mixins
-import iconMixin from "../../mixins/iconMixin";
+import {CarbonEmail, CarbonLink} from "../../components";
 
 export default {
 	name: "PublicRequirementItemInformation",
 	components: {
+		CarbonEmail,
+		CarbonLink,
 		editor,
 		Icon,
 		NSelect,
@@ -205,7 +207,6 @@ export default {
 			},
 		},
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			requirementItemScopeModel: "",

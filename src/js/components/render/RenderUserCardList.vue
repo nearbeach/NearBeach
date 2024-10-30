@@ -36,10 +36,9 @@
 				class="user-card--remove"
 				v-if="userLevel >= 3"
 			>
-				<Icon
-					v-bind:icon="icons.trashCan"
+				<carbon-trash-can
 					v-on:click="removeUser(user.username)"
-				/>
+				></carbon-trash-can>
 			</div>
 		</div>
 		<div v-if="addingUserStatus"
@@ -59,11 +58,12 @@ import { mapGetters } from "vuex";
 import {Icon} from "@iconify/vue";
 
 //Mixins
-import iconMixin from "../../mixins/iconMixin";
+import {CarbonTrashCan} from "../../components";
 
 export default {
 	name: "RenderUserCardList",
 	components: {
+		CarbonTrashCan,
 		Icon,
 	},
 	emits: [
@@ -85,9 +85,6 @@ export default {
 			},
 		},
 	},
-	mixins: [
-		iconMixin,
-	],
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",

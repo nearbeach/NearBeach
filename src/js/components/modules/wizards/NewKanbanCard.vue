@@ -12,9 +12,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.cardChecklist"></Icon>
-						Add
-						Kanban Card Wizard
+						Add Kanban Card Wizard
 					</h2>
 					<button
 						type="button"
@@ -169,7 +167,6 @@ import {NSelect} from "naive-ui";
 import {mapGetters} from "vuex";
 
 //Mixins
-import iconMixin from "../../../mixins/iconMixin";
 import uploadMixin from "../../../mixins/uploadMixin";
 
 export default {
@@ -208,7 +205,7 @@ export default {
 			},
 		},
 	},
-	mixins: [iconMixin, uploadMixin],
+	mixins: [uploadMixin],
 	data() {
 		return {
 			disableAddButton: true,

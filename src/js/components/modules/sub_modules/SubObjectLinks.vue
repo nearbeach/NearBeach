@@ -30,10 +30,9 @@
 			class="object-link--remove"
 			v-if="userLevel >= 2 && canDelete === true"
 		>
-			<Icon
-				v-bind:icon="icons.trashCan"
+			<carbon-trash-can
 				v-on:click="confirmRemoveLink(link)"
-			/>
+			></carbon-trash-can>
 		</div>
 	</div>
 	<div class="spacer-extra"
@@ -46,17 +45,15 @@ import {mapGetters} from "vuex";
 import {Icon} from "@iconify/vue";
 
 import {Modal} from "bootstrap";
-
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
+import {CarbonTrashCan} from "../../../components";
 
 export default {
 	name: "SubObjectLinks",
 	components: {
+		CarbonTrashCan,
 		Icon,
 	},
 	emits: ["update_link_results"],
-	mixins: [iconMixin],
 	props: {
 		canDelete: {
 			type: Boolean,
