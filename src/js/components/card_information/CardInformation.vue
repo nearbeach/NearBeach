@@ -227,7 +227,6 @@ import ListPublicLinks from "../modules/sub_modules/ListPublicLinks.vue";
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
 import ListTagsModule from "../modules/sub_modules/ListTagsModule.vue";
 import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
 

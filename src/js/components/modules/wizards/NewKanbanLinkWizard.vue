@@ -291,7 +291,6 @@
 import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
-//Mixins
 
 //VueX
 import {mapGetters} from "vuex";

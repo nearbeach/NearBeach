@@ -229,7 +229,6 @@ import {mapGetters} from "vuex";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 
-//Mixins
 import {CarbonCloseOutline} from "../../components";
 
 export default {

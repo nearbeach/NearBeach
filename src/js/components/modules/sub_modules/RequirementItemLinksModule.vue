@@ -68,7 +68,6 @@ import ConfirmLinkDelete from "../wizards/ConfirmLinkDelete.vue";
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
 import SubObjectLinks from "./SubObjectLinks.vue";
 
 export default {

@@ -54,7 +54,6 @@ import {Icon} from "@iconify/vue";
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
 import RenderObjectCard from "../../render/RenderObjectCard.vue";
 
 export default {

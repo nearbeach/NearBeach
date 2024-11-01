@@ -56,7 +56,6 @@
 </template>
 
 <script>
-//Mixins
 import KanbanRow from "./KanbanRow.vue";
 
 //VueX

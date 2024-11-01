@@ -22,7 +22,6 @@
 </template>
 
 <script>
-//Import mixins
 import RenderObjectCard from "../render/RenderObjectCard.vue";
 
 export default {

@@ -42,8 +42,6 @@
 </template>
 
 <script>
-//Mixins
-import datetimeMixin from "../../mixins/datetimeMixin";
 
 export default {
 	name: "RenderObjectTable",
@@ -78,6 +76,5 @@ export default {
 	data() {
 		return {};
 	},
-	mixins: [datetimeMixin],
 };
 </script>

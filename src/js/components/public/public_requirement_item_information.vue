@@ -165,7 +165,6 @@ import { NSelect } from "naive-ui";
 //VueX
 import { mapGetters } from "vuex";
 
-//Mixins
 import {CarbonEmail, CarbonLink} from "../../components";
 
 export default {

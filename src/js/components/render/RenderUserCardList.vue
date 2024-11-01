@@ -57,7 +57,6 @@ import { mapGetters } from "vuex";
 //Components
 import {Icon} from "@iconify/vue";
 
-//Mixins
 import {CarbonTrashCan} from "../../components";
 
 export default {

@@ -102,7 +102,6 @@ import NewRequirementLinkWizard from "../wizards/NewRequirementLinkWizard.vue";
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
 import SubObjectLinks from "./SubObjectLinks.vue";
 import ConfirmLinkDelete from "../wizards/ConfirmLinkDelete.vue";
 

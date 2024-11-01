@@ -166,7 +166,6 @@ import {NSelect} from "naive-ui";
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
 import {useUploadImage} from "../../../composables/uploads/useUploadImage";
 
 export default {

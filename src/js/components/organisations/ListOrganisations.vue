@@ -41,8 +41,6 @@
 //VueX
 import {mapGetters} from "vuex";
 import {Icon} from "@iconify/vue";
-
-//Mixins
 import {CarbonEmail, CarbonLink} from "../../components";
 
 export default {
