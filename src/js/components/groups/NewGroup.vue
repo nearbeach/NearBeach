@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>New Group</h1>
@@ -75,8 +75,8 @@ import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
-// Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "NewGroup",
@@ -113,7 +113,6 @@ export default {
 			uniqueGroupName: true,
 		};
 	},
-	mixins: [getThemeMixin],
 	validations: {
 		groupNameModel: {
 			required,
@@ -140,6 +139,7 @@ export default {
 		},
 	},
 	methods: {
+		useNBTheme,
 		addNewGroup() {
 			//Check to make sure everything is validated
 			this.v$.$touch();

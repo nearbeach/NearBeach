@@ -77,15 +77,12 @@
 import { mapGetters } from "vuex";
 
 //Components
-import {Icon} from "@iconify/vue";
+import { CarbonTrashCan } from "../../components";
 import { NDatePicker, NSelect } from "naive-ui";
 import { Modal } from "bootstrap";
 
 //Datetime
 import { DateTime } from "luxon";
-
-//Mixins
-import {CarbonTrashCan} from "../../components";
 
 export default {
 	name: "RenderGanttRow",
@@ -130,7 +127,6 @@ export default {
 	},
 	components: {
 		CarbonTrashCan,
-		Icon,
 		NDatePicker,
 		NSelect,
 	},

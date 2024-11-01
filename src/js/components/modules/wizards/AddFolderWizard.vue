@@ -76,7 +76,7 @@ import {Icon} from "@iconify/vue";
 
 //VueX
 import {mapGetters} from "vuex";
-import reopenCardInformation from "../../../mixins/reopenCardInformation";
+import {useReopenCardInformation} from "../../../composables/card_information/useReopenCardinformation";
 
 export default {
 	name: "AddFolderWizard",
@@ -93,9 +93,6 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [
-		reopenCardInformation,
-	],
 	data() {
 		return {
 			disableAddFolderButton: true,
@@ -141,7 +138,7 @@ export default {
 					document.getElementById("addFolderCloseButton").click();
 
 					//Reshow the card information modal if exists
-					this.reopenCardInformation();
+					useReopenCardInformation();
 				})
 				.catch((error) => {
 					this.$store.dispatch("newToast", {

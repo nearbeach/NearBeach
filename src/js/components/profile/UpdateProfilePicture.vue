@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<div class="row">
@@ -19,7 +19,7 @@
 						<n-upload
 							:action="`${rootUrl}profile_information/update_profile/`"
 							:headers="{
-							'X-CSRFTOKEN': getToken('csrftoken'),
+							'X-CSRFTOKEN': useToken('csrftoken'),
 						}"
 							:data="{}"
 							:max="1"
@@ -39,9 +39,9 @@
 import {NUpload, NButton} from "naive-ui";
 import {mapGetters} from "vuex";
 
-//Mixins
-import getToken from "../../mixins/getTokenMixin";
-import getThemeMixin from "../../mixins/getThemeMixin";
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useToken} from "../../composables/security/useToken";
 
 export default {
 	name: "UpdateProfilePicture",
@@ -71,8 +71,9 @@ export default {
 			rootUrl: "getRootUrl",
 		}),
 	},
-	mixins: [getToken, getThemeMixin],
 	methods: {
+		useToken,
+		useNBTheme,
 		setProfilePicture() {
 			//Set the default
 			this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;

@@ -14,7 +14,7 @@
 						license_key: 'gpl',
 						file_picker_types: 'image',
 						height: 300,
-						images_upload_handler: uploadImage,
+						images_upload_handler: useUploadImage,
 						menubar: false,
 						paste_data_images: true,
 						plugins: ['lists', 'image', 'codesample', 'table'],
@@ -68,7 +68,7 @@ import Editor from "@tinymce/tinymce-vue";
 import {mapGetters} from "vuex";
 
 //Mixins
-import uploadMixin from "../../mixins/uploadMixin";
+import {useUploadImage} from "../../composables/uploads/useUploadImage";
 
 export default {
 	name: "CardDescription",
@@ -100,8 +100,8 @@ export default {
 			},
 		},
 	},
-	mixins: [uploadMixin],
 	methods: {
+		useUploadImage,
 		closeModal() {
 			document
 				.getElementById("cardInformationModalCloseButton")

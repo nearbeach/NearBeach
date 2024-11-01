@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<ul
@@ -107,20 +107,22 @@
 import ChangeTaskDescription from "./modules/ChangeTaskDescription.vue";
 import ChangeTaskLinkList from "./modules/ChangeTaskLinkList.vue";
 import ChangeTaskMisc from "./modules/ChangeTaskMisc.vue"
-import getThemeMixin from "../../mixins/getThemeMixin";
 
 //Naive UI
 import { NConfigProvider } from "naive-ui";
 
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
+
 export default {
 	name: "ChangeTaskModules",
+	methods: {useNBTheme},
 	props: {
 		theme: {
 			type: String,
 			default: "light",
 		}
 	},
-	mixins: [getThemeMixin],
 	components: {
 		ChangeTaskDescription,
 		ChangeTaskLinkList,

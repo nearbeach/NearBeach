@@ -26,7 +26,7 @@
 						{{note.first_name}} {{note.last_name}}
 					</div>
 					<div class="note-history--date">
-						{{getNiceDatetime(note.date_modified)}}
+						{{useNiceDatetime(note.date_modified)}}
 					</div>
 
 					<div class="note-history--edit-button"
@@ -74,16 +74,14 @@ import { Modal } from "bootstrap";
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import datetimeMixin from "../../../mixins/datetimeMixin";
-
+//Composables
+import {useNiceDatetime} from "../../../composables/datetime/useNiceDatetime";
 
 export default {
 	name: "ListNotes",
 	components: {
 		editor: Editor,
 	},
-	mixins: [datetimeMixin],
 	props: {
 		destination: {
 			type: String,
@@ -100,6 +98,7 @@ export default {
 		}),
 	},
 	methods: {
+		useNiceDatetime,
 		deleteNote(object_note_id) {
 			//Tell VueX of the note id change
 			this.$store.dispatch({

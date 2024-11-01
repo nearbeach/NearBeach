@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="sprint-header">
 			<h1>{{sprintResults[0].sprint_name}}</h1>
 			<a v-bind:href="getParentUrl()">
@@ -11,15 +11,15 @@
 					 v-if="sprintResults[0].sprint_status === 'Finish'"
 				>
 					<strong>Finish Date:</strong>
-					{{getNiceDatetime(sprintResults[0].sprint_end_date)}}
+					{{useNiceDatetime(sprintResults[0].sprint_end_date)}}
 				</div>
 				<div class="sprint-header--information-date"
 					 v-else
 				>
 					<strong>Start Date:</strong>
-					{{getNiceDatetime(sprintResults[0].sprint_start_date)}}<br/>
+					{{useNiceDatetime(sprintResults[0].sprint_start_date)}}<br/>
 					<strong>End Date:</strong>
-					{{getNiceDatetime(sprintResults[0].sprint_end_date)}}
+					{{useNiceDatetime(sprintResults[0].sprint_end_date)}}
 				</div>
 				<div class="sprint-header--information-status">
 					<strong>Sprint Status:</strong> {{ sprintResults[0].sprint_status }}
@@ -74,13 +74,13 @@
 </template>
 
 <script>
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import datetimeMixin from "../../mixins/datetimeMixin";
-
 //Components
 import ConfirmSprintDelete from "./ConfirmSprintDelete.vue";
 import AddObjectWizard from "./AddObjectWizard.vue";
+
+//Composables
+import { useNiceDatetime } from "../../composables/datetime/useNiceDatetime";
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 //Bootstrap
 import { Modal } from "bootstrap";
@@ -111,10 +111,6 @@ export default {
 			default: 1,
 		},
 	},
-	mixins: [
-		datetimeMixin,
-		getThemeMixin,
-	],
 	data() {
 		return {
 			parentObjectDestination: "",
@@ -122,6 +118,8 @@ export default {
 		}
 	},
 	methods: {
+		useNBTheme,
+		useNiceDatetime,
 		confirmDeleteSprint() {
 			const modal = new Modal(document.getElementById("confirmSprintDeleteModal"));
 			modal.show();

@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>New Kanban</h1>
@@ -110,8 +110,8 @@ import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "NewKanban",
@@ -145,9 +145,6 @@ export default {
 			},
 		},
 	},
-	mixins: [
-		getThemeMixin,
-	],
 	data() {
 		return {
 			checkingKanbanBoardName: false,
@@ -242,6 +239,7 @@ export default {
 		},
 	},
 	methods: {
+		useNBTheme,
 		addNewKanban() {
 			//Check form validation
 			this.v$.$touch();

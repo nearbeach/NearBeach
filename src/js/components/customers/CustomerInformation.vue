@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<!-- TITLE -->
@@ -31,7 +31,7 @@
 								v-if="userLevel > 1"
 								:action="`${rootUrl}customer_information/${customerResults[0].pk}/update_profile/`"
 								:headers="{
-								'X-CSRFTOKEN': getToken('csrftoken'),
+								'X-CSRFTOKEN': useToken('csrftoken'),
 							}"
 								:data="{}"
 								@finish="updateProfilePicture"
@@ -128,9 +128,9 @@ import useVuelidate from "@vuelidate/core";
 import {required, email} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue"
 
-//Import Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import getToken from "../../mixins/getTokenMixin";
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useToken} from "../../composables/security/useToken";
 
 export default {
 	name: "CustomerInformation",
@@ -198,7 +198,6 @@ export default {
 			titleFixList: [],
 		};
 	},
-	mixins: [getThemeMixin, getToken],
 	validations: {
 		customerEmailModel: {
 			required,
@@ -215,6 +214,8 @@ export default {
 		},
 	},
 	methods: {
+		useToken,
+		useNBTheme,
 		showErrorToast() {
 			this.$store.dispatch("newToast", {
 				header: "Error uploading profile picture",

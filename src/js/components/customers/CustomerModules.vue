@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<!-- The MENU Items -->
@@ -53,17 +53,15 @@
 import AssociatedObjects from "../modules/sub_modules/AssociatedObjects.vue";
 import { mapGetters } from "vuex";
 
-//Mixin
-import getThemeMixin from "../../mixins/getThemeMixin";
+//Composable
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "CustomerModule",
+	methods: {useNBTheme},
 	components: {
 		AssociatedObjects,
 	},
-	mixins: [
-		getThemeMixin,
-	],
 	computed: {
 		...mapGetters({
 			theme: "getTheme",

@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card card-body">
 				<h1>Scheduled Object Information</h1>
@@ -74,7 +74,7 @@
 							:init="{
 							file_picker_types: 'image',
 							height: 500,
-							images_upload_handler: newObjectUploadImage,
+							images_upload_handler: useNewObjectUploadImage,
 							menubar: false,
 							paste_data_images: true,
 							plugins: ['lists', 'image', 'codesample', 'table'],
@@ -201,10 +201,6 @@ import { NSelect, NConfigProvider, NSwitch } from "naive-ui";
 import BetweenDates from "../dates/BetweenDates.vue";
 import SchedulerFrequency from "./SchedulerFrequency.vue";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import uploadMixin from "../../mixins/uploadMixin";
-
 //Validations
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
@@ -213,6 +209,10 @@ import ValidationRendering from "../validation/ValidationRendering.vue";
 //VueX
 import { mapGetters } from "vuex";
 import StakeholderInformation from "../organisations/StakeholderInformation.vue";
+
+//Composable
+import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNewObjectUploadImage} from "../../composables/uploads/useNewObjectUploadImage";
 
 export default {
 	name: "NewScheduledObject",
@@ -351,11 +351,9 @@ export default {
 			required,
 		},
 	},
-	mixins: [
-		getThemeMixin,
-		uploadMixin,
-	],
 	methods: {
+		useNewObjectUploadImage,
+		useNBTheme,
 		calculateUserLevel(data) {
 			//If there is no data to crunch, just return.
 			if (data.length === 0) return 0;

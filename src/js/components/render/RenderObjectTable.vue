@@ -33,7 +33,7 @@
 				<p>{{ result[importVariables.status] }}</p>
 				<div class="spacer"></div>
 				<p class="small-text">
-					{{ getNiceDatetime(result[importVariables.end_date]) }}
+					{{ useNiceDatetime(result[importVariables.end_date]) }}
 				</p>
 			</td>
 		</tr>

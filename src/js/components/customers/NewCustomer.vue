@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<!-- HEADER -->
@@ -65,12 +65,12 @@
 import useVuelidate from "@vuelidate/core";
 import {required, email} from "@vuelidate/validators";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-
 //Components
 import NewCustomerForm from "./NewCustomerForm.vue";
 import {NSelect} from "naive-ui";
+
+//Composable
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "NewCustomer",
@@ -101,7 +101,6 @@ export default {
 			},
 		},
 	},
-	mixins: [getThemeMixin],
 	data() {
 		return {
 			customerEmailModel: "",
@@ -133,6 +132,7 @@ export default {
 		};
 	},
 	methods: {
+		useNBTheme,
 		fetchOptions(search, loading) {
 			//Clear timer if it already exists
 			if (this.searchTimeout !== "") {

@@ -1,4 +1,4 @@
-export function getRandomID() {
+export function useRandomID() {
     //If crypto.randomUUID works on browser - use that by default
     if (crypto.randomUUID !== undefined) return crypto.randomUUID();
 

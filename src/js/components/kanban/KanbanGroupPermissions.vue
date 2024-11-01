@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card kanban-group-permissions">
 			<div class="card-body">
 				<!-- Group Permissions -->
@@ -12,12 +12,15 @@
 </template>
 
 <script>
-import getThemeMixins from "../../mixins/getThemeMixin"
+//Components
 import GroupsAndUsersModule from "../modules/sub_modules/GroupsAndUsersModule.vue";
+
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "KanbanGroupPermissions",
-	mixins: [getThemeMixins],
+	methods: {useNBTheme},
 	props: {
 		isReadOnly: {
 			type: Boolean,

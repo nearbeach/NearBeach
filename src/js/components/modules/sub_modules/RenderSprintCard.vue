@@ -18,7 +18,7 @@
 				</div>
 				<div class="object-link--link">
 					Dates:
-					{{ getNiceDate(sprint.sprint_start_date) }} till {{ getNiceDate(sprint.sprint_end_date) }}
+					{{ useNiceDate(sprint.sprint_start_date) }} till {{ useNiceDate(sprint.sprint_end_date) }}
 				</div>
 			</a>
 		</div>
@@ -44,13 +44,13 @@
 </template>
 
 <script>
-//Mixins
-import datetimeMixin from "../../../mixins/datetimeMixin";
-
 //Vuex
 import { mapGetters } from "vuex";
 import {Icon} from "@iconify/vue";
 import {CarbonTrashCan} from "../../../components";
+
+//Composables
+import {useNiceDate} from "../../../composables/datetime/useNiceDate";
 
 export default {
 	name: "RenderSprintCard",
@@ -73,13 +73,11 @@ export default {
 			userLevel: "getUserLevel",
 		})
 	},
-	mixins: [
-		datetimeMixin,
-	],
 	emits: [
 		"confirm_remove_sprint",
 	],
 	methods: {
+		useNiceDate,
 		confirmRemoveSprintFunction(sprint) {
 			//Send request upstream
 			this.$emit("confirm_remove_sprint", sprint);

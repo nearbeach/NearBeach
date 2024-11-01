@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>Requirement Item Information</h1>
@@ -67,7 +67,7 @@
 								license_key: 'gpl',
 								file_picker_types: 'image',
 								height: 500,
-								images_upload_handler: uploadImage,
+								images_upload_handler: useUploadImage,
 								menubar: false,
 								paste_data_images: true,
 								plugins: ['lists', 'image', 'codesample', 'table'],
@@ -193,15 +193,15 @@ import {NSelect} from "naive-ui";
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import uploadMixin from "../../mixins/uploadMixin";
-
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 import {CarbonEmail, CarbonLink} from "../../components";
+
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useUploadImage} from "../../composables/uploads/useUploadImage";
 
 
 export default {
@@ -276,7 +276,6 @@ export default {
 			return `${this.rootUrl}private/${this.stakeholderModel.organisation_profile_picture}`;
 		},
 	},
-	mixins: [getThemeMixin, uploadMixin],
 	data() {
 		return {
 			isReadOnly: false,
@@ -320,6 +319,8 @@ export default {
 		},
 	},
 	methods: {
+		useUploadImage,
+		useNBTheme,
 		checkStatusIsClosed() {
 			//Will filter the current status for the status - then check to see if it is closed
 			const filtered_status = this.statusOptions.filter((row) => {

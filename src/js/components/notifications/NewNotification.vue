@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>New Notification</h1>
@@ -87,9 +87,6 @@
 <script>
 import BetweenDates from "../dates/BetweenDates.vue";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
@@ -97,6 +94,7 @@ import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //Naive ui
 import { NSelect } from "naive-ui";
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 
 export default {
@@ -119,7 +117,6 @@ export default {
 			default: "",
 		},
 	},
-	mixins: [getThemeMixin],
 	data() {
 		return {
 			endDateModel: "",
@@ -151,6 +148,7 @@ export default {
 		},
 	},
 	methods: {
+		useNBTheme,
 		submitNewNotification: async function() {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();

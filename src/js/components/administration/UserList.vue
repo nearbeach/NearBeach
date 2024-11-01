@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h2 v-if="destination === 'user'">User Permission List</h2>
@@ -100,10 +100,6 @@
 <script>
 import {Modal} from "bootstrap";
 
-
-//Import mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-
 //Vue Components
 import AdminAddUser from "./AdminAddUser.vue";
 import ConfirmPermissionDelete from "./ConfirmPermissionDelete.vue"
@@ -111,6 +107,9 @@ import ConfirmPermissionDelete from "./ConfirmPermissionDelete.vue"
 //Icon
 import {Icon} from "@iconify/vue";
 import {CarbonTrashCan} from "../../components";
+
+//Composable
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "UserList",
@@ -146,8 +145,8 @@ export default {
 			permissionDeleteId: 0,
 		};
 	},
-	mixins: [getThemeMixin],
 	methods: {
+		useNBTheme,
 		addButtonText() {
 			//Add Group should be used on user
 			if (this.destination === "user") {

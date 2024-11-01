@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>New Task</h1>
@@ -54,7 +54,7 @@
 							license_key: 'gpl',
 							file_picker_types: 'image',
 							height: 500,
-							images_upload_handler: newObjectUploadImage,
+							images_upload_handler: useNewObjectUploadImage,
 							menubar: false,
 							plugins: ['lists', 'image', 'codesample', 'table'],
             				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
@@ -119,12 +119,12 @@ import BetweenDates from "../dates/BetweenDates.vue";
 import GroupPermissions from "../permissions/GroupPermissions.vue";
 import GetStakeholders from "../organisations/GetStakeholders.vue";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
-
 //VueX
 import { mapGetters } from "vuex";
+
+//Composables
+import { useNewObjectUploadImage } from "../../composables/uploads/useNewObjectUploadImage";
+import { useNBTheme } from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "NewTask",
@@ -190,7 +190,6 @@ export default {
 			skin: "getSkin",
 		}),
 	},
-	mixins: [getThemeMixin, newObjectUploadMixin],
 	validations: {
 		groupModel: {
 			required,
@@ -213,6 +212,8 @@ export default {
 		},
 	},
 	methods: {
+		useNewObjectUploadImage,
+		useNBTheme,
 		submitNewTask: async function () {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();

@@ -85,7 +85,7 @@
 									license_key: 'gpl',
 									file_picker_types: 'image',
 									height: 300,
-									images_upload_handler: uploadImage,
+									images_upload_handler: useUploadImage,
 									menubar: false,
 									paste_data_images: true,
 									plugins: ['lists', 'image', 'codesample', 'table'],
@@ -167,7 +167,7 @@ import {NSelect} from "naive-ui";
 import {mapGetters} from "vuex";
 
 //Mixins
-import uploadMixin from "../../../mixins/uploadMixin";
+import {useUploadImage} from "../../../composables/uploads/useUploadImage";
 
 export default {
 	name: "NewKanbanCard",
@@ -205,7 +205,6 @@ export default {
 			},
 		},
 	},
-	mixins: [uploadMixin],
 	data() {
 		return {
 			disableAddButton: true,
@@ -249,6 +248,7 @@ export default {
 		}),
 	},
 	methods: {
+		useUploadImage,
 		addKanbanCard() {
 			//Disable the save
 			this.disableAddButton = true;

@@ -21,7 +21,7 @@
 						{{ result[importVariables.status] }}
 					</div>
 					<p class="small-text">
-						{{ getNiceDatetime(result[importVariables.end_date]) }}
+						{{ useNiceDatetime(result[importVariables.end_date]) }}
 					</p>
 				</a>
 			</div>
@@ -30,14 +30,17 @@
 </template>
 
 <script>
-//Mixins
-import datetimeMixin from "../../mixins/datetimeMixin";
-
 //VueX
 import {mapGetters} from "vuex";
 
+//Composables
+import {useNiceDatetime} from "../../composables/datetime/useNiceDatetime";
+
 export default {
 	name: "RenderObjectCard",
+	methods: {
+		useNiceDatetime
+	},
 	props: {
 		destination: {
 			type: String,
@@ -62,7 +65,6 @@ export default {
 			},
 		},
 	},
-	mixins: [datetimeMixin],
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",

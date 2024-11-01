@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div>
 			<h1 class="kanban-header">
 				{{ kanbanBoardResults[0].fields.kanban_board_name }}
@@ -148,6 +148,24 @@
 </template>
 
 <script>
+import {Modal} from "bootstrap";
+
+//VueX
+import {mapGetters} from "vuex";
+
+//Naive UI
+import {NSwitch} from "naive-ui";
+
+//Components
+import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
+import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
+import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
+import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
+import ConfirmFolderDelete from "../modules/wizards/ConfirmFolderDelete.vue";
+import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
+import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
+import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
+import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
 import AddUserToCard from "../card_information/AddUserToCard.vue";
 import ArchiveCards from "./ArchiveCards.vue";
 import BlockedNotesModal from "./BlockedNotesModal.vue";
@@ -157,24 +175,8 @@ import CardInformation from "../card_information/CardInformation.vue";
 import NewKanbanLinkWizard from "../modules/wizards/NewKanbanLinkWizard.vue";
 import ConfirmCardArchive from "./ConfirmCardArchive.vue";
 
-//VueX
-import {mapGetters} from "vuex";
-
-//Naive UI
-import {NSwitch} from "naive-ui";
-
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
-import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
-import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
-import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
-import ConfirmFolderDelete from "../modules/wizards/ConfirmFolderDelete.vue";
-import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
-import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
-import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
-import {Modal} from "bootstrap";
-import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "KanbanInformation",
@@ -281,9 +283,6 @@ export default {
 			this.refreshUserList = true;
 		},
 	},
-	mixins: [
-		getThemeMixin,
-	],
 	data() {
 		return {
 			canDragCards: true,
@@ -294,6 +293,7 @@ export default {
 		};
 	},
 	methods: {
+		useNBTheme,
 		addNewKanbanCard() {
 			//Update New Card VueX to use this location
 			this.$store.commit({

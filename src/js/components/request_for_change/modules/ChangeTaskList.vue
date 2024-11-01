@@ -24,8 +24,8 @@
 			<a class="change-task--dates"
 			   v-bind:href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
 			>
-				{{ getNiceDatetime(changeTask.change_task_start_date) }} -
-				{{ getNiceDatetime(changeTask.change_task_end_date) }}
+				{{ useNiceDatetime(changeTask.change_task_start_date) }} -
+				{{ useNiceDatetime(changeTask.change_task_end_date) }}
 			</a>
 
 			<a class="change-task--responsibility"
@@ -178,11 +178,11 @@ import {Modal} from "bootstrap";
 import ConfirmChangeTaskClosure from "./ConfirmChangeTaskClosure.vue";
 import NewChangeTask from "../../change_task/NewChangeTask.vue";
 
-// Mixins
-import datetimeMixin from "../../../mixins/datetimeMixin";
-
 //VueX
 import {mapGetters} from "vuex";
+
+//Composables
+import {useNiceDatetime} from "../../../composables/datetime/useNiceDatetime";
 
 export default {
 	name: "ChangeTaskList",
@@ -214,7 +214,6 @@ export default {
 			},
 		},
 	},
-	mixins: [datetimeMixin],
 	data: () => ({
 		blockedTaskList: [],
 		changeTaskList: [],
@@ -249,6 +248,7 @@ export default {
 		},
 	},
 	methods: {
+		useNiceDatetime,
 		addNewChangeItem() {
 			const newChangeTaskModal = new Modal(
 				document.getElementById("newRunItemModal")

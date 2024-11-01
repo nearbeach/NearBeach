@@ -48,12 +48,10 @@ import ValidationRendering from "../../validation/ValidationRendering.vue";
 //TinyMce editor
 import Editor from "@tinymce/tinymce-vue";
 
-//Mixins
-import uploadMixin from "../../../mixins/uploadMixin";
-import newObjectUploadMixin from "../../../mixins/newObjectUploadMixin";
-
 //VueX
 import { mapGetters } from "vuex";
+import {useNewObjectUploadImage} from "../../../composables/uploads/useNewObjectUploadImage";
+import {useUploadImage} from "../../../composables/uploads/useUploadImage";
 
 export default {
 	name: "RfcTestPlan",
@@ -90,7 +88,6 @@ export default {
 			skin: "getSkin",
 		}),
 	},
-	mixins: [uploadMixin, newObjectUploadMixin],
 	data: () => ({
 		rfcTestPlanModel: "",
 	}),
@@ -105,8 +102,8 @@ export default {
 			//If we have passed a UUID down, this is a new object
 			//We'll need to use the new object upload
 			//Otherwise use the usual method
-			if (this.uuid === "") return this.uploadImage(blobInfo, progress);
-			return this.newObjectUploadImage(blobInfo, progress)
+			if (this.uuid === "") return useUploadImage(blobInfo, progress);
+			return useNewObjectUploadImage(blobInfo, progress)
 		},
 		updateValidation() {
 			this.v$.$touch();

@@ -23,7 +23,6 @@
 
 <script>
 //Import mixins
-import datetimeMixin from "../../mixins/datetimeMixin";
 import RenderObjectCard from "../render/RenderObjectCard.vue";
 
 export default {
@@ -47,7 +46,6 @@ export default {
 			},
 		};
 	},
-	mixins: [datetimeMixin],
 	methods: {
 		getRfcApprovalsList() {
 			//Use axios to get data

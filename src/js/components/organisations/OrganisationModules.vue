@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<!-- The MENU Items -->
@@ -222,18 +222,14 @@
 <script>
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
+
+//Components
 import CustomersListModule from "../modules/sub_modules/CustomersListModule.vue";
 import ListTagsModule from "../modules/sub_modules/ListTagsModule.vue";
 import NewCustomerModal from "../customers/NewCustomerModal.vue";
 import NotesModule from "../modules/sub_modules/NotesModule.vue";
 import AssociatedObjects from "../modules/sub_modules/AssociatedObjects.vue";
 import DocumentsModule from "../modules/sub_modules/DocumentsModule.vue";
-
-//VueX
-// import { mapGetters } from 'vuex';
-
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
 import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
 import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
 import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
@@ -241,6 +237,9 @@ import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
 import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
 import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
 import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
+
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "OrganisationModules",
@@ -315,8 +314,8 @@ export default {
 		// }),
 	},
 	emits: ["remove_customer"],
-	mixins: [getThemeMixin],
 	methods: {
+		useNBTheme,
 		addNewContact() {
 			const new_customer_modal = new Modal(
 				document.getElementById("addCustomerModal")

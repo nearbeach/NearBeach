@@ -31,7 +31,7 @@
 						v-if="userLevel > 1"
 						:action="`${rootUrl}organisation_information/${organisationResults[0].pk}/update_profile/`"
 						:headers="{
-							'X-CSRFTOKEN': getToken('csrftoken'),
+							'X-CSRFTOKEN': useToken('csrftoken'),
 						}"
 						:data="{}"
 						@finish="updateProfilePicture"
@@ -125,8 +125,8 @@ import useVuelidate from "@vuelidate/core";
 import {email, maxLength, required, url} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
-//Mixins
-import getToken from "../../mixins/getTokenMixin";
+//Composables
+import {useToken} from "../../composables/security/useToken";
 
 export default {
 	name: "OrganisationInformation",
@@ -146,7 +146,6 @@ export default {
 			},
 		},
 	},
-	mixins: [getToken],
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",
@@ -180,6 +179,7 @@ export default {
 		},
 	},
 	methods: {
+		useToken,
 		showErrorToast() {
 			this.$store.dispatch("newToast", {
 				header: "Error uploading profile picture",

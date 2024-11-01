@@ -51,10 +51,7 @@
 
 <script>
 import {mapGetters} from "vuex";
-
-
-//Mixins
-import reopenCardInformation from "../../../mixins/reopenCardInformation";
+import {useReopenCardInformation} from "../../../composables/card_information/useReopenCardinformation";
 
 export default {
 	name: "ConfirmNoteDelete",
@@ -66,9 +63,6 @@ export default {
 			rootUrl: "getRootUrl",
 		}),
 	},
-	mixins: [
-		reopenCardInformation,
-	],
 	methods: {
 		deleteNote() {
 			//Tell the user we are deleting the note
@@ -106,7 +100,7 @@ export default {
 				this.closeModal();
 
 				//Reshow the card information modal if exists
-				this.reopenCardInformation();
+				useReopenCardInformation();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Failed to Delete Note",
@@ -121,7 +115,7 @@ export default {
 			document.getElementById("confirmNoteDeleteButton").click();
 
 			//Open the card information modal, if it exists
-			this.reopenCardInformation();
+			useReopenCardInformation();
 		},
 	},
 }

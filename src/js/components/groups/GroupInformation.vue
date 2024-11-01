@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1 class="mb-4">Group Information</h1>
@@ -72,8 +72,8 @@ import { Modal } from "bootstrap";
 //Components
 import ConfirmGroupDelete from "./ConfirmGroupDelete.vue";
 
-//Load mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "GroupInformation",
@@ -111,8 +111,8 @@ export default {
 			parentGroupModel: this.groupResults[0].fields.parent_group,
 		}
 	},
-	mixins: [getThemeMixin],
 	methods: {
+		useNBTheme,
 		confirmDelete() {
 			//Show the modal
 			const modal = new Modal(document.getElementById("confirmGroupDeleteModal"));

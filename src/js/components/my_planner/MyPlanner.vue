@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<h1 class="planner-header">My Planner</h1>
 		<button class="btn btn-primary planner-button"
 				v-on:click="showModal"
@@ -77,14 +77,14 @@ import { DateTime } from "luxon";
 import { Modal } from "bootstrap";
 import {Icon} from "@iconify/vue";
 
-//Mixins
-import datetimeMixin from "../../mixins/datetimeMixin";
-import getThemeMixin from "../../mixins/getThemeMixin";
-
 //Component
 import ConfirmUserJobDelete from "./ConfirmUserJobDelete.vue";
 import NewPlannerObjectWizard from "./NewPlannerObjectWizard.vue";
 import {CarbonTrashCan} from "../../components";
+
+//Composables
+import { useNiceDatetime } from "../../composables/datetime/useNiceDatetime";
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "MyPlanner",
@@ -122,11 +122,8 @@ export default {
 			dateArray: [],
 		}
 	},
-	mixins: [
-		datetimeMixin,
-		getThemeMixin,
-	],
 	methods: {
+		useNBTheme,
 		confirmCardDelete(user_job_id, index) {
 			//Update the confirm id
 			this.confirmIdToDelete = user_job_id;
@@ -144,7 +141,7 @@ export default {
 			return "";
 		},
 		formatObjectId(element) {
-			const end_date = this.getNiceDatetime(element.end_date);
+			const end_date = useNiceDatetime(element.end_date);
 			switch (element.object_type) {
 				case "card":
 					return `Card${element.location_id}`;

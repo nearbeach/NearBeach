@@ -172,9 +172,7 @@ import {Icon} from "@iconify/vue";
 
 //VueX
 import {mapGetters} from "vuex";
-
-//Mixins
-import reopenCardInformation from "../../../mixins/reopenCardInformation"
+import {useReopenCardInformation} from "../../../composables/card_information/useReopenCardinformation";
 
 export default {
 	name: "UploadDocumentWizard",
@@ -191,7 +189,6 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [reopenCardInformation],
 	data() {
 		return {
 			disableUploadButton: true,
@@ -297,7 +294,7 @@ export default {
 				this.resetForm();
 
 				//Reshow the card information modal if exists
-				this.reopenCardInformation();
+				useReopenCardInformation();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Failed to upload documentation",

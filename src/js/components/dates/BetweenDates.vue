@@ -49,9 +49,6 @@ import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
-//Mixin
-import disableDate from "../../mixins/datetimeMixin";
-
 //VueX
 import { mapGetters } from "vuex";
 
@@ -65,7 +62,6 @@ export default {
 		ValidationRendering,
 	},
 	emits: ['update_dates'],
-	mixins: [disableDate],
 	props: {
 		destination: {
 			type: String,

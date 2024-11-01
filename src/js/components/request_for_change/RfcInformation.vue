@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>Request for Change</h1>
@@ -73,8 +73,8 @@
 					<div class="row col-md-8">
 						<!-- Start and End date row -->
 						<div class="col-md-12">
-							<strong>Start Date: </strong>{{getNiceDatetimeFromInt(rfcImplementationStartModel)}}<br/>
-							<strong>End Date: </strong>{{getNiceDatetimeFromInt(rfcImplementationEndModel)}}
+							<strong>Start Date: </strong>{{useNiceDatetimeFromInt(rfcImplementationStartModel)}}<br/>
+							<strong>End Date: </strong>{{useNiceDatetimeFromInt(rfcImplementationEndModel)}}
 						</div>
 
 						<!-- Validation row -->
@@ -280,14 +280,15 @@ import {NSelect, NDatePicker} from "naive-ui";
 import {mapGetters} from "vuex";
 import {Modal} from "bootstrap";
 
-//Import mixins
-import datetimeMixin from "../../mixins/datetimeMixin";
-import getThemeMixin from "../../mixins/getThemeMixin";
-
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
+
+//Composables
+import { useNiceDatetimeFromInt } from "../../composables/datetime/useNiceDatetimeFromInt";
+import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useDisableDate} from "../../composables/datetime/useDisableDate";
 
 export default {
 	name: "RfcInformation",
@@ -363,7 +364,6 @@ export default {
 					this.v$.rfcReleaseModel.$dirty;
 		},
 	},
-	mixins: [datetimeMixin, getThemeMixin],
 	data() {
 		return {
 			approvalUsersList: [],
@@ -418,6 +418,8 @@ export default {
 		},
 	},
 	methods: {
+		useNiceDatetimeFromInt,
+		useNBTheme,
 		approveRFCStatus() {
 			const data_to_send = new FormData();
 			data_to_send.set("rfc_status", "3"); //Value 3: Approved
@@ -430,7 +432,7 @@ export default {
 				return false;
 			}
 
-			return this.disableDate(date);
+			return useDisableDate(date);
 		},
 		getApprovalUserList() {
 			//If the status isn't 2 (i.e. waiting for approval), then just return. Don't need the data

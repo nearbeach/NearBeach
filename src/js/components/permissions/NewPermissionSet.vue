@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>New Permission Set</h1>
@@ -59,11 +59,14 @@
 </template>
 
 <script>
-//Import mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import ValidationRendering from "../validation/ValidationRendering.vue";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
+
+//Components
+import ValidationRendering from "../validation/ValidationRendering.vue";
+
+//Composable
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "NewPermissionSet",
@@ -91,7 +94,6 @@ export default {
 			uniquePermissionSetName: true,
 		};
 	},
-	mixins: [getThemeMixin],
 	validations: {
 		permissionSetNameModel: {
 			required,
@@ -127,6 +129,7 @@ export default {
 		},
 	},
 	methods: {
+		useNBTheme,
 		addNewPermissionSet() {
 			//Check to make sure everything is validated
 			this.v$.$touch();

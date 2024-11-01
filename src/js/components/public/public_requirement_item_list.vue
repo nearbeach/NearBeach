@@ -39,7 +39,7 @@
 								{{ getStatus(result.fields.requirement_item_status) }}
 							</div>
 							<p class="small-text">
-								{{ getNiceDatetime(result.fields.requirement_item_end_date) }}
+								{{ useNiceDatetime(result.fields.requirement_item_end_date) }}
 							</p>
 						</div>
 					</div>
@@ -65,15 +65,14 @@ import { Modal } from "bootstrap";
 //VueX
 import { mapGetters } from "vuex";
 
-//Mixins
-import dateTimeMixin from "../../mixins/datetimeMixin"
-
 //Components
 import PublicRequirementItemInformation from "./public_requirement_item_information.vue";
 
+//Composables
+import {useNiceDatetime} from "../../composables/datetime/useNiceDatetime";
+
 export default {
 	name: "PublicRequirementItemList",
-	mixins: [dateTimeMixin],
 	components: {
 		PublicRequirementItemInformation,
 	},
@@ -130,6 +129,7 @@ export default {
 		},
 	},
 	methods: {
+		useNiceDatetime,
 		getStatus(status) {
 			//Filter for the status
 			const filtered_status = this.statusList.filter((row) => {

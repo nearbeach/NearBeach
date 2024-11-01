@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>Change Task - {{ changeTaskResults[0].pk }}</h1>
@@ -186,11 +186,9 @@ import {Modal} from "bootstrap";
 //Vuex
 import {mapGetters} from "vuex";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-
 //Components
 import ConfirmChangeTaskDelete from "./modules/ConfirmChangeTaskDelete.vue";
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "ChangeTaskInformation",
@@ -261,9 +259,6 @@ export default {
 			}),
 		};
 	},
-	mixins: [
-		getThemeMixin,
-	],
 	computed: {
 		...mapGetters({
 			rfcEndDate: "getEndDate",
@@ -271,6 +266,7 @@ export default {
 		}),
 	},
 	methods: {
+		useNBTheme,
 		confirmDeleteChangeTask() {
 			const modal = new Modal(document.getElementById("confirmChangeTaskDeleteModal"));
 			modal.show();

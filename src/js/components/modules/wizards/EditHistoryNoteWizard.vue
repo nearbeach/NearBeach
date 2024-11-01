@@ -70,12 +70,12 @@
 
 <script>
 //JavaScript components
-import reopenCardInformation from "../../../mixins/reopenCardInformation";
 import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
 
 //VueX
 import {mapGetters} from "vuex";
+import {useReopenCardInformation} from "../../../composables/card_information/useReopenCardinformation";
 
 
 export default {
@@ -84,7 +84,6 @@ export default {
 		editor: Editor,
 		Icon,
 	},
-	mixins: [reopenCardInformation],
 	data() {
 		return {
 			noteModel: "",
@@ -113,7 +112,7 @@ export default {
 			document.getElementById("editNoteCloseButton").click();
 
 			//Open the card information modal, if it exists
-			this.reopenCardInformation();
+			useReopenCardInformation();
 		},
 		updateNote() {
 			//Setup data to send
@@ -157,7 +156,7 @@ export default {
 				document.getElementById("editNoteCloseButton").click();
 
 				//Reshow the card information modal if exists
-				this.reopenCardInformation();
+				useReopenCardInformation();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Failed Updating Note",

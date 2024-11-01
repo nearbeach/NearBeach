@@ -98,13 +98,14 @@ import {Icon} from "@iconify/vue";
 
 //VueX
 import {mapGetters} from "vuex";
-import reopenCardInformation from "../../../mixins/reopenCardInformation"
 
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, url} from "@vuelidate/validators";
 import ValidationRendering from "../../validation/ValidationRendering.vue";
 
+//Composables
+import {useReopenCardinformation} from "../../../composables/card_information/useReopenCardinformation";
 
 export default {
 	name: "AddLinkWizard",
@@ -125,9 +126,6 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [
-      reopenCardInformation,
-  ],
 	data() {
 		return {
 			linkModel: "",
@@ -187,7 +185,7 @@ export default {
 				document.getElementById("addLinkCloseButton").click();
 
 				//Reshow the card information modal if exists
-				this.reopenCardInformation();
+				useReopenCardInformation();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error Adding Link",

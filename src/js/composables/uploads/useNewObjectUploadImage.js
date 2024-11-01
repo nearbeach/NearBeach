@@ -1,0 +1,34 @@
+import { toValue } from "vue";
+import axios from "axios";
+import { store } from "../../vuex-store";
+
+
+export function useNewObjectUploadImage(blobInfo) {
+    const value = toValue(blobInfo);
+    const rootUrl = store.getters.getRootUrl;
+
+    //Value needs to be defined
+    if (value === undefined) return;
+
+    //Create the form
+    const data_to_send = new FormData();
+    data_to_send.set("document", value.blob(), value.filename());
+    data_to_send.set("document_description", value.filename());
+    data_to_send.set("uuid", this.uuid);
+
+    //Use axios to send the data
+    return this.axios.post(
+        `${rootUrl}documentation/new_object_upload/`,
+        data_to_send,
+    ).then((response) => {
+        //Just send the location to the success
+        return `/private/${response.data[0].document_key_id}`;
+    }).catch((error) => {
+        this.$store.dispatch("newToast", {
+            header: "Failed to upload image",
+            message: `Sorry, could not upload image. Error -> ${error}`,
+            extra_classes: "bg-danger",
+            delay: 0,
+        });
+    });
+}
