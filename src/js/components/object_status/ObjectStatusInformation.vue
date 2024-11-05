@@ -86,9 +86,6 @@
 </template>
 
 <script>
-//Icon
-import { Icon } from "@iconify/vue";
-
 //Draggable
 import draggable from "vuedraggable";
 

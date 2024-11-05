@@ -102,9 +102,6 @@ import useVuelidate from "@vuelidate/core";
 import {required, url} from "@vuelidate/validators";
 import ValidationRendering from "../../validation/ValidationRendering.vue";
 
-//Composables
-import {useReopenCardinformation} from "../../../composables/card_information/useReopenCardinformation";
-
 export default {
 	name: "AddLinkWizard",
 	setup() {
