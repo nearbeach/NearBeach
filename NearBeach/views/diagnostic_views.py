@@ -45,8 +45,8 @@ def diagnostic_information(request):
     csrf_trusted_urls = getattr(settings, "CSRF_TRUSTED_URLS", [])
 
     # Try and get the attributes, with a default of "". If it is "" means it has not been setup correctly.
-    smtp_email_host = not getattr(settings, "EMAIL_HOST", None) == None
-    smtp_email_host_user = not getattr(settings, "EMAIL_HOST_USER", None) == None
+    smtp_email_host = not getattr(settings, "EMAIL_HOST", None) is None
+    smtp_email_host_user = not getattr(settings, "EMAIL_HOST_USER", None) is None
 
     c = {
         "allowed_hosts": allowed_hosts,
