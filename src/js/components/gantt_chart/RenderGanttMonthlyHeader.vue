@@ -65,7 +65,7 @@ export default {
 			let keep_looping = true;
 			let index = 0;
 			while (keep_looping) {
-				var delta = 0;
+				let delta = 0;
 
 				//Determine if end date is in the current month
 				if (point_date.getMonth() === end_date.getMonth()) {

@@ -420,16 +420,13 @@ export default {
 			}
 
 			// Check to see if we are editing an existing item, or adding
+			let url = "";
 			if (single_item_id === "") {
 				//Get the url
-				var url = `/kanban_${this.propertyName.toLowerCase()}/${
-					this.kanbanBoardId
-				}/new/`;
+				url = `/kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/new/`;
 			} else {
 				//Get the url
-				var url = `/kanban_${this.propertyName.toLowerCase()}/${
-					this.singleItemId
-				}/edit/`;
+				url = `/kanban_${this.propertyName.toLowerCase()}/${this.singleItemId}/edit/`;
 			}
 
 			// Send data
