@@ -214,7 +214,7 @@ def document_list_folders(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_remove(request, destination, location_id):
+def document_remove(request, _, __):
     # Get form data
     form = DocumentRemoveForm(request.POST)
     if not form.is_valid():
@@ -234,7 +234,7 @@ def document_remove(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_remove_folder(request, destination, location_id):
+def document_remove_folder(request, _, __):
     # Get form data
     form = FolderRemoveForm(request.POST)
     if not form.is_valid():

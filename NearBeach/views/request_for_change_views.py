@@ -573,7 +573,7 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
 
 
 # Internal function
-def rfc_status_rejected(rfc_id, rfc_results):
+def rfc_status_rejected(rfc_id, _):
     """
     :param rfc_results:
     :param rfc_id:

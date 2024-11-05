@@ -99,7 +99,7 @@ def check_user_generic_permissions(min_permission_level, extra_permissions=""):
     return decorator
 
 
-def check_specific_object_permissions(min_permission_level, object_lookup, extra_permissions=""):
+def check_specific_object_permissions(min_permission_level, object_lookup):
     """
     Checks the user's permissions against the provided object_lookup.
     From here it will determine which partial permission it should
