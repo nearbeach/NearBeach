@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand
 from django.db.models import Q, F
 
 from NearBeach.models import (
-    OBJECT_TEMPLATE_TYPE,
     ObjectAssignment,
     ObjectTemplate,
     Project,
