@@ -51,7 +51,6 @@ export default {
 	name: "SubObjectLinks",
 	components: {
 		CarbonTrashCan,
-		Icon,
 	},
 	emits: ["update_link_results"],
 	props: {

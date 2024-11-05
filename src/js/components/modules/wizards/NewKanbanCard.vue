@@ -172,7 +172,6 @@ export default {
 	name: "NewKanbanCard",
 	components: {
 		editor: Editor,
-		Icon,
 		NSelect,
 	},
 	emits: [

@@ -40,7 +40,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "NotesModule",
 	components: {
-		Icon,
 		ListNotes,
 	},
 	computed: {

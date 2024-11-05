@@ -42,9 +42,6 @@
 import {Modal} from "bootstrap";
 import {Icon} from "@iconify/vue";
 
-//Mixin
-import AddTagWizard from "../wizards/AddTagWizard.vue";
-
 //VueX
 import {mapGetters} from "vuex";
 import {CarbonCloseOutline} from "../../../components";
@@ -53,8 +50,6 @@ export default {
 	name: "ListTagsModule",
 	components: {
 		CarbonCloseOutline,
-		AddTagWizard,
-		Icon,
 	},
 	props: {
 		closeModalBefore: {

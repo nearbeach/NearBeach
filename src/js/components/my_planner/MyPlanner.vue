@@ -92,7 +92,6 @@ export default {
 		CarbonTrashCan,
 		ConfirmUserJobDelete,
 		draggable,
-		Icon,
 		NewPlannerObjectWizard,
 	},
 	props: {

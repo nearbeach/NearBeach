@@ -110,7 +110,6 @@ export default {
 	components: {
 		ConfirmLinkDelete,
 		SubObjectLinks,
-		Icon,
 		NewRequirementLinkWizard,
 	},
 	data() {

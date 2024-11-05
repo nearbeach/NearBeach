@@ -252,7 +252,6 @@ export default {
 		CustomersListModule,
 		DocumentsModule,
 		EditHistoryNoteWizard,
-		Icon,
 		ListTagsModule,
 		NewCustomerModal,
 		NewHistoryNoteWizard,

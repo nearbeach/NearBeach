@@ -114,7 +114,6 @@ export default {
 	components: {
 		CarbonInformation,
 		CarbonLink,
-		Icon,
 		draggable,
 	},
 	props: {

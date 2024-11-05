@@ -240,7 +240,6 @@ export default {
 		CardNotes,
 		CardUsers,
 		DocumentsModule,
-		Icon,
 		ListPublicLinks,
 	},
 	emits: [

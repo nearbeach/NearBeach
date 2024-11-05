@@ -113,7 +113,6 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
-		Icon,
 		ValidationRendering,
 	},
 	props: {

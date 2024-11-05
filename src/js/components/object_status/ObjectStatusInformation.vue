@@ -129,7 +129,6 @@ export default {
 	components: {
 		CarbonCloseOutline,
 		draggable,
-		Icon,
 		ObjectStatusConfirmDelete,
 		ObjectStatusModal,
 	},

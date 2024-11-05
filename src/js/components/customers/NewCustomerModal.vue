@@ -68,7 +68,6 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
-		Icon,
 		NewCustomerForm,
 	},
 	props: {

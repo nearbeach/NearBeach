@@ -239,7 +239,6 @@ export default {
 	components: {
 		CarbonCloseOutline,
 		draggable,
-		Icon,
 		NRadio,
 		NRadioGroup,
 		NSelect,

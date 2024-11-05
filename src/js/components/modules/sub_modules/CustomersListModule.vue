@@ -59,7 +59,6 @@ export default {
 		CarbonEmail,
 		CarbonTrashCan,
 		ConfirmCustomerRemoval,
-		Icon,
 	},
 	props: {
 		customerResults: {

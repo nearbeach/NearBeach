@@ -75,7 +75,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "AddTagWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	props: {

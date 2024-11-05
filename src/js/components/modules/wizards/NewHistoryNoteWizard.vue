@@ -80,7 +80,6 @@ export default {
 	name: "NewHistoryNoteWizard",
 	components: {
 		editor: Editor,
-		Icon,
 	},
 	props: {
 		destination: {

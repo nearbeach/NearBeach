@@ -106,7 +106,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "AddUserToCard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	computed: {

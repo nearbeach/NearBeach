@@ -64,7 +64,6 @@ export default {
 	components: {
 		AddCustomerWizard,
 		CustomersListModule,
-		Icon,
 	},
 	data() {
 		return {

@@ -154,7 +154,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "AddBugWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	emits: [

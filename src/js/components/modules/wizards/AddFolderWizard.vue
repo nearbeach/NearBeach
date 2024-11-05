@@ -81,7 +81,6 @@ import {useReopenCardInformation} from "../../../composables/card_information/us
 export default {
 	name: "AddFolderWizard",
 	components: {
-		Icon,
 	},
 	props: {
 		destination: {

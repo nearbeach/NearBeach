@@ -74,7 +74,6 @@ export default {
 	name: "RequirementItemLinksModule",
 	components: {
     ConfirmLinkDelete,
-		Icon,
 		NewRequirementLinkWizard,
     SubObjectLinks,
 	},

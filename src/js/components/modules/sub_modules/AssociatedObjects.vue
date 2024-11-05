@@ -60,7 +60,6 @@ export default {
 	name: "AssociatedObjects",
 	components: {
 		RenderObjectCard,
-		Icon,
 	},
 	data() {
 		return {

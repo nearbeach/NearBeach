@@ -174,7 +174,6 @@ export default {
 		MdiMicrosoftExcel,
 		MdiMicrosoftPowerPoint,
 		MdiMicrosoftWord,
-		Icon,
 	},
 	props: {
 		overrideDestination: {

@@ -213,7 +213,6 @@ export default {
 		CarbonEmail,
 		CarbonLink,
 		editor: Editor,
-		Icon,
 		NSelect,
 		ValidationRendering,
 	},

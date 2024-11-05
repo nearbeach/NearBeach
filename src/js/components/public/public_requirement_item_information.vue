@@ -173,7 +173,6 @@ export default {
 		CarbonEmail,
 		CarbonLink,
 		editor,
-		Icon,
 		NSelect,
 	},
 	props: {

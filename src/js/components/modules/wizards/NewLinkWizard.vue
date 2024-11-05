@@ -171,7 +171,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "NewLinkWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	emits: [

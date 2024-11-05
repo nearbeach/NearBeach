@@ -176,9 +176,6 @@ import {useReopenCardInformation} from "../../../composables/card_information/us
 
 export default {
 	name: "UploadDocumentWizard",
-	components: {
-		Icon,
-	},
 	props: {
 		overrideDestination: {
 			type: String,

@@ -126,7 +126,6 @@ export default {
 		AddUserWizard,
 		ConfirmGroupDelete,
 		ConfirmUserDelete,
-		Icon,
 		RenderUserCardList,
 	},
 	props: {

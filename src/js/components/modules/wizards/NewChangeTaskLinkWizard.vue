@@ -116,7 +116,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "NewChangeTaskLinkWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	emits: [

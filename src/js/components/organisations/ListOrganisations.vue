@@ -48,7 +48,6 @@ export default {
 	components: {
 		CarbonEmail,
 		CarbonLink,
-		Icon,
 	},
 	props: {
 		organisationResults: {

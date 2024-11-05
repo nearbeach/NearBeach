@@ -66,7 +66,6 @@ export default {
 	name: "ChangeTaskLinkList",
 	components: {
 		NewChangeTaskLinkWizardVue,
-		Icon,
 		SubObjectLinks,
 	},
 	data() {

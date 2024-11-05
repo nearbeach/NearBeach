@@ -53,7 +53,6 @@ export default {
 	components: {
 		CarbonInformation,
 		CarbonLink,
-		Icon,
 	},
 	props: {
 		columnId: {

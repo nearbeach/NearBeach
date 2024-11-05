@@ -67,7 +67,6 @@ export default {
 	name: "RequirementItemsModule",
 	components: {
 		RenderObjectCard,
-		Icon,
 		NewRequirementItemWizard,
 	},
 	data() {

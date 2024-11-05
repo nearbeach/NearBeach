@@ -101,7 +101,6 @@ export default {
 	components: {
 		CarbonTrashCan,
 		AddBugWizard,
-		Icon,
 	},
 	data() {
 		return {

@@ -105,7 +105,6 @@ export default {
 	},
 	components: {
 		CarbonTrashCan,
-		Icon,
 	},
 	computed: {
 		...mapGetters({

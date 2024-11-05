@@ -117,7 +117,6 @@ export default {
 		CarbonTrashCan,
 		AdminAddUser,
 		ConfirmPermissionDelete,
-		Icon,
 	},
 	props: {
 		destination: {

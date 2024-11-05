@@ -72,7 +72,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "UpdateChangeLeadWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	emits: [

@@ -111,7 +111,6 @@ export default {
 	name: "ObjectLinks",
 	components: {
 		ConfirmLinkDelete,
-		Icon,
 		NewLinkWizard,
 		SubObjectLinks,
 	},

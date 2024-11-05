@@ -63,7 +63,6 @@ export default {
 	name: "RenderUserCardList",
 	components: {
 		CarbonTrashCan,
-		Icon,
 	},
 	emits: [
 		'remove_user',

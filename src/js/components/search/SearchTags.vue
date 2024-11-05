@@ -82,7 +82,6 @@ export default {
 	components: {
 		CarbonInformation,
 		EditTagModal,
-		Icon,
 	},
 	props: {
 		rootUrl: {

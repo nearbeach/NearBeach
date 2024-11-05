@@ -101,7 +101,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "AddCustomerWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	emits: [

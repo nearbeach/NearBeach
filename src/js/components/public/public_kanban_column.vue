@@ -41,7 +41,6 @@ export default {
 	components: {
 		CarbonInformation,
 		CarbonLink,
-		Icon,
 	},
 	emits: [
 		'card_clicked',

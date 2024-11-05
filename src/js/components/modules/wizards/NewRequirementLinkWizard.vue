@@ -180,7 +180,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "NewRequirementLinkWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	emits: ['update_module'],

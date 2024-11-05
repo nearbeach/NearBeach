@@ -38,7 +38,6 @@ export default {
 	name: "ListCustomers",
 	components: {
 		CarbonEmail,
-		Icon,
 	},
 	props: {
 		customerResults: {

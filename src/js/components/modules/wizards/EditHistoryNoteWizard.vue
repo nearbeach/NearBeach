@@ -82,7 +82,6 @@ export default {
 	name: "EditHistoryNoteWizard",
 	components: {
 		editor: Editor,
-		Icon,
 	},
 	data() {
 		return {

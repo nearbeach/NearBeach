@@ -157,7 +157,6 @@ export default {
 	},
 	components: {
 		editor: Editor,
-		Icon,
 		NSelect,
 		ValidationRendering,
 	},

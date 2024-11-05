@@ -298,7 +298,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "NewKanbanLinkWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	emits: ['new_card'],
