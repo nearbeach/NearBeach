@@ -182,7 +182,7 @@ export default {
 			this.startDateModel = new Date(data.start_date);
 			this.endDateModel = new Date(data.end_date);
 		},
-		updateNotification: async function() {
+		async updateNotification() {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect) {

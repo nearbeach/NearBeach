@@ -214,7 +214,7 @@ export default {
 	methods: {
 		useNewObjectUploadImage,
 		useNBTheme,
-		submitNewTask: async function () {
+		async submitNewTask() {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect || this.displayGroupPermissionIssue) {

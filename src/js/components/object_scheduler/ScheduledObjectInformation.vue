@@ -450,7 +450,7 @@ export default {
 			this.singleDayModel = data.singleDayModel;
 			this.startDateModel = data.startDateModel;
 		},
-		updateSchedulerObject: async function() {
+		async updateSchedulerObject() {
 			//Validate the data before sending
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect || this.displayGroupPermissionIssue || !this.isFormValid) {

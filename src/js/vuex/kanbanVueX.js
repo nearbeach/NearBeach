@@ -106,7 +106,7 @@ export const moduleKanban = {
             // 3. Update the card's information
             commit({
                 type: "updateKanbanCard",
-                card_id: card_id,
+                card_id,
                 kanban_column: new_card_column,
                 kanban_level: new_card_level,
                 kanban_card_sort_number: new_card_sort_number,
@@ -175,7 +175,7 @@ export const moduleKanban = {
             // 3. Update the card's information
             commit({
                 type: "updateKanbanCard",
-                card_id: card_id,
+                card_id,
                 kanban_column: new_card_column,
                 kanban_level: new_card_level,
                 kanban_card_sort_number: new_card_sort_number,
