@@ -167,9 +167,6 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
-
-
 //VueX
 import {mapGetters} from "vuex";
 import {useReopenCardInformation} from "../../../composables/card_information/useReopenCardinformation";

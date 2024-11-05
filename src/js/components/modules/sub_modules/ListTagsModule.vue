@@ -40,7 +40,6 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //VueX
 import {mapGetters} from "vuex";

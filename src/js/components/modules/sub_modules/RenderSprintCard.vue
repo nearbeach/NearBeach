@@ -46,7 +46,6 @@
 <script>
 //Vuex
 import { mapGetters } from "vuex";
-import {Icon} from "@iconify/vue";
 import {CarbonTrashCan} from "../../../components";
 
 //Composables

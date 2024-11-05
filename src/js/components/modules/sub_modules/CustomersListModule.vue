@@ -46,7 +46,6 @@
 
 <script>
 import { Modal } from "bootstrap";
-import {Icon} from "@iconify/vue";
 import ConfirmCustomerRemoval from "../wizards/ConfirmCustomerRemove.vue";
 
 //VueX

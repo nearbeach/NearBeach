@@ -53,7 +53,6 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //Components
 import NewChangeTaskLinkWizardVue from "../../modules/wizards/NewChangeTaskLinkWizard.vue";

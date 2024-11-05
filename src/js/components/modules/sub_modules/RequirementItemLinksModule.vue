@@ -61,7 +61,6 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 import NewRequirementLinkWizard from "../wizards/NewRequirementLinkWizard.vue";
 import ConfirmLinkDelete from "../wizards/ConfirmLinkDelete.vue";
 

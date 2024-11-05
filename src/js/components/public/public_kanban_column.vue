@@ -30,8 +30,6 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
-
 //Components
 import CarbonInformation from "../icons/CarbonInformation.vue";
 import CarbonLink from "../icons/CarbonLink.vue";

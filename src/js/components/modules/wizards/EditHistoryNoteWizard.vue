@@ -70,7 +70,6 @@
 
 <script>
 //JavaScript components
-import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
 
 //VueX

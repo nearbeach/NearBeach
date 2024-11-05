@@ -146,7 +146,6 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //Icons
 import CarbonArrowUp from "../../icons/CarbonArrowUp.vue";

@@ -89,7 +89,6 @@
 <script>
 //JavaScript components
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 import AddBugWizard from "../wizards/AddBugWizard.vue";
 
 //VueX

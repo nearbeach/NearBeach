@@ -94,7 +94,6 @@
 <script>
 //JavaScript components
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //Components
 import NewRequirementLinkWizard from "../wizards/NewRequirementLinkWizard.vue";

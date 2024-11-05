@@ -50,7 +50,6 @@
 
 <script>
 //JavaScript components
-import {Icon} from "@iconify/vue";
 import CustomersListModule from "./CustomersListModule.vue";
 import AddCustomerWizard from "../wizards/AddCustomerWizard.vue";
 import {Modal} from "bootstrap";

@@ -27,9 +27,6 @@
 </template>
 
 <script>
-//Mixin
-import {Icon} from "@iconify/vue";
-
 //VueX
 import {mapGetters} from "vuex";
 import {CarbonEmail} from "../../components";

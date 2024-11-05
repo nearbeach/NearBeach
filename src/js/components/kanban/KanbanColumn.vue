@@ -38,7 +38,6 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //Components
 import CarbonInformation from "../icons/CarbonInformation.vue"

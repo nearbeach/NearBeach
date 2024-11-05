@@ -105,7 +105,6 @@ import AdminAddUser from "./AdminAddUser.vue";
 import ConfirmPermissionDelete from "./ConfirmPermissionDelete.vue"
 
 //Icon
-import {Icon} from "@iconify/vue";
 import {CarbonTrashCan} from "../../components";
 
 //Composable

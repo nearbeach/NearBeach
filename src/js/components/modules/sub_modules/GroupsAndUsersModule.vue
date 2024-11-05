@@ -104,7 +104,6 @@
 
 <script>
 //JavaScript extras
-import {Icon} from "@iconify/vue";
 import {Modal} from "bootstrap";
 import AddGroupWizard from "../wizards/AddGroupWizard.vue";
 import AddUserWizard from "../wizards/AddUserWizard.vue";

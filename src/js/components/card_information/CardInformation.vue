@@ -216,7 +216,6 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
 import CardDetails from "./CardDetails.vue";
 import CardNotes from "./CardNotes.vue";
 import CardDescription from "./CardDescription.vue";

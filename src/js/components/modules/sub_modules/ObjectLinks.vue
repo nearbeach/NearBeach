@@ -98,7 +98,6 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 import NewLinkWizard from "../wizards/NewLinkWizard.vue";
 import SubObjectLinks from "./SubObjectLinks.vue";

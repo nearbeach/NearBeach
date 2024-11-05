@@ -42,7 +42,6 @@
 
 <script>
 import {mapGetters} from "vuex";
-import {Icon} from "@iconify/vue";
 
 import {Modal} from "bootstrap";
 import {CarbonTrashCan} from "../../../components";

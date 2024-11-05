@@ -31,7 +31,6 @@
 <script>
 // JavaScript Libraries
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 import ListNotes from "./ListNotes.vue";
 
 //VueX

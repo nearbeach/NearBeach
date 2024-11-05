@@ -49,8 +49,6 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
-
 //VueX
 import {mapGetters} from "vuex";
 

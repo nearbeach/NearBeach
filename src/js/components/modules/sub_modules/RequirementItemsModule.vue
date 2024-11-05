@@ -54,7 +54,6 @@
 <script>
 //JavaScript Libraries
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //Components
 import NewRequirementItemWizard from "../wizards/NewRequirementItemWizard.vue";

@@ -162,7 +162,6 @@
 
 <script>
 //JavaScript components
-import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
 //VueX

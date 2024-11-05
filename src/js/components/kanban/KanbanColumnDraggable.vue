@@ -99,7 +99,6 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
 import draggable from "vuedraggable";
 import {Modal} from "bootstrap";
 

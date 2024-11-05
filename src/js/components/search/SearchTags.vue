@@ -71,7 +71,6 @@
 <script>
 //Imports
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //Components
 import EditTagModal from "../tags/EditTagModal.vue";

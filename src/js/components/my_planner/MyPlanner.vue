@@ -75,7 +75,6 @@
 import draggable from "vuedraggable";
 import { DateTime } from "luxon";
 import { Modal } from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //Component
 import ConfirmUserJobDelete from "./ConfirmUserJobDelete.vue";

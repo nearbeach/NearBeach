@@ -40,7 +40,6 @@
 <script>
 //VueX
 import {mapGetters} from "vuex";
-import {Icon} from "@iconify/vue";
 import {CarbonEmail, CarbonLink} from "../../components";
 
 export default {

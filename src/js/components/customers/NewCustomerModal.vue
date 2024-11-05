@@ -51,8 +51,6 @@
 </template>
 
 <script>
-
-import {Icon} from "@iconify/vue";
 import NewCustomerForm from "./NewCustomerForm.vue";
 
 //VueX

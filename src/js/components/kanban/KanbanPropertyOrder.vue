@@ -220,7 +220,6 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 import {NSelect, NRadioGroup, NRadio, NSpace} from "naive-ui";
 import draggable from "vuedraggable";
 import {mapGetters} from "vuex";

@@ -221,7 +221,6 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //Components
 import CustomersListModule from "../modules/sub_modules/CustomersListModule.vue";

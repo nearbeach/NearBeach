@@ -158,7 +158,6 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
 import editor from "@tinymce/tinymce-vue";
 import { NSelect } from "naive-ui";
 

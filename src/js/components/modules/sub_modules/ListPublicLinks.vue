@@ -73,7 +73,6 @@
 import { mapGetters } from "vuex";
 
 //Icon
-import {Icon} from "@iconify/vue";
 import {CarbonTrashCan} from "../../../components";
 
 export default {

@@ -186,7 +186,6 @@
 
 <script>
 //JavaScript Libraries
-import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
 import {NSelect} from "naive-ui";
 
