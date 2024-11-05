@@ -149,7 +149,7 @@ export default {
 	},
 	methods: {
 		useNBTheme,
-		submitNewNotification: async function() {
+		async submitNewNotification() {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect) {

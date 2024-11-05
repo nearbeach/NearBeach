@@ -88,8 +88,8 @@ export default {
 				}
 
 				this.monthArray.push({
-					index: index,
-					delta: delta,
+					index,
+					delta,
 					width: delta * 48,
 					month: this.monthDictionary[point_date.getMonth()],
 					year: point_date.getFullYear(),

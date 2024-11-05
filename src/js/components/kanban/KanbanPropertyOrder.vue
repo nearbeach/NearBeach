@@ -400,7 +400,7 @@ export default {
 			//Open up the modal
 			this.openModal();
 		},
-		editModeAddItem: async function (/*var*/) {
+		async editModeAddItem() {
 			// Create variable names
 			const name = `kanban_${this.propertyName.toLowerCase()}_name`,
 				sort_number = `kanban_${this.propertyName.toLowerCase()}_sort_number`,

@@ -240,7 +240,7 @@ export default {
 			this.dateArray.push({
 				date: new_day.toFormat("yyyy-LL-dd"),
 				day: new_day.toFormat("cccc"),
-				data: data,
+				data,
 			});
 		}
 	},

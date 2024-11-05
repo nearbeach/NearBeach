@@ -80,7 +80,7 @@ export default {
 		confirmRemoveLink(objectLink) {
 			//Send link information up to VueX
 			this.$store.commit("updateObjectLink", {
-				objectLink: objectLink,
+				objectLink,
 			});
 
 			//Open the modal

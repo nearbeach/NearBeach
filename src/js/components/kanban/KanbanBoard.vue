@@ -108,7 +108,7 @@ export default {
 		expandLevel(level_id) {
 			//Update the VueX data
 			this.$store.dispatch("updateLevelCollapse", {
-				level_id: level_id,
+				level_id,
 			});
 		},
 		getColumnCount(column_id) {

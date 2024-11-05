@@ -94,7 +94,7 @@ export default {
 			set(value) {
 				this.$store.commit("updateValue", {
 					field: "cardDescription",
-					value: value,
+					value,
 				});
 			},
 		},
@@ -108,7 +108,7 @@ export default {
 		},
 		updateCard(close_modal) {
 			this.$emit("update_card", {
-				close_modal: close_modal,
+				close_modal,
 			});
 		},
 	},

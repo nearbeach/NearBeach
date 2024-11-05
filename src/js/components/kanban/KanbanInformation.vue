@@ -425,7 +425,7 @@ export default {
 			this.$store.commit({
 				type: "initKanbanSettings",
 				canDragCards: can_drag_cards,
-				levels: levels,
+				levels,
 			})
 		}
 	},

@@ -86,7 +86,7 @@ export default {
 		},
 		removeToast(unique_uuid) {
 			this.$store.dispatch("removeToast", {
-				unique_uuid: unique_uuid,
+				unique_uuid,
 			});
 		}
 	},

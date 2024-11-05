@@ -37,7 +37,7 @@ export default {
 				//Update the VueX
 				this.$store.commit({
 					type: "updateChangeTaskRequiredBy",
-					requiredBy: requiredBy,
+					requiredBy,
 				});
 
 				//Destroy the first timer if it exists

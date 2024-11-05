@@ -111,7 +111,7 @@ export default {
 		}),
 	},
 	methods: {
-		submitNewCustomer: async function () {
+		async submitNewCustomer() {
 			//Flag downstream to check validation
 			this.flagValidationCheck = true;
 

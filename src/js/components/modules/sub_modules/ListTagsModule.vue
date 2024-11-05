@@ -133,7 +133,7 @@ export default {
 			).then(() => {
 				//Remove data from tagList
 				this.$store.dispatch("removeAssignedTag", {
-					tag_id: tag_id,
+					tag_id,
 				});
 
 				//If destination is a kanban card, we update the card's tag list

@@ -281,7 +281,7 @@ export default {
 			}
 			return user_level_project;
 		},
-		submitNewScheduledObject: async function() {
+		async submitNewScheduledObject() {
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect || this.displayGroupPermissionIssue || !this.isFormValid) {
                 //Tell the user to fix the validation issues

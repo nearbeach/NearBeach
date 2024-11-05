@@ -299,7 +299,7 @@ export default {
 		async onEnd(event) {
 			//Tell VueX we have moved the card - VueX will handle the logistic. Wait for vuex
 			await this.$store.dispatch("kanbanCardMoved", {
-				event: event,
+				event,
 			});
 
 			//Get the y=data

@@ -179,7 +179,7 @@ export default {
 					});
 			});
 		},
-		submitNewCustomer: async function () {
+		async submitNewCustomer() {
 			//Flag downstream to check validation
 			this.flagValidationCheck = true;
 

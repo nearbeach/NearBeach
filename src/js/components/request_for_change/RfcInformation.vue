@@ -522,7 +522,7 @@ export default {
 				releaseDateModel: this.localReleaseDate,
 			});
 		},
-		updateRFC: async function () {
+		async updateRFC() {
 			//Check form validation
 			const validation_results = await this.v$.$validate();
 

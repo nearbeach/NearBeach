@@ -191,7 +191,7 @@ export default {
 		},
 	},
 	methods: {
-		addUser: async function () {
+		async addUser() {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect) {

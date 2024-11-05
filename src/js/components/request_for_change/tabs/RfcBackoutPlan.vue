@@ -116,8 +116,8 @@ export default {
 		},
 		updateValues(modelName, modelValue) {
 			this.$emit("update_values", {
-				modelName: modelName,
-				modelValue: modelValue,
+				modelName,
+				modelValue,
 			});
 		},
 	},
