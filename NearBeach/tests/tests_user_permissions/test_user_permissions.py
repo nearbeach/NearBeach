@@ -1,7 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.db.models import Q
-from NearBeach.models import UserGroup, Group, ObjectAssignment
+from NearBeach.models import UserGroup
 
 
 def login_user(c: object, self: object) -> object:
