@@ -8,6 +8,7 @@ test_patterns = [
 exclude_patterns = [
   "browserstack/**",
   "cypress/**",
+  "NearBeach/migrations/**",
   "NearBeach/static/**",
   "Nearbeach/migrations/**",
   "tests/**",

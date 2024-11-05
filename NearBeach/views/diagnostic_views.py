@@ -20,8 +20,6 @@ def diagnostic_email_test(request):
     try:
         default_email = getattr(settings, "DEFAULT_FROM_EMAIL", "error@error.com")
 
-        r = request.user
-
         send_mail(
             "NearBeach Diagnostic Test Email. EOM",
             "Please ignore.",

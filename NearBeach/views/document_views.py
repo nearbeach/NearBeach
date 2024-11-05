@@ -53,7 +53,7 @@ def connect_check_client_s3(botoInitValues):
 
     # Check to see if the connection works
     try:
-        response = client.list_buckets()
+        client.list_buckets()
     except Exception as e:
         print(F"An issue has occurred trying to connect to the S3 bucket. Please see the following errors - {e}")
 
@@ -674,7 +674,7 @@ def transfer_new_object_uploads(destination, location_id, uuid):
     An Internal function that will add the new destination/location_id to an already uploaded document(s) which match
     the supplied UUID. Thus removing the lack of permissions around the document.
     """
-    document_permission_results = DocumentPermission.objects.filter(
+    DocumentPermission.objects.filter(
         is_deleted=False,
         new_object=uuid,
     ).update(

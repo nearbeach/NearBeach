@@ -146,18 +146,6 @@ class TeamLeaderPermissionTest(TestCase):
             username=2,
         )
 
-        group_results = Group.objects.filter(
-            Q(
-                is_deleted=False,
-                # The object_lookup groups
-                group_id__in=ObjectAssignment.objects.filter(
-                    is_deleted=False,
-                    kanban_board_id=2,
-                ).values("group_id"),
-            )
-            & Q(group_id__in=user_group_results.values("group_id"))
-        )
-
         # Make sure the admin user can open the kanban
         response_2 = c.get(reverse("kanban_information", args=[1]))
         self.assertEqual(response_2.status_code, 403)
