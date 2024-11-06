@@ -286,7 +286,7 @@ export default {
 				)
 				.then((response) => {
 					//Get the first value from the response
-					let new_card = response.data[0];
+					const new_card = response.data[0];
 					new_card.tag_list = [];
 
 					//Emit the data upstream

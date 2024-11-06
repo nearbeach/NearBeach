@@ -369,7 +369,7 @@ export default {
 				data_to_send
 			).then((response) => {
 				//Get the response data
-				let new_link = response.data[0];
+				const new_link = response.data[0];
 				new_link.tag_list = [];
 
 				//Data has been successfully saved. Time to add the card to the board

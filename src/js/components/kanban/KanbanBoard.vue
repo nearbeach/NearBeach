@@ -157,7 +157,7 @@ export default {
 				//So we need to use the scroll width of the container
 				const scroll_width = container_element.scrollWidth;
 				// const header_element = document.getElementsByClassName("kanban-edit-text")[0];
-				let elements = document.getElementsByClassName("kanban-level-div");
+				const elements = document.getElementsByClassName("kanban-level-div");
 
 				//Loop through each element
 				Array.from(elements).forEach((element) => {
