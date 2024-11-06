@@ -135,6 +135,9 @@ export default {
 	components: {
 		NSelect,
 	},
+	emits: [
+		"update_card",
+	],
 	data() {
 		return {
 			listPriority: [

@@ -74,6 +74,9 @@ export default {
 	components: {
 		editor: Editor,
 	},
+	emits: [
+		"update_card",
+	],
 	props: {},
 	data() {
 		return {

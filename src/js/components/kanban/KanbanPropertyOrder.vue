@@ -235,6 +235,9 @@ export default {
 	setup() {
 		return {v$: useVuelidate()};
 	},
+	emits: [
+		"update_property_list",
+	],
 	components: {
 		CarbonCloseOutline,
 		draggable,
