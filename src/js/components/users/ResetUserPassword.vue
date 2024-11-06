@@ -211,7 +211,7 @@ export default {
 
 					// Loop through each key and value and write the error message.
 					for (const [key, value] of Object.entries(error.response.data)) {
-						error_message = error_message + `${key} - ${value[0].message} `;
+						error_message = `${error_message} ${key} - ${value[0].message} `;
 					}
 				}
 
