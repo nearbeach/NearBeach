@@ -132,13 +132,10 @@ export default {
 			this.bugList.push(data_object);
 		},
 		getBugHyperLink(bug) {
-			if (
-				bug.bug_client__list_of_bug_client__bug_client_name ===
-				"Bugzilla"
-			) {
+			if (bug.bug_client__list_of_bug_client__bug_client_name === "Bugzilla") {
 				return `${bug.bug_client__bug_client_url}/show_bug.cgi?id=${bug.bug_code}`;
 			}
-			return "javascript:void(0)";
+			return "#";
 		},
 		getBugList() {
 			//We don't need to get the bug list when destination is requirement_items
