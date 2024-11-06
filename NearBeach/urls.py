@@ -516,7 +516,7 @@ urlpatterns = [
     path(
         "new_requirement_item/save/<int:requirement_id>/",
         requirement_item_views.new_requirement_item,
-        name="new_requirement_item",
+        name="new_requirement_item_save",
     ),
     path(
         "new_scheduled_object/",
