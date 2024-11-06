@@ -72,7 +72,7 @@ export const moduleKanban = {
             //Required Data
             const event = payload.event;
 
-            var new_elem = event.to,
+            const new_elem = event.to,
                 old_elem = event.from,
                 card_id = event.item.dataset.cardId,
                 card_priorty = event.item.dataset.cardPriority;
@@ -142,8 +142,8 @@ export const moduleKanban = {
             //Required Data
             const event = payload.event;
 
-            var new_elem = event.to,
-                
+            const new_elem = event.to,
+
                 card_id = event.item.dataset.cardId;
 
             //Setup variables (for shorthand)
@@ -208,7 +208,7 @@ export const moduleKanban = {
             if (event === undefined) return;
 
             //Determine if we are dragging to the same or different location
-            var new_elem = event.to,
+            const new_elem = event.to,
                 old_elem = event.from;
 
             //Setup variables (for shorthand)
