@@ -13,16 +13,17 @@ import json, datetime
 
 # Import NearBeach Models
 from NearBeach.models import (
+    Bug,
     KanbanBoard,
     KanbanCard,
     KanbanColumn,
+    Notification,
     ObjectAssignment,
-    UserGroup,
-    Task,
-    RequestForChange,
     Project,
-    Bug,
+    RequestForChange,
     Requirement,
+    Task,
+    UserGroup,
 )
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.user_job_views import get_my_planning_objects
