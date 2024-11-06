@@ -239,7 +239,6 @@ def my_planner_get_object_list(request, destination):
 
     # Using the list of ids. We now grab the objects
     dict_object = DICT_PLANNING_OBJECTS[destination]
-    location_id = dict_object["location_id"]
 
     results = dict_object["object"].objects.filter(
         is_deleted=False,

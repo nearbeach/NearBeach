@@ -139,12 +139,6 @@ class TeamLeaderPermissionTest(TestCase):
         response = c.get(reverse("kanban_information", args=["2"]))
         self.assertEqual(response.status_code, 200)
 
-        # TEMP CODE - CHECK USER PERMISSIONS LOGIC
-        user_group_results = UserGroup.objects.filter(
-            is_deleted=False,
-            username=2,
-        )
-
         # Make sure the admin user can open the kanban
         response_2 = c.get(reverse("kanban_information", args=[1]))
         self.assertEqual(response_2.status_code, 403)
