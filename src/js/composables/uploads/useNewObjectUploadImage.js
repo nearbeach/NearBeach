@@ -16,7 +16,7 @@ export function useNewObjectUploadImage(blobInfo) {
     data_to_send.set("uuid", this.uuid);
 
     //Use axios to send the data
-    return this.axios.post(
+    this.axios.post(
         `${rootUrl}documentation/new_object_upload/`,
         data_to_send,
     ).then((response) => {
