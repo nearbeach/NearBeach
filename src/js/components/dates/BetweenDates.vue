@@ -76,9 +76,6 @@ export default {
 				temp_date.setSeconds(0);
 				temp_date.setMilliseconds(0);
 
-				//Add on 14 days
-				new Date(temp_date.setDate(temp_date.getDate() + 14));
-
 				return temp_date.getTime();
 			},
 		},
