@@ -258,7 +258,7 @@ export default {
 
 			//Filter for the bug information out of the bugResults
 			const filted_bug_results = this.bugResults.filter((row) => {
-				return row.id == bug_id;
+				return parseInt(row.id) === parseInt(bug_id);
 
 			});
 

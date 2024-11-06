@@ -394,7 +394,7 @@ export default {
 		getUserName(user_id) {
 			//Filter for the user by using the user_id
 			const single_user = this.userList.filter((row) => {
-				return row.id == user_id;
+				return parseInt(row.id) === parseInt(user_id);
 			});
 
 			//If there are no results - default to ---
