@@ -276,7 +276,6 @@ class ChangeTask(models.Model):
         max_length=255,
     )
     change_task_description = models.TextField(
-        blank=True,
         null=True,
         default="",
     )
@@ -402,7 +401,6 @@ class Document(models.Model):
     document_description = models.CharField(max_length=255)
     document_url_location = models.TextField(
         # Contains URLS
-        null=True,
         blank=True,
         default="",
     )
