@@ -508,11 +508,11 @@ def handle_document_permissions(
 class FileHandler:
 
     @staticmethod
-    def upload(self, upload_document, document_results, file):
+    def upload(_, upload_document, document_results, file):
         return NotImplemented
 
     @staticmethod
-    def fetch(self, document_results):
+    def fetch(_, document_results):
         return NotImplemented
 
 
