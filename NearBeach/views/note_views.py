@@ -225,7 +225,7 @@ def organisation_note_list(request, _, organisation_id, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @check_specific_object_permissions(min_permission_level=1, object_lookup="organisation")
-def organisation_update_note(request, _, *args, **kwargs):
+def organisation_update_note(request, *args, **kwargs):
     generic_update_note(request)
 
     return HttpResponse("")
@@ -233,7 +233,7 @@ def organisation_update_note(request, _, *args, **kwargs):
 
 @login_required(login_url="login", redirect_field_name="")
 @check_specific_object_permissions(min_permission_level=1, object_lookup="object_note")
-def update_note(request, _, *args, **kwargs):
+def update_note(request, *args, **kwargs):
     generic_update_note(request)
 
     return HttpResponse("")
