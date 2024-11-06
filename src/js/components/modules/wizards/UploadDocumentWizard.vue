@@ -328,6 +328,8 @@ export default {
 			this.maxUploadString = `Max Upload Size: ${parseFloat(
 				(this.maxUploadSize / Math.pow(k, i)).toFixed(2)
 			)} ${sizes[i]}`;
+
+			return "";
 		},
 	},
 	updated() {

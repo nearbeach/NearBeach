@@ -12,7 +12,7 @@ export function useUploadImage(blobInfo) {
     data_to_send.set("document_description", value.filename());
 
     //Use axios to send the data
-    return this.axios.post(
+    this.axios.post(
         `${rootUrl}documentation/${destination}/${locationId}/upload/`,
         data_to_send,
     ).then((response) => {

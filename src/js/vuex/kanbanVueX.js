@@ -143,7 +143,6 @@ export const moduleKanban = {
             const event = payload.event;
 
             const new_elem = event.to,
-
                 card_id = event.item.dataset.cardId;
 
             //Setup variables (for shorthand)
@@ -169,7 +168,7 @@ export const moduleKanban = {
 
 			//If they are the same (i.e. drag and dropped in same place) - return
 			if (largest === smallest) {
-				return [];
+				return;
 			}
 
             // 3. Update the card's information
