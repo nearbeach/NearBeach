@@ -227,12 +227,10 @@ import ListPublicLinks from "../modules/sub_modules/ListPublicLinks.vue";
 import {mapGetters} from "vuex";
 
 import ListTagsModule from "../modules/sub_modules/ListTagsModule.vue";
-import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
 
 export default {
 	name: "CardInformation",
 	components: {
-		AddTagWizard,
 		ListTagsModule,
 		CardDescription,
 		CardDetails,
