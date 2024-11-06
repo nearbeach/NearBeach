@@ -53,7 +53,7 @@ import {useNiceDate} from "../../../composables/datetime/useNiceDate";
 
 export default {
 	name: "RenderSprintCard",
-	components: {CarbonTrashCan, Icon},
+	components: {CarbonTrashCan},
 	props: {
 		canDelete: {
 			type: Boolean,
