@@ -255,7 +255,7 @@ export default {
 			);
 			newChangeTaskModal.show();
 		},
-		async blockedBy(change_task_id) {
+		blockedBy(change_task_id) {
 			/*
 			The blockedBy function accepts the current change_task_id.
 

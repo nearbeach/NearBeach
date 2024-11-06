@@ -68,7 +68,7 @@ export const moduleKanban = {
         },
     },
     actions: {
-        async dragDifferentColumn({commit, state}, payload) {
+        dragDifferentColumn({commit, state}, payload) {
             //Required Data
             const event = payload.event;
 
@@ -138,7 +138,7 @@ export const moduleKanban = {
                 });
             });
         },
-        async dragSameColumn({commit, state}, payload) {
+        dragSameColumn({commit, state}, payload) {
             //Required Data
             const event = payload.event;
 
