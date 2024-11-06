@@ -1,6 +1,5 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from NearBeach.models import UserGroup
 
 
 def login_user(c: object, self: object) -> object:
