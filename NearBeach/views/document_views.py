@@ -508,11 +508,11 @@ def handle_document_permissions(
 class FileHandler:
 
     @staticmethod
-    def upload(upload_document, document_results, file):
+    def upload(self, upload_document, document_results, file):
         return NotImplemented
 
     @staticmethod
-    def fetch(document_results):
+    def fetch(self, document_results):
         return NotImplemented
 
 
@@ -591,6 +591,7 @@ class S3FileHandler(FileHandler):
             self._bucket,
             str(document_results.document),
         )
+
 
 class AzureFileHanlder(FileHandler):
     def __init__(self, local_settings):
