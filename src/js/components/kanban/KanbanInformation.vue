@@ -92,7 +92,6 @@
 			></confirm-card-archive>
 
 			<new-kanban-card
-				v-bind:kanban-card-results="kanbanCardResults"
 				v-bind:column-results="columnResults"
 				v-bind:level-results="levelResults"
 				v-bind:kanban-board-results="kanbanBoardResults"

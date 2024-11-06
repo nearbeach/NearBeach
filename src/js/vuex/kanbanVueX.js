@@ -252,6 +252,9 @@ export const moduleKanban = {
                 return parseInt(row.kanban_column) === parseInt(column_id);
             }).length;
         },
+        getKanbanCardResults: (state) => {
+            return state.kanbanCardResults;
+        },
         getLevelResults: (state) => {
             return state.levelResults;
         },
