@@ -276,8 +276,8 @@ class ChangeTask(models.Model):
         max_length=255,
     )
     change_task_description = models.TextField(
-        null=True,
         default="",
+        blank=True,
     )
     change_task_start_date = models.DateTimeField()
     change_task_end_date = models.DateTimeField()
