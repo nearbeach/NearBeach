@@ -15,39 +15,45 @@
 					Kanban Menu
 				</button>
 				<ul class="dropdown-menu">
-					<li><a class="dropdown-item" href="#">
-						<n-switch v-model:value="canDragCards"
-								  @update:value="updateCanDragCards"
-								  v-if="kanbanBoardResults[0].fields.kanban_board_status !== 'Closed' && userLevel >= 2"
-						>
-							<template #checked>
-								Can Drag Cards
-							</template>
-							<template #unchecked>
-								Card Position Locked
-							</template>
-						</n-switch>
-					</a></li>
-					<li>
+					<li v-if="kanbanStatus.toLowerCase() !== 'closed'">
+						<a class="dropdown-item" href="#">
+							<n-switch v-model:value="canDragCards"
+									  @update:value="updateCanDragCards"
+									  v-if="kanbanBoardResults[0].fields.kanban_board_status !== 'Closed' && userLevel >= 2"
+							>
+								<template #checked>
+									Can Drag Cards
+								</template>
+								<template #unchecked>
+									Card Position Locked
+								</template>
+							</n-switch>
+						</a>
+					</li>
+					<li v-if="kanbanStatus.toLowerCase() !== 'closed'">
 						<hr class="dropdown-divider"
 							v-if="userLevel >= 3"
 						>
 					</li>
-					<li><a
-						class="dropdown-item"
-						href="#"
-						v-on:click="addNewKanbanCard()"
-					>
-						Add New Card
-					</a></li>
-					<li><a
-						class="dropdown-item"
-						href="#"
-						v-on:click="addNewLink()"
-					>
-						Add New Link to Object
-					</a></li>
-					<li>
+					<li v-if="kanbanStatus.toLowerCase() !== 'closed'">
+						<a
+							class="dropdown-item"
+							href="#"
+							v-on:click="addNewKanbanCard()"
+						>
+							Add New Card
+						</a>
+					</li>
+					<li v-if="kanbanStatus.toLowerCase() !== 'closed'">
+						<a
+							class="dropdown-item"
+							href="#"
+							v-on:click="addNewLink()"
+						>
+							Add New Link to Object
+						</a>
+					</li>
+					<li v-if="kanbanStatus.toLowerCase() !== 'closed'">
 						<hr class="dropdown-divider"
 							v-if="userLevel >= 3"
 						>
@@ -286,6 +292,7 @@ export default {
 		return {
 			canDragCards: true,
 			cardInformation: {},
+			kanbanStatus: this.kanbanBoardResults[0].fields.kanban_board_status,
 			localKanbanCardResults: this.kanbanCardResults,
 			refreshUserList: false,
 			newCardInfo: [],
