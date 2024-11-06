@@ -93,7 +93,5 @@ export default {
 			return "Task";
 		},
 	},
-	mounted() {
-	}
 }
 </script>
