@@ -214,7 +214,7 @@ def document_list_folders(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_remove(request, _, __):
+def document_remove(request, destination, location_id, *args, **kwargs):
     # Get form data
     form = DocumentRemoveForm(request.POST)
     if not form.is_valid():
@@ -225,7 +225,10 @@ def document_remove(request, _, __):
     document_update.is_deleted = True
     document_update.save()
 
-    document_permission_update = DocumentPermission.objects.get(document_key = document_update.document_key)
+    document_permission_update = DocumentPermission.objects.get(
+        document_key = document_update.document_key,
+        **{F"{destination}_id": location_id},
+    )
     document_permission_update.is_deleted = True
     document_permission_update.save()
 
