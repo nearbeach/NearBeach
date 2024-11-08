@@ -95,6 +95,14 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("note", this.cardNoteModel);
 
+			this.$store.dispatch("newToast", {
+				header: "Adding Note",
+				message: "Currently adding note to object",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "adding_note",
+			});
+
 			//Use axios to send the data
 			this.axios.post(
 				`${this.rootUrl}object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
@@ -108,12 +116,20 @@ export default {
 
 				//Clear the card note model
 				this.cardNoteModel = "";
+
+				this.$store.dispatch("newToast", {
+					header: "Successfully Added Note",
+					message: "Successfully Added Note to Object",
+					extra_classes: "bg-success",
+					unique_type: "adding_note",
+				});
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Can't add Note",
 					message: `Sorry, we could not add a note for you. Error -> ${error}`,
 					extra_classes: "bg-danger",
 					delay: 0,
+					unique_type: "adding_note",
 				});
 			});
 		},
