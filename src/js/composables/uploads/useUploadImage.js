@@ -3,8 +3,14 @@ import { toValue } from "vue";
 export function useUploadImage(blobInfo, progress) {
     const value = toValue(blobInfo);
     const rootUrl = this.$store.getters.getRootUrl;
-    const destination = this.$store.getters.getDestination;
-    const locationId = this.$store.getters.getLocationId;
+    let destination = this.$store.getters.getDestination;
+    let locationId = this.$store.getters.getLocationId;
+
+    //If the upload, is happening on a kanban board, change destination to kanban_card, and use the card Id
+    if (destination === "kanban_board") {
+        destination = "kanban_card";
+        locationId = this.$store.getters.getCardId;
+    }
 
     //Create the form
     const data_to_send = new FormData();
