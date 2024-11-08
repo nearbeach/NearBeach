@@ -197,12 +197,29 @@ export default {
 			data_to_send.set("password", this.password1Model);
 			data_to_send.set("username", this.username);
 
+			//Notify User
+			this.$store.dispatch("newToast", {
+				header: "Updating User Password",
+				message: "Please wait. Updating Password",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "update-user-password",
+			});
+
 			//Setup Axios to send data
 			this.axios.post(
 				`${this.rootUrl}${this.location}update_user_password/`,
 				data_to_send
 			).then(() => {
 				this.closeModal();
+
+				this.$store.dispatch("newToast", {
+					header: "Updated User Password",
+					message: "User Password Successfully Updated",
+					extra_classes: "bg-success",
+					delay: 0,
+					unique_type: "update-user-password",
+				});
 			}).catch((error) => {
 				let error_message = "There was an issue trying to save your password.";
 
@@ -220,6 +237,7 @@ export default {
 					message: error_message,
 					extra_classes: "bg-danger",
 					delay: 0,
+					unique_type: "update-user-password",
 				});
 			});
 		},
