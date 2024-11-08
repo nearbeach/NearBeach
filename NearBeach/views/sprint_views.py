@@ -237,11 +237,10 @@ def new_sprint(request, destination, location_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_sprint_permission_with_sprint(2)
-def remove_sprint(request, destination, location_id, *args, **kwargs):
+def remove_sprint(request, destination, location_id, sprint_id, *args, **kwargs):
     form = RemoveSprintForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-
 
     SprintObjectAssignment.objects.filter(
         **{F"{destination}_id": location_id},
