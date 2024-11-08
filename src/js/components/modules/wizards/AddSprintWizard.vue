@@ -129,7 +129,7 @@ export default {
 			data_to_send.set("sprint_id", this.sprintModel);
 
 			this.axios.post(
-				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_sprint/`,
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_sprint/${this.sprintModel}/`,
 				data_to_send,
 			).then((response) => {
 				//Send the data upstream

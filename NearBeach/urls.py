@@ -607,7 +607,7 @@ urlpatterns = [
         name="add_object_to_sprint",
     ),
     path(
-        "object_data/<destination>/<location_id>/add_sprint/",
+        "object_data/<destination>/<location_id>/add_sprint/<sprint_id>/",
         sprint_views.add_sprint_to_object,
         name="add_sprint_to_object",
     ),
