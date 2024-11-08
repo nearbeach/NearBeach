@@ -5,6 +5,7 @@
 		description, please hit the "Update Descritpion" button
 	</p>
 	<editor
+		license-key="gpl"
 		:init="{
 			license_key: 'gpl',
             file_picker_types: 'image',

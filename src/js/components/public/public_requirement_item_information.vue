@@ -54,6 +54,7 @@
 									alt="loading image for Tinymce"
 								/>
 								<editor
+									license-key="gpl"
 									:init="{
 									license_key: 'gpl',
 									height: 500,

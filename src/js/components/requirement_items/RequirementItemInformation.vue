@@ -63,6 +63,7 @@
 								alt="loading image for Tinymce"
 							/>
 							<editor
+								license-key="gpl"
 								:init="{
 								license_key: 'gpl',
 								file_picker_types: 'image',

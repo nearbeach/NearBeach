@@ -48,6 +48,7 @@
 				</div>
 				<div class="note-history--note">
 					<editor
+						license-key="gpl"
 						:init="{
 						license_key: 'gpl',
 						height: 250,

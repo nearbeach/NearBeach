@@ -71,6 +71,7 @@
 							alt="loading image for Tinymce"
 						/>
 						<editor
+							license-key="gpl"
 							:init="{
 							file_picker_types: 'image',
 							height: 500,

@@ -33,6 +33,7 @@
 						submit button to submit the note.
 					</p>
 					<editor
+						license-key="gpl"
 						:init="{
 							license_key: 'gpl',
 							height: 300,

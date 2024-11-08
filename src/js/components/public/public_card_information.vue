@@ -94,6 +94,7 @@
 		</div>
 		<div class="col-md-8">
 			<editor
+				license-key="gpl"
 				:init="{
 					license_key: 'gpl',
 					height: 300,

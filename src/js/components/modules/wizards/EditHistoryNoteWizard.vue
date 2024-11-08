@@ -33,6 +33,7 @@
 						to submit the changes.
 					</p>
 					<editor
+						license-key="gpl"
 						:init="{
 							license_key: 'gpl',
 							height: 300,

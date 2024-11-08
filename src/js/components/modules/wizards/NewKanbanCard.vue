@@ -81,6 +81,7 @@
 						</div>
 						<div class="col-md-8">
 							<editor
+								license-key="gpl"
 								:init="{
 									license_key: 'gpl',
 									file_picker_types: 'image',

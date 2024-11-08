@@ -14,6 +14,7 @@
 			<div class="col-md-8">
 				<label>Note Box</label>
 				<editor
+					license-key="gpl"
 					:init="{
 						license_key: 'gpl',
 						height: 250,
