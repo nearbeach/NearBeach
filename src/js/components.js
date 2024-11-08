@@ -1,11 +1,66 @@
 import {defineAsyncComponent} from "vue/dist/vue.esm-bundler";
 
-export const // BugsModule = defineAsyncComponent(() =>
-    //     import(
-    //         /* webpackChunkName: "bugs-module" */
-    //         './components/modules/sub_modules/BugsModule.vue'
-    //     )
-    // ),
+export const
+    CarbonArrowUp = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "carbon-arrow-up" */
+            "./components/icons/CarbonArrowUp.vue"
+            )
+    ),
+    CarbonCloseOutline = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "carbon-close-outline" */
+            "./components/icons/CarbonCloseOutline.vue"
+            )
+    ),
+    CarbonDocument = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "carbon-document" */
+            "./components/icons/CarbonDocument.vue"
+            )
+    ),
+    CarbonDocumentPdf = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "carbon-document-pdf" */
+            "./components/icons/CarbonDocumentPdf.vue"
+            )
+    ),
+    CarbonEmail = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "carbon-email" */
+            "./components/icons/CarbonEmail.vue"
+            )
+    ),
+    CarbonFolder = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "carbon-folder" */
+            "./components/icons/CarbonFolder.vue"
+            )
+    ),
+    CarbonImage = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "carbon-image" */
+            "./components/icons/CarbonImage.vue"
+            )
+    ),
+    CarbonInformation = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "carbon-information" */
+            "./components/icons/CarbonInformation.vue"
+            )
+    ),
+    CarbonLink = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "carbon-link" */
+            "./components/icons/CarbonLink.vue"
+            )
+    ),
+    CarbonTrashCan = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "carbon-trash-can" */
+            "./components/icons/CarbonTrashCan.vue"
+            )
+    ),
     ChangeTaskInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "change-task-information" */
@@ -132,18 +187,24 @@ export const // BugsModule = defineAsyncComponent(() =>
             "./components/search/ListSearchResults.vue"
             )
     ),
-    // NewCustomer = defineAsyncComponent(() =>
-    //     import(
-    //         /* webpackChunkName: "new-customer" */
-    //         './components/customers/NewCustomer.vue'
-    //     )
-    // ),
-    // NewOrganisation = defineAsyncComponent(() =>
-    //     import(
-    //         /* webpackChunkName: "new-customer" */
-    //         './components/organisations/NewOrganisation.vue'
-    //     )
-    // )
+    MdiMicrosoftExcel = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "mdi-microsoft-excel" */
+            "./components/icons/MdiMicrosoftExcel.vue"
+            )
+    ),
+    MdiMicrosoftPowerPoint = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "mdi-microsoft-power-point" */
+            "./components/icons/MdiMicrosoftPowerPoint.vue"
+            )
+    ),
+    MdiMicrosoftWord = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "mdi-microsoft-word" */
+            "./components/icons/MdiMicrosoftWord.vue"
+            )
+    ),
     MyPlanner = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "my-planner" */

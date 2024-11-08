@@ -14,6 +14,7 @@
 			<div class="col-md-8">
 				<label>Note Box</label>
 				<editor
+					license-key="gpl"
 					:init="{
 						license_key: 'gpl',
 						height: 250,
@@ -22,7 +23,8 @@
             			toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 			 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
             			skin: `${this.skin}`,
-			            content_css: `${this.contentCss}`
+			            content_css: `${this.contentCss}`,
+			            relative_urls: false,
 					}"
 					v-model="cardNoteModel"
 					v-bind:disabled="kanbanStatus === 'Closed'"
@@ -95,6 +97,14 @@ export default {
 			const data_to_send = new FormData();
 			data_to_send.set("note", this.cardNoteModel);
 
+			this.$store.dispatch("newToast", {
+				header: "Adding Note",
+				message: "Currently adding note to object",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "adding_note",
+			});
+
 			//Use axios to send the data
 			this.axios.post(
 				`${this.rootUrl}object_data/kanban_card/${this.$store.state.card.cardId}/add_notes/`,
@@ -108,12 +118,20 @@ export default {
 
 				//Clear the card note model
 				this.cardNoteModel = "";
+
+				this.$store.dispatch("newToast", {
+					header: "Successfully Added Note",
+					message: "Successfully Added Note to Object",
+					extra_classes: "bg-success",
+					unique_type: "adding_note",
+				});
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Can't add Note",
 					message: `Sorry, we could not add a note for you. Error -> ${error}`,
 					extra_classes: "bg-danger",
 					delay: 0,
+					unique_type: "adding_note",
 				});
 			});
 		},

@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>New Request for Change</h1>
@@ -102,9 +102,9 @@ import RfcBackoutPlan from "./tabs/RfcBackoutPlan.vue";
 import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
 import RfcWizard from "./RfcWizard.vue";
 
-// Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
+//Composable
+import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useReplaceIncorrectImageUrl} from "../../composables/uploads/useReplaceIncorrectImageUrl";
 
 export default {
 	name: "NewRequestForChange",
@@ -148,7 +148,6 @@ export default {
 		},
 	},
 	emits: ["onComplete"],
-	mixins: [getThemeMixin, newObjectUploadMixin],
 	data: () => ({
 		currentTab: 0,
 		disableSubmitButton: false,
@@ -177,6 +176,7 @@ export default {
 		},
 	}),
 	methods: {
+		useNBTheme,
 		displayTab(tab_id) {
 			if (parseInt(tab_id) === parseInt(this.currentTab)) {
 				//We want to display this tab
@@ -244,7 +244,7 @@ export default {
 			data_to_send.set("rfc_title", data.rfcTitleModel);
 			data_to_send.set(
 				"rfc_summary",
-				this.replaceIncorrectImageUrl(data.rfcSummaryModel)
+				useReplaceIncorrectImageUrl(data.rfcSummaryModel)
 			);
 			data_to_send.set("rfc_type", data.rfcTypeModel);
 			data_to_send.set("rfc_version_number", data.rfcVersionModel);
@@ -254,14 +254,14 @@ export default {
 			data_to_send.set("rfc_impact", data.rfcImpactModel);
 			data_to_send.set(
 				"rfc_risk_and_impact_analysis",
-				this.replaceIncorrectImageUrl(data.rfcRiskSummaryModel)
+				useReplaceIncorrectImageUrl(data.rfcRiskSummaryModel)
 			);
 			data_to_send.set(
 				"rfc_implementation_plan",
-				this.replaceIncorrectImageUrl(data.rfcImplementationPlanModel)
+				useReplaceIncorrectImageUrl(data.rfcImplementationPlanModel)
 			);
-			data_to_send.set("rfc_backout_plan", this.replaceIncorrectImageUrl(data.rfcBackoutPlan));
-			data_to_send.set("rfc_test_plan", this.replaceIncorrectImageUrl(data.rfcTestPlanModel));
+			data_to_send.set("rfc_backout_plan", useReplaceIncorrectImageUrl(data.rfcBackoutPlan));
+			data_to_send.set("rfc_test_plan", useReplaceIncorrectImageUrl(data.rfcTestPlanModel));
 
 			// Insert a new row for each group list item
 			data.groupModel.forEach((row) => {

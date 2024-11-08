@@ -15,7 +15,6 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.noteAdd"></Icon>
 						Edit Note
 					</h2>
 					<button
@@ -34,6 +33,7 @@
 						to submit the changes.
 					</p>
 					<editor
+						license-key="gpl"
 						:init="{
 							license_key: 'gpl',
 							height: 300,
@@ -42,7 +42,8 @@
             				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 				 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
             				skin: `${this.skin}`,
-			            	content_css: `${this.contentCss}`
+			            	content_css: `${this.contentCss}`,
+			            	relative_urls: false,
 						}"
 						v-model="noteModel"
 					/>
@@ -71,22 +72,18 @@
 
 <script>
 //JavaScript components
-import iconMixin from "../../../mixins/iconMixin";
-import reopenCardInformation from "../../../mixins/reopenCardInformation";
-import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
 
 //VueX
 import {mapGetters} from "vuex";
+import {useReopenCardInformation} from "../../../composables/card_information/useReopenCardinformation";
 
 
 export default {
 	name: "EditHistoryNoteWizard",
 	components: {
 		editor: Editor,
-		Icon,
 	},
-	mixins: [iconMixin, reopenCardInformation],
 	data() {
 		return {
 			noteModel: "",
@@ -115,7 +112,7 @@ export default {
 			document.getElementById("editNoteCloseButton").click();
 
 			//Open the card information modal, if it exists
-			this.reopenCardInformation();
+			useReopenCardInformation();
 		},
 		updateNote() {
 			//Setup data to send
@@ -159,7 +156,7 @@ export default {
 				document.getElementById("editNoteCloseButton").click();
 
 				//Reshow the card information modal if exists
-				this.reopenCardInformation();
+				useReopenCardInformation();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Failed Updating Note",

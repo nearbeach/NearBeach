@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon>
-						Add Customer
-						Wizard
+						Add Customer Wizard
 					</h2>
 					<button
 						type="button"
@@ -53,8 +51,6 @@
 </template>
 
 <script>
-
-import {Icon} from "@iconify/vue";
 import NewCustomerForm from "./NewCustomerForm.vue";
 
 //VueX
@@ -64,16 +60,12 @@ import {mapGetters} from "vuex";
 import useVuelidate from "@vuelidate/core";
 import {required, email} from "@vuelidate/validators";
 
-//Mixin
-import iconMixin from "../../mixins/iconMixin";
-
 export default {
 	name: "NewCustomerModal",
 	setup() {
 		return {v$: useVuelidate()};
 	},
 	components: {
-		Icon,
 		NewCustomerForm,
 	},
 	props: {
@@ -88,7 +80,6 @@ export default {
 			},
 		},
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			customerEmailModel: "",
@@ -120,7 +111,7 @@ export default {
 		}),
 	},
 	methods: {
-		submitNewCustomer: async function () {
+		async submitNewCustomer() {
 			//Flag downstream to check validation
 			this.flagValidationCheck = true;
 

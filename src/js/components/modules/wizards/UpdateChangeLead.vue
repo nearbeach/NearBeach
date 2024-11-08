@@ -11,9 +11,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon>
-						Change Lead
-						Wizard
+						Change Lead Wizard
 					</h2>
 					<button
 						type="button"
@@ -65,25 +63,19 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
-
 export default {
 	name: "UpdateChangeLeadWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	emits: [
 		'update_change_lead'
 	],
-	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",

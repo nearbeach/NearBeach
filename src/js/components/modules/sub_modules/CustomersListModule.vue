@@ -22,7 +22,7 @@
 					</a>
 				</div>
 				<div class="customer-card--email">
-					<Icon v-bind:icon="icons.mailIcon"></Icon>
+					<carbon-email></carbon-email>
 					{{ customer.fields.customer_email }}
 				</div>
 			</div>
@@ -31,10 +31,9 @@
 				class="customer-card--remove"
 				v-if="userLevel >= 2"
 			>
-				<Icon
-					v-bind:icon="icons.trashCan"
+				<carbon-trash-can
 					v-on:click="confirmRemoveCustomer(customer.pk)"
-				/>
+				></carbon-trash-can>
 			</div>
 		</div>
 	</div>
@@ -47,20 +46,18 @@
 
 <script>
 import { Modal } from "bootstrap";
-import {Icon} from "@iconify/vue";
 import ConfirmCustomerRemoval from "../wizards/ConfirmCustomerRemove.vue";
-
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
 
 //VueX
 import {mapGetters} from "vuex";
+import {CarbonEmail, CarbonTrashCan} from "../../../components";
 
 export default {
 	name: "CustomersListModule",
 	components: {
+		CarbonEmail,
+		CarbonTrashCan,
 		ConfirmCustomerRemoval,
-		Icon,
 	},
 	props: {
 		customerResults: {
@@ -82,7 +79,6 @@ export default {
 			return `${this.staticUrl}/NearBeach/images/placeholder/people_tax.svg`;
 		},
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			customerObject: {

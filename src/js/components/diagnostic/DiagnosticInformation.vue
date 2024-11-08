@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>Diagnostic Information</h1>
@@ -162,12 +162,10 @@
 </template>
 
 <script>
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin"
-
 //Components
 import DiagnosticUpload from "./DiagnosticUploadTest.vue";
 import DiagnosticEmailTest from "./DiagnosticEmailTest.vue";
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "DiagnosticInformation",
@@ -223,8 +221,7 @@ export default {
 			default: "light",
 		},
 	},
-	mixins: [getThemeMixin],
-	methods: {},
+	methods: {useNBTheme},
 	mounted() {
 		this.$store.commit({
 			type: "updateUrl",

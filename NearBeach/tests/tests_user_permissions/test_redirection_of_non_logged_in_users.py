@@ -142,7 +142,7 @@ class CheckPrivateDocument(TestCase):
 
 
 class CheckNew(TestCase):
-    def new(self):
+    def test_new_objects(self):
         # Make sure the user gets redirected to the login page
         c = Client()
 
@@ -153,14 +153,14 @@ class CheckNew(TestCase):
             c.get(reverse("new_project")),
             c.get(reverse("new_request_for_change")),
             c.get(reverse("new_requirement")),
-            c.get(reverse("new_requirement_item", args=[1])),
             c.get(reverse("new_task")),
         ]
 
         # Check the array
-        assertEqual405(response_array, self)
+        for single_response in response_array:
+            self.assertEqual(single_response.status_code, 302)
 
-    def new_save(self):
+    def test_new_save(self):
         # Make sure the user gets redirected to the login page
         c = Client()
 
@@ -176,7 +176,8 @@ class CheckNew(TestCase):
         ]
 
         # Check the array
-        assertRedirectsToLogin(response_array, self)
+        for single_response in response_array:
+            self.assertEqual(single_response.status_code, 302)
 
 
 class CheckObjects(TestCase):

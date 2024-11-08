@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>New Project</h1>
@@ -50,11 +50,12 @@
 							alt="loading image for Tinymce"
 						/>
 						<editor
+							license-key="gpl"
 							:init="{
 							license_key: 'gpl',
 							file_picker_types: 'image',
 							height: 500,
-							images_upload_handler: newObjectUploadImage,
+							images_upload_handler: useNewObjectUploadImage,
 							menubar: false,
 							paste_data_images: true,
 							plugins: ['lists', 'image', 'codesample', 'table'],
@@ -62,6 +63,7 @@
 									 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
 							skin: `${this.skin}`,
 							content_css: `${this.contentCss}`,
+							relative_urls: false,
 						}"
 							v-model="projectDescriptionModel"
 						/>
@@ -124,12 +126,11 @@ import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import newObjectUploadMixin from "../../mixins/newObjectUploadMixin";
-
 //VueX
 import { mapGetters } from "vuex";
+import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNewObjectUploadImage} from "../../composables/uploads/useNewObjectUploadImage";
+import {useReplaceIncorrectImageUrl} from "../../composables/uploads/useReplaceIncorrectImageUrl";
 
 export default {
 	name: "NewProject",
@@ -189,7 +190,6 @@ export default {
 			skin: "getSkin",
 		}),
 	},
-	mixins: [getThemeMixin, newObjectUploadMixin],
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
@@ -225,7 +225,9 @@ export default {
 		},
 	},
 	methods: {
-		submitNewProject: async function () {
+		useNewObjectUploadImage,
+		useNBTheme,
+		async submitNewProject() {
 			//Check validation
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect || this.displayGroupPermissionIssue) {
@@ -247,8 +249,7 @@ export default {
 			data_to_send.set("project_name", this.projectNameModel);
 			data_to_send.set(
 				"project_description",
-				this.replaceIncorrectImageUrl(this.projectDescriptionModel)
-				//this.projectDescriptionModel
+				useReplaceIncorrectImageUrl(this.projectDescriptionModel)
 			);
 			data_to_send.set("organisation", this.stakeholderModel);
 			data_to_send.set(

@@ -45,7 +45,7 @@
 							>
 								<div class="col-md-12 mb-4">
 									<strong>Sprint Name: </strong>{{sprint.label}}<br/>
-									<strong>Sprint Start Date: </strong>{{getNiceDatetime(sprint.sprint_start_date)}}
+									<strong>Sprint Start Date: </strong>{{useNiceDatetime(sprint.sprint_start_date)}}
 								</div>
 							</div>
 						</div>
@@ -80,8 +80,8 @@ import { NSelect } from "naive-ui";
 //Vuex
 import { mapGetters } from "vuex";
 
-//Mixins
-import datetimeMixin from "../../../mixins/datetimeMixin";
+//Composables
+import {useNiceDatetime} from "../../../composables/datetime/useNiceDatetime";
 
 export default {
 	name: "AddSprintWizard",
@@ -98,9 +98,6 @@ export default {
 			sprintOptions: [],
 		}
 	},
-	mixins: [
-		datetimeMixin,
-	],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -116,6 +113,7 @@ export default {
 		},
 	},
 	methods: {
+		useNiceDatetime,
 		addSprint() {
 			//Notify the users of the change
 			this.$store.dispatch("newToast", {
@@ -131,7 +129,7 @@ export default {
 			data_to_send.set("sprint_id", this.sprintModel);
 
 			this.axios.post(
-				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_sprint/`,
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/add_sprint/${this.sprintModel}/`,
 				data_to_send,
 			).then((response) => {
 				//Send the data upstream

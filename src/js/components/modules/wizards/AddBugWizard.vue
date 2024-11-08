@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.usersIcon"></Icon>
-						Add Bugs
-						Wizard
+						Add Bugs Wizard
 					</h2>
 					<button
 						type="button"
@@ -147,8 +145,6 @@
 
 <script>
 //JavaScript extras
-import iconMixin from "../../../mixins/iconMixin";
-import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
 //VueX
@@ -157,7 +153,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "AddBugWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	emits: [
@@ -179,7 +174,6 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			bugClientModel: "",
@@ -264,7 +258,7 @@ export default {
 
 			//Filter for the bug information out of the bugResults
 			const filted_bug_results = this.bugResults.filter((row) => {
-				return row.id == bug_id;
+				return parseInt(row.id) === parseInt(bug_id);
 
 			});
 

@@ -68,11 +68,11 @@ export const moduleKanban = {
         },
     },
     actions: {
-        async dragDifferentColumn({commit, state}, payload) {
+        dragDifferentColumn({commit, state}, payload) {
             //Required Data
             const event = payload.event;
 
-            var new_elem = event.to,
+            const new_elem = event.to,
                 old_elem = event.from,
                 card_id = event.item.dataset.cardId,
                 card_priorty = event.item.dataset.cardPriority;
@@ -106,7 +106,7 @@ export const moduleKanban = {
             // 3. Update the card's information
             commit({
                 type: "updateKanbanCard",
-                card_id: card_id,
+                card_id,
                 kanban_column: new_card_column,
                 kanban_level: new_card_level,
                 kanban_card_sort_number: new_card_sort_number,
@@ -138,12 +138,11 @@ export const moduleKanban = {
                 });
             });
         },
-        async dragSameColumn({commit, state}, payload) {
+        dragSameColumn({commit, state}, payload) {
             //Required Data
             const event = payload.event;
 
-            var new_elem = event.to,
-                
+            const new_elem = event.to,
                 card_id = event.item.dataset.cardId;
 
             //Setup variables (for shorthand)
@@ -169,13 +168,13 @@ export const moduleKanban = {
 
 			//If they are the same (i.e. drag and dropped in same place) - return
 			if (largest === smallest) {
-				return [];
+				return;
 			}
 
             // 3. Update the card's information
             commit({
                 type: "updateKanbanCard",
-                card_id: card_id,
+                card_id,
                 kanban_column: new_card_column,
                 kanban_level: new_card_level,
                 kanban_card_sort_number: new_card_sort_number,
@@ -208,7 +207,7 @@ export const moduleKanban = {
             if (event === undefined) return;
 
             //Determine if we are dragging to the same or different location
-            var new_elem = event.to,
+            const new_elem = event.to,
                 old_elem = event.from;
 
             //Setup variables (for shorthand)
@@ -252,6 +251,9 @@ export const moduleKanban = {
             return state.kanbanCardResults.filter((row) => {
                 return parseInt(row.kanban_column) === parseInt(column_id);
             }).length;
+        },
+        getKanbanCardResults: (state) => {
+            return state.kanbanCardResults;
         },
         getLevelResults: (state) => {
             return state.levelResults;

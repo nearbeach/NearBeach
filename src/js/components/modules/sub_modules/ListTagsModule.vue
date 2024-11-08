@@ -16,9 +16,9 @@
 				<span
 					v-on:click="removeTag(tag.tag_id)"
 				>
-					<Icon v-bind:icon="icons.xCircle"
+					<carbon-close-outline
 						  v-if="userLevel > 1"
-					></Icon>
+					></carbon-close-outline>
 				</span>
 			</div>
 		</div>
@@ -40,20 +40,15 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
-
-//Mixin
-import iconMixin from "../../../mixins/iconMixin";
-import AddTagWizard from "../wizards/AddTagWizard.vue";
 
 //VueX
 import {mapGetters} from "vuex";
+import {CarbonCloseOutline} from "../../../components";
 
 export default {
 	name: "ListTagsModule",
 	components: {
-		AddTagWizard,
-		Icon,
+		CarbonCloseOutline,
 	},
 	props: {
 		closeModalBefore: {
@@ -74,7 +69,6 @@ export default {
 			this.getAssignedTags();
 		}
 	},
-	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			assignedTags: "getAssignedTags",
@@ -139,7 +133,7 @@ export default {
 			).then(() => {
 				//Remove data from tagList
 				this.$store.dispatch("removeAssignedTag", {
-					tag_id: tag_id,
+					tag_id,
 				});
 
 				//If destination is a kanban card, we update the card's tag list

@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.linkOut"></Icon>
 			Change Task Links
 		</h2>
 		<p class="text-instructions">
@@ -54,14 +53,10 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //Components
 import NewChangeTaskLinkWizardVue from "../../modules/wizards/NewChangeTaskLinkWizard.vue";
 import SubObjectLinks from "../../modules/sub_modules/SubObjectLinks.vue";
-
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -70,10 +65,8 @@ export default {
 	name: "ChangeTaskLinkList",
 	components: {
 		NewChangeTaskLinkWizardVue,
-		Icon,
 		SubObjectLinks,
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			linkResults: [],

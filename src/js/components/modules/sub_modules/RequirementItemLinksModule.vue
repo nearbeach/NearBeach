@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.linkIcon2"></Icon>
 			Requirement Item Links
 		</h2>
 		<p class="text-instructions">
@@ -62,26 +61,21 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 import NewRequirementLinkWizard from "../wizards/NewRequirementLinkWizard.vue";
 import ConfirmLinkDelete from "../wizards/ConfirmLinkDelete.vue";
 
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
 import SubObjectLinks from "./SubObjectLinks.vue";
 
 export default {
 	name: "RequirementItemLinksModule",
 	components: {
     ConfirmLinkDelete,
-		Icon,
 		NewRequirementLinkWizard,
     SubObjectLinks,
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			// itemLinkResults: [],

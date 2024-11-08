@@ -12,9 +12,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.cardChecklist"></Icon>
-						Add
-						Kanban Card Wizard
+						Add Kanban Card Wizard
 					</h2>
 					<button
 						type="button"
@@ -83,18 +81,20 @@
 						</div>
 						<div class="col-md-8">
 							<editor
+								license-key="gpl"
 								:init="{
 									license_key: 'gpl',
 									file_picker_types: 'image',
 									height: 300,
-									images_upload_handler: uploadImage,
+									images_upload_handler: useUploadImage,
 									menubar: false,
 									paste_data_images: true,
 									plugins: ['lists', 'image', 'codesample', 'table'],
             						toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 											 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
             						skin: `${this.skin}`,
-						            content_css: `${this.contentCss}`
+						            content_css: `${this.contentCss}`,
+						            relative_urls: false,
 								}"
 								v-model="kanbanCardDescriptionModel"
 							/>
@@ -161,22 +161,18 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
 import {NSelect} from "naive-ui";
 
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
-import uploadMixin from "../../../mixins/uploadMixin";
+import {useUploadImage} from "../../../composables/uploads/useUploadImage";
 
 export default {
 	name: "NewKanbanCard",
 	components: {
 		editor: Editor,
-		Icon,
 		NSelect,
 	},
 	emits: [
@@ -184,12 +180,6 @@ export default {
 	],
 	props: {
 		columnResults: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
-		kanbanCardResults: {
 			type: Array,
 			default: () => {
 				return [];
@@ -208,7 +198,6 @@ export default {
 			},
 		},
 	},
-	mixins: [iconMixin, uploadMixin],
 	data() {
 		return {
 			disableAddButton: true,
@@ -244,6 +233,7 @@ export default {
 	computed: {
 		...mapGetters({
 			contentCss: "getContentCss",
+			kanbanCardResults: "getKanbanCardResults",
 			listColumns: "getListColumns",
 			listLevels: "getListLevels",
 			newCardLocation: "getNewCardLocation",
@@ -252,6 +242,7 @@ export default {
 		}),
 	},
 	methods: {
+		useUploadImage,
 		addKanbanCard() {
 			//Disable the save
 			this.disableAddButton = true;
@@ -292,7 +283,7 @@ export default {
 				)
 				.then((response) => {
 					//Get the first value from the response
-					let new_card = response.data[0];
+					const new_card = response.data[0];
 					new_card.tag_list = [];
 
 					//Emit the data upstream

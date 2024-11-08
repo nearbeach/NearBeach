@@ -135,6 +135,9 @@ export default {
 	components: {
 		NSelect,
 	},
+	emits: [
+		"update_card",
+	],
 	data() {
 		return {
 			listPriority: [
@@ -179,7 +182,7 @@ export default {
 				this.$store.commit({
 					type: "updateValue",
 					field: "cardColumn",
-					value: value,
+					value,
 				});
 			},
 		},
@@ -191,7 +194,7 @@ export default {
 				this.$store.commit({
 					type: "updateValue",
 					field: "cardLevel",
-					value: value,
+					value,
 				});
 			},
 		},
@@ -203,7 +206,7 @@ export default {
 				this.$store.commit({
 					type: "updateValue",
 					field: "cardPriority",
-					value: value,
+					value,
 				});
 			},
 		},
@@ -215,7 +218,7 @@ export default {
 				this.$store.commit({
 					type: "updateValue",
 					field: "cardTitle",
-					value: value,
+					value,
 				});
 			},
 		}
@@ -269,7 +272,7 @@ export default {
 			//Send this information up to vueX :)
 			//VueX will move everything around for us - like we have moved the card manually
 			await this.$store.dispatch("kanbanCardMoved", {
-				event: event,
+				event,
 			});
 
 			//Now we get the new destination and old destination
@@ -284,9 +287,9 @@ export default {
 
 			//Tell the parent node that we have updated the data
 			this.$emit("update_card", {
-				close_modal: close_modal,
-				new_destination: new_destination,
-				old_destination: old_destination,
+				close_modal,
+				new_destination,
+				old_destination,
 			});
 		},
 		sameDestination(close_modal) {
@@ -300,7 +303,7 @@ export default {
 
 			//Tell the parent node that we have updated the data
 			this.$emit("update_card", {
-				close_modal: close_modal,
+				close_modal,
 			});
 		},
 		updateCard(close_modal) {

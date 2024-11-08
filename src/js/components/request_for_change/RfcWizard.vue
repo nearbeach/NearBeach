@@ -42,12 +42,12 @@ export default {
 
 			// If index is current tab - we highlight as current
 			if (parseInt(index) === this.currentTab) {
-				return classReturn + " current";
+				return `${classReturn} current`;
 			}
 
 			// If index is less than current tab, then we are completed
 			if (parseInt(index) < this.currentTab) {
-				return classReturn + " completed";
+				return `${classReturn} completed`;
 			}
 
 			return classReturn;

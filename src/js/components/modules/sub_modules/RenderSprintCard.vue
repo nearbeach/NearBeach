@@ -18,7 +18,7 @@
 				</div>
 				<div class="object-link--link">
 					Dates:
-					{{ getNiceDate(sprint.sprint_start_date) }} till {{ getNiceDate(sprint.sprint_end_date) }}
+					{{ useNiceDate(sprint.sprint_start_date) }} till {{ useNiceDate(sprint.sprint_end_date) }}
 				</div>
 			</a>
 		</div>
@@ -36,26 +36,24 @@
 			class="object-link--remove"
 			v-if="userLevel >= 2 && canDelete === true"
 		>
-			<Icon
-				v-bind:icon="icons.trashCan"
+			<carbon-trash-can
 				v-on:click="confirmRemoveSprintFunction(sprint)"
-			/>
+			></carbon-trash-can>
 		</div>
 	</div>
 </template>
 
 <script>
-//Mixins
-import datetimeMixin from "../../../mixins/datetimeMixin";
-import iconMixin from "../../../mixins/iconMixin";
-
 //Vuex
 import { mapGetters } from "vuex";
-import {Icon} from "@iconify/vue";
+import {CarbonTrashCan} from "../../../components";
+
+//Composables
+import {useNiceDate} from "../../../composables/datetime/useNiceDate";
 
 export default {
 	name: "RenderSprintCard",
-	components: {Icon},
+	components: {CarbonTrashCan},
 	props: {
 		canDelete: {
 			type: Boolean,
@@ -74,14 +72,11 @@ export default {
 			userLevel: "getUserLevel",
 		})
 	},
-	mixins: [
-		datetimeMixin,
-		iconMixin,
-	],
 	emits: [
 		"confirm_remove_sprint",
 	],
 	methods: {
+		useNiceDate,
 		confirmRemoveSprintFunction(sprint) {
 			//Send request upstream
 			this.$emit("confirm_remove_sprint", sprint);

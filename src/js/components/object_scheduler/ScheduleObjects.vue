@@ -57,9 +57,6 @@
 </template>
 
 <script>
-//Mixins
-import datetimeMixin from "../../mixins/datetimeMixin";
-
 export default {
 	name: "ScheduleObjects",
 	props: {
@@ -83,9 +80,6 @@ export default {
 			},
 		},
 	},
-	mixins: [
-		datetimeMixin,
-	],
 	computed: {
 		canUserAddScheduledObject() {
 			//Return if the user level for either project or task is greater than create
@@ -99,7 +93,5 @@ export default {
 			return "Task";
 		},
 	},
-	mounted() {
-	}
 }
 </script>

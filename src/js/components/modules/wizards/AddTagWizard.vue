@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.usersIcon"></Icon>
-						Add Tags
-						Wizard
+						Add Tags Wizard
 					</h2>
 					<button
 						type="button"
@@ -67,8 +65,6 @@
 
 <script>
 //JavaScript extras
-import iconMixin from "../../../mixins/iconMixin";
-import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 import {Modal} from "bootstrap";
 
@@ -78,7 +74,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "AddTagWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	props: {
@@ -95,7 +90,6 @@ export default {
 			default: "",
 		},
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			tagModel: [],

@@ -9,35 +9,36 @@
 			<div
 				v-bind:class="`card-priority-line priority-${priorityList[element.fields.kanban_card_priority]}`">
 			</div>
-			<Icon v-if="isLinkedObject(element)"
-				  v-bind:icon="icons.linkOut"
-				  v-bind:data-sort-number="element.fields.kanban_card_sort_number"
-				  v-bind:data-card-id="element.pk"
-				  class="card-external-link"
-			></Icon>
+			<carbon-link
+				v-if="isLinkedObject(element)"
+				v-bind:data-sort-number="element.fields.kanban_card_sort_number"
+				v-bind:data-card-id="element.pk"
+				class="card-external-link"
+			></carbon-link>
 			<b>#{{ element.pk }}</b
 			><br/>
 			{{ element.fields.kanban_card_text }}
-			<Icon
+			<carbon-information
 				class="kanban-card-info-icon"
-				v-bind:icon="icons.infoCircle"
+				width="25px"
+				height="25px"
 				v-on:click="singleClickCard(element.pk)"
 				v-on:dblclick="singleClickCard(element.pk)"
-			></Icon>
+			></carbon-information>
 		</div>
 	</div>
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
-
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
+//Components
+import CarbonInformation from "../icons/CarbonInformation.vue";
+import CarbonLink from "../icons/CarbonLink.vue";
 
 export default {
 	name: "PublicKanbanColumn",
 	components: {
-		Icon,
+		CarbonInformation,
+		CarbonLink,
 	},
 	emits: [
 		'card_clicked',
@@ -50,9 +51,6 @@ export default {
 			},
 		},
 	},
-	mixins: [
-		iconMixin,
-	],
 	data: () => ({
 		priorityList: [
 			'highest',

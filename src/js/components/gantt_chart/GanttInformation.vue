@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="gantt-chart"
 			 v-bind:style="ganttStyle"
 			 v-on:mouseup="mouseUp"
@@ -67,8 +67,8 @@ import RenderGanttDaysHeader from "./RenderGanttDaysHeader.vue";
 import RenderGanttMonthlyHeader from "./RenderGanttMonthlyHeader.vue";
 import RenderGanttRow from "./RenderGanttRow.vue";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
+//Composable
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "GanttChart",
@@ -149,9 +149,6 @@ export default {
 	unmounted() {
 		window.removeEventListener("resize", this.updateGanttStyle);
 	},
-	mixins: [
-		getThemeMixin,
-	],
 	computed: {
 		...mapGetters({
 			deltaDays: "getDeltaDays",
@@ -159,6 +156,7 @@ export default {
 		}),
 	},
 	methods: {
+		useNBTheme,
         checkAllObjectsAreWithinDates() {
             //Setup the dates
             const end_date = DateTime.fromISO(this.ganttEndDate);

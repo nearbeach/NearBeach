@@ -516,7 +516,7 @@ urlpatterns = [
     path(
         "new_requirement_item/save/<int:requirement_id>/",
         requirement_item_views.new_requirement_item,
-        name="new_requirement_item",
+        name="new_requirement_item_save",
     ),
     path(
         "new_scheduled_object/",
@@ -607,7 +607,7 @@ urlpatterns = [
         name="add_object_to_sprint",
     ),
     path(
-        "object_data/<destination>/<location_id>/add_sprint/",
+        "object_data/<destination>/<location_id>/add_sprint/<sprint_id>/",
         sprint_views.add_sprint_to_object,
         name="add_sprint_to_object",
     ),
@@ -707,7 +707,7 @@ urlpatterns = [
         name="remove_link",
     ),
     path(
-        "object_data/<destination>/<location_id>/remove_sprint/",
+        "object_data/<destination>/<location_id>/remove_sprint/<sprint_id>/",
         sprint_views.remove_sprint,
         name="remove_sprint",
     ),

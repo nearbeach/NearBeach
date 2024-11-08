@@ -131,10 +131,7 @@ def get_public_context_project(results):
         "project_status_sort_order"
     )
 
-    organisation_results = getattr(
-        results,
-        "organisation"
-    )
+    organisation_results = results.organisation
 
     # Serialise in the if statement - as None can not be serialized
     organisation_results = serializers.serialize("json", [organisation_results])
@@ -170,10 +167,7 @@ def get_public_context_requirement(results):
         is_deleted=False,
     )
 
-    organisation_results = getattr(
-        results,
-        "organisation"
-    )
+    organisation_results = results.organisation
 
     # Serialise
     organisation_results = serializers.serialize("json", [organisation_results])
@@ -201,15 +195,9 @@ def get_public_context_requirement_item(results):
         requirement_item_id=results.requirement_item_id
     )
 
-    requirement_results = getattr(
-        results,
-        "requirement"
-    )
+    requirement_results = results.requirement
 
-    organisation_results = getattr(
-        requirement_results,
-        "organisation"
-    )
+    organisation_results = requirement_results.organisation
 
     status_options = ListOfRequirementItemStatus.objects.filter(
         is_deleted=False,
@@ -271,10 +259,7 @@ def get_public_context_task(results):
         "task_status_sort_order",
     )
 
-    organisation_results = getattr(
-        results,
-        "organisation"
-    )
+    organisation_results = results.organisation
 
     # Serialise in the if statement - as None can not be serialized
     organisation_results = serializers.serialize("json", [organisation_results])

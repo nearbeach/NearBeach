@@ -28,7 +28,7 @@
 								{{ row.status }}
 							</div>
 							<p class="small-text">
-								{{ getNiceDatetime(row.end_date) }}
+								{{ useNiceDatetime(row.end_date) }}
 							</p>
 						</a>
 					</div>
@@ -39,7 +39,8 @@
 </template>
 
 <script>
-import datetimeMixin from "../../mixins/datetimeMixin";
+//Composables
+import {useNiceDatetime} from "../../composables/datetime/useNiceDatetime";
 
 export default {
 	name: "DashboardTodoToday",
@@ -55,10 +56,8 @@ export default {
 			todoList: [],
 		}
 	},
-	mixins: [
-		datetimeMixin,
-	],
 	methods: {
+		useNiceDatetime,
 		getExtraClasses(higher_order_status) {
 			if (higher_order_status === "Closed") {
 				return "bg-secondary-subtle";

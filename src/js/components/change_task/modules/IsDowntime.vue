@@ -49,7 +49,8 @@ export default {
 			set(isDowntime) {
 				this.$store.commit({
 					type: "updateChangeTaskIsDowntime",
-					isDowntime: isDowntime,
+					//isDowntime: isDowntime,
+					isDowntime,
 				});
 
 				this.updateIsDowntime(isDowntime);

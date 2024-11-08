@@ -26,9 +26,6 @@ import {Modal} from "bootstrap";
 import {mapGetters} from "vuex";
 import RenderUserCardList from "../render/RenderUserCardList.vue";
 
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
-
 export default {
 	name: "CardUsers",
 	components: {
@@ -45,7 +42,6 @@ export default {
 			objectUserList: "getObjectUserList",
 		}),
 	},
-	mixins: [iconMixin],
 	methods: {
 		addUser() {
 			//Close the current modal

@@ -1,4 +1,4 @@
-import { getRandomID } from "../mixins/randomMixin"
+import {useRandomID} from "../composables/security/useRandomID";
 
 export const moduleToasts = {
     state: () => ({
@@ -22,7 +22,7 @@ export const moduleToasts = {
                 message: "",
                 timestamp: timestamp.getTime(),
                 unique_type: "",
-                unique_uuid: getRandomID(),
+                unique_uuid: useRandomID(),
             };
 
             //Loop through each keys for the payload, and update the relevant field

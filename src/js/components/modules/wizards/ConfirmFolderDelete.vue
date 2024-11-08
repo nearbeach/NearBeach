@@ -52,16 +52,10 @@
 
 <script>
 import {mapGetters} from "vuex";
-
-
-//Mixins
-import reopenCardInformation from "../../../mixins/reopenCardInformation";
+import {useReopenCardInformation} from "../../../composables/card_information/useReopenCardinformation";
 
 export default {
 	name: "ConfirmFolderDelete",
-	mixins: [
-		reopenCardInformation,
-	],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -119,7 +113,7 @@ export default {
 			document.getElementById("confirmFolderDeleteButton").click();
 
 			//Reshow the card information modal if exists
-			this.reopenCardInformation();
+			useReopenCardInformation();
 		}
 	},
 }

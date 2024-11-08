@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.linkOut"></Icon>
-						New Kanban
-						Link Wizard
+						New Kanban Link Wizard
 					</h2>
 					<button
 						type="button"
@@ -290,11 +288,8 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -302,7 +297,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "NewKanbanLinkWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	emits: ['new_card'],
@@ -321,7 +315,6 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			isSearching: false,
@@ -376,7 +369,7 @@ export default {
 				data_to_send
 			).then((response) => {
 				//Get the response data
-				let new_link = response.data[0];
+				const new_link = response.data[0];
 				new_link.tag_list = [];
 
 				//Data has been successfully saved. Time to add the card to the board

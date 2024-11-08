@@ -3,10 +3,9 @@
 		<div class="gantt-row--information">
 			<div class="gantt-row--title">
 				<span style="margin-right:10px;">
-					<Icon
-						v-bind:icon="icons.trashCan"
+					<carbon-trash-can
 						v-on:click="confirmRemoval()"
-					/>
+					></carbon-trash-can>
 				</span>
 				{{title}}
 			</div>
@@ -78,15 +77,12 @@
 import { mapGetters } from "vuex";
 
 //Components
-import {Icon} from "@iconify/vue";
+import { CarbonTrashCan } from "../../components";
 import { NDatePicker, NSelect } from "naive-ui";
 import { Modal } from "bootstrap";
 
 //Datetime
 import { DateTime } from "luxon";
-
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
 
 export default {
 	name: "RenderGanttRow",
@@ -130,13 +126,10 @@ export default {
 		},
 	},
 	components: {
-		Icon,
+		CarbonTrashCan,
 		NDatePicker,
 		NSelect,
 	},
-	mixins: [
-		iconMixin,
-	],
 	data() {
 		return {
 			datePickerFormat: "yyyy-MM-dd HH:mm",

@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>Permission Information</h1>
@@ -294,11 +294,11 @@
 import SinglePermissionProperties from "./SinglePermissionProperties.vue";
 import ConfirmPermissionSetDelete from "./ConfirmPermissionSetDelete.vue";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-
 //Modal
 import { Modal } from "bootstrap";
+
+//Composable
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "PermissionInformation",
@@ -361,8 +361,8 @@ export default {
 
 		};
 	},
-	mixins: [getThemeMixin],
 	methods: {
+		useNBTheme,
 		confirmDelete() {
 			//Open the modal
 			const modal = new Modal(document.getElementById("confirmPermissionSetDeleteModal"));

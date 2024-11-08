@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>
-			<Icon :icon="icons.bxBriefcase"/>
 			Documents
 		</h2>
 		<p class="text-instructions">
@@ -28,11 +27,10 @@
 				v-on:click="goToParentDirectory()"
 				class="document--child"
 			>
-				<Icon
-					v-bind:icon="icons.arrowUp"
-					width="80px"
+				<carbon-arrow-up
 					height="80px"
-				/>
+					width="80px"
+				></carbon-arrow-up>
 				<p class="text-instructions">Go to Parent Directory...</p>
 			</div>
 
@@ -46,11 +44,10 @@
 					href="javascript:void(0)"
 					v-on:click="updateCurrentFolder(folder.pk)"
 				>
-					<Icon
-						v-bind:icon="icons.folderIcon"
+					<carbon-folder
 						width="80px"
 						height="80px"
-					/>
+					></carbon-folder>
 					<p class="text-instructions">
 						{{ shortName(folder.fields.folder_description) }}
 					</p>
@@ -61,10 +58,9 @@
 					class="document--remove"
 					v-if="userLevel >= 2"
 				>
-					<Icon
-						v-bind:icon="icons.trashCan"
+					<carbon-trash-can
 						v-on:click="confirmFolderDelete(folder.pk)"
-					/>
+					></carbon-trash-can>
 				</div>
 			</div>
 
@@ -79,11 +75,11 @@
 					rel="noopener noreferrer"
 					target="_blank"
 				>
-					<Icon
-						v-bind:icon="getIcon(document)"
+					<component
+						v-bind:is="getIcon(document)"
 						width="80px"
 						height="80px"
-					/>
+					></component>
 					<p class="text-instructions">
 						{{ shortName(document.document_key__document_description) }}
 					</p>
@@ -94,10 +90,9 @@
 					class="document--remove"
 					v-if="userLevel >= 2"
 				>
-					<Icon
-						v-bind:icon="icons.trashCan"
+					<carbon-trash-can
 						v-on:click="confirmFileDelete(document.document_key_id)"
-					/>
+					></carbon-trash-can>
 				</div>
 			</div>
 		</div>
@@ -151,18 +146,33 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
+//Icons
+import CarbonArrowUp from "../../icons/CarbonArrowUp.vue";
+import CarbonDocument from "../../icons/CarbonDocument.vue";
+import CarbonDocumentPdf from "../../icons/CarbonDocumentPdf.vue"
+import CarbonFolder from "../../icons/CarbonFolder.vue";
+import CarbonImage from "../../icons/CarbonImage.vue";
+import MdiMicrosoftExcel from "../../icons/MdiMicrosoftExcel.vue";
+import MdiMicrosoftPowerPoint from "../../icons/MdiMicrosoftPowerPoint.vue";
+import MdiMicrosoftWord from "../../icons/MdiMicrosoftWord.vue";
 
 //VueX
 import {mapGetters} from "vuex";
+import {CarbonTrashCan} from "../../../components";
 
 export default {
 	name: "DocumentsModule",
 	components: {
-		Icon,
+		CarbonArrowUp,
+		CarbonDocument,
+		CarbonDocumentPdf,
+		CarbonFolder,
+		CarbonImage,
+		CarbonTrashCan,
+		MdiMicrosoftExcel,
+		MdiMicrosoftPowerPoint,
+		MdiMicrosoftWord,
 	},
 	props: {
 		overrideDestination: {
@@ -178,7 +188,6 @@ export default {
 			default: false,
 		},
 	},
-	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			currentFolder: "getCurrentFolder",
@@ -188,6 +197,7 @@ export default {
 			folderFilteredList: "getFolderFilteredList",
 			locationId: "getLocationId",
 			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
 			userLevel: "getUserLevel",
 		}),
 		...mapGetters([
@@ -320,7 +330,7 @@ export default {
 				document.document_key__document_url_location !== "" &&
 				document.document_key__document_url_location !== null
 			) {
-				return this.icons.linkOut;
+				return "CarbonLink";
 			}
 
 			//We know the document is not a link - now we use the suffix to the document name to determine the icon
@@ -333,20 +343,20 @@ export default {
 				case "jpg":
 				case "png":
 				case "bmp":
-					return this.icons.imageIcon;
+					return CarbonImage;
 				case "doc":
 				case "docx":
-					return this.icons.microsoftWord;
+					return MdiMicrosoftWord;
 				case "xls":
 				case "xlsx":
-					return this.icons.microsoftExcel;
+					return MdiMicrosoftExcel;
 				case "ppt":
 				case "pptx":
-					return this.icons.microsoftPowerpoint;
+					return MdiMicrosoftPowerPoint;
 				case "pdf":
-					return this.icons.documentPdf;
+					return CarbonDocumentPdf;
 				default:
-					return this.icons.documentText;
+					return CarbonDocument;
 			}
 		},
 		getLocationId() {

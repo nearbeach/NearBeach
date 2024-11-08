@@ -54,6 +54,7 @@
 									alt="loading image for Tinymce"
 								/>
 								<editor
+									license-key="gpl"
 									:init="{
 									license_key: 'gpl',
 									height: 500,
@@ -63,6 +64,7 @@
 											 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
 									skin: `${this.skin}`,
 									content_css: `${this.contentCss}`,
+									relative_urls: false,
 								}"
 									v-model="requirementItemScopeModel"
 									v-bind:disabled="true"
@@ -88,7 +90,7 @@
 								{{ stakeholderModel.organisation_name }}
 							</div>
 							<div class="organisation-link">
-								<Icon v-bind:icon="icons.linkOut"></Icon>
+								<carbon-link></carbon-link>
 								Website:
 								<a
 									v-bind:href="stakeholderModel.organisation_website"
@@ -99,7 +101,7 @@
 								</a>
 							</div>
 							<div class="organisation-email">
-								<Icon v-bind:icon="icons.mailIcon"></Icon>
+								<carbon-email></carbon-email>
 								Email:
 								<a
 									v-bind:href="`mailto:${stakeholderModel.organisation_email}`"
@@ -158,21 +160,20 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
 import editor from "@tinymce/tinymce-vue";
 import { NSelect } from "naive-ui";
 
 //VueX
 import { mapGetters } from "vuex";
 
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
+import {CarbonEmail, CarbonLink} from "../../components";
 
 export default {
 	name: "PublicRequirementItemInformation",
 	components: {
+		CarbonEmail,
+		CarbonLink,
 		editor,
-		Icon,
 		NSelect,
 	},
 	props: {
@@ -205,7 +206,6 @@ export default {
 			},
 		},
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			requirementItemScopeModel: "",

@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 			<h1 class="kanban-header">
 				{{ kanbanBoardResults[0].fields.kanban_board_name }}
 			</h1>
@@ -101,8 +101,8 @@ import PublicCardInformation from "./public_card_information.vue"
 
 import { Modal } from "bootstrap";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 export default {
 	name: "PublicKanbanBoard",
 	components: {
@@ -170,9 +170,6 @@ export default {
 			},
 		],
 	}),
-	mixins: [
-		getThemeMixin,
-	],
 	created() {
 		window.addEventListener("resize", this.resizeProcedure);
 		window.addEventListener("scroll", this.scrollProcedure);
@@ -182,6 +179,7 @@ export default {
 		window.removeEventListener("scroll", this.scrollProcedure);
 	},
 	methods: {
+		useNBTheme,
 		cardClicked(card_id) {
 			//Filter for the card we want
 			let card_results = this.kanbanCardResults.filter((row) => {

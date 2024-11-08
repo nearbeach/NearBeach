@@ -18,7 +18,7 @@
 				</a>
 			</div>
 			<div class="organisation-link">
-				<Icon v-bind:icon="icons.linkOut"></Icon>
+				<carbon-link></carbon-link>
 				Website:
 				<a
 					v-bind:href="stakeholderModel.organisation_website"
@@ -29,7 +29,7 @@
 				</a>
 			</div>
 			<div class="organisation-email">
-				<Icon v-bind:icon="icons.mailIcon"></Icon>
+				<carbon-email></carbon-email>
 				Email:
 				<a
 					v-bind:href="`mailto:${stakeholderModel.organisation_email}`"
@@ -42,18 +42,15 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
-
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
-
 //VueX
 import {mapGetters} from "vuex";
+import {CarbonEmail, CarbonLink} from "../../components";
 
 export default {
 	name: "StakeholderInformation",
 	components: {
-		Icon,
+		CarbonEmail,
+		CarbonLink,
 	},
 	props: {
 		defaultStakeholderImage: {
@@ -72,7 +69,6 @@ export default {
 			stakeholderModel: this.organisationResults[0].fields,
 		};
 	},
-	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",

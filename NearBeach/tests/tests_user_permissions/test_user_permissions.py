@@ -1,7 +1,5 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.db.models import Q
-from NearBeach.models import UserGroup, Group, ObjectAssignment
 
 
 def login_user(c: object, self: object) -> object:
@@ -139,24 +137,6 @@ class TeamLeaderPermissionTest(TestCase):
         # Make sure the admin user can open the kanban
         response = c.get(reverse("kanban_information", args=["2"]))
         self.assertEqual(response.status_code, 200)
-
-        # TEMP CODE - CHECK USER PERMISSIONS LOGIC
-        user_group_results = UserGroup.objects.filter(
-            is_deleted=False,
-            username=2,
-        )
-
-        group_results = Group.objects.filter(
-            Q(
-                is_deleted=False,
-                # The object_lookup groups
-                group_id__in=ObjectAssignment.objects.filter(
-                    is_deleted=False,
-                    kanban_board_id=2,
-                ).values("group_id"),
-            )
-            & Q(group_id__in=user_group_results.values("group_id"))
-        )
 
         # Make sure the admin user can open the kanban
         response_2 = c.get(reverse("kanban_information", args=[1]))

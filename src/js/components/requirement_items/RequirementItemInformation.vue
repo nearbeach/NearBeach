@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>Requirement Item Information</h1>
@@ -63,18 +63,20 @@
 								alt="loading image for Tinymce"
 							/>
 							<editor
+								license-key="gpl"
 								:init="{
 								license_key: 'gpl',
 								file_picker_types: 'image',
 								height: 500,
-								images_upload_handler: uploadImage,
+								images_upload_handler: useUploadImage,
 								menubar: false,
 								paste_data_images: true,
 								plugins: ['lists', 'image', 'codesample', 'table'],
             					toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 										 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
 								skin: `${this.skin}`,
-								content_css: `${this.contentCss}`
+								content_css: `${this.contentCss}`,
+								relative_urls: false,
 							}"
 								v-model="requirementItemScopeModel"
 								v-bind:disabled="isReadOnly"
@@ -100,7 +102,7 @@
 							{{ stakeholderModel.organisation_name }}
 						</div>
 						<div class="organisation-link">
-							<Icon v-bind:icon="icons.linkOut"></Icon>
+							<carbon-link></carbon-link>
 							Website:
 							<a
 								v-bind:href="stakeholderModel.organisation_website"
@@ -111,7 +113,7 @@
 							</a>
 						</div>
 						<div class="organisation-email">
-							<Icon v-bind:icon="icons.mailIcon"></Icon>
+							<carbon-email></carbon-email>
 							Email:
 							<a
 								v-bind:href="`mailto:${stakeholderModel.organisation_email}`"
@@ -186,22 +188,21 @@
 
 <script>
 //JavaScript Libraries
-import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
 import {NSelect} from "naive-ui";
 
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import iconMixin from "../../mixins/iconMixin";
-import uploadMixin from "../../mixins/uploadMixin";
-
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
+import {CarbonEmail, CarbonLink} from "../../components";
+
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useUploadImage} from "../../composables/uploads/useUploadImage";
 
 
 export default {
@@ -210,8 +211,9 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
+		CarbonEmail,
+		CarbonLink,
 		editor: Editor,
-		Icon,
 		NSelect,
 		ValidationRendering,
 	},
@@ -274,7 +276,6 @@ export default {
 			return `${this.rootUrl}private/${this.stakeholderModel.organisation_profile_picture}`;
 		},
 	},
-	mixins: [getThemeMixin, iconMixin, uploadMixin],
 	data() {
 		return {
 			isReadOnly: false,
@@ -318,6 +319,8 @@ export default {
 		},
 	},
 	methods: {
+		useUploadImage,
+		useNBTheme,
 		checkStatusIsClosed() {
 			//Will filter the current status for the status - then check to see if it is closed
 			const filtered_status = this.statusOptions.filter((row) => {

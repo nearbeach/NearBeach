@@ -276,9 +276,8 @@ class ChangeTask(models.Model):
         max_length=255,
     )
     change_task_description = models.TextField(
-        blank=True,
-        null=True,
         default="",
+        blank=True,
     )
     change_task_start_date = models.DateTimeField()
     change_task_end_date = models.DateTimeField()
@@ -402,7 +401,6 @@ class Document(models.Model):
     document_description = models.CharField(max_length=255)
     document_url_location = models.TextField(
         # Contains URLS
-        null=True,
         blank=True,
         default="",
     )

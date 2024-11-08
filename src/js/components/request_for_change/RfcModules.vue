@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<ul
@@ -295,8 +295,8 @@ import GroupsAndUsersModule from "../modules/sub_modules/GroupsAndUsersModule.vu
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "RfcModules",
@@ -337,7 +337,6 @@ export default {
 			},
 		},
 	},
-	mixins: [getThemeMixin],
 	data: () => ({
 		rfcData: {
 			rfcBackoutPlan: "",
@@ -363,6 +362,7 @@ export default {
 		}),
 	},
 	methods: {
+		useNBTheme,
 		sendData(data_to_send, url, object) {
 			//Notify user of updating
 			this.$store.dispatch("newToast", {

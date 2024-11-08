@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon>
-						Add Folder
-						Wizard
+						Add Folder Wizard
 					</h2>
 					<button
 						type="button"
@@ -73,20 +71,13 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
-
-
 //VueX
 import {mapGetters} from "vuex";
-
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
-import reopenCardInformation from "../../../mixins/reopenCardInformation";
+import {useReopenCardInformation} from "../../../composables/card_information/useReopenCardinformation";
 
 export default {
 	name: "AddFolderWizard",
 	components: {
-		Icon,
 	},
 	props: {
 		destination: {
@@ -98,10 +89,6 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [
-		iconMixin,
-		reopenCardInformation,
-	],
 	data() {
 		return {
 			disableAddFolderButton: true,
@@ -147,7 +134,7 @@ export default {
 					document.getElementById("addFolderCloseButton").click();
 
 					//Reshow the card information modal if exists
-					this.reopenCardInformation();
+					useReopenCardInformation();
 				})
 				.catch((error) => {
 					this.$store.dispatch("newToast", {

@@ -10,18 +10,20 @@
 			</div>
 			<div class="col-md-8">
 				<editor
+					license-key="gpl"
 					:init="{
 						license_key: 'gpl',
 						file_picker_types: 'image',
 						height: 300,
-						images_upload_handler: uploadImage,
+						images_upload_handler: useUploadImage,
 						menubar: false,
 						paste_data_images: true,
 						plugins: ['lists', 'image', 'codesample', 'table'],
             			toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 			'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
             			skin: `${this.skin}`,
-			            content_css: `${this.contentCss}`
+			            content_css: `${this.contentCss}`,
+						relative_urls: false,
 					}"
 					v-model="cardDescription"
 					v-bind:disabled="editorIsDisabled"
@@ -67,14 +69,16 @@ import Editor from "@tinymce/tinymce-vue";
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import uploadMixin from "../../mixins/uploadMixin";
+import {useUploadImage} from "../../composables/uploads/useUploadImage";
 
 export default {
 	name: "CardDescription",
 	components: {
 		editor: Editor,
 	},
+	emits: [
+		"update_card",
+	],
 	props: {},
 	data() {
 		return {
@@ -95,13 +99,13 @@ export default {
 			set(value) {
 				this.$store.commit("updateValue", {
 					field: "cardDescription",
-					value: value,
+					value,
 				});
 			},
 		},
 	},
-	mixins: [uploadMixin],
 	methods: {
+		useUploadImage,
 		closeModal() {
 			document
 				.getElementById("cardInformationModalCloseButton")
@@ -109,7 +113,7 @@ export default {
 		},
 		updateCard(close_modal) {
 			this.$emit("update_card", {
-				close_modal: close_modal,
+				close_modal,
 			});
 		},
 	},

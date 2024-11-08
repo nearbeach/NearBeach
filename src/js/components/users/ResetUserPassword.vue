@@ -40,9 +40,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h2>
-							<Icon v-bind:icon="icons.passwordIcon"></Icon>
-							Reset
-							User Password
+							Reset User Password
 						</h2>
 						<button
 							type="button"
@@ -113,13 +111,9 @@
 <script>
 //JavaScript components
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 
 //VueX
 import {mapGetters} from "vuex";
-
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
 
 //Validation
 import useVuelidate from "@vuelidate/core"
@@ -132,7 +126,6 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
-		Icon,
 		ValidationRendering,
 	},
 	props: {
@@ -145,7 +138,6 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			password1Model: "",
@@ -205,12 +197,29 @@ export default {
 			data_to_send.set("password", this.password1Model);
 			data_to_send.set("username", this.username);
 
+			//Notify User
+			this.$store.dispatch("newToast", {
+				header: "Updating User Password",
+				message: "Please wait. Updating Password",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "update-user-password",
+			});
+
 			//Setup Axios to send data
 			this.axios.post(
 				`${this.rootUrl}${this.location}update_user_password/`,
 				data_to_send
 			).then(() => {
 				this.closeModal();
+
+				this.$store.dispatch("newToast", {
+					header: "Updated User Password",
+					message: "User Password Successfully Updated",
+					extra_classes: "bg-success",
+					delay: 0,
+					unique_type: "update-user-password",
+				});
 			}).catch((error) => {
 				let error_message = "There was an issue trying to save your password.";
 
@@ -219,7 +228,7 @@ export default {
 
 					// Loop through each key and value and write the error message.
 					for (const [key, value] of Object.entries(error.response.data)) {
-						error_message = error_message + `${key} - ${value[0].message} `;
+						error_message = `${error_message} ${key} - ${value[0].message} `;
 					}
 				}
 
@@ -228,6 +237,7 @@ export default {
 					message: error_message,
 					extra_classes: "bg-danger",
 					delay: 0,
+					unique_type: "update-user-password",
 				});
 			});
 		},

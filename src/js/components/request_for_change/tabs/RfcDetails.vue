@@ -93,9 +93,6 @@
 import {NSelect} from "naive-ui";
 import GroupPermissions from "../../permissions/GroupPermissions.vue";
 
-//Mixins
-// import datetimeMixin from "../../../mixins/datetimeMixin";
-
 //VueX
 import {mapGetters} from "vuex";
 
@@ -266,8 +263,8 @@ export default {
 		},
 		updateValues(modelName, modelValue) {
 			this.$emit("update_values", {
-				modelName: modelName,
-				modelValue: modelValue,
+				modelName,
+				modelValue,
 			});
 		},
 	},

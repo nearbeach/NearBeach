@@ -42,6 +42,7 @@
 				alt="loading image for Tinymce"
 			/>
 			<editor
+				license-key="gpl"
 				:init="{
 					license_key: 'gpl',
 					file_picker_types: 'image',
@@ -54,6 +55,7 @@
 							 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
 					skin: `${this.skin}`,
 					content_css: `${this.contentCss}`,
+					relative_urls: false,
 				}"
 				v-bind:disabled="isReadOnly"
 				v-model="rfcSummaryModel"
@@ -71,12 +73,12 @@ import ValidationRendering from "../../validation/ValidationRendering.vue";
 //TinyMce
 import Editor from "@tinymce/tinymce-vue";
 
-//Mixins
-import uploadMixin from "../../../mixins/uploadMixin";
-import newObjectUploadMixin from "../../../mixins/newObjectUploadMixin";
-
 //VueX
 import {mapGetters} from "vuex";
+
+//Composables
+import {useNewObjectUploadImage} from "../../../composables/uploads/useNewObjectUploadImage";
+import {useUploadImage} from "../../../composables/uploads/useUploadImage";
 
 export default {
 	name: "RfcDescription",
@@ -107,7 +109,6 @@ export default {
 			default: "",
 		},
 	},
-	mixins: [uploadMixin, newObjectUploadMixin],
 	data: () => ({
 		rfcSummaryModel: "",
 		rfcTitleModel: "",
@@ -134,8 +135,8 @@ export default {
 			//If we have passed a UUID down, this is a new object
 			//We'll need to use the new object upload
 			//Otherwise use the usual method
-			if (this.uuid === "") return this.uploadImage(blobInfo, progress);
-			return this.newObjectUploadImage(blobInfo, progress)
+			if (this.uuid === "") return useUploadImage(blobInfo, progress);
+			return useNewObjectUploadImage(blobInfo, progress)
 		},
 		updateValidation() {
 			this.v$.$touch();
@@ -147,8 +148,8 @@ export default {
 		},
 		updateValues(modelName, modelValue) {
 			this.$emit("update_values", {
-				modelName: modelName,
-				modelValue: modelValue,
+				modelName,
+				modelValue,
 			});
 		},
 	},

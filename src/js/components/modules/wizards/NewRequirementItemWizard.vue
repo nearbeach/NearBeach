@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.clipboardIcon"></Icon>
-						New
-						Requirement Item Wizard
+						New Requirement Item Wizard
 					</h2>
 					<button
 						type="button"
@@ -60,6 +58,7 @@
 							</label>
 							<br/>
 							<editor
+								license-key="gpl"
 								:init="{
 									license_key: 'gpl',
 									height: 500,
@@ -68,7 +67,8 @@
             						toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 											 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
             						skin: `${this.skin}`,
-						            content_css: `${this.contentCss}`
+						            content_css: `${this.contentCss}`,
+						            relative_urls: false,
 								}"
 								v-model="requirementItemScopeModel"
 							/>
@@ -140,12 +140,8 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 import Editor from "@tinymce/tinymce-vue";
-
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
@@ -162,14 +158,12 @@ export default {
 	},
 	components: {
 		editor: Editor,
-		Icon,
 		NSelect,
 		ValidationRendering,
 	},
 	emits: [
 		'new_item_added',
 	],
-	mixins: [iconMixin],
 	data() {
 		return {
 			requirementItemScopeModel: "",

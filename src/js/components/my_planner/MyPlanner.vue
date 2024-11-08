@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<h1 class="planner-header">My Planner</h1>
 		<button class="btn btn-primary planner-button"
 				v-on:click="showModal"
@@ -47,13 +47,12 @@
 								{{ element.title }}
 							</strong></div>
 							<div>Status: <span class="text-instructions">{{ element.status }}</span></div>
-							<Icon
+							<carbon-trash-can
 								class="kanban-card-info-icon"
 								style="color: red;"
-								v-bind:icon="icons.trashCan"
 								v-on:click="confirmCardDelete(element.user_job_id, index)"
 								v-on:dblclick="confirmCardDelete(element.user_job_id, index)"
-							></Icon>
+							></carbon-trash-can>
 						</div>
 					</template>
 				</draggable>
@@ -76,23 +75,22 @@
 import draggable from "vuedraggable";
 import { DateTime } from "luxon";
 import { Modal } from "bootstrap";
-import {Icon} from "@iconify/vue";
-
-//Mixins
-import datetimeMixin from "../../mixins/datetimeMixin";
-import getThemeMixin from "../../mixins/getThemeMixin";
-import iconMixin from "../../mixins/iconMixin";
 
 //Component
 import ConfirmUserJobDelete from "./ConfirmUserJobDelete.vue";
 import NewPlannerObjectWizard from "./NewPlannerObjectWizard.vue";
+import {CarbonTrashCan} from "../../components";
+
+//Composables
+import { useNiceDatetime } from "../../composables/datetime/useNiceDatetime";
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "MyPlanner",
 	components: {
+		CarbonTrashCan,
 		ConfirmUserJobDelete,
 		draggable,
-		Icon,
 		NewPlannerObjectWizard,
 	},
 	props: {
@@ -122,12 +120,8 @@ export default {
 			dateArray: [],
 		}
 	},
-	mixins: [
-		datetimeMixin,
-		getThemeMixin,
-		iconMixin,
-	],
 	methods: {
+		useNBTheme,
 		confirmCardDelete(user_job_id, index) {
 			//Update the confirm id
 			this.confirmIdToDelete = user_job_id;
@@ -145,7 +139,7 @@ export default {
 			return "";
 		},
 		formatObjectId(element) {
-			const end_date = this.getNiceDatetime(element.end_date);
+			const end_date = useNiceDatetime(element.end_date);
 			switch (element.object_type) {
 				case "card":
 					return `Card${element.location_id}`;
@@ -246,7 +240,7 @@ export default {
 			this.dateArray.push({
 				date: new_day.toFormat("yyyy-LL-dd"),
 				day: new_day.toFormat("cccc"),
-				data: data,
+				data,
 			});
 		}
 	},

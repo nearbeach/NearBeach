@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card text-bg-warning">
 			<div class="card-body">
 				<h1>DANGER ZONE</h1>
@@ -46,8 +46,10 @@
 </template>
 
 <script>
-import getThemeMixin from "../../mixins/getThemeMixin";
 import {Modal} from "bootstrap";
+
+//Composable
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "KanbanDangerZone",
@@ -61,8 +63,8 @@ export default {
 			default: "",
 		},
 	},
-	mixins: [getThemeMixin],
 	methods: {
+		useNBTheme,
 		closeKanban() {
 			const modal = new Modal("#confirmKanbanBoardClosure");
 			modal.show();

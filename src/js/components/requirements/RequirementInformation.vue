@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>Requirement Information</h1>
@@ -60,11 +60,12 @@
 							alt="loading image for Tinymce"
 						/>
 						<editor
+							license-key="gpl"
 							:init="{
 							license_key: 'gpl',
 							file_picker_types: 'image',
 							height: 500,
-							images_upload_handler: uploadImage,
+							images_upload_handler: useUploadImage,
 							menubar: false,
 							paste_data_images: true,
 							plugins: ['lists', 'image', 'codesample', 'table'],
@@ -72,6 +73,7 @@
 									 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
 							skin: `${this.skin}`,
 							content_css: `${this.contentCss}`,
+							relative_urls: false,
 						}"
 							v-bind:disabled="isReadOnly"
 							v-model="requirementScopeModel"
@@ -168,9 +170,9 @@ import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import uploadMixin from "../../mixins/uploadMixin";
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useUploadImage} from "../../composables/uploads/useUploadImage";
 
 export default {
 	name: "RequirementInformation",
@@ -233,7 +235,6 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
-	mixins: [getThemeMixin, uploadMixin],
 	data() {
 		return {
 			isReadOnly: false,
@@ -273,6 +274,8 @@ export default {
 		},
 	},
 	methods: {
+		useUploadImage,
+		useNBTheme,
 		checkStatusIsClosed() {
 			//Will filter the current status for the status - then check to see if it is closed
 			const filtered_status = this.statusOptions.filter((row) => {

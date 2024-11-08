@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<list-public-links
@@ -13,12 +13,15 @@
 </template>
 
 <script>
-import getThemeMixins from "../../mixins/getThemeMixin"
+//Component
 import ListPublicLinks from "../modules/sub_modules/ListPublicLinks.vue"
+
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "KanbanPublicLinks",
-	mixins: [getThemeMixins],
+	methods: {useNBTheme},
 	props: {
 		isReadOnly: {
 			type: Boolean,

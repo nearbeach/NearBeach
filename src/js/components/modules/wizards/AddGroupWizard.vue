@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.groupPresentation"></Icon>
-						Add
-						Group Wizard
+						Add Group Wizard
 					</h2>
 					<button
 						type="button"
@@ -94,11 +92,7 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
-
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -106,7 +100,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "AddGroupWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	computed: {
@@ -130,7 +123,6 @@ export default {
 			})
 		}
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			groupFixList: [],

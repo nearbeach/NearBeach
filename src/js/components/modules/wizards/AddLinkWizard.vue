@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon>
-						Add Link
-						Wizard
+						Add Link Wizard
 					</h2>
 					<button
 						type="button"
@@ -96,20 +94,13 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
-
 //VueX
 import {mapGetters} from "vuex";
-
-//Mixins
-import iconMixin from "../../../mixins/iconMixin";
-import reopenCardInformation from "../../../mixins/reopenCardInformation"
 
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, url} from "@vuelidate/validators";
 import ValidationRendering from "../../validation/ValidationRendering.vue";
-
 
 export default {
 	name: "AddLinkWizard",
@@ -117,7 +108,6 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
-		Icon,
 		ValidationRendering,
 	},
 	props: {
@@ -130,10 +120,6 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [
-      iconMixin,
-      reopenCardInformation,
-  ],
 	data() {
 		return {
 			linkModel: "",
@@ -193,7 +179,7 @@ export default {
 				document.getElementById("addLinkCloseButton").click();
 
 				//Reshow the card information modal if exists
-				this.reopenCardInformation();
+				useReopenCardInformation();
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error Adding Link",

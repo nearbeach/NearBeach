@@ -5,6 +5,7 @@
 		description, please hit the "Update Descritpion" button
 	</p>
 	<editor
+		license-key="gpl"
 		:init="{
 			license_key: 'gpl',
             file_picker_types: 'image',
@@ -16,7 +17,8 @@
             toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
             skin: `${this.skin}`,
-            content_css: `${this.contentCss}`
+            content_css: `${this.contentCss}`,
+            relative_urls: false,
         }"
 		v-model="changeDescriptionModel"
 		v-bind:disabled="isReadOnly"

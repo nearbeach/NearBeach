@@ -49,9 +49,6 @@ import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
-//Mixin
-import disableDate from "../../mixins/datetimeMixin";
-
 //VueX
 import { mapGetters } from "vuex";
 
@@ -65,7 +62,6 @@ export default {
 		ValidationRendering,
 	},
 	emits: ['update_dates'],
-	mixins: [disableDate],
 	props: {
 		destination: {
 			type: String,
@@ -79,9 +75,6 @@ export default {
 				temp_date.setMinutes(0);
 				temp_date.setSeconds(0);
 				temp_date.setMilliseconds(0);
-
-				//Add on 14 days
-				new Date(temp_date.setDate(temp_date.getDate() + 14));
 
 				return temp_date.getTime();
 			},

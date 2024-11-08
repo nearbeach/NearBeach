@@ -59,24 +59,11 @@ def new_scheduled_object(request):
     """
     t = loader.get_template("NearBeach/object_scheduler/new_scheduled_object.html")
 
-    # Get the data
-    group_results = Group.objects.filter(
-        is_deleted=False,
-    )
-
     c = {
         "group_results": get_all_groups(),
         "need_tinymce": True,
         "nearbeach_title": "New Scheduled Object",
         "theme": get_theme(request),
-        # "user_group_and_level": json.dumps(
-        #     list(user_group_and_level),
-        #     cls=DjangoJSONEncoder,
-        # ),
-        # "user_group_results": json.dumps(
-        #     list(user_group_results),
-        #     cls=DjangoJSONEncoder
-        # DjangoJSONEncoder),
         "user_group_permissions": get_user_group_permission(request.user, ["project"]),
         "uuid": str(uuid.uuid4()),
     }

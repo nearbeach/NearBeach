@@ -70,7 +70,7 @@ def add_object_to_sprint(request, destination, location_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_sprint_permission_with_sprint(2)
-def add_sprint_to_object(request, destination, location_id, *args, **kwargs):
+def add_sprint_to_object(request, destination, location_id, sprint_id, *args, **kwargs):
     """
     User currently on an object information page. They have selected this object be added to an existing sprint.
     """
@@ -78,8 +78,12 @@ def add_sprint_to_object(request, destination, location_id, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    form_sprint = form.cleaned_data["sprint_id"]
+    if not int(sprint_id) == form_sprint.sprint_id:
+        return HttpResponseBadRequest("Mismatch sprint id")
+
     submit_sprint_assignment = SprintObjectAssignment(
-        sprint_id=form.cleaned_data["sprint_id"],
+        sprint_id=form_sprint,
         **{F"{destination}_id": location_id},
         change_user=request.user,
     )
@@ -233,11 +237,10 @@ def new_sprint(request, destination, location_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_sprint_permission_with_sprint(2)
-def remove_sprint(request, destination, location_id, *args, **kwargs):
+def remove_sprint(request, destination, location_id, sprint_id, *args, **kwargs):
     form = RemoveSprintForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
-
 
     SprintObjectAssignment.objects.filter(
         **{F"{destination}_id": location_id},

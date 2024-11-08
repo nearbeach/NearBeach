@@ -15,7 +15,7 @@ export const themeSettings = {
         // },
     },
     actions: {
-        async processThemeUpdate({commit}, payload) {
+        processThemeUpdate({commit}, payload) {
             //Depending on the theme, depends on the values
             switch (payload.theme) {
                 case "dark":

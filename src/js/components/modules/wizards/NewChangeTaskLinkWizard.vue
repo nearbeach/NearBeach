@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.linkOut"></Icon>
-						New
-						Change Task Link Wizard
+						New Change Task Link Wizard
 					</h2>
 					<button
 						type="button"
@@ -109,8 +107,6 @@
 </template>
 
 <script>
-import iconMixin from "../../../mixins/iconMixin";
-import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 
 //VueX
@@ -119,7 +115,6 @@ import {mapGetters} from "vuex";
 export default {
 	name: "NewChangeTaskLinkWizard",
 	components: {
-		Icon,
 		NSelect,
 	},
 	emits: [
@@ -156,7 +151,6 @@ export default {
 			}
 		},
 	},
-	mixins: [iconMixin],
 	methods: {
 		checkSelected(pk) {
 			if (this.linkModel.includes(pk)) {

@@ -78,13 +78,15 @@ export default {
 	},
 	methods: {
 		removeSprint() {
+			const sprint_id = this.confirmRemoveSprint.sprint_id;
+
 			//Setup Data to Send
 			const data_to_send = new FormData();
-			data_to_send.set("sprint_id", this.confirmRemoveSprint.sprint_id);
+			data_to_send.set("sprint_id", sprint_id);
 
 			//Axios
 			this.axios.post(
-				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_sprint/`,
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_sprint/${sprint_id}/`,
 				data_to_send,
 			).then((response) => {
 				//Send the updated data upstream

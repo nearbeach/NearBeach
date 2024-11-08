@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(currentTheme)">
+	<n-config-provider :theme="useNBTheme(currentTheme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>My Profile</h1>
@@ -109,8 +109,8 @@ import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "ProfileInformation",
@@ -166,7 +166,6 @@ export default {
 			this.showMessage = true;
 		},
 	},
-	mixins: [getThemeMixin],
 	validations() {
 		return {
 			lastNameModel: {
@@ -180,6 +179,7 @@ export default {
 		};
 	},
 	methods: {
+		useNBTheme,
 		updateUser() {
 			//Check form validation
 			this.v$.$touch();

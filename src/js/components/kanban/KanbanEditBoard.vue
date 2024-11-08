@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<h1>{{ kanbanBoardResults[0].fields.kanban_board_name }}</h1>
@@ -82,8 +82,8 @@ import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "KanbanEditBoard",
@@ -138,7 +138,6 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [getThemeMixin],
 	data() {
 		return {
 			canDragCards: false,
@@ -155,6 +154,7 @@ export default {
 		},
 	},
 	methods: {
+		useNBTheme,
 		backToBoard() {
 			window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/`;
 		},

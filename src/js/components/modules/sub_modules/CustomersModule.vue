@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<h2>
-			<Icon v-bind:icon="icons.userIcon"></Icon>
 			Customers
 		</h2>
 		<p class="text-instructions">
@@ -51,8 +50,6 @@
 
 <script>
 //JavaScript components
-import iconMixin from "../../../mixins/iconMixin";
-import {Icon} from "@iconify/vue";
 import CustomersListModule from "./CustomersListModule.vue";
 import AddCustomerWizard from "../wizards/AddCustomerWizard.vue";
 import {Modal} from "bootstrap";
@@ -66,9 +63,7 @@ export default {
 	components: {
 		AddCustomerWizard,
 		CustomersListModule,
-		Icon,
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			customerResults: [],

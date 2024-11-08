@@ -56,8 +56,6 @@
 </template>
 
 <script>
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
 import KanbanRow from "./KanbanRow.vue";
 
 //VueX
@@ -91,7 +89,6 @@ export default {
 			levelResults: "getLevelResults",
 		}),
 	},
-	mixins: [iconMixin],
 	data() {
 		return {};
 	},
@@ -111,7 +108,7 @@ export default {
 		expandLevel(level_id) {
 			//Update the VueX data
 			this.$store.dispatch("updateLevelCollapse", {
-				level_id: level_id,
+				level_id,
 			});
 		},
 		getColumnCount(column_id) {
@@ -160,7 +157,7 @@ export default {
 				//So we need to use the scroll width of the container
 				const scroll_width = container_element.scrollWidth;
 				// const header_element = document.getElementsByClassName("kanban-edit-text")[0];
-				let elements = document.getElementsByClassName("kanban-level-div");
+				const elements = document.getElementsByClassName("kanban-level-div");
 
 				//Loop through each element
 				Array.from(elements).forEach((element) => {

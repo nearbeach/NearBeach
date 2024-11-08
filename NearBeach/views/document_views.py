@@ -31,7 +31,6 @@ from ..forms import (
 )
 from ..models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
 from azure.storage.blob import BlobServiceClient
-from django.conf import settings
 
 import boto3
 import json
@@ -54,14 +53,15 @@ def connect_check_client_s3(botoInitValues):
 
     # Check to see if the connection works
     try:
-        response = client.list_buckets()
+        client.list_buckets()
     except Exception as e:
         print(F"An issue has occurred trying to connect to the S3 bucket. Please see the following errors - {e}")
 
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_add_folder(request, destination, location_id):
+@check_user_generic_permissions(2, "document")
+def document_add_folder(request, destination, location_id, *args, **kwargs):
     """
     This will add a folder to the user's destination and location_id
     :param request:
@@ -95,7 +95,8 @@ def document_add_folder(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_add_link(request, destination, location_id):
+@check_user_generic_permissions(2, "document")
+def document_add_link(request, destination, location_id, *args, **kwargs):
     """
     Will add a link to the document
     :param request:
@@ -148,7 +149,8 @@ def document_add_link(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_list_files(request, destination, location_id):
+@check_user_generic_permissions(1, "document")
+def document_list_files(request, destination, location_id, *args, **kwargs):
     """
     Get the documents that are associated with the destination and location id
 
@@ -186,7 +188,8 @@ def document_list_files(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_list_folders(request, destination, location_id):
+@check_user_generic_permissions(1, "document")
+def document_list_folders(request, destination, location_id, *args, **kwargs):
     """
     Get the folders that are associated with the destination and location id
 
@@ -215,7 +218,8 @@ def document_list_folders(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_remove(request, destination, location_id):
+@check_user_generic_permissions(2, "document")
+def document_remove(request, destination, location_id, *args, **kwargs):
     # Get form data
     form = DocumentRemoveForm(request.POST)
     if not form.is_valid():
@@ -226,7 +230,10 @@ def document_remove(request, destination, location_id):
     document_update.is_deleted = True
     document_update.save()
 
-    document_permission_update = DocumentPermission.objects.get(document_key = document_update.document_key)
+    document_permission_update = DocumentPermission.objects.get(
+        document_key = document_update.document_key,
+        **{F"{destination}_id": location_id},
+    )
     document_permission_update.is_deleted = True
     document_permission_update.save()
 
@@ -235,7 +242,8 @@ def document_remove(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_remove_folder(request, destination, location_id):
+@check_user_generic_permissions(2, "document")
+def document_remove_folder(request, destination, location_id, *args, **kwargs):
     # Get form data
     form = FolderRemoveForm(request.POST)
     if not form.is_valid():
@@ -251,7 +259,7 @@ def document_remove_folder(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_generic_permissions(1, "document")
+@check_user_generic_permissions(2, "document")
 def document_upload(request, destination, location_id, *args, **kwargs):
     """
     The following function will deal with the uploaded document. It will first;
@@ -509,16 +517,17 @@ def handle_document_permissions(
 class FileHandler:
 
     @staticmethod
-    def upload(upload_document, document_results, file):
+    def upload(_, upload_document, document_results, file):
         return NotImplemented
 
     @staticmethod
-    def fetch(document_results):
+    def fetch(_, document_results):
         return NotImplemented
 
+
 class LocalFileHandler(FileHandler):
-    def __init__(self, settings):
-        self.root = Path(settings.PRIVATE_MEDIA_ROOT)
+    def __init__(self, local_settings):
+        self.root = Path(local_settings.PRIVATE_MEDIA_ROOT)
 
     def fetch(self, document_results):
         # Normal setup - find document on server and serve
@@ -546,30 +555,30 @@ class LocalFileHandler(FileHandler):
 
 
 class S3FileHandler(FileHandler):
-    def __init__(self, settings):
+    def __init__(self, local_settings):
         botoInitValues = {
-            "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
-            "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
+            "aws_access_key_id": local_settings.AWS_ACCESS_KEY_ID,
+            "aws_secret_access_key": local_settings.AWS_SECRET_ACCESS_KEY,
         }
-        if getattr(settings, "AWS_S3_ENDPOINT_URL", None):
+        if getattr(local_settings, "AWS_S3_ENDPOINT_URL", None):
             # Assume the person is using minio  so defualts are the values
             # which will allow for connection to minio
             botoInitValues.update(
-                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-                aws_session_token=getattr(settings, "AWS_S3_SESSION_TOKEN", None),
+                endpoint_url=local_settings.AWS_S3_ENDPOINT_URL,
+                aws_session_token=getattr(local_settings, "AWS_S3_SESSION_TOKEN", None),
                 config=getattr(
-                    settings, 
+                    local_settings,
                     "AWS_CONFIG", 
                     boto3.session.Config(signature_version='s3v4'),
                 ),
-                verify=getattr(settings, "AWS_VERIFY_TLS", True),
-                **getattr(settings, "AWS_INIT_VALUES", {})
+                verify=getattr(local_settings, "AWS_VERIFY_TLS", True),
+                **getattr(local_settings, "AWS_INIT_VALUES", {})
             )
             # Log any issues for the user
             connect_check_client_s3(botoInitValues)
 
         self._s3 = boto3.client("s3",   **botoInitValues)
-        self._bucket = settings.AWS_STORAGE_BUCKET_NAME
+        self._bucket = local_settings.AWS_STORAGE_BUCKET_NAME
 
     def fetch(self, document_results):
         # Use boto3 to download
@@ -592,13 +601,14 @@ class S3FileHandler(FileHandler):
             str(document_results.document),
         )
 
+
 class AzureFileHanlder(FileHandler):
-    def __init__(self, settings):
+    def __init__(self, local_settings):
         # Create the BlobServiceClient object
         self._sevice_client = BlobServiceClient.from_connection_string(
-            settings.AZURE_STORAGE_CONNECTION_STRING
+            local_settings.AZURE_STORAGE_CONNECTION_STRING
         )
-        self._client_name = settings.AZURE_STORAGE_CONTAINER_NAME
+        self._client_name = local_settings.AZURE_STORAGE_CONTAINER_NAME
 
     def fetch(self, document_results):
         # Get container
@@ -628,13 +638,13 @@ class AzureFileHanlder(FileHandler):
         blob_client.upload_blob(file)
 
 
-def get_file_handler(settings):
+def get_file_handler(local_settings):
     # Handle the document upload
-    if getattr(settings, "AWS_ACCESS_KEY_ID", None):
-        return S3FileHandler(settings)
-    if getattr(settings, "AZURE_STORAGE_CONNECTION_STRING", None):
-        return AzureFileHanlder(settings)
-    return LocalFileHandler(settings)
+    if getattr(local_settings, "AWS_ACCESS_KEY_ID", None):
+        return S3FileHandler(local_settings)
+    if getattr(local_settings, "AZURE_STORAGE_CONNECTION_STRING", None):
+        return AzureFileHanlder(local_settings)
+    return LocalFileHandler(local_settings)
 
 
 @require_http_methods(["POST"])
@@ -675,7 +685,7 @@ def transfer_new_object_uploads(destination, location_id, uuid):
     An Internal function that will add the new destination/location_id to an already uploaded document(s) which match
     the supplied UUID. Thus removing the lack of permissions around the document.
     """
-    document_permission_results = DocumentPermission.objects.filter(
+    DocumentPermission.objects.filter(
         is_deleted=False,
         new_object=uuid,
     ).update(

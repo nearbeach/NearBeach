@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.userIcon"></Icon>
-						Add User
-						To Card
+						Add User To Card
 					</h2>
 					<button
 						type="button"
@@ -98,23 +96,17 @@
 </template>
 
 <script>
-import {Icon} from "@iconify/vue";
 import {NSelect} from "naive-ui";
 import {Modal} from "bootstrap";
 
 //VueX
 import {mapGetters} from "vuex";
 
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
-
 export default {
 	name: "AddUserToCard",
 	components: {
-		Icon,
 		NSelect,
 	},
-	mixins: [iconMixin],
 	computed: {
 		...mapGetters({
 			cardId: "getCardId",

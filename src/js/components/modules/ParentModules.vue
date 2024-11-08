@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<ul
@@ -349,9 +349,11 @@ import ListSprints from "./sub_modules/ListSprints.vue";
 import EditHistoryNoteWizard from "./wizards/EditHistoryNoteWizard.vue";
 import NewHistoryNoteWizard from "./wizards/NewHistoryNoteWizard.vue";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
+//Components
 import ConfirmNoteDelete from "./wizards/ConfirmNoteDelete.vue";
+
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "ParentModules",
@@ -375,9 +377,6 @@ export default {
 		UploadDocumentWizard,
 		MiscModule,
 	},
-	mixins: [
-		getThemeMixin
-	],
 	props: {
 		destination: {
 			type: String,
@@ -417,7 +416,7 @@ export default {
 	data() {
 		return {};
 	},
-	methods: {},
+	methods: {useNBTheme},
 	async beforeMount() {
 		await this.$store.dispatch("processThemeUpdate", {
 			theme: this.theme,

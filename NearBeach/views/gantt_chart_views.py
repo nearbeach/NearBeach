@@ -43,6 +43,10 @@ GANTT_DATA_UPDATE_STRUCTURE = {
 
 @check_gantt_chart_permissions_with_destination(min_permission_level=1)
 def gantt_data_get_data(request, destination, location_id, *args, **kwargs):
+    # Check to make sure the destination is a sprint
+    if not destination == "sprint":
+        return HttpResponseBadRequest("Not a sprint")
+
     # Get the object results
     object_results = get_object_results(location_id)
     status_results = get_status_results()

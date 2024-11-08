@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card-body">
 				<!-- The MENU Items -->
@@ -117,7 +117,6 @@
 						aria-labelledby="profile-tab"
 					>
 						<h2>
-							<Icon v-bind:icon="icons.userIcon"></Icon>
 							Contacts
 						</h2>
 						<p class="text-instructions">
@@ -216,26 +215,22 @@
 				v-bind:organisation-id="locationId"
 				v-bind:title-list="titleList"
 			></new-customer-modal>
+
+			<add-tag-wizard></add-tag-wizard>
 		</div>
 	</n-config-provider>
 </template>
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
+
+//Components
 import CustomersListModule from "../modules/sub_modules/CustomersListModule.vue";
 import ListTagsModule from "../modules/sub_modules/ListTagsModule.vue";
 import NewCustomerModal from "../customers/NewCustomerModal.vue";
 import NotesModule from "../modules/sub_modules/NotesModule.vue";
 import AssociatedObjects from "../modules/sub_modules/AssociatedObjects.vue";
 import DocumentsModule from "../modules/sub_modules/DocumentsModule.vue";
-
-//VueX
-// import { mapGetters } from 'vuex';
-
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import iconMixin from "../../mixins/iconMixin";
 import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
 import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
 import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
@@ -243,10 +238,15 @@ import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
 import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
 import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
 import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
+import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
+
+//Composables
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "OrganisationModules",
 	components: {
+		AddTagWizard,
 		AddFolderWizard,
 		AddLinkWizard,
 		AssociatedObjects,
@@ -255,7 +255,6 @@ export default {
 		CustomersListModule,
 		DocumentsModule,
 		EditHistoryNoteWizard,
-		Icon,
 		ListTagsModule,
 		NewCustomerModal,
 		NewHistoryNoteWizard,
@@ -317,8 +316,8 @@ export default {
 		// }),
 	},
 	emits: ["remove_customer"],
-	mixins: [getThemeMixin, iconMixin],
 	methods: {
+		useNBTheme,
 		addNewContact() {
 			const new_customer_modal = new Modal(
 				document.getElementById("addCustomerModal")

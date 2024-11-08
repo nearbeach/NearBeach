@@ -1,5 +1,5 @@
 <template>
-	<n-config-provider :theme="getTheme(theme)">
+	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
 			<div class="card card-body">
 				<h1>Scheduled Object Information</h1>
@@ -71,10 +71,11 @@
 							alt="loading image for Tinymce"
 						/>
 						<editor
+							license-key="gpl"
 							:init="{
 							file_picker_types: 'image',
 							height: 500,
-							images_upload_handler: newObjectUploadImage,
+							images_upload_handler: useNewObjectUploadImage,
 							menubar: false,
 							paste_data_images: true,
 							plugins: ['lists', 'image', 'codesample', 'table'],
@@ -82,6 +83,7 @@
 									 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
 							skin: `${this.skin}`,
 							content_css: `${this.contentCss}`,
+							relative_urls: false,
 						}"
 							v-model="objectDescriptionModel"
 						/>
@@ -201,10 +203,6 @@ import { NSelect, NConfigProvider, NSwitch } from "naive-ui";
 import BetweenDates from "../dates/BetweenDates.vue";
 import SchedulerFrequency from "./SchedulerFrequency.vue";
 
-//Mixins
-import getThemeMixin from "../../mixins/getThemeMixin";
-import uploadMixin from "../../mixins/uploadMixin";
-
 //Validations
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
@@ -213,6 +211,10 @@ import ValidationRendering from "../validation/ValidationRendering.vue";
 //VueX
 import { mapGetters } from "vuex";
 import StakeholderInformation from "../organisations/StakeholderInformation.vue";
+
+//Composable
+import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNewObjectUploadImage} from "../../composables/uploads/useNewObjectUploadImage";
 
 export default {
 	name: "NewScheduledObject",
@@ -351,11 +353,9 @@ export default {
 			required,
 		},
 	},
-	mixins: [
-		getThemeMixin,
-		uploadMixin,
-	],
 	methods: {
+		useNewObjectUploadImage,
+		useNBTheme,
 		calculateUserLevel(data) {
 			//If there is no data to crunch, just return.
 			if (data.length === 0) return 0;
@@ -452,7 +452,7 @@ export default {
 			this.singleDayModel = data.singleDayModel;
 			this.startDateModel = data.startDateModel;
 		},
-		updateSchedulerObject: async function() {
+		async updateSchedulerObject() {
 			//Validate the data before sending
 			const isFormCorrect = await this.v$.$validate();
 			if (!isFormCorrect || this.displayGroupPermissionIssue || !this.isFormValid) {
@@ -523,7 +523,7 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}scheduled_object_information/${this.scheduledObjectResults.schedule_object_id}/save/`,
 				data_to_send,
-			).then((response) => {
+			).then(() => {
 				this.$store.dispatch("newToast", {
 					header: "Saved Scheduled Object",
 					message: "Scheduled Object has been updated",

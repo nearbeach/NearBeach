@@ -15,7 +15,6 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>
-						<Icon v-bind:icon="icons.noteAdd"></Icon>
 						New Note
 					</h2>
 					<button
@@ -34,6 +33,7 @@
 						submit button to submit the note.
 					</p>
 					<editor
+						license-key="gpl"
 						:init="{
 							license_key: 'gpl',
 							height: 300,
@@ -42,7 +42,8 @@
             				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 				 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
             				skin: `${this.skin}`,
-			            	content_css: `${this.contentCss}`
+			            	content_css: `${this.contentCss}`,
+			            	relative_urls: false,
 						}"
 						v-model="newNoteModel"
 					/>
@@ -71,8 +72,6 @@
 
 <script>
 //JavaScript components
-import iconMixin from "../../../mixins/iconMixin";
-import {Icon} from "@iconify/vue";
 import Editor from "@tinymce/tinymce-vue";
 
 //VueX
@@ -82,7 +81,6 @@ export default {
 	name: "NewHistoryNoteWizard",
 	components: {
 		editor: Editor,
-		Icon,
 	},
 	props: {
 		destination: {
@@ -94,7 +92,6 @@ export default {
 			default: 0,
 		},
 	},
-	mixins: [iconMixin],
 	data() {
 		return {
 			newNoteModel: "",

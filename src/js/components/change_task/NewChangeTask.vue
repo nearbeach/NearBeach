@@ -383,14 +383,14 @@ export default {
 		},
 		updateUserList() {
 			//Grab a map of the potential and current users
-			const a = this.objectUserList.map((row) => {
+			const formatted_user_list = this.objectUserList.map((row) => {
 				return {
 					label: `${row.username}: ${row.first_name} ${row.last_name}`,
 					value: row.id,
 				}
 			});
 
-			const b = this.potentialUserList.map((row) => {
+			const formatted_potential_list = this.potentialUserList.map((row) => {
 				return {
 					label: `${row.username}: ${row.first_name} ${row.last_name}`,
 					value: row.id,
@@ -398,7 +398,7 @@ export default {
 			});
 
 			//Concatenate the lists
-			this.userList = a.concat(b);
+			this.userList = formatted_user_list.concat(formatted_potential_list);
 		},
 	},
 	mounted() {

@@ -46,7 +46,7 @@ export default {
 				//Loop through each toast item and deploy :)
 				toastList.forEach((row) => {
 					//Get the delay
-					var delay = row.dataset.delay;
+					const delay = row.dataset.delay;
 
 					//Setup the options
 					const options = {
@@ -86,7 +86,7 @@ export default {
 		},
 		removeToast(unique_uuid) {
 			this.$store.dispatch("removeToast", {
-				unique_uuid: unique_uuid,
+				unique_uuid,
 			});
 		}
 	},

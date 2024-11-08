@@ -47,7 +47,7 @@ export const store = createStore({
         userLevel: moduleUserLevel,
 
         //User Settings
-        kanbanSettings: kanbanSettings,
-        themeSettings: themeSettings,
+        kanbanSettings,
+        themeSettings,
     },
 });

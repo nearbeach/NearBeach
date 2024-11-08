@@ -767,7 +767,7 @@ def delete_link(request, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_generic_permissions(min_permission_level=4)
+@check_user_generic_permissions(min_permission_level=2)
 def delete_tag(request, destination, location_id, *args, **kwargs):
     # Get form data
     form = DeleteTagForm(request.POST)

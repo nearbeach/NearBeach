@@ -51,7 +51,7 @@
 									v-on:click="removeStatus(element.status_id)"
 									v-if="localStatusList.length > 1"
 								>
-									<Icon v-bind:icon="icons.xCircle"></Icon>
+									<carbon-close-outline></carbon-close-outline>
 								</span>
 							</div>
 						</template>
@@ -86,21 +86,16 @@
 </template>
 
 <script>
-//Icon
-import { Icon } from "@iconify/vue";
-
 //Draggable
 import draggable from "vuedraggable";
 
 //Bootstrap
 import { Modal } from "bootstrap";
 
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
-
 //Components
 import ObjectStatusConfirmDelete from "./ObjectStatusConfirmDelete.vue";
 import ObjectStatusModal from "./ObjectStatusModal.vue";
+import {CarbonCloseOutline} from "../../components";
 
 export default {
 	name: "ObjectStatusInformation",
@@ -128,10 +123,9 @@ export default {
 			default: "",
 		},
 	},
-	mixins: [iconMixin],
 	components: {
+		CarbonCloseOutline,
 		draggable,
-		Icon,
 		ObjectStatusConfirmDelete,
 		ObjectStatusModal,
 	},

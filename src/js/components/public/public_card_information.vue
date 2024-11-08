@@ -94,6 +94,7 @@
 		</div>
 		<div class="col-md-8">
 			<editor
+				license-key="gpl"
 				:init="{
 					license_key: 'gpl',
 					height: 300,
@@ -102,7 +103,8 @@
             		toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 							 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
 					skin: `${this.skin}`,
-					content_css: `${this.contentCss}`
+					content_css: `${this.contentCss}`,
+					relative_urls: false,
 				}"
 				v-model="localCardDescription"
 				v-bind:disabled="true"

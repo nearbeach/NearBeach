@@ -44,7 +44,7 @@
 						v-on:click="removeItem(element.id)"
 						v-if="localPropertyList.length > 1"
 					>
-						<Icon v-bind:icon="icons.xCircle"></Icon>
+						<carbon-close-outline></carbon-close-outline>
 					</span>
 				</div>
 			</template>
@@ -220,7 +220,6 @@
 
 <script>
 import {Modal} from "bootstrap";
-import {Icon} from "@iconify/vue";
 import {NSelect, NRadioGroup, NRadio, NSpace} from "naive-ui";
 import draggable from "vuedraggable";
 import {mapGetters} from "vuex";
@@ -229,17 +228,19 @@ import {mapGetters} from "vuex";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 
-//Mixins
-import iconMixin from "../../mixins/iconMixin";
+import {CarbonCloseOutline} from "../../components";
 
 export default {
 	name: "KanbanPropertyOrder",
 	setup() {
 		return {v$: useVuelidate()};
 	},
+	emits: [
+		"update_property_list",
+	],
 	components: {
+		CarbonCloseOutline,
 		draggable,
-		Icon,
 		NRadio,
 		NRadioGroup,
 		NSelect,
@@ -307,7 +308,6 @@ export default {
 			singleItemId: "",
 		};
 	},
-	mixins: [iconMixin],
 	validations: {
 		localPropertyList: {
 			required,
@@ -403,7 +403,7 @@ export default {
 			//Open up the modal
 			this.openModal();
 		},
-		editModeAddItem: async function (/*var*/) {
+		async editModeAddItem() {
 			// Create variable names
 			const name = `kanban_${this.propertyName.toLowerCase()}_name`,
 				sort_number = `kanban_${this.propertyName.toLowerCase()}_sort_number`,
@@ -423,16 +423,13 @@ export default {
 			}
 
 			// Check to see if we are editing an existing item, or adding
+			let url = "";
 			if (single_item_id === "") {
 				//Get the url
-				var url = `/kanban_${this.propertyName.toLowerCase()}/${
-					this.kanbanBoardId
-				}/new/`;
+				url = `/kanban_${this.propertyName.toLowerCase()}/${this.kanbanBoardId}/new/`;
 			} else {
 				//Get the url
-				var url = `/kanban_${this.propertyName.toLowerCase()}/${
-					this.singleItemId
-				}/edit/`;
+				url = `/kanban_${this.propertyName.toLowerCase()}/${this.singleItemId}/edit/`;
 			}
 
 			// Send data

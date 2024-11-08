@@ -33,7 +33,7 @@
 				<p>{{ result[importVariables.status] }}</p>
 				<div class="spacer"></div>
 				<p class="small-text">
-					{{ getNiceDatetime(result[importVariables.end_date]) }}
+					{{ useNiceDatetime(result[importVariables.end_date]) }}
 				</p>
 			</td>
 		</tr>
@@ -42,8 +42,6 @@
 </template>
 
 <script>
-//Mixins
-import datetimeMixin from "../../mixins/datetimeMixin";
 
 export default {
 	name: "RenderObjectTable",
@@ -78,6 +76,5 @@ export default {
 	data() {
 		return {};
 	},
-	mixins: [datetimeMixin],
 };
 </script>
