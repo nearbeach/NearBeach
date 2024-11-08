@@ -56,6 +56,7 @@
 						toolbar: [],
 						skin: `${this.skin}`,
 						content_css: `${this.contentCss}`,
+						relative_urls: false,
 					}"
 						v-model="note.object_note"
 						v-bind:disabled="true"

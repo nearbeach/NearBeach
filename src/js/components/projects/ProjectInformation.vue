@@ -69,6 +69,7 @@
 					 				 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
 							skin: `${this.skin}`,
 							content_css: `${this.contentCss}`,
+							relative_urls: false,
 						}"
 							v-bind:disabled="isReadOnly"
 							v-model="projectDescriptionModel"

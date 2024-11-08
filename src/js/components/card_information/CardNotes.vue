@@ -22,7 +22,8 @@
             			toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 			 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
             			skin: `${this.skin}`,
-			            content_css: `${this.contentCss}`
+			            content_css: `${this.contentCss}`,
+			            relative_urls: false,
 					}"
 					v-model="cardNoteModel"
 					v-bind:disabled="kanbanStatus === 'Closed'"
