@@ -324,7 +324,6 @@ export default {
 			}
 
 			//Check to make sure it does not exist
-			console.log("Kanban Card Results: ", this.kanbanCardResults);
 			const filtered_results = this.kanbanCardResults.filter((row) => {
 				return (
 					row.kanban_card_text === this.kanbanCardTextModel
