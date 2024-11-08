@@ -1,6 +1,6 @@
 import { toValue } from "vue";
 
-export function useObjectUploadImage(blobInfo) {
+export function useObjectUploadImage(blobInfo, progress) {
     const value = toValue(blobInfo);
 
     //Create the form
@@ -11,9 +11,9 @@ export function useObjectUploadImage(blobInfo) {
 
     //Configuration for axios
     const config = {
-        onUploadProgress: () => {
+        onUploadProgress: (progressEvent) => {
             //As the document gets uploaded - we want to update the upload Percentage
-
+            progress = parseFloat(progressEvent.loaded) / parseFloat(progressEvent.total);
         },
     };
 

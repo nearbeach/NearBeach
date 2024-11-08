@@ -2,7 +2,7 @@ import { toValue } from "vue";
 import { store } from "../../vuex-store";
 
 
-export function useNewObjectUploadImage(blobInfo) {
+export function useNewObjectUploadImage(blobInfo, progress) {
     const value = toValue(blobInfo);
     const rootUrl = store.getters.getRootUrl;
 
@@ -15,10 +15,19 @@ export function useNewObjectUploadImage(blobInfo) {
     data_to_send.set("document_description", value.filename());
     data_to_send.set("uuid", this.uuid);
 
+    //Configuration for axios
+    const config = {
+        onUploadProgress: (progressEvent) => {
+            //As the document gets uploaded - we want to update the upload Percentage
+            progress = parseFloat(progressEvent.loaded) / parseFloat(progressEvent.total);
+        },
+    };
+
     //Use axios to send the data
-    this.axios.post(
+    return this.axios.post(
         `${rootUrl}documentation/new_object_upload/`,
         data_to_send,
+        config
     ).then((response) => {
         //Just send the location to the success
         return `/private/${response.data[0].document_key_id}`;
