@@ -215,6 +215,8 @@
 				v-bind:organisation-id="locationId"
 				v-bind:title-list="titleList"
 			></new-customer-modal>
+
+			<add-tag-wizard></add-tag-wizard>
 		</div>
 	</n-config-provider>
 </template>
@@ -236,6 +238,7 @@ import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
 import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
 import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
 import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
+import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
 
 //Composables
 import {useNBTheme} from "../../composables/theme/useNBTheme";
@@ -243,6 +246,7 @@ import {useNBTheme} from "../../composables/theme/useNBTheme";
 export default {
 	name: "OrganisationModules",
 	components: {
+		AddTagWizard,
 		AddFolderWizard,
 		AddLinkWizard,
 		AssociatedObjects,
