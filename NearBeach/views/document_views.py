@@ -60,7 +60,8 @@ def connect_check_client_s3(botoInitValues):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_add_folder(request, destination, location_id):
+@check_user_generic_permissions(2, "document")
+def document_add_folder(request, destination, location_id, *args, **kwargs):
     """
     This will add a folder to the user's destination and location_id
     :param request:
@@ -94,7 +95,8 @@ def document_add_folder(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_add_link(request, destination, location_id):
+@check_user_generic_permissions(2, "document")
+def document_add_link(request, destination, location_id, *args, **kwargs):
     """
     Will add a link to the document
     :param request:
@@ -147,7 +149,8 @@ def document_add_link(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_list_files(request, destination, location_id):
+@check_user_generic_permissions(1, "document")
+def document_list_files(request, destination, location_id, *args, **kwargs):
     """
     Get the documents that are associated with the destination and location id
 
@@ -185,7 +188,8 @@ def document_list_files(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_list_folders(request, destination, location_id):
+@check_user_generic_permissions(1, "document")
+def document_list_folders(request, destination, location_id, *args, **kwargs):
     """
     Get the folders that are associated with the destination and location id
 
@@ -214,6 +218,7 @@ def document_list_folders(request, destination, location_id):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
+@check_user_generic_permissions(2, "document")
 def document_remove(request, destination, location_id, *args, **kwargs):
     # Get form data
     form = DocumentRemoveForm(request.POST)
@@ -237,7 +242,8 @@ def document_remove(request, destination, location_id, *args, **kwargs):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-def document_remove_folder(request, _, __):
+@check_user_generic_permissions(2, "document")
+def document_remove_folder(request, destination, location_id, *args, **kwargs):
     # Get form data
     form = FolderRemoveForm(request.POST)
     if not form.is_valid():
@@ -253,7 +259,7 @@ def document_remove_folder(request, _, __):
 
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
-@check_user_generic_permissions(1, "document")
+@check_user_generic_permissions(2, "document")
 def document_upload(request, destination, location_id, *args, **kwargs):
     """
     The following function will deal with the uploaded document. It will first;
