@@ -249,8 +249,14 @@ def document_remove_folder(request, destination, location_id, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # Get folder from the from
+    # Getting folder update
     folder_update = form.cleaned_data["folder_id"]
+
+    # Check the destination and location id
+    if not folder_update.destination == destination or not folder_update.location_id == location_id:
+        return HttpResponseBadRequest("Mismatch of data")
+
+    # Get folder from the from
     folder_update.is_deleted = True
     folder_update.save()
 

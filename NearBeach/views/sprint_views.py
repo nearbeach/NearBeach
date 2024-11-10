@@ -242,9 +242,13 @@ def remove_sprint(request, destination, location_id, sprint_id, *args, **kwargs)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    form_sprint = form.cleaned_data["sprint_id"]
+    if not int(sprint_id) == form_sprint.sprint_id:
+        return HttpResponseBadRequest("Mismatch sprint id")
+
     SprintObjectAssignment.objects.filter(
         **{F"{destination}_id": location_id},
-        sprint_id=form.cleaned_data["sprint_id"],
+        sprint_id=form_sprint,
     ).update(
         is_deleted=True,
     )
