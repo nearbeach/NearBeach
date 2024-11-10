@@ -13,7 +13,7 @@ export function useObjectUploadImage(blobInfo, progress) {
     const config = {
         onUploadProgress: (progressEvent) => {
             //As the document gets uploaded - we want to update the upload Percentage
-            progress = parseFloat(progressEvent.loaded) / parseFloat(progressEvent.total);
+            progress(parseFloat(progressEvent.loaded) / parseFloat(progressEvent.total));
         },
     };
 
