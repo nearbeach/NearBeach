@@ -11,8 +11,8 @@ export function useNewObjectUploadImage(blobInfo, progress) {
 
     //Create the form
     const data_to_send = new FormData();
-    data_to_send.set("document", value.blob(), value.filename());
-    data_to_send.set("document_description", value.filename());
+    data_to_send.set("document", value.blob(), value.blob().name);
+    data_to_send.set("document_description", value.blob().name);
     data_to_send.set("uuid", this.uuid);
 
     //Configuration for axios
