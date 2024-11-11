@@ -91,13 +91,13 @@
 				v-if="schedulerFrequencyModel === 'Set Day of the Week'"
 			>
 				<div class="text-center col-md-1 d-flex flex-column justify-content-between px-0"
-					 v-for="day in dayOfTheWeekArray"
-					 :key="day.value"
+					 v-for="dayLoop in dayOfTheWeekArray"
+					 :key="dayLoop.value"
 				>
-					<label v-bind:for="`checkbox_${day.value}`">{{ day.shortLabel }}</label>
+					<label v-bind:for="`checkbox_${dayLoop.value}`">{{ dayLoop.shortLabel }}</label>
 					<input type="checkbox"
-						   v-bind:value="day.value"
-						   v-bind:id="`checkbox_${day.value}`"
+						   v-bind:value="dayLoop.value"
+						   v-bind:id="`checkbox_${dayLoop.value}`"
 						   v-model="dayModel"
 					/>
 				</div>
