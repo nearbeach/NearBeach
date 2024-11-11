@@ -1,7 +1,7 @@
 <template>
 	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
-			<div class="card-body">
+			<div class="card-body requirement-border">
 				<h1>New Requirement</h1>
 				<hr/>
 				<div class="row">

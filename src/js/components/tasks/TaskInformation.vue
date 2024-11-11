@@ -1,7 +1,7 @@
 <template>
 	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
-			<div class="card-body">
+			<div class="card-body task-border">
 				<h1>Task Information</h1>
 				<hr/>
 

@@ -44,5 +44,11 @@
 @import "layouts/footer";
 @import "layouts/header";
 
+//Custom Boards
+@import "components/project";
+@import "components/requirement";
+@import "components/requirement_item";
+@import "components/task";
+
 //Import vue-form-wizard components
 //@import "~vue-form-wizard/dist/vue-form-wizard.min.css";
