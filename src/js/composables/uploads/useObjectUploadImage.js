@@ -31,5 +31,7 @@ export function useObjectUploadImage(blobInfo, progress) {
             extra_classes: "bg-danger",
             delay: 0,
         });
+
+        return "";
     });
 }
