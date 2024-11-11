@@ -179,6 +179,7 @@ def add_group(request, destination, location_id, *args, **kwargs):
         get_group_and_user_list(
             destination,
             location_id,
+            request,
         )
     )
 
@@ -371,6 +372,7 @@ def add_user(request, destination, location_id, *args, **kwargs):
         get_group_and_user_list(
             destination,
             location_id,
+            request,
         )
     )
 
@@ -805,7 +807,7 @@ def get_customer_list(destination, location_id, *args, **kwargs):
 
 
 # Internal function
-def get_group_and_user_list(destination, location_id, *args, **kwargs):
+def get_group_and_user_list(destination, location_id, request, *args, **kwargs):
     # Get the data dependant on the objects lookup
     object_group_results = get_group_list(destination, location_id)
     object_user_results = get_user_list(destination, location_id)
@@ -818,15 +820,26 @@ def get_group_and_user_list(destination, location_id, *args, **kwargs):
         group_id__in=object_group_results.values('group_id')
     )
 
+    # Get user objects
+    user_group_results = UserGroup.objects.filter(
+        is_deleted=False,
+        username=request.user,
+    ).values(
+        "group_id",
+        "group_id__group_name",
+    )
+
     # Convert data to json format
     object_group_results = json.dumps(list(object_group_results.values()), cls=DjangoJSONEncoder)
     potential_group_results = json.dumps(list(potential_group_results.values()), cls=DjangoJSONEncoder)
+    user_group_results = json.dumps(list(user_group_results), cls=DjangoJSONEncoder)
 
     return_data = {
         "object_group_list": json.loads(object_group_results),
         "object_user_list": json.loads(object_user_results),
         "potential_group_list": json.loads(potential_group_results),
         "potential_user_list": json.loads(potential_user_results),
+        "user_group_list": json.loads(user_group_results),
     }
 
     return return_data
@@ -955,7 +968,8 @@ def group_and_user_data(request, destination, location_id, *args, **kwargs):
     return JsonResponse(
         get_group_and_user_list(
             destination, 
-            location_id
+            location_id,
+            request,
         )
     )
 
@@ -1301,6 +1315,7 @@ def remove_group(request, destination, location_id, *args, **kwargs):
         get_group_and_user_list(
             destination,
             location_id,
+            request,
         )
     )
 
@@ -1357,6 +1372,7 @@ def remove_user(request, destination, location_id, *args, **kwargs):
         get_group_and_user_list(
             destination,
             location_id,
+            request,
         )
     )
 
