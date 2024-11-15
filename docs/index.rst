@@ -51,6 +51,7 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
     Quick Install with Podman </001-installation/quick-install-with-podman>
     Different Databases </001-installation/different-databases/index>
     Different Blob Storage </001-installation/different-blob-storage/index>
+    Install Against Existing Project </001-installation/install-against-existing-project/index>
     Old Installation Process </001-installation/old-installation-process/index>
 
 
