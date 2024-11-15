@@ -14,6 +14,10 @@ export default defineConfig({
             reporter: ['text','html','json']
         },
         environment: "jsdom",
+        exclude: [
+            `./src/js/components.js`,
+            `./src/js/composables/**/*`,
+        ],
         include: [
             `./tests/unit/**/*.unit.js`,
         ],
