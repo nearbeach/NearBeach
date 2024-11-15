@@ -11,15 +11,15 @@ export function useNewObjectUploadImage(blobInfo, progress) {
 
     //Create the form
     const data_to_send = new FormData();
-    data_to_send.set("document", value.blob(), value.filename());
-    data_to_send.set("document_description", value.filename());
+    data_to_send.set("document", value.blob(), value.blob().name);
+    data_to_send.set("document_description", value.blob().name);
     data_to_send.set("uuid", this.uuid);
 
     //Configuration for axios
     const config = {
         onUploadProgress: (progressEvent) => {
             //As the document gets uploaded - we want to update the upload Percentage
-            progress = parseFloat(progressEvent.loaded) / parseFloat(progressEvent.total);
+            progress(parseFloat(progressEvent.loaded) / parseFloat(progressEvent.total));
         },
     };
 
@@ -38,5 +38,7 @@ export function useNewObjectUploadImage(blobInfo, progress) {
             extra_classes: "bg-danger",
             delay: 0,
         });
+
+        return "";
     });
 }

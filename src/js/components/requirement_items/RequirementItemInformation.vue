@@ -1,7 +1,7 @@
 <template>
 	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
-			<div class="card-body">
+			<div class="card-body requirement-item-border">
 				<h1>Requirement Item Information</h1>
 				<br/>
 				<a

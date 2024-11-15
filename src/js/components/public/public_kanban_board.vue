@@ -82,7 +82,7 @@
 						v-bind:card-level="cardLevel"
 						v-bind:card-priority="cardPriority"
 						v-bind:card-text="cardText"
-						v-bind:theme="`light`"
+						theme="light"
 						v-bind:user-level="1"
 					></public-card-information>
 				</div>

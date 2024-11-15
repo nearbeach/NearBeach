@@ -27,7 +27,9 @@
 							Include Closed Objects</label
 						>
 					</div>
-					<div class="form-group">
+					<div class="form-group"
+						 v-if="isSuperuser"
+					>
 						<input
 							type="checkbox"
 							id="includeAllGroups"
@@ -114,6 +116,10 @@ export default {
 			default: false,
 		},
 		includeClosed: {
+			type: Boolean,
+			default: false,
+		},
+		isSuperuser: {
 			type: Boolean,
 			default: false,
 		},

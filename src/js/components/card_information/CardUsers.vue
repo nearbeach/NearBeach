@@ -78,6 +78,7 @@ export default {
 						objectUserList: response.data.object_user_list,
 						potentialGroupList: response.data.potential_group_list,
 						potentialUserList: response.data.potential_user_list,
+						userGroupList: response.data.user_group_list,
 					})
 				});
 		},

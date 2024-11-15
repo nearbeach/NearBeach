@@ -1,7 +1,7 @@
 <template>
 	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="card">
-			<div class="card-body">
+			<div class="card-body project-border">
 				<h1>Project Information</h1>
 				<hr/>
 

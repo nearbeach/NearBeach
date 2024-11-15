@@ -139,7 +139,7 @@
 import useVuelidate from "@vuelidate/core";
 import {email, helpers, required} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
-const usernameRegex = helpers.regex(/^[0-9a-zA-Z,_@+.\-]{1,150}$/);
+const usernameRegex = helpers.regex(/^[0-9a-zA-Z,_@+.-]{1,150}$/);
 
 export default {
 	name: "NewUser",

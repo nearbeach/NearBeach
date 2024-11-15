@@ -220,10 +220,11 @@ export default {
 		submitRfc() {
 			// Check validation
 			let validation_is_true = true;
-			for (const tab in this.validationData) {
+			for (const tab of Object.keys(this.validationData)) {
 				//If there are any FALSE, then the "validation_is_true" will be false
 				validation_is_true = validation_is_true && this.validationData[tab];
 			}
+
 			if (validation_is_true === false) {
 				this.$store.dispatch("newToast", {
 					header: "Please check your inputs",

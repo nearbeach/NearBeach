@@ -21,7 +21,7 @@ export function useUploadImage(blobInfo, progress) {
     const config = {
         onUploadProgress: (progressEvent) => {
             //As the document gets uploaded - we want to update the upload Percentage
-            progress = parseFloat(progressEvent.loaded) / parseFloat(progressEvent.total);
+            progress(parseFloat(progressEvent.loaded) / parseFloat(progressEvent.total));
         },
     };
 
@@ -40,5 +40,7 @@ export function useUploadImage(blobInfo, progress) {
             extra_classes: "bg-danger",
             delay: 0,
         });
+
+        return "";
     });
 }

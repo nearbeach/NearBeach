@@ -94,7 +94,16 @@ export default {
 					objectUserList: response.data.object_user_list,
 					potentialGroupList: response.data.potential_group_list,
 					potentialUserList: response.data.potential_user_list,
-				})
+					userGroupList: response.data.user_group_list,
+				});
+
+				if (this.hasUserAccessBeenRemoved(
+					response.data.object_group_list,
+					response.data.user_group_list
+				)) {
+					//Access has been removed. User removed their last group from object
+					document.location.reload();
+				}
 			})
 			.catch((error) => {
 				this.$store.dispatch("newToast", {
@@ -110,6 +119,15 @@ export default {
 		},
 		closeModal() {
 			document.getElementById("confirmGroupDeleteButton").click();
+		},
+		hasUserAccessBeenRemoved(objectGroupList, userGroupList) {
+			//Make sure there is some overlap between objectGroupList and userGroupList. If there is no overlap
+			//it means the user has removed all their groups.
+			const count = objectGroupList.filter((row) => {
+				return userGroupList.some(level => row.group_id === level.group_id);
+			}).length;
+
+			return count === 0;
 		}
 	},
 }

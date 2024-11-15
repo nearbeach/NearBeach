@@ -6,6 +6,7 @@ export const moduleGroupsAndUsers = {
         objectUserList: [],
         potentialGroupList: [],
         potentialUserList: [],
+        userGroupList: [],
     }),
     mutations: {
         updateGroupsAndUsers(state, payload) {
@@ -14,6 +15,7 @@ export const moduleGroupsAndUsers = {
             state.objectUserList = payload.objectUserList !== undefined ? payload.objectUserList : state.objectUserList;
             state.potentialGroupList = payload.potentialGroupList !== undefined ? payload.potentialGroupList : state.potentialGroupList;
             state.potentialUserList = payload.potentialUserList !== undefined ? payload.potentialUserList : state.potentialUserList;
+            state.userGroupList = payload.userGroupList !== undefined ? payload.userGroupList : state.userGroupList;
         },
         updateAddingGroupStatus(state, payload) {
             state.addingGroupStatus = payload.addingGroupStatus;
@@ -41,6 +43,9 @@ export const moduleGroupsAndUsers = {
         },
         getPotentialUserList: (state) => {
             return state.potentialUserList;
+        },
+        getUserGroupList: (state) => {
+            return state.userGroupList;
         },
     },
 };
