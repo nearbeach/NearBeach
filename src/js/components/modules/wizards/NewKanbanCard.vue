@@ -276,44 +276,39 @@ export default {
 			)
 
 			//Send the data
-			this.axios
-				.post(
-					`${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/new_card/`,
-					data_to_send
-				)
-				.then((response) => {
-					//Get the first value from the response
-					const new_card = response.data[0];
-					new_card.tag_list = [];
+			this.axios.post(
+				`${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/new_card/`,
+				data_to_send
+			).then((response) => {
+				//Get the first value from the response
+				const new_card = response.data[0];
+				new_card.tag_list = [];
 
-					//Emit the data upstream
-					this.$emit("new_card", new_card);
+				//Emit the data upstream
+				this.$emit("new_card", new_card);
 
-					//Blank the model
-					this.kanbanCardTextModel = "";
-					this.kanbanCardDescriptionModel = "";
+				//Blank the model
+				this.kanbanCardTextModel = "";
+				this.kanbanCardDescriptionModel = "";
 
-					//Close the modal
-					document
-						.getElementById("addKanbanCardCloseButton")
-						.click();
+				//Close the modal
+				document.getElementById("addKanbanCardCloseButton").click();
 
-					this.$store.dispatch("newToast", {
-						header: "Card created successfully",
-						message: "Card created successfully",
-						extra_classes: "bg-success",
-						unique_type: "new_card",
-					});
-				})
-				.catch((error) => {
-					this.$store.dispatch("newToast", {
-						header: "Error creating card",
-						message: `Error creating card: Error -> ${error}`,
-						extra_classes: "bg-danger",
-						delay: 0,
-						unique_type: "new_card",
-					});
+				this.$store.dispatch("newToast", {
+					header: "Card created successfully",
+					message: "Card created successfully",
+					extra_classes: "bg-success",
+					unique_type: "new_card",
 				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error creating card",
+					message: `Error creating card: Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "new_card",
+				});
+			});
 		},
 	},
 	watch: {

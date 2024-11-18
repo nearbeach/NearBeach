@@ -39,6 +39,12 @@
 				<br/>
 				{{ element.kanban_card_text }}
 				<br />
+				<div>
+					Created Date:
+					<span class="text-instructions">
+						{{useNiceDatetime(element.date_created)}}
+					</span>
+				</div>
 				<div v-if="element.tag_list.length > 0"
 					 class="tag-list"
 				>
@@ -107,6 +113,9 @@ import {CarbonInformation, CarbonLink} from "../../components";
 
 //VUEX MAP GETTERS
 import {mapGetters} from "vuex";
+
+//Composables
+import {useNiceDatetime} from "../../composables/datetime/useNiceDatetime";
 
 export default {
 	name: "kanbanColumnDraggable",
@@ -391,6 +400,8 @@ export default {
 				cardLevel: filtered_data.kanban_level,
 				cardLink: {},
 				cardPriority: filtered_data.kanban_card_priority,
+				dateCreated: filtered_data.date_created,
+				dateModified: filtered_data.date_modified,
 			});
 
 			//Show the modal
@@ -408,6 +419,7 @@ export default {
 			//Setup data to send upstream
 			this.sendDataUpstream(filtered_data);
 		},
+		useNiceDatetime,
 	},
 	watch: {
 		newCardInfo() {

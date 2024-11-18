@@ -300,6 +300,8 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
         "project",
         "requirement",
         "task",
+        "date_created",
+        "date_modified",
     ).order_by(
         "kanban_card_sort_number"
     )
@@ -539,16 +541,18 @@ def new_kanban_card(request, kanban_board_id, *args, **kwargs):
     kanban_card_results = KanbanCard.objects.filter(
         kanban_card_id=submit_kanban_card.kanban_card_id
     ).values(
-       "kanban_card_description",
-       "kanban_card_id",
-       "kanban_card_priority",
-       "kanban_card_sort_number",
-       "kanban_card_text",
-       "kanban_column",
-       "kanban_level",
-       "project",
-       "requirement",
-       "task",
+        "kanban_card_description",
+        "kanban_card_id",
+        "kanban_card_priority",
+        "kanban_card_sort_number",
+        "kanban_card_text",
+        "kanban_column",
+        "kanban_level",
+        "project",
+        "requirement",
+        "task",
+        "date_created",
+        "date_modified",
     )
     kanban_card_results = json.dumps(list(kanban_card_results), cls=DjangoJSONEncoder)
 

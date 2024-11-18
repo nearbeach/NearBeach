@@ -87,6 +87,29 @@
 			</div>
 		</div>
 
+		<hr>
+		<div class="row">
+			<div class="col-md-4">
+				<strong>Card Dates</strong>
+			</div>
+			<div class="col-md-8">
+				<div class="row">
+					<div class="col-md-6">
+						Creation Date
+						<p class="text-instructions">
+							{{useNiceDatetime(dateCreated)}}
+						</p>
+					</div>
+					<div class="col-md-6">
+						Last Modified Date
+						<p class="text-instructions">
+							{{useNiceDatetime(dateModified)}}
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<hr v-if="userLevel > 1"/>
 		<div
 			class="row"
@@ -130,6 +153,9 @@ import {NSelect} from "naive-ui";
 import {mapGetters} from "vuex";
 import {Modal} from "bootstrap";
 
+//Composables
+import { useNiceDatetime } from "../../composables/datetime/useNiceDatetime";
+
 export default {
 	name: "CardDetails",
 	components: {
@@ -169,6 +195,8 @@ export default {
 		...mapGetters({
 			cardId: "getCardId",
 			cardLink: "getCardLink",
+			dateCreated: "getDateCreated",
+			dateModified: "getDateModified",
 			kanbanStatus: "getKanbanStatus",
 			listColumns: "getListColumns",
 			listLevels: "getListLevels",
@@ -328,6 +356,7 @@ export default {
 				this.differentDestination(close_modal, old_card);
 			}
 		},
+		useNiceDatetime,
 	},
 };
 </script>
