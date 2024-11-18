@@ -202,6 +202,16 @@ urlpatterns = [
         name="document_remove_folder",
     ),
     path(
+        "documentation/<destination>/<location_id>/update_document/",
+        document_views.document_update_document,
+        name="document_update_document",
+    ),
+    path(
+        "documentation/<destination>/<location_id>/update_folder/",
+        document_views.document_update_folder,
+        name="document_update_folder",
+    ),
+    path(
         "documentation/<destination>/<location_id>/upload/",
         document_views.document_upload,
         name="document_upload",

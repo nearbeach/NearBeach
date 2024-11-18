@@ -26,6 +26,9 @@
 				v-if="this.currentFolder !== 0"
 				v-on:click="goToParentDirectory()"
 				class="document--child"
+				@dragover.prevent
+				@dragenter.prevent
+				@drop="drop($event, currentParentFolder)"
 			>
 				<carbon-arrow-up
 					height="80px"
@@ -39,6 +42,11 @@
 				v-for="folder in folderFilteredList"
 				:key="folder.pk"
 				class="document--child"
+				@dragover.prevent
+				@dragenter.prevent
+				@drop="drop($event, folder.pk)"
+				@dragstart="dragFolderStart($event, folder.pk)"
+				draggable="true"
 			>
 				<a
 					href="javascript:void(0)"
@@ -69,6 +77,8 @@
 				v-for="document in documentFilteredList"
 				:key="document.document_key_id"
 				class="document--child"
+				@dragstart="dragDocumentStart($event, document.document_key_id)"
+				draggable="true"
 			>
 				<a
 					v-bind:href="`/private/${document.document_key_id}/`"
@@ -191,6 +201,7 @@ export default {
 	computed: {
 		...mapGetters({
 			currentFolder: "getCurrentFolder",
+			currentParentFolder: "getCurrentParentFolder",
 			destination: "getDestination",
 			documentFilteredList: "getDocumentFilteredList",
 			documentObjectCount: "getDocumentObjectCount",
@@ -282,6 +293,40 @@ export default {
 			);
 			confirmFolderDeleteModal.show();
 		},
+		dragDocumentStart(event, moving_document_id) {
+			event.dataTransfer.setData(
+				"moving_document_id",
+				moving_document_id
+			);
+
+			event.dataTransfer.setData(
+				"object_type",
+				"document"
+			);
+		},
+		dragFolderStart(event, moving_folder_id) {
+			event.dataTransfer.setData(
+				"moving_folder_id",
+				moving_folder_id
+			);
+
+			event.dataTransfer.setData(
+				"object_type",
+				"folder"
+			);
+		},
+		drop(event, folder_id) {
+			event.preventDefault();
+
+			//Look up the object type and apply the correct movement
+			const object_type = event.dataTransfer.getData("object_type");
+			if (object_type === "folder") {
+				//Handle the folder stuff
+				this.handleFolderMove(event, folder_id);
+			} else if (object_type === "document") {
+				this.handleDocumentMove(event, folder_id);
+			}
+		},
 		getDestination() {
 			return this.overrideDestination !== "" ? this.overrideDestination : this.destination;
 		},
@@ -364,7 +409,75 @@ export default {
 			return this.overrideDestination !== "" ? this.overrideLocationId : this.locationId;
 		},
 		goToParentDirectory() {
-			this.$store.dispatch("goToParentDirectory",{});
+			this.$store.commit("updateCurrentFolder", {
+				currentFolder: this.currentParentFolder,
+			});
+		},
+		handleDocumentMove(event, parent_folder_id) {
+			//Get the document key id
+			const document_key_id = event.dataTransfer.getData('moving_document_id');
+			if (document_key_id === undefined) return;
+
+			//If folder id == 0, make it null
+			if (parseInt(parent_folder_id) === 0) parent_folder_id = null;
+
+			//Update document folder id
+			this.$store.dispatch("updateDocumentFolder", {
+				document_key_id: document_key_id,
+				parent_folder_id: parent_folder_id,
+			});
+
+			//Update the backend
+			const data_to_send = new FormData();
+			data_to_send.set("document_key", document_key_id);
+			if (parent_folder_id !== undefined && parent_folder_id !== null) {
+				data_to_send.set("parent_folder", parent_folder_id);
+			}
+
+			this.axios.post(
+				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/update_document/`,
+				data_to_send,
+			).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Error Moving Document",
+					message: `Sorry, there was an error moving your document. Please refresh page. Error -> ${error}`,
+					delay: 0,
+					extra_classes: "bg-danger",
+				});
+			});
+		},
+		handleFolderMove(event, parent_folder_id) {
+			//Get the folder id of the moving folder
+			const moving_folder_id = event.dataTransfer.getData("moving_folder_id");
+			if (moving_folder_id === undefined) return;
+
+			//If folder_id == 0, make it null
+			if (parseInt(parent_folder_id) === 0) parent_folder_id = null;
+
+			//Update the folder
+			this.$store.dispatch("updateFolderParentFolder", {
+				moving_folder_id: moving_folder_id,
+				parent_folder_id: parent_folder_id,
+			});
+
+			//Update backend
+			const data_to_send = new FormData();
+			data_to_send.set("moving_folder", moving_folder_id);
+			if (parent_folder_id !== undefined && parent_folder_id !== null && parseInt(parent_folder_id) !== 0) {
+				data_to_send.set("parent_folder", parent_folder_id);
+			}
+
+			this.axios.post(
+				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/update_folder/`,
+				data_to_send,
+			).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Error Moving Folder",
+					message: `Sorry, there was an error moving your folder. Please refresh page. Error -> ${error}`,
+					delay: 0,
+					extra_classes: "bg-danger",
+				});
+			});
 		},
 		shortName(input_string) {
 			//The following method will determine if we need an ellipsis (...) at the end of the file/folder name

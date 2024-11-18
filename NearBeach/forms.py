@@ -364,6 +364,17 @@ class DocumentRemoveForm(forms.Form):
     )
 
 
+class DocumentUpdateForm(forms.Form):
+    document_key = forms.ModelChoiceField(
+        queryset=Document.objects.all(),
+        required=True,
+    )
+    parent_folder = forms.ModelChoiceField(
+        queryset=Folder.objects.all(),
+        required=False,
+    )
+
+
 class DocumentUploadForm(forms.ModelForm):
     document = forms.FileField(
         required=True,
@@ -406,6 +417,17 @@ class FolderRemoveForm(forms.Form):
     folder_id = forms.ModelChoiceField(
         queryset=Folder.objects.all(),
         required=True,
+    )
+
+
+class FolderUpdateForm(forms.Form):
+    moving_folder = forms.ModelChoiceField(
+        queryset=Folder.objects.all(),
+        required=True,
+    )
+    parent_folder = forms.ModelChoiceField(
+        queryset=Folder.objects.all(),
+        required=False,
     )
 
 
