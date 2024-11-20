@@ -305,6 +305,7 @@
 						aria-labelledby="contact-tab"
 					>
 						<misc-module></misc-module>
+						<confirm-public-link-delete></confirm-public-link-delete>
 					</div>
 					<div
 						class="tab-pane fade"
@@ -354,10 +355,12 @@ import ConfirmNoteDelete from "./wizards/ConfirmNoteDelete.vue";
 
 //Composables
 import {useNBTheme} from "../../composables/theme/useNBTheme";
+import ConfirmPublicLinkDelete from "./wizards/ConfirmPublicLinkDelete.vue";
 
 export default {
 	name: "ParentModules",
 	components: {
+		ConfirmPublicLinkDelete,
 		ConfirmNoteDelete,
 		AddFolderWizard,
 		ConfirmFileDeleteVue,

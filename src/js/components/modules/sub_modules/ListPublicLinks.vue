@@ -48,7 +48,7 @@
 				<td v-if="userLevel > 1">
 					<span class="remove-link">
 						<carbon-trash-can
-							v-on:click="deletePublicLink(link.public_link_id)"
+							v-on:click="confirmDeletePublicLink(link.public_link_id)"
 						></carbon-trash-can>
 					</span>
 				</td>
@@ -75,6 +75,9 @@ import { mapGetters } from "vuex";
 //Icon
 import {CarbonTrashCan} from "../../../components";
 
+//Bootstrap
+import {Modal} from "bootstrap";
+
 export default {
 	name: "ListPublicLinks",
 	props: {
@@ -94,7 +97,7 @@ export default {
 	data() {
 		return {
 			isFetchingData: true,
-			publicLinkResults: [],
+			// publicLinkResults: [],
 		};
 	},
 	watch: {
@@ -109,11 +112,32 @@ export default {
 		...mapGetters({
 			destination: "getDestination",
 			locationId: "getLocationId",
+			publicLinkResults: "getPublicLinkResults",
 			rootUrl: "getRootUrl",
 			userLevel: "getUserLevel",
 		})
 	},
 	methods: {
+		confirmDeletePublicLink(public_link_id) {
+			//Update VueX
+			this.$store.commit({
+				type: "updatePublicLinkRemoveKey",
+				publicLinkRemoveKey: public_link_id,
+			});
+
+			//Close the card modal if exists
+			const cardModal = document.getElementById("cardInformationModalCloseButton");
+			if (cardModal !== null)
+			{
+				cardModal.click();
+			}
+
+			//Open Modal
+			const modal = new Modal(
+				document.getElementById("confirmPublicLinkDeleteModal")
+			);
+			modal.show();
+		},
 		async copyPublicLink(public_link_id) {
 			//Get the URL
 			const url = `${window.location.origin}${this.rootUrl}public/${this.getDestination()}/${this.getLocationId()}/${public_link_id}/`
@@ -160,7 +184,10 @@ export default {
 				});
 
 				//Replace everything
-				this.publicLinkResults = response.data;
+				this.$store.commit({
+					type: "updatePublicLinkResults",
+					publicLinkResults: response.data,
+				});
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Can not create new public link",
@@ -170,46 +197,6 @@ export default {
 					unique_type: "create_public_link",
 				});
 			})
-		},
-		deletePublicLink(public_link_id) {
-			//Construct data to send
-			const data_to_send = new FormData();
-			data_to_send.set("public_link_id", public_link_id);
-
-			//Notify user we are deleting the data
-			this.$store.dispatch("newToast", {
-				header: "Deleting Public Link",
-				message: "Deleting Public Link",
-				extra_classes: "bg-warning text-dark",
-				delay: 0,
-				unique_type: "public_link_delete",
-			})
-
-			//Use axios
-			this.axios.post(
-				`${this.rootUrl}public_data/${this.getDestination()}/${this.getLocationId()}/delete/`,
-				data_to_send,
-			).then(() => {
-				//Remove the row
-				this.publicLinkResults = this.publicLinkResults.filter((row) => {
-					return row.public_link_id !== public_link_id;
-				});
-
-				this.$store.dispatch("newToast", {
-					header: "Successfully Deleted Public Link",
-					message: "Successfully Deleted Public Link",
-					extra_classes: "bg-success",
-					unique_type: "public_link_delete",
-				});
-			}).catch((error) => {
-				this.$store.dispatch("newToast", {
-					header: "Error Deleting Public Link",
-					message: `Error - could not delete link. Error -> ${error}`,
-					extra_classes: "bg-danger",
-					delay: 0,
-					unique_type: "public_link_delete",
-				});
-			});
 		},
 		formatUrl(public_link_id) {
 			//Double check we are getting the correct URL
@@ -237,7 +224,10 @@ export default {
 				`${this.rootUrl}public_data/${this.getDestination()}/${this.getLocationId()}/get_links/`,
 			).then((response) => {
 				//Set the data
-				this.publicLinkResults = response.data;
+				this.$store.commit({
+					type: "updatePublicLinkResults",
+					publicLinkResults: response.data,
+				});
 
 				//Set the fetch status to false
 				this.isFetchingData = false;
