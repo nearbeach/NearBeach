@@ -24,7 +24,7 @@ from NearBeach.models import (
     Sprint,
     User,
     Tag,
-    UserGroup,
+    UserGroup, ObjectTemplateGroup, ScheduledObject,
 )
 from NearBeach.views.theme_views import get_theme
 from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
@@ -589,6 +589,54 @@ def search_permission_set_data(request):
     json_results = serializers.serialize("json", permission_set_results)
 
     return HttpResponse(json_results, content_type="application/json")
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+def search_scheduled_objects(request, *args, **kwargs):
+    """
+    Will send back a JSON array of Scheduled Objects
+    :param request: Contains the POST content for search
+    :return: Json Array
+    """
+    form = SearchObjectsForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Grab all object assignments for the object template
+    object_template_group_results = ObjectTemplateGroup.objects.filter(
+        is_deleted=False,
+        group_id__in=UserGroup.objects.filter(
+            is_deleted=False,
+            username=request.user,
+        ).values("group_id"),
+    )
+
+    # Grab the scheduled objects that the user has access too
+    scheduled_object_results = ScheduledObject.objects.filter(
+        is_deleted=False,
+        object_template__in=object_template_group_results.values("object_template_id"),
+        schedule_object_title__icontains=form.cleaned_data["search"],
+    ).annotate(
+        object_template_type=F('object_template__object_template_type'),
+        object_template_json=F('object_template__object_template_json'),
+    ).values(
+        "schedule_object_id",
+        "last_run",
+        "next_scheduled_run",
+        "is_active",
+        "frequency",
+        "frequency_attribute",
+        "object_template_id",
+        "object_template_type",
+        "object_template_json",
+    )
+
+    scheduled_object_results = json.dumps(list(scheduled_object_results), cls=DjangoJSONEncoder)
+    return JsonResponse(
+        json.loads(scheduled_object_results),
+        safe=False
+    )
 
 
 @login_required(login_url="login", redirect_field_name="")

@@ -1014,6 +1014,11 @@ urlpatterns = [
         name="search_sprint",
     ),
     path(
+        "search/scheduled_objects/",
+        search_views.search_scheduled_objects,
+        name="search_scheduled_objects",
+    ),
+    path(
         "search/sprint/data/",
         search_views.search_sprint_data,
         name="search_sprint_data",
