@@ -103,6 +103,7 @@ export default {
 		}),
 	},
 	methods: {
+		useReopenCardInformation,
 		addFolder() {
 			//Construct the data to send
 			const data_to_send = new FormData();

@@ -107,6 +107,7 @@ export default {
 		},
 	},
 	methods: {
+		useReopenCardInformation,
 		closeModal() {
 			//Close the current modal
 			document.getElementById("editNoteCloseButton").click();

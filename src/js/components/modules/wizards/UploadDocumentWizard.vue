@@ -206,6 +206,7 @@ export default {
 		}),
 	},
 	methods: {
+		useReopenCardInformation,
 		getDestination() {
 			return this.overrideDestination !== "" ? this.overrideDestination : this.destination;
 		},
