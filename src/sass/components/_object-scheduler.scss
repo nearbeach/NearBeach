@@ -1,0 +1,12 @@
+.scheduled-object-loader {
+    display: flex;
+    justify-content: center;
+
+    img {
+        width: 100%;
+
+        @media screen and (min-width: 767px) {
+            width: 25%;
+        }
+    }
+}

@@ -10,6 +10,8 @@ export const moduleCard = {
         cardDescription: "",
         cardNotes: [],
         cardPriority: 2,
+        dateCreated: "",
+        dateModified: "",
         kanbanStatus: "Open",
         listColumns: [],
         listLevels: [],
@@ -49,6 +51,8 @@ export const moduleCard = {
             state.cardColumn = payload.cardColumn;
             state.cardLink = payload.cardLink;
             state.cardPriority = payload.cardPriority;
+            state.dateCreated = payload.dateCreated;
+            state.dateModified = payload.dateModified;
 
             //Get data for the notes
             axios.post(
@@ -128,6 +132,12 @@ export const moduleCard = {
         },
         getCardPriority: (state) => {
             return state.cardPriority;
+        },
+        getDateCreated: (state) => {
+            return state.dateCreated;
+        },
+        getDateModified: (state) => {
+            return state.dateModified;
         },
     },
 };

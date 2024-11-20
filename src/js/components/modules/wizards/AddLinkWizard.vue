@@ -101,6 +101,7 @@ import {mapGetters} from "vuex";
 import useVuelidate from "@vuelidate/core";
 import {required, url} from "@vuelidate/validators";
 import ValidationRendering from "../../validation/ValidationRendering.vue";
+import {useReopenCardInformation} from "../../../composables/card_information/useReopenCardinformation";
 
 export default {
 	name: "AddLinkWizard",
@@ -146,6 +147,7 @@ export default {
 		}),
 	},
 	methods: {
+		useReopenCardInformation,
 		addLink() {
 			const data_to_send = new FormData();
 			data_to_send.set(

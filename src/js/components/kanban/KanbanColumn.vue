@@ -235,6 +235,8 @@ export default {
 				cardLevel: filtered_data.kanban_level,
 				cardLink: {},
 				cardPriority: filtered_data.kanban_card_priority,
+				dateCreated: filtered_data.date_created,
+				dateModified: filtered_data.date_modified,
 			});
 
 			//Show the modal

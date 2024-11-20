@@ -65,6 +65,7 @@ export default {
 		})
 	},
 	methods: {
+		useReopenCardInformation,
 		deleteFile() {
 			//Check to make sure it isn't blank
 			if (this.documentRemoveKey === "") {

@@ -64,6 +64,7 @@ export default {
 		}),
 	},
 	methods: {
+		useReopenCardInformation,
 		deleteNote() {
 			//Tell the user we are deleting the note
 			this.$store.dispatch("newToast", {

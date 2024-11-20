@@ -2,6 +2,7 @@ export const moduleDocuments = {
     state: () => ({
         acceptedDocuments: "image/*,text/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         currentFolder: 0,
+        currentParentFolder: 0,
         documentList: [],
         documentRemoveKey: "",
         folderList: [],
@@ -10,10 +11,21 @@ export const moduleDocuments = {
     mutations: {
         updateCurrentFolder: (state, payload) => {
             //Add in a simple check for the current folder - default to 0
-            let current_folder = payload.currentFolder;
-            if (current_folder === null || current_folder === undefined) current_folder = 0;
+            const index_location = state.folderList.findIndex((row) => {
+                return row.pk === parseInt(payload.currentFolder);
+            });
+
+            let current_folder = 0;
+            let parent_folder = 0;
+            if (index_location !== undefined && index_location >= 0)
+            {
+                current_folder = state.folderList[index_location].pk;
+                parent_folder = state.folderList[index_location].fields.parent_folder;
+                parent_folder = parent_folder === null ? 0 : parent_folder;
+            }
 
             state.currentFolder = current_folder;
+            state.currentParentFolder = parent_folder;
         },
         updateDocumentList: (state, payload) => {
             state.documentList = payload.documentList;
@@ -53,21 +65,6 @@ export const moduleDocuments = {
                 folderList: folder_list,
             });
         },
-        goToParentDirectory: ({state, commit}) => {
-            //Filter for the directory - then obtain it's parent directory
-            const filtered_data = state.folderList.filter((row) => {
-                return parseInt(row.pk) === parseInt(state.currentFolder);
-            })[0];
-
-            //Make sure we have some data
-            if (filtered_data === undefined) return;
-
-            //Update the current directory to the parent folder
-            commit({
-                type: "updateCurrentFolder",
-                currentFolder: filtered_data.fields.parent_folder,
-            });
-        },
         removeDocument: ({state, commit}, payload) => {
             //Filter out the document
             const new_document_list = state.documentList.filter((row) => {
@@ -92,6 +89,24 @@ export const moduleDocuments = {
                 folderList: new_folder_list,
             });
         },
+        updateDocumentFolder: ({state, commit}, payload) => {
+            const index_location = state.documentList.findIndex((row) => {
+                return row.document_key_id === payload.document_key_id;
+            });
+            if (index_location === undefined || index_location < 0) return;
+
+            //Update the folder id directly
+            state.documentList[index_location].folder = payload.parent_folder_id;
+        },
+        updateFolderParentFolder: ({state, commit}, payload) => {
+            const index_location = state.folderList.findIndex((row) => {
+                return parseInt(row.pk) === parseInt(payload.moving_folder_id);
+            });
+            if (index_location === undefined || index_location < 0) return;
+
+            //Update the folder id directly
+            state.folderList[index_location].fields.parent_folder = payload.parent_folder_id;
+        },
     },
     getters: {
         getAcceptedDocuments: (state) => {
@@ -99,6 +114,9 @@ export const moduleDocuments = {
         },
         getCurrentFolder: (state) => {
             return state.currentFolder;
+        },
+        getCurrentParentFolder: (state) => {
+            return state.currentParentFolder;
         },
         getDocumentFilteredList: (state) => {
             //If current folder set as 0 - filter for none

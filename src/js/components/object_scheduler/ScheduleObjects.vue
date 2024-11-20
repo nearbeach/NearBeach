@@ -4,8 +4,30 @@
 			<h1>Scheduled Objects</h1>
 			<hr>
 
+			<!-- SEARCH FIELD -->
+			<div class="form-row">
+				<div class="form-group">
+					<label>Search:</label>
+					<input
+						type="text"
+						class="form-control search-organisation"
+						v-model="searchModel"
+						maxlength="250"
+					/>
+				</div>
+			</div>
+			<hr/>
+
+			<div class="scheduled-object-loader"
+				 v-if="isLoadingData"
+			>
+				<img
+					v-bind:src="`${staticUrl}NearBeach/images/placeholder/loading_re.svg`"
+					alt="Please wait whilst we load in the scheduled objects"
+				/>
+			</div>
 			<div class="alert alert-info"
-				 v-if="scheduleObjectResults.length === 0"
+				 v-else-if="scheduleObjectResults.length === 0"
 			>
 				Currently there are no scheduled objects.
 			</div>
@@ -64,11 +86,9 @@ export default {
 			type: String,
 			default: "/",
 		},
-		scheduleObjectResults: {
-			type: Array,
-			default: () => {
-				return [];
-			},
+		staticUrl: {
+			type: String,
+			default: "/",
 		},
 		userLevel: {
 			type: Object,
@@ -80,18 +100,67 @@ export default {
 			},
 		},
 	},
+	data() {
+		return {
+			isLoadingData: true,
+			searchModel: "",
+			searchTimeout: "",
+			scheduleObjectResults: [],
+		}
+	},
 	computed: {
 		canUserAddScheduledObject() {
 			//Return if the user level for either project or task is greater than create
 			return this.userLevel.project >= 3 || this.userLevel.task >= 3;
 		}
 	},
+	watch: {
+		searchModel() {
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getScheduleObjectResults();
+				}, 500);
+			}
+		},
+	},
 	methods: {
+		getScheduleObjectResults() {
+			const data_to_send = new FormData();
+			data_to_send.set("search", this.searchModel);
+
+			this.axios.post(
+				`${this.rootUrl}search/scheduled_objects/`,
+				data_to_send,
+			).then(response => {
+				this.scheduleObjectResults = response.data;
+
+				//No longer loading data
+				this.isLoadingData = false;
+			}).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Scheduled Objects",
+					message: `Sorry, could not get the scheduled objects. Error -> ${error}`,
+					delay: 0,
+					extra_classes: "bg-danger",
+				});
+			});
+		},
 		getType(type) {
 			if (type === 0 || type === "0") return "Project";
 
 			return "Task";
 		},
 	},
+	mounted() {
+		this.getScheduleObjectResults();
+	}
 }
 </script>

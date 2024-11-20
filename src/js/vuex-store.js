@@ -11,6 +11,7 @@ import {moduleGantChart} from "./vuex/ganttChartVueX";
 import {moduleGroupsAndUsers} from "./vuex/groupAndUsersVueX";
 import {moduleKanban} from "./vuex/kanbanVueX";
 import {moduleObjectLink} from "./vuex/objectLinkVueX";
+import {modulePublicLink} from "./vuex/publicLinkVuex";
 import {moduleNewCard} from "./vuex/newCardVueX";
 import {moduleNote} from "./vuex/noteVueX";
 import {moduleRfc} from "./vuex/rfcVueX";
@@ -39,6 +40,7 @@ export const store = createStore({
         newCard: moduleNewCard,
         note: moduleNote,
         objectLink: moduleObjectLink,
+        publicLink: modulePublicLink,
         rfc: moduleRfc,
         tags: moduleTags,
         toasts: moduleToasts,

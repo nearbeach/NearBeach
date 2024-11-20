@@ -6,7 +6,6 @@
             v-bind:root-url="`{% url 'dashboard' %}`"
             v-bind:static-url="`{% static '' %}`"
             v-bind:theme="'{{ theme }}'"
-            v-bind:schedule-object-results="{{ scheduled_object_results }}"
             v-bind:user-level="{{ user_level }}"
     ></schedule-objects>
 {% endblock %}

@@ -27,7 +27,7 @@ from ..forms import (
     Document,
     DocumentRemoveForm,
     DocumentUploadForm,
-    RequirementItem, FolderRemoveForm,
+    RequirementItem, FolderRemoveForm, DocumentUpdateForm, FolderUpdateForm,
 )
 from ..models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
 from azure.storage.blob import BlobServiceClient
@@ -259,6 +259,44 @@ def document_remove_folder(request, destination, location_id, *args, **kwargs):
     # Get folder from the from
     folder_update.is_deleted = True
     folder_update.save()
+
+    return HttpResponse("")
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_generic_permissions(2, "document")
+def document_update_document(request, destination, location_id, *args, **kwargs):
+    form = DocumentUpdateForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    DocumentPermission.objects.filter(
+        document_key=form.cleaned_data["document_key"],
+        **{destination: location_id},
+    ).update(
+        folder=form.cleaned_data["parent_folder"],
+    )
+
+    return HttpResponse("")
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_user_generic_permissions(2, "document")
+def document_update_folder(request, destination, location_id, *args, **kwargs):
+    form = FolderUpdateForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    moving_folder = form.cleaned_data["moving_folder"]
+
+    Folder.objects.filter(
+        folder_id=moving_folder.folder_id,
+        **{destination: location_id},
+    ).update(
+        parent_folder=form.cleaned_data["parent_folder"],
+    )
 
     return HttpResponse("")
 

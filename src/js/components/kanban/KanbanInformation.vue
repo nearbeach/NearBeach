@@ -137,6 +137,12 @@
 			<confirm-file-delete-vue></confirm-file-delete-vue>
 			<confirm-folder-delete></confirm-folder-delete>
 
+			<!-- CONFIRM PUBLIC LINK DELETE -->
+			<confirm-public-link-delete
+				v-bind:override-location-id="cardId"
+				override-destination="kanban_card"
+			></confirm-public-link-delete>
+
 			<new-kanban-link-wizard
 				v-bind:location-id="locationId"
 				v-bind:column-results="columnResults"
@@ -182,10 +188,12 @@ import ConfirmCardArchive from "./ConfirmCardArchive.vue";
 
 //Composables
 import {useNBTheme} from "../../composables/theme/useNBTheme";
+import ConfirmPublicLinkDelete from "../modules/wizards/ConfirmPublicLinkDelete.vue";
 
 export default {
 	name: "KanbanInformation",
 	components: {
+		ConfirmPublicLinkDelete,
 		AddTagWizard,
 		ConfirmNoteDelete,
 		NewHistoryNoteWizard,
