@@ -169,7 +169,7 @@ import MdiMicrosoftWord from "../../icons/MdiMicrosoftWord.vue";
 
 //VueX
 import {mapGetters} from "vuex";
-import {CarbonTrashCan} from "../../../components";
+import {CarbonLink, CarbonTrashCan} from "../../../components";
 
 export default {
 	name: "DocumentsModule",
@@ -375,7 +375,7 @@ export default {
 				document.document_key__document_url_location !== "" &&
 				document.document_key__document_url_location !== null
 			) {
-				return "CarbonLink";
+				return CarbonLink;
 			}
 
 			//We know the document is not a link - now we use the suffix to the document name to determine the icon
