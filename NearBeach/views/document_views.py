@@ -1,3 +1,5 @@
+import shutil
+
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from django.core import serializers
@@ -34,6 +36,7 @@ from azure.storage.blob import BlobServiceClient
 
 import boto3
 import json
+import datetime
 from pathlib import Path
 from botocore.config import Config
 
@@ -228,6 +231,7 @@ def document_remove(request, destination, location_id, *args, **kwargs):
     # Get document from the form
     document_update = form.cleaned_data["document_key"]
     document_update.is_deleted = True
+    document_update.date_modified=datetime.datetime.now()
     document_update.save()
 
     document_permission_update = DocumentPermission.objects.get(
@@ -235,6 +239,7 @@ def document_remove(request, destination, location_id, *args, **kwargs):
         **{F"{destination}_id": location_id},
     )
     document_permission_update.is_deleted = True
+    document_permission_update.date_modified=datetime.datetime.now()
     document_permission_update.save()
 
     return HttpResponse("")
@@ -597,6 +602,12 @@ class LocalFileHandler(FileHandler):
             for chunk in upload_document.chunks():
                 destination.write(chunk)
 
+    def delete(self, document_key_id):
+        storage_location = self.root / "private" / str(document_key_id)
+        shutil.rmtree(storage_location, ignore_errors=True)
+
+        return
+
 
 class S3FileHandler(FileHandler):
     def __init__(self, local_settings):
@@ -623,6 +634,24 @@ class S3FileHandler(FileHandler):
 
         self._s3 = boto3.client("s3",   **botoInitValues)
         self._bucket = local_settings.AWS_STORAGE_BUCKET_NAME
+
+    def delete(self, document_key_id):
+        # Use boto3 to delete
+        objects_to_delete = self._s3.list_objects(
+            Bucket=self._bucket,
+            Prefix=F"private/{document_key_id}"
+        )
+
+        delete_keys = {
+            'Objects': [
+                {'Key': k} for k in [obj['Key'] for obj in objects_to_delete.get('Contents', [])]
+            ]
+        }
+
+        self._s3.delete_objects(
+            Bucket=self._bucket,
+            Delete=delete_keys
+        )
 
     def fetch(self, document_results):
         # Use boto3 to download
@@ -680,6 +709,22 @@ class AzureFileHanlder(FileHandler):
         )
         # Upload the created file
         blob_client.upload_blob(file)
+
+    def delete(self, document_key_id):
+        container_client = self._sevice_client.get_container_client(
+            container=self._client_name
+        )
+
+        blob_list = container_client.list_blobs(
+            name_starts_with=F"private/{document_key_id}"
+        )
+
+        for blob in blob_list:
+            blob_client = self._sevice_client.get_blob_client(
+                container=self._client_name,
+                blob=blob.name
+            )
+            blob_client.delete_blob()
 
 
 def get_file_handler(local_settings):

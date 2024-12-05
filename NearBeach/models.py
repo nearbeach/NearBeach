@@ -420,6 +420,9 @@ class Document(models.Model):
     is_deleted = models.BooleanField(
         default=False,
     )
+    is_purged = models.BooleanField(
+        default=False,
+    )
 
     def __str__(self):
         return str(self.document_description)
@@ -499,6 +502,9 @@ class DocumentPermission(models.Model):
         USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
     )
     is_deleted = models.BooleanField(
+        default=False,
+    )
+    is_purged = models.BooleanField(
         default=False,
     )
 
