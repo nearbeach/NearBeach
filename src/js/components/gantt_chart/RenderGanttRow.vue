@@ -7,26 +7,37 @@
 						v-on:click="confirmRemoval()"
 					></carbon-trash-can>
 				</span>
+				<span style="margin-right:10px"
+					  :data-bs-title="description"
+					  data-bs-toggle="tooltip"
+					  data-bs-html="true"
+					  data-bs-custom-class="tooltip-description"
+					  data-bs-delay="200"
+				>
+					<carbon-information></carbon-information>
+				</span>
 				{{title}}
 			</div>
 			<div class="gantt-row--start-date">
   				<n-date-picker
 					v-if="objectType !== 'requirement_item'"
 					v-model:value="localStartDate"
-					type="datetime"
 					@update:value="modifiedStartDate"
                     :disabled="userLevel <= 1 || isClosed"
 					:format="datePickerFormat"
+					size="small"
+					type="datetime"
 				/>
 			</div>
 			<div class="gantt-row--end-date">
 				<n-date-picker
 					v-if="objectType !== 'requirement_item'"
 					v-model:value="localEndDate"
-					type="datetime"
 					@update:value="modifiedEndDate"
                     :disabled="userLevel <= 1 || isClosed"
 					:format="datePickerFormat"
+					size="small"
+					type="datetime"
 				></n-date-picker>
 			</div>
 			<div class="gantt-row--status">
@@ -35,6 +46,7 @@
 					:options="statusList"
 					:on-update-value="updateStatus"
                     :disabled="userLevel <= 1 || isClosed"
+					size="small"
 				></n-select>
 			</div>
 		</div>
@@ -78,8 +90,9 @@ import { mapGetters } from "vuex";
 
 //Components
 import { CarbonTrashCan } from "../../components";
+import { CarbonInformation } from "../../components";
 import { NDatePicker, NSelect } from "naive-ui";
-import { Modal } from "bootstrap";
+import { Modal, Tooltip } from "bootstrap";
 
 //Datetime
 import { DateTime } from "luxon";
@@ -88,6 +101,10 @@ export default {
 	name: "RenderGanttRow",
 	emits: ['mouse_down'],
 	props: {
+		description: {
+			type: String,
+			default: "",
+		},
 		endDate: {
 			type: Number,
 			default: 0,
@@ -126,6 +143,7 @@ export default {
 		},
 	},
 	components: {
+		CarbonInformation,
 		CarbonTrashCan,
 		NDatePicker,
 		NSelect,
@@ -314,6 +332,12 @@ export default {
 	},
 	mounted() {
 		this.getStatusList();
+
+		setTimeout(() => {
+			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
+			console.log("TOOLTIPS SET!!!!");
+		}, 500);
 	}
 }
 </script>

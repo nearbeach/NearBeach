@@ -109,6 +109,7 @@ def get_object_results(location_id):
         ).values("project_id"),
     ).annotate(
         title=F('project_name'),
+        description=F('project_description'),
         status_id=F('project_status_id'),
         higher_order_status=F('project_status__project_higher_order_status'),
         start_date=F('project_start_date'),
@@ -117,6 +118,7 @@ def get_object_results(location_id):
         object_id=F("project_id"),
     ).values(
         'title',
+        'description',
         'status_id',
         'higher_order_status',
         'start_date',
@@ -132,6 +134,7 @@ def get_object_results(location_id):
         ).values("task_id")
     ).annotate(
         title=F('task_short_description'),
+        description=F('task_long_description'),
         status_id=F('task_status_id'),
         higher_order_status=F('task_status__task_higher_order_status'),
         start_date=F('task_start_date'),
@@ -140,6 +143,7 @@ def get_object_results(location_id):
         object_id=F("task_id")
     ).values(
         'title',
+        'description',
         'status_id',
         'higher_order_status',
         'start_date',
@@ -155,6 +159,7 @@ def get_object_results(location_id):
         ).values("requirement_item_id")
     ).annotate(
         title=F('requirement_item_title'),
+        description=F('requirement_item_scope'),
         status_id=F('requirement_item_status_id'),
         higher_order_status=F('requirement_item_status__requirement_item_higher_order_status'),
         start_date=Value("1970-01-01T00:00:0Z"),
@@ -163,6 +168,7 @@ def get_object_results(location_id):
         object_id=F("requirement_item_id")
     ).values(
         'title',
+        'description',
         'status_id',
         'higher_order_status',
         'start_date',
@@ -177,6 +183,7 @@ def get_object_results(location_id):
         requirement_item_results
     ).values(
         'title',
+        'description',
         'status_id',
         'higher_order_status',
         'start_date',
