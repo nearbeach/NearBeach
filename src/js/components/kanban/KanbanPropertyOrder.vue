@@ -31,21 +31,30 @@
 					v-bind:data-title="element.title"
 					v-on:dblclick="editItem($event)"
 				>
-					<strong
-						v-bind:key="element.id"
-						v-bind:id="element.id"
-						v-bind:data-id="element.id"
-						v-bind:data-property="element.property"
-						v-bind:data-title="element.title"
-					>
-						{{ element.title }}
-					</strong>
-					<span
-						v-on:click="removeItem(element.id)"
-						v-if="localPropertyList.length > 1"
+					<div class="content">
+						<strong
+							v-bind:key="element.id"
+							v-bind:id="element.id"
+							v-bind:data-id="element.id"
+							v-bind:data-property="element.property"
+							v-bind:data-title="element.title"
+						>
+							{{ element.title }}
+						</strong>
+						<span v-if="!canDragCards"
+							  v-bind:id="element.id"
+							  v-bind:data-id="element.id"
+							  v-bind:data-property="element.property"
+							  v-bind:data-title="element.title"
+							  style="font-weight: lighter"
+						> - Movement Locked!</span>
+					</div>
+					<div class="icon"
+						 v-on:click="removeItem(element.id)"
+						 v-if="localPropertyList.length > 1"
 					>
 						<carbon-close-outline></carbon-close-outline>
-					</span>
+					</div>
 				</div>
 			</template>
 		</draggable>
