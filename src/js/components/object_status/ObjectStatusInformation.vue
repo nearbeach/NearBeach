@@ -41,18 +41,20 @@
 								v-bind:data-id="element.status_id"
 								v-on:dblclick="editStatus($event)"
 							>
-								<strong
-									v-bind:key="element.status_id"
-									v-bind:data-id="element.status_id"
-								>
-									{{ element.status }}
-								</strong>
-								<span
-									v-on:click="removeStatus(element.status_id)"
-									v-if="localStatusList.length > 1"
+								<div class="content">
+									<strong
+										v-bind:key="element.status_id"
+										v-bind:data-id="element.status_id"
+									>
+										{{ element.status }}
+									</strong>
+								</div>
+								<div class="icon"
+									 v-on:click="removeStatus(element.status_id)"
+									 v-if="localStatusList.length > 1"
 								>
 									<carbon-close-outline></carbon-close-outline>
-								</span>
+								</div>
 							</div>
 						</template>
 					</draggable>

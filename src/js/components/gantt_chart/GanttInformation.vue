@@ -13,6 +13,7 @@
 			<render-gantt-row
 				v-for="(row, index) in ganttChartData"
 				:key="index"
+				v-bind:description="row.description"
 				v-bind:end-date="row.end_date"
 				v-bind:index="index"
 				v-bind:is-closed="isParentClosed()"
