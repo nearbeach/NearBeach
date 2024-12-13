@@ -14,7 +14,11 @@
 					  data-bs-custom-class="tooltip-description"
 					  data-bs-delay="200"
 				>
-					<carbon-information></carbon-information>
+					<a target="_blank"
+					   v-bind:href="getObjectUrl()"
+					>
+						<carbon-information></carbon-information>
+					</a>
 				</span>
 				{{title}}
 			</div>
@@ -241,6 +245,9 @@ export default {
 			const modal = new Modal(document.getElementById("confirmObjectRemoveModal"));
 			modal.show();
 		},
+		getObjectUrl() {
+			return `${this.rootUrl}${this.objectType}_information/${this.objectId}`;
+		},
 		getStatusList() {
 			//Get the status list dependent on the object type
 			this.statusList = this.$store.getters.getGanttStatusList(this.objectType);
@@ -336,7 +343,6 @@ export default {
 		setTimeout(() => {
 			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
-			console.log("TOOLTIPS SET!!!!");
 		}, 500);
 	}
 }
