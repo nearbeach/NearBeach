@@ -41,7 +41,10 @@
 								v-bind:data-id="element.status_id"
 								v-on:dblclick="editStatus($event)"
 							>
-								<div class="content">
+								<div class="content"
+									 v-bind:key="element.status_id"
+									 v-bind:data-id="element.status_id"
+								>
 									<strong
 										v-bind:key="element.status_id"
 										v-bind:data-id="element.status_id"
@@ -153,6 +156,7 @@ export default {
 			});
 		},
 		editStatus(event) {
+			console.log("Event: ", event);
 			//Get the id
 			const status_id = parseInt(event.target.dataset.id);
 
