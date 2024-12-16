@@ -1,6 +1,7 @@
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.db.models import Value, F
+from django.db import connection
 
 from NearBeach.forms import GanttDataUpdateDataForm
 from NearBeach.models import (
@@ -94,107 +95,103 @@ def gantt_data_update_data(request, destination, location_id, *args, **kwargs):
 
 # Internal Function
 def get_object_results(location_id):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            WITH TmpTable(
+                  sprint_object_assignment_id
+                , project_id
+                , requirement_item_id
+                , sprint_id_id
+                , task_id
+            ) AS (
+                SELECT DISTINCT
+                  sprint_object_assignment_id
+                , project_id
+                , requirement_item_id
+                , sprint_id_id
+                , task_id
+                FROM [NearBeach_sprintobjectassignment]
+                WHERE 1=1
+                AND is_deleted = 0
+                AND sprint_id_id = %s
+            )
 
-    # Import all connected objects
-    sprint_object_assignment_results = SprintObjectAssignment.objects.filter(
-        is_deleted=False,
-        sprint_id=location_id,
-    )
+            SELECT DISTINCT
+              P.project_name AS 'title'
+            , P.project_description AS 'description'
+            , P.project_status_id AS 'status_id'
+            , PS.project_higher_order_status AS 'higher_order_status'
+            , P.project_start_date AS 'start_date'
+            , P.project_end_date AS 'end_date'
+            , 'project' AS 'object_type'
+            , P.project_id AS 'object_id'
+            , OA.parent_link AS 'parent_object_type'
+            , OA.requirement_item_id AS 'parent_object_id'
+            FROM [NearBeach_project] AS P LEFT JOIN [NearBeach_listofprojectstatus] PS
+                ON PS.project_status_id = P.project_status_id
+                LEFT OUTER JOIN [NearBeach_objectassignment] OA
+                ON OA.project_id = P.project_id
 
 
-    project_results = Project.objects.filter(
-        is_deleted=False,
-        project_id__in=sprint_object_assignment_results.filter(
-            project_id__isnull=False,
-        ).values("project_id"),
-    ).annotate(
-        title=F('project_name'),
-        description=F('project_description'),
-        status_id=F('project_status_id'),
-        higher_order_status=F('project_status__project_higher_order_status'),
-        start_date=F('project_start_date'),
-        end_date=F('project_end_date'),
-        object_type=Value("project"),
-        object_id=F("project_id"),
-    ).values(
-        'title',
-        'description',
-        'status_id',
-        'higher_order_status',
-        'start_date',
-        'end_date',
-        'object_type',
-        'object_id',
-    )
+            WHERE P.project_id IN (
+                SELECT project_id FROM TmpTable
+            )
+            AND OA.link_relationship = 'Subobject'
+            AND OA.parent_link IN ('requirement_item')
 
-    task_results = Task.objects.filter(
-        is_deleted=False,
-        task_id__in=sprint_object_assignment_results.filter(
-            task_id__isnull=False,
-        ).values("task_id")
-    ).annotate(
-        title=F('task_short_description'),
-        description=F('task_long_description'),
-        status_id=F('task_status_id'),
-        higher_order_status=F('task_status__task_higher_order_status'),
-        start_date=F('task_start_date'),
-        end_date=F('task_end_date'),
-        object_type=Value("task"),
-        object_id=F("task_id")
-    ).values(
-        'title',
-        'description',
-        'status_id',
-        'higher_order_status',
-        'start_date',
-        'end_date',
-        'object_type',
-        'object_id',
-    )
+            UNION
+
+            SELECT
+              T.task_short_description AS 'title'
+            , T.task_long_description AS 'description'
+            , T.task_status_id AS 'status_id'
+            , TS.task_higher_order_status AS 'higher_order_status'
+            , T.task_start_date AS 'start_date'
+            , T.task_end_date AS 'end_date'
+            , 'task' AS 'object_type'
+            , T.task_id AS 'object_id'
+            , OA.parent_link AS 'parent_object_type'
+            , CASE OA.parent_link
+                WHEN 'requirement_item' THEN OA.requirement_item_id
+                WHEN 'project' THEN OA.project_id
+                ELSE ''
+            END AS 'parent_object_id'
+            FROM [NearBeach_task] T LEFT JOIN [NearBeach_listoftaskstatus] TS
+                ON TS.task_status_id = T.task_status_id
+                LEFT OUTER JOIN [NearBeach_objectassignment] OA
+                ON OA.task_id = T.task_id
+                AND OA.link_relationship = 'Subobject'
+                AND OA.parent_link IN ('requirement_item', 'project')
+
+            WHERE T.task_id IN (
+                SELECT task_id FROM TmpTable
+            )
+
+            UNION
+
+            SELECT DISTINCT
+              RI.requirement_item_title AS 'title'
+            , RI.requirement_item_scope AS 'description'
+            , RI.requirement_item_status_id AS 'status_id'
+            , RIS.requirement_item_higher_order_status AS 'higher_order_status'
+            , '' AS 'start_date'
+            , '' AS 'end_date'
+            , 'requirement_item' AS 'object_type'
+            , RI.requirement_id AS 'object_id'
+            , '' AS 'object_id'
+            , '' AS 'parent_object_type'
+            FROM [NearBeach_requirementitem] RI LEFT JOIN [NearBeach_listofrequirementitemstatus] RIS
+                ON RIS.requirement_item_status_id = RI.requirement_item_status_id
+            WHERE RI.requirement_item_id IN (
+                SELECT requirement_item_id FROM TmpTable
+            )
+            """,
+           [location_id]
+        )
+        # object_results = cursor.fetchall()
+        columns = [col[0] for col in cursor.description]
+        object_results = [dict(zip(columns, row)) for row in cursor.fetchall()]
     
-    requirement_item_results = RequirementItem.objects.filter(
-        is_deleted=False,
-        requirement_item_id__in=sprint_object_assignment_results.filter(
-            requirement_item_id__isnull=False,
-        ).values("requirement_item_id")
-    ).annotate(
-        title=F('requirement_item_title'),
-        description=F('requirement_item_scope'),
-        status_id=F('requirement_item_status_id'),
-        higher_order_status=F('requirement_item_status__requirement_item_higher_order_status'),
-        start_date=Value("1970-01-01T00:00:0Z"),
-        end_date=Value("1970-01-01T00:00:0Z"),
-        object_type=Value("requirement_item"),
-        object_id=F("requirement_item_id")
-    ).values(
-        'title',
-        'description',
-        'status_id',
-        'higher_order_status',
-        'start_date',
-        'end_date',
-        'object_type',
-        'object_id',
-    )
-
-    # Union the data and send back to user
-    object_results = project_results.union(
-        task_results,
-        requirement_item_results
-    ).values(
-        'title',
-        'description',
-        'status_id',
-        'higher_order_status',
-        'start_date',
-        'end_date',
-        'object_type',
-        'object_id',
-    ).order_by(
-        'start_date',
-        'end_date',
-    )
-
     # Just return the json dumps
     return json.dumps(list(object_results), cls=DjangoJSONEncoder)
 
