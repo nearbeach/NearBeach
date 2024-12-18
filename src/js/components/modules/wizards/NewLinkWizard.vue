@@ -197,12 +197,6 @@ export default {
 			objectModel: null,
 			objectRelation: [
 				{value: "relates", label: "Relates To"},
-				{value: "blocked_by", label: "Is Blocked By"},
-				{value: "blocking", label: "Is Currently Blocking"},
-				{value: "sub_object_of", label: "Is Sub Object Of"},
-				{value: "parent_object_of", label: "Is Parent Object Of"},
-				{value: "has_duplicate", label: "Has Duplicate Object Of"},
-				{value: "duplicate_object", label: "Is Duplicate Object Of"},
 			],
 			objectRelationModel: "relates",
 			objectResults: [],
@@ -216,6 +210,32 @@ export default {
 		};
 	},
 	methods: {
+		handleRelationship() {
+			//Depending on what object we are looking for, depends which relationships are allowed. For example, the
+			//requirements and requirement items are only allowed to have the "Of Parent Of" relation ship
+			if (this.objectModel === "Requirement" || this.objectModel === "Requirement_Item") {
+				this.objectRelation = [
+					{value: "parent_object_of", label: "Is Parent Object Of"},
+				];
+
+				this.objectRelationModel = "parent_object_of";
+
+				return;
+			}
+
+			//Default :)
+			this.objectRelation = [
+				{value: "relates", label: "Relates To"},
+				{value: "blocked_by", label: "Is Blocked By"},
+				{value: "blocking", label: "Is Currently Blocking"},
+				{value: "sub_object_of", label: "Is Sub Object Of"},
+				{value: "parent_object_of", label: "Is Parent Object Of"},
+				{value: "has_duplicate", label: "Has Duplicate Object Of"},
+				{value: "duplicate_object", label: "Is Duplicate Object Of"},
+			];
+
+			this.objectRelationModel = "relates";
+		},
 		saveLinks() {
 			// Set up the data object to send
 			const data_to_send = new FormData();
@@ -252,6 +272,9 @@ export default {
 			//Clear data
 			this.linkModel = [];
 
+			//Handle the relationship field
+			this.handleRelationship();
+
 			//User has chosen an object.
 			if (this.objectModel === null) {
 				//Ok - then removed the objects. We don't need to do anything
@@ -283,6 +306,9 @@ export default {
 			});
 		},
 	},
+	mounted() {
+		this.handleRelationship();
+	}
 };
 </script>
 
