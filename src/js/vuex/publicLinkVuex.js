@@ -17,7 +17,7 @@ export const modulePublicLink = {
                 return row.public_link_id !== payload.public_link_id;
             });
 
-            console.log("New Public Link: ", new_public_link_results);
+            
 
             commit("updatePublicLinkResults", {
                 publicLinkResults: new_public_link_results,
