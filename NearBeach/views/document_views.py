@@ -608,8 +608,6 @@ class LocalFileHandler(FileHandler):
         storage_location = self.root / "private" / str(document_key_id)
         shutil.rmtree(storage_location, ignore_errors=True)
 
-        return
-
 
 class S3FileHandler(FileHandler):
     def __init__(self, local_settings):
