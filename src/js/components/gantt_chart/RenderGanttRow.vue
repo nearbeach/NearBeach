@@ -336,7 +336,7 @@ export default {
 		setTimeout(() => {
 			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
-			console.log("TOOLTIPS SET!!!!");
+			
 		}, 500);
 	}
 }
