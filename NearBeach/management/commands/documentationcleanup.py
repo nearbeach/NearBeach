@@ -48,8 +48,6 @@ class Command(BaseCommand):
     def purge_document_from_blob(self, document_key_id):
         FILE_HANDLER.delete(document_key_id=document_key_id)
 
-        return
-
     @staticmethod
     def clean_up_generic_object_documents(self, field, description_field):
         clean_after_days = getattr(settings, "DOCUMENTATION_CLEAN_AFTER_DAYS", 90)
@@ -91,8 +89,6 @@ class Command(BaseCommand):
             date_modified=todays_date,
         )
 
-        return
-
     @staticmethod
     def clean_up_organisation_documents(self):
         clean_after_days = getattr(settings, "DOCUMENTATION_CLEAN_AFTER_DAYS", 90)
@@ -125,8 +121,6 @@ class Command(BaseCommand):
             is_purged=True,
             date_modified=todays_date,
         )
-
-        return
 
     @staticmethod
     def clean_up_rfc_documents(self):
@@ -178,5 +172,3 @@ class Command(BaseCommand):
             is_purged=True,
             date_modified=todays_date,
         )
-
-        return
