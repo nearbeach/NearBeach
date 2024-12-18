@@ -260,7 +260,7 @@ def document_remove_folder(request, destination, location_id, *args, **kwargs):
     # Check the destination and location id match within the folder :)
     check_object = getattr(folder_update, destination, 0)
     check_id = getattr(check_object, "pk", 0)
-    if not int(check_id) == int(location_id):
+    if int(check_id) != int(location_id):
         return HttpResponseBadRequest("Mismatch of data")
 
     # Get folder from the from
