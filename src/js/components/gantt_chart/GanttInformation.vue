@@ -23,7 +23,6 @@
 				v-bind:start-date="row.start_date"
 				v-bind:status-id="row.status_id"
 				v-bind:title="row.title"
-				v-on:mouse_down="mouseDown"
 			></render-gantt-row>
 		</div>
 	</n-config-provider>
@@ -113,20 +112,7 @@ export default {
 		return {
             endDateIssues: [],
 			ganttStyle: "",
-			isMouseDown: false,
             startDateIssues: [],
-
-			//Mouse Down Variables
-			mdClientXInitial: 0,
-			mdIndex: 0,
-			mdObjectId: 0,
-			mdObjectType: "",
-			mdColumn: "",
-			mdEndDateInitial: 0,
-			mdHigherOrderStatus: "",
-			mdStartDateInitial: 0,
-			mdStatus: "",
-			mdTitle: "",
 		}
 	},
     watch: {
@@ -154,6 +140,20 @@ export default {
 		...mapGetters({
 			deltaDays: "getDeltaDays",
 			ganttChartData: "getGanttChartData",
+
+			//Mouse Down Variables
+			isMouseDown: "getIsMouseDown",
+			mdClientXInitial: "getMdClientXInitial",
+			mdIndex: "getMdIndex",
+			mdObjectId: "getMdObjectId",
+			mdObjectType: "getMdObjectType",
+			mdColumn: "getMdColumn",
+			mdEndDateInitial: "getMdEndDateInitial",
+			mdHigherOrderStatus: "getMdHigherOrderStatus",
+			mdStartDateInitial: "getMdStartDateInitial",
+			mdStatus: "getMdStatus",
+			mdStatusId: "getMdStatusId",
+			mdTitle: "getMdTitle",
 		}),
 	},
 	methods: {
@@ -218,28 +218,13 @@ export default {
 
 			return closed_status.includes(this.parentStatus.toLowerCase());
 		},
-		mouseDown(data) {
-			//Update the mouse down variables
-			this.mdClientXInitial = data.mdClientXInitial;
-			this.mdHigherOrderStatus = data.mdHigherOrderStatus;
-			this.mdIndex = data.mdIndex;
-			this.mdObjectId = data.mdObjectId;
-			this.mdObjectType = data.mdObjectType;
-			this.mdColumn = data.mdColumn;
-			this.mdEndDateInitial = data.mdEndDateInitial;
-			this.mdStartDateInitial = data.mdStartDateInitial;
-			this.mdStatus = data.mdStatus;
-			this.mdStatusId = data.mdStatusId;
-			this.mdTitle = data.mdTitle;
-
-			//Mouse is now down
-			this.isMouseDown = true;
-		},
 		mouseLeave(event) {
 			event.preventDefault();
 
 			//Tell the system the mouse is no longer down
-			this.isMouseDown = false;
+			this.$store.commit("updateMouseDown", {
+				isMouseDown: false,
+			});
 
 			//Check to make sure we need to update the backend
 			if (this.mdObjectId !== 0) {
@@ -288,7 +273,9 @@ export default {
 			event.preventDefault();
 
 			//Tell the system the mouse is no longer down
-			this.isMouseDown = false;
+			this.$store.commit("updateMouseDown", {
+				isMouseDown: false,
+			});
 
 			//Update the backend data
 			if (this.mdObjectId !== 0) {
