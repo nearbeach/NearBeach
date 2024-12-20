@@ -172,5 +172,3 @@ class Command(BaseCommand):
             is_purged=True,
             date_modified=todays_date,
         )
-
-        return
