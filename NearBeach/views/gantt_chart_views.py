@@ -131,15 +131,19 @@ def get_object_results(location_id):
                 ON PS.project_status_id = P.project_status_id
                 LEFT OUTER JOIN [NearBeach_objectassignment] OA
                 ON OA.project_id = P.project_id
-
-
+                AND OA.link_relationship = 'Subobject'
+                AND OA.parent_link IN ('requirement_item')
+                AND OA.requirement_id IN (
+                    SELECT requirement_id FROM TmpTable
+                )
+                
             WHERE P.project_id IN (
                 SELECT project_id FROM TmpTable
             )
-            AND OA.link_relationship = 'Subobject'
-            AND OA.parent_link IN ('requirement_item')
+
 
             UNION
+
 
             SELECT
               T.task_short_description AS 'title'
@@ -162,12 +166,22 @@ def get_object_results(location_id):
                 ON OA.task_id = T.task_id
                 AND OA.link_relationship = 'Subobject'
                 AND OA.parent_link IN ('requirement_item', 'project')
+                AND (
+                    OA.requirement_id IN (
+                        SELECT requirement_id FROM TmpTable
+                    )
+                    OR OA.project_id IN (
+                        SELECT project_id FROM TmpTable
+                    )
+                )
 
             WHERE T.task_id IN (
                 SELECT task_id FROM TmpTable
             )
 
+
             UNION
+
 
             SELECT DISTINCT
               RI.requirement_item_title AS 'title'
@@ -184,7 +198,7 @@ def get_object_results(location_id):
                 ON RIS.requirement_item_status_id = RI.requirement_item_status_id
             WHERE RI.requirement_item_id IN (
                 SELECT requirement_item_id FROM TmpTable
-            )
+            ) 
             """,
            [location_id]
         )

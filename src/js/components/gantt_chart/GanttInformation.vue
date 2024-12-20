@@ -10,8 +10,8 @@
 			<render-gantt-days-header></render-gantt-days-header>
 
 			<!-- RENDER EACH GANTT ROW-->
-			<render-gantt-row
-				v-for="(row, index) in ganttChartData"
+			<render-gantt-group
+				v-for="(row, index) in filteredGanttChartData"
 				:key="index"
 				v-bind:description="row.description"
 				v-bind:end-date="row.end_date"
@@ -23,7 +23,22 @@
 				v-bind:start-date="row.start_date"
 				v-bind:status-id="row.status_id"
 				v-bind:title="row.title"
-			></render-gantt-row>
+			></render-gantt-group>
+
+<!--			<render-gantt-row-->
+<!--				v-for="(row, index) in filteredGanttChartData"-->
+<!--				:key="index"-->
+<!--				v-bind:description="row.description"-->
+<!--				v-bind:end-date="row.end_date"-->
+<!--				v-bind:index="index"-->
+<!--				v-bind:is-closed="isParentClosed()"-->
+<!--				v-bind:object-id="row.object_id"-->
+<!--				v-bind:object-type="row.object_type"-->
+<!--				v-bind:higher-order-status="row.higher_order_status"-->
+<!--				v-bind:start-date="row.start_date"-->
+<!--				v-bind:status-id="row.status_id"-->
+<!--				v-bind:title="row.title"-->
+<!--			></render-gantt-row>-->
 		</div>
 	</n-config-provider>
 
@@ -69,10 +84,12 @@ import RenderGanttRow from "./RenderGanttRow.vue";
 
 //Composable
 import {useNBTheme} from "../../composables/theme/useNBTheme";
+import RenderGanttGroup from "./RenderGanttGroup.vue";
 
 export default {
 	name: "GanttChart",
 	components: {
+		RenderGanttGroup,
 		ConfirmObjectRemove,
 		RenderGanttRow,
 		RenderGanttDaysHeader,
@@ -155,6 +172,10 @@ export default {
 			mdStatusId: "getMdStatusId",
 			mdTitle: "getMdTitle",
 		}),
+
+		filteredGanttChartData() {
+			return this.ganttChartData("", "");
+		},
 	},
 	methods: {
 		useNBTheme,

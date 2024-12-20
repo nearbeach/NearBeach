@@ -105,46 +105,7 @@ export default {
 	name: "RenderGanttRow",
 	emits: ['mouse_down'],
 	props: {
-		description: {
-			type: String,
-			default: "",
-		},
-		endDate: {
-			type: Number,
-			default: 0,
-		},
-		higherOrderStatus: {
-			type: String,
-			default: "",
-		},
-		index: {
-			type: Number,
-			default: 0,
-		},
-		isClosed: {
-			type: Boolean,
-			default: false,
-		},
-		objectId: {
-			type: Number,
-			default: 0,
-		},
-		objectType: {
-			type: String,
-			default: "",
-		},
-		startDate: {
-			type: Number,
-			default: 0,
-		},
-		statusId: {
-			type: Number,
-			default: 0,
-		},
-		title: {
-			type: String,
-			default: "",
-		},
+
 	},
 	components: {
 		CarbonInformation,
@@ -340,6 +301,12 @@ export default {
 	},
 	mounted() {
 		this.getStatusList();
+
+		//This code is used the for tooltip when user is hovering over the (i) icon.
+		setTimeout(() => {
+			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
+		}, 500);
 	}
 }
 </script>

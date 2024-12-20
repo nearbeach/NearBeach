@@ -93,8 +93,25 @@ export const moduleGantChart = {
         getDeltaDays: (state) => {
             return state.deltaDays;
         },
-        getGanttChartData: (state) => {
-            return state.ganttChartData;
+        getGanttChartData: (state) => (parentObjectType, parentObjectId ) => {
+            /*
+            The top level objects, will have either a null or a string in the parent_object_(type|id).
+            This is causing an issue where we can't guarentee if it will be a null, or a null string.
+            Hence we are using an if statement here.
+             */
+            if (parentObjectType === null || parentObjectType === "")
+            {
+                return state.ganttChartData.filter(row => {
+                    return row.parent_object_type === "" || row.parent_object_type === null;
+                });
+            }
+
+            return state.ganttChartData.filter(row => {
+                const condition1 = String(row.parent_object_type).toLowerCase() === parentObjectType;
+                const condition2 = parseInt(row.parent_object_id) === parseInt(parentObjectId);
+
+                return condition1 && condition2;
+            });
         },
         getGanttChartDataSingleRow: (state) => (index) => {
             return state.ganttChartData[index];
