@@ -45,15 +45,13 @@ class Command(BaseCommand):
         return datetime.datetime.today()
 
     @staticmethod
-    def purge_document_from_blob(self, document_key_id):
+    def purge_document_from_blob(_, document_key_id):
         FILE_HANDLER.delete(document_key_id=document_key_id)
 
-        return
-
     @staticmethod
-    def clean_up_generic_object_documents(self, field, description_field):
+    def clean_up_generic_object_documents(origin, field, description_field):
         clean_after_days = getattr(settings, "DOCUMENTATION_CLEAN_AFTER_DAYS", 90)
-        todays_date = self.get_today()
+        todays_date = origin.get_today()
         expired_date = todays_date - datetime.timedelta(days=clean_after_days)
 
         documents_to_be_purged = DocumentPermission.objects.filter(
@@ -72,7 +70,7 @@ class Command(BaseCommand):
 
             if document_key_id not in description:
                 # Process deleting the file
-                self.purge_document_from_blob(document_key_id)
+                origin.purge_document_from_blob(document_key_id)
 
                 purged_document_keys.append(document_key_id)
 
@@ -91,12 +89,10 @@ class Command(BaseCommand):
             date_modified=todays_date,
         )
 
-        return
-
     @staticmethod
-    def clean_up_organisation_documents(self):
+    def clean_up_organisation_documents(origin):
         clean_after_days = getattr(settings, "DOCUMENTATION_CLEAN_AFTER_DAYS", 90)
-        todays_date = self.get_today()
+        todays_date = origin.get_today()
         expired_date = todays_date - datetime.timedelta(days=clean_after_days)
 
         documents_to_be_purged = DocumentPermission.objects.filter(
@@ -109,7 +105,7 @@ class Command(BaseCommand):
         # Loop through all the records - and make sure the document is not in the description
         for single_document in documents_to_be_purged:
             document_key_id = str(single_document.document_key_id)
-            self.purge_document_from_blob(document_key_id)
+            origin.purge_document_from_blob(document_key_id)
 
         # Bulk update to purged documents
         Document.objects.filter(
@@ -125,8 +121,6 @@ class Command(BaseCommand):
             is_purged=True,
             date_modified=todays_date,
         )
-
-        return
 
     @staticmethod
     def clean_up_rfc_documents(self):
