@@ -423,8 +423,8 @@ export default {
 
 			//Update document folder id
 			this.$store.dispatch("updateDocumentFolder", {
-				document_key_id: document_key_id,
-				parent_folder_id: parent_folder_id,
+				document_key_id,
+				parent_folder_id,
 			});
 
 			//Update the backend
@@ -456,8 +456,8 @@ export default {
 
 			//Update the folder
 			this.$store.dispatch("updateFolderParentFolder", {
-				moving_folder_id: moving_folder_id,
-				parent_folder_id: parent_folder_id,
+				moving_folder_id,
+				parent_folder_id,
 			});
 
 			//Update backend
