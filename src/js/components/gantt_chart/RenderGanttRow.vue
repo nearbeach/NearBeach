@@ -332,12 +332,6 @@ export default {
 	},
 	mounted() {
 		this.getStatusList();
-
-		setTimeout(() => {
-			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
-			
-		}, 500);
 	}
 }
 </script>

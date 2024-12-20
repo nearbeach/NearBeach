@@ -89,7 +89,7 @@ export const moduleDocuments = {
                 folderList: new_folder_list,
             });
         },
-        updateDocumentFolder: ({state, commit}, payload) => {
+        updateDocumentFolder: ({state}, payload) => {
             const index_location = state.documentList.findIndex((row) => {
                 return row.document_key_id === payload.document_key_id;
             });
@@ -98,7 +98,7 @@ export const moduleDocuments = {
             //Update the folder id directly
             state.documentList[index_location].folder = payload.parent_folder_id;
         },
-        updateFolderParentFolder: ({state, commit}, payload) => {
+        updateFolderParentFolder: ({state}, payload) => {
             const index_location = state.folderList.findIndex((row) => {
                 return parseInt(row.pk) === parseInt(payload.moving_folder_id);
             });
