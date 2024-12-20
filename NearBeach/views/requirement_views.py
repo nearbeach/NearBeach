@@ -51,7 +51,8 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
             requirement=requirement_instance,
             project=Project.objects.get(project_id=row),
             change_user=request.user,
-            link_relationship="Relate"
+            link_relationship="Subobject",
+            parent_link="requirement",
         )
         submit_object_assignment.save()
 
@@ -60,7 +61,8 @@ def add_requirement_link(request, requirement_id, *args, **kwargs):
             requirement=requirement_instance,
             task=Task.objects.get(task_id=row),
             change_user=request.user,
-            link_relationship="Relate"
+            link_relationship="Subobject",
+            parent_link="requirement",
         )
         submit_object_assignment.save()
 

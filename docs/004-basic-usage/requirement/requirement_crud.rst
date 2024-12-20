@@ -82,10 +82,13 @@ For example: The below section has a requirement, which then has three requireme
 Create Requirement Item
 -----------------------
 
-ADD DOCUMENTATION
+.. image:: requirement-screenshot-requirement-items.png
+    :width: 600
+    :alt: Screenshot of the Requirement Items under requirement
 
------------------------
-Update Requirement Item
------------------------
+#. Under the "Requirement Item" tab, click on the button "Create a new Requirement Item"
 
-ADD DOCUMENTATION
+#. The "New Requirement Item Wizard" will appear. Fill it out appropriately and hit "Save Requirement Item"
+
+The new requirement item will now appear in the list. If you want to view, please click on the appropriate item in the
+list.

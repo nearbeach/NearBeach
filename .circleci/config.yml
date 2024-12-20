@@ -33,7 +33,7 @@ jobs:
           destination: tr1
   build-and-test-frontend:
     docker:
-      - image: cimg/node:21.2.0
+      - image: cimg/node:23.4.0
     steps:
       - checkout
       - run:

@@ -273,7 +273,8 @@ export default {
             if (this.userLevel <= 1) return;
 
 			//Send data up stream
-			this.$emit("mouse_down", {
+			this.$store.commit("updateMouseDown", {
+				isMouseDown: true,
 				mdClientXInitial: event.clientX,
 				mdHigherOrderStatus: this.higherOrderStatus,
 				mdIndex: this.index,
@@ -339,11 +340,6 @@ export default {
 	},
 	mounted() {
 		this.getStatusList();
-
-		setTimeout(() => {
-			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
-		}, 500);
 	}
 }
 </script>

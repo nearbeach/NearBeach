@@ -257,8 +257,10 @@ def document_remove_folder(request, destination, location_id, *args, **kwargs):
     # Getting folder update
     folder_update = form.cleaned_data["folder_id"]
 
-    # Check the destination and location id
-    if not folder_update.destination == destination or not folder_update.location_id == location_id:
+    # Check the destination and location id match within the folder :)
+    check_object = getattr(folder_update, destination, 0)
+    check_id = getattr(check_object, "pk", 0)
+    if int(check_id) != int(location_id):
         return HttpResponseBadRequest("Mismatch of data")
 
     # Get folder from the from
@@ -605,8 +607,6 @@ class LocalFileHandler(FileHandler):
     def delete(self, document_key_id):
         storage_location = self.root / "private" / str(document_key_id)
         shutil.rmtree(storage_location, ignore_errors=True)
-
-        return
 
 
 class S3FileHandler(FileHandler):

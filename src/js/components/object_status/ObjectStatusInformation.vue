@@ -1,90 +1,95 @@
 <template>
-	<div class="card">
-		<div class="card-body">
-			<h1>{{ nearbeachTitle }}</h1>
-			<br/>
-			<a v-bind:href="`${this.rootUrl}object_status_list/`">
-				Go back to object status list
-			</a>
-			<hr>
+	<n-config-provider :theme="useNBTheme(theme)">
+		<div class="card">
+			<div class="card-body">
+				<h1>{{ nearbeachTitle }}</h1>
+				<br/>
+				<a v-bind:href="`${this.rootUrl}object_status_list/`">
+					Go back to object status list
+				</a>
+				<hr>
 
-			<div class="row">
-				<div class="col-md-4">
-					<strong>Editing Status</strong>
-					<p class="text-instructions">
-						Move the status' around to reorder them. Double click to edit text and settings.
-					</p>
-				</div>
-				<div class="col-md-8">
-					<strong>Status List</strong>
-					<span
-						class="error"
-						v-if="localStatusList.length === 0"
-					>
-						Please create at least one status
-					</span>
-					<br/>
-					<draggable
-						v-model="localStatusList"
-						item-key="status_id"
-						ghost-class="ghost"
-						@change="updateSortOrder"
-					>
-						<template
-							#item="{ element }"
-							type="transition"
-							name="flip-list"
+				<div class="row">
+					<div class="col-md-4">
+						<strong>Editing Status</strong>
+						<p class="text-instructions">
+							Move the status' around to reorder them. Double click to edit text and settings.
+						</p>
+					</div>
+					<div class="col-md-8">
+						<strong>Status List</strong>
+						<span
+							class="error"
+							v-if="localStatusList.length === 0"
 						>
-							<div
-								class="sortable"
-								v-bind:key="element.status_id"
-								v-bind:data-id="element.status_id"
-								v-on:dblclick="editStatus($event)"
+							Please create at least one status
+						</span>
+						<br/>
+						<draggable
+							v-model="localStatusList"
+							item-key="status_id"
+							ghost-class="ghost"
+							@change="updateSortOrder"
+						>
+							<template
+								#item="{ element }"
+								type="transition"
+								name="flip-list"
 							>
-								<div class="content">
-									<strong
-										v-bind:key="element.status_id"
-										v-bind:data-id="element.status_id"
-									>
-										{{ element.status }}
-									</strong>
-								</div>
-								<div class="icon"
-									 v-on:click="removeStatus(element.status_id)"
-									 v-if="localStatusList.length > 1"
+								<div
+									class="sortable"
+									v-bind:key="element.status_id"
+									v-bind:data-id="element.status_id"
+									v-on:dblclick="editStatus($event)"
 								>
-									<carbon-close-outline></carbon-close-outline>
+									<div class="content"
+										 v-bind:key="element.status_id"
+										 v-bind:data-id="element.status_id"
+									>
+										<strong
+											v-bind:key="element.status_id"
+											v-bind:data-id="element.status_id"
+										>
+											{{ element.status }}
+										</strong>
+									</div>
+									<div class="icon"
+										 v-on:click="removeStatus(element.status_id)"
+										 v-if="localStatusList.length > 1"
+									>
+										<carbon-close-outline></carbon-close-outline>
+									</div>
 								</div>
-							</div>
-						</template>
-					</draggable>
+							</template>
+						</draggable>
 
-					<div class="spacer"></div>
+						<div class="spacer"></div>
 
-					<button v-on:click="newStatus"
-							class="btn btn-primary"
-					>
-						New Status
-					</button>
+						<button v-on:click="newStatus"
+								class="btn btn-primary"
+						>
+							New Status
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<object-status-modal
-		v-bind:status-data="statusData"
-		v-bind:status-id="statusId"
-		v-bind:status-list="localStatusList"
-		v-on:add_status="addStatus($event)"
-		v-on:update_status="updateStatus($event)"
-	></object-status-modal>
+		<object-status-modal
+			v-bind:status-data="statusData"
+			v-bind:status-id="statusId"
+			v-bind:status-list="localStatusList"
+			v-on:add_status="addStatus($event)"
+			v-on:update_status="updateStatus($event)"
+		></object-status-modal>
 
-	<object-status-confirm-delete
-		v-bind:status-data="statusData"
-		v-bind:status-id="statusId"
-		v-bind:status-list="localStatusList"
-		v-on:delete_status="delete_status"
-	></object-status-confirm-delete>
+		<object-status-confirm-delete
+			v-bind:status-data="statusData"
+			v-bind:status-id="statusId"
+			v-bind:status-list="localStatusList"
+			v-on:delete_status="delete_status"
+		></object-status-confirm-delete>
+	</n-config-provider>
 </template>
 
 <script>
@@ -98,6 +103,7 @@ import { Modal } from "bootstrap";
 import ObjectStatusConfirmDelete from "./ObjectStatusConfirmDelete.vue";
 import ObjectStatusModal from "./ObjectStatusModal.vue";
 import {CarbonCloseOutline} from "../../components";
+import {useNBTheme} from "../../composables/theme/useNBTheme";
 
 export default {
 	name: "ObjectStatusInformation",
@@ -142,6 +148,7 @@ export default {
 		}
 	},
 	methods: {
+		useNBTheme,
 		addStatus(data) {
 			//Add the data to the local status list
 			this.localStatusList.push(data[0]);
@@ -153,6 +160,7 @@ export default {
 			});
 		},
 		editStatus(event) {
+			
 			//Get the id
 			const status_id = parseInt(event.target.dataset.id);
 
