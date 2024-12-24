@@ -705,7 +705,7 @@ class AzureFileHanlder(FileHandler):
         # Create the blob client using the private file path name as the name for the blob
         blob_client = self._sevice_client.get_blob_client(
             container=self._client_name, 
-            blob=document_results.document,
+            blob=str(document_results.document),
         )
         # Upload the created file
         blob_client.upload_blob(file)
