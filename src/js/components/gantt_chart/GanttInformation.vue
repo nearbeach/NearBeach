@@ -10,20 +10,22 @@
 			<render-gantt-days-header></render-gantt-days-header>
 
 			<!-- RENDER EACH GANTT ROW-->
-			<render-gantt-row
-				v-for="(row, index) in ganttChartData"
+			<render-gantt-group
+				v-for="(row, index) in filteredGanttChartData"
 				:key="index"
 				v-bind:description="row.description"
 				v-bind:end-date="row.end_date"
-				v-bind:index="index"
 				v-bind:is-closed="isParentClosed()"
+				v-bind:level-number="0"
 				v-bind:object-id="row.object_id"
 				v-bind:object-type="row.object_type"
+				v-bind:parent-object-id="0"
+				v-bind:parent-object-type="row.parent_object_type"
 				v-bind:higher-order-status="row.higher_order_status"
 				v-bind:start-date="row.start_date"
 				v-bind:status-id="row.status_id"
 				v-bind:title="row.title"
-			></render-gantt-row>
+			></render-gantt-group>
 		</div>
 	</n-config-provider>
 
@@ -69,10 +71,12 @@ import RenderGanttRow from "./RenderGanttRow.vue";
 
 //Composable
 import {useNBTheme} from "../../composables/theme/useNBTheme";
+import RenderGanttGroup from "./RenderGanttGroup.vue";
 
 export default {
 	name: "GanttChart",
 	components: {
+		RenderGanttGroup,
 		ConfirmObjectRemove,
 		RenderGanttRow,
 		RenderGanttDaysHeader,
@@ -155,6 +159,10 @@ export default {
 			mdStatusId: "getMdStatusId",
 			mdTitle: "getMdTitle",
 		}),
+
+		filteredGanttChartData() {
+			return this.ganttChartData("", "");
+		},
 	},
 	methods: {
 		useNBTheme,
@@ -304,16 +312,13 @@ export default {
 
 			//Update VueX with the new dates\
 			this.$store.dispatch("updateGanttChartSingleRow", {
-				index: this.mdIndex,
-				value: {
-					end_date: end_date.getTime(),
-					higher_order_status: this.mdHigherOrderStatus,
-					object_id: this.mdObjectId,
-					object_type: this.mdObjectType,
-					start_date: this.mdStartDateInitial,
-					status_id: this.mdStatusId,
-					title: this.mdTitle,
-				},
+				end_date: end_date.getTime(),
+				higher_order_status: this.mdHigherOrderStatus,
+				object_id: this.mdObjectId,
+				object_type: this.mdObjectType,
+				start_date: this.mdStartDateInitial,
+				status_id: this.mdStatusId,
+				title: this.mdTitle,
 			});
 		},
 		updateGanttData() {
@@ -344,7 +349,9 @@ export default {
 			});
 
 			//Release the data
-			this.mdObjectId = 0;
+			this.$store.commit("updateMouseDown", {
+				mdObjectId: 0,
+			});
 		},
 		updateGanttStyle() {
 			//Function used to determine the size and margin of the gantt chart.
@@ -395,16 +402,13 @@ export default {
 
 			//Update VueX with the new dates\
 			this.$store.dispatch("updateGanttChartSingleRow", {
-				index: this.mdIndex,
-				value: {
-					end_date: end_date.getTime(),
-					higher_order_status: this.mdHigherOrderStatus,
-					object_id: this.mdObjectId,
-					object_type: this.mdObjectType,
-					start_date: start_date.getTime(),
-					status_id: this.mdStatusId,
-					title: this.mdTitle,
-				},
+				end_date: end_date.getTime(),
+				higher_order_status: this.mdHigherOrderStatus,
+				object_id: this.mdObjectId,
+				object_type: this.mdObjectType,
+				start_date: start_date.getTime(),
+				status_id: this.mdStatusId,
+				title: this.mdTitle,
 			});
 		},
 		updateStart(delta) {
@@ -427,16 +431,13 @@ export default {
 
 			//Update VueX with the new dates\
 			this.$store.dispatch("updateGanttChartSingleRow", {
-				index: this.mdIndex,
-				value: {
-					end_date: this.mdEndDateInitial,
-					higher_order_status: this.mdHigherOrderStatus,
-					object_id: this.mdObjectId,
-					object_type: this.mdObjectType,
-					start_date: start_date.getTime(),
-					status_id: this.mdStatusId,
-					title: this.mdTitle,
-				},
+				end_date: this.mdEndDateInitial,
+				higher_order_status: this.mdHigherOrderStatus,
+				object_id: this.mdObjectId,
+				object_type: this.mdObjectType,
+				start_date: start_date.getTime(),
+				status_id: this.mdStatusId,
+				title: this.mdTitle,
 			});
 		},
 	},
