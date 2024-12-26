@@ -80,14 +80,25 @@ export const moduleGantChart = {
             // Get the gantt chart data
             const gantt_chart_data = state.ganttChartData.slice(); // Create a copy to maintain immutability
 
-            // Mutate the gantt chart data
-            gantt_chart_data[payload.index] = payload.value;
+            //Filter for the data we want to mutate and then apply mutations
+            gantt_chart_data.filter(row => {
+                const condition1 = parseInt(row.object_id) === payload.object_id;
+                const condition2 = row.object_type === payload.object_type;
+
+                return condition1 && condition2;
+            }).forEach(row => {
+                row.end_date = payload.end_date;
+                row.higher_order_status = payload.higher_order_status;
+                row.start_date = payload.start_date;
+                row.status_id = payload.status_id;
+            });
 
             // Update gantt chart data
             commit("updateGanttChartData", {
                 ganttChartData: gantt_chart_data,
             });
         },
+        updateGanttChartSingleRowsParent: ({ state, commit }, payload ) => {},
     },
     getters: {
         getDeltaDays: (state) => {

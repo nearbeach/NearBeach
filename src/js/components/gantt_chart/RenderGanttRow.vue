@@ -1,7 +1,9 @@
 <template>
 	<div class="gantt-row">
 		<div class="gantt-row--information">
-			<div class="gantt-row--title">
+			<div class="gantt-row--title"
+				v-bind:style="`padding-left:${levelNumber * 32}px`"
+			>
 				<span style="margin-right:10px;">
 					<carbon-trash-can
 						v-on:click="confirmRemoval()"
@@ -105,7 +107,54 @@ export default {
 	name: "RenderGanttRow",
 	emits: ['mouse_down'],
 	props: {
-
+		description: {
+			type: String,
+			default: "",
+		},
+		endDate: {
+			type: Number,
+			default: 0,
+		},
+		higherOrderStatus: {
+			type: String,
+			default: "",
+		},
+		isClosed: {
+			type: Boolean,
+			default: false,
+		},
+		levelNumber: {
+			type: Number,
+			default: 0,
+		},
+		objectId: {
+			type: Number,
+			default: 0,
+		},
+		objectType: {
+			type: String,
+			default: "",
+		},
+		parentObjectId: {
+			type: Number,
+			default: 0,
+		},
+		parentObjectType: {
+			type: String,
+			default: "",
+		},
+		startDate: {
+			type: Number,
+			default: 0,
+		},
+		statusId: {
+			type: Number,
+			default: 0,
+		},
+		title: {
+			type: String,
+			default: "",
+		},
 	},
 	components: {
 		CarbonInformation,
@@ -238,7 +287,6 @@ export default {
 				isMouseDown: true,
 				mdClientXInitial: event.clientX,
 				mdHigherOrderStatus: this.higherOrderStatus,
-				mdIndex: this.index,
 				mdObjectId: this.objectId,
 				mdObjectType: this.objectType,
 				mdColumn: event.target.dataset.column,
@@ -252,16 +300,12 @@ export default {
 		updateGanttData() {
 			//Update the VueX with the new data
 			this.$store.dispatch("updateGanttChartSingleRow", {
-				index: this.index,
-				value: {
-					end_date: this.localEndDate,
-					higher_order_status: this.higherOrderStatus,
-					object_id: this.objectId,
-					object_type: this.objectType,
-					start_date: this.localStartDate,
-					status_id: this.localStatusId,
-					title: this.title,
-				},
+				end_date: this.localEndDate,
+				higher_order_status: this.higherOrderStatus,
+				object_id: this.objectId,
+				object_type: this.objectType,
+				start_date: this.localStartDate,
+				status_id: this.localStatusId,
 			});
 
 			//Next tick is required - we have a race condition if this is not here. :'(

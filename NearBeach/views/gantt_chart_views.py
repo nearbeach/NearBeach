@@ -133,8 +133,8 @@ def get_object_results(location_id):
                 ON OA.project_id = P.project_id
                 AND OA.link_relationship = 'Subobject'
                 AND OA.parent_link IN ('requirement_item')
-                AND OA.requirement_id IN (
-                    SELECT requirement_id FROM TmpTable
+                AND OA.requirement_item_id IN (
+                    SELECT requirement_item_id FROM TmpTable
                 )
                 
             WHERE P.project_id IN (
@@ -191,7 +191,7 @@ def get_object_results(location_id):
             , '' AS 'start_date'
             , '' AS 'end_date'
             , 'requirement_item' AS 'object_type'
-            , RI.requirement_id AS 'object_id'
+            , RI.requirement_item_id AS 'object_id'
             , '' AS 'object_id'
             , '' AS 'parent_object_type'
             FROM [NearBeach_requirementitem] RI LEFT JOIN [NearBeach_listofrequirementitemstatus] RIS
