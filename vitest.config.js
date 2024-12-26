@@ -21,5 +21,7 @@ export default defineConfig({
         include: [
             `./tests/unit/**/*.unit.js`,
         ],
+        minThreads: 2,
+        maxThreads: 5
     },
 })
