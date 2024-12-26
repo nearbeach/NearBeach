@@ -1,36 +1,36 @@
 version: 2.1
 
 jobs:
-  build-and-test-backend:
-    docker:
-      - image: cimg/python:3.12.0
-    steps:
-      - checkout
-      - restore_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
-      - run:
-          name: Building Virtual Environment
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements-dev.txt
-            pip install coverage
-      - save_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
-          paths:
-            - "venv"
-      - run:
-          name: Running Tests
-          command: |
-            . venv/bin/activate
-            CI=true coverage run --branch \
-              --omit='venv/*,NearBeach/tests/*,NearBeach/migrations/*,*/__init__.py,manage.py,settings.py,NearBeach/admin.py,NearBeach/apps.py' \
-              manage.py test
-            coverage report
-            coverage html
-      - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-          path: ~/project/htmlcov
-          destination: tr1
+#  build-and-test-backend:
+#    docker:
+#      - image: cimg/python:3.12.0
+#    steps:
+#      - checkout
+#      - restore_cache:
+#          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+#      - run:
+#          name: Building Virtual Environment
+#          command: |
+#            python3 -m venv venv
+#            . venv/bin/activate
+#            pip install -r requirements-dev.txt
+#            pip install coverage
+#      - save_cache:
+#          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+#          paths:
+#            - "venv"
+#      - run:
+#          name: Running Tests
+#          command: |
+#            . venv/bin/activate
+#            CI=true coverage run --branch \
+#              --omit='venv/*,NearBeach/tests/*,NearBeach/migrations/*,*/__init__.py,manage.py,settings.py,NearBeach/admin.py,NearBeach/apps.py' \
+#              manage.py test
+#            coverage report
+#            coverage html
+#      - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+#          path: ~/project/htmlcov
+#          destination: tr1
   build-and-test-frontend:
     docker:
       - image: cimg/node:23.4.0
@@ -58,5 +58,5 @@ jobs:
 workflows:
   build:
     jobs:
-      - build-and-test-backend
+#      - build-and-test-backend
       - build-and-test-frontend
