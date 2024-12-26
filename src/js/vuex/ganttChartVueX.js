@@ -80,21 +80,49 @@ export const moduleGantChart = {
             // Get the gantt chart data
             const gantt_chart_data = state.ganttChartData.slice(); // Create a copy to maintain immutability
 
-            // Mutate the gantt chart data
-            gantt_chart_data[payload.index] = payload.value;
+            //Filter for the data we want to mutate and then apply mutations
+            gantt_chart_data.filter(row => {
+                const condition1 = parseInt(row.object_id) === payload.object_id;
+                const condition2 = row.object_type === payload.object_type;
+
+                return condition1 && condition2;
+            }).forEach(row => {
+                row.end_date = payload.end_date;
+                row.higher_order_status = payload.higher_order_status;
+                row.start_date = payload.start_date;
+                row.status_id = payload.status_id;
+            });
 
             // Update gantt chart data
             commit("updateGanttChartData", {
                 ganttChartData: gantt_chart_data,
             });
         },
+        updateGanttChartSingleRowsParent: ({ state, commit }, payload ) => {},
     },
     getters: {
         getDeltaDays: (state) => {
             return state.deltaDays;
         },
-        getGanttChartData: (state) => {
-            return state.ganttChartData;
+        getGanttChartData: (state) => (parentObjectType, parentObjectId ) => {
+            /*
+            The top level objects, will have either a null or a string in the parent_object_(type|id).
+            This is causing an issue where we can't guarentee if it will be a null, or a null string.
+            Hence we are using an if statement here.
+             */
+            if (parentObjectType === null || parentObjectType === "")
+            {
+                return state.ganttChartData.filter(row => {
+                    return row.parent_object_type === "" || row.parent_object_type === null;
+                });
+            }
+
+            return state.ganttChartData.filter(row => {
+                const condition1 = String(row.parent_object_type).toLowerCase() === parentObjectType;
+                const condition2 = parseInt(row.parent_object_id) === parseInt(parentObjectId);
+
+                return condition1 && condition2;
+            });
         },
         getGanttChartDataSingleRow: (state) => (index) => {
             return state.ganttChartData[index];

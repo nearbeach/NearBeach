@@ -260,7 +260,7 @@ def document_remove_folder(request, destination, location_id, *args, **kwargs):
     # Check the destination and location id match within the folder :)
     check_object = getattr(folder_update, destination, 0)
     check_id = getattr(check_object, "pk", 0)
-    if not int(check_id) == int(location_id):
+    if int(check_id) != int(location_id):
         return HttpResponseBadRequest("Mismatch of data")
 
     # Get folder from the from
@@ -608,8 +608,6 @@ class LocalFileHandler(FileHandler):
         storage_location = self.root / "private" / str(document_key_id)
         shutil.rmtree(storage_location, ignore_errors=True)
 
-        return
-
 
 class S3FileHandler(FileHandler):
     def __init__(self, local_settings):
@@ -707,7 +705,7 @@ class AzureFileHanlder(FileHandler):
         # Create the blob client using the private file path name as the name for the blob
         blob_client = self._sevice_client.get_blob_client(
             container=self._client_name, 
-            blob=document_results.document,
+            blob=str(document_results.document),
         )
         # Upload the created file
         blob_client.upload_blob(file)

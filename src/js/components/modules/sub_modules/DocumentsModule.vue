@@ -23,11 +23,13 @@
 		>
 			<!-- GO TO PARENT DIRECTORY -->
 			<div
+				id="folder_parent_directory"
 				v-if="this.currentFolder !== 0"
 				v-on:click="goToParentDirectory()"
 				class="document--child"
-				@dragover.prevent
 				@dragenter.prevent
+				@dragover="dragoverFolder($event, 'folder_parent_directory')"
+				@dragleave="dragleaveFolder($event, 'folder_parent_directory')"
 				@drop="drop($event, currentParentFolder)"
 			>
 				<carbon-arrow-up
@@ -39,11 +41,13 @@
 
 			<!-- RENDER THE FOLDERS -->
 			<div
+				v-bind:id="`folder_${folder.pk}`"
 				v-for="folder in folderFilteredList"
 				:key="folder.pk"
 				class="document--child"
-				@dragover.prevent
 				@dragenter.prevent
+				@dragover="dragoverFolder($event, `folder_${folder.pk}`)"
+				@dragleave="dragleaveFolder($event, `folder_${folder.pk}`)"
 				@drop="drop($event, folder.pk)"
 				@dragstart="dragFolderStart($event, folder.pk)"
 				draggable="true"
@@ -304,6 +308,14 @@ export default {
 				"document"
 			);
 		},
+		dragleaveFolder(event, folder_id) {
+			//Prevent Default
+			event.preventDefault();
+
+			//Manipulate the background colour
+			const folder_object = document.getElementById(folder_id);
+			folder_object.style.backgroundColor = "";
+		},
 		dragFolderStart(event, moving_folder_id) {
 			event.dataTransfer.setData(
 				"moving_folder_id",
@@ -314,6 +326,14 @@ export default {
 				"object_type",
 				"folder"
 			);
+		},
+		dragoverFolder(event, folder_id) {
+			//Prevent default
+			event.preventDefault();
+
+			//Manipulate the background colour
+			const folder_object = document.getElementById(folder_id);
+			folder_object.style.backgroundColor = "rgba(150, 150, 150, 0.5)";
 		},
 		drop(event, folder_id) {
 			event.preventDefault();
@@ -326,6 +346,14 @@ export default {
 			} else if (object_type === "document") {
 				this.handleDocumentMove(event, folder_id);
 			}
+
+			//Due to a bug, a user could drag and drop a document onot a folder, or parent directory. After this happens
+			//the background stays the gray colour. We are fetching both possibilities and making sure they are returned
+			//to their prior colour.
+			const parentFolder = document.getElementById('folder_parent_directory');
+			const folderObject = document.getElementById(`folder_${folder_id}`);
+			if (parentFolder !== undefined && parentFolder !== null) parentFolder.style.backgroundColor = "";
+			if (folderObject !== undefined && folderObject !== null) folderObject.style.backgroundColor = "";
 		},
 		getDestination() {
 			return this.overrideDestination !== "" ? this.overrideDestination : this.destination;
@@ -423,8 +451,8 @@ export default {
 
 			//Update document folder id
 			this.$store.dispatch("updateDocumentFolder", {
-				document_key_id: document_key_id,
-				parent_folder_id: parent_folder_id,
+				document_key_id,
+				parent_folder_id,
 			});
 
 			//Update the backend
@@ -456,8 +484,8 @@ export default {
 
 			//Update the folder
 			this.$store.dispatch("updateFolderParentFolder", {
-				moving_folder_id: moving_folder_id,
-				parent_folder_id: parent_folder_id,
+				moving_folder_id,
+				parent_folder_id,
 			});
 
 			//Update backend

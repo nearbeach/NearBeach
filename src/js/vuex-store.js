@@ -10,6 +10,7 @@ import {moduleDocuments} from "./vuex/documentsVueX";
 import {moduleGantChart} from "./vuex/ganttChartVueX";
 import {moduleGroupsAndUsers} from "./vuex/groupAndUsersVueX";
 import {moduleKanban} from "./vuex/kanbanVueX";
+import {moduleMouseDown} from "./vuex/mouseDownVueX";
 import {moduleObjectLink} from "./vuex/objectLinkVueX";
 import {modulePublicLink} from "./vuex/publicLinkVuex";
 import {moduleNewCard} from "./vuex/newCardVueX";
@@ -37,6 +38,7 @@ export const store = createStore({
         ganttChart: moduleGantChart,
         groupsAndUsers: moduleGroupsAndUsers,
         kanban: moduleKanban,
+        mouseDown: moduleMouseDown,
         newCard: moduleNewCard,
         note: moduleNote,
         objectLink: moduleObjectLink,
