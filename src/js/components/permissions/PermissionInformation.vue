@@ -117,7 +117,7 @@
 							v-bind:list-of-choices="permissionLevel"
 							property="kanbanModel"
 							property-label="Kanban Boards"
-							v-on:update_property_valu="updatePropertyValue($event)"
+							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
 
 						<single-permission-properties
