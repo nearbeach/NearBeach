@@ -103,6 +103,24 @@
         }
 
         .gantt-row--render {
+            .gantt-row--level-0 {
+                .gantt-row--bar {
+                    background-color: var(--nb-sprint-level-0-background-color);
+                }
+            }
+
+            .gantt-row--level-1 {
+                .gantt-row--bar {
+                    background-color: var(--nb-sprint-level-1-background-color);
+                }
+            }
+
+            .gantt-row--level-2 {
+                .gantt-row--bar {
+                    background-color: var(--nb-sprint-level-2-background-color);
+                }
+            }
+
             .gantt-row--render-bar {
                 position: absolute;
                 display: flex;
@@ -110,12 +128,10 @@
 
                 .gantt-row--bar {
                     display: flex;
-                    background-color: var(--nb-kanban-level-div-background-color);
+                    //background-color: var(--nb-kanban-level-div-background-color);
                     min-width: 24px;
                     height: 20px;
                     margin-top: 10px;
-                    //border-left: 2px var(--nb-kanban-cell-background-color) dashed;
-                    //border-right: 2px var(--nb-kanban-cell-background-color) dashed;
 
                     .gantt-row--bar-start, .gantt-row--bar-end {
                         height: inherit;

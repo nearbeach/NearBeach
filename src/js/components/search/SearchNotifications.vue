@@ -112,7 +112,7 @@ export default {
 			}
 
 			//Setup timer if there are 3 characters or more
-			if (this.searchModel.length >= 3) {
+			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
 				//Start the potential search
 				this.searchTimeout = setTimeout(() => {
 					this.getSearchResults();

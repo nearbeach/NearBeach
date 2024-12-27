@@ -58,7 +58,7 @@
 		</div>
 
 		<div class="gantt-row--render">
-			<div class="gantt-row--render-bar"
+			<div v-bind:class="`gantt-row--render-bar gantt-row--level-${levelNumber}`"
 				 v-if="renderBar"
 			>
 				<div

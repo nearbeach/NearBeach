@@ -3,6 +3,8 @@
 		<div class="card">
 			<div class="card-body">
 				<h1>Notification Information</h1>
+				<br/>
+				<a v-bind:href="`${rootUrl}search/notification/`">Go back to Notification Search</a>
 				<hr/>
 
 				<div class="row">
