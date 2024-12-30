@@ -26,6 +26,9 @@
 				v-bind:status-id="row.status_id"
 				v-bind:title="row.title"
 			></render-gantt-group>
+
+			<render-blank-gantt-row></render-blank-gantt-row>
+
 		</div>
 	</n-config-provider>
 
@@ -67,7 +70,7 @@ import {DateTime} from "luxon";
 import ConfirmObjectRemove from "../modules/wizards/ConfirmObjectRemove.vue";
 import RenderGanttDaysHeader from "./RenderGanttDaysHeader.vue";
 import RenderGanttMonthlyHeader from "./RenderGanttMonthlyHeader.vue";
-import RenderGanttRow from "./RenderGanttRow.vue";
+import RenderBlankGanttRow from "./RenderBlankGanttRow.vue";
 
 //Composable
 import {useNBTheme} from "../../composables/theme/useNBTheme";
@@ -78,7 +81,7 @@ export default {
 	components: {
 		RenderGanttGroup,
 		ConfirmObjectRemove,
-		RenderGanttRow,
+		RenderBlankGanttRow,
 		RenderGanttDaysHeader,
 		RenderGanttMonthlyHeader,
 	},
@@ -249,11 +252,11 @@ export default {
 			//If closed do nothing
 			if (this.isParentClosed()) return;
 
-			//Make sure not on a touch device
+			//Make sure not on a touch device, simple hand gestures will cause unwanted results. aka bars moving around
 			const touch = matchMedia('(hover: none)').matches;
 			if (touch) return;
 
-			//Make sure mouse is down
+			//Make sure mouse is down - if it isn't, then we don't want anything to move :)
 			if (this.isMouseDown !== true) return
 
 			//Deal with the mouse movement
@@ -322,6 +325,10 @@ export default {
 			});
 		},
 		updateGanttData() {
+			//If we are not moving the bar itself, we don't want to complete this function.
+			const required_conditions = ["end", "middle", "start"];
+			if (!required_conditions.includes(this.mdColumn)) return;
+
 			//Get the data from VueX
 			const data = this.$store.getters.getGanttChartDataSingleRow(this.mdIndex);
 

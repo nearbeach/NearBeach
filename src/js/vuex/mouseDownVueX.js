@@ -5,6 +5,8 @@ export const moduleMouseDown = {
         mdIndex: 0,
         mdObjectId: 0,
         mdObjectType: "",
+        mdParentObjectId: 0,
+        mdParentObjectType: "",
         mdColumn: "",
         mdEndDateInitial: 0,
         mdHigherOrderStatus: "",
@@ -46,6 +48,12 @@ export const moduleMouseDown = {
         },
         getMdHigherOrderStatus: (state) => {
             return state.mdHigherOrderStatus;
+        },
+        getMdParentObjectId: (state) => {
+            return state.mdParentObjectId;
+        },
+        getMdParentObjectType: (state) => {
+            return state.mdParentObjectType;
         },
         getMdStartDateInitial: (state) => {
             return state.mdStartDateInitial;

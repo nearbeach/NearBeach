@@ -98,7 +98,43 @@ export const moduleGantChart = {
                 ganttChartData: gantt_chart_data,
             });
         },
-        updateGanttChartSingleRowsParent: ({ state, commit }, payload ) => {},
+        updateGanttChartSingleRowsParent: ({ state, commit }, payload ) => {
+            //Get the gantt chart data
+            const gantt_chart_data = state.ganttChartData.slice(); // Create a copy to maintain immutability
+
+            let parent_object_id = payload.parent_object_id;
+            let parent_object_type = payload.parent_object_type;
+            if (parseInt(parent_object_id) === 0) {
+                parent_object_id = 0;
+                parent_object_type = "";
+            }
+
+            //Filter for the data we are going to mutate and then apply mutations
+            gantt_chart_data.filter(row => {
+                let row_poi = row.parent_object_id;
+                let row_pot = row.parent_object_type;
+                if (row_poi === null || row_poi === undefined || row_poi === "") {
+                    row_poi = 0;
+                    row_pot = "";
+                }
+
+                //Conditions
+                const condition1 = parseInt(row.object_id) === payload.object_id;
+                const condition2 = row.object_type === payload.object_type;
+                const condition3 = parseInt(row_poi) === parseInt(parent_object_id);
+                const condition4 = row_pot === parent_object_type;
+
+                return condition1 && condition2 && condition3 && condition4;
+            }).forEach(row => {
+                row.parent_object_type = payload.new_parent_object_type;
+                row.parent_object_id = payload.new_parent_object_id;
+            });
+
+            //Update the gantt chart data
+            commit("updateGanttChartData", {
+                ganttChartData: gantt_chart_data,
+            });
+        },
     },
     getters: {
         getDeltaDays: (state) => {
@@ -120,6 +156,14 @@ export const moduleGantChart = {
             return state.ganttChartData.filter(row => {
                 const condition1 = String(row.parent_object_type).toLowerCase() === parentObjectType;
                 const condition2 = parseInt(row.parent_object_id) === parseInt(parentObjectId);
+
+                return condition1 && condition2;
+            });
+        },
+        getGanttChartDataByObject: (state) => (object_id, object_type) => {
+            return state.ganttChartData.filter(row => {
+                const condition1 = parseInt(row.object_id) === parseInt(object_id);
+                const condition2 = row.object_type === object_type;
 
                 return condition1 && condition2;
             });
