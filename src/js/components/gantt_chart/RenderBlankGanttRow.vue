@@ -79,6 +79,9 @@ export default {
 		drop(event) {
 			event.preventDefault();
 
+			const element = document.getElementById("gantt_row_parent");
+			element.classList.remove("gantt-chart-row-destination");
+
 			if (this.canBeDestination() === false) return;
 
 			if (!this.canObjectMove()) {
@@ -91,9 +94,6 @@ export default {
 
 				return;
 			}
-
-			const element = document.getElementById("gantt_row_parent");
-			element.classList.remove("gantt-chart-row-destination");
 
 			//Handle the process of moving the object :)
 			this.$store.dispatch("updateGanttChartSingleRowsParent", {
