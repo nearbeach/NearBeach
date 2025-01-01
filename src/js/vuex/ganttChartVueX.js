@@ -50,6 +50,8 @@ export const moduleGantChart = {
                 row.start_date = start_date.toMillis();
 
                 return row;
+            }).sort((a, b) => {
+                return a.start_date > b.start_date || a.end_date > b.end_date;
             });
 
             // Commit the data
