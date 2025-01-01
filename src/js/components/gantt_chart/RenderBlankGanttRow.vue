@@ -21,9 +21,6 @@
 //VueX
 import { mapGetters } from "vuex";
 
-//Components
-import { Modal } from "bootstrap";
-
 export default {
 	name: "RenderBlankGanttRow",
 	emits: ['mouse_down'],
@@ -38,6 +35,8 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			rootUrl: "getRootUrl",
+
 			//Mouse Down
 			mdObjectId: "getMdObjectId",
 			mdObjectType: "getMdObjectType",
@@ -103,6 +102,22 @@ export default {
 				parent_object_type: this.mdParentObjectType,
 				new_parent_object_id: 0,
 				new_parent_object_type: "",
+			});
+
+			const data_to_remove = new FormData();
+			data_to_remove.set("link_id", this.mdObjectId);
+			data_to_remove.set("link_connection", this.mdObjectType);
+
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.mdParentObjectType}/${this.mdParentObjectId}/remove_link/`,
+				data_to_remove,
+			).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Failed Updating Sprint",
+					message: `Sorry, moving the object failed. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 	},

@@ -64,11 +64,16 @@ export const moduleGantChart = {
         removeGanttChartSingleRow: ({ state, commit }, payload) => {
             // Simple remove that row using the id and object type
             const gantt_chart_data = state.ganttChartData.filter(row => {
+                const parent_object_type = row.parent_object_type === null ? "" : row.parent_object_type;
+                const parent_object_id = row.parent_object_id === "" ? 0 : row.parent_object_id;
+
                 const condition1 = payload.objectType !== row.object_type;
                 const condition2 = parseInt(payload.objectId) !== parseInt(row.object_id);
+                const condition3 = payload.parentObjectType !== parent_object_type;
+                const condition4 = parseInt(payload.parentObjectId) !== parseInt(parent_object_id);
 
                 // To keep, at least one of the conditions have to be true
-                return condition1 || condition2;
+                return condition1 || condition2 || condition3 || condition4;
             });
 
             // Remove from the front end :)

@@ -304,6 +304,8 @@ export default {
 				type: "updateConfirmDelete",
 				objectType: this.objectType,
 				objectId: this.objectId,
+				parentObjectId: this.parentObjectId,
+				parentObjectType: this.parentObjectType,
 			});
 
 			//Open the modal
@@ -352,6 +354,42 @@ export default {
 				new_parent_object_id: this.objectId,
 				new_parent_object_type: this.objectType,
 			});
+
+
+			const data_to_send = new FormData();
+			data_to_send.set(this.mdObjectType, this.mdObjectId);
+			data_to_send.set("object_relation", "parent_object_of");
+
+			const data_to_remove = new FormData();
+			data_to_remove.set("link_id", this.mdObjectId);
+			data_to_remove.set("link_connection", this.mdObjectType);
+
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.objectType}/${this.objectId}/add_link/`,
+				data_to_send
+			).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Failed Updating Sprint",
+					message: `Sorry, moving the object failed. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+
+			//In the case we are moving from a the root directory, we don't need to remove anything
+			if (this.mdParentObjectId === 0) return;
+
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.mdParentObjectType}/${this.mdParentObjectId}/remove_link/`,
+				data_to_remove,
+			).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Failed Updating Sprint",
+					message: `Sorry, moving the object failed. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
 		},
 		getGanttRowId() {
 			if (this.parentObjectId === 0 || this.parentObjectId === undefined) {
@@ -396,7 +434,6 @@ export default {
 			this.updateGanttData();
 		},
 		mouseDown(event) {
-			console.log("EVENT: ", event);
             //If the user does not have enough permissions, do nothing
             if (this.userLevel <= 1) return;
 
