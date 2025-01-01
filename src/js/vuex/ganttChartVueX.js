@@ -175,8 +175,34 @@ export const moduleGantChart = {
                 return condition1 && condition2;
             });
         },
-        getGanttChartDataSingleRow: (state) => (index) => {
-            return state.ganttChartData[index];
+        getGanttChartDataSingleRow: (state) => (object_id, object_type, parent_object_id, parent_object_type) => {
+            if (
+                parseInt(parent_object_id) === 0 ||
+                parent_object_id === "" ||
+                parent_object_id === null ||
+                parent_object_id === undefined
+            ) {
+                parent_object_id = 0;
+                parent_object_type = "";
+            }
+
+            //Filter for the data we need
+            return state.ganttChartData.filter(row => {
+                let row_poi = row.parent_object_id;
+                let row_pot = row.parent_object_type;
+                if (row_poi === null || row_poi === undefined || row_poi === "") {
+                    row_poi = 0;
+                    row_pot = "";
+                }
+
+                //Conditions
+                const condition1 = parseInt(row.object_id) === object_id;
+                const condition2 = row.object_type === object_type;
+                const condition3 = parseInt(row_poi) === parseInt(parent_object_id);
+                const condition4 = row_pot === parent_object_type;
+
+                return condition1 && condition2 && condition3 && condition4;
+            })[0];
         },
         getGanttStatusList: (state) => (object_type) => {
             return state.ganttStatusList[object_type];

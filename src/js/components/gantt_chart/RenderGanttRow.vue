@@ -444,6 +444,8 @@ export default {
 				mdHigherOrderStatus: this.higherOrderStatus,
 				mdObjectId: this.objectId,
 				mdObjectType: this.objectType,
+				mdParentObjectId: this.parentObjectId,
+				mdParentObjectType: this.parentObjectType,
 				mdColumn: event.target.dataset.column,
 				mdEndDateInitial: this.endDate,
 				mdStartDateInitial: this.startDate,

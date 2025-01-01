@@ -154,6 +154,8 @@ export default {
 			mdIndex: "getMdIndex",
 			mdObjectId: "getMdObjectId",
 			mdObjectType: "getMdObjectType",
+			mdParentObjectId: "getMdParentObjectId",
+			mdParentObjectType: "getMdParentObjectType",
 			mdColumn: "getMdColumn",
 			mdEndDateInitial: "getMdEndDateInitial",
 			mdHigherOrderStatus: "getMdHigherOrderStatus",
@@ -240,9 +242,10 @@ export default {
 			//Check to make sure we need to update the backend
 			if (this.mdObjectId !== 0) {
 				//Update the backend
-				this.$nextTick(() => {
-					this.updateGanttData();
-				});
+				// this.$nextTick(() => {
+				// 	this.updateGanttData();
+				// });
+				this.updateGanttData();
 			}
 		},
 		mouseMove(event) {
@@ -290,9 +293,10 @@ export default {
 
 			//Update the backend data
 			if (this.mdObjectId !== 0) {
-				this.$nextTick(() => {
-					this.updateGanttData();
-				});
+				// this.$nextTick(() => {
+				// 	this.updateGanttData();
+				// });
+				this.updateGanttData();
 			}
 		},
 		updateEnd(delta) {
@@ -330,7 +334,23 @@ export default {
 			if (!required_conditions.includes(this.mdColumn)) return;
 
 			//Get the data from VueX
-			const data = this.$store.getters.getGanttChartDataSingleRow(this.mdIndex);
+			const data = this.$store.getters.getGanttChartDataSingleRow(
+				this.mdObjectId,
+				this.mdObjectType,
+				this.mdParentObjectId,
+				this.mdParentObjectType,
+			);
+
+			if (data === undefined) {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Gantt Data",
+					message: "We have had an issue isolating that particular record.",
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+
+				return;
+			}
 
 			//Send updated data to the backend
 			const data_to_send = new FormData();
