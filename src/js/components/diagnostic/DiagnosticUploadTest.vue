@@ -27,6 +27,12 @@
 	<div v-else-if="uploadState === 'sending'">
 		<div class="alert alert-info">Currently sending data</div>
 	</div>
+	<div v-else-if="uploadState === 'error'">
+		<div class="alert alert-danger">
+			Sorry this upload process failed. Please read the error below.
+		</div>
+		<iframe :srcdoc="uploadError"></iframe>
+	</div>
 	<div v-else
 		 class="row"
 	>
@@ -55,6 +61,7 @@ export default {
 	data() {
 		return {
 			downloadLocation: "",
+			uploadError: "",
 			uploadIssues: "",
 			uploadState: "before_upload",
 			uuidVerification: "",
@@ -99,6 +106,13 @@ export default {
 					extra_classes: "bg-danger",
 					delay: 0,
 				});
+
+				this.uploadState = "error";
+				// let test = document.getElementById("iframe_test");
+				// test.src = `data:text/html;charset=utf-8,${error.response.data}`;
+
+				this.uploadError = error.response.data;
+				// console.log("ERROR: ", error.response.data);
 			})
 		}
 	}
