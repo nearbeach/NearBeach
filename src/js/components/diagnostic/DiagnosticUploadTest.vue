@@ -108,11 +108,7 @@ export default {
 				});
 
 				this.uploadState = "error";
-				// let test = document.getElementById("iframe_test");
-				// test.src = `data:text/html;charset=utf-8,${error.response.data}`;
-
 				this.uploadError = error.response.data;
-				// console.log("ERROR: ", error.response.data);
 			})
 		}
 	}
