@@ -136,6 +136,7 @@ def get_object_results(location_id):
                 AND OA.requirement_item_id IN (
                     SELECT requirement_item_id FROM TmpTable
                 )
+                AND OA.is_deleted = 0
                 
             WHERE P.project_id IN (
                 SELECT project_id FROM TmpTable
@@ -174,6 +175,7 @@ def get_object_results(location_id):
                         SELECT project_id FROM TmpTable
                     )
                 )
+                AND OA.is_deleted = 0
 
             WHERE T.task_id IN (
                 SELECT task_id FROM TmpTable

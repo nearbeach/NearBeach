@@ -17,7 +17,6 @@
 
 <!--	RENDER ALL THE CHILD ELEMENTS WE WANT-->
 <!--	TODO: FIX THE "IS-CLOSED", as we have just put false-->
-<!--	TODO: FIX THE LOOP ISSUES - WE ARE GOING IN A FOREVER LOOP-->
 		<render-gantt-group
 			v-if="levelNumber <= 3"
 			v-for="(row, index) in filteredGanttChartData"

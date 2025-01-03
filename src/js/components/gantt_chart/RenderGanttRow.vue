@@ -1,6 +1,12 @@
 <template>
-	<div class="gantt-row">
-		<div class="gantt-row--information">
+	<div class="gantt-row"
+		v-bind:id="getGanttRowId()"
+	>
+		<div class="gantt-row--information"
+			 v-on:dragleave="dragleaveRow"
+			 v-on:dragover="dragoverRow"
+			 v-on:drop="drop"
+		>
 			<div class="gantt-row--title"
 				v-bind:style="`padding-left:${levelNumber * 32}px`"
 			>
@@ -8,6 +14,15 @@
 					<carbon-trash-can
 						v-on:click="confirmRemoval()"
 					></carbon-trash-can>
+				</span>
+				<span style="margin-right:10px;"
+					  v-on:mousedown="handleVerticalMove"
+					  v-if="objectType !== 'requirement_item'"
+				>
+					<a href="javascript:void(0)">
+						<carbon-drag-vertical
+						></carbon-drag-vertical>
+					</a>
 				</span>
 				<span style="margin-right:10px"
 					  :data-bs-title="description"
@@ -22,7 +37,7 @@
 						<carbon-information></carbon-information>
 					</a>
 				</span>
-				{{title}}
+				{{titleKeyValuePair[objectType]}}{{objectId}} - {{title}}
 			</div>
 			<div class="gantt-row--start-date">
   				<n-date-picker
@@ -102,6 +117,7 @@ import { Modal, Tooltip } from "bootstrap";
 
 //Datetime
 import { DateTime } from "luxon";
+import CarbonDragVertical from "../icons/CarbonDragVertical.vue";
 
 export default {
 	name: "RenderGanttRow",
@@ -157,6 +173,7 @@ export default {
 		},
 	},
 	components: {
+		CarbonDragVertical,
 		CarbonInformation,
 		CarbonTrashCan,
 		NDatePicker,
@@ -169,6 +186,11 @@ export default {
 			localStartDate: this.startDate,
 			localStatusId: this.statusId,
 			statusList: [],
+			titleKeyValuePair: {
+				"project": "Pro",
+				"requirement_item": "Item",
+				"task": "Task",
+			},
 		};
 	},
 	watch: {
@@ -188,6 +210,13 @@ export default {
 			rootUrl: "getRootUrl",
 			startDateGantt: "getStartDateGantt",
             userLevel: "getUserLevel",
+
+			//Mouse Down
+			mdObjectId: "getMdObjectId",
+			mdObjectType: "getMdObjectType",
+			mdParentObjectId: "getMdParentObjectId",
+			mdParentObjectType: "getMdParentObjectType",
+			mdColumn: "getMdColumn",
 		}),
 		barWidth() {
 			//Setup the date variables
@@ -243,17 +272,137 @@ export default {
 		},
 	},
 	methods: {
+		canBeDestination() {
+			//If a user if moving a row, can this particular row be it's destination :)
+			if (this.mdColumn !== "na_vertical_move") return false;
+
+			//We can't move any objects to be a sub object of a task
+			if (this.objectType === "task") return false;
+			if (this.objectType === this.mdObjectType) return false;
+
+			//If the moving object's parents are this parent, we don't need to move anything
+			if (
+				(this.mdParentObjectType === this.objectType) &&
+				(parseInt(this.mdParentObjectId) === parseInt(this.objectId))
+			) {
+				return false;
+			}
+
+			return true;
+		},
+		canObjectMove() {
+			//If the object already exists in the location we want to go too, we will flag that it can not be moved
+			//here
+			const object_list = this.$store.getters.getGanttChartDataByObject(this.mdObjectId, this.mdObjectType);
+			const count = object_list.filter(row => {
+				const condition1 = parseInt(row.parent_object_id) === parseInt(this.objectId);
+				const condition2 = row.parent_object_type === this.objectType;
+
+				return condition1 && condition2;
+			}).length;
+
+			return count === 0;
+		},
 		confirmRemoval() {
 			//Add this location into the confirm delete store
 			this.$store.commit({
 				type: "updateConfirmDelete",
 				objectType: this.objectType,
 				objectId: this.objectId,
+				parentObjectId: this.parentObjectId,
+				parentObjectType: this.parentObjectType,
 			});
 
 			//Open the modal
 			const modal = new Modal(document.getElementById("confirmObjectRemoveModal"));
 			modal.show();
+		},
+		dragleaveRow(event) {
+			event.preventDefault();
+
+			const element = document.getElementById(this.getGanttRowId());
+			element.classList.remove("gantt-chart-row-destination");
+		},
+		dragoverRow(event) {
+			event.preventDefault();
+
+			if (this.canBeDestination() === false) return;
+
+			const element = document.getElementById(this.getGanttRowId());
+			element.classList.add("gantt-chart-row-destination");
+		},
+		drop(event) {
+			event.preventDefault();
+
+			const element = document.getElementById(this.getGanttRowId());
+			element.classList.remove("gantt-chart-row-destination");
+
+			if (this.canBeDestination() === false) return;
+
+			if (!this.canObjectMove()) {
+				this.$store.dispatch("newToast", {
+					heading: "Can not move object",
+					message: "Sorry object can't be moved, as there already exists an instance of this object within this location",
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+
+				return;
+			}
+
+			//Handle the process of moving the object :)
+			this.$store.dispatch("updateGanttChartSingleRowsParent", {
+				object_id: this.mdObjectId,
+				object_type: this.mdObjectType,
+				parent_object_id: this.mdParentObjectId,
+				parent_object_type: this.mdParentObjectType,
+				new_parent_object_id: this.objectId,
+				new_parent_object_type: this.objectType,
+			});
+
+
+			const data_to_send = new FormData();
+			data_to_send.set(this.mdObjectType, this.mdObjectId);
+			data_to_send.set("object_relation", "parent_object_of");
+
+			const data_to_remove = new FormData();
+			data_to_remove.set("link_id", this.mdObjectId);
+			data_to_remove.set("link_connection", this.mdObjectType);
+
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.objectType}/${this.objectId}/add_link/`,
+				data_to_send
+			).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Failed Updating Sprint",
+					message: `Sorry, moving the object failed. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+
+			//In the case we are moving from a the root directory, we don't need to remove anything
+			if (this.mdParentObjectId === 0) return;
+
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.mdParentObjectType}/${this.mdParentObjectId}/remove_link/`,
+				data_to_remove,
+			).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Failed Updating Sprint",
+					message: `Sorry, moving the object failed. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		},
+		getGanttRowId() {
+			if (this.parentObjectId === 0 || this.parentObjectId === undefined) {
+				//Return the short name
+				return `gantt_row_${this.objectType}_${this.objectId}`;
+			}
+
+			return `gantt_row_${this.objectType}_${this.objectId}_${this.parentObjectType}_${this.parentObjectId}`;
 		},
 		getObjectUrl() {
 			return `${this.rootUrl}${this.objectType}_information/${this.objectId}`;
@@ -261,6 +410,17 @@ export default {
 		getStatusList() {
 			//Get the status list dependent on the object type
 			this.statusList = this.$store.getters.getGanttStatusList(this.objectType);
+		},
+		handleVerticalMove(event) {
+			//Send data up stream
+			this.$store.commit("updateMouseDown", {
+				isMouseDown: true,
+				mdObjectId: this.objectId,
+				mdObjectType: this.objectType,
+				mdParentObjectId: this.parentObjectId,
+				mdParentObjectType: this.parentObjectType,
+				mdColumn: "na_vertical_move",
+			});
 		},
 		modifiedEndDate() {
 			//If the end date is before the start date - we modify the start date to be the end date minus one day
@@ -289,6 +449,8 @@ export default {
 				mdHigherOrderStatus: this.higherOrderStatus,
 				mdObjectId: this.objectId,
 				mdObjectType: this.objectType,
+				mdParentObjectId: this.parentObjectId,
+				mdParentObjectType: this.parentObjectType,
 				mdColumn: event.target.dataset.column,
 				mdEndDateInitial: this.endDate,
 				mdStartDateInitial: this.startDate,
@@ -341,7 +503,7 @@ export default {
 			this.localStatusId = data;
 
 			this.updateGanttData();
-		}
+		},
 	},
 	mounted() {
 		this.getStatusList();

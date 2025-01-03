@@ -50,6 +50,8 @@ export const moduleGantChart = {
                 row.start_date = start_date.toMillis();
 
                 return row;
+            }).sort((a, b) => {
+                return a.start_date > b.start_date || a.end_date > b.end_date;
             });
 
             // Commit the data
@@ -64,11 +66,16 @@ export const moduleGantChart = {
         removeGanttChartSingleRow: ({ state, commit }, payload) => {
             // Simple remove that row using the id and object type
             const gantt_chart_data = state.ganttChartData.filter(row => {
+                const parent_object_type = row.parent_object_type === null ? "" : row.parent_object_type;
+                const parent_object_id = row.parent_object_id === "" ? 0 : row.parent_object_id;
+
                 const condition1 = payload.objectType !== row.object_type;
                 const condition2 = parseInt(payload.objectId) !== parseInt(row.object_id);
+                const condition3 = payload.parentObjectType !== parent_object_type;
+                const condition4 = parseInt(payload.parentObjectId) !== parseInt(parent_object_id);
 
                 // To keep, at least one of the conditions have to be true
-                return condition1 || condition2;
+                return condition1 || condition2 || condition3 || condition4;
             });
 
             // Remove from the front end :)
@@ -98,7 +105,43 @@ export const moduleGantChart = {
                 ganttChartData: gantt_chart_data,
             });
         },
-        updateGanttChartSingleRowsParent: ({ state, commit }, payload ) => {},
+        updateGanttChartSingleRowsParent: ({ state, commit }, payload ) => {
+            //Get the gantt chart data
+            const gantt_chart_data = state.ganttChartData.slice(); // Create a copy to maintain immutability
+
+            let parent_object_id = payload.parent_object_id;
+            let parent_object_type = payload.parent_object_type;
+            if (parseInt(parent_object_id) === 0) {
+                parent_object_id = 0;
+                parent_object_type = "";
+            }
+
+            //Filter for the data we are going to mutate and then apply mutations
+            gantt_chart_data.filter(row => {
+                let row_poi = row.parent_object_id;
+                let row_pot = row.parent_object_type;
+                if (row_poi === null || row_poi === undefined || row_poi === "") {
+                    row_poi = 0;
+                    row_pot = "";
+                }
+
+                //Conditions
+                const condition1 = parseInt(row.object_id) === payload.object_id;
+                const condition2 = row.object_type === payload.object_type;
+                const condition3 = parseInt(row_poi) === parseInt(parent_object_id);
+                const condition4 = row_pot === parent_object_type;
+
+                return condition1 && condition2 && condition3 && condition4;
+            }).forEach(row => {
+                row.parent_object_type = payload.new_parent_object_type;
+                row.parent_object_id = payload.new_parent_object_id;
+            });
+
+            //Update the gantt chart data
+            commit("updateGanttChartData", {
+                ganttChartData: gantt_chart_data,
+            });
+        },
     },
     getters: {
         getDeltaDays: (state) => {
@@ -124,8 +167,42 @@ export const moduleGantChart = {
                 return condition1 && condition2;
             });
         },
-        getGanttChartDataSingleRow: (state) => (index) => {
-            return state.ganttChartData[index];
+        getGanttChartDataByObject: (state) => (object_id, object_type) => {
+            return state.ganttChartData.filter(row => {
+                const condition1 = parseInt(row.object_id) === parseInt(object_id);
+                const condition2 = row.object_type === object_type;
+
+                return condition1 && condition2;
+            });
+        },
+        getGanttChartDataSingleRow: (state) => (object_id, object_type, parent_object_id, parent_object_type) => {
+            if (
+                parseInt(parent_object_id) === 0 ||
+                parent_object_id === "" ||
+                parent_object_id === null ||
+                parent_object_id === undefined
+            ) {
+                parent_object_id = 0;
+                parent_object_type = "";
+            }
+
+            //Filter for the data we need
+            return state.ganttChartData.filter(row => {
+                let row_poi = row.parent_object_id;
+                let row_pot = row.parent_object_type;
+                if (row_poi === null || row_poi === undefined || row_poi === "") {
+                    row_poi = 0;
+                    row_pot = "";
+                }
+
+                //Conditions
+                const condition1 = parseInt(row.object_id) === object_id;
+                const condition2 = row.object_type === object_type;
+                const condition3 = parseInt(row_poi) === parseInt(parent_object_id);
+                const condition4 = row_pot === parent_object_type;
+
+                return condition1 && condition2 && condition3 && condition4;
+            })[0];
         },
         getGanttStatusList: (state) => (object_type) => {
             return state.ganttStatusList[object_type];

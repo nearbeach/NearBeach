@@ -156,19 +156,8 @@
             }
         }
     }
+}
 
-    //.gantt-row--cells {
-    //    display: flex;
-    //    flex-direction: row;
-    //    -webkit-user-select: none;
-    //    user-select: none;
-    //
-    //    .gantt-row--cell {
-    //        width: 35px;
-    //        height: 35px;
-    //        background-color: lightgrey;
-    //        border: solid 1px dimgray;
-    //    }
-    //}
-
+.gantt-chart-row-destination {
+    background-color: var(--nb-document-hover);
 }

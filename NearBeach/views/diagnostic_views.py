@@ -79,16 +79,21 @@ def diagnostic_upload_test(request):
     file = form.cleaned_data["document"]
     document_description = str(file)
 
-    # Upload the document
-    _, document_results = handle_document_permissions(
-        request,
-        request.FILES["document"],
-        file,
-        document_description,
-        "new_object",
-        form.cleaned_data["uuid"],
-        0,
-    )
+    try:
+        # Upload the document
+        _, document_results = handle_document_permissions(
+            request,
+            request.FILES["document"],
+            file,
+            document_description,
+            "new_object",
+            form.cleaned_data["uuid"],
+            0,
+        )
+    except ValueError:
+        a = "hello world"
+        return HttpResponseBadRequest(ValueError)
+
 
     # Send back json data
     json_results = json.dumps(list(document_results), cls=DjangoJSONEncoder)

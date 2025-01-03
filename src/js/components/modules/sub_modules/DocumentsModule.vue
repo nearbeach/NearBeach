@@ -298,6 +298,9 @@ export default {
 			confirmFolderDeleteModal.show();
 		},
 		dragDocumentStart(event, moving_document_id) {
+			//If user is read only, do nothing
+			if (this.userLevel <= 1) return;
+
 			event.dataTransfer.setData(
 				"moving_document_id",
 				moving_document_id
@@ -309,6 +312,9 @@ export default {
 			);
 		},
 		dragleaveFolder(event, folder_id) {
+			//If user is read only, do nothing
+			if (this.userLevel <= 1) return;
+
 			//Prevent Default
 			event.preventDefault();
 
@@ -317,6 +323,9 @@ export default {
 			folder_object.style.backgroundColor = "";
 		},
 		dragFolderStart(event, moving_folder_id) {
+			//If user is read only, do nothing
+			if (this.userLevel <= 1) return;
+
 			event.dataTransfer.setData(
 				"moving_folder_id",
 				moving_folder_id
@@ -331,12 +340,18 @@ export default {
 			//Prevent default
 			event.preventDefault();
 
+			//If user is read only, do nothing
+			if (this.userLevel <= 1) return;
+
 			//Manipulate the background colour
 			const folder_object = document.getElementById(folder_id);
 			folder_object.style.backgroundColor = "rgba(150, 150, 150, 0.5)";
 		},
 		drop(event, folder_id) {
 			event.preventDefault();
+
+			//If user is read only, do nothing
+			if (this.userLevel <= 1) return;
 
 			//Look up the object type and apply the correct movement
 			const object_type = event.dataTransfer.getData("object_type");

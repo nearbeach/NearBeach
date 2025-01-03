@@ -26,6 +26,9 @@
 				v-bind:status-id="row.status_id"
 				v-bind:title="row.title"
 			></render-gantt-group>
+
+			<render-blank-gantt-row></render-blank-gantt-row>
+
 		</div>
 	</n-config-provider>
 
@@ -67,7 +70,7 @@ import {DateTime} from "luxon";
 import ConfirmObjectRemove from "../modules/wizards/ConfirmObjectRemove.vue";
 import RenderGanttDaysHeader from "./RenderGanttDaysHeader.vue";
 import RenderGanttMonthlyHeader from "./RenderGanttMonthlyHeader.vue";
-import RenderGanttRow from "./RenderGanttRow.vue";
+import RenderBlankGanttRow from "./RenderBlankGanttRow.vue";
 
 //Composable
 import {useNBTheme} from "../../composables/theme/useNBTheme";
@@ -78,7 +81,7 @@ export default {
 	components: {
 		RenderGanttGroup,
 		ConfirmObjectRemove,
-		RenderGanttRow,
+		RenderBlankGanttRow,
 		RenderGanttDaysHeader,
 		RenderGanttMonthlyHeader,
 	},
@@ -151,6 +154,8 @@ export default {
 			mdIndex: "getMdIndex",
 			mdObjectId: "getMdObjectId",
 			mdObjectType: "getMdObjectType",
+			mdParentObjectId: "getMdParentObjectId",
+			mdParentObjectType: "getMdParentObjectType",
 			mdColumn: "getMdColumn",
 			mdEndDateInitial: "getMdEndDateInitial",
 			mdHigherOrderStatus: "getMdHigherOrderStatus",
@@ -237,9 +242,10 @@ export default {
 			//Check to make sure we need to update the backend
 			if (this.mdObjectId !== 0) {
 				//Update the backend
-				this.$nextTick(() => {
-					this.updateGanttData();
-				});
+				// this.$nextTick(() => {
+				// 	this.updateGanttData();
+				// });
+				this.updateGanttData();
 			}
 		},
 		mouseMove(event) {
@@ -249,11 +255,11 @@ export default {
 			//If closed do nothing
 			if (this.isParentClosed()) return;
 
-			//Make sure not on a touch device
+			//Make sure not on a touch device, simple hand gestures will cause unwanted results. aka bars moving around
 			const touch = matchMedia('(hover: none)').matches;
 			if (touch) return;
 
-			//Make sure mouse is down
+			//Make sure mouse is down - if it isn't, then we don't want anything to move :)
 			if (this.isMouseDown !== true) return
 
 			//Deal with the mouse movement
@@ -287,9 +293,10 @@ export default {
 
 			//Update the backend data
 			if (this.mdObjectId !== 0) {
-				this.$nextTick(() => {
-					this.updateGanttData();
-				});
+				// this.$nextTick(() => {
+				// 	this.updateGanttData();
+				// });
+				this.updateGanttData();
 			}
 		},
 		updateEnd(delta) {
@@ -322,8 +329,28 @@ export default {
 			});
 		},
 		updateGanttData() {
+			//If we are not moving the bar itself, we don't want to complete this function.
+			const required_conditions = ["end", "middle", "start"];
+			if (!required_conditions.includes(this.mdColumn)) return;
+
 			//Get the data from VueX
-			const data = this.$store.getters.getGanttChartDataSingleRow(this.mdIndex);
+			const data = this.$store.getters.getGanttChartDataSingleRow(
+				this.mdObjectId,
+				this.mdObjectType,
+				this.mdParentObjectId,
+				this.mdParentObjectType,
+			);
+
+			if (data === undefined) {
+				this.$store.dispatch("newToast", {
+					header: "Error Updating Gantt Data",
+					message: "We have had an issue isolating that particular record.",
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+
+				return;
+			}
 
 			//Send updated data to the backend
 			const data_to_send = new FormData();
