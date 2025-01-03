@@ -37,7 +37,7 @@
 						<carbon-information></carbon-information>
 					</a>
 				</span>
-				{{title}}
+				{{titleKeyValuePair[objectType]}}{{objectId}} - {{title}}
 			</div>
 			<div class="gantt-row--start-date">
   				<n-date-picker
@@ -186,6 +186,11 @@ export default {
 			localStartDate: this.startDate,
 			localStatusId: this.statusId,
 			statusList: [],
+			titleKeyValuePair: {
+				"project": "Pro",
+				"requirement_item": "Item",
+				"task": "Task",
+			},
 		};
 	},
 	watch: {
