@@ -322,7 +322,11 @@ export default {
 			type: "updateDestination",
 			destination: "customer",
 			locationId: this.customerResults[0].pk,
-		})
+		});
+		this.$store.commit({
+			type: "updateTitle",
+			title: `${this.customerFirstNameModel} ${this.customerLastNameModel}`,
+		});
 
 		//Convert the title list data into a format NSelect can use
 		this.titleFixList = this.titleList.map((row) => {

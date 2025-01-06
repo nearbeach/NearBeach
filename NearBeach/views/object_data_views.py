@@ -23,11 +23,14 @@ from NearBeach.models import (
     ChangeTask,
     Customer,
     Group,
+    KanbanBoard,
     KanbanCard,
     ObjectAssignment,
     Organisation,
     PermissionSet,
+    RequestForChange,
     RequirementItem,
+    Sprint,
     Tag,
     TagAssignment,
     UserGroup,
@@ -72,6 +75,21 @@ LOOKUP_FUNCS = {
     "task": lookup_task,
     "requirement": lookup_requirement,
     "requirement_item": lookup_requirement_item,
+}
+
+OBJECT_DICT = {
+    "change_task": ChangeTask,
+    "customer": Customer,
+    "kanban": KanbanBoard,
+    "kanban_board": KanbanBoard,
+    "kanban_card": KanbanCard,
+    "organisation": Organisation,
+    "project": Project,
+    "request_for_change": RequestForChange,
+    "requirement": Requirement,
+    "requirement_item": RequirementItem,
+    "sprint": Sprint,
+    "task": Task,
 }
 
 
@@ -1055,6 +1073,27 @@ def link_object(object_assignment_submit, destination, location_id, *args, **kwa
 
     # Return the results
     return object_assignment_submit
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_destination()
+@check_user_generic_permissions(min_permission_level=4)
+def object_delete(request, destination, location_id, *args, **kwargs):
+    """
+    Function is used to soft delete an object
+    :param request:
+    :param destination: The object type
+    :param location_id: The object id
+    :return:
+    """
+    OBJECT_DICT[destination].objects.filter(
+        **{F"{destination}_id": location_id}
+    ).update(
+        is_deleted=True,
+    )
+
+    return HttpResponse("")
 
 
 @require_http_methods(["POST"])

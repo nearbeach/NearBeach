@@ -304,6 +304,11 @@ export default {
 	mounted() {
 		//Set profile picture
 		this.setProfilePicture();
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.organisationNameModel,
+		});
 	},
 };
 </script>

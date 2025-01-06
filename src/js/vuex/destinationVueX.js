@@ -2,11 +2,15 @@ export const moduleDestination = {
     state: () => ({
         destination: "unknown",
         locationId: 0,
+        title: "",
     }),
     mutations: {
         updateDestination(state, payload) {
             state.destination = payload.destination;
             state.locationId = payload.locationId;
+        },
+        updateTitle(state, payload) {
+            state.title = payload.title;
         },
     },
     actions: {},
@@ -16,6 +20,9 @@ export const moduleDestination = {
         },
         getLocationId: (state) => {
             return state.locationId;
+        },
+        getTitle: (state) => {
+            return state.title;
         },
     },
 };

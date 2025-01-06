@@ -254,6 +254,11 @@ export default {
 			type: "updateUrl",
 			rootUrl: this.rootUrl,
 		});
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: `${this.firstNameModel} ${this.lastNameModel}`,
+		});
 	},
 };
 </script>
