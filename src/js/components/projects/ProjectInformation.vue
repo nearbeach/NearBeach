@@ -78,22 +78,31 @@
 					</div>
 				</div>
 
-				<!-- PROJECT STATUS -->
+				<!-- PROJECT STATUS AND PRIORITY -->
 				<hr/>
 				<div class="row">
 					<div class="col-md-4">
-						<strong>Project Status</strong>
+						<strong>Project Status and Priority</strong>
 						<p class="text-instructions">
-							Please update the project's task to reflect it's current
-							status. Then click on the "Update Project" button to
+							Please update the project's status and priority to reflect it's current
+							status/priority. Then click on the "Update Project" button to
 							save the change.
 						</p>
 					</div>
 					<div class="col-md-4">
+						<label>Project Status</label>
 						<n-select
 							v-bind:options="statusOptions"
 							v-bind:disabled="userLevel<=1"
 							v-model:value="projectStatusModel"
+						></n-select>
+					</div>
+					<div class="col-md-4">
+						<label>Project Priority</label>
+						<n-select
+							v-bind:options="priorityOptions"
+							v-bind:disabled="userLevel<=1"
+							v-model:value="projectPriorityModel"
 						></n-select>
 					</div>
 				</div>
@@ -225,11 +234,19 @@ export default {
 	data() {
 		return {
 			isReadOnly: false,
+			priorityOptions: [
+				{ value: 0, label: "Highest" },
+				{ value: 1, label: "High" },
+				{ value: 2, label: "Normal" },
+				{ value: 3, label: "Low" },
+				{ value: 4, label: "Lowest" },
+			],
 			projectDescriptionModel: this.projectResults[0].fields.project_description,
 			projectEndDateModel: new Date(
 				this.projectResults[0].fields.project_end_date
 			),
 			projectNameModel: this.projectResults[0].fields.project_name,
+			projectPriorityModel: this.projectResults[0].fields.project_priority,
 			projectStartDateModel: new Date(
 				this.projectResults[0].fields.project_start_date
 			),
@@ -306,6 +323,7 @@ export default {
 				this.projectStartDateModel.toISOString()
 			);
 			data_to_send.set("project_status", this.projectStatusModel);
+			data_to_send.set("project_priority", this.projectPriorityModel);
 
 			//Notify user of attempting to save
 			this.$store.dispatch("newToast", {
@@ -317,34 +335,31 @@ export default {
 			});
 
 			//Use axios to send data
-			this.axios
-				.post(
-					`${this.rootUrl}project_information/${this.projectResults[0].pk}/save/`,
-					data_to_send
-				)
-				.then(() => {
-					//Notify user of success update
-					this.$store.dispatch("newToast", {
-						header: "Project Saved",
-						message: "Project Saved",
-						extra_classes: "bg-success",
-						unique_type: "save",
-					});
-
-					//Reload the page IF the status is closed
-					if (this.checkStatusIsClosed()) {
-						window.location.reload();
-					}
-				})
-				.catch((error) => {
-					this.$store.dispatch("newToast", {
-						header: "Project Could not save",
-						message: `There was an error saving the project. Error -> ${error}`,
-						extra_classes: "bg-danger",
-						unique_type: "save",
-						delay: 0,
-					});
+			this.axios.post(
+				`${this.rootUrl}project_information/${this.projectResults[0].pk}/save/`,
+				data_to_send
+			).then(() => {
+				//Notify user of success update
+				this.$store.dispatch("newToast", {
+					header: "Project Saved",
+					message: "Project Saved",
+					extra_classes: "bg-success",
+					unique_type: "save",
 				});
+
+				//Reload the page IF the status is closed
+				if (this.checkStatusIsClosed()) {
+					window.location.reload();
+				}
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Project Could not save",
+					message: `There was an error saving the project. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					unique_type: "save",
+					delay: 0,
+				});
+			});
 		},
 	},
 	async beforeMount() {

@@ -78,22 +78,31 @@
 					</div>
 				</div>
 
-				<!-- TASK STATUS -->
+				<!-- TASK STATUS AND PRIORITY -->
 				<hr/>
 				<div class="row">
 					<div class="col-md-4">
-						<strong>Task Status</strong>
+						<strong>Task Status and Priority</strong>
 						<p class="text-instructions">
-							Please update the task's status to reflect it's current
-							status. Then click on the "Update Task" button to save
+							Please update the task's status and priority to reflect it's current
+							status/priority. Then click on the "Update Task" button to save
 							the change.
 						</p>
 					</div>
 					<div class="col-md-4">
+						<label>Task Status</label>
 						<n-select
 							v-bind:options="statusOptions"
 							v-bind:disabled="userLevel <= 2"
 							v-model:value="taskStatusModel"
+						></n-select>
+					</div>
+					<div class="col-md-4">
+						<label>Task Priority</label>
+						<n-select
+							v-bind:options="priorityOptions"
+							v-bind:disabled="userLevel <= 2"
+							v-model:value="taskPriorityModel"
 						></n-select>
 					</div>
 				</div>
@@ -222,13 +231,19 @@ export default {
 	data() {
 		return {
 			isReadOnly: false,
-			taskDescriptionModel:
-			this.taskResults[0].fields.task_long_description,
+			priorityOptions: [
+				{ value: 0, label: "Highest" },
+				{ value: 1, label: "High" },
+				{ value: 2, label: "Normal" },
+				{ value: 3, label: "Low" },
+				{ value: 4, label: "Lowest" },
+			],
+			taskDescriptionModel: this.taskResults[0].fields.task_long_description,
 			taskEndDateModel: new Date(
 				this.taskResults[0].fields.task_end_date
 			),
-			taskShortDescriptionModel:
-			this.taskResults[0].fields.task_short_description,
+			taskPriorityModel: this.taskResults[0].fields.task_priority,
+			taskShortDescriptionModel: this.taskResults[0].fields.task_short_description,
 			taskStartDateModel: new Date(
 				this.taskResults[0].fields.task_start_date
 			),
@@ -320,6 +335,7 @@ export default {
 				this.taskStartDateModel.toISOString()
 			);
 			data_to_send.set("task_status", this.taskStatusModel);
+			data_to_send.set("task_priority", this.taskPriorityModel);
 
 			//Send data to backend
 			this.axios.post(
