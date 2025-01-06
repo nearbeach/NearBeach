@@ -880,7 +880,7 @@ urlpatterns = [
     ),
     path(
         "requirement_item_information/<int:requirement_item_id>/save/",
-        requirement_item_views.requirement_information_save,
+        requirement_item_views.requirement_item_information_save,
         name="requirement_information_save",
     ),
     # Request for Change

@@ -187,6 +187,7 @@ def project_information_save(request, project_id, *args, **kwargs):
     project_update.project_start_date = form.cleaned_data["project_start_date"]
     project_update.project_end_date = form.cleaned_data["project_end_date"]
     project_update.project_status = form.cleaned_data["project_status"]
+    project_update.project_priority = form.cleaned_data["project_priority"]
 
     # Save
     project_update.save()
@@ -198,6 +199,7 @@ def project_information_save(request, project_id, *args, **kwargs):
         project_id=project_id,
     ).update(
         kanban_card_description=project_update.project_description,
+        kanban_card_priority=project_update.project_priority,
     )
 
-    return HttpResponse("Good")
+    return HttpResponse("")
