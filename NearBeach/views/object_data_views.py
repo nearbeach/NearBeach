@@ -78,18 +78,90 @@ LOOKUP_FUNCS = {
 }
 
 OBJECT_DICT = {
-    "change_task": ChangeTask,
-    "customer": Customer,
-    "kanban": KanbanBoard,
-    "kanban_board": KanbanBoard,
-    "kanban_card": KanbanCard,
-    "organisation": Organisation,
-    "project": Project,
-    "request_for_change": RequestForChange,
-    "requirement": Requirement,
-    "requirement_item": RequirementItem,
-    "sprint": Sprint,
-    "task": Task,
+    "change_task": {
+        "object": ChangeTask,
+        "primary_key": "change_task_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    },
+    "customer": {
+        "object": Customer,
+        "primary_key": "customer_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    },
+    "kanban": {
+        "object": KanbanBoard,
+        "primary_key": "kanban_board_id",
+        "has_children": True,
+        "child_object": KanbanCard,
+        "foreign_key": "kanban_board_id",
+    },
+    "kanban_board": {
+        "object": KanbanBoard,
+        "primary_key": "kanban_board_id",
+        "has_children": True,
+        "child_object": KanbanCard,
+        "foreign_key": "kanban_board_id",
+    },
+    "kanban_card": {
+        "object": KanbanCard,
+        "primary_key": "kanban_card_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    },
+    "organisation": {
+        "object": Organisation,
+        "primary_key": "organisation_id",
+        "has_children": True,
+        "child_object": Customer,
+        "foreign_key": "organisation_id",
+    },
+    "project": {
+        "object": Project,
+        "primary_key": "project_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": "organisation_id",
+    },
+    "request_for_change": {
+        "object": RequestForChange,
+        "primary_key": "rfc_id",
+        "has_children": True,
+        "child_object": ChangeTask,
+        "foreign_key": "request_for_change_id",
+    },
+    "requirement": {
+        "object": Requirement,
+        "primary_key": "requirement_id",
+        "has_children": True,
+        "child_object": RequirementItem,
+        "foreign_key": "requirement_id",
+    },
+    "requirement_item": {
+        "object": RequirementItem,
+        "primary_key": "requirement_item_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    },
+    "sprint": {
+        "object": Sprint,
+        "primary_key": "sprint_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    },
+    "task": {
+        "object": Task,
+        "primary_key": "task_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    }
 }
 
 
@@ -1081,17 +1153,25 @@ def link_object(object_assignment_submit, destination, location_id, *args, **kwa
 @check_user_generic_permissions(min_permission_level=4)
 def object_delete(request, destination, location_id, *args, **kwargs):
     """
-    Function is used to soft delete an object
+    Function is used to soft delete an object and if relevant it's child objects
     :param request:
     :param destination: The object type
     :param location_id: The object id
     :return:
     """
-    OBJECT_DICT[destination].objects.filter(
-        **{F"{destination}_id": location_id}
+    OBJECT_DICT[destination]["object"].objects.filter(
+        **{OBJECT_DICT[destination]["primary_key"]: location_id}
     ).update(
         is_deleted=True,
     )
+
+    if OBJECT_DICT[destination]["has_children"]:
+        OBJECT_DICT[destination]["child_object"].objects.filter(
+            is_deleted=False,
+            **{OBJECT_DICT[destination]["foreign_key"]: location_id},
+        ).update(
+            is_deleted=True,
+        )
 
     return HttpResponse("")
 

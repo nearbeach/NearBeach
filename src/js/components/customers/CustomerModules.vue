@@ -26,6 +26,25 @@
 							Associated Objects
 						</button>
 					</li>
+
+					<!-- ADMIN -->
+					<li
+						class="nav-item"
+						role="presentation"
+					>
+						<button
+							class="nav-link"
+							id="admin-tab"
+							data-bs-toggle="tab"
+							data-bs-target="#admin"
+							type="button"
+							role="tab"
+							aria-controls="home"
+							aria-select="false"
+						>
+							Admin
+						</button>
+					</li>
 				</ul>
 				<hr/>
 
@@ -43,6 +62,15 @@
 						<associated-objects
 						></associated-objects>
 					</div>
+
+					<div
+						class="tab-pane fade bg-danger"
+						id="admin"
+						role="tabpanel"
+						aria-labelledby="contact-tab"
+					>
+						<delete-object></delete-object>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -55,11 +83,13 @@ import { mapGetters } from "vuex";
 
 //Composable
 import {useNBTheme} from "../../composables/theme/useNBTheme";
+import DeleteObject from "../modules/sub_modules/DeleteObject.vue";
 
 export default {
 	name: "CustomerModule",
 	methods: {useNBTheme},
 	components: {
+		DeleteObject,
 		AssociatedObjects,
 	},
 	computed: {
