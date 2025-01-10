@@ -379,6 +379,11 @@ export default {
 	mounted() {
 		//Set the read only on mount :)
 		this.setReadOnly();
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.taskShortDescriptionModel,
+		});
 	},
 };
 </script>

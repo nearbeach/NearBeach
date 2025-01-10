@@ -183,28 +183,10 @@ export default {
 			userLevel: this.userLevel,
 		});
 
-		//Figure out what destination the parent is and assign the values
-		const project = this.sprintResults[0].project;
-		const requirement = this.sprintResults[0].requirement;
-
-		//Project
-		if (project !== null && project !== undefined && project !== "") {
-			this.parentObjectDestination = "project";
-			this.parentObjectLocationId = project;
-		} else if (requirement !== null && requirement !== undefined && requirement !== "") {
-			//Requirement
-			this.parentObjectDestination = "requirement";
-			this.parentObjectLocationId = requirement;
-		} else {
-			//We have an issue where we don't know what the parent is. Show error
-			this.$store.dispatch("newToast", {
-				header: "Error Getting Sprint's Parent",
-				message: "We have come across an issue, where the current sprint does not contain a parent!",
-				extra_classes: "bg-danger",
-				delay: 0,
-			});
-		}
-
-	}
-}
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.sprintResults[0].sprint_name,
+		});
+	},
+};
 </script>

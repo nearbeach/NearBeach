@@ -207,6 +207,25 @@
 							Notes
 						</button>
 					</li>
+
+					<!-- ADMIN -->
+					<li
+						class="nav-item"
+						role="presentation"
+					>
+						<button
+							class="nav-link"
+							id="admin-tab"
+							data-bs-toggle="tab"
+							data-bs-target="#admin"
+							type="button"
+							role="tab"
+							aria-controls="home"
+							aria-select="false"
+						>
+							Admin
+						</button>
+					</li>
 				</ul>
 				<hr/>
 
@@ -325,6 +344,14 @@
 
 						<confirm-note-delete></confirm-note-delete>
 					</div>
+					<div
+						class="tab-pane fade bg-danger"
+						id="admin"
+						role="tabpanel"
+						aria-labelledby="contact-tab"
+					>
+						<delete-object></delete-object>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -356,10 +383,12 @@ import ConfirmNoteDelete from "./wizards/ConfirmNoteDelete.vue";
 //Composables
 import {useNBTheme} from "../../composables/theme/useNBTheme";
 import ConfirmPublicLinkDelete from "./wizards/ConfirmPublicLinkDelete.vue";
+import DeleteObject from "./sub_modules/DeleteObject.vue";
 
 export default {
 	name: "ParentModules",
 	components: {
+		DeleteObject,
 		ConfirmPublicLinkDelete,
 		ConfirmNoteDelete,
 		AddFolderWizard,

@@ -179,6 +179,10 @@ export default {
 			destination: "kanban_board",
 			locationId: this.locationId,
 		});
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.kanbanBoardResults[0].fields.kanban_board_name,
+		})
 
 		//Send the rootURL to the vuex
 		this.$store.commit({

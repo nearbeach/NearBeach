@@ -40,8 +40,29 @@
 						</button>
 					</div>
 				</div>
+
+				<hr/>
+				
+				<div class="row">
+					<div class="col-md-4">
+						<h2>DELETE Kanban Board</h2>
+						<p>
+							WARNING - this will DELETE the kanban board, this can not be reverted!
+						</p>
+					</div>
+					<div class="col-md-8">
+						<button
+							class="btn btn-danger"
+							v-on:click="deleteKanban"
+						>
+							Delete Kanban Board!
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
+
+		<confirm-delete-object></confirm-delete-object>
 	</n-config-provider>
 </template>
 
@@ -51,8 +72,14 @@ import {Modal} from "bootstrap";
 //Composable
 import {useNBTheme} from "../../composables/theme/useNBTheme";
 
+//Components
+import ConfirmDeleteObject from "../modules/wizards/ConfirmDeleteObject.vue";
+
 export default {
 	name: "KanbanDangerZone",
+	components: {
+		ConfirmDeleteObject
+	},
 	props: {
 		kanbanBoardStatus: {
 			type: String,
@@ -69,10 +96,14 @@ export default {
 			const modal = new Modal("#confirmKanbanBoardClosure");
 			modal.show();
 		},
+		deleteKanban() {
+			const modal = new Modal("#confirmDeleteObjectModal");
+			modal.show();
+		},
 		reopenKanban() {
 			const modal = new Modal("#confirmKanbanBoardReopen");
 			modal.show();
-		}
+		},
 	},
 
 }

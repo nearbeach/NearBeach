@@ -7,6 +7,23 @@
 					id="misc_module_tabs"
 					role="tablist"
 				>
+					<li
+						class="nav-item"
+						role="presentation"
+					>
+						<button
+							class="nav-link"
+							id="admin-tab"
+							data-bs-toggle="tab"
+							data-bs-target="#admin"
+							type="button"
+							role="tab"
+							aria-controls="home"
+							aria-selected="true"
+						>
+							Admin
+						</button>
+					</li>
 					<!-- GROUPS AND USERS -->
 					<li
 						class="nav-item"
@@ -127,6 +144,14 @@
 					class="tab-content"
 					id="misc_module_content"
 				>
+					<div
+						class="tab-pane fade bg-danger"
+						id="admin"
+						role="tabpanel"
+						aria-labelledby="contact-tab"
+					>
+						<delete-object></delete-object>
+					</div>
 					<div
 						class="tab-pane fade"
 						id="group-and-users"
@@ -297,10 +322,12 @@ import {mapGetters} from "vuex";
 
 //Composables
 import {useNBTheme} from "../../composables/theme/useNBTheme";
+import DeleteObject from "../modules/sub_modules/DeleteObject.vue";
 
 export default {
 	name: "RfcModules",
 	components: {
+		DeleteObject,
 		ChangeTaskList,
 		GroupsAndUsersModule,
 		RfcBackoutPlan,

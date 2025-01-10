@@ -637,6 +637,11 @@ urlpatterns = [
         name="associated_objects",
     ),
     path(
+        "object_data/<destination>/<location_id>/delete/",
+        object_data_views.object_delete,
+        name="object_delete",
+    ),
+    path(
         "object_data/<destination>/<location_id>/remove_object_from_sprint/",
         sprint_views.remove_object_from_sprint,
         name="remove_object_from_sprint",

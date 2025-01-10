@@ -373,7 +373,12 @@ export default {
 	},
 	mounted() {
 		//Check for the read only
-		this.setReadOnly();	
+		this.setReadOnly();
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.requirementTitleModel,
+		});
 	},
 };
 </script>
