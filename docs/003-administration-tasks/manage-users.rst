@@ -65,3 +65,17 @@ Removing User from system
 8. Remove all groups and permissions the user has. This will effectively remove them from the system. They will not be able to log into NearBeach
 
 9. Un-tick the "User Active" tick box and then save
+
+NearBeach does not recommend deleting users. As a delete command will cause a cascade of deletes, and will delete any object that has been modified by the user, or created by them. This will result in data loss.
+
+If the user will need to go through a deletion process, brought on by GDPR (General Data Protection Regulation), we are currently writing functionality to tackle this. The functionality will;
+
+#. Rename the user - and remove any credentials, and reset user's password.
+
+#. Profile pictures will be delete from the blob storage
+
+#. The system will remove any object assignments to the user
+
+#. The system will migrate any "Change User" or "Creation user" records to a user id of choice.
+
+The user is essentially dead information at this point, without the need of a destructive delete.
