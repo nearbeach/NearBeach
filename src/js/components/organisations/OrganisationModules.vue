@@ -102,6 +102,25 @@
 							Notes
 						</button>
 					</li>
+
+					<!-- ADMIN -->
+					<li
+						class="nav-item"
+						role="presentation"
+					>
+						<button
+							class="nav-link"
+							id="admin-tab"
+							data-bs-toggle="tab"
+							data-bs-target="#admin"
+							type="button"
+							role="tab"
+							aria-controls="home"
+							aria-select="false"
+						>
+							Admin
+						</button>
+					</li>
 				</ul>
 				<hr/>
 
@@ -207,6 +226,15 @@
 
 						<confirm-note-delete></confirm-note-delete>
 					</div>
+
+					<div
+						class="tab-pane fade bg-danger"
+						id="admin"
+						role="tabpanel"
+						aria-labelledby="contact-tab"
+					>
+						<delete-object></delete-object>
+					</div>
 				</div>
 			</div>
 
@@ -239,6 +267,7 @@ import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue"
 import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
 import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
 import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
+import DeleteObject from "../modules/sub_modules/DeleteObject.vue";
 
 //Composables
 import {useNBTheme} from "../../composables/theme/useNBTheme";
@@ -253,6 +282,7 @@ export default {
 		ConfirmFileDeleteVue,
 		ConfirmNoteDelete,
 		CustomersListModule,
+		DeleteObject,
 		DocumentsModule,
 		EditHistoryNoteWizard,
 		ListTagsModule,

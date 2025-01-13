@@ -2,64 +2,61 @@
 	<n-config-provider :theme="useNBTheme(theme)">
 		<div class="sprint-header">
 			<h1>{{sprintResults[0].sprint_name}}</h1>
-			<a v-bind:href="getParentUrl()">
-				Go to Parent Object
-			</a>
-			<div class="spacer"></div>
-			<div class="sprint-header--information">
-				<div class="sprint-header--information-date"
-					 v-if="sprintResults[0].sprint_status === 'Finish'"
-				>
-					<strong>Finish Date:</strong>
-					{{useNiceDatetime(sprintResults[0].sprint_end_date)}}
-				</div>
-				<div class="sprint-header--information-date"
-					 v-else
-				>
-					<strong>Start Date:</strong>
-					{{useNiceDatetime(sprintResults[0].sprint_start_date)}}<br/>
-					<strong>End Date:</strong>
-					{{useNiceDatetime(sprintResults[0].sprint_end_date)}}
-				</div>
-				<div class="sprint-header--information-status">
-					<strong>Sprint Status:</strong> {{ sprintResults[0].sprint_status }}
-				</div>
-			</div>
-
-			<hr v-if="userLevel >= 2 && sprintResults[0].sprint_status !== 'Finished'" />
-			<div
-				v-if="userLevel >= 2"
-				class="sprint-header--buttons"
-			>
-				<button
-					v-on:click="showAddObjectWizard"
-					class="btn btn-primary"
-					v-if="sprintResults[0].sprint_status !== 'Finished'"
-				>
-					Add Object Wizard
+			<strong>Sprint Status:</strong> {{ sprintStatus }}
+			<div class="dropdown">
+				<button class="btn btn-secondary btn-sm dropdown-toggle"
+						type="button"
+						data-bs-toggle="dropdown"
+						aria-expanded="false">
+					Sprint Menu
 				</button>
-				<button
-					v-on:click="confirmDeleteSprint"
-					class="btn btn-danger delete-button"
-					v-if="sprintResults[0].sprint_status !== 'Finished'"
-				>
-					Delete Sprint
-				</button>
-
-				<button
-					class="btn btn-success"
-					v-if="sprintResults[0].sprint_status === 'Draft'"
-					v-on:click="startSprint"
-				>
-					Start Sprint
-				</button>
-				<button
-					class="btn btn-warning"
-					v-if="sprintResults[0].sprint_status === 'Current'"
-					v-on:click="finishSprint"
-				>
-					Finish Sprint
-				</button>
+				<ul class="dropdown-menu">
+					<li>
+						<a class="dropdown-item"
+						   v-bind:href="getParentUrl()"
+						>
+							Go to Parent Object
+						</a>
+					</li>
+					<li v-if="userLevel >= 2 && sprintStatus !== 'Finished'">
+						<a class="dropdown-item"
+						   href="#"
+						   v-on:click="showAddObjectWizard"
+						>
+							Add Object Wizard
+						</a>
+					</li>
+					<li v-if="userLevel >= 2 && (sprintStatus === 'Draft' || sprintStatus === 'Current')">
+						<hr class="dropdown-divider">
+					</li>
+					<li v-if="userLevel >= 2 && sprintStatus === 'Draft'">
+						<a class="dropdown-item"
+						   href="#"
+						   v-on:click="startSprint"
+						>
+							Start Sprint
+						</a>
+					</li>
+					<li v-if="userLevel >= 2 && sprintStatus === 'Current'">
+						<a class="dropdown-item"
+						   href="#"
+						   v-on:click="finishSprint"
+						>
+							Finish Sprint
+						</a>
+					</li>
+					<li v-if="userLevel >= 2 && sprintStatus !== 'Finished'">
+						<hr class="dropdown-divider">
+					</li>
+					<li v-if="userLevel >= 2 && sprintStatus !== 'Finished'">
+						<a class="dropdown-item"
+						   href="#"
+						   v-on:click="confirmDeleteSprint"
+						>
+							Delete Sprint
+						</a>
+					</li>
+				</ul>
 			</div>
 		</div>
 
@@ -115,6 +112,7 @@ export default {
 		return {
 			parentObjectDestination: "",
 			parentObjectLocationId: 0,
+			sprintStatus: this.sprintResults[0].sprint_status,
 		}
 	},
 	methods: {
@@ -183,28 +181,21 @@ export default {
 			userLevel: this.userLevel,
 		});
 
-		//Figure out what destination the parent is and assign the values
-		const project = this.sprintResults[0].project;
-		const requirement = this.sprintResults[0].requirement;
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.sprintResults[0].sprint_name,
+		});
 
-		//Project
-		if (project !== null && project !== undefined && project !== "") {
+		//Define what parent object and it's ID is
+		const project_id = this.sprintResults[0].project;
+		const requirement_id = this.sprintResults[0].requirement_id;
+		if (project_id !== null && project_id !== undefined && project_id !== "") {
+			this.parentObjectLocationId = project_id;
 			this.parentObjectDestination = "project";
-			this.parentObjectLocationId = project;
-		} else if (requirement !== null && requirement !== undefined && requirement !== "") {
-			//Requirement
+		} else if (requirement_id !== null && requirement_id !== undefined && requirement_id !== "") {
+			this.parentObjectLocationId = requirement_id;
 			this.parentObjectDestination = "requirement";
-			this.parentObjectLocationId = requirement;
-		} else {
-			//We have an issue where we don't know what the parent is. Show error
-			this.$store.dispatch("newToast", {
-				header: "Error Getting Sprint's Parent",
-				message: "We have come across an issue, where the current sprint does not contain a parent!",
-				extra_classes: "bg-danger",
-				delay: 0,
-			});
 		}
-
-	}
-}
+	},
+};
 </script>

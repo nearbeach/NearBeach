@@ -400,6 +400,10 @@ export default {
 			locationId: this.locationId,
 		});
 		this.$store.commit({
+			type: "updateTitle",
+			title: this.changeTitleModel,
+		});
+		this.$store.commit({
 			type: "updateUrl",
 			rootUrl: this.rootUrl,
 			staticUrl: this.staticUrl,

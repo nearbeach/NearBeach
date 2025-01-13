@@ -26,8 +26,8 @@ from NearBeach.decorators.check_user_permissions.object_permissions import check
 import json
 
 # Convert kanban card priorty to dict for easy lookup
-from NearBeach.models import KANBAN_CARD_PRIORITY
-DICT_KANBAN_CARD_PRIORITY = dict(KANBAN_CARD_PRIORITY)
+from NearBeach.models import OBJECT_CARD_PRIORITY
+DICT_OBJECT_CARD_PRIORITY = dict(OBJECT_CARD_PRIORITY)
 
 
 @require_http_methods(["POST"])
@@ -92,7 +92,7 @@ def get_public_context_kanban_card(results):
         "card_description": results.kanban_card_description,
         "card_id": results.kanban_card_id,
         "card_level": results.kanban_level.kanban_level_name,
-        "card_priority": DICT_KANBAN_CARD_PRIORITY[results.kanban_card_priority],
+        "card_priority": DICT_OBJECT_CARD_PRIORITY[results.kanban_card_priority],
         "card_text": results.kanban_card_text,
     }
 

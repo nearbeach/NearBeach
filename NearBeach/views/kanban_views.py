@@ -76,12 +76,15 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     if object_lookup == "project":
         kanban_card_submit.project = data
         kanban_card_submit.kanban_card_description = data.project_description
+        kanban_card_submit.kanban_card_priority = data.project_priority
     elif object_lookup == "task":
         kanban_card_submit.task = data
         kanban_card_submit.kanban_card_description = data.task_long_description
+        kanban_card_submit.kanban_card_priority = data.task_priority
     elif object_lookup == "requirement":
         kanban_card_submit.requirement = data
         kanban_card_submit.kanban_card_description = data.requirement_scope
+        kanban_card_submit.kanban_card_priority = data.requirement_item_priority
 
     kanban_card_submit.kanban_card_text = form.cleaned_data[object_lookup]
 

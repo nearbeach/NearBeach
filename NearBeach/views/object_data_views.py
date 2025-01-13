@@ -23,11 +23,14 @@ from NearBeach.models import (
     ChangeTask,
     Customer,
     Group,
+    KanbanBoard,
     KanbanCard,
     ObjectAssignment,
     Organisation,
     PermissionSet,
+    RequestForChange,
     RequirementItem,
+    Sprint,
     Tag,
     TagAssignment,
     UserGroup,
@@ -72,6 +75,93 @@ LOOKUP_FUNCS = {
     "task": lookup_task,
     "requirement": lookup_requirement,
     "requirement_item": lookup_requirement_item,
+}
+
+OBJECT_DICT = {
+    "change_task": {
+        "object": ChangeTask,
+        "primary_key": "change_task_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    },
+    "customer": {
+        "object": Customer,
+        "primary_key": "customer_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    },
+    "kanban": {
+        "object": KanbanBoard,
+        "primary_key": "kanban_board_id",
+        "has_children": True,
+        "child_object": KanbanCard,
+        "foreign_key": "kanban_board_id",
+    },
+    "kanban_board": {
+        "object": KanbanBoard,
+        "primary_key": "kanban_board_id",
+        "has_children": True,
+        "child_object": KanbanCard,
+        "foreign_key": "kanban_board_id",
+    },
+    "kanban_card": {
+        "object": KanbanCard,
+        "primary_key": "kanban_card_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    },
+    "organisation": {
+        "object": Organisation,
+        "primary_key": "organisation_id",
+        "has_children": True,
+        "child_object": Customer,
+        "foreign_key": "organisation_id",
+    },
+    "project": {
+        "object": Project,
+        "primary_key": "project_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": "organisation_id",
+    },
+    "request_for_change": {
+        "object": RequestForChange,
+        "primary_key": "rfc_id",
+        "has_children": True,
+        "child_object": ChangeTask,
+        "foreign_key": "request_for_change_id",
+    },
+    "requirement": {
+        "object": Requirement,
+        "primary_key": "requirement_id",
+        "has_children": True,
+        "child_object": RequirementItem,
+        "foreign_key": "requirement_id",
+    },
+    "requirement_item": {
+        "object": RequirementItem,
+        "primary_key": "requirement_item_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    },
+    "sprint": {
+        "object": Sprint,
+        "primary_key": "sprint_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    },
+    "task": {
+        "object": Task,
+        "primary_key": "task_id",
+        "has_children": False,
+        "child_object": None,
+        "foreign_key": None,
+    }
 }
 
 
@@ -1055,6 +1145,35 @@ def link_object(object_assignment_submit, destination, location_id, *args, **kwa
 
     # Return the results
     return object_assignment_submit
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_destination()
+@check_user_generic_permissions(min_permission_level=4)
+def object_delete(request, destination, location_id, *args, **kwargs):
+    """
+    Function is used to soft delete an object and if relevant it's child objects
+    :param request:
+    :param destination: The object type
+    :param location_id: The object id
+    :return:
+    """
+    OBJECT_DICT[destination]["object"].objects.filter(
+        **{OBJECT_DICT[destination]["primary_key"]: location_id}
+    ).update(
+        is_deleted=True,
+    )
+
+    if OBJECT_DICT[destination]["has_children"]:
+        OBJECT_DICT[destination]["child_object"].objects.filter(
+            is_deleted=False,
+            **{OBJECT_DICT[destination]["foreign_key"]: location_id},
+        ).update(
+            is_deleted=True,
+        )
+
+    return HttpResponse("")
 
 
 @require_http_methods(["POST"])

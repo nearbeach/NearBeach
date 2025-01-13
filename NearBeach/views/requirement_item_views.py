@@ -207,7 +207,7 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_specific_object_permissions(min_permission_level=2, object_lookup="requirement_item")
-def requirement_information_save(request, requirement_item_id, *args, **kwargs):
+def requirement_item_information_save(request, requirement_item_id, *args, **kwargs):
     """
     The following will save data
     :param request:
@@ -236,6 +236,7 @@ def requirement_information_save(request, requirement_item_id, *args, **kwargs):
     requirement_item_submit.requirement_item_type = form.cleaned_data[
         "requirement_item_type"
     ]
+    requirement_item_submit.requirement_item_priority = form.cleaned_data["requirement_item_priority"]
     requirement_item_submit.save()
 
     # Send back an empty response

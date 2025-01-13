@@ -21,14 +21,6 @@ KANBAN_BOARD_STATUS_CHOICE = (
     ("Closed", "Closed"),
 )
 
-KANBAN_CARD_PRIORITY = (
-    (0, "Highest"),
-    (1, "High"),
-    (2, "Normal"),
-    (3, "Low"),
-    (4, "Lowest"),
-)
-
 LINK_RELATIONSHIP = (
     ("block", "Block"),
     ("duplicate", "Duplicate"),
@@ -40,6 +32,14 @@ NOTIFICATION_LOCATION = (
     ("all", "All Options"),
     ("dashboard", "Dashboard Screen"),
     ("login", "Login Screen"),
+)
+
+OBJECT_CARD_PRIORITY = (
+    (0, "Highest"),
+    (1, "High"),
+    (2, "Normal"),
+    (3, "Low"),
+    (4, "Lowest"),
 )
 
 OBJECT_HIGHER_ORDER_STATUS = (
@@ -666,7 +666,7 @@ class KanbanCard(models.Model):
         on_delete=models.CASCADE,
     )
     kanban_card_priority = models.IntegerField(
-        choices=KANBAN_CARD_PRIORITY,
+        choices=OBJECT_CARD_PRIORITY,
         default=2,
     )
     project = models.ForeignKey(
@@ -1403,6 +1403,10 @@ class Project(models.Model):
     )
     project_story_point_min = models.IntegerField(default=1)
     project_story_point_max = models.IntegerField(default=4)
+    project_priority = models.IntegerField(
+        choices=OBJECT_CARD_PRIORITY,
+        default=2,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -1645,6 +1649,10 @@ class RequirementItem(models.Model):
     )
     ri_story_point_min = models.IntegerField(default=4)
     ri_story_point_max = models.IntegerField(default=10)
+    requirement_item_priority = models.IntegerField(
+        choices=OBJECT_CARD_PRIORITY,
+        default=2,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(
@@ -1906,6 +1914,10 @@ class Task(models.Model):
     )
     task_story_point_min = models.IntegerField(default=4)
     task_story_point_max = models.IntegerField(default=10)
+    task_priority = models.IntegerField(
+        choices=OBJECT_CARD_PRIORITY,
+        default=2,
+    )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     change_user = models.ForeignKey(

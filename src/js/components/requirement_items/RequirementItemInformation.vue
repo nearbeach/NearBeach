@@ -167,6 +167,25 @@
 					</div>
 				</div>
 
+				<!-- Priority -->
+				<hr>
+				<div class="row">
+					<div class="col-md-4">
+						<h2>Priority</h2>
+						<p class="text-instructions">
+							Set the priority of the Requirement Item here.
+						</p>
+					</div>
+					<div class="col-md-4">
+						<label>Requirement Item Priority</label>
+						<n-select
+							v-bind:options="priorityOptions"
+							v-bind:disabled="userLevel <= 2"
+							v-model:value="requirementItemPriorityModel"
+						></n-select>
+					</div>
+				</div>
+
 				<!-- Submit Button -->
 				<hr v-if="!isReadOnly"/>
 				<div
@@ -279,6 +298,14 @@ export default {
 	data() {
 		return {
 			isReadOnly: false,
+			priorityOptions: [
+				{ value: 0, label: "Highest" },
+				{ value: 1, label: "High" },
+				{ value: 2, label: "Normal" },
+				{ value: 3, label: "Low" },
+				{ value: 4, label: "Lowest" },
+			],
+			requirementItemPriorityModel: this.requirementItemResults[0].fields.requirement_item_priority,
 			requirementItemScopeModel: this.requirementItemResults[0].fields.requirement_item_scope,
 			requirementItemTitleModel: this.requirementItemResults[0].fields.requirement_item_title,
 			stakeholderModel: this.organisationResults[0].fields,
@@ -390,6 +417,7 @@ export default {
 			);
 			data_to_send.set("requirement_item_status", this.statusModel);
 			data_to_send.set("requirement_item_type", this.typeModel);
+			data_to_send.set("requirement_item_priority", this.requirementItemPriorityModel);
 
 			// Use Axion to send the data
 			this.axios.post(
@@ -427,6 +455,11 @@ export default {
 	mounted() {
 		//Set the read only status
 		this.setReadOnly();
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.requirementItemTitleModel,
+		});
 	},
 };
 </script>

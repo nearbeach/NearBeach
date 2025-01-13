@@ -177,6 +177,10 @@ export default {
 			type: "updateUrl",
 			rootUrl: this.rootUrl,
 		});
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.groupNameModel,
+		});
 	},
 };
 </script>

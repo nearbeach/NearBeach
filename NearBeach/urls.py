@@ -637,6 +637,11 @@ urlpatterns = [
         name="associated_objects",
     ),
     path(
+        "object_data/<destination>/<location_id>/delete/",
+        object_data_views.object_delete,
+        name="object_delete",
+    ),
+    path(
         "object_data/<destination>/<location_id>/remove_object_from_sprint/",
         sprint_views.remove_object_from_sprint,
         name="remove_object_from_sprint",
@@ -880,7 +885,7 @@ urlpatterns = [
     ),
     path(
         "requirement_item_information/<int:requirement_item_id>/save/",
-        requirement_item_views.requirement_information_save,
+        requirement_item_views.requirement_item_information_save,
         name="requirement_information_save",
     ),
     # Request for Change

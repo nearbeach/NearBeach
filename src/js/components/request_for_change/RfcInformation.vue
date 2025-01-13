@@ -604,6 +604,11 @@ export default {
 			staticUrl: this.staticUrl,
 		});
 
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.rfcTitleModel,
+		});
+
 		//Send user level to VueX
 		this.$store.commit({
 			type: "updateUserLevel",

@@ -10,8 +10,8 @@
 		</div>
 		<div class="col-md-4">
 			<div class="form-group">
-				<label
-				>{{ destination }} Start Date:
+				<label class="text-capitalize">
+					{{ destination }} Start Date:
 					<validation-rendering
 						v-bind:error-list="v$.localStartDateModel.$errors"
 					></validation-rendering>
@@ -25,8 +25,8 @@
 		</div>
 		<div class="col-md-4">
 			<div class="form-group">
-				<label
-				>{{ destination }} End Date:
+				<label class="text-capitalize">
+					{{ destination }} End Date:
 					<validation-rendering
 						v-bind:error-list="v$.localEndDateModel.$errors"
 					></validation-rendering>
