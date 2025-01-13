@@ -35,7 +35,7 @@ class ProjectViewTests(TestCase):
             "project_start_date": "2023-08-10T23:00:00.000Z",
             "project_end_date": "2023-08-10T23:00:00.000Z",
             "organisation": 1,
-            "group_list": [1, 2]
+            "group_list": [1, 2],
         }
 
         # Use POST to submit the new project
@@ -77,6 +77,7 @@ class ProjectViewTests(TestCase):
             "project_start_date": "2023-08-10T23:00:00.000Z",
             "project_end_date": "2023-08-10T23:00:00.000Z",
             "project_status": "1",
+            "project_priority": "2",
         }
 
         # Use POST to submit the new project
