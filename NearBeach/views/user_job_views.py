@@ -108,6 +108,7 @@ def get_my_planning_objects(request, delta=7):
     card_results = userjob_results.filter(
         is_deleted=False,
         kanban_card__isnull=False,
+        kanban_card__is_archived=False,
     ).annotate(
         object_type=V("card"),
         location_id=F("kanban_card__kanban_card_id"),
@@ -236,6 +237,12 @@ def my_planner_get_object_list(request, destination):
     ).values(
         "object_id",
     )
+
+    # Check to make sure the kanban cards are not archived
+    if destination == "kanban_card":
+        object_assignment_results = object_assignment_results.filter(
+            kanban_card__is_archived=False,
+        )
 
     # Using the list of ids. We now grab the objects
     dict_object = DICT_PLANNING_OBJECTS[destination]
