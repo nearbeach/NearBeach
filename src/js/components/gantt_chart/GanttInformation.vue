@@ -395,7 +395,7 @@ export default {
 
 			//If screen width > gantt_max_width, we want to specify the gantt chart size, and margin
 			if (parseInt(screen_width) > parseInt(gantt_max_width)) {
-				this.ganttStyle = `width:${gantt_max_width}px; margin: 0 auto;`;
+				this.ganttStyle = `width:${gantt_max_width}px; margin: 0 10;`;
 			} else {
 				this.ganttStyle = "width: calc(100vw - 10px);";
 			}
