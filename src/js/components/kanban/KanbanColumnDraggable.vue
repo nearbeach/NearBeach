@@ -47,10 +47,16 @@
 				</div>
 				<div v-if="element.tag_list.length > 0"
 					 class="tag-list"
+					 v-bind:data-card-id="element.kanban_card_id"
+					 v-bind:data-sort-number="element.kanban_card_sort_number"
+					 v-bind:data-card-priority="element.kanban_card_priority"
 				>
 					<div v-for="single_tag in element.tag_list"
 						 :key="single_tag.tag_assignment_id"
 						 v-bind:style="`background-color:${single_tag.tag_colour};color:${single_tag.tag_text_colour};`"
+						 v-bind:data-card-id="element.kanban_card_id"
+						 v-bind:data-sort-number="element.kanban_card_sort_number"
+						 v-bind:data-card-priority="element.kanban_card_priority"
 						 class="single-tag-thin"
 					>
 						{{ single_tag.tag_name }}
