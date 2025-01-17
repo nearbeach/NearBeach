@@ -25,14 +25,8 @@
 				v-on:dblclick="doubleClickCard($event)"
 			>
 				<div v-bind:class="`card-priority-line priority-${priorityList[element.kanban_card_priority]}`"
-					 v-bind:data-card-id="element.kanban_card_id"
-					 v-bind:data-sort-number="element.kanban_card_sort_number"
-					 v-bind:data-card-priority="element.kanban_card_priority"
 				></div>
 				<carbon-link v-if="isLinkedObject(element).length > 0"
-					  v-bind:data-card-id="element.kanban_card_id"
-					  v-bind:data-sort-number="element.kanban_card_sort_number"
-					  v-bind:data-card-priority="element.kanban_card_priority"
 					  class="card-external-link"
 				></carbon-link>
 				<b>#{{ element.kanban_card_id }}</b>
@@ -47,16 +41,10 @@
 				</div>
 				<div v-if="element.tag_list.length > 0"
 					 class="tag-list"
-					 v-bind:data-card-id="element.kanban_card_id"
-					 v-bind:data-sort-number="element.kanban_card_sort_number"
-					 v-bind:data-card-priority="element.kanban_card_priority"
 				>
 					<div v-for="single_tag in element.tag_list"
 						 :key="single_tag.tag_assignment_id"
 						 v-bind:style="`background-color:${single_tag.tag_colour};color:${single_tag.tag_text_colour};`"
-						 v-bind:data-card-id="element.kanban_card_id"
-						 v-bind:data-sort-number="element.kanban_card_sort_number"
-						 v-bind:data-card-priority="element.kanban_card_priority"
 						 class="single-tag-thin"
 					>
 						{{ single_tag.tag_name }}
@@ -293,14 +281,37 @@ export default {
 			//Done - hide the error screen
 			document.getElementById("sort_error").style.display = "";
 		},
-		doubleClickCard(data) {
+		doubleClickCard(event) {
+			//Retrieve the card id from the event
+			const card_id = this.getCardIdFromObject(event.target);
+
+			//Check to make sure we card is not 0
+			if (card_id === 0) return;
+
 			//Filter out the data we want to send up stream
 			const filtered_data = this.masterList.filter((row) => {
-				return parseInt(row.kanban_card_id) === parseInt(data.target.dataset.cardId);
+				return parseInt(row.kanban_card_id) === parseInt(card_id);
 			})[0];
+
+			if (filtered_data === undefined) return;
 
 			//Setup data to send upstream
 			this.sendDataUpstream(filtered_data);
+		},
+		getCardIdFromObject(object) {
+			//Recursive function, that checks to see if we can get the card id. If not we look at the parent.
+			//The break points are where the parent is undefined, OR the id === "kanban_container"
+			const card_id = object.dataset.cardId;
+
+			//Got the card id, lets return
+			if (card_id !== undefined) return card_id;
+
+			//Check to make sure we not at the escapte point
+			if (object.id === "kanban_container") return 0;
+			if (object.parentElement === undefined || object.parentElement === null) return 0;
+
+			//Recursive call the function
+			return this.getCardIdFromObject(object.parentElement);
 		},
 		isLinkedObject(object) {
 			let results = "";
