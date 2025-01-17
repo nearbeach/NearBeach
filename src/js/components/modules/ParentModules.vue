@@ -212,6 +212,7 @@
 					<li
 						class="nav-item"
 						role="presentation"
+						v-if="userLevel === 4"
 					>
 						<button
 							class="nav-link"
@@ -349,6 +350,7 @@
 						id="admin"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
+						v-if="userLevel === 4"
 					>
 						<delete-object></delete-object>
 					</div>

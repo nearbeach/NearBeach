@@ -31,6 +31,7 @@
 					<li
 						class="nav-item"
 						role="presentation"
+						v-if="userLevel === 4"
 					>
 						<button
 							class="nav-link"
@@ -52,6 +53,7 @@
 				<div
 					class="tab-content"
 					id="misc_module_content"
+					v-if="userLevel === 4"
 				>
 					<div
 						class="tab-pane fade active show"
@@ -95,6 +97,7 @@ export default {
 	computed: {
 		...mapGetters({
 			theme: "getTheme",
+			userLevel: "getUserLevel",
 		}),
 	},
 };

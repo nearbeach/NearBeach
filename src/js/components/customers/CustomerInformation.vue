@@ -319,6 +319,11 @@ export default {
 		});
 
 		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
+		});
+
+		this.$store.commit({
 			type: "updateDestination",
 			destination: "customer",
 			locationId: this.customerResults[0].pk,
