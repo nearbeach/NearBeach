@@ -2,10 +2,15 @@
 	<n-config-provider :theme="useNBTheme(theme)">
 		<div>
 			<h1 class="kanban-header">
+				<span v-if="kanbanStatus.toLowerCase() === 'closed'"
+					class="kanban-closed"
+				>
+					CLOSED:
+				</span>
 				{{ kanbanBoardResults[0].fields.kanban_board_name }}
 			</h1>
 			<div class="btn-group kanban-menu"
-				v-if="userLevel >= 2"
+				v-if="canRenderDropdown"
 			>
 				<button class="btn btn-secondary btn-sm dropdown-toggle"
 						type="button"
@@ -70,7 +75,7 @@
 				</ul>
 			</div>
 
-			<div v-if="userLevel <= 1"
+			<div v-else
 				 style="height: 31px; width: 100%;"
 			></div>
 
@@ -290,6 +295,16 @@ export default {
 		...mapGetters({
 			cardId: "getCardId",
 		}),
+		canRenderDropdown() {
+			//Condition 1: User has Create or higher permissions
+			const condition1 = this.userLevel >= 3;
+
+			//Conditon 2: User has Edit permissions and board is not closed
+			const condition2 = this.kanbanBoardResults[0].fields.kanban_board_status.toLowerCase() !== 'closed'
+				&& this.userLevel === 2;
+
+			return condition1 || condition2;
+		},
 	},
 	watch: {
 		cardId() {
