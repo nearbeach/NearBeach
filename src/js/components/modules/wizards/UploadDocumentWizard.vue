@@ -126,7 +126,7 @@
 										class="spinner-border text-primary"
 										role="status"
 									>
-										<span class="sr-only">Loading...</span>
+										<span class="sr-only"></span>
 									</div>
 								</div>
 
