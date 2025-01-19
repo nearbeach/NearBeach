@@ -127,7 +127,11 @@
     text-overflow: ellipsis;
 
     @media screen and (min-width: 767px) {
-        margin: 10px 35px;
+        margin: 10px 5px;
+    }
+
+    .kanban-closed {
+        color: rgb(236, 106, 89);
     }
 }
 
@@ -147,7 +151,7 @@
     overflow: hidden;
 
     @media (min-width: 576px) {
-        top: 157px;
+        top: 150px;
         width: calc(100vw - 4px);
     }
 }

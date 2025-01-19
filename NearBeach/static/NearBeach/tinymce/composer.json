@@ -1,9 +1,9 @@
 {
 	"name": "tinymce/tinymce",
-	"version": "7.6.0",
+	"version": "6.8.3",
 	"description": "Web based JavaScript HTML WYSIWYG editor control.",
 	"license": [
-		"GPL-2.0-or-later"
+		"MIT-only"
 	],
 	"keywords": [
 		"wysiwyg",
