@@ -4,9 +4,7 @@
 NearBeach Flow
 ==============
 
-What is NearBeach Flow
-
-We have several beliefs when it comes to project management;
+What is NearBeach Flow? We have several beliefs when it comes to project management;
 
 * Things always go wrong
 * Quoting is really hard and no one gets it correct
@@ -39,17 +37,13 @@ How Does It Work
 User Requirements
 -----------------
 
-Requirements are a helicopter view of the project at hand.
-
-For example;
+Requirements are a helicopter view of the project at hand. For example;
 
 * Building a new site for Client X
 * Rebranding merchandise
 * Implementing a new ticketing system
 
-For each smaller and detailed user story, you should use requirement items.
-
-For example;
+For each smaller and detailed user story, you should use requirement items. For example;
 
 * Implementation of the new API to accept payments
 * Deployment of the CI/CD pipeline
@@ -67,7 +61,7 @@ For example, the requirement item "Creation of a new page for the Product X" can
 * Frontend build of the new web page for product X
 
 As you can see, each task is required for this user story. However the tasks themselves are completely different and
-usually tackled by different departments. The designer usually does not tackle the frontend code for the web page.
+usually tackled by different departments. The photographer usually does not tackle the frontend code for the web page.
 
 
 Projects/Tasks
@@ -85,8 +79,9 @@ tasks;
 
 So that small project has a bunch of smaller tasks.
 
-Question: What if I am the only one who does this project?
-Answer: How you utilise NearBeach is up to you. You can easily not create any of the extra tasks, and just keep it as a
+**Question:** What if I am the only one who does this project?
+
+**Answer:** How you utilise NearBeach is up to you. You can easily not create any of the extra tasks, and just keep it as a
 a single project. That will work perfectly fine, however we recommend splitting up projects if they start getting large,
 or there are multiple people involved. That way you can assign responsibilities at the task levels.
 
@@ -107,6 +102,7 @@ The Request For Change module in NearBeach is designed to;
 * Describe the risk of the change
 * Describe the implementation and back-out plan of the change
 * Describe the test plan of the change
+* Detail to the end user, when the change is happening and the process around that change
 
 The request for change also has "Change Tasks", which are a single task done at a certain point in the change process.
 These change tasks can be assigned to a user, with a QA to sign off. The RFC functionality in NearBeach can be used to
