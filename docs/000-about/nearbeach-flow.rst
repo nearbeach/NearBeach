@@ -1,8 +1,11 @@
-.. _nearbeach-flow:
+.. _nearbeach_flow:
 
 ==============
 NearBeach Flow
 ==============
+
+What is NearBeach Flow?
+=======================
 
 What is NearBeach Flow? We have several beliefs when it comes to project management;
 
