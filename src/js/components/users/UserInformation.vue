@@ -2,9 +2,9 @@
 	<div class="card">
 		<div class="card-body">
 			<h1 class="mb-4">User Information</h1>
-			<a v-bind:href="`${this.rootUrl}search/user/`"
-			>Go back to user list</a
-			>
+			<a v-bind:href="`${this.rootUrl}search/user/`">
+				Go back to user list
+			</a>
 			<hr/>
 
 			<!-- USERNAME -->

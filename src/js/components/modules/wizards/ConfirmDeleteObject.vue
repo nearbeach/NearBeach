@@ -47,14 +47,14 @@
 				<div class="modal-footer justify-content-between">
 					<button
 						type="button"
-						class="btn btn-primary"
+						class="btn btn-primary btn-sm"
 						v-on:click="closeModal"
 					>
 						No - Keep {{ destination }}
 					</button>
 					<button
 						type="button"
-						class="btn btn-danger"
+						class="btn btn-danger btn-sm"
 						v-on:click="deleteObject"
 						v-bind:disabled="isButtonDisabled"
 					>

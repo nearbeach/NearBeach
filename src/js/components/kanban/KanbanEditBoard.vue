@@ -3,6 +3,9 @@
 		<div class="card">
 			<div class="card-body">
 				<h1>{{ kanbanBoardResults[0].fields.kanban_board_name }}</h1>
+				<a v-bind:href="`${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/`">
+					Go back to kanban board
+				</a>
 				<hr/>
 
 				<!-- Properties for the drag and drop coloumns/levels -->

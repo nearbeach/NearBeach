@@ -36,6 +36,7 @@
 								:data="{}"
 								@finish="updateProfilePicture"
 								@error="showErrorToast"
+								accept=".jpg, .jpeg, .png, *.webp"
 							>
 								<n-button>Update Profile Picture</n-button>
 							</n-upload>

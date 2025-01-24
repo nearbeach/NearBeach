@@ -61,6 +61,9 @@
 							v-on:update_property_list="updatePropertyList($event)"
 						></kanban-property-order>
 					</div>
+					<div class="d-block d-md-none d-lg-none d-xl-none d-xxl-none mt-3">
+						<hr />
+					</div>
 					<div class="col-md-4">
 						<kanban-property-order
 							v-bind:property-list="levelModel"

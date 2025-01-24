@@ -198,3 +198,11 @@
     }
 }
 
+.kanban-property-order {
+    margin: 1.5rem auto;
+    max-width: 80%;
+
+    @media screen and (min-width: 767px) {
+        max-width: 100%;
+    }
+}
