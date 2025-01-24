@@ -1,226 +1,223 @@
 <template>
-	<div>
-		<strong>{{ propertyName }}</strong>
-		<span
-			class="error"
-			v-if="!v$.localPropertyList.required && isDirty"
-		>
-			Please create at least one {{ propertyName }}.</span
-		>
+	<strong>{{ propertyName }}</strong>
+	<span
+		class="error"
+		v-if="!v$.localPropertyList.required && isDirty"
+	>
+		Please create at least one {{ propertyName }}.</span
+	>
 
-		<!-- The column of data where you can sort the properties -->
-		<draggable
-			v-model="localPropertyList"
-			:disabled="!canDragCards || isReadOnly"
-			item-key="pk"
-			ghost-class="ghost"
-			@change="sendPropertyListUp"
-			class="mt-4"
+	<!-- The column of data where you can sort the properties -->
+	<draggable
+		v-model="localPropertyList"
+		:disabled="!canDragCards || isReadOnly"
+		item-key="pk"
+		ghost-class="ghost"
+		@change="sendPropertyListUp"
+		class="kanban-property-order"
+	>
+		<template
+			#item="{ element }"
+			type="transition"
+			name="flip-list"
 		>
-			<template
-				#item="{ element }"
-				type="transition"
-				name="flip-list"
+			<div
+				class="sortable"
+				v-bind:key="element.id"
+				v-bind:id="element.id"
+				v-bind:data-property="element.property"
+				v-bind:data-id="element.id"
+				v-bind:data-title="element.title"
+				v-on:dblclick="editItem($event)"
 			>
-				<div
-					class="sortable"
-					v-bind:key="element.id"
-					v-bind:id="element.id"
-					v-bind:data-property="element.property"
-					v-bind:data-id="element.id"
-					v-bind:data-title="element.title"
-					v-on:dblclick="editItem($event)"
-				>
-					<div class="content">
-						<strong
-							v-bind:key="element.id"
-							v-bind:id="element.id"
-							v-bind:data-id="element.id"
-							v-bind:data-property="element.property"
-							v-bind:data-title="element.title"
-						>
-							{{ element.title }}
-						</strong>
-						<span v-if="!canDragCards"
-							  v-bind:id="element.id"
-							  v-bind:data-id="element.id"
-							  v-bind:data-property="element.property"
-							  v-bind:data-title="element.title"
-							  style="font-weight: lighter"
-						> - Movement Locked!</span>
-					</div>
-					<div class="icon"
-						 v-on:click="removeItem(element.id)"
-						 v-if="localPropertyList.length > 1"
+				<div class="content">
+					<strong
+						v-bind:key="element.id"
+						v-bind:id="element.id"
+						v-bind:data-id="element.id"
+						v-bind:data-property="element.property"
+						v-bind:data-title="element.title"
 					>
-						<carbon-close-outline></carbon-close-outline>
+						{{ element.title }}
+					</strong>
+					<span v-if="!canDragCards"
+						  v-bind:id="element.id"
+						  v-bind:data-id="element.id"
+						  v-bind:data-property="element.property"
+						  v-bind:data-title="element.title"
+						  style="font-weight: lighter"
+					> - Movement Locked!</span>
+				</div>
+				<div class="icon"
+					 v-on:click="removeItem(element.id)"
+					 v-if="localPropertyList.length > 1"
+				>
+					<carbon-close-outline></carbon-close-outline>
+				</div>
+			</div>
+		</template>
+	</draggable>
+
+	<!-- ADD BUTTON -->
+	<button
+		class="btn btn-primary"
+		v-on:click="openModal"
+		v-if="isReadOnly===false"
+	>
+		Add {{ propertyName }} Item
+	</button>
+
+	<!-- MODAL FOR ADDING AN EXTRA ROW -->
+	<div
+		class="modal fade"
+		v-bind:id="`addItem${propertyName}`"
+		tabindex="-1"
+		aria-labelledby="exampleModalLabel"
+		aria-hidden="true"
+	>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5
+						class="modal-title"
+						id="exampleModalLabel"
+					>
+						Add/Edit {{ propertyName }}
+					</h5>
+					<button
+						type="button"
+						class="btn-close"
+						data-bs-dismiss="modal"
+						aria-label="Close"
+						v-bind:id="`addItemClose${propertyName}`"
+					></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>{{ propertyName }} Item Description</label>
+						<input
+							v-model="newPropertyItem"
+							type="text"
+							class="form-control"
+						/>
+					</div>
+					<div
+						class="form-group"
+						v-if="propertyName.toLowerCase() === 'column'"
+					>
+						<label>{{ propertyName }} Property</label>
+						<n-select
+							v-model:value="columnPropertyModel"
+							:options="columnPropertyOptions"
+						/>
 					</div>
 				</div>
-			</template>
-		</draggable>
-
-		<!-- ADD BUTTON -->
-		<hr/>
-		<button
-			class="btn btn-primary"
-			v-on:click="openModal"
-			v-if="isReadOnly===false"
-		>
-			Add {{ propertyName }} Item
-		</button>
-
-		<!-- MODAL FOR ADDING AN EXTRA ROW -->
-		<div
-			class="modal fade"
-			v-bind:id="`addItem${propertyName}`"
-			tabindex="-1"
-			aria-labelledby="exampleModalLabel"
-			aria-hidden="true"
-		>
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5
-							class="modal-title"
-							id="exampleModalLabel"
-						>
-							Add/Edit {{ propertyName }}
-						</h5>
-						<button
-							type="button"
-							class="btn-close"
-							data-bs-dismiss="modal"
-							aria-label="Close"
-							v-bind:id="`addItemClose${propertyName}`"
-						></button>
-					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<label>{{ propertyName }} Item Description</label>
-							<input
-								v-model="newPropertyItem"
-								type="text"
-								class="form-control"
-							/>
-						</div>
-						<div
-							class="form-group"
-							v-if="propertyName.toLowerCase() === 'column'"
-						>
-							<label>{{ propertyName }} Property</label>
-							<n-select
-								v-model:value="columnPropertyModel"
-								:options="columnPropertyOptions"
-							/>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button
-							type="button"
-							class="btn btn-secondary"
-							data-bs-dismiss="modal"
-						>
-							Close
-						</button>
-						<button
-							type="button"
-							class="btn btn-primary"
-							v-on:click="addItem"
-						>
-							Save changes
-						</button>
-					</div>
+				<div class="modal-footer">
+					<button
+						type="button"
+						class="btn btn-secondary"
+						data-bs-dismiss="modal"
+					>
+						Close
+					</button>
+					<button
+						type="button"
+						class="btn btn-primary"
+						v-on:click="addItem"
+					>
+						Save changes
+					</button>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<!-- MODAL FOR DELETING ITEM -->
-		<div
-			class="modal fade"
-			v-bind:id="`deleteItem${propertyName}`"
-			tabindex="-1"
-			aria-labelledby="exampleModalLabel"
-			aria-hidden="true"
-		>
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">Delete {{ propertyName }}</h5>
-						<button
-							type="button"
-							class="btn-close"
-							data-bs-dismiss="modal"
-							aria-label="Close"
-							v-bind:id="`deleteItemClose${propertyName}`"
-						></button>
+	<!-- MODAL FOR DELETING ITEM -->
+	<div
+		class="modal fade"
+		v-bind:id="`deleteItem${propertyName}`"
+		tabindex="-1"
+		aria-labelledby="exampleModalLabel"
+		aria-hidden="true"
+	>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Delete {{ propertyName }}</h5>
+					<button
+						type="button"
+						class="btn-close"
+						data-bs-dismiss="modal"
+						aria-label="Close"
+						v-bind:id="`deleteItemClose${propertyName}`"
+					></button>
+				</div>
+				<div class="modal-body pb-4">
+					<!-- WARNING -->
+					<div class="alert alert-warning">
+						<h4>WARNING</h4>
+						<p>
+							This process can not be reversed. Deleting a
+							{{ propertyName }} will remove it.
+						</p>
+
+						<p>
+							All existing cards will be moved to the stated
+							location you have provided. Any cards that have
+							been archived or deleted, will still be
+							associated with the removed card.
+						</p>
 					</div>
-					<div class="modal-body pb-4">
-						<!-- WARNING -->
-						<div class="alert alert-warning">
-							<h4>WARNING</h4>
-							<p>
-								This process can not be reversed. Deleting a
-								{{ propertyName }} will remove it.
-							</p>
 
-							<p>
-								All existing cards will be moved to the stated
-								location you have provided. Any cards that have
-								been archived or deleted, will still be
-								associated with the removed card.
-							</p>
-						</div>
-
-						<!-- ASK USER ABOUT CARDS -->
-						<div class="row">
-							<p>Would you like to remove the cards within the {{ propertyName }}?</p>
-							<n-radio-group v-model:value="removeCardsModel" name="radiogroup">
-								<n-space>
-									<n-radio v-bind:value="true"
-											 label="Yes - please remove cards"
-									/>
-									<n-radio v-bind:value="false"
-											 label="No - please MOVE cards"
-									/>
-								</n-space>
-							</n-radio-group>
-						</div>
-
-						<!-- CARD DESTINATIONS -->
-						<div class="spacer"></div>
-						<div v-if="!removeCardsModel"
-							 class="row"
-						>
-							<p>Please select an appropriate destination for the current cards.</p>
-							<label
-							><strong>Destination for Cards</strong></label
-							>
-							<n-select
-								v-bind:options="newCardDestinationList"
-								v-model:value="destinationItemId"
-								style="z-index: 9999"
-								class="new-card-destination"
-							></n-select>
-						</div>
+					<!-- ASK USER ABOUT CARDS -->
+					<div class="row">
+						<p>Would you like to remove the cards within the {{ propertyName }}?</p>
+						<n-radio-group v-model:value="removeCardsModel" name="radiogroup">
+							<n-space>
+								<n-radio v-bind:value="true"
+										 label="Yes - please remove cards"
+								/>
+								<n-radio v-bind:value="false"
+										 label="No - please MOVE cards"
+								/>
+							</n-space>
+						</n-radio-group>
 					</div>
-					<div class="modal-footer">
-						<button
-							type="button"
-							class="btn btn-secondary"
-							data-bs-dismiss="modal"
+
+					<!-- CARD DESTINATIONS -->
+					<div class="spacer"></div>
+					<div v-if="!removeCardsModel"
+						 class="row"
+					>
+						<p>Please select an appropriate destination for the current cards.</p>
+						<label
+						><strong>Destination for Cards</strong></label
 						>
-							Close
-						</button>
-						<button
-							type="button"
-							class="btn btn-primary"
-							v-if="isReadOnly===false"
-							v-on:click="deleteItem"
-							v-bind:disabled="this.destinationItemId == null"
-						>
-							Delete {{ propertyName }}
-						</button>
+						<n-select
+							v-bind:options="newCardDestinationList"
+							v-model:value="destinationItemId"
+							style="z-index: 9999"
+							class="new-card-destination"
+						></n-select>
 					</div>
+				</div>
+				<div class="modal-footer">
+					<button
+						type="button"
+						class="btn btn-secondary"
+						data-bs-dismiss="modal"
+					>
+						Close
+					</button>
+					<button
+						type="button"
+						class="btn btn-primary"
+						v-if="isReadOnly===false"
+						v-on:click="deleteItem"
+						v-bind:disabled="this.destinationItemId == null"
+					>
+						Delete {{ propertyName }}
+					</button>
 				</div>
 			</div>
 		</div>
