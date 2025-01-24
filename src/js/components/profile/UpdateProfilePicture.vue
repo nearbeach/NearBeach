@@ -25,6 +25,7 @@
 							:max="1"
 							@error="showErrorToast"
 							@finish="updateProfilePicture"
+							accept=".jpg, .jpeg, .png, *.webp"
 						>
 							<n-button>Update Profile Picture</n-button>
 						</n-upload>
