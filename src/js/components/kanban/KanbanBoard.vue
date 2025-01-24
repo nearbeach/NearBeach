@@ -35,9 +35,10 @@
 			:key="level.pk"
 		>
 			<!-- CREATE THE LEVEL HEADER -->
-			<div class="kanban-level-div">
+			<div class="kanban-level-div"
+				 v-on:click="expandLevel(level.pk)"
+			>
         		<span v-bind:class="getExpandClass(level.pk)"
-					  v-on:click="expandLevel(level.pk)"
 				></span>
 				<span>
 					{{ level.fields.kanban_level_name }}
