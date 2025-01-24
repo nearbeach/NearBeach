@@ -654,8 +654,6 @@ def update_card(request, *args, **kwargs):
     kanban_card_update.kanban_card_priority = form.cleaned_data["kanban_card_priority"]
     kanban_card_update.kanban_column = form.cleaned_data["kanban_column"]
     kanban_card_update.kanban_level = form.cleaned_data["kanban_level"]
-    kanban_card_update.save()
-
 
     # If we move the card's destination, we want to update the sort order in both the old and new destination
     new_destination = form.cleaned_data['new_destination']
@@ -664,7 +662,6 @@ def update_card(request, *args, **kwargs):
     for index, card in enumerate(new_destination):
         if card.kanban_card_id == kanban_card_update.kanban_card_id:
             kanban_card_update.kanban_card_sort_number = index
-            kanban_card_update.save()
         else:
             card.kanban_card_sort_number = index
             card.save()
@@ -672,6 +669,9 @@ def update_card(request, *args, **kwargs):
     for index, card in enumerate(old_destination):
         card.kanban_card_sort_number = index
         card.save()
+
+    # Save late, as multiple saves causes an override issue.
+    kanban_card_update.save()
 
     return HttpResponse("")
 
