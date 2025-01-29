@@ -139,6 +139,12 @@ export const
             "./components/diagnostic/DiagnosticInformation.vue"
             )
     ),
+    EditSprint = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "edit-sprint" */
+            "./components/sprints/EditSprint.vue"
+            )
+    ),
     GanttInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "gantt-information" */

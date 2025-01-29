@@ -8,7 +8,13 @@ import json
 
 from django.views.decorators.http import require_http_methods
 
-from NearBeach.forms import NewSprintAssignmentForm, NewSprintForm, AddObjectToSprintForm, RemoveSprintForm
+from NearBeach.forms import (
+    NewSprintAssignmentForm,
+    NewSprintForm,
+    AddObjectToSprintForm,
+    RemoveSprintForm,
+    UpdateSprintForm,
+)
 from NearBeach.models import Sprint, SprintObjectAssignment, ObjectAssignment, UserGroup
 from NearBeach.views.gantt_chart_views import get_object_results
 from NearBeach.views.theme_views import get_theme
@@ -105,6 +111,36 @@ def delete_sprint(request, sprint_id, *args, **kwargs):
     )
 
     return HttpResponse("")
+
+
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permission_with_sprint(2)
+def edit_sprint(request, sprint_id, *args, **kwargs):
+    sprint_results = Sprint.objects.filter(
+        is_deleted=False,
+        sprint_id=sprint_id,
+    )
+
+    if sprint_results is None:
+        return HttpResponseBadRequest("No sprints")
+
+    sprint_start_date = sprint_results[0].sprint_start_date.isoformat()
+    sprint_end_date = sprint_results[0].sprint_end_date.isoformat()
+
+    t = loader.get_template("NearBeach/sprints/edit_sprint.html")
+
+    c = {
+        "need_tinymce": False,
+        "sprint_end_date": sprint_end_date,
+        "sprint_id": sprint_id,
+        "sprint_name": sprint_results[0].sprint_name,
+        "sprint_start_date": sprint_start_date,
+        "sprint_status": sprint_results[0].sprint_status,
+        "user_level": kwargs["user_level"],
+        "theme": get_theme(request),
+    }
+
+    return HttpResponse(t.render(c, request))
 
 
 @require_http_methods(["POST"])
@@ -375,5 +411,27 @@ def start_sprint(request, sprint_id, *args, **kwargs):
     ).update(
         sprint_status="Current",
     )
+
+    return HttpResponse("")
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_sprint_permission_with_sprint(2)
+def update_sprint(request, sprint_id, *args, **kwargs):
+    form = UpdateSprintForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    update_sprint = Sprint.objects.get(
+        sprint_id=sprint_id,
+    )
+
+    update_sprint.sprint_name = form.cleaned_data["sprint_name"]
+    update_sprint.sprint_status = form.cleaned_data["sprint_status"]
+    update_sprint.sprint_start_date = form.cleaned_data["sprint_start_date"]
+    update_sprint.sprint_end_date = form.cleaned_data["sprint_end_date"]
+
+    update_sprint.save()
 
     return HttpResponse("")
