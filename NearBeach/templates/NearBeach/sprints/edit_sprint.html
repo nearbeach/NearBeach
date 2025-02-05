@@ -1,0 +1,15 @@
+{% extends "NearBeach/partials/template.html" %}
+{% load static %}
+{% block content %}
+    <edit-sprint
+            v-bind:root-url="`{% url 'dashboard' %}`"
+            v-bind:sprint-end-date="'{{ sprint_end_date }}'"
+            v-bind:sprint-id="{{ sprint_id }}"
+            v-bind:sprint-name="'{{ sprint_name }}'"
+            v-bind:sprint-start-date="'{{ sprint_start_date }}'"
+            v-bind:sprint-status="'{{ sprint_status }}'"
+            v-bind:static-url="`{% static '/' %}`"
+            v-bind:theme="`{{ theme }}`"
+            v-bind:user-level="{{ user_level }}"
+    ></edit-sprint>
+{% endblock %}

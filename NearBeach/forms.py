@@ -1364,6 +1364,18 @@ class UpdateRFCStatus(forms.ModelForm):
         ]
 
 
+class UpdateSprintForm(forms.ModelForm):
+    # Basic Meta Data
+    class Meta:
+        model = Sprint
+        fields = [
+            "sprint_name",
+            "sprint_status",
+            "sprint_end_date",
+            "sprint_start_date",
+        ]
+
+
 class UpdateUserForm(forms.ModelForm):
     first_name = forms.CharField(
         max_length=255,

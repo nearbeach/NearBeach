@@ -30,13 +30,17 @@
 					v-for="(day, index) in dateArray"
 					v-bind:data-job-date="day.date"
 					v-bind:data-index="index"
+					v-bind:move="move"
 					:key="day.date"
 					:list="day.data"
 					@end="onEnd($event)"
+
 				>
 					<template #item="{ element }">
 						<div class="list-group-item"
-							v-bind:data-user-job-id="element.user_job_id"
+							 v-bind:data-user-job-id="element.user_job_id"
+							 v-bind:data-object-type="element.object_type"
+							 v-bind:data-location-id="element.location_id"
 						>
 							<div v-if="element.higher_order_status !== 'Closed'"
 								class="card-priority-line priority-normal"></div>
@@ -66,6 +70,7 @@
 		></confirm-user-job-delete>
 
 		<new-planner-object-wizard
+			v-bind:date-array="dateArray"
 			v-on:update_date_array="updateDateArray($event)"
 		></new-planner-object-wizard>
 	</n-config-provider>
@@ -79,6 +84,8 @@ import { Modal } from "bootstrap";
 //Component
 import ConfirmUserJobDelete from "./ConfirmUserJobDelete.vue";
 import NewPlannerObjectWizard from "./NewPlannerObjectWizard.vue";
+
+//Composable
 import {CarbonTrashCan} from "../../components";
 
 //Composables
@@ -151,13 +158,46 @@ export default {
 					return "----";
 			}
 		},
+		move(event) {
+			//Get object data
+			const new_elem = event.to;
+			const object_type = event.dragged.dataset.objectType;
+			const location_id = event.dragged.dataset.locationId;
+
+			//Check to make sure the object does not already exist in the final location
+			const object_exists = this.dateArray.filter((row) => {
+				return row.date === new_elem.dataset.jobDate;
+			})[0].data.filter((row) => {
+				const condition_1 = row.object_type.toLowerCase() === object_type.toLowerCase();
+				const condition_2 = parseInt(row.location_id) === parseInt(location_id);
+
+				return condition_1 && condition_2;
+			}).length > 0;
+
+			//Check to see if the object exists
+			if (object_exists) {
+				//Notify the user
+				this.$store.dispatch("newToast", {
+					header: "Object Already Exists",
+					message: `Sorry, the ${object_type} already exists on ${new_elem.dataset.jobDate}.`,
+					extra_classes: "bg-info",
+					unique_type: "move_planner_card",
+					delay: 1750,
+				});
+
+				//Do nothing
+				return false;
+			}
+
+			return true;
+		},
 		removeUserJob() {
 			this.dateArray[this.confirmIndex].data = this.dateArray[this.confirmIndex].data.filter((row) => {
 				return row.user_job_id !== this.confirmIdToDelete;
 			});
 		},
 		onEnd(event) {
-			//Short hand some varibales
+			//Short hand some variables
 			const new_elem = event.to;
 			const old_elem = event.from;
 			const user_job_id = event.item.dataset.userJobId;

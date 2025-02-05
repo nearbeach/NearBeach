@@ -1042,6 +1042,11 @@ urlpatterns = [
         name="sprint_information_delete",
     ),
     path(
+        "sprint_information/<int:sprint_id>/edit/",
+        sprint_views.edit_sprint,
+        name="sprint_information_edit"
+    ),
+    path(
         "sprint_information/<int:sprint_id>/finish_sprint/",
         sprint_views.finish_sprint,
         name="sprint_information_finish_sprint",
@@ -1050,6 +1055,11 @@ urlpatterns = [
         "sprint_information/<int:sprint_id>/start_sprint/",
         sprint_views.start_sprint,
         name="sprint_information_start_sprint",
+    ),
+    path(
+        "sprint_information/<int:sprint_id>/update_sprint/",
+        sprint_views.update_sprint,
+        name="sprint_information_update"
     ),
     # Tags
     path("tag/delete/<int:tag_id>/", tag_views.delete_tag, name="delete_tag"),

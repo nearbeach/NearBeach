@@ -45,8 +45,11 @@
 							Finish Sprint
 						</a>
 					</li>
-					<li v-if="userLevel >= 2 && sprintStatus !== 'Finished'">
+					<li v-if="userLevel >= 2">
 						<hr class="dropdown-divider">
+						<a class="dropdown-item"
+						   v-bind:href="`${this.rootUrl}sprint_information/${this.sprintId}/edit/`"
+						>Edit Sprint</a>
 					</li>
 					<li v-if="userLevel >= 2 && sprintStatus !== 'Finished'">
 						<a class="dropdown-item"
@@ -112,6 +115,7 @@ export default {
 		return {
 			parentObjectDestination: "",
 			parentObjectLocationId: 0,
+			sprintId: this.sprintResults[0].sprint_id,
 			sprintStatus: this.sprintResults[0].sprint_status,
 		}
 	},
