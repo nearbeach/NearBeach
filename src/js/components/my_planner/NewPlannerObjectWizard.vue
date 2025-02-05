@@ -193,7 +193,14 @@ export default {
 		NSelect,
 	},
 	emits: ['update_date_array'],
-	props: {},
+	props: {
+		dateArray: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
+	},
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",
@@ -223,10 +230,42 @@ export default {
 					label: "Task",
 				},
 			],
-			searchTermModel: "",
+			searchTermModel: "----",
 		};
 	},
 	methods: {
+		getFilteredResults() {
+			//Filter the object results and exclude any objects that already exist on today
+			const data = this.dateArray.filter(row => row.date === this.dayModel)[0].data;
+			const object_results = this.objectResults.filter((row) => {
+				const count_of_already_existing = data.filter((row_object) => {
+					//Match the object results to those already existing on today
+					const condition_1 = row.destination.toLowerCase() === row_object.object_type.toLowerCase();
+					const condition_2 = parseInt(row.location_id) === parseInt(row_object.location_id);
+
+					return condition_1 && condition_2;
+				}).length;
+
+				//Only return if there are no objects on today
+				return count_of_already_existing === 0;
+			});
+
+			//If the search bar is empty - we don't do anything
+			if (
+				this.searchTermModel === "" ||
+				this.searchTermModel === null
+			) {
+				this.objectFilteredResults = object_results;
+				return;
+			}
+
+			//Update the filters by checking to see if the string matches
+			this.objectFilteredResults = object_results.filter((row) => {
+				return row.title.toLowerCase().includes(
+					this.searchTermModel.toLowerCase()
+				)
+			});
+		},
 		renderObjectId(data) {
 			switch (data.destination) {
 				case "kanban_card":
@@ -302,6 +341,19 @@ export default {
 		},
 	},
 	watch: {
+		dateArray: {
+			handler() {
+				this.getFilteredResults();
+			},
+			deep: true,
+		},
+		dayModel() {
+			//Day model changed, remove all ticked objects
+			this.linkModel = [];
+
+			//Update filted results
+			this.getFilteredResults();
+		},
 		objectModel() {
 			//Clear data
 			this.linkModel = [];
@@ -339,20 +391,7 @@ export default {
 			});
 		},
 		searchTermModel() {
-			if (
-				this.searchTermModel === "" ||
-				this.searchTermModel === null
-			) {
-				this.objectFilteredResults = this.objectResults;
-				return;
-			}
-
-			//Update the filters by checking to see if the string matches
-			this.objectFilteredResults = this.objectResults.filter((row) => {
-				return row.title.toLowerCase().includes(
-					this.searchTermModel.toLowerCase()
-				)
-			});
+			this.getFilteredResults();
 		},
 	},
 	mounted() {
