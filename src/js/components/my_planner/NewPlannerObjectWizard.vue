@@ -236,7 +236,12 @@ export default {
 	methods: {
 		getFilteredResults() {
 			//Filter the object results and exclude any objects that already exist on today
-			const data = this.dateArray.filter(row => row.date === this.dayModel)[0].data;
+			const data_array = this.dateArray.filter(row => row.date === this.dayModel);
+			let data = [];
+			if (data_array.length > 0) {
+				data = data_array[0].data;
+			}
+
 			const object_results = this.objectResults.filter((row) => {
 				const count_of_already_existing = data.filter((row_object) => {
 					//Match the object results to those already existing on today
