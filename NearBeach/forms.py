@@ -4,7 +4,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.db.models import Case, When
 
-# Import from Models
+
+# Import from NearBeach
+from .decorators.check_destination import OBJECT_ARRAY
 from .models import (
     Bug,
     Folder,
@@ -1261,6 +1263,13 @@ class SearchForm(forms.Form):
 
 
 class SearchObjectsForm(forms.Form):
+    array_of_objects = forms.MultipleChoiceField(
+        choices=OBJECT_ARRAY,
+        required=True,
+    )
+    destination_page = forms.IntegerField(
+        required=True,
+    )
     include_closed = forms.BooleanField(
         required=False,
         initial=False,

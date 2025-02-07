@@ -156,7 +156,9 @@ def get_object_search_data(search_form, request):
         requirement_results = requirement_results.filter(
             Q(requirement_title__icontains=split_row)
         )
-        project_results = project_results.filter(Q(project_name__icontains=split_row))
+        project_results = project_results.filter(
+            Q(project_name__icontains=split_row)
+        )
         task_results = task_results.filter(
             Q(task_short_description__icontains=split_row)
         )
