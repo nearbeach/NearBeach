@@ -12,6 +12,7 @@ from NearBeach.models import (
     UserGroup,
 )
 import json
+import math
 
 # Define global variables
 SEARCH_PAGE_SIZE = getattr(settings, 'SEARCH_PAGE_SIZE', 5)
@@ -32,7 +33,7 @@ class SearchObjects:
             "fields": [
                 "project_id",
                 "project_name",
-                "project_status_text",
+                "project_status",
             ],
             "objects": Project.objects,
             "title": "project_name",
@@ -60,27 +61,31 @@ class SearchObjects:
             "fields": [
                 "task_id",
                 "task_short_description",
-                "task_status_text",
+                "task_status",
             ],
             "objects": Task.objects,
             "title": "task_short_description",
         },
     }
 
-    def get_object_search_results(self, form: SearchObjectsForm, request):
+    results = {}
+
+    def __init__(self, form: SearchObjectsForm, request):
         # Create an empty object to fill
         return_results = {}
 
         for single_object in form.cleaned_data['array_of_objects']:
             # Get the results from the method
-            result = self._get_single_search_object(form, single_object, request)
+            result, count = self._get_single_search_object(form, single_object, request)
 
             # Check to make sure we are not getting None
             if result is not None:
                 result = json.dumps(list(result), cls=DjangoJSONEncoder)
                 return_results[single_object] = json.loads(result)
+                return_results[F"{single_object}_number_of_pages"] = math.ceil(count / SEARCH_PAGE_SIZE)
+                return_results[F"{single_object}_current_page"] = form.cleaned_data["destination_page"]
 
-        return return_results
+        self.results = return_results
 
     def _get_single_search_object(self, form: SearchObjectsForm, object_name, request):
         # Check to make sure we can search for this object
@@ -126,11 +131,11 @@ class SearchObjects:
         include_closed = form.cleaned_data["include_closed"]
 
         # If we are NOT including closed - then we will limit to those with status is_deleted=False
-        if not include_closed & object_name == "request_for_change":
+        if not include_closed and object_name == "request_for_change":
             results = results.exclude(
                 rfc_status__in=(5, 6),
             )
-        elif not include_closed:
+        elif not include_closed and not object_name == "kanban_board":
             results = results.exclude(
                 **{F"{object_name}_status__{object_name}_higher_order_status": "Closed"}
             )
@@ -158,7 +163,8 @@ class SearchObjects:
         # page number
         destination_page = 0 if destination_page <= 0 else destination_page - 1
 
-        return results[destination_page * SEARCH_PAGE_SIZE:(destination_page + 1) * SEARCH_PAGE_SIZE]
+        # Return the results, and length of the complete data set
+        return results[destination_page * SEARCH_PAGE_SIZE:(destination_page + 1) * SEARCH_PAGE_SIZE], len(results)
 
     @staticmethod
     def _get_id_name(object_name):

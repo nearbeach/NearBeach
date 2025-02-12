@@ -6,7 +6,7 @@ from django.db.models import Case, When
 
 
 # Import from NearBeach
-from .decorators.check_destination import OBJECT_ARRAY
+# from .decorators.check_destination import OBJECT_ARRAY
 from .models import (
     Bug,
     Folder,
@@ -51,6 +51,21 @@ OBJECT_STATUS_LOOKUP = {
     "project": ListOfProjectStatus,
     "task": ListOfTaskStatus,
 }
+
+OBJECT_ARRAY = [
+    ("change_task", "change_task"),
+    ("customer", "customer"),
+    ("kanban", "kanban"),
+    ("kanban_board", "kanban_board"),
+    ("kanban_card", "kanban_card"),
+    ("requirement", "requirement"),
+    ("requirement_item", "requirement_item"),
+    ("request_for_change", "request_for_change"),
+    ("organisation", "organisation"),
+    ("project", "project"),
+    ("sprint", "sprint"),
+    ("task", "task"),
+]
 
 
 # CUSTOM Fields
@@ -1265,10 +1280,10 @@ class SearchForm(forms.Form):
 class SearchObjectsForm(forms.Form):
     array_of_objects = forms.MultipleChoiceField(
         choices=OBJECT_ARRAY,
-        required=True,
+        required=False,
     )
     destination_page = forms.IntegerField(
-        required=True,
+        required=False,
     )
     include_closed = forms.BooleanField(
         required=False,

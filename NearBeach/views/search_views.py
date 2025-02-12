@@ -7,6 +7,7 @@ from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
+from NearBeach.decorators.search.search_objects import SearchObjects
 from NearBeach.forms import SearchObjectsForm, SearchForm
 from NearBeach.models import (
     Notification,
@@ -29,6 +30,7 @@ from NearBeach.models import (
 from NearBeach.views.theme_views import get_theme
 from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
+
 
 # Internal Function
 def get_object_search_data(search_form, request):
@@ -204,7 +206,7 @@ def get_object_search_data(search_form, request):
         "requirement": json.loads(requirement_results),
         "project": json.loads(project_results),
         "task": json.loads(task_results),
-        "kanban": json.loads(kanban_results),
+        "kanban_board": json.loads(kanban_results),
     }
 
 
@@ -260,23 +262,12 @@ def search(request):
     :param request:
     :return:
     """
-    form = SearchObjectsForm(request.POST)
+    form = SearchForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
     # Template
     t = loader.get_template("NearBeach/search/search.html")
-
-    # Translate the include closed, from Python Boolean to JavaScript boolean
-    if form.cleaned_data["include_closed"]:  # If exists and true
-        include_closed = "true"
-    else:
-        include_closed = "false"
-
-    if form.cleaned_data["include_all_groups"]:
-        include_all_groups = "true"
-    else:
-        include_all_groups = "false"
 
     # Translate the is_superuser, from Python Boolean to JavaScript boolean
     if request.user.is_superuser:
@@ -286,13 +277,10 @@ def search(request):
 
     # Context
     c = {
-        "include_all_groups": include_all_groups,
-        "include_closed": include_closed,
         "is_superuser": is_superuser,
         "need_tinymce": False,
         "nearbeach_title": "Search",
         "search_input": form.cleaned_data["search"],
-        "search_results": get_object_search_data(form, request),
         "theme": get_theme(request),
     }
 
@@ -311,8 +299,12 @@ def search_data(request):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    # results = SEARCH_OBJECT.get_object_search_databject_search_results(form, request)
+    search_results = SearchObjects(form, request)
+
     # Return the JSON data
-    return JsonResponse(get_object_search_data(form, request))
+    # return JsonResponse(get_object_search_data(form, request))
+    return JsonResponse(search_results.results)
 
 
 @login_required(login_url="login", redirect_field_name="")
