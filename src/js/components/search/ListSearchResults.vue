@@ -10,14 +10,14 @@
 			></render-object-card>
 
 			<nav v-bind:aria-label="`Pagination for ${importVariables.header}`"
-				v-if="number_of_pages > 1"
+				v-if="numberOfPages > 1"
 			>
 				<ul class="pagination justify-content-center"
 				>
-					<li v-for="index in number_of_pages"
+					<li v-for="index in numberOfPages"
 						v-bind:class="getClasses(index)"
 					>
-						<a v-if="parseInt(index) !== parseInt(current_page)"
+						<a v-if="parseInt(index) !== parseInt(currentPage)"
 							class="page-link"
 						   	href="javascript:void(0)"
 						   	v-on:click="changePage(index)"
@@ -46,7 +46,7 @@ export default {
 		RenderObjectCard,
 	},
 	props: {
-		current_page: {
+		currentPage: {
 			type: Number,
 			default: 0,
 		},
@@ -66,7 +66,7 @@ export default {
 				};
 			},
 		},
-		number_of_pages: {
+		numberOfPages: {
 			type: Number,
 			default: 0,
 		},
@@ -87,12 +87,12 @@ export default {
 			});
 		},
 		getClasses(index) {
-			if (parseInt(index) === this.current_page) {
+			if (parseInt(index) === this.currentPage) {
 				return "page-item active";
 			}
 
 			return "page-item";
-		}
+		},
 	}
 };
 </script>

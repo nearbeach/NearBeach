@@ -47,10 +47,10 @@
 		<!-- REQUEST FOR CHANGE RESULTS -->
 		<list-search-results
 			v-if="searchResults.request_for_change.length > 0"
-			v-bind:current_page="searchResults.request_for_change_current_page"
+			v-bind:currentPage="searchResults.request_for_change_current_page"
 			v-bind:search-results="searchResults.request_for_change"
 			v-bind:import-variables="requestForChangeVariables"
-			v-bind:number_of_pages="searchResults.request_for_change_number_of_pages"
+			v-bind:number-of-pages="searchResults.request_for_change_number_of_pages"
 			v-on:get_search_results="getSearchResults($event)"
 			destination="rfc"
 		></list-search-results>
@@ -58,10 +58,10 @@
 		<!-- REQUIREMENTS RESULTS -->
 		<list-search-results
 			v-if="searchResults.requirement.length > 0"
-			v-bind:current_page="searchResults.requirement_current_page"
+			v-bind:currentPage="searchResults.requirement_current_page"
 			v-bind:search-results="searchResults.requirement"
 			v-bind:import-variables="requirementVariables"
-			v-bind:number_of_pages="searchResults.requirement_number_of_pages"
+			v-bind:number-of-pages="searchResults.requirement_number_of_pages"
 			v-on:get_search_results="getSearchResults($event)"
 			destination="requirement"
 		></list-search-results>
@@ -69,10 +69,10 @@
 		<!-- PROJECT RESULTS -->
 		<list-search-results
 			v-if="searchResults.project.length > 0"
-			v-bind:current_page="searchResults.project_current_page"
+			v-bind:currentPage="searchResults.project_current_page"
 			v-bind:search-results="searchResults.project"
 			v-bind:import-variables="projectVariables"
-			v-bind:number_of_pages="searchResults.project_number_of_pages"
+			v-bind:number-of-pages="searchResults.project_number_of_pages"
 			v-on:get_search_results="getSearchResults($event)"
 			destination="project"
 		></list-search-results>
@@ -80,10 +80,10 @@
 		<!-- TASK RESULTS -->
 		<list-search-results
 			v-if="searchResults.task.length > 0"
-			v-bind:current_page="searchResults.task_current_page"
+			v-bind:currentPage="searchResults.task_current_page"
 			v-bind:search-results="searchResults.task"
 			v-bind:import-variables="taskVariables"
-			v-bind:number_of_pages="searchResults.task_number_of_pages"
+			v-bind:number-of-pages="searchResults.task_number_of_pages"
 			v-on:get_search_results="getSearchResults($event)"
 			destination="task"
 		></list-search-results>
@@ -91,10 +91,10 @@
 		<!-- KANBAN RESULTS -->
 		<list-search-results
 			v-if="searchResults.kanban_board.length > 0"
-			v-bind:current_page="searchResults.kanban_board_current_page"
+			v-bind:currentPage="searchResults.kanban_board_current_page"
 			v-bind:search-results="searchResults.kanban_board"
 			v-bind:import-variables="kanbanVariables"
-			v-bind:number_of_pages="searchResults.kanban_board_number_of_pages"
+			v-bind:number-of-pages="searchResults.kanban_board_number_of_pages"
 			v-on:get_search_results="getSearchResults($event)"
 			destination="kanban"
 		></list-search-results>
@@ -155,30 +155,30 @@ export default {
 			kanbanVariables: {
 				header: "Kanban",
 				prefix: "Kb",
-				id: "kanban_board_id",
-				title: "kanban_board_name",
-				status: "kanban_board_status",
+				id: "id",
+				title: "title",
+				status: "status",
 			},
 			projectVariables: {
 				header: "Projects",
 				prefix: "Pro",
-				id: "project_id",
-				title: "project_name",
-				status: "project_status_text",
+				id: "id",
+				title: "title",
+				status: "status",
 			},
 			requestForChangeVariables: {
 				header: "Request for Change",
 				prefix: "Rfc",
-				id: "rfc_id",
-				title: "rfc_title",
-				status: "rfc_status__rfc_status",
+				id: "id",
+				title: "title",
+				status: "status",
 			},
 			requirementVariables: {
 				header: "Requirements",
 				prefix: "Req",
-				id: "requirement_id",
-				title: "requirement_title",
-				status: "requirement_status__requirement_status",
+				id: "id",
+				title: "title",
+				status: "status",
 			},
 			searchModel: this.searchInput,
 			searchResults: {
@@ -192,9 +192,9 @@ export default {
 			taskVariables: {
 				header: "Tasks",
 				prefix: "Task",
-				id: "task_id",
-				title: "task_short_description",
-				status: "task_status_text",
+				id: "id",
+				title: "title",
+				status: "status",
 			},
 		};
 	},

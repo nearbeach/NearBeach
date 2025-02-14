@@ -251,7 +251,6 @@ export default {
 
 			//Use axios to get the list
 			this.axios.post(
-				// `${this.rootUrl}object_data/sprint/${this.locationId}/${new_value}/link_list/`,
 				`${this.rootUrl}object_data/sprint/${this.locationId}/${new_value}/potential_object_list/`,
 			).then((response) => {
 				//Update local response

@@ -260,31 +260,26 @@ export default {
 			this.isSearching = true;
 
 			//Now to use axios to get the data we require
-			this.axios
-				.post(
-					`${this.rootUrl}object_data/${this.destination}/${
-						this.locationId
-					}/${this.objectModel.toLowerCase()}/link_list/`
-				)
-				.then((response) => {
-					//Load the data into the array
-					this.objectResults = response.data;
-					this.objectFilteredResults = response.data;
+			this.axios.post(
+				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
+			).then((response) => {
+				//Load the data into the array
+				this.objectResults = response.data;
+				this.objectFilteredResults = response.data;
 
-					//Tell the user we are no longer searching
-					this.isSearching = false;
+				//Tell the user we are no longer searching
+				this.isSearching = false;
 
-					//Clear the search term results
-					this.searchTermModel = "";
-				})
-				.catch(() => {
-					this.$store.dispatch("newToast", {
-						header: "Error retrieving links",
-						message: "We are currently having issues obtaining data",
-						delay: 0,
-						extra_classes: "bg-danger",
-					});
+				//Clear the search term results
+				this.searchTermModel = "";
+			}).catch(() => {
+				this.$store.dispatch("newToast", {
+					header: "Error retrieving links",
+					message: "We are currently having issues obtaining data",
+					delay: 0,
+					extra_classes: "bg-danger",
 				});
+			});
 		},
 		searchTermModel() {
 			//If search term model is empty - just return all results

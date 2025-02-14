@@ -1,5 +1,5 @@
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
+from django.db.models import Q, F
 from django.conf import settings
 from NearBeach.forms import SearchObjectsForm
 from NearBeach.models import (
@@ -8,6 +8,7 @@ from NearBeach.models import (
     Project,
     RequestForChange,
     Requirement,
+    RequirementItem,
     Task,
     UserGroup,
 )
@@ -21,48 +22,56 @@ SEARCH_PAGE_SIZE = getattr(settings, 'SEARCH_PAGE_SIZE', 5)
 class SearchObjects:
     OBJECT_SETUP = {
         "kanban_board": {
-            "fields": [
-                "kanban_board_id",
-                "kanban_board_name",
-                "kanban_board_status",
-            ],
+            "fields": {
+                "id": "kanban_board_id",
+                "title": "kanban_board_name",
+                "status": "kanban_board_status",
+            },
             "objects": KanbanBoard.objects,
             "title": "kanban_board_name",
         },
         "project": {
-            "fields": [
-                "project_id",
-                "project_name",
-                "project_status",
-            ],
+            "fields": {
+                "id": "project_id",
+                "title": "project_name",
+                "status": "project_status__project_status",
+            },
             "objects": Project.objects,
             "title": "project_name",
         },
         "request_for_change": {
-            "fields": [
-                "rfc_id",
-                "rfc_title",
-                "rfc_status",
-                "rfc_status__rfc_status",
-            ],
+            "fields": {
+                "id": "rfc_id",
+                "title": "rfc_title",
+                "status": "rfc_status__rfc_status",
+            },
             "objects": RequestForChange.objects,
             "title": "rfc_title",
         },
         "requirement": {
-            "fields": [
-                "requirement_id",
-                "requirement_title",
-                "requirement_status__requirement_status",
-            ],
+            "fields": {
+                "id": "requirement_id",
+                "title": "requirement_title",
+                "status": "requirement_status__requirement_status",
+            },
             "objects": Requirement.objects,
             "title": "requirement_title",
         },
+        "requirement_item": {
+            "fields": {
+                "id": "requirement_item_id",
+                "title": "requirement_item_title",
+                "status": "requirement_item_status__requirement_item_status",
+            },
+            "objects": RequirementItem.objects,
+            "title": "requirement_item_title",
+        },
         "task": {
-            "fields": [
-                "task_id",
-                "task_short_description",
-                "task_status",
-            ],
+            "fields": {
+                "id": "task_id",
+                "title": "task_short_description",
+                "status": "task_status__task_status",
+            },
             "objects": Task.objects,
             "title": "task_short_description",
         },
@@ -97,8 +106,14 @@ class SearchObjects:
 
         results = data["objects"].filter(
             is_deleted=False,
+        ).annotate(
+            id=F(data["fields"]["id"]),
+            title=F(data["fields"]["title"]),
+            status=F(data["fields"]["status"]),
         ).values(
-            *data["fields"],
+            "id",
+            "title",
+            "status",
         )
 
         # Determine if a user is NOT being limited.
@@ -155,6 +170,23 @@ class SearchObjects:
                         **{F"{self._get_id_name(object_name)}": split_row}
                     )
                 )
+
+        # EXCLUSION OF RESULTS
+        # There are some requests that come through that need to be
+        # excluded
+        exclude_destination = form.cleaned_data["exclude_destination"]
+        exclude_location_id = form.cleaned_data["exclude_location_id"]
+        if not exclude_destination is "" and not exclude_location_id is None:
+            # shortcut variable
+            id_field = self._get_id_name(object_name)
+
+            results = results.exclude(
+                **{F"{id_field}__in": ObjectAssignment.objects.filter(
+                    is_deleted=False,
+                    **{F"{object_name}_id__isnull": False},
+                    **{F"{exclude_destination}_id": exclude_location_id},
+                ).values(F"{object_name}_id")}
+            )
 
         # Pagination :D
         destination_page = form.cleaned_data["destination_page"]

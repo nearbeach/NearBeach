@@ -72,7 +72,9 @@
 					<hr/>
 
 					<!-- SELECTING WHICH OBJECTS TO LINK TO -->
-					<div class="row">
+					<div class="row" id="select_links"
+						 v-bind:style="styleHeight"
+					>
 						<div class="col-md-4">
 							<strong>Select Links</strong>
 							<p class="text-instructions">
@@ -81,17 +83,6 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							<!-- LOADING PLACEHOLDER -->
-							<div
-								id="link_wizard_results"
-								v-if="isSearching || objectModel == null"
-							>
-								<img
-									v-bind:src="`${staticUrl}/NearBeach/images/placeholder/search.svg`"
-									alt="Searching..."
-								/>
-							</div>
-
 							<div
 								v-if="
 									objectResults.length === 0 &&
@@ -126,7 +117,7 @@
 											{{objectModel}} {{ result.id }}
 										</div>
 										<div>
-											<strong>{{ result.description }}</strong>
+											<strong>{{ result.title }}</strong>
 										</div>
 										<div>
 											Status:
@@ -134,6 +125,30 @@
 										</div>
 									</div>
 								</div>
+
+								<nav v-bind:aria-label="`Pagination for New Link Wizard`"
+									 v-if="numberOfPages > 1"
+								>
+									<ul class="pagination justify-content-center"
+									>
+										<li v-for="index in numberOfPages"
+											v-bind:class="getClasses(index)"
+										>
+											<a v-if="parseInt(index) !== parseInt(currentPage)"
+											   class="page-link"
+											   href="javascript:void(0)"
+											   v-on:click="changePage(index)"
+											>
+												{{ index }}
+											</a>
+											<span v-else
+												  class="page-link"
+											>
+												{{ index }}
+											</span>
+										</li>
+									</ul>
+								</nav>
 							</div>
 						</div>
 					</div>
@@ -193,6 +208,7 @@ export default {
 	},
 	data() {
 		return {
+			currentPage: 1,
 			isSearching: false,
 			objectModel: null,
 			objectRelation: [
@@ -207,9 +223,82 @@ export default {
 				{value: "Task", label: "Task"},
 			],
 			linkModel: [],
+			numberOfPages: 1,
+			styleHeight: "height: 0px",
 		};
 	},
+	watch: {
+		objectModel() {
+			this.getObjects();
+		},
+	},
 	methods: {
+		changePage(index) {
+			this.currentPage = index;
+			this.getObjects();
+		},
+		getClasses(index) {
+			if (parseInt(index) === this.currentPage) {
+				return "page-item active";
+			}
+
+			return "page-item";
+		},
+		getObjects() {
+			//Clear data
+			this.linkModel = [];
+
+			//Handle the relationship field
+			this.handleRelationship();
+
+			//User has chosen an object.
+			if (this.objectModel === null) {
+				//Ok - then removed the objects. We don't need to do anything
+				this.isSearching = false;
+				return;
+			}
+
+			const data_to_send = new FormData();
+			data_to_send.append("array_of_objects", this.objectModel.toLowerCase());
+			data_to_send.set("destination_page", this.currentPage);
+			data_to_send.set("exclude_destination", this.destination);
+			data_to_send.set("exclude_location_id", this.locationId);
+
+			//Tell the form that we are searching
+			this.isSearching = true;
+
+			//Now to use axios to get the data we require
+			this.axios.post(
+				// `${this.rootUrl}object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
+				`${this.rootUrl}search/data/`,
+				data_to_send,
+			).then((response) => {
+				//Load the data into the array
+				this.objectResults = response.data[this.objectModel.toLowerCase()];
+				this.numberOfPages = response.data[`${this.objectModel.toLowerCase()}_number_of_pages`];
+				this.currentPage = response.data[`${this.objectModel.toLowerCase()}_current_page`];
+
+				//Tell the user we are no longer searching
+				this.isSearching = false;
+
+				//Set style height as nothing
+				this.styleHeight = "";
+
+				this.$nextTick(() => {
+					const select_links = document.getElementById("select_links");
+					if (select_links !== undefined) {
+						this.styleHeight = `height: ${select_links.clientHeight}px`;
+					}
+				})
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Searching",
+					message: `We got an error searching. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		},
 		handleRelationship() {
 			//Depending on what object we are looking for, depends which relationships are allowed. For example, the
 			//requirements and requirement items are only allowed to have the "Of Parent Of" relation ship
@@ -264,45 +353,6 @@ export default {
 
 				//Click on the close button - a hack, but it should close the modal
 				document.getElementById("linkCloseButton").click();
-			});
-		},
-	},
-	watch: {
-		objectModel() {
-			//Clear data
-			this.linkModel = [];
-
-			//Handle the relationship field
-			this.handleRelationship();
-
-			//User has chosen an object.
-			if (this.objectModel === null) {
-				//Ok - then removed the objects. We don't need to do anything
-				this.isSearching = false;
-				return;
-			}
-
-			//Tell the form that we are searching
-			this.isSearching = true;
-
-			//Now to use axios to get the data we require
-			this.axios.post(
-				`${this.rootUrl}object_data/${this.destination}/${
-					this.locationId
-				}/${this.objectModel.toLowerCase()}/link_list/`
-			).then((response) => {
-				//Load the data into the array
-				this.objectResults = response.data;
-
-				//Tell the user we are no longer searching
-				this.isSearching = false;
-			}).catch((error) => {
-				this.$store.dispatch("newToast", {
-					header: "Error Searching",
-					message: `We got an error searching. Error -> ${error}`,
-					extra_classes: "bg-danger",
-					delay: 0,
-				});
 			});
 		},
 	},

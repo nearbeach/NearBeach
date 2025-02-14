@@ -1280,9 +1280,16 @@ class SearchForm(forms.Form):
 class SearchObjectsForm(forms.Form):
     array_of_objects = forms.MultipleChoiceField(
         choices=OBJECT_ARRAY,
-        required=False,
+        required=True,
     )
     destination_page = forms.IntegerField(
+        required=True,
+    )
+    exclude_destination = forms.ChoiceField(
+        choices=OBJECT_ARRAY,
+        required=False,
+    )
+    exclude_location_id = forms.IntegerField(
         required=False,
     )
     include_closed = forms.BooleanField(

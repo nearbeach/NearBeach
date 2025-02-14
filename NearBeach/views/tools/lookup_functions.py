@@ -30,9 +30,9 @@ def lookup_project(user_group_results, destination, location_id):
             ).values("project_id")
         )
     ).annotate(
-        id = F('project_id'),
-        description = F('project_name'),
-        status = F('project_status__project_status'),
+        id=F('project_id'),
+        description=F('project_name'),
+        status=F('project_status__project_status'),
     ).values(
         'id',
         'description',
@@ -60,9 +60,9 @@ def lookup_task(user_group_results, destination, location_id):
             ).values("task_id")
         )
     ).annotate(
-        id = F('task_id'),
-        description = F('task_short_description'),
-        status = F('task_status__task_status'),
+        id=F('task_id'),
+        description=F('task_short_description'),
+        status=F('task_status__task_status'),
     ).values(
         'id',
         'description',
@@ -79,8 +79,8 @@ def lookup_requirement(user_group_results, *args, **kwargs):
             group_id__in=user_group_results,
         ).values('requirement_id'),
     ).annotate(
-        id = F('requirement_id'),
-        description = F('requirement_title'),
+        id=F('requirement_id'),
+        description=F('requirement_title'),
         status=F('requirement_status__requirement_status'),
     ).exclude(
         requirement_status__requirement_higher_order_status="Closed",
@@ -107,9 +107,9 @@ def lookup_requirement_item(user_group_results, *args, **kwargs):
     ).exclude(
         requirement_item_status__requirement_item_higher_order_status="Closed",
     ).annotate(
-        id = F('requirement_item_id'),
-        description = F('requirement_item_title'),
-        status = F('requirement_item_status__requirement_item_status'),
+        id=F('requirement_item_id'),
+        description=F('requirement_item_title'),
+        status=F('requirement_item_status__requirement_item_status'),
     ).values(
         'id',
         'description',
