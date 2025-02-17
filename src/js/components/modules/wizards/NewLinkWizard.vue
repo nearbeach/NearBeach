@@ -72,7 +72,8 @@
 					<hr/>
 
 					<!-- SELECTING WHICH OBJECTS TO LINK TO -->
-					<div class="row" id="select_links"
+					<div id="select_links"
+						 class="row"
 						 v-bind:style="styleHeight"
 					>
 						<div class="col-md-4">
@@ -83,6 +84,17 @@
 							</p>
 						</div>
 						<div class="col-md-8">
+							<div class="row"
+								 v-if="objectModel !== '' && objectModel !== null"
+							>
+								<div class="form-group">
+									<label>Search</label>
+									<input type="text"
+										   class="form-control"
+										   v-model="searchModel"
+									/>
+								</div>
+							</div>
 							<div
 								v-if="
 									objectResults.length === 0 &&
@@ -224,12 +236,29 @@ export default {
 			],
 			linkModel: [],
 			numberOfPages: 1,
-			styleHeight: "height: 0px",
+			searchModel: "",
+			searchTimeout: "",
+			styleHeight: "height: 90px",
 		};
 	},
 	watch: {
 		objectModel() {
 			this.getObjects();
+		},
+		searchModel() {
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Only search if there are either 0 characters, or more than 3
+			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
+				this.searchTimeout = setTimeout(() => {
+					//Use change page, as we should change the page back to destination page 1
+					this.changePage(1);
+				}, 500);
+			}
 		},
 	},
 	methods: {
@@ -263,13 +292,13 @@ export default {
 			data_to_send.set("destination_page", this.currentPage);
 			data_to_send.set("exclude_destination", this.destination);
 			data_to_send.set("exclude_location_id", this.locationId);
+			data_to_send.set("search", this.searchModel);
 
 			//Tell the form that we are searching
 			this.isSearching = true;
 
 			//Now to use axios to get the data we require
 			this.axios.post(
-				// `${this.rootUrl}object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
 				`${this.rootUrl}search/data/`,
 				data_to_send,
 			).then((response) => {
@@ -289,7 +318,7 @@ export default {
 					if (select_links !== undefined) {
 						this.styleHeight = `height: ${select_links.clientHeight}px`;
 					}
-				})
+				});
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error Searching",
@@ -353,6 +382,9 @@ export default {
 
 				//Click on the close button - a hack, but it should close the modal
 				document.getElementById("linkCloseButton").click();
+
+				//Shrink the style height
+				this.styleHeight = "height: 90px";
 			});
 		},
 	},

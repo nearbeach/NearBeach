@@ -5,6 +5,7 @@ from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from NearBeach.decorators.search.search_objects import SearchObjects
@@ -30,6 +31,11 @@ from NearBeach.models import (
 from NearBeach.views.theme_views import get_theme
 from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
+
+import math
+
+# Define global variables
+SEARCH_PAGE_SIZE = getattr(settings, 'SEARCH_PAGE_SIZE', 5)
 
 
 # Internal Function
@@ -253,7 +259,14 @@ def get_sprint_search_data(search_form, request):
         "sprint_status",
     )
 
-    return json.dumps(list(sprint_results), cls=DjangoJSONEncoder)
+    # Pagination :D
+    destination_page = search_form.cleaned_data["destination_page"]
+
+    # Apply the shift of the destination page, as we should -1 the value. Due to the front end sending the actual
+    # page number
+    destination_page = 0 if destination_page <= 0 else destination_page - 1
+
+    return sprint_results[destination_page * SEARCH_PAGE_SIZE:(destination_page + 1) * SEARCH_PAGE_SIZE], len(sprint_results)
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -639,24 +652,12 @@ def search_sprint(request, *args, **kwargs):
     :param request:
     :return:
     """
-    form = SearchObjectsForm(request.POST)
-    if not form.is_valid():
-        return HttpResponseBadRequest(form.errors)
-
     # Template
     t = loader.get_template("NearBeach/search/search_sprints.html")
 
-    # Translate the include closed, from Python Boolean to JavaScript boolean
-    if form.cleaned_data["include_closed"]:  # If exists and true
-        include_closed = "true"
-    else:
-        include_closed = "false"
-
     c = {
-        "include_closed": include_closed,
         "need_tinymce": False,
         "nearbeach_title": "Search Sprints",
-        "sprint_results": get_sprint_search_data(form, request),
         "theme": get_theme(request),
     }
 
@@ -670,8 +671,19 @@ def search_sprint_data(request):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    # Get the results
+    results, count = get_sprint_search_data(form, request)
+    results = json.dumps(list(results), cls=DjangoJSONEncoder)
+
+    # Construct Return Results
+    return_results = {
+        "sprint": json.loads(results),
+        "sprint_number_of_pages": math.ceil(count / SEARCH_PAGE_SIZE),
+        "sprint_current_page": form.cleaned_data["destination_page"]
+    }
+
     # Return the JSON data
-    return JsonResponse(json.loads(get_sprint_search_data(form, request)), safe=False)
+    return JsonResponse(return_results)
 
 
 @login_required(login_url="login", redirect_field_name="")

@@ -34,15 +34,18 @@
 
 		<!-- SPRINTS -->
 		<list-search-results
-			v-if="localSearchResults.length > 0"
-			v-bind:search-results="localSearchResults"
+			v-if="searchResults.length > 0"
+			v-bind:search-results="searchResults"
 			v-bind:import-variables="sprintVariables"
+			v-bind:number-of-pages="numberOfPages"
+			v-bind:current-page="currentPage"
+			v-on:get_search_results="changePage"
 			destination="sprint"
 		></list-search-results>
 
 		<!-- WHEN THERE ARE NO RESULTS -->
 		<div
-			v-if="localSearchResults.length === 0"
+			v-if="searchResults.length === 0"
 			class="alert alert-warning"
 		>
 			Sorry - but there are currently no sprints matching the search terms
@@ -60,30 +63,16 @@ export default {
 		ListSearchResults,
 	},
 	props: {
-		includeClosed: {
-			type: Boolean,
-			default: false,
-		},
 		rootUrl: {
 			type: String,
 			default: "/",
 		},
-		searchInput: {
-			type: String,
-			required: false,
-			default: "",
-		},
-		searchResults: {
-			type: Array,
-			required: true,
-			default: () => {
-				return [];
-			},
-		},
 	},
 	data() {
 		return {
+			currentPage: 1,
 			includeClosedObjectsModel: this.includeClosed,
+			numberOfPages: 1,
 			sprintVariables: {
 				header: "Sprint",
 				prefix: "spr",
@@ -91,28 +80,43 @@ export default {
 				title: "sprint_name",
 				status: "sprint_status",
 			},
-			localSearchResults: this.searchResults,
-			searchModel: this.searchInput,
+			searchModel: "",
+			searchResults: [],
 			searchTimeout: "",
 		};
 	},
 	methods: {
+		changePage(data) {
+			this.currentPage = data.destination_page;
+			this.getSearchResults();
+		},
+		getClasses(index) {
+			if (parseInt(index) === this.currentPage) {
+				return "page-item active";
+			}
+
+			return "page-item";
+		},
 		getSearchResults() {
 			// Setup the data_to_send
 			const data_to_send = new FormData();
 			data_to_send.set("search", this.searchModel);
-			data_to_send.set(
-				"include_closed",
-				this.includeClosedObjectsModel
-			);
+			data_to_send.set("include_closed", this.includeClosedObjectsModel);
+			data_to_send.set("array_of_objects", "sprint");
+			data_to_send.set("destination_page", this.currentPage);
 
 			//Use axios to request data
 			this.axios.post(
 				`${this.rootUrl}search/sprint/data/`,
 				data_to_send
 			).then((response) => {
-				//Update the localSearchResults with the data
-				this.localSearchResults = response.data;
+				console.log("Response.Data: ", response.data);
+				//Update the searchResults with the data
+				this.searchResults = response.data.sprint;
+				this.numberOfPages = response.data.sprint_number_of_pages;
+				this.currentPage = response.data.sprint_current_page;
+
+
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Failed to get search results",

@@ -45,6 +45,9 @@ export default {
 	components: {
 		RenderObjectCard,
 	},
+	emits: [
+		"get_search_results",
+	],
 	props: {
 		currentPage: {
 			type: Number,

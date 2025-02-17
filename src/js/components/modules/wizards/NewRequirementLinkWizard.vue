@@ -46,7 +46,10 @@
 					<hr/>
 
 					<!-- SELECTING WHICH OBJECTS TO LINK TO -->
-					<div class="row">
+					<div id="select_links"
+						 class="row"
+						 v-bind:style="styleHeight"
+					>
 						<div class="col-md-4">
 							<strong>Select Links</strong>
 							<p class="text-instructions">
@@ -55,22 +58,8 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							<!-- LOADING PLACEHOLDER -->
 							<div
-								id="link_wizard_results"
-								v-if="isSearching || objectModel == null"
-							>
-								<img
-									v-bind:src="`${staticUrl}/NearBeach/images/placeholder/search.svg`"
-									alt="Searching..."
-								/>
-							</div>
-
-							<div
-								v-if="
-									objectResults.length === 0 &&
-									objectModel != null
-								"
+								v-if="objectResults.length === 0 && objectModel != null"
 								class="alert alert-warning"
 							>
 								Sorry - there are no results.
@@ -79,71 +68,75 @@
 							<!-- SEARCH RESULTS -->
 							<div
 								class="form-group"
-								v-if="
-									!isSearching &&
-									objectResults.length > 0 &&
-									objectModel != null
-								"
+								v-if="objectModel != null"
 							>
-								<label>Search Terms</label>
+								<label>Filter</label>
 								<input
 									id="search_terms"
 									class="form-control"
-									v-model="searchTermModel"
+									v-model="searchModel"
 									type="text"
 								/>
 							</div>
 							<br/>
 
-							<!-- TABLE CONTAINING RESULTS -->
-							<table
-								class="table"
-								v-if="
-									!isSearching &&
-									objectResults.length > 0 &&
-									objectModel != null
-								"
+							<div class="wizard-results"
+								 v-if="!isSearching &&
+										objectResults.length > 0 &&
+										objectModel != null"
 							>
-								<thead>
-								<tr>
-									<td>{{ objectModel }} Description</td>
-									<td>Status</td>
-								</tr>
-								</thead>
-
-								<!-- PROJECTS -->
-								<tbody>
-								<tr
-									v-for="result in objectFilteredResults"
-									:key="result.id"
+								<div class="wizard-results--card"
+									 v-for="result in objectResults"
+									 :key="result.id"
 								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="checkbox"
-												v-bind:value="result.id"
-												v-bind:id="`checkbox_${objectModel.toLowerCase()}_${result.id}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`checkbox_${objectModel.toLowerCase()}_${result.id}`"
-											>
-												{{ result.description }}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
+									<div class="wizard-results--card--tick">
+										<input
+											class="form-check-input"
+											type="checkbox"
+											name="link-option"
+											v-bind:value="result.id"
+											v-bind:id="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
+											v-model="linkModel"
+										/>
+									</div>
+									<div class="wizard-results--card--content">
+										<div class="text-instructions">
 											{{objectModel}} {{ result.id }}
-										</p>
-									</td>
-									<td>
-										{{ result.status }}
-									</td>
-								</tr>
-								</tbody>
-							</table>
+										</div>
+										<div>
+											<strong>{{ result.title }}</strong>
+										</div>
+										<div>
+											Status:
+											<span class="text-instructions">{{ result.status }}</span>
+										</div>
+									</div>
+								</div>
+
+								<nav v-bind:aria-label="`Pagination for New Link Wizard`"
+									 v-if="numberOfPages > 1"
+								>
+									<ul class="pagination justify-content-center"
+									>
+										<li v-for="index in numberOfPages"
+											v-bind:class="getClasses(index)"
+										>
+											<a v-if="parseInt(index) !== parseInt(currentPage)"
+											   class="page-link"
+											   href="javascript:void(0)"
+											   v-on:click="changePage(index)"
+											>
+												{{ index }}
+											</a>
+											<span v-else
+												  class="page-link"
+											>
+												{{ index }}
+											</span>
+										</li>
+									</ul>
+								</nav>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -200,19 +193,103 @@ export default {
 	},
 	data() {
 		return {
+			currentPage: 1,
 			isSearching: false,
 			linkModel: [],
+			numberOfPages: 1,
 			objectModel: null,
-			objectFilteredResults: [],
 			objectResults: [],
 			objectSelection: [
 				{value: "Project", label: "Project"},
 				{value: "Task", label: "Task"},
 			],
-			searchTermModel: "",
+			searchModel: "",
+			searchTimeout: "",
+			styleHeight: "height: 90px",
 		};
 	},
+	watch: {
+		objectModel() {
+			this.getObjects();
+		},
+		searchModel() {
+			//Determine if there is a timeout session going on
+			if (this.searchTimeout !== "") {
+				clearTimeout(this.searchTimeout);
+			}
+
+			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
+				this.searchTimeout = setTimeout(() => {
+					this.getObjects();
+				}, 500);
+			}
+		},
+	},
 	methods: {
+		changePage(index) {
+			this.currentPage = index;
+			this.getObjects();
+		},
+		getClasses(index) {
+			if (parseInt(index) === this.currentPage) {
+				return "page-item active";
+			}
+
+			return "page-item";
+		},
+		getObjects() {
+			//Clear data
+			this.linkModel = [];
+
+			//User has chosen an object.
+			if (this.objectModel === null) {
+				//Ok - then removed the objects. We don't need to do anything
+				this.isSearching = false;
+				return;
+			}
+
+			const data_to_send = new FormData();
+			data_to_send.append("array_of_objects", this.objectModel.toLowerCase());
+			data_to_send.set("destination_page", this.currentPage);
+			data_to_send.set("exclude_destination", this.destination);
+			data_to_send.set("exclude_location_id", this.locationId);
+			data_to_send.set("search", this.searchModel);
+
+			//Tell the form that we are searching
+			this.isSearching = true;
+
+			//Now to use axios to get the data we require
+			this.axios.post(
+				`${this.rootUrl}search/data/`,
+				data_to_send,
+			).then((response) => {
+				//Load the data into the array
+				console.log("Response: ", response, " || Object model: ", this.objectModel);
+				this.objectResults = response.data[this.objectModel.toLowerCase()];
+				this.numberOfPages = response.data[`${this.objectModel.toLowerCase()}_number_of_pages`];
+				this.currentPage = response.data[`${this.objectModel.toLowerCase()}_current_page`];
+
+				//Tell the user we are no longer searching
+				this.isSearching = false;
+
+				//Set style height as nothing
+				this.styleHeight = "";
+
+				this.$nextTick(() => {
+					const select_links = document.getElementById("select_links");
+					if (select_links != undefined) {
+						this.styleHeight = `height: ${select_links.clientHeight}px`;
+					}
+				});
+			}).catch(() => {
+				this.$store.dispatch("newToast", {
+					header: "Error retrieving links",
+					message: "We are currently having issues obtaining data",
+					delay: 0,
+					extra_classes: "bg-danger",
+				});
+			});
+		},
 		saveLinks() {
 			// Set up the data object to send
 			const data_to_send = new FormData();
@@ -229,8 +306,7 @@ export default {
 			this.axios.post(
 				`${this.rootUrl}${this.destination}_information/${this.locationId}/add_link/`,
 				data_to_send
-			)
-			.then((response) => {
+			).then((response) => {
 				//Data has been successfully saved. Time to update the requirement links
 				this.$emit("update_module", response.data);
 
@@ -241,75 +317,10 @@ export default {
 
 				//Clear results
 				this.objectModel = null;
+
+				//Set style height
+				this.styleHeight = "height: 90px";
 			});
-		},
-	},
-	watch: {
-		objectModel() {
-			//Clear data
-			this.linkModel = [];
-
-			//User has chosen an object.
-			if (this.objectModel === null) {
-				//Ok - then removed the objects. We don't need to do anything
-				this.isSearching = false;
-				return;
-			}
-
-			//Tell the form that we are searching
-			this.isSearching = true;
-
-			//Now to use axios to get the data we require
-			this.axios.post(
-				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/${this.objectModel.toLowerCase()}/link_list/`
-			).then((response) => {
-				//Load the data into the array
-				this.objectResults = response.data;
-				this.objectFilteredResults = response.data;
-
-				//Tell the user we are no longer searching
-				this.isSearching = false;
-
-				//Clear the search term results
-				this.searchTermModel = "";
-			}).catch(() => {
-				this.$store.dispatch("newToast", {
-					header: "Error retrieving links",
-					message: "We are currently having issues obtaining data",
-					delay: 0,
-					extra_classes: "bg-danger",
-				});
-			});
-		},
-		searchTermModel() {
-			//If search term model is empty - just return all results
-			if (
-				this.searchTermModel === "" ||
-				this.searchTermModel === null
-			) {
-				this.objectFilteredResults = this.objectResults;
-				return;
-			}
-
-			//Update the filters by checking to see if the string matches
-			this.objectFilteredResults = this.objectResults.filter(
-				(row) => {
-					//Get the description from either task or project
-					let description = "";
-					if (row.fields.project_description !== undefined) {
-						description =
-							row.fields.project_description.toLowerCase();
-					} else {
-						description =
-							row.fields.task_short_description.toLowerCase();
-					}
-
-					//Return true or false if the string is inside the description
-					return description.includes(
-						this.searchTermModel.toLowerCase()
-					);
-				}
-			);
 		},
 	},
 };
