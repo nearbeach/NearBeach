@@ -62,20 +62,6 @@ from NearBeach.forms import (
 
 User = get_user_model()
 
-from NearBeach.views.tools.lookup_functions import (
-    lookup_project,
-    lookup_requirement,
-    lookup_task,
-    lookup_requirement_item
-)
-
-# Used for the link list
-LOOKUP_FUNCS = {
-    "project": lookup_project,
-    "task": lookup_task,
-    "requirement": lookup_requirement,
-    "requirement_item": lookup_requirement_item,
-}
 
 OBJECT_DICT = {
     "change_task": {
@@ -1094,29 +1080,6 @@ def lead_user_list(request, *args, **kwargs):
         serializers.serialize("json", user_results),
         content_type="application/json",
     )
-
-
-@require_http_methods(["POST"])
-@login_required(login_url="login", redirect_field_name="")
-@check_destination()
-@check_user_generic_permissions(min_permission_level=1)
-def link_list(request, destination, location_id, object_lookup, *args, **kwargs):
-    # Get user groups
-    user_group_results = UserGroup.objects.filter(
-        is_deleted=False,
-        username=request.user,
-        group_id__isnull=False,
-    ).values("group_id")
-
-    if object_lookup not in LOOKUP_FUNCS:
-        return HttpResponseBadRequest("Sorry - but that object lookup does not exist")
-
-    # Get the data dependent on the object lookup
-    data_results = LOOKUP_FUNCS[object_lookup](user_group_results, destination, location_id)
-
-    # Send the data to the user
-    data_results = json.dumps(list(data_results), cls=DjangoJSONEncoder)
-    return JsonResponse(json.loads(data_results), safe=False)
 
 
 # Internal function

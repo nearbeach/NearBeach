@@ -4,7 +4,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.db.models import Case, When
 
-# Import from Models
+
+# Import from NearBeach
+# from .decorators.check_destination import OBJECT_ARRAY
 from .models import (
     Bug,
     Folder,
@@ -49,6 +51,21 @@ OBJECT_STATUS_LOOKUP = {
     "project": ListOfProjectStatus,
     "task": ListOfTaskStatus,
 }
+
+OBJECT_ARRAY = [
+    ("change_task", "change_task"),
+    ("customer", "customer"),
+    ("kanban", "kanban"),
+    ("kanban_board", "kanban_board"),
+    ("kanban_card", "kanban_card"),
+    ("requirement", "requirement"),
+    ("requirement_item", "requirement_item"),
+    ("request_for_change", "request_for_change"),
+    ("organisation", "organisation"),
+    ("project", "project"),
+    ("sprint", "sprint"),
+    ("task", "task"),
+]
 
 
 # CUSTOM Fields
@@ -1261,6 +1278,20 @@ class SearchForm(forms.Form):
 
 
 class SearchObjectsForm(forms.Form):
+    array_of_objects = forms.MultipleChoiceField(
+        choices=OBJECT_ARRAY,
+        required=True,
+    )
+    destination_page = forms.IntegerField(
+        required=True,
+    )
+    exclude_destination = forms.ChoiceField(
+        choices=OBJECT_ARRAY,
+        required=False,
+    )
+    exclude_location_id = forms.IntegerField(
+        required=False,
+    )
     include_closed = forms.BooleanField(
         required=False,
         initial=False,

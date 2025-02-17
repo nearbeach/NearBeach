@@ -672,11 +672,6 @@ urlpatterns = [
         name="group_and_user_data",
     ),
     path(
-        "object_data/<destination>/<location_id>/<object_lookup>/link_list/",
-        object_data_views.link_list,
-        name="link_list",
-    ),
-    path(
         "object_data/<destination>/<location_id>/<object_lookup>/potential_object_list/",
         sprint_views.potential_object_list,
         name="sprint_potential_object_list",
