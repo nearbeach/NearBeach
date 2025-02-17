@@ -385,7 +385,7 @@ def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
         object_results = Project.objects.filter(
             is_deleted=False,
             project_id__in=object_assignment_results.filter(
-                project_id__isnull=False,
+                project_id__iobjectResultssnull=False,
             ).values("project_id")
         ).exclude(
             project_id__in=existing_objects.exclude(project_id__isnull=True).values(

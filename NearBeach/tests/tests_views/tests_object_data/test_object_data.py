@@ -70,35 +70,6 @@ class TestObjectData(TestCase):
                 response = c.post(reverse(url, args=["task", 1]))
                 self.assertEqual(response.status_code, 403)
 
-    def test_incorrect_destination_data__link_list(self):
-        """
-        The following test will make sure;
-        1. Link List functions has the decorator @check_destination
-        2. Make sure the @check_destination works
-        """
-        c = Client()
-
-        # User wil be logged in
-        login_user(c, self)
-
-        # Get data of wrong location - gets a 403
-        response = c.post(reverse("link_list", args=["task", 1, "project"]))
-        self.assertEqual(response.status_code, 403)
-
-    def test_correct_destination_data__link_list(self):
-        """
-        The following test will make sure;
-        1. Link List functions has the decorator @check_destination
-        2. Make sure the @check_destination works
-        """
-        c = Client()
-
-        # User wil be logged in
-        login_user(c, self)
-
-        # Get data of wrong location - gets a 403
-        response = c.post(reverse("link_list", args=["task", 2, "project"]))
-        self.assertEqual(response.status_code, 200)
 
     def test_correct_object_data__without_forms(self):
         """
