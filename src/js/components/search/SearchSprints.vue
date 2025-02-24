@@ -110,7 +110,6 @@ export default {
 				`${this.rootUrl}search/sprint/data/`,
 				data_to_send
 			).then((response) => {
-				console.log("Response.Data: ", response.data);
 				//Update the searchResults with the data
 				this.searchResults = response.data.sprint;
 				this.numberOfPages = response.data.sprint_number_of_pages;

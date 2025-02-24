@@ -264,7 +264,6 @@ export default {
 				data_to_send,
 			).then((response) => {
 				//Load the data into the array
-				console.log("Response: ", response, " || Object model: ", this.objectModel);
 				this.objectResults = response.data[this.objectModel.toLowerCase()];
 				this.numberOfPages = response.data[`${this.objectModel.toLowerCase()}_number_of_pages`];
 				this.currentPage = response.data[`${this.objectModel.toLowerCase()}_current_page`];
