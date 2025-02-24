@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
+from django.db.models import Q, F
 from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
 
@@ -15,15 +15,17 @@ from NearBeach.forms import (
     RemoveSprintForm,
     UpdateSprintForm,
 )
-from NearBeach.models import Sprint, SprintObjectAssignment, ObjectAssignment, UserGroup
+from NearBeach.models import (
+    ObjectAssignment,
+    Project,
+    RequirementItem,
+    Sprint,
+    Task,
+    SprintObjectAssignment,
+    UserGroup, Requirement
+)
 from NearBeach.views.gantt_chart_views import get_object_results
 from NearBeach.views.theme_views import get_theme
-
-from NearBeach.views.tools.lookup_functions import (
-    lookup_project,
-    lookup_requirement_item,
-    lookup_task,
-)
 
 from NearBeach.decorators.check_user_permissions.sprint_permissions import (
     check_sprint_permission_with_sprint,
@@ -33,9 +35,21 @@ from NearBeach.decorators.check_user_permissions.sprint_permissions import (
 from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
 
 LOOKUP_FUNCS = {
-    "project": lookup_project,
-    "task": lookup_task,
-    "requirement_item": lookup_requirement_item,
+    "project": {
+        "object": Project.objects,
+        "title": "project_name",
+        "parent": "project",
+    },
+    "task": {
+        "object": Task.objects,
+        "title": "task_short_description",
+        "parent": "task",
+    },
+    "requirement_item": {
+        "object": RequirementItem.objects,
+        "title": "requirement_item_title",
+        "parent": "requirement",
+    },
 }
 
 
@@ -217,14 +231,8 @@ def potential_object_list(request, destination, location_id, object_lookup, *arg
     if not destination == "sprint":
         return HttpResponseBadRequest("Object has to be a sprint")
 
-    # Excluded objects
-    exclude_objects = SprintObjectAssignment.objects.filter(
-        sprint_id=location_id,
-        **{F"{object_lookup}_id__isnull": False},
-        is_deleted=False,
-    ).values(
-        F"{object_lookup}_id",
-    )
+    if object_lookup not in LOOKUP_FUNCS:
+        return HttpResponseBadRequest("Sorry - but that object lookup does not exist")
 
     # Get user groups
     user_group_results = UserGroup.objects.filter(
@@ -233,15 +241,63 @@ def potential_object_list(request, destination, location_id, object_lookup, *arg
         group_id__isnull=False,
     ).values("group_id")
 
-    if object_lookup not in LOOKUP_FUNCS:
-        return HttpResponseBadRequest("Sorry - but that object lookup does not exist")
+    # Depending on the object, we might need to look at the parent. If an object does not have
+    # A parent, it will refer itself. i.e. project will refer project
+    parent = LOOKUP_FUNCS[object_lookup]["parent"]
+    object = LOOKUP_FUNCS[object_lookup]["object"]
+
+    # Get both object exclusion and inclusion
+    object_inclusion = ObjectAssignment.objects.filter(
+        is_deleted=False,
+        **{F"{parent}_id__isnull": False},
+        group_id__in=user_group_results,
+    ).exclude(
+        **{F"{parent}__{parent}_status__{parent}_higher_order_status": "Closed"},
+    ).values(
+        F"{parent}_id"
+    )
 
     # Get the data dependent on the object lookup
-    data_results = LOOKUP_FUNCS[object_lookup](user_group_results, "object_assignment_id", 0)
+    data_results = object.filter(
+        is_deleted=False,
+        **{F"{parent}_id__in": object_inclusion}
+    ).exclude(
+        Q(
+            **{F"{object_lookup}_status__{object_lookup}_higher_order_status": "Closed"},
+        )
+    ).annotate(
+        id=F(F"{object_lookup}_id"),
+        description=F(F"{LOOKUP_FUNCS[object_lookup]['title']}"),
+        status=F(F"{object_lookup}_status__{object_lookup}_status")
+    ).values(
+        'id',
+        'description',
+        'status',
+    )
+
+    # If destination is requirement_item, we need to exclude any of it's
+    # deleted parents
+    if destination == "requirement_item":
+        data_results = data_results.exclude(
+            Q(
+                requirement_id__in=Requirement.objects.filter(
+                    is_deleted=True,
+                ).values("requirement_id")
+            )
+            | Q(
+                requirement_item_status__requirement_item_higher_order_status="Closed",
+            )
+        )
 
     # Exclude the data from data results
     data_results = data_results.filter().exclude(
-        **{F"{object_lookup}_id__in": exclude_objects},
+        **{F"{object_lookup}_id__in": SprintObjectAssignment.objects.filter(
+            sprint_id=location_id,
+            **{F"{object_lookup}_id__isnull": False},
+            is_deleted=False,
+        ).values(
+            F"{object_lookup}_id",
+        )},
     )
 
     # Send the data to the user
