@@ -169,7 +169,7 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="linkModel.length === 0"
+						v-bind:disabled="filteredLinkModel.length === 0"
 						v-on:click="saveLinks"
 					>
 						Save changes
@@ -210,6 +210,7 @@ export default {
 	data() {
 		return {
 			dayModel: "",
+			filteredLinkModel: [],
 			isSearching: false,
 			linkModel: [],
 			listOfDays: [],
@@ -234,13 +235,34 @@ export default {
 		};
 	},
 	methods: {
+		getFilteredLinkModel() {
+			//Filter the object results and exclude any objects that already exist on today
+			const data_array = this.dateArray.filter(row => row.date === this.dayModel);
+
+			//Make sure we have data, if we don't silently fail
+			if (data_array.length === 0) return;
+
+			//Get the data from the first array
+			let existing_data = data_array[0].data;
+
+			this.filteredLinkModel = this.linkModel.filter((row) => {
+				const count = existing_data.filter((existing_row) => {
+					return parseInt(existing_row.location_id) === parseInt(row);
+				}).length
+
+				return count === 0;
+			});
+		},
 		getFilteredResults() {
 			//Filter the object results and exclude any objects that already exist on today
 			const data_array = this.dateArray.filter(row => row.date === this.dayModel);
-			let data = [];
-			if (data_array.length > 0) {
-				data = data_array[0].data;
-			}
+
+			//Make sure we have data, if we don't silently fail
+			if (data_array.length === 0) return;
+
+			//Get the data from the first array
+			let data = data_array[0].data;
+
 
 			const object_results = this.objectResults.filter((row) => {
 				const count_of_already_existing = data.filter((row_object) => {
@@ -285,7 +307,7 @@ export default {
 		},
 		saveLinks() {
 			//Escape conditions
-			if (this.linkModel.length === 0) return;
+			if (this.filteredLinkModel.length === 0) return;
 
 			//Tell user we are updating their planner
 			this.$store.dispatch("newToast", {
@@ -306,7 +328,7 @@ export default {
 			);
 
 			//Set the data for the link Model
-			this.linkModel.forEach((row) => {
+			this.filteredLinkModel.forEach((row) => {
 				data_to_send.append(this.objectModel, row);
 			});
 
@@ -348,20 +370,28 @@ export default {
 	watch: {
 		dateArray: {
 			handler() {
+				this.getFilteredLinkModel();
 				this.getFilteredResults();
 			},
 			deep: true,
 		},
 		dayModel() {
-			//Day model changed, remove all ticked objects
-			this.linkModel = [];
+			//The day has changed, update the filtered link models to exclude any duplicates
+			this.getFilteredLinkModel();
 
 			//Update filted results
 			this.getFilteredResults();
 		},
+		linkModel: {
+			handler() {
+				this.getFilteredLinkModel();
+			},
+			deep: true,
+		},
 		objectModel() {
 			//Clear data
 			this.linkModel = [];
+			this.getFilteredLinkModel();
 
 			//User has chosen an object.
 			if (this.objectModel === null) {

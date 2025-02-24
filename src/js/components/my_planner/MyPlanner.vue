@@ -148,7 +148,7 @@ export default {
 		formatObjectId(element) {
 			const end_date = useNiceDatetime(element.end_date);
 			switch (element.object_type) {
-				case "card":
+				case "kanban_card":
 					return `Card${element.location_id}`;
 				case "project":
 					return `Pro${element.location_id} - ${end_date}`;
