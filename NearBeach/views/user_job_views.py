@@ -110,7 +110,7 @@ def get_my_planning_objects(request, delta=7):
         kanban_card__isnull=False,
         kanban_card__is_archived=False,
     ).annotate(
-        object_type=V("card"),
+        object_type=V("kanban_card"),
         location_id=F("kanban_card__kanban_card_id"),
         title=F("kanban_card__kanban_card_text"),
         end_date=V(""),
