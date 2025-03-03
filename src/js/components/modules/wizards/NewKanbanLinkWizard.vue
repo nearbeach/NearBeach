@@ -96,17 +96,6 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							<!-- LOADING PLACEHOLDER -->
-							<div
-								id="link_wizard_results"
-								v-if="isSearching || objectModel == null"
-							>
-								<img
-									v-bind:src="`${staticUrl}/NearBeach/images/placeholder/search.svg`"
-									alt="Searching..."
-								/>
-							</div>
-
 							<div
 								v-if="
 									objectResults.length === 0 &&
@@ -130,138 +119,13 @@
 								<input
 									id="search_terms"
 									class="form-control"
-									v-model="searchTermModel"
+									v-model="searchModel"
 									type="text"
 								/>
 							</div>
 							<br/>
 
-							<!-- TABLE CONTAINING RESULTS -->
-							<table
-								class="table"
-								v-if="
-									!isSearching &&
-									objectFilteredResults.length > 0 &&
-									objectModel != null
-								"
-							>
-								<thead>
-								<tr>
-									<td>{{ objectModel }} Description</td>
-									<td>Status</td>
-								</tr>
-								</thead>
-
-								<!-- PROJECTS -->
-								<tbody v-if="objectModel == 'Project'">
-								<tr
-									v-for="result in objectFilteredResults"
-									:key="result.pk"
-								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="radio"
-												name="link-option"
-												v-bind:value="result.pk"
-												v-bind:id="`radio_project_${result.pk}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`radio_project_${result.pk}`"
-											>
-												{{
-													result.fields
-														.project_name
-												}}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
-											Project {{ result.pk }}
-										</p>
-									</td>
-									<td>
-										{{ result.fields.project_status }}
-									</td>
-								</tr>
-								</tbody>
-
-								<!-- REQUIREMENTS -->
-								<tbody v-if="objectModel == 'Requirement'">
-								<tr
-									v-for="result in objectFilteredResults"
-									:key="result.pk"
-								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="radio"
-												name="link-option"
-												v-bind:value="result.pk"
-												v-bind:id="`radio_requirement_${result.pk}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`radio_task_${result.pk}`"
-											>
-												{{
-													result.fields
-														.requirement_title
-												}}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
-											Requirement {{ result.pk }}
-										</p>
-									</td>
-									<td>
-										{{
-											result.fields.requirement_status
-										}}
-									</td>
-								</tr>
-								</tbody>
-
-								<!-- TASKS -->
-								<tbody v-if="objectModel === 'Task'">
-								<tr
-									v-for="result in objectFilteredResults"
-									:key="result.pk"
-								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="radio"
-												v-bind:value="result.pk"
-												v-bind:id="`radio_task_${result.pk}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`radio_task_${result.pk}`"
-											>
-												{{
-													result.fields
-														.task_short_description
-												}}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
-											Task {{ result.pk }}
-										</p>
-									</td>
-									<td>{{ result.fields.task_status }}</td>
-								</tr>
-								</tbody>
-							</table>
+							<!-- ADD CODE -->
 						</div>
 					</div>
 				</div>
@@ -317,6 +181,7 @@ export default {
 	},
 	data() {
 		return {
+			currentPage: 1,
 			isSearching: false,
 			linkModel: [],
 			localColumnId: 0,
@@ -338,16 +203,69 @@ export default {
 					label: "Task",
 				},
 			],
-			searchTermModel: "",
+			searchModel: "",
+			searchTimeout: "",
 		};
 	},
 	methods: {
+		changePage(index) {
+			this.currentPage = index;
+			this.getObjects();
+		},
+		getClasses(index) {
+			if (parseInt(index) === this.currentPage) {
+				return "page-item active";
+			}
+
+			return "page-item";
+		},
+		getObjects() {
+			//Clear data
+			this.linkModel = [];
+
+			//User has chosen an object.
+			if (this.objectModel === null) {
+				//Ok - then removed the objects. We don't need to do anything
+				this.isSearching = false;
+				return;
+			}
+
+			const data_to_send = new FormData();
+			data_to_send.append("array_of_objects", this.objectModel.toLowerCase());
+			data_to_send.set("destination_page", this.currentPage);
+			data_to_send.set("exclude_destination", "kanban_board");
+			data_to_send.set("exclude_location_id", this.locationId);
+			data_to_send.set("search", this.searchModel);
+
+			//Tell the form that we are searching
+			this.isSearching = true;
+
+			//Now to use axios to get the data we require
+			this.axios.post(
+				`${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`,
+				data_to_send
+			).then((response) => {
+				//Load the data into the array
+				this.objectResults = response.data;
+				this.objectFilteredResults = response.data;
+
+				//Tell the user we are no longer searching
+				this.isSearching = false;
+
+				//Clear out search term model
+				this.searchTermModel = "";
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Link List",
+					message: `We had an issue getting Link List. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		},
 		saveLinks() {
 			// Set up the data object to send
 			const data_to_send = new FormData();
-
-			//Get the modal to extract data from
-			// const self_modal = document.getElementById("newLinkModal");
 
 			//Depending on what the object model is - depends what is sent
 			data_to_send.set(
@@ -393,70 +311,24 @@ export default {
 			immediate: true,
 		},
 		objectModel() {
-			//Clear data
-			this.linkModel = [];
-
-			//User has chosen an object.
-			if (this.objectModel === null) {
-				//Ok - then removed the objects. We don't need to do anything
-				this.isSearching = false;
-				return;
+			this.currentPage = 1;
+			this.getObjects();
+		},
+		searchModel() {
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
 			}
 
-			//Tell the form that we are searching
-			this.isSearching = true;
-
-			//Now to use axios to get the data we require
-			this.axios.post(
-				`${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`
-			).then((response) => {
-				//Load the data into the array
-				this.objectResults = response.data;
-				this.objectFilteredResults = response.data;
-
-				//Tell the user we are no longer searching
-				this.isSearching = false;
-
-				//Clear out search term model
-				this.searchTermModel = "";
-			}).catch((error) => {
-				this.$store.dispatch("newToast", {
-					header: "Error Getting Link List",
-					message: `We had an issue getting Link List. Error -> ${error}`,
-					extra_classes: "bg-danger",
-					delay: 0,
-				});
-			});
-		},
-		searchTermModel() {
-			if (
-				this.searchTermModel === "" ||
-				this.searchTermModel === null
-			) {
-				this.objectFilteredResults = this.objectResults;
-				return;
+			//Only search if there are either 0 character or more than 3
+			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
+				this.searchTimeout = setTimeout(() => {
+					//Use change page, as we should change the page back to destination page 1
+					this.changePage(1);
+				}, 500);
 			}
-
-			//Update the filters by checking to see if the string matches
-			this.objectFilteredResults = this.objectResults.filter(
-				(row) => {
-					//Get the description from either task or project
-					let description = "";
-					if (row.fields.project_description !== undefined) {
-						description =
-							row.fields.project_description.toLowerCase();
-					} else {
-						description =
-							row.fields.task_short_description.toLowerCase();
-					}
-
-					//Return true or false if the string is inside the description
-					return description.includes(
-						this.searchTermModel.toLowerCase()
-					);
-				}
-			);
-		},
+		}
 	},
 };
 </script>

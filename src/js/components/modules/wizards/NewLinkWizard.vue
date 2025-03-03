@@ -243,6 +243,7 @@ export default {
 	},
 	watch: {
 		objectModel() {
+			this.currentPage = 1;
 			this.getObjects();
 		},
 		searchModel() {
