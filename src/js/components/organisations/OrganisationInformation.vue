@@ -181,10 +181,15 @@ export default {
 	},
 	methods: {
 		useToken,
-		showErrorToast() {
+		showErrorToast(data) {
+			//Setup the error from the response, unless it is too large for a mobile screen
+			let error = data.event.originalTarget.response;
+			if (error === undefined || error === "" || error === null || error.length > 255) {
+				error = "Sorry, we had an issue uploading the profile image.";
+			}
 			this.$store.dispatch("newToast", {
 				header: "Error uploading profile picture",
-				message: "Sorry, we had an issue uploading the profile image.",
+				message: error,
 				extra_classes: "bg-danger",
 				delay: 0,
 			});

@@ -87,7 +87,10 @@
 
 					<!-- SELECTING WHICH OBJECTS TO LINK TO -->
 					<hr/>
-					<div class="row">
+					<div id="select_links"
+						 class="row"
+						 v-bind:style="styleHeight"
+					>
 						<div class="col-md-4">
 							<strong>Select Links</strong>
 							<p class="text-instructions">
@@ -96,19 +99,19 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							<!-- LOADING PLACEHOLDER -->
-							<div
-								id="link_wizard_results"
-								v-if="isSearching || objectModel == null"
-							>
-								<img
-									v-bind:src="`${staticUrl}/NearBeach/images/placeholder/search.svg`"
-									alt="Searching..."
+							<!-- SEARCH RESULTS -->
+							<div class="form-group">
+								<label>Search Terms</label>
+								<input
+									id="search_terms"
+									class="form-control"
+									v-model="searchModel"
+									type="text"
 								/>
 							</div>
+							<br/>
 
-							<div
-								v-if="
+							<div v-if="
 									objectResults.length === 0 &&
 									objectModel != null
 								"
@@ -117,151 +120,64 @@
 								Sorry - there are no results.
 							</div>
 
-							<!-- SEARCH RESULTS -->
-							<div
-								class="form-group"
-								v-if="
-									!isSearching &&
-									objectResults.length > 0 &&
-									objectModel != null
-								"
+							<!-- ADD CODE -->
+							<div class="wizard-results"
+								 v-if="!isSearching &&
+										objectResults.length > 0 &&
+										objectModel != null"
 							>
-								<label>Search Terms</label>
-								<input
-									id="search_terms"
-									class="form-control"
-									v-model="searchTermModel"
-									type="text"
-								/>
+								<div class="wizard-results--card"
+									 v-for="result in objectResults"
+									 :key="result.id"
+								>
+									<div class="wizard-results--card--tick">
+										<input
+											class="form-check-input"
+											type="radio"
+											name="link-option"
+											v-bind:value="result.id"
+											v-bind:id="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
+											v-model="linkModel"
+										/>
+									</div>
+									<div class="wizard-results--card--content">
+										<div class="text-instructions">
+											{{objectModel}} {{ result.id }}
+										</div>
+										<div>
+											<strong>{{ result.title }}</strong>
+										</div>
+										<div>
+											Status:
+											<span class="text-instructions">{{ result.status }}</span>
+										</div>
+									</div>
+								</div>
+
+								<nav v-bind:aria-label="`Pagination for New Link Wizard`"
+									 v-if="numberOfPages > 1"
+								>
+									<ul class="pagination justify-content-center"
+									>
+										<li v-for="index in numberOfPages"
+											v-bind:class="getClasses(index)"
+										>
+											<a v-if="parseInt(index) !== parseInt(currentPage)"
+											   class="page-link"
+											   href="javascript:void(0)"
+											   v-on:click="changePage(index)"
+											>
+												{{ index }}
+											</a>
+											<span v-else
+												  class="page-link"
+											>
+												{{ index }}
+											</span>
+										</li>
+									</ul>
+								</nav>
 							</div>
-							<br/>
-
-							<!-- TABLE CONTAINING RESULTS -->
-							<table
-								class="table"
-								v-if="
-									!isSearching &&
-									objectFilteredResults.length > 0 &&
-									objectModel != null
-								"
-							>
-								<thead>
-								<tr>
-									<td>{{ objectModel }} Description</td>
-									<td>Status</td>
-								</tr>
-								</thead>
-
-								<!-- PROJECTS -->
-								<tbody v-if="objectModel == 'Project'">
-								<tr
-									v-for="result in objectFilteredResults"
-									:key="result.pk"
-								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="radio"
-												name="link-option"
-												v-bind:value="result.pk"
-												v-bind:id="`radio_project_${result.pk}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`radio_project_${result.pk}`"
-											>
-												{{
-													result.fields
-														.project_name
-												}}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
-											Project {{ result.pk }}
-										</p>
-									</td>
-									<td>
-										{{ result.fields.project_status }}
-									</td>
-								</tr>
-								</tbody>
-
-								<!-- REQUIREMENTS -->
-								<tbody v-if="objectModel == 'Requirement'">
-								<tr
-									v-for="result in objectFilteredResults"
-									:key="result.pk"
-								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="radio"
-												name="link-option"
-												v-bind:value="result.pk"
-												v-bind:id="`radio_requirement_${result.pk}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`radio_task_${result.pk}`"
-											>
-												{{
-													result.fields
-														.requirement_title
-												}}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
-											Requirement {{ result.pk }}
-										</p>
-									</td>
-									<td>
-										{{
-											result.fields.requirement_status
-										}}
-									</td>
-								</tr>
-								</tbody>
-
-								<!-- TASKS -->
-								<tbody v-if="objectModel === 'Task'">
-								<tr
-									v-for="result in objectFilteredResults"
-									:key="result.pk"
-								>
-									<td>
-										<div class="form-check">
-											<input
-												class="form-check-input"
-												type="radio"
-												v-bind:value="result.pk"
-												v-bind:id="`radio_task_${result.pk}`"
-												v-model="linkModel"
-											/>
-											<label
-												class="form-check-label"
-												v-bind:for="`radio_task_${result.pk}`"
-											>
-												{{
-													result.fields
-														.task_short_description
-												}}
-											</label>
-										</div>
-										<div class="spacer"></div>
-										<p class="small-text">
-											Task {{ result.pk }}
-										</p>
-									</td>
-									<td>{{ result.fields.task_status }}</td>
-								</tr>
-								</tbody>
-							</table>
 						</div>
 					</div>
 				</div>
@@ -290,7 +206,6 @@
 <script>
 import {NSelect} from "naive-ui";
 
-
 //VueX
 import {mapGetters} from "vuex";
 
@@ -317,12 +232,13 @@ export default {
 	},
 	data() {
 		return {
+			currentPage: 1,
 			isSearching: false,
 			linkModel: [],
 			localColumnId: 0,
 			localLevelId: 0,
+			numberOfPages: 1,
 			objectModel: null,
-			objectFilteredResults: [],
 			objectResults: [],
 			objectSelection: [
 				{
@@ -338,16 +254,113 @@ export default {
 					label: "Task",
 				},
 			],
-			searchTermModel: "",
+			searchModel: "",
+			searchTimeout: "",
+			styleHeight: "height: 90px",
 		};
 	},
+	watch: {
+		newCardLocation: {
+			handler(new_value) {
+				this.localColumnId = new_value.columnId;
+				this.localLevelId = new_value.levelId;
+			},
+			deep: true,
+			immediate: true,
+		},
+		objectModel() {
+			this.currentPage = 1;
+			this.getObjects();
+		},
+		searchModel() {
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Only search if there are either 0 character or more than 3
+			if (this.searchModel.length >= 3 ||
+				this.searchModel.length === 0 ||
+				Number.isInteger(parseInt(this.searchModel))
+			) {
+				this.searchTimeout = setTimeout(() => {
+					//Use change page, as we should change the page back to destination page 1
+					this.changePage(1);
+				}, 500);
+			}
+		}
+	},
 	methods: {
+		changePage(index) {
+			this.currentPage = index;
+			this.getObjects();
+		},
+		getClasses(index) {
+			if (parseInt(index) === this.currentPage) {
+				return "page-item active";
+			}
+
+			return "page-item";
+		},
+		getObjects() {
+			//Clear data
+			this.linkModel = [];
+
+			//User has chosen an object.
+			if (this.objectModel === null) {
+				//Ok - then removed the objects. We don't need to do anything
+				this.isSearching = false;
+				return;
+			}
+
+			const data_to_send = new FormData();
+			data_to_send.append("array_of_objects", this.objectModel.toLowerCase());
+			data_to_send.set("destination_page", this.currentPage);
+			data_to_send.set("exclude_destination", "kanban_board");
+			data_to_send.set("exclude_location_id", this.locationId);
+			data_to_send.set("search", this.searchModel);
+
+			//Tell the form that we are searching
+			this.isSearching = true;
+
+			//Now to use axios to get the data we require
+			this.axios.post(
+				`${this.rootUrl}kanban_information/${this.locationId}/link_list/`,
+				data_to_send
+			).then((response) => {
+				//Load the data into the array
+				this.objectResults = response.data[this.objectModel.toLowerCase()];
+				this.numberOfPages = response.data[`${this.objectModel.toLowerCase()}_number_of_pages`];
+				this.currentPage = response.data[`${this.objectModel.toLowerCase()}_current_page`];
+
+				//Tell the user we are no longer searching
+				this.isSearching = false;
+
+				//Clear out search term model
+				this.searchTermModel = "";
+
+				//Set style height as nothing
+				this.styleHeight = "";
+
+				this.$nextTick(() => {
+					const select_links = document.getElementById("select_links");
+					if (select_links !== undefined) {
+						this.styleHeight = `height: ${select_links.clientHeight}px`;
+					}
+				});
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Link List",
+					message: `We had an issue getting Link List. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		},
 		saveLinks() {
 			// Set up the data object to send
 			const data_to_send = new FormData();
-
-			//Get the modal to extract data from
-			// const self_modal = document.getElementById("newLinkModal");
 
 			//Depending on what the object model is - depends what is sent
 			data_to_send.set(
@@ -380,82 +393,10 @@ export default {
 
 				//Click on the close button - a hack, but it should close the modal
 				document.getElementById("requirementLinkCloseButton").click();
+
+				//Shrink the style height
+				this.styleHeight = "height: 90px";
 			});
-		},
-	},
-	watch: {
-		newCardLocation: {
-			handler(new_value) {
-				this.localColumnId = new_value.columnId;
-				this.localLevelId = new_value.levelId;
-			},
-			deep: true,
-			immediate: true,
-		},
-		objectModel() {
-			//Clear data
-			this.linkModel = [];
-
-			//User has chosen an object.
-			if (this.objectModel === null) {
-				//Ok - then removed the objects. We don't need to do anything
-				this.isSearching = false;
-				return;
-			}
-
-			//Tell the form that we are searching
-			this.isSearching = true;
-
-			//Now to use axios to get the data we require
-			this.axios.post(
-				`${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`
-			).then((response) => {
-				//Load the data into the array
-				this.objectResults = response.data;
-				this.objectFilteredResults = response.data;
-
-				//Tell the user we are no longer searching
-				this.isSearching = false;
-
-				//Clear out search term model
-				this.searchTermModel = "";
-			}).catch((error) => {
-				this.$store.dispatch("newToast", {
-					header: "Error Getting Link List",
-					message: `We had an issue getting Link List. Error -> ${error}`,
-					extra_classes: "bg-danger",
-					delay: 0,
-				});
-			});
-		},
-		searchTermModel() {
-			if (
-				this.searchTermModel === "" ||
-				this.searchTermModel === null
-			) {
-				this.objectFilteredResults = this.objectResults;
-				return;
-			}
-
-			//Update the filters by checking to see if the string matches
-			this.objectFilteredResults = this.objectResults.filter(
-				(row) => {
-					//Get the description from either task or project
-					let description = "";
-					if (row.fields.project_description !== undefined) {
-						description =
-							row.fields.project_description.toLowerCase();
-					} else {
-						description =
-							row.fields.task_short_description.toLowerCase();
-					}
-
-					//Return true or false if the string is inside the description
-					return description.includes(
-						this.searchTermModel.toLowerCase()
-					);
-				}
-			);
 		},
 	},
 };

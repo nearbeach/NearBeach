@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
-from NearBeach.decorators.search.search_objects import SearchObjects
+from NearBeach.views.search.search_objects import SearchObjects
 from NearBeach.forms import SearchObjectsForm, SearchForm
 from NearBeach.models import (
     Notification,
@@ -36,184 +36,6 @@ import math
 
 # Define global variables
 SEARCH_PAGE_SIZE = getattr(settings, 'SEARCH_PAGE_SIZE', 5)
-
-
-# Internal Function
-def get_object_search_data(search_form, request):
-    """
-    The following internal function will search the following objects using the form's data;
-    - Kanban boards
-    - Request for Change
-    - Requirements
-    - Projects
-    - Tasks
-    It will combine them into a single JSON array and send back to the previous function
-    :param form: Contains all the data we require.
-    :return:
-    """
-    # Get instance data for all objects
-    rfc_results = RequestForChange.objects.filter(is_deleted=False,).values(
-        "rfc_id",
-        "rfc_title",
-        "rfc_status",
-        "rfc_status__rfc_status",
-    )
-    requirement_results = Requirement.objects.filter(is_deleted=False,).values(
-        "requirement_id",
-        "requirement_title",
-        "requirement_status__requirement_status",
-    )
-    project_results = Project.objects.filter(is_deleted=False,).annotate(
-        project_status_text=F("project_status__project_status"),
-    ).values(
-        "project_id",
-        "project_name",
-        "project_status_text",
-    )
-    task_results = Task.objects.filter(is_deleted=False,).annotate(
-        task_status_text=F("task_status__task_status"),
-    ).values(
-        "task_id",
-        "task_short_description",
-        "task_status_text",
-    )
-    kanban_results = KanbanBoard.objects.filter(is_deleted=False,).values(
-        "kanban_board_id",
-        "kanban_board_name",
-        "kanban_board_status",
-    )
-
-    # Determine if a user is NOT being limited.
-    # A user won't be limited to groups IF they are;
-    # - An administrator
-    # - AND flagged they want all groups
-    dont_limit_by_groups = request.user.is_superuser & search_form.cleaned_data["include_all_groups"]
-
-    # Check to see if not superuser - if not we limit to user's own groups
-    if not dont_limit_by_groups:
-        object_assignment_results = ObjectAssignment.objects.filter(
-            is_deleted=False,
-            group_id__in=UserGroup.objects.filter(
-                is_deleted=False,
-                username=request.user,
-            ).values("group_id"),
-        )
-
-        rfc_results = rfc_results.filter(
-            rfc_id__in=object_assignment_results.filter(
-                request_for_change_id__isnull=False,
-            ).values("request_for_change_id"),
-        )
-
-        requirement_results = requirement_results.filter(
-            requirement_id__in=object_assignment_results.filter(
-                requirement_id__isnull=False,
-            ).values("requirement_id"),
-        )
-
-        project_results = project_results.filter(
-            project_id__in=object_assignment_results.filter(
-                project_id__isnull=False,
-            ).values("project_id"),
-        )
-
-        task_results = task_results.filter(
-            task_id__in=object_assignment_results.filter(
-                task_id__isnull=False,
-            ).values("task_id"),
-        )
-
-        kanban_results = kanban_results.filter(
-            kanban_board_id__in=object_assignment_results.filter(
-                kanban_board_id__isnull=False,
-            ).values("kanban_board_id"),
-        )
-
-    # Check to see if we are searching for closed objects
-    include_closed = search_form.cleaned_data["include_closed"]
-
-    # If we are NOT including closed - then we will limit to those with status is_deleted=False
-    if not include_closed:
-        rfc_results = rfc_results.exclude(
-            rfc_status__in=(5, 6),
-        )
-
-        requirement_results = requirement_results.exclude(
-            requirement_status__in=ListOfRequirementStatus.objects.filter(
-                is_deleted=False,
-                requirement_higher_order_status="Closed",
-            ).values("requirement_status_id")
-        )
-
-        project_results = project_results.exclude(
-            project_status__project_higher_order_status="Closed",
-        )
-
-        task_results = task_results.exclude(
-            task_status__task_higher_order_status="Closed",
-        )
-
-        kanban_results = kanban_results.exclude(
-            kanban_board_status__in=["Closed"],
-        )
-
-    # Split the space results - then apply the filter of each split value
-    for split_row in search_form.cleaned_data["search"].split(" "):
-        # Update the each instance with the split row results
-        rfc_results = rfc_results.filter(Q(rfc_title__icontains=split_row))
-        requirement_results = requirement_results.filter(
-            Q(requirement_title__icontains=split_row)
-        )
-        project_results = project_results.filter(
-            Q(project_name__icontains=split_row)
-        )
-        task_results = task_results.filter(
-            Q(task_short_description__icontains=split_row)
-        )
-        kanban_results = kanban_results.filter(
-            Q(kanban_board_name__icontains=split_row)
-        )
-
-        # If the split row is a number - also check against the id
-        if split_row.isnumeric():
-            rfc_results = rfc_results.filter(Q(rfc_id=split_row))
-            requirement_results = requirement_results.filter(
-                Q(requirement_id=split_row)
-            )
-            project_results = project_results.filter(Q(project_id=split_row))
-            task_results = task_results.filter(Q(task_id=split_row))
-            kanban_results = kanban_results.filter(Q(kanban_board_id=split_row))
-    # Only have 25 results and order by alphabetical order
-    rfc_results = rfc_results.order_by("rfc_title")[:25]
-    requirement_results = requirement_results.order_by("requirement_title")[:25]
-    project_results = project_results.order_by("project_name")[:25]
-    task_results = task_results.order_by("task_short_description")[:25]
-    kanban_results = kanban_results.order_by("kanban_board_name")[:25]
-
-    """
-    The pain point
-    ~~~~~~~~~~~~~~
-    Due to Django wanting to send converted json data as a string, we have to;
-    1. Apply serialisation
-    2. Apply a json.loads function
-    3. Compile data and send back.
-
-    Note to Django developers - there has to be a better way
-    """
-    rfc_results = json.dumps(list(rfc_results), cls=DjangoJSONEncoder)
-    requirement_results = json.dumps(list(requirement_results), cls=DjangoJSONEncoder)
-    project_results = json.dumps(list(project_results), cls=DjangoJSONEncoder)
-    task_results = json.dumps(list(task_results), cls=DjangoJSONEncoder)
-    kanban_results = json.dumps(list(kanban_results), cls=DjangoJSONEncoder)
-
-    # Send back a JSON array with JSON arrays inside
-    return {
-        "request_for_change": json.loads(rfc_results),
-        "requirement": json.loads(requirement_results),
-        "project": json.loads(project_results),
-        "task": json.loads(task_results),
-        "kanban_board": json.loads(kanban_results),
-    }
 
 
 # Internal Function
@@ -312,11 +134,9 @@ def search_data(request):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
-    # results = SEARCH_OBJECT.get_object_search_databject_search_results(form, request)
     search_results = SearchObjects(form, request)
 
     # Return the JSON data
-    # return JsonResponse(get_object_search_data(form, request))
     return JsonResponse(search_results.results)
 
 

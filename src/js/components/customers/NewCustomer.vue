@@ -20,14 +20,19 @@
 					<div class="col-md-4">
 						<strong>Customer Organisation</strong>
 						<p class="text-instructions">
-							This field is optional. If this customer does not have
-							any organisations attached, it will treat this customer
-							as a freelancer.
+							A customer will require an Organisation. If the customer
+							does not have any organisations, i.e. a sole trader, we
+							recommend creating the customer as an organisation instead.
 						</p>
 					</div>
 					<div class="col-md-8">
 						<div class="form-group col-sm-8">
-							<label>Organisation:</label>
+							<label>
+								Organisation:
+								<validation-rendering
+									v-bind:error-list="v$.organisationModel.$errors"
+								></validation-rendering>
+							</label>
 							<n-select
 								:options="organisationFixList"
 								filterable
@@ -71,6 +76,7 @@ import {NSelect} from "naive-ui";
 
 //Composable
 import {useNBTheme} from "../../composables/theme/useNBTheme";
+import ValidationRendering from "../validation/ValidationRendering.vue";
 
 export default {
 	name: "NewCustomer",
@@ -78,6 +84,7 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
+		ValidationRendering,
 		NewCustomerForm,
 		NSelect,
 	},
@@ -124,6 +131,9 @@ export default {
 				required,
 			},
 			customerLastNameModel: {
+				required,
+			},
+			organisationModel: {
 				required,
 			},
 			titleModel: {

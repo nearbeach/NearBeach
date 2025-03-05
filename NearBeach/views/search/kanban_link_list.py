@@ -19,17 +19,8 @@ import math
 SEARCH_PAGE_SIZE = getattr(settings, 'SEARCH_PAGE_SIZE', 5)
 
 
-class SearchObjects:
+class KanbanLinkList:
     OBJECT_SETUP = {
-        "kanban_board": {
-            "fields": {
-                "id": "kanban_board_id",
-                "title": "kanban_board_name",
-                "status": "kanban_board_status",
-            },
-            "objects": KanbanBoard.objects,
-            "title": "kanban_board_name",
-        },
         "project": {
             "fields": {
                 "id": "project_id",
@@ -39,14 +30,14 @@ class SearchObjects:
             "objects": Project.objects,
             "title": "project_name",
         },
-        "request_for_change": {
+        "task": {
             "fields": {
-                "id": "rfc_id",
-                "title": "rfc_title",
-                "status": "rfc_status__rfc_status",
+                "id": "task_id",
+                "title": "task_short_description",
+                "status": "task_status__task_status",
             },
-            "objects": RequestForChange.objects,
-            "title": "rfc_title",
+            "objects": Task.objects,
+            "title": "task_short_description",
         },
         "requirement": {
             "fields": {
@@ -65,15 +56,6 @@ class SearchObjects:
             },
             "objects": RequirementItem.objects,
             "title": "requirement_item_title",
-        },
-        "task": {
-            "fields": {
-                "id": "task_id",
-                "title": "task_short_description",
-                "status": "task_status__task_status",
-            },
-            "objects": Task.objects,
-            "title": "task_short_description",
         },
     }
 
@@ -101,11 +83,27 @@ class SearchObjects:
         if object_name not in self.OBJECT_SETUP:
             return None
 
+        # shortcut variable
+        id_field = self._get_id_name(object_name)
+
         # Used to shorten the code below
         data = self.OBJECT_SETUP[object_name]
 
+        object_assignment_results = ObjectAssignment.objects.filter(
+            is_deleted=False,
+            group_id__in=UserGroup.objects.filter(
+            is_deleted=False,
+                username=request.user,
+            ).values("group_id"),
+        )
+
         results = data["objects"].filter(
             is_deleted=False,
+            **{F"{id_field}__in": object_assignment_results.filter(
+                **{F"{id_field}__isnull": False}
+            ).values(F"{id_field}")}
+        ).exclude(
+            **{F"{object_name}_status__{object_name}_higher_order_status": "Closed"},
         ).annotate(
             id=F(data["fields"]["id"]),
             title=F(data["fields"]["title"]),
@@ -116,58 +114,21 @@ class SearchObjects:
             "status",
         )
 
-        # Determine if a user is NOT being limited.
-        # A user won't be limited to groups IF they are;
-        # - An administrator
-        # - AND flagged they want all groups
-        dont_limit_by_groups = request.user.is_superuser & form.cleaned_data["include_all_groups"]
-
-        # Check to see if not superuser - if no we limit to user's own groups
-        if not dont_limit_by_groups:
-            object_assignment_results = ObjectAssignment.objects.filter(
-                is_deleted=False,
-                group_id__in=UserGroup.objects.filter(
-                    is_deleted=False,
-                    username=request.user,
-                ).values("group_id"),
-            )
-
-            # shortcut variable
-            id_field = self._get_id_name(object_name)
-
-            results = results.filter(
-                # **{F"{data['id']}__isnull": False},
-                **{F"{id_field}__in": object_assignment_results.filter(
-                    **{F"{object_name}_id__isnull": False}
-                ).values(F"{object_name}_id")}
-            )
-
-        # Check to see if we are searching for closed objects
-        include_closed = form.cleaned_data["include_closed"]
-
-        # If we are NOT including closed - then we will limit to those with status is_deleted=False
-        if not include_closed and object_name == "request_for_change":
-            results = results.exclude(
-                rfc_status__in=(5, 6),
-            )
-        elif not include_closed and not object_name == "kanban_board":
-            results = results.exclude(
-                **{F"{object_name}_status__{object_name}_higher_order_status": "Closed"}
-            )
-
         # Split the space results - then apply the filter of each split value
         for split_row in form.cleaned_data["search"].split(" "):
-            results = results.filter(
-                Q(
-                    **{F"{data['title']}__icontains": split_row}
-                )
-            )
-
-            # If the split row is a number - also check against the id
+            # If split row is a number, search both the title and object id
             if split_row.isnumeric():
                 results = results.filter(
                     Q(
+                        **{F"{data['title']}__icontains": split_row}
+                    ) | Q(
                         **{F"{self._get_id_name(object_name)}": split_row}
+                    )
+                )
+            else:
+                results = results.filter(
+                    Q(
+                        **{F"{data['title']}__icontains": split_row}
                     )
                 )
 
