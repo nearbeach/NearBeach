@@ -1,7 +1,7 @@
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import F, Q
+from django.db.models import F
 from django.shortcuts import get_object_or_404
 
 from NearBeach.models import (
@@ -10,7 +10,6 @@ from NearBeach.models import (
     ObjectAssignment,
     Group,
     TagAssignment,
-    UserGroup,
     UserSetting,
 )
 from NearBeach.views.search.kanban_link_list import KanbanLinkList
