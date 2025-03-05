@@ -116,17 +116,19 @@ class KanbanLinkList:
 
         # Split the space results - then apply the filter of each split value
         for split_row in form.cleaned_data["search"].split(" "):
-            results = results.filter(
-                Q(
-                    **{F"{data['title']}__icontains": split_row}
-                )
-            )
-
-            # If the split row is a number - also check against the id
+            # If split row is a number, search both the title and object id
             if split_row.isnumeric():
                 results = results.filter(
                     Q(
+                        **{F"{data['title']}__icontains": split_row}
+                    ) | Q(
                         **{F"{self._get_id_name(object_name)}": split_row}
+                    )
+                )
+            else:
+                results = results.filter(
+                    Q(
+                        **{F"{data['title']}__icontains": split_row}
                     )
                 )
 
