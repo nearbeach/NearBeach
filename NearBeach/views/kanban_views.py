@@ -1,7 +1,7 @@
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import F
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404
 
 from NearBeach.models import (
@@ -13,6 +13,7 @@ from NearBeach.models import (
     UserGroup,
     UserSetting,
 )
+from NearBeach.views.search.kanban_link_list import KanbanLinkList
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.tools.internal_functions import (
     get_all_groups,
@@ -21,6 +22,7 @@ from NearBeach.views.tools.internal_functions import (
     KanbanBoard,
     Project,
     Requirement,
+    RequirementItem,
     Task,
 )
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
@@ -33,6 +35,7 @@ from NearBeach.forms import (
     NewKanbanCardForm,
     NewKanbanForm,
     KanbanCardForm,
+    SearchObjectsForm,
 )
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -42,6 +45,29 @@ from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
+
+LOOKUP_FUNCS = {
+    "project": {
+        "object": Project.objects,
+        "title": "project_name",
+        "parent": "project",
+    },
+    "task": {
+        "object": Task.objects,
+        "title": "task_short_description",
+        "parent": "task",
+    },
+    "requirement": {
+        "object": Requirement.objects,
+        "title": "requirement_title",
+        "parent": "requirement",
+    },
+    "requirement_item": {
+        "object": RequirementItem.objects,
+        "title": "requirement_item_title",
+        "parent": "requirement",
+    },
+}
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -359,69 +385,21 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
 @check_specific_object_permissions(min_permission_level=1, object_lookup="kanban_board")
-def kanban_link_list(request, kanban_board_id, object_lookup, *args, **kwargs):
+def kanban_link_list(request, kanban_board_id, *args, **kwargs):
     """
     Obtains the data for the kanban links
     :param request:
     :param kanban_board_id:
     :return:
     """
-    existing_objects = KanbanCard.objects.filter(
-        is_deleted=False,
-        is_archived=False,
-        kanban_board_id=kanban_board_id,
-    )
+    form = SearchObjectsForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
 
-    object_assignment_results = ObjectAssignment.objects.filter(
-        is_deleted=False,
-        group_id__in=UserGroup.objects.filter(
-            is_deleted=False,
-            username=request.user,
-        ).values("group_id"),
-    )
+    results = KanbanLinkList(form, request)
 
-    # Get the results we require
-    if object_lookup == "Project":
-        object_results = Project.objects.filter(
-            is_deleted=False,
-            project_id__in=object_assignment_results.filter(
-                project_id__isnull=False,
-            ).values("project_id")
-        ).exclude(
-            project_id__in=existing_objects.exclude(project_id__isnull=True).values(
-                "project_id"
-            )
-        )
-    elif object_lookup == "Requirement":
-        object_results = Requirement.objects.filter(
-            is_deleted=False,
-            requirement_id__in=object_assignment_results.filter(
-                requirement_id__isnull=False,
-            ).values("requirement_id"),
-        ).exclude(
-            requirement_id__in=existing_objects.exclude(
-                requirement_id__isnull=True
-            ).values("requirement_id")
-        )
-    elif object_lookup == "Task":
-        object_results = Task.objects.filter(
-            is_deleted=False,
-            task_id__in=object_assignment_results.filter(
-                task_id__isnull=False,
-            ).values("task_id")
-        ).exclude(
-            task_id__in=existing_objects.exclude(
-                task_id__isnull=True,
-            ).values("task_id")
-        )
-    else:
-        return HttpResponseBadRequest(
-            "Sorry - there was an issue with your object lookup"
-        )
-
-    return HttpResponse(
-        serializers.serialize("json", object_results), content_type="application/json"
-    )
+    # Return the json data
+    return JsonResponse(results.results)
 
 
 @login_required(login_url="login", redirect_field_name="")

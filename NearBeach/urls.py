@@ -342,7 +342,7 @@ urlpatterns = [
         name="add_kanban_link",
     ),
     path(
-        "kanban_information/<int:kanban_board_id>/<object_lookup>/link_list/",
+        "kanban_information/<int:kanban_board_id>/link_list/",
         kanban_views.kanban_link_list,
         name="kanban_link_list",
     ),

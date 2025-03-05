@@ -87,7 +87,10 @@
 
 					<!-- SELECTING WHICH OBJECTS TO LINK TO -->
 					<hr/>
-					<div class="row">
+					<div id="select_links"
+						 class="row"
+						 v-bind:style="styleHeight"
+					>
 						<div class="col-md-4">
 							<strong>Select Links</strong>
 							<p class="text-instructions">
@@ -96,25 +99,8 @@
 							</p>
 						</div>
 						<div class="col-md-8">
-							<div
-								v-if="
-									objectResults.length === 0 &&
-									objectModel != null
-								"
-								class="alert alert-warning"
-							>
-								Sorry - there are no results.
-							</div>
-
 							<!-- SEARCH RESULTS -->
-							<div
-								class="form-group"
-								v-if="
-									!isSearching &&
-									objectResults.length > 0 &&
-									objectModel != null
-								"
-							>
+							<div class="form-group">
 								<label>Search Terms</label>
 								<input
 									id="search_terms"
@@ -125,7 +111,73 @@
 							</div>
 							<br/>
 
+							<div v-if="
+									objectResults.length === 0 &&
+									objectModel != null
+								"
+								class="alert alert-warning"
+							>
+								Sorry - there are no results.
+							</div>
+
 							<!-- ADD CODE -->
+							<div class="wizard-results"
+								 v-if="!isSearching &&
+										objectResults.length > 0 &&
+										objectModel != null"
+							>
+								<div class="wizard-results--card"
+									 v-for="result in objectResults"
+									 :key="result.id"
+								>
+									<div class="wizard-results--card--tick">
+										<input
+											class="form-check-input"
+											type="radio"
+											name="link-option"
+											v-bind:value="result.id"
+											v-bind:id="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
+											v-model="linkModel"
+										/>
+									</div>
+									<div class="wizard-results--card--content">
+										<div class="text-instructions">
+											{{objectModel}} {{ result.id }}
+										</div>
+										<div>
+											<strong>{{ result.title }}</strong>
+										</div>
+										<div>
+											Status:
+											<span class="text-instructions">{{ result.status }}</span>
+										</div>
+									</div>
+								</div>
+
+								<nav v-bind:aria-label="`Pagination for New Link Wizard`"
+									 v-if="numberOfPages > 1"
+								>
+									<ul class="pagination justify-content-center"
+									>
+										<li v-for="index in numberOfPages"
+											v-bind:class="getClasses(index)"
+										>
+											<a v-if="parseInt(index) !== parseInt(currentPage)"
+											   class="page-link"
+											   href="javascript:void(0)"
+											   v-on:click="changePage(index)"
+											>
+												{{ index }}
+											</a>
+											<span v-else
+												  class="page-link"
+											>
+												{{ index }}
+											</span>
+										</li>
+									</ul>
+								</nav>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -153,7 +205,6 @@
 
 <script>
 import {NSelect} from "naive-ui";
-
 
 //VueX
 import {mapGetters} from "vuex";
@@ -186,8 +237,8 @@ export default {
 			linkModel: [],
 			localColumnId: 0,
 			localLevelId: 0,
+			numberOfPages: 1,
 			objectModel: null,
-			objectFilteredResults: [],
 			objectResults: [],
 			objectSelection: [
 				{
@@ -205,7 +256,40 @@ export default {
 			],
 			searchModel: "",
 			searchTimeout: "",
+			styleHeight: "height: 90px",
 		};
+	},
+	watch: {
+		newCardLocation: {
+			handler(new_value) {
+				this.localColumnId = new_value.columnId;
+				this.localLevelId = new_value.levelId;
+			},
+			deep: true,
+			immediate: true,
+		},
+		objectModel() {
+			this.currentPage = 1;
+			this.getObjects();
+		},
+		searchModel() {
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Only search if there are either 0 character or more than 3
+			if (this.searchModel.length >= 3 ||
+				this.searchModel.length === 0 ||
+				Number.isInteger(parseInt(this.searchModel))
+			) {
+				this.searchTimeout = setTimeout(() => {
+					//Use change page, as we should change the page back to destination page 1
+					this.changePage(1);
+				}, 500);
+			}
+		}
 	},
 	methods: {
 		changePage(index) {
@@ -242,18 +326,30 @@ export default {
 
 			//Now to use axios to get the data we require
 			this.axios.post(
-				`${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel}/link_list/`,
+				`${this.rootUrl}kanban_information/${this.locationId}/link_list/`,
 				data_to_send
 			).then((response) => {
+				console.log("Response: ", response);
 				//Load the data into the array
-				this.objectResults = response.data;
-				this.objectFilteredResults = response.data;
+				this.objectResults = response.data[this.objectModel.toLowerCase()];
+				this.numberOfPages = response.data[`${this.objectModel.toLowerCase()}_number_of_pages`];
+				this.currentPage = response.data[`${this.objectModel.toLowerCase()}_current_page`];
 
 				//Tell the user we are no longer searching
 				this.isSearching = false;
 
 				//Clear out search term model
 				this.searchTermModel = "";
+
+				//Set style height as nothing
+				this.styleHeight = "";
+
+				this.$nextTick(() => {
+					const select_links = document.getElementById("select_links");
+					if (select_links !== undefined) {
+						this.styleHeight = `height: ${select_links.clientHeight}px`;
+					}
+				});
 			}).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Error Getting Link List",
@@ -298,37 +394,11 @@ export default {
 
 				//Click on the close button - a hack, but it should close the modal
 				document.getElementById("requirementLinkCloseButton").click();
+
+				//Shrink the style height
+				this.styleHeight = "height: 90px";
 			});
 		},
-	},
-	watch: {
-		newCardLocation: {
-			handler(new_value) {
-				this.localColumnId = new_value.columnId;
-				this.localLevelId = new_value.levelId;
-			},
-			deep: true,
-			immediate: true,
-		},
-		objectModel() {
-			this.currentPage = 1;
-			this.getObjects();
-		},
-		searchModel() {
-			//Clear timer if it already exists
-			if (this.searchTimeout !== "") {
-				//Stop the clock
-				clearTimeout(this.searchTimeout);
-			}
-
-			//Only search if there are either 0 character or more than 3
-			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
-				this.searchTimeout = setTimeout(() => {
-					//Use change page, as we should change the page back to destination page 1
-					this.changePage(1);
-				}, 500);
-			}
-		}
 	},
 };
 </script>
