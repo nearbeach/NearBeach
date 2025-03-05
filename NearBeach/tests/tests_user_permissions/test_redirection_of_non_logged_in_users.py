@@ -110,7 +110,7 @@ class CheckKanban(TestCase):
         response_array = [
             c.get(reverse("kanban_information", args=[1])),
             c.get(reverse("add_kanban_link", args=[1, "project"])),
-            c.get(reverse("kanban_link_list", args=[1, "project"])),
+            c.get(reverse("kanban_link_list", args=[1])),
             c.get(reverse("new_kanban_card", args=[1])),
             c.get(reverse("move_kanban_card", args=[1])),
             c.get(reverse("check_kanban_board_name")),
