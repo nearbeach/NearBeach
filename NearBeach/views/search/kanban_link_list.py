@@ -137,7 +137,7 @@ class KanbanLinkList:
         # excluded
         exclude_destination = form.cleaned_data["exclude_destination"]
         exclude_location_id = form.cleaned_data["exclude_location_id"]
-        if not exclude_destination is "" and not exclude_location_id is None:
+        if exclude_destination and exclude_location_id:
             # shortcut variable
             id_field = self._get_id_name(object_name)
 
