@@ -329,7 +329,6 @@ export default {
 				`${this.rootUrl}kanban_information/${this.locationId}/link_list/`,
 				data_to_send
 			).then((response) => {
-				console.log("Response: ", response);
 				//Load the data into the array
 				this.objectResults = response.data[this.objectModel.toLowerCase()];
 				this.numberOfPages = response.data[`${this.objectModel.toLowerCase()}_number_of_pages`];
