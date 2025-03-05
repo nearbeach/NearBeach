@@ -144,6 +144,7 @@
 									<ul class="pagination justify-content-center"
 									>
 										<li v-for="index in numberOfPages"
+											v-bind:key="index"
 											v-bind:class="getClasses(index)"
 										>
 											<a v-if="parseInt(index) !== parseInt(currentPage)"
