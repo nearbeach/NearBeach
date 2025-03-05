@@ -113,7 +113,7 @@
 									</div>
 								</div>
 
-								<nav v-bind:aria-label="`Pagination for New Link Wizard`"
+								<nav aria-label="Pagination for New Link Wizard"
 									 v-if="numberOfPages > 1"
 								>
 									<ul class="pagination justify-content-center"
