@@ -40,6 +40,7 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
     :caption: 🚀 About
 
     Features </000-about/features>
+    NearBeach Flow </000-about/nearbeach-flow>
 
 
 .. toctree::

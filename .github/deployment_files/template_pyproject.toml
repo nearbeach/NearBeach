@@ -10,7 +10,7 @@ dependencies = [
   "simplejson",
   "pillow>=10.0.1",
   "urllib3",
-  "boto3",
+  "boto3==1.35.99",
   "azure-storage-blob",
   "azure-identity",
   "pip>=19.2",
