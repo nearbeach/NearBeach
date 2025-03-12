@@ -9,15 +9,15 @@ from NearBeach.models import (
 
 
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
-    pain = serializers.MultipleChoiceField(
+    group_list = serializers.MultipleChoiceField(
         write_only=True,
+        required=True,
         choices=Group.objects.filter(
             is_deleted=False,
         ).values_list(
             "group_id",
             "group_name",
         ),
-        required=True,
     )
     organisation_id = serializers.PrimaryKeyRelatedField(
         many=False,
@@ -74,8 +74,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             "project_priority",
             "project_priority_name",
             "uuid",
-            # "group_list",
-            "pain",
+            "group_list",
         ]
 
     def get_fields(self):

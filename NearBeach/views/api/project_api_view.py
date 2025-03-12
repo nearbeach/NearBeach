@@ -66,7 +66,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project_submit.save()
 
         # Assign project to the groups
-        group_list = serializer.data.get("group_list")
+        group_list = request.data.getlist('group_list', [])
         for single_group in group_list:
             group_instance = Group.objects.get(
                 group_id=single_group,
