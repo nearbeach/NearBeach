@@ -10,3 +10,4 @@ azure-identity>=1.16.1
 
 pip>=19.2
 requests>=2.32.2
+djangorestframework

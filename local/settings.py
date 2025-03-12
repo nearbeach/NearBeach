@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['localhost', '0.0.0.0', '192.168.1.105']
 
 INSTALLED_APPS = [
     'NearBeach.apps.NearBeachConfig',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
