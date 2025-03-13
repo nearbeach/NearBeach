@@ -1,43 +1,43 @@
+from rest_framework.generics import get_object_or_404
+from rest_framework.renderers import JSONRenderer
+
 from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
 from NearBeach.models import (
     Group,
     ListOfProjectStatus,
     ObjectAssignment,
     Organisation,
-    Project,
+    Project, UserGroup,
 )
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework import permissions, renderers, viewsets, status
+from rest_framework import permissions, viewsets, status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework.reverse import reverse
 from NearBeach.views.document_views import transfer_new_object_uploads
-
-
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'project': reverse('project-list', request=request, format="json"),
-        # 'users': reverse('user-list', request=request, format=format),
-        # 'snippets': reverse('snippet-list', request=request, format=format)
-    })
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
     # Check User Authentication
     authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    renderer_classes = [JSONRenderer]
 
     # Setup the queryset and serialiser class
     queryset = Project.objects.filter(is_deleted=False)
     serializer_class = ProjectSerializer
 
-    # @check_user_generic_permissions(min_permission_level=3)
+    @check_user_generic_permissions(min_permission_level=3)
     def create(self, request, *args, **kwargs):
         serializer = ProjectSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
             return Response(
                 serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        group_list = request.data.getlist('group_list', [])
+        if group_list is None or len(group_list) == 0:
+            return Response(
+                "Groups are missing",
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -66,7 +66,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project_submit.save()
 
         # Assign project to the groups
-        group_list = request.data.getlist('group_list', [])
         for single_group in group_list:
             group_instance = Group.objects.get(
                 group_id=single_group,
@@ -96,4 +95,36 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project.change_user = request.user
         project.save()
         return Response(data='project deleted')
+
+    def list(self, request, *args, **kwargs):
+        # Setup Attributes
+        page_size = int(request.query_params.get("page_size", 100))
+        page_size = page_size if page_size <= 1000 else 1000
+        page = int(request.query_params.get("page", 1))
+
+        object_assignment_results = ObjectAssignment.objects.filter(
+            is_deleted=False,
+            group_id__in=UserGroup.objects.filter(
+                is_deleted=False,
+                username=request.user,
+            ).values(
+                "group_id",
+            )
+        )
+
+        project_results = Project.objects.filter(
+            is_deleted=False,
+            project_id__in=object_assignment_results.values("project_id"),
+        )[(page - 1) * page_size : page * page_size]
+
+        serializer = ProjectSerializer(project_results, many=True)
+
+        return Response(serializer.data)
+
+    @check_user_generic_permissions(min_permission_level=1)
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        queryset = Project.objects.all()
+        project_results = get_object_or_404(queryset, pk=pk)
+        serializer = ProjectSerializer(project_results)
+        return Response(serializer.data)
 
