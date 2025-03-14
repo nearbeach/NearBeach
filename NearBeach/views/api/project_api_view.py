@@ -128,3 +128,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(project_results)
         return Response(serializer.data)
 
+    @check_user_generic_permissions(min_permission_level=2)
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_418_IM_A_TEAPOT)
+
