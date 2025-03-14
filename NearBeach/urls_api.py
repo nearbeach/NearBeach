@@ -7,7 +7,7 @@ from NearBeach.views.api import (
 
 # Create the router for our view sets
 router = SimpleRouter()
-router.register(r'projects', project_api_view.ProjectViewSet, basename='project'),
+router.register(r'project', project_api_view.ProjectViewSet, basename='project'),
 
 urlpatterns = [
     # path('', include(router.urls)),

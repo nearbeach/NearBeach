@@ -4,6 +4,8 @@ from NearBeach.models import Group, ObjectAssignment, UserGroup
 
 
 def generic_permissions(request, object_lookup, kwargs):
+    user = request.user if hasattr(request, "user") else request.request.user
+
     # Extra Permissions
     extra_permissions = ""
     if "extra_permissions" in kwargs:
@@ -12,11 +14,11 @@ def generic_permissions(request, object_lookup, kwargs):
     # Default user level is 0
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
-        username=request.user,
+        username=user,
     )
 
     # If we are passing the object_lookup through, we will use a different function
-    if len(kwargs) > 0:
+    if "location_id" in kwargs:
         # Determine if there are any cross over with user groups and object_lookup groups
         group_results = Group.objects.filter(
             Q(

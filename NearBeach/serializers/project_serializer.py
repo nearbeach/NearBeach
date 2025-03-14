@@ -8,16 +8,15 @@ from NearBeach.models import (
 )
 
 
-class ProjectSerializer(serializers.HyperlinkedModelSerializer):
-    group_list = serializers.MultipleChoiceField(
-        write_only=True,
-        required=True,
-        choices=Group.objects.filter(
+# We are using serializers.Serializer because "group_list" is not in the project table
+class ProjectSerializer(serializers.Serializer):
+    group_list = serializers.PrimaryKeyRelatedField(
+        many=False,
+        queryset=Group.objects.filter(
             is_deleted=False,
-        ).values_list(
-            "group_id",
-            "group_name",
         ),
+        required=True,
+        write_only=True,
     )
     organisation_id = serializers.PrimaryKeyRelatedField(
         many=False,
@@ -29,11 +28,21 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     organisation_name = serializers.ReadOnlyField(
         source='organisation.organisation_name',
     )
+    project_description = serializers.CharField(
+        required=True,
+    )
     project_end_date = serializers.DateTimeField(
         required=True,
     )
     project_higher_order_status = serializers.ReadOnlyField(
         source='project_status.project_higher_order_status',
+    )
+    project_id = serializers.IntegerField(
+        read_only=True,
+    )
+    project_name = serializers.CharField(
+        max_length=255,
+        required=True,
     )
     project_priority = serializers.ChoiceField(
         choices=OBJECT_CARD_PRIORITY,
@@ -58,25 +67,6 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
         write_only=True,
     )
 
-    class Meta:
-        model = Project
-        fields = [
-            "project_id",
-            "project_name",
-            "project_description",
-            "organisation_id",
-            "organisation_name",
-            "project_start_date",
-            "project_end_date",
-            "project_status",
-            "project_status_name",
-            "project_higher_order_status",
-            "project_priority",
-            "project_priority_name",
-            "uuid",
-            "group_list",
-        ]
-
     def get_fields(self):
         fields = super().get_fields()
 
@@ -91,7 +81,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
 
         # Updating a new project
         if self.context['request'].method == "PUT":
-            # fields.pop("group_list", None)
+            fields.pop("group_list", None)
             fields.pop("organisation_id", None)
 
         return fields

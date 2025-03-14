@@ -1,6 +1,7 @@
 from rest_framework.generics import get_object_or_404
 from rest_framework.renderers import JSONRenderer
 
+from NearBeach.decorators.check_user_permissions.api_permissions import check_user_api_permissions
 from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
 from NearBeach.models import (
     Group,
@@ -26,7 +27,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.filter(is_deleted=False)
     serializer_class = ProjectSerializer
 
-    @check_user_generic_permissions(min_permission_level=3)
+    @check_user_api_permissions(min_permission_level=3)
     def create(self, request, *args, **kwargs):
         serializer = ProjectSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
@@ -86,9 +87,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
             serializer.data.get("uuid")
         )
 
-        return Response(serializer.data)
+        return Response(
+            data={ "project_id": project_submit.project_id },
+            status=status.HTTP_201_CREATED,
+        )
 
-    @check_user_generic_permissions(min_permission_level=4)
+    @check_user_api_permissions(min_permission_level=4)
     def destroy(self, request, *args, **kwargs):
         project = self.get_object()
         project.is_deleted = True
@@ -96,6 +100,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project.save()
         return Response(data='project deleted')
 
+    @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
         # Setup Attributes
         page_size = int(request.query_params.get("page_size", 100))
@@ -121,14 +126,42 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    @check_user_generic_permissions(min_permission_level=1)
+    @check_user_api_permissions(min_permission_level=1)
     def retrieve(self, request, pk=None, *args, **kwargs):
         queryset = Project.objects.all()
-        project_results = get_object_or_404(queryset, pk=pk)
+        project_results = get_object_or_404(
+            queryset,
+            pk=pk
+        )
         serializer = ProjectSerializer(project_results)
         return Response(serializer.data)
 
-    @check_user_generic_permissions(min_permission_level=2)
-    def update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_418_IM_A_TEAPOT)
+    @check_user_api_permissions(min_permission_level=2)
+    def update(self, request, pk=None, *args, **kwargs):
+        serializer = ProjectSerializer(data=request.data, context={'request': request})
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Obtain Instances
+        project_status_instance = ListOfProjectStatus.objects.get(
+            project_status_id=serializer.data["project_status"],
+        )
+
+        # Update Project
+        update_project = Project.objects.get(pk=pk)
+        update_project.project_name = serializer.data["project_name"]
+        update_project.project_description = serializer.data["project_description"]
+        update_project.project_start_date = serializer.data["project_start_date"]
+        update_project.project_end_date = serializer.data["project_end_date"]
+        update_project.project_status = project_status_instance
+        update_project.project_priority = serializer.data["project_priority"]
+        update_project.save()
+
+        return Response(
+            data=serializer.data,
+            status=status.HTTP_200_OK
+        )
 
