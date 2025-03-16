@@ -2,7 +2,6 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.renderers import JSONRenderer
 
 from NearBeach.decorators.check_user_permissions.api_permissions import check_user_api_permissions
-from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
 from NearBeach.models import (
     Group,
     ListOfProjectStatus,
