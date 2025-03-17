@@ -1,7 +1,5 @@
 from rest_framework.generics import get_object_or_404
-from rest_framework.renderers import JSONRenderer
-
-from NearBeach.decorators.check_user_permissions.api_permissions import check_user_api_permissions
+from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach.models import (
     Group,
     ListOfProjectStatus,
@@ -10,18 +8,12 @@ from NearBeach.models import (
     Project, UserGroup,
 )
 from NearBeach.serializers.project_serializer import ProjectSerializer
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework import permissions, viewsets, status
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from NearBeach.views.document_views import transfer_new_object_uploads
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    # Check User Authentication
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-    renderer_classes = [JSONRenderer]
-
     # Setup the queryset and serialiser class
     queryset = Project.objects.filter(is_deleted=False)
     serializer_class = ProjectSerializer

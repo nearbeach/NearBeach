@@ -18,7 +18,7 @@ def check_user_api_permissions(min_permission_level):
         def inner(request, *args, **kwargs):
             # Extract the url string, and split into a list
             url_string = request.request.path
-            url_list = url_string.replace("/api/", "").removesuffix("/").split("/")
+            url_list = url_string.replace("/api/v0/", "").removesuffix("/").split("/")
 
             destination = ""
             if len(url_list) == 1:
