@@ -2,7 +2,6 @@ from rest_framework import serializers
 from NearBeach.models import (
     Group,
     ListOfProjectStatus,
-    Project,
     OBJECT_CARD_PRIORITY,
     Organisation,
 )
