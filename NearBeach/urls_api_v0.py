@@ -21,10 +21,10 @@ from NearBeach.views.api.object_data import (
 # Create the router for our view sets
 router = SimpleRouter()
 router.register(r'available_data/customer_list', customer_list_api_view.CustomerListViewSet, basename='customer_list')
-# router.register(r'available_data/sprint_list', sprint_list_api_view.SprintListViewSet, basename='sprint_list')
-# router.register(r'available_data/tag_list', tag_list_api_view.TagListViewSet, basename='tag_list')
+router.register(r'available_data/sprint_list', sprint_list_api_view.SprintListViewSet, basename='sprint_list')
+router.register(r'available_data/tag_list', tag_list_api_view.TagListViewSet, basename='tag_list')
 router.register(r'coffee', coffee_api_view.CoffeeViewSet, basename='coffee')
-# router.register(r'object_data/group_and_user', group_and_user_api_view.GroupAndUserViewSet, basename='group_and_user')
+router.register(r'object_data/group_and_user', group_and_user_api_view.GroupAndUserViewSet, basename='group_and_user')
 # router.register(r'object_data/link', link_api_view.LinkViewSet, basename='link')
 # router.register(r'object_data/note', note_api_view.NoteViewSet, basename='note')
 # router.register(r'object_data/object_sprint', object_sprint_api_view.ObjectSprintViewSet, basename='object_sprint')

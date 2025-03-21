@@ -1,9 +1,12 @@
 from django.core.exceptions import PermissionDenied
 from functools import wraps
 from .partials.generic_permissions import generic_permissions
+from NearBeach.serializers.destination_serializer import DestinationSerializer
+from rest_framework import status
+from rest_framework.response import Response
 
 
-def check_user_api_permissions(min_permission_level):
+def api_object_data_permissions(min_permission_level):
     """
     Checks the user's generic permissions. It will gather both the
     - destination
@@ -16,16 +19,15 @@ def check_user_api_permissions(min_permission_level):
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
-            # Extract the url string, and split into a list
-            url_string = request.request.path
-            url_list = url_string.replace("/api/v0/", "").removesuffix("/").split("/")
+            serializer = DestinationSerializer(data=request.request.data)
+            if not serializer.is_valid():
+                return Response(
+                    data=serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
-            destination = ""
-            if len(url_list) == 1:
-                destination = url_list[0]
-            elif len(url_list) == 2:
-                destination = url_list[0]
-                kwargs["location_id"] = url_list[1]
+            destination = serializer.data["destination"]
+            kwargs["location_id"] = serializer.data["location_id"]
 
             passes, user_level, extra_level = generic_permissions(request, destination, kwargs)
 
@@ -42,7 +44,3 @@ def check_user_api_permissions(min_permission_level):
         return inner
 
     return decorator
-
-
-def check_object_data_api_permissions():
-    return None
