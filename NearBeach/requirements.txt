@@ -1,5 +1,6 @@
 # requirement.txt
 Django>=4.2.15
+django-rest-framework
 simplejson
 pillow>=10.0.1
 urllib3>2.2.2
