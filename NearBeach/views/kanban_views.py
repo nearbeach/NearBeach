@@ -1,7 +1,7 @@
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import F, Q
+from django.db.models import F
 from django.shortcuts import get_object_or_404
 
 from NearBeach.models import (
@@ -10,7 +10,6 @@ from NearBeach.models import (
     ObjectAssignment,
     Group,
     TagAssignment,
-    UserGroup,
     UserSetting,
 )
 from NearBeach.views.search.kanban_link_list import KanbanLinkList
@@ -110,7 +109,6 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     elif object_lookup == "requirement":
         kanban_card_submit.requirement = data
         kanban_card_submit.kanban_card_description = data.requirement_scope
-        # kanban_card_submit.kanban_card_priority = data.requirement_priority
 
     kanban_card_submit.kanban_card_text = form.cleaned_data[object_lookup]
 

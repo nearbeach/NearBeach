@@ -49,8 +49,11 @@ def check_user_generic_permissions(min_permission_level, extra_permissions=""):
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
+            # Depending on the request type, depends which user we use
+            user = request.user if hasattr(request, "user") else request.request.user
+
             # If user is admin - grant them all permissions
-            if request.user.is_superuser:
+            if user.is_superuser:
                 # Return the function with a user_level of 4
                 return func(request, *args, **kwargs, user_level=4)
 

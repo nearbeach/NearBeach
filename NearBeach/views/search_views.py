@@ -13,12 +13,6 @@ from NearBeach.forms import SearchObjectsForm, SearchForm
 from NearBeach.models import (
     Notification,
     ObjectAssignment,
-    RequestForChange,
-    Requirement,
-    Project,
-    Task,
-    KanbanBoard,
-    ListOfRequirementStatus,
     Customer,
     Group,
     Organisation,

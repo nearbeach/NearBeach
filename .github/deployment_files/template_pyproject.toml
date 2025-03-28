@@ -14,6 +14,7 @@ dependencies = [
   "azure-storage-blob",
   "azure-identity",
   "pip>=19.2",
+  "djangorestframework",
 ]
 requires-python = ">=3.9"
 authors = [
