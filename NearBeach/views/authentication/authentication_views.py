@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
-from ..forms import PermissionSet, Group, LoginForm
-from ..models import UserGroup, Notification, Organisation
+from ...forms import PermissionSet, Group, LoginForm
+from ...models import UserGroup, Notification, Organisation
 from django.contrib.auth.models import User
 
 # Import Django Libraries
