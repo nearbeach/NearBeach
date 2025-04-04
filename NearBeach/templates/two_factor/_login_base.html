@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="expires" content="0">
+        <title>NearBeach Login</title>
+
+        <!-- Webpack file with Foundation -->
+        {% load static %}
+        <script defer
+                src="{% static 'NearBeach/login.min.js' %}"
+                id="login_script"
+                data-static="{% static '' %}"
+        ></script>
+
+        <!-- fav icon -->
+        <link rel="shortcut icon" type="image/png" href="{% static 'NearBeach/NearBeach_Small.png' %}"/>
+    </head>
+    <body>
+        <div class="background">
+            <div class="login-dialog">
+                {% for notification in notification_results %}
+                    <div class="alert alert-primary">
+                        <h4 class="alert-heading">{{ notification.notification_header }}</h4>
+                        {{ notification.notification_message }}
+                    </div>
+                {% endfor %}
+
+                <h1>NearBeach Login</h1>
+
+                {% block content_wrapper %}
+                    {% block content %}{% endblock %}
+                {% endblock %}
+            </div>
+        </div>
+    </body>
+</html>

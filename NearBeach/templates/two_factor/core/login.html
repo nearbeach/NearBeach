@@ -1,4 +1,4 @@
-{% extends "two_factor/_base_focus.html" %}
+{% extends "two_factor/_login_base.html" %}
 {% load i18n %}
 {% load two_factor_tags %}
 
@@ -20,6 +20,8 @@
             <input type="submit" value="" hidden />
 
             {% include "two_factor/_wizard_actions.html" %}
+
+            <a href="{% url 'password_reset' %}">Forgotten Password</a>
         {% endblock %}
     </form>
 

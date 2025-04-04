@@ -7,6 +7,7 @@ body {
 
 .background {
     align-items: center;
+    background-size: cover;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -20,6 +21,14 @@ body {
         font-size: 22px;
         padding: 10px 7px;
         width: 414px;
+
+        a {
+            color: white;
+        }
+
+        a:visited {
+             color: white;
+        }
 
         h1 {
             font-size: 50px;

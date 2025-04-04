@@ -1,6 +1,6 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path, include, include
-from two_factor.urls import urlpatterns as tf_urls
+# from two_factor.urls import urlpatterns as tf_urls
 
 from .views import (
     admin_views,
@@ -40,6 +40,8 @@ from .views.authentication import (
     authentication_views,
 )
 from .views.authentication.login_view import TwoFactorLoginView
+from .views.authentication.two_factor_setup_view import TwoFactorSetupView
+from .urls_two_factor import urlpatterns as tf_urls
 
 # The following two imports are for the static files
 # 404 and 500 pages
