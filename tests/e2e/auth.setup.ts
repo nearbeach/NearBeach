@@ -29,11 +29,11 @@ Promise.all(credentials.map(async (single : credentialsType) : Promise<void> => 
 		await page.goto('http://localhost:8000/login');
 
 		// Type in username and password
-		await page.locator("#id_username").fill(single.username);
-		await page.locator("#id_password").fill(single.password);
+		await page.locator("#id_auth-username").fill(single.username);
+		await page.locator("#id_auth-password").fill(single.password);
 
 		// Sign in time
-		await page.getByRole('button', { name: 'Login' }).click();
+		await page.getByRole('button', { name: 'Next' }).click();
 
 		// Wait for page to login and then save the cookies
 		await page.waitForURL('http://localhost:8000/');
