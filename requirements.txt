@@ -3,6 +3,7 @@ Django>=4.2.15
 django-rest-framework
 django-two-factor-auth
 django-two-factor-auth[phonenumberslite]
+django_otp
 simplejson
 pillow>=10.0.1
 urllib3>=2.2.2
