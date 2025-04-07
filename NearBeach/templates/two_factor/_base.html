@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+    <html lang="en" data-bs-theme="{{ theme }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <head role="head">
+        {% include "NearBeach/partials/head.html" %}
+    </head>
+    <body>
+        <header>
+            {% include "NearBeach/partials/header.html" %}
+        </header>
+
+        {% include "NearBeach/partials/simple_loader.html" %}
+
+        {% block content_wrapper %}
+            <main class="container">
+                {#  Unused APP - Keep on page otherwise JavaScript will fail #}
+                <div id="app"></div>
+
+                {% block content %}{% endblock %}
+            </main>
+        {% endblock %}
+
+        {% include "NearBeach/partials/footer.html" %}
+    </body>
+</html>

@@ -1,0 +1,28 @@
+{% extends "two_factor/_login_base.html" %}
+{% load i18n %}
+{% load two_factor_tags %}
+
+{% block extra_media %}
+  {{ form.media }}
+{% endblock %}
+
+{% block content %}
+    {%  if wizard.steps.current == 'token' %}
+        <p>{{ device|as_verbose_action }}</p>
+    {% endif %}
+
+    <form id="login-form" action="/login" method="post">
+        {% block main_form_content %}
+            {% csrf_token %}
+            {% include "two_factor/_wizard_forms.html" %}
+
+            {# hidden submit button to enable [enter] key #}
+            <input type="submit" value="" hidden />
+
+            {% include "two_factor/_wizard_actions.html" %}
+
+            <a href="{% url 'password_reset' %}">Forgotten Password</a>
+        {% endblock %}
+    </form>
+
+{% endblock %}

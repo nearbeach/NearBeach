@@ -1,0 +1,50 @@
+{% extends "two_factor/_base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h1>
+            {% block title %}
+                {% trans "Disable Two-factor Authentication" %}
+            {% endblock %}
+        </h1>
+        <hr/>
+
+        <div class="row">
+            <div class="col">
+                <p>
+                    {% blocktrans trimmed %}
+                        You are about to disable two-factor authentication. This weakens your account security, are you
+                        sure?
+                    {% endblocktrans %}
+                </p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form }}
+                    </div>
+
+                    <div class="spacer"></div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a class="btn btn-outline-info"
+                                href="{% url 'profile_information' %}two_factor/"
+                            >
+                                Cancel - go back to profile
+                            </a>
+                            <button class="btn btn-danger float-end"
+                                    type="submit"
+                            >
+                                {% trans "Disable Two Factor Authentication" %}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

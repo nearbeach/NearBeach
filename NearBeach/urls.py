@@ -1,9 +1,9 @@
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, include, include
+# from two_factor.urls import urlpatterns as tf_urls
 
 from .views import (
     admin_views,
-    authentication_views,
     change_task_views,
     card_views,
     customer_views,
@@ -36,12 +36,19 @@ from .views import (
     user_setting_views,
     user_views, object_status_editor_views,
 )
+from .views.authentication import (
+    authentication_views,
+)
+from .views.authentication.login_view import TwoFactorLoginView
+from .views.authentication.two_factor_setup_view import TwoFactorSetupView
+from .urls_two_factor import urlpatterns as tf_urls
 
 # The following two imports are for the static files
 # 404 and 500 pages
 
 urlpatterns = [
     path("", dashboard_views.dashboard, name="dashboard"),
+    path('', include(tf_urls)),
     # Administration
     path("admin_add_user/", admin_views.add_user, name="admin_add_user"),
     path(
@@ -367,7 +374,8 @@ urlpatterns = [
         name="kanban_update_card",
     ),
     # Authentication
-    path("login", authentication_views.login, name="login"),
+    # path("login", authentication_views.login, name="login"),
+    path("login", TwoFactorLoginView.as_view(), name="login"),
     path("logout", authentication_views.logout, name="logout"),
     # My Planner
     path(

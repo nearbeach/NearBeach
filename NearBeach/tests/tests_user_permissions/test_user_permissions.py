@@ -20,7 +20,11 @@ class AdminUserPermissionTest(TestCase):
     fixtures = ["NearBeach_basic_setup.json"]
 
     def setUp(self):
-        self.credentials = {"username": "admin", "password": "Test1234$"}
+        self.credentials = {
+            "two_factor_login_view-current_step": "auth",
+            "auth-username": "admin",
+            "auth-password": "Test1234$"
+        }
 
     def test_project_permissions(self):
         c = Client()
@@ -98,7 +102,11 @@ class TeamLeaderPermissionTest(TestCase):
     fixtures = ["NearBeach_basic_setup.json"]
 
     def setUp(self):
-        self.credentials = {"username": "team_leader", "password": "Test1234$"}
+        self.credentials = {
+            "two_factor_login_view-current_step": "auth",
+            "auth-username": "team_leader",
+            "auth-password": "Test1234$"
+        }
 
     def test_project_permissions(self):
         c = Client()
@@ -173,7 +181,11 @@ class TeamMemberPermissionTest(TestCase):
     fixtures = ["NearBeach_basic_setup.json"]
 
     def setUp(self):
-        self.credentials = {"username": "team_member", "password": "Test1234$"}
+        self.credentials = {
+            "two_factor_login_view-current_step": "auth",
+            "auth-username": "team_member",
+            "auth-password": "Test1234$"
+        }
 
     def test_project_permissions(self):
         c = Client()
@@ -214,7 +226,11 @@ class TeamInternPermissionTest(TestCase):
     fixtures = ["NearBeach_basic_setup.json"]
 
     def setUp(self):
-        self.credentials = {"username": "team_intern", "password": "Test1234$"}
+        self.credentials = {
+            "two_factor_login_view-current_step": "auth",
+            "auth-username": "team_intern",
+            "auth-password": "Test1234$"
+        }
 
     def test_project_permissions_ti(self):
         c = Client()
