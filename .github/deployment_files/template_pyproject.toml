@@ -15,6 +15,9 @@ dependencies = [
   "azure-identity",
   "pip>=19.2",
   "djangorestframework",
+  "django-two-factor-auth",
+  "django-two-factor-auth[phonenumberslite]",
+  "django_otp",
 ]
 requires-python = ">=3.9"
 authors = [
