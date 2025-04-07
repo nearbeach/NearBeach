@@ -1,0 +1,55 @@
+{% extends "two_factor/_base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h1>
+            {% block title %}
+                {% trans "Backup Tokens" %}
+            {% endblock %}
+        </h1>
+        <hr/>
+
+        <div class="row">
+            <div class="col-md-4">
+                <strong>Backup Tokens</strong>
+                <p class="text-instructions">
+                    Backup tokens can be used when your primary and backup phone numbers aren't available. The backup
+                    tokens can be used for login verifications. If you've used up all your backup tokens, you can
+                    generate a new set of backup tokens.
+                </p>
+            </div>
+            <div class="col-md-8">
+                {% if device.token_set.count %}
+                    <p>Only the backup tokens shown below will be vailid.</p>
+                    <ul>
+                        {% for token in device.token_set.all %}
+                            <li>{{ token.token }}</li>
+                        {% endfor %}
+                    </ul>
+                    <p>{% blocktrans %}Print these tokens and keep them somewhere safe.{% endblocktrans %}</p>
+                {% else %}
+                    <p>{% trans "You don't have any backup codes yet." %}</p>
+                {% endif %}
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button class="btn btn-primary" type="submit">{% trans "Generate Tokens" %}</button>
+                </form>
+            </div>
+        </div>
+        <hr/>
+
+        <div class="row">
+            <div class="col-md-12">
+                <a href="{% url 'profile_information' %}two_factor"
+                    class="btn btn-outline-info"
+                >
+                    Back to Account Security
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

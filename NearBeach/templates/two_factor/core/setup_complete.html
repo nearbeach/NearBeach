@@ -1,0 +1,28 @@
+{% extends "two_factor/_base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h1>
+            {% block title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}
+        </h1>
+        <hr/>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    {% blocktrans trimmed %}
+                        Congratulations, you've successfully enabled two-factor authentication.
+                    {% endblocktrans %}
+                </p>
+                <a href="{% url 'profile_information' %}"
+                   class="btn btn-block btn-secondary"
+                >
+                    {% trans "Back to Account Security" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

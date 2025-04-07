@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
-from ..forms import PermissionSet, Group, LoginForm
-from ..models import UserGroup, Notification, Organisation
+from ...forms import PermissionSet, Group, LoginForm
+from ...models import UserGroup, Notification, Organisation
 from django.contrib.auth.models import User
 
 # Import Django Libraries
@@ -218,98 +218,6 @@ def check_recaptcha(post_data):
     if result["success"]:
         return True
     return False
-
-
-def login(request):
-    """
-    Will either log user in (if POST is submitted) or take the user to the login screen.
-
-    The form is declared at the start and filled with either the POST data OR nothing. If this
-    process is called in POST, then the form will be checked and if it passes the checks, the
-    user will be logged in.
-
-    If the form is not in POST (aka GET) OR fails the checks, then it will create the form with
-    the relevant errors.
-    """
-    error_message = ""
-
-    form = LoginForm(request.POST or None)
-
-    # POST
-    if request.method == "POST" and form.is_valid():
-        # Create empty user - it will be false
-        user = False
-
-        # Check if user passes recaptcha
-        if check_recaptcha(request.POST) is True:
-            # Looks like we can authenticate the user
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-
-            # Check to see if user exists AND has more than one group assigned
-            user = auth.authenticate(username=username, password=password)
-            if user is not None:
-                auth.login(request, user)
-
-        # Just double-checking. :)
-        if request.user.is_authenticated:
-            # Check to make sure it isn't first time login -> need to setup functionalities
-            check_first_time_login(request)
-
-            # Check how many groups user is in
-            user_group_count = len(
-                UserGroup.objects.filter(
-                    is_deleted=False,
-                    username=user,
-                )
-            )
-
-            if user_group_count > 0:
-                return HttpResponseRedirect(reverse("dashboard"))
-
-            # User has actually failed to log in. We will purposly log them out
-            # And make sure we tell them why
-            auth.logout(request)
-            error_message = "Please contact your System Administrator. You do not have any associated Groups"
-        else:
-            # User is not logged in - tell the front end
-            error_message = "Username or Password is incorrect. Please try again"
-
-    # Get recaptcha public key
-    if hasattr(settings, "RECAPTCHA_PUBLIC_KEY") and hasattr(
-        settings, "RECAPTCHA_PRIVATE_KEY"
-    ):
-        RECAPTCHA_PUBLIC_KEY = settings.RECAPTCHA_PUBLIC_KEY
-    else:
-        RECAPTCHA_PUBLIC_KEY = ""
-
-    # load template
-    t = loader.get_template("NearBeach/authentication/login.html")
-
-    # Get notification results
-    notification_results = Notification.objects.filter(
-        Q(
-            is_deleted=False,
-            notification_start_date__lte=datetime.datetime.now().date(),
-            notification_end_date__gte=datetime.datetime.now().date(),
-        )
-        & Q(Q(notification_location="all") | Q(notification_location="login"))
-    )
-
-    # Get random number
-    cryptogen = SystemRandom()
-
-    # context
-    c = {
-        "error_message": error_message,
-        "LoginForm": form,
-        "nearbeach_title": "NearBeach Login",
-        "notification_results": notification_results,
-        "RECAPTCHA_PUBLIC_KEY": RECAPTCHA_PUBLIC_KEY,
-        "image_number": f"{1 + cryptogen.randrange(1, 19):03.0f}",
-    }
-
-    return HttpResponse(t.render(c, request))
 
 
 def logout(request):

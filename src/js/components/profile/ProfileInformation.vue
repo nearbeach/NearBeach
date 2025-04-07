@@ -84,6 +84,19 @@
 				</div>
 				<hr/>
 
+				<div class="row">
+					<div class="col-md-4">
+						<strong>Two Factor Authentication</strong>
+						<p class="text-instructions">
+							Click on "Manage Two Factor Authentication" to manage your two factor authentication.
+						</p>
+					</div>
+					<div class="col-md-8">
+						<a href="/profile_information/two_factor">Manage Two Factor Authentication.</a>
+					</div>
+				</div>
+				<hr/>
+
 				<!-- UPDATE USER -->
 				<div class="row submit-row">
 					<div class="col-md-12">
