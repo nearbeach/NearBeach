@@ -29,7 +29,11 @@ class NewInstanceLoginTest(TestCase):
     fixtures = ["NearBeach_no_setup.json"]
 
     def setUp(self):
-        self.credentials = {"username": username, "password": password}
+        self.credentials = {
+            "two_factor_login_view-current_step": "auth",
+            "auth-username": username,
+            "auth-password": password
+        }
 
     def test_admin_login(self):
         c = Client()

@@ -20,7 +20,11 @@ class TestPermissionDenied(TestCase):
     fixtures = ["NearBeach_basic_setup.json"]
 
     def setUp(self):
-        self.credentials = {"username": "admin", "password": "Test1234$"}
+        self.credentials = {
+            "two_factor_login_view-current_step": "auth",
+            "auth-username": "admin",
+            "auth-password": "Test1234$"
+        }
 
     def test_permission_denied(self):
         c = Client()

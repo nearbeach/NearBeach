@@ -20,7 +20,11 @@ class ProjectViewTests(TestCase):
 
     def setUp(self):
         # Login
-        self.credentials = {"username": username, "password": password}
+        self.credentials = {
+            "two_factor_login_view-current_step": "auth",
+            "auth-username": username,
+            "auth-password": password
+        }
 
         # Setup the client
         self.client = Client()

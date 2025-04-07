@@ -24,7 +24,11 @@ class TestNote(TestCase):
     fixtures = ["NearBeach_basic_setup.json"]
 
     def setUp(self):
-        self.credentials = {"username": username, "password": password}
+        self.credentials = {
+            "two_factor_login_view-current_step": "auth",
+            "auth-username": username,
+            "auth-password": password
+        }
 
     def test_note_delete_fail(self):
         """
