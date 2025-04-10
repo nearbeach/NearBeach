@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from two_factor.views import LoginView
-from .authentication_views import check_first_time_login, check_recaptcha
+from .authentication_views import check_first_time_login
 from django.contrib import auth
 from NearBeach.models import UserGroup
 
@@ -16,14 +16,6 @@ class TwoFactorLoginView(LoginView):
         super().__init__(**kwargs)
 
     def done(self, form_list, *args, **kwargs):
-        # Check recaptcha
-        # TODO - Re-implement the recaptcha
-        # if not check_recaptcha(self.request.POST):
-        #     # User has failed the recaptcha
-        #     self.storage.reset()
-        #     self.show_recaptcha_errors = True
-        #     return self.render_goto_step(self.FIRST_STEP)
-
         # Authenticate user - needs to occur BEFORE first time login. Otherwise user can not be obtained from request
         auth.login(request=self.request, user=self.get_user())
 

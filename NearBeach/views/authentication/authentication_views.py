@@ -164,62 +164,6 @@ def check_first_time_login(request):
     request.session["is_superuser"] = request.user.is_superuser
 
 
-def check_recaptcha(post_data):
-    """
-    Determine if the user has setup the recaptcha in the settings.py file, and then check the result against google.
-    :param post_data: data from user's POST
-    :return:
-    """
-    if hasattr(settings, "RECAPTCHA_PUBLIC_KEY") and hasattr(
-        settings, "RECAPTCHA_PRIVATE_KEY"
-    ):
-        RECAPTCHA_PRIVATE_KEY = settings.RECAPTCHA_PRIVATE_KEY
-    else:
-        # User has not setup recaptcha - return true
-        return True
-
-    """
-    As the Google documentation states. I have to send the request back to
-    the given URL. It gives back a JSON object, which will contain the
-    success results.
-
-    Method
-    ~~~~~~
-    1.) Collect the variables
-    2.) With the data - encode the variables into URL format
-    3.) Send the request to the given URL
-    4.) The response will open and store the response from GOOGLE
-    5.) The results will contain the JSON Object
-    """
-    recaptcha_response = post_data.get("g-recaptcha-response")
-    url = "https://www.google.com/recaptcha/api/siteverify"
-    values = {"secret": RECAPTCHA_PRIVATE_KEY, "response": recaptcha_response}
-
-    """
-    SECURITY ISSUE
-    ~~~~~~~~~~~~~~
-    The URL could contain a file. Which we do not want executed by mistake. So we just make sure that the URL starts
-    with a http instead of ftp or file.
-
-    We place the  at the end of the json_data because we have checked the field. This should be just a json
-    response. If it is not at this point then it will produce a server issue.
-    """
-    if url.lower().startswith("http"):
-        req = urllib.request.Request(url)
-    else:
-        raise ValueError from None
-
-    with urllib.request.urlopen(
-        req, urllib.parse.urlencode(values).encode("utf8")
-    ) as response:  # nosec
-        result = json.load(response)
-
-    # Check to see if the user is a robot. Success = human
-    if result["success"]:
-        return True
-    return False
-
-
 def logout(request):
     # log the user out and go to login page
     auth.logout(request)
