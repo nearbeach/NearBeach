@@ -7,7 +7,8 @@ django_otp
 simplejson
 pillow>=10.0.1
 urllib3>2.2.2
-boto3==1.35.99
+boto3
+botocore
 azure-storage-blob
 azure-identity>=1.16.1
 
