@@ -45,8 +45,8 @@ class TagViewSet(viewsets.ViewSet):
             )
 
         # Get variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
         tag_list = serializer.data["tag_list"]
 
         for single_tag in tag_list:
@@ -82,8 +82,8 @@ class TagViewSet(viewsets.ViewSet):
             )
 
         # Get variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
 
         # Get the tags to delete
         remove_tag = TagAssignment.objects.filter(
@@ -126,15 +126,13 @@ class TagViewSet(viewsets.ViewSet):
             )
 
         # Get variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
 
         # Get the serialized data
         serializer = self._get_tag_list(destination, location_id)
-        datadata = serializer.data
 
         return Response(
             data=serializer.data,
             status=status.HTTP_200_OK
         )
-

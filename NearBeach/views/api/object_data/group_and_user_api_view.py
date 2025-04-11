@@ -8,7 +8,6 @@ from NearBeach.models import (
     User,
     UserGroup,
 )
-from NearBeach.serializers.destination_serializer import DestinationSerializer
 from NearBeach.serializers.object_data.group_and_user_serializer import GroupAndUserSerializer
 from NearBeach.views.object_data_views import get_group_and_user_list
 from NearBeach.views.tools.internal_functions import set_object_from_destination
@@ -26,8 +25,8 @@ class GroupAndUserViewSet(viewsets.ViewSet):
             )
 
         # Flat pack the variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
         group_list = serializer.data["group_list"]
         user_list = serializer.data["user_list"]
 
@@ -116,8 +115,8 @@ class GroupAndUserViewSet(viewsets.ViewSet):
             )
 
         # Flat pack the variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
         group = serializer.data.get("group", None)
         user = serializer.data.get("user", None)
 
@@ -168,17 +167,9 @@ class GroupAndUserViewSet(viewsets.ViewSet):
 
     @api_object_data_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
-        # Serialise the data
-        serializer = DestinationSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # Flat pack the variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
 
         return Response(
             get_group_and_user_list(

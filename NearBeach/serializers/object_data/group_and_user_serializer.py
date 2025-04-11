@@ -1,22 +1,15 @@
 from rest_framework import serializers
 from NearBeach.models import Group, User
-from NearBeach.serializers.destination_serializer import DestinationSerializer
 
 
-class GroupAndUserSerializer(DestinationSerializer):
-    # Queryset Data
-    group_results = Group.objects.filter(
-        is_deleted=False,
-    )
-    user_results = User.objects.filter(
-        is_active=True,
-    )
-
+class GroupAndUserSerializer(serializers.Serializer):
     # Serialise Data
     group = serializers.PrimaryKeyRelatedField(
         required=False,
         many=False,
-        queryset=group_results,
+        queryset=Group.objects.filter(
+            is_deleted=False,
+        ),
     )
     user = serializers.PrimaryKeyRelatedField(
         required=False,
@@ -28,7 +21,9 @@ class GroupAndUserSerializer(DestinationSerializer):
     group_list = serializers.PrimaryKeyRelatedField(
         required=False,
         many=True,
-        queryset=group_results,
+        queryset=Group.objects.filter(
+            is_deleted=False,
+        ),
     )
     user_list = serializers.PrimaryKeyRelatedField(
         required=False,

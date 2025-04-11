@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from NearBeach.serializers.destination_serializer import DestinationSerializer
 from NearBeach.models import Tag
 
-class TagSerializer(DestinationSerializer):
+
+class TagSerializer(serializers.Serializer):
     tag_assignment_id = serializers.IntegerField(
         read_only=True,
     )
@@ -29,9 +29,6 @@ class TagSerializer(DestinationSerializer):
 
         # Check to see if request exists in context
         if "request" not in self.context:
-            # When there is no context, we don't want these fields to be required
-            fields["destination"].required = False
-            fields["location_id"].required = False
             return fields
 
         if self.context["request"].method == "POST":

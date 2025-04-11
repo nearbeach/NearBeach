@@ -41,8 +41,8 @@ class ObjectSprintViewSet(viewsets.ViewSet):
             )
 
         # Get variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
         sprint_end_date = serializer.data["sprint_end_date"]
         sprint_name = serializer.data["sprint_name"]
         sprint_start_date = serializer.data["sprint_start_date"]
@@ -78,8 +78,8 @@ class ObjectSprintViewSet(viewsets.ViewSet):
             )
 
         # Variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
 
         # Get the update sprint list
         serializer = self._get_object_sprint_list(destination, location_id)

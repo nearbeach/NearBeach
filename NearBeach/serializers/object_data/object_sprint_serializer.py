@@ -1,8 +1,7 @@
 from rest_framework import serializers
-from NearBeach.serializers.destination_serializer import DestinationSerializer
 
 
-class ObjectSprintSerializer(DestinationSerializer):
+class ObjectSprintSerializer(serializers.Serializer):
      sprint_id = serializers.IntegerField(
          read_only=True,
      )
@@ -32,9 +31,6 @@ class ObjectSprintSerializer(DestinationSerializer):
 
         # Check to see if request exists in context
         if "request" not in self.context:
-            # When there is no context, we don't want these fields to be required
-            fields["destination"].required = False
-            fields["location_id"].required = False
             return fields
 
         if self.context["request"].method == "GET":

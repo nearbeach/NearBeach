@@ -61,8 +61,8 @@ class NoteViewSet(viewsets.ViewSet):
             )
 
         # Variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
         object_note = serializer.data["object_note"]
 
         # SAVE DATA
@@ -109,8 +109,8 @@ class NoteViewSet(viewsets.ViewSet):
             )
 
         # Get variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
 
         # Get the note to delete
         delete_note = ObjectNote.objects.filter(
@@ -151,8 +151,8 @@ class NoteViewSet(viewsets.ViewSet):
             )
 
         # Variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
 
         # Get the serialized data
         serializer = self._get_list(request, destination, location_id)
@@ -175,8 +175,8 @@ class NoteViewSet(viewsets.ViewSet):
             )
 
         # Variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
         object_note = serializer.data["object_note"]
 
         # Get the object to update

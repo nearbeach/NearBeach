@@ -1,11 +1,9 @@
 from collections import namedtuple
-from typing import List
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.db.models import Q, F, Value
 from NearBeach.decorators.check_user_permissions.api_object_data_permissions_v0 import api_object_data_permissions
-from NearBeach.serializers.destination_serializer import DestinationSerializer
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer
 from NearBeach.models import (
     ChangeTask,
@@ -211,8 +209,8 @@ class LinkViewSet(viewsets.ModelViewSet):
             )
 
         # Get the parent object of
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
         object_relation = serializer.data["object_relation"]
 
         # Loop through the results and add them in.
@@ -274,19 +272,9 @@ class LinkViewSet(viewsets.ModelViewSet):
 
     @api_object_data_permissions(min_permission_level=4)
     def destroy(self, request, pk=None, *args, **kwargs):
-        serializer = DestinationSerializer(
-            data=request.data,
-            context={"request": request},
-        )
-        if not serializer.is_valid():
-            return Response(
-                data=serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # Get data from serializer
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
 
         # Get the object we wish to remove
         remove_object = ObjectAssignment.objects.filter(
@@ -317,15 +305,8 @@ class LinkViewSet(viewsets.ModelViewSet):
 
     @api_object_data_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
-        serializer = DestinationSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
 
         # Get the serialized data
         serializer = self._get_list(destination, location_id)
