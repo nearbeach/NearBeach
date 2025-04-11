@@ -7,6 +7,8 @@ from NearBeach.models import Sprint
 
 
 class ObjectSprintViewSet(viewsets.ViewSet):
+    serializer_class = ObjectSprintSerializer
+
     def _get_object_sprint_list(self, destination, location_id):
         # Get data
         sprint_results = Sprint.objects.filter(

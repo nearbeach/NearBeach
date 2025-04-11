@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
@@ -12,8 +13,12 @@ from NearBeach.serializers.object_data.group_and_user_serializer import GroupAnd
 from NearBeach.views.object_data_views import get_group_and_user_list
 from NearBeach.views.tools.internal_functions import set_object_from_destination
 
-
+@extend_schema(
+    tags=["Object Data|Groups And Users"]
+)
 class GroupAndUserViewSet(viewsets.ViewSet):
+    serializer_class = GroupAndUserSerializer
+
     @api_object_data_permissions(min_permission_level=2)
     def create(self, request, *args, **kwargs):
         # Serialize the data for references

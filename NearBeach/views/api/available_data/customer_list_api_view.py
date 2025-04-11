@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -22,6 +23,12 @@ OBJECT_DICT = {
 
 
 class CustomerListViewSet(viewsets.ViewSet):
+    serializer_class = CustomerListSerializer
+
+    @extend_schema(
+        request=DestinationSerializer,
+        responses={200: CustomerListSerializer},
+    )
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
         # Serialise the data

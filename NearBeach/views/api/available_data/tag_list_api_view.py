@@ -8,6 +8,8 @@ from NearBeach.serializers.available_data.tag_list_serializer import TagListSeri
 
 
 class TagListViewSet(viewsets.ViewSet):
+    serializer_class = TagListSerializer
+
     def list(self, request, *args, **kwargs):
         tag_results = Tag.objects.filter(
             is_deleted=False,

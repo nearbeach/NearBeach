@@ -1,5 +1,6 @@
 from collections import namedtuple
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.db.models import Q, F, Value
@@ -54,7 +55,12 @@ OBJECT_TITLE = {
 }
 
 
+@extend_schema(
+    tags=["Object Data|Link"]
+)
 class LinkViewSet(viewsets.ModelViewSet):
+    serializer_class = LinkSerializer
+
     def _get_list(self, destination, location_id):
         # Check objects that match the destination and location id
         # Also make sure we get any meta data where the destination is not null

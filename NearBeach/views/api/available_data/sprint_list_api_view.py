@@ -11,6 +11,8 @@ from NearBeach.serializers.available_data.sprint_list_serializer import SprintLi
 
 
 class SprintListViewSet(viewsets.ViewSet):
+    serializer_class = SprintListSerializer
+
     #TODO: Check to see if we need to implement permissions
     def list(self, request, *args, **kwargs):
         object_assignment_results = ObjectAssignment.objects.filter(

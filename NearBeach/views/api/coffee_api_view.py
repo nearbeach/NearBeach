@@ -3,6 +3,8 @@ from rest_framework.response import Response
 
 
 class CoffeeViewSet(viewsets.ViewSet):
+    serializer_class = None
+
     def create(self, request, *args, **kwargs):
         return Response(
             data={"Teapot": "Why did you put coffee in me?"},

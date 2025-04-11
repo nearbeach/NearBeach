@@ -8,6 +8,8 @@ from NearBeach.models import Tag, TagAssignment
 
 
 class TagViewSet(viewsets.ViewSet):
+    serializer_class = TagSerializer
+    
     def _get_tag_list(self, destination, location_id):
         # Get the data we want
         tag_results = TagAssignment.objects.filter(
