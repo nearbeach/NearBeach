@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from django.db.models import Q
 
@@ -10,7 +11,12 @@ from NearBeach.models import (
 from NearBeach.serializers.available_data.sprint_list_serializer import SprintListSerializer
 
 
+@extend_schema(
+    tags=["Available Data"]
+)
 class SprintListViewSet(viewsets.ViewSet):
+    serializer_class = SprintListSerializer
+
     #TODO: Check to see if we need to implement permissions
     def list(self, request, *args, **kwargs):
         object_assignment_results = ObjectAssignment.objects.filter(

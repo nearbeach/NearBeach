@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
@@ -12,8 +13,45 @@ from NearBeach.serializers.object_data.group_and_user_serializer import GroupAnd
 from NearBeach.views.object_data_views import get_group_and_user_list
 from NearBeach.views.tools.internal_functions import set_object_from_destination
 
-
+@extend_schema(
+    tags=["Object Data|Groups And Users"]
+)
 class GroupAndUserViewSet(viewsets.ViewSet):
+    serializer_class = GroupAndUserSerializer
+
+    @extend_schema(
+        description="""
+Add either a user(s) or a group(s) to this object. The IDs for the users and groups can be obtained by
+using the GET functionality, and looking at the "potential_group_list" or "potential_user_list" fields within 
+the response.
+
+Parameters
+
+Destination is the object you are looking up. It can only be;
+- Kanban Card
+- Project
+- Request for Change
+- Requirement
+- Requirement Item
+- Task
+
+The Location Id, is the ID number of that specific object.
+
+The ID is a integer field, just leave as 0
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Add both user 2, and 3 to the current object",
+                value={"user_list": [2, 3]},
+            ),
+            OpenApiExample(
+                "Example 2",
+                description="Add the group 5 to the current project",
+                value={"group_list": 5},
+            ),
+        ],
+    )
     @api_object_data_permissions(min_permission_level=2)
     def create(self, request, *args, **kwargs):
         # Serialize the data for references
@@ -104,6 +142,38 @@ class GroupAndUserViewSet(viewsets.ViewSet):
             status_code,
         )
 
+    @extend_schema(
+        description="""
+Remove either a single user or a single group from this object. The IDs for the users and groups can be obtained by
+using the GET functionality.
+
+Parameters
+
+Destination is the object you are looking up. It can only be;
+- Kanban Card
+- Project
+- Request for Change
+- Requirement
+- Requirement Item
+- Task
+
+The Location Id, is the ID number of that specific object.
+
+The ID is a integer field, just leave as 0
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Remove user (2) from the current project",
+                value={"user": 2},
+            ),
+            OpenApiExample(
+                "Example 2",
+                description="Remove group (3) from the current project",
+                value={"user": 3},
+            ),
+        ],
+    )
     @api_object_data_permissions(min_permission_level=2)
     def destroy(self, request, pk=None, *args, **kwargs):
         # Serialise the data
@@ -165,11 +235,38 @@ class GroupAndUserViewSet(viewsets.ViewSet):
             )
         )
 
+    @extend_schema(
+        description="""
+Group and User API end point supplies the following information on a given object;
+- Object Group List -> A list of groups assigned to current object
+- Object User List -> A list of users assigned to current object
+- Potential Group List -> Potential groups that can be assigned to object
+- Potential User List -> Potential users that can be assigned to object
+- User Group List -> Current user's list of groups they have been assigned to.
+
+This list is used by the front end for the Group and User section. It can be used to obtain any of the data
+outlined above.
+
+Parameters
+
+Destination is the object you are looking up. It can only be;
+- Kanban Card
+- Project
+- Request for Change
+- Requirement
+- Requirement Item
+- Task
+
+The Location Id, is the ID number of that specific object.
+            """,
+    )
     @api_object_data_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
         # Flat pack the variables
         destination = kwargs["destination"]
         location_id = kwargs["location_id"]
+
+        # TODO - Add in destination check - not all destination objects can be utilised for this function :)
 
         return Response(
             get_group_and_user_list(
