@@ -15,6 +15,9 @@ from NearBeach.views.tools.internal_functions import set_object_from_destination
 #NOTE - We might need to have a custom permissions, for the organisation vs other objects. This needs testing
 
 
+@extend_schema(
+    tags=["Object Data|Notes"]
+)
 class NoteViewSet(viewsets.ViewSet):
     serializer_class = NoteSerializer
 

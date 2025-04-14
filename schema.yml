@@ -7,6 +7,18 @@ paths:
   /api/v0/{destination}/{location_id}/group_and_user/:
     get:
       operationId: group_and_user_list
+      description: "\nGroup and User API end point supplies the following information\
+        \ on a given object;\n- Object Group List -> A list of groups assigned to\
+        \ current object\n- Object User List -> A list of users assigned to current\
+        \ object\n- Potential Group List -> Potential groups that can be assigned\
+        \ to object\n- Potential User List -> Potential users that can be assigned\
+        \ to object\n- User Group List -> Current user's list of groups they have\
+        \ been assigned to.\n\nThis list is used by the front end for the Group and\
+        \ User section. It can be used to obtain any of the data\noutlined above.\n\
+        \nParameters\n\nDestination is the object you are looking up. It can only\
+        \ be;\n- Kanban Card\n- Project\n- Request for Change\n- Requirement\n- Requirement\
+        \ Item\n- Task\n\nThe Location Id, is the ID number of that specific object.\n\
+        \            "
       parameters:
       - in: path
         name: destination
@@ -37,6 +49,14 @@ paths:
           description: ''
     post:
       operationId: group_and_user_create
+      description: "\nAdd either a user(s) or a group(s) to this object. The IDs for\
+        \ the users and groups can be obtained by\nusing the GET functionality, and\
+        \ looking at the \"potential_group_list\" or \"potential_user_list\" fields\
+        \ within \nthe response.\n\nParameters\n\nDestination is the object you are\
+        \ looking up. It can only be;\n- Kanban Card\n- Project\n- Request for Change\n\
+        - Requirement\n- Requirement Item\n- Task\n\nThe Location Id, is the ID number\
+        \ of that specific object.\n\nThe ID is a integer field, just leave as 0\n\
+        \        "
       parameters:
       - in: path
         name: destination
@@ -57,6 +77,19 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/GroupAndUser'
+            examples:
+              Example1:
+                value:
+                  user_list:
+                  - 2
+                  - 3
+                summary: Example 1
+                description: Add both user 2, and 3 to the current object
+              Example2:
+                value:
+                  group_list: 5
+                summary: Example 2
+                description: Add the group 5 to the current project
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/GroupAndUser'
@@ -73,10 +106,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GroupAndUser'
+              examples:
+                Example1:
+                  value:
+                    user_list:
+                    - 2
+                    - 3
+                  summary: Example 1
+                  description: Add both user 2, and 3 to the current object
+                Example2:
+                  value:
+                    group_list: 5
+                  summary: Example 2
+                  description: Add the group 5 to the current project
           description: ''
   /api/v0/{destination}/{location_id}/group_and_user/{id}/:
     delete:
       operationId: group_and_user_destroy
+      description: "\nRemove either a single user or a single group from this object.\
+        \ The IDs for the users and groups can be obtained by\nusing the GET functionality.\n\
+        \nParameters\n\nDestination is the object you are looking up. It can only\
+        \ be;\n- Kanban Card\n- Project\n- Request for Change\n- Requirement\n- Requirement\
+        \ Item\n- Task\n\nThe Location Id, is the ID number of that specific object.\n\
+        \nThe ID is a integer field, just leave as 0\n        "
       parameters:
       - in: path
         name: destination
@@ -342,7 +394,7 @@ paths:
           pattern: ^[0-9]+$
         required: true
       tags:
-      - note
+      - Object Data|Notes
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -372,7 +424,7 @@ paths:
           pattern: ^[0-9]+$
         required: true
       tags:
-      - note
+      - Object Data|Notes
       requestBody:
         content:
           application/json:
@@ -417,7 +469,7 @@ paths:
           pattern: ^[0-9]+$
         required: true
       tags:
-      - note
+      - Object Data|Notes
       requestBody:
         content:
           application/json:
@@ -461,7 +513,7 @@ paths:
           pattern: ^[0-9]+$
         required: true
       tags:
-      - note
+      - Object Data|Notes
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -486,7 +538,7 @@ paths:
           pattern: ^[0-9]+$
         required: true
       tags:
-      - object_sprint
+      - Object Data|Sprints
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -516,7 +568,7 @@ paths:
           pattern: ^[0-9]+$
         required: true
       tags:
-      - object_sprint
+      - Object Data|Sprints
       requestBody:
         content:
           application/json:
@@ -556,7 +608,7 @@ paths:
           pattern: ^[0-9]+$
         required: true
       tags:
-      - tag
+      - Object Data|Tags
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -586,7 +638,7 @@ paths:
           pattern: ^[0-9]+$
         required: true
       tags:
-      - tag
+      - Object Data|Tags
       requestBody:
         content:
           application/json:
@@ -631,7 +683,7 @@ paths:
           pattern: ^[0-9]+$
         required: true
       tags:
-      - tag
+      - Object Data|Tags
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -643,7 +695,7 @@ paths:
     get:
       operationId: available_data_customer_list_list
       tags:
-      - available_data
+      - Available Data
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -661,7 +713,7 @@ paths:
     get:
       operationId: available_data_sprint_list_list
       tags:
-      - available_data
+      - Available Data
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -679,7 +731,7 @@ paths:
     get:
       operationId: available_data_tag_list_list
       tags:
-      - available_data
+      - Available Data
       security:
       - cookieAuth: []
       - basicAuth: []

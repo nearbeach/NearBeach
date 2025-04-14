@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.db.models import F
@@ -7,6 +8,9 @@ from NearBeach.serializers.object_data.tag_serializer import TagSerializer
 from NearBeach.models import Tag, TagAssignment
 
 
+@extend_schema(
+    tags=["Object Data|Tags"]
+)
 class TagViewSet(viewsets.ViewSet):
     serializer_class = TagSerializer
     

@@ -22,6 +22,9 @@ OBJECT_DICT = {
 }
 
 
+@extend_schema(
+    tags=["Available Data"]
+)
 class CustomerListViewSet(viewsets.ViewSet):
     serializer_class = CustomerListSerializer
 
