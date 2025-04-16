@@ -2,26 +2,26 @@ from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach.models import (
     Group,
-    ListOfProjectStatus,
+    ListOfTaskStatus,
     ObjectAssignment,
     Organisation,
-    Project,
+    Task,
     UserGroup,
 )
-from NearBeach.serializers.project_serializer import ProjectSerializer
+from NearBeach.serializers.task_serializer import TaskSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from NearBeach.views.document_views import transfer_new_object_uploads
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
+class TaskViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
-    queryset = Project.objects.filter(is_deleted=False)
-    serializer_class = ProjectSerializer
+    queryset = Task.objects.filter(is_deleted=False)
+    serializer_class = TaskSerializer
 
     @check_user_api_permissions(min_permission_level=3)
     def create(self, request, *args, **kwargs):
-        serializer = ProjectSerializer(data=request.data, context={'request': request})
+        serializer = TaskSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
             return Response(
                 serializer.errors,
@@ -39,58 +39,59 @@ class ProjectViewSet(viewsets.ModelViewSet):
             organisation_id=serializer.data.get("organisation_id"),
         )
 
-        # Get first project status
-        project_status = ListOfProjectStatus.objects.filter(
+        # Get first task status
+        task_status = ListOfTaskStatus.objects.filter(
             is_deleted=False
         ).order_by(
-            "project_status_sort_order",
+            "task_status_sort_order",
         )
 
-        project_submit = Project(
-            project_name=serializer.data.get("project_name"),
-            project_description=serializer.data.get("project_description"),
+        task_submit = Task(
+            task_short_description=serializer.data.get("task_short_description"),
+            task_long_description=serializer.data.get("task_long_description"),
             organisation=organisation_instance,
-            project_start_date=serializer.data.get("project_start_date"),
-            project_end_date=serializer.data.get("project_end_date"),
-            project_status=project_status.first(),
+            task_start_date=serializer.data.get("task_start_date"),
+            task_end_date=serializer.data.get("task_end_date"),
+            task_status=task_status.first(),
             change_user=request.user,
             creation_user=request.user,
-        )
-        project_submit.save()
 
-        # Assign project to the groups
+        )
+        task_submit.save()
+
+        # Assign task to the groups
         for single_group in group_list:
             group_instance = Group.objects.get(
                 group_id=single_group,
             )
 
-            # Save the group against the new project
+            # Save the group against the new task
             submit_object_assignment = ObjectAssignment(
                 group_id=group_instance,
-                project=project_submit,
                 change_user=request.user,
+                task=task_submit,
             )
             submit_object_assignment.save()
 
-        # Transfer any images to the new project id
+        # Transfer any images to the new task id
         transfer_new_object_uploads(
-            "project",
-            project_submit.project_id,
+            "task",
+            task_submit.task_id,
             serializer.data.get("uuid")
         )
 
         return Response(
-            data={ "project_id": project_submit.project_id },
+            data={ "task_id": task_submit.task_id },
             status=status.HTTP_201_CREATED,
         )
 
     @check_user_api_permissions(min_permission_level=4)
     def destroy(self, request, *args, **kwargs):
-        project = self.get_object()
-        project.is_deleted = True
-        project.change_user = request.user
-        project.save()
-        return Response(data='project deleted')
+        task = self.get_object()
+        task.is_deleted = True
+        task.change_user = request.user
+        task.save()
+        return Response(data='task deleted')
 
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
@@ -109,28 +110,28 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
         )
 
-        project_results = Project.objects.filter(
+        task_results = Task.objects.filter(
             is_deleted=False,
-            project_id__in=object_assignment_results.values("project_id"),
+            task_id__in=object_assignment_results.values("task_id"),
         )[(page - 1) * page_size : page * page_size]
 
-        serializer = ProjectSerializer(project_results, many=True)
+        serializer = TaskSerializer(task_results, many=True)
 
         return Response(serializer.data)
 
     @check_user_api_permissions(min_permission_level=1)
     def retrieve(self, request, pk=None, *args, **kwargs):
-        queryset = Project.objects.all()
-        project_results = get_object_or_404(
+        queryset = Task.objects.all()
+        task_results = get_object_or_404(
             queryset,
             pk=pk
         )
-        serializer = ProjectSerializer(project_results)
+        serializer = TaskSerializer(task_results)
         return Response(serializer.data)
 
     @check_user_api_permissions(min_permission_level=2)
     def update(self, request, pk=None, *args, **kwargs):
-        serializer = ProjectSerializer(data=request.data, context={'request': request})
+        serializer = TaskSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
             return Response(
                 serializer.errors,
@@ -138,19 +139,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
         # Obtain Instances
-        project_status_instance = ListOfProjectStatus.objects.get(
-            project_status_id=serializer.data["project_status"],
+        task_status_instance = ListOfTaskStatus.objects.get(
+            task_status_id=serializer.data["task_status"],
         )
 
-        # Update Project
-        update_project = Project.objects.get(pk=pk)
-        update_project.project_name = serializer.data["project_name"]
-        update_project.project_description = serializer.data["project_description"]
-        update_project.project_start_date = serializer.data["project_start_date"]
-        update_project.project_end_date = serializer.data["project_end_date"]
-        update_project.project_status = project_status_instance
-        update_project.project_priority = serializer.data["project_priority"]
-        update_project.save()
+        # Update task
+        update_task = Task.objects.get(pk=pk)
+        update_task.task_short_description = serializer.data["task_short_description"]
+        update_task.task_long_description = serializer.data["task_long_description"]
+        update_task.task_start_date = serializer.data["task_start_date"]
+        update_task.task_end_date = serializer.data["task_end_date"]
+        update_task.task_status = task_status_instance
+        update_task.task_priority = serializer.data["task_priority"]
+        update_task.save()
 
         return Response(
             data=serializer.data,
