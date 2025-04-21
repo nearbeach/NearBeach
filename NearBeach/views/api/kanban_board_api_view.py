@@ -179,7 +179,7 @@ class KanbanBoardViewSet(viewsets.ModelViewSet):
 
         kanban_board_results.kanban_card = KanbanCard.objects.filter(
             is_deleted=False,
-            kanban_board_id=kanban_board_results.kanban_board_id,
+            kanban_board_id=pk,
         )
 
         serializer = KanbanBoardSerializer(kanban_board_results)

@@ -4,6 +4,8 @@ from NearBeach.views.api import (
     coffee_api_view,
     kanban_board_api_view,
     project_api_view,
+    requirement_api_view,
+    request_for_change_api_view,
     task_api_view,
 )
 from NearBeach.views.api.available_data import (
@@ -28,6 +30,8 @@ router.register(r'available_data/tag_list', tag_list_api_view.TagListViewSet, ba
 router.register(r'coffee', coffee_api_view.CoffeeViewSet, basename='coffee')
 router.register(r'kanban_board', kanban_board_api_view.KanbanBoardViewSet, basename='kanban_board')
 router.register(r'project', project_api_view.ProjectViewSet, basename='project')
+router.register(r'requirement', requirement_api_view.RequirementViewSet, basename='requirement')
+router.register(r'request_for_change', request_for_change_api_view.RequirementViewSet, basename='request_for_change')
 router.register(r'task', task_api_view.TaskViewSet, basename='task')
 router.register(r'(?P<destination>[\w]+)/(?P<location_id>[0-9]+)/group_and_user', group_and_user_api_view.GroupAndUserViewSet, basename='group_and_user')
 router.register(r'(?P<destination>[\w]+)/(?P<location_id>[0-9]+)/link', link_api_view.LinkViewSet, basename='link')
