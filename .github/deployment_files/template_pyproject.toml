@@ -18,6 +18,8 @@ dependencies = [
   "django-two-factor-auth",
   "django-two-factor-auth[phonenumberslite]",
   "django_otp",
+  "drf_spectacular",
+  "drf_spectacular[sidecar]"
 ]
 requires-python = ">=3.9"
 authors = [
