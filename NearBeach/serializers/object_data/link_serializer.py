@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from NearBeach.decorators.check_destination import OBJECT_ARRAY
 from NearBeach.models import (
     ChangeTask,
     Project,
@@ -14,15 +13,8 @@ class LinkSerializer(serializers.Serializer):
         queryset=ChangeTask.objects.all(),
         required=False,
     )
-    destination = serializers.ChoiceField(
-        required=False,
-        choices=OBJECT_ARRAY,
-    )
     link_relationship = serializers.CharField(
         read_only=True,
-    )
-    location_id = serializers.IntegerField(
-        required=False,
     )
     object_assignment_id = serializers.IntegerField(
         read_only=True,
@@ -74,12 +66,6 @@ class LinkSerializer(serializers.Serializer):
 
         # If creating a new link, we'll need the object relation
         if self.context["request"].method == "POST":
-            fields["destination"].required = True
-            fields["location_id"].required = True
             fields["object_relation"].required = True
-
-        if self.context["request"].method == "DELETE":
-            fields["destination"].required = True
-            fields["location_id"].required = True
 
         return fields

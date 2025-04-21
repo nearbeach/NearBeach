@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
@@ -6,7 +7,12 @@ from NearBeach.serializers.object_data.object_sprint_serializer import ObjectSpr
 from NearBeach.models import Sprint
 
 
+@extend_schema(
+    tags=["Object Data|Sprints"]
+)
 class ObjectSprintViewSet(viewsets.ViewSet):
+    serializer_class = ObjectSprintSerializer
+
     def _get_object_sprint_list(self, destination, location_id):
         # Get data
         sprint_results = Sprint.objects.filter(
@@ -41,8 +47,8 @@ class ObjectSprintViewSet(viewsets.ViewSet):
             )
 
         # Get variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
         sprint_end_date = serializer.data["sprint_end_date"]
         sprint_name = serializer.data["sprint_name"]
         sprint_start_date = serializer.data["sprint_start_date"]
@@ -78,8 +84,8 @@ class ObjectSprintViewSet(viewsets.ViewSet):
             )
 
         # Variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
 
         # Get the update sprint list
         serializer = self._get_object_sprint_list(destination, location_id)

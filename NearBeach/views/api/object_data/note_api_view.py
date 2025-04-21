@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.db.models import F, Case, When, Value
@@ -13,7 +14,13 @@ from NearBeach.views.tools.internal_functions import set_object_from_destination
 #TODO - double check the permissions for the Notes API. Do we use special permissions?
 #NOTE - We might need to have a custom permissions, for the organisation vs other objects. This needs testing
 
+
+@extend_schema(
+    tags=["Object Data|Notes"]
+)
 class NoteViewSet(viewsets.ViewSet):
+    serializer_class = NoteSerializer
+
     def _get_list(self, request, destination, location_id):
         # Get the notes dependent on the user destination and location
         note_results = ObjectNote.objects.filter(
@@ -61,8 +68,8 @@ class NoteViewSet(viewsets.ViewSet):
             )
 
         # Variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
         object_note = serializer.data["object_note"]
 
         # SAVE DATA
@@ -109,8 +116,8 @@ class NoteViewSet(viewsets.ViewSet):
             )
 
         # Get variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
 
         # Get the note to delete
         delete_note = ObjectNote.objects.filter(
@@ -151,8 +158,8 @@ class NoteViewSet(viewsets.ViewSet):
             )
 
         # Variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
 
         # Get the serialized data
         serializer = self._get_list(request, destination, location_id)
@@ -175,8 +182,8 @@ class NoteViewSet(viewsets.ViewSet):
             )
 
         # Variables
-        destination = serializer.data["destination"]
-        location_id = serializer.data["location_id"]
+        destination = kwargs["destination"]
+        location_id = kwargs["location_id"]
         object_note = serializer.data["object_note"]
 
         # Get the object to update

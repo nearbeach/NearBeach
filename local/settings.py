@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'NearBeach.apps.NearBeachConfig',
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -123,7 +125,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 
@@ -214,3 +217,15 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # TWO FACTOR AUTHENTICATION
 LOGIN_URL = 'two_factor:login'
 LOGIN_REDIRECT_URL = 'dashboard'
+
+# DRF - drf-spectacular
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'NearBeach API',
+    'DESCRIPTION': 'NearBeach is an open source project management system.',
+    'VERSION': '0.0.1',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
+    # OTHER SETTINGS
+}

@@ -1,9 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from functools import wraps
 from .partials.generic_permissions import generic_permissions
-from NearBeach.serializers.destination_serializer import DestinationSerializer
-from rest_framework import status
-from rest_framework.response import Response
 
 
 def api_object_data_permissions(min_permission_level):
@@ -19,17 +16,11 @@ def api_object_data_permissions(min_permission_level):
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
-            serializer = DestinationSerializer(data=request.request.data)
-            if not serializer.is_valid():
-                return Response(
-                    data=serializer.errors,
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            destination = serializer.data["destination"]
-            kwargs["location_id"] = serializer.data["location_id"]
-
-            passes, user_level, extra_level = generic_permissions(request, destination, kwargs)
+            passes, user_level, extra_level = generic_permissions(
+                request,
+                kwargs["destination"],
+                kwargs
+            )
 
             if not passes:
                 raise PermissionDenied
