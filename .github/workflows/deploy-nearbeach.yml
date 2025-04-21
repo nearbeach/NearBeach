@@ -52,7 +52,7 @@ jobs:
           python3 -m pip install virtualenv
           virtualenv venv
           source ./venv/bin/activate
-          pip install requests 
+          pip install requests drf-spectacular drf-spectacular[sidecar]
           python3 ./.github/deployment_files/generate_templates.py
       - name: Install Dependencies
         run: |
