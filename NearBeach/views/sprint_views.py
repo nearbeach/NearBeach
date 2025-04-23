@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q, F
-from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse, Http404
 from django.template import loader
 
 import json
@@ -385,6 +385,7 @@ def sprint_information(request, sprint_id, *args, **kwargs):
 
     sprint_results = Sprint.objects.filter(
         sprint_id=sprint_id,
+        is_deleted=False,
     ).values(
         "sprint_id",
         "completed_story_points",
@@ -396,6 +397,9 @@ def sprint_information(request, sprint_id, *args, **kwargs):
         "sprint_status",
         "total_story_points",
     )
+
+    if len(sprint_results) == 0:
+        raise Http404
 
     gantt_start_date = sprint_results[0]['sprint_start_date'].isoformat()
     gantt_end_date = sprint_results[0]['sprint_end_date'].isoformat()

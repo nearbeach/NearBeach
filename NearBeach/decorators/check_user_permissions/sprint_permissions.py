@@ -65,6 +65,8 @@ def check_sprint_permission_with_sprint(min_permission_level):
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
+            request = request.request if hasattr(request, "request") else request
+
             # If user is admin - grant them all permissions
             if request.user.is_superuser:
                 # Return the function with a user_level of 4
@@ -75,6 +77,8 @@ def check_sprint_permission_with_sprint(min_permission_level):
                 sprint_id = kwargs["sprint_id"]
             elif "location_id" in kwargs:
                 sprint_id = kwargs["location_id"]
+            elif "pk" in kwargs:
+                sprint_id = kwargs["pk"]
             else:
                 sprint_id = args[0]
 
