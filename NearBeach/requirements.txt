@@ -11,6 +11,8 @@ boto3
 botocore
 azure-storage-blob
 azure-identity>=1.16.1
+drf-spectacular
+drf-spectacular[sidecar]
 
 pip>=19.2 # not directly required, pinned by Snyk to avoid a vulnerability
 requests>=2.32.2 # not directly required, pinned by Snyk to avoid a vulnerability

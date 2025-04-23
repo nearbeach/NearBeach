@@ -3,6 +3,4 @@ black
 bandit
 python-dotenv
 django-storages
-drf-spectacular
-drf-spectacular[sidecar]
 -r ./requirements.txt
