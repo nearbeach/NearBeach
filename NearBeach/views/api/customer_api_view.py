@@ -28,11 +28,11 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
         # Gather instances
         organisation_instance = Organisation.objects.get(
-            organisation_id=serializer.data.get("organisation_id"),
+            organisation_id=serializer.data.get("organisation"),
         )
 
         customer_title_instance = ListOfTitle.objects.get(
-            title_id=serializer.data.get("customer_title_id"),
+            title_id=serializer.data.get("customer_title"),
         )
 
         # Create Customer
@@ -52,8 +52,8 @@ class CustomerViewSet(viewsets.ModelViewSet):
         )
 
     @check_user_customer_permissions(min_permission_level=4)
-    def destroy(self, request, *args, **kwargs):
-        customer = self.get_object()
+    def destroy(self, request, pk=None, *args, **kwargs):
+        customer = Customer.objects.get(pk=pk)
         customer.is_deleted = True
         customer.change_user = request.user
         customer.save()
@@ -95,7 +95,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
         # Obtain Instances
         customer_title_instance = ListOfTitle.objects.get(
-            title_id=serializer.data.get("customer_title_id"),
+            title_id=serializer.data.get("customer_title"),
         )
 
         # Update Customer

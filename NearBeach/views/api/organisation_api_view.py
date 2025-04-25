@@ -32,6 +32,7 @@ class OrganisationViewSet(viewsets.ModelViewSet):
             organisation_email=serializer.data.get("organisation_email"),
             change_user=request.user,
         )
+        organisation_submit.save()
 
         return Response(
             data={"organisation_id": organisation_submit.organisation_id },
@@ -39,8 +40,8 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         )
 
     @check_user_organisation_permissions(min_permission_level=4)
-    def destroy(self, request, *args, **kwargs):
-        organisation = self.get_object()
+    def destroy(self, request, pk=None, *args, **kwargs):
+        organisation = Organisation.objects.get(pk=pk)
         organisation.is_deleted = True
         organisation.change_user = request.user
         organisation.save()

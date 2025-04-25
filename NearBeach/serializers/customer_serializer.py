@@ -27,7 +27,9 @@ class CustomerSerializer(serializers.ModelSerializer):
     customer_email = serializers.CharField(
         required=True,
     )
-    # "customer_profile_picture",
+    customer_profile_picture = serializers.ImageField(
+        read_only=True,
+    )
     customer_profile_picture_path = serializers.SerializerMethodField()
     organisation = serializers.PrimaryKeyRelatedField(
         queryset=Organisation.objects.filter(
@@ -49,6 +51,9 @@ class CustomerSerializer(serializers.ModelSerializer):
         ]
     
     def get_customer_profile_picture_path(self, obj):
+        if obj.customer_profile_picture_id is None:
+            return None
+
         private_media_url = getattr(settings, "PRIVATE_MEDIA_URL", False)
 
         return private_media_url + str(obj.customer_profile_picture_id)
@@ -63,3 +68,9 @@ class CustomerSerializer(serializers.ModelSerializer):
         # Updating an organisation
         if self.context["request"].method == "PUT":
             fields.pop("organisation", None)
+            fields.pop("customer_profile_picture_path", None)
+
+        if self.context["request"].method == "POST":
+            fields.pop("customer_profile_picture_path", None)
+
+        return fields
