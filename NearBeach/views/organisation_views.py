@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, Http404
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions.organisation_permissions import check_user_organisation_permissions
@@ -126,7 +126,13 @@ def organisation_information(request, organisation_id, *args, **kwargs):
     """
     user_level = kwargs["user_level"]
 
-    organisation_results = Organisation.objects.get(organisation_id=organisation_id)
+    organisation_results = Organisation.objects.filter(
+        organisation_id=organisation_id,
+        is_deleted=False
+    )
+    if len(organisation_results) == 0:
+        raise Http404
+    organisation_results = organisation_results[0]
 
     customer_results = Customer.objects.filter(
         is_deleted=False,

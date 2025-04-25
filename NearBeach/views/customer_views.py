@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, Http404
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
@@ -24,7 +24,14 @@ def customer_information(request, customer_id, *args, **kwargs):
     # Find out if the user is read only - if they are send them to the read only
 
     # Get customer data
-    customer_results = Customer.objects.get(customer_id=customer_id)
+    customer_results = Customer.objects.filter(
+        customer_id=customer_id,
+        is_deleted=False
+    )
+    if len(customer_results) == 0:
+        raise Http404
+
+    customer_results = customer_results[0]
 
     organisation_results = Organisation.objects.filter(
         organisation_id=customer_results.organisation_id,
