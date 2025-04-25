@@ -4,6 +4,7 @@ from NearBeach.models import (
     ListOfTitle,
     Organisation,
 )
+from django.conf import settings
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -15,7 +16,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         required=True,
     )
     customer_title_name = serializers.ReadOnlyField(
-        source="title_name.title_name",
+        source="customer_title.title",
     )
     customer_first_name = serializers.CharField(
         required=True,
@@ -26,9 +27,8 @@ class CustomerSerializer(serializers.ModelSerializer):
     customer_email = serializers.CharField(
         required=True,
     )
-    customer_profile_picture = serializers.ReadOnlyField(
-        source='userprofilepicture__document_id__document_key'
-    )
+    # "customer_profile_picture",
+    customer_profile_picture_path = serializers.SerializerMethodField()
     organisation = serializers.PrimaryKeyRelatedField(
         queryset=Organisation.objects.filter(
             is_deleted=False,
@@ -42,12 +42,16 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         exclude = [
-            "customer_profile_picture",
             "date_created",
             "date_modified",
             "change_user",
             "is_deleted",
         ]
+    
+    def get_customer_profile_picture_path(self, obj):
+        private_media_url = getattr(settings, "PRIVATE_MEDIA_URL", False)
+
+        return private_media_url + str(obj.customer_profile_picture_id)
 
     def get_fields(self):
         fields = super().get_fields()

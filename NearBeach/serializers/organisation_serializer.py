@@ -3,6 +3,7 @@ from NearBeach.models import (
     Organisation,
 )
 from NearBeach.serializers.customer_serializer import CustomerSerializer
+from django.conf import settings
 
 
 class OrganisationSerializer(serializers.ModelSerializer):
@@ -21,9 +22,7 @@ class OrganisationSerializer(serializers.ModelSerializer):
     organisation_email = serializers.CharField(
         required=True,
     )
-    organisation_profile_picture = serializers.ReadOnlyField(
-        source="organisationprofilepicture__document_id__document_key"
-    )
+    organisation_profile_picture_path = serializers.SerializerMethodField()
 
     class Meta:
         model = Organisation
@@ -34,3 +33,8 @@ class OrganisationSerializer(serializers.ModelSerializer):
             "change_user",
             "is_deleted",
         ]
+
+    def get_organisation_profile_picture_path(self, obj):
+        private_media_url = getattr(settings, "PRIVATE_MEDIA_URL", False)
+
+        return private_media_url + str(obj.organisation_profile_picture_id)

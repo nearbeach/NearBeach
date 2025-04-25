@@ -14,6 +14,9 @@ def check_user_customer_permissions(min_permission_level):
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
+            # Need to update request if we are using API
+            request = request.request if hasattr(request, "request") else request
+
             # if user is admin -grant them all permissions
             if request.user.is_superuser:
                 # Return the function with a user_level of 4
