@@ -23,6 +23,46 @@ NearBeach deployment cycle.
 
 i.e Boto3 has a security patch, and we need to deploy
 
+--------------
+Initial Checks
+--------------
+
+Check 1: If NearBeach requires any new Python Packages, these will need to be noted within the following locations;
+
+NearBeach Source
+
+- /requirements.txt
+- /NearBeach/requirements.txt
+- /.github/deployment_files/template_pyproject.toml
+
+The above will make sure the Python package is installed in the Docker build of NearBeach.
+
+
+Check 2: Make sure Docker will build and run
+
+#. Using a terminal, cd into the NearBeach-Docker source directory
+
+#. Do a simple git pull and check that you are on the correct branch
+
+#. Run the following command to build a local version of NearBeach `docker build --no-cache --file Dockerfile --tag robotichead/nearbeach:nearbeach-local .`
+
+#. Use the docker-compose example on https://nearbeach.org/self-hosting/ and save in an appropriate location as docker-compose.yml
+
+#. Using the terminal, cd to the location of the docker-compose.yml file from previous instructions
+
+#. Modify the NearBeach image to match the build name. `image: robotichead/nearbeach:nearbeach-local`
+
+#. Using docker compose up -D you can easily test the local docker build of NearBeach
+
+
+Check 3: Make sure Local Code will build and run
+
+#. Use the docker-compose example on https://nearbeach.org/self-hosting/ and save in an appropriate location
+
+#. Modify the Volumes to override the NearBeach installation directory - https://stackoverflow.com/questions/40905761/how-do-i-mount-a-host-directory-as-a-volume-in-docker-compose
+
+TODO - Finish Check 3 code
+
 
 --------------------
 Deployment Process 1
