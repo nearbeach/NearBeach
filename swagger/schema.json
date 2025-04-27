@@ -1,0 +1,2183 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "NearBeach API",
+        "version": "0.0.1",
+        "description": "NearBeach is an open source project management system."
+    },
+    "paths": {
+        "/api/v0/{destination}/{location_id}/group_and_user/": {
+            "get": {
+                "operationId": "group_and_user_list",
+                "description": "\n# 📌 Description\n\nThis API endpoint provides group and user-related information for a specified object. It returns several categorized lists that can be used by the frontend to manage group and user assignments.\n\n# Returned Fields:\n\n- **Object Group List**: A list of groups currently assigned to the object.\n- **Object User List**: A list of users currently assigned to the object.\n- **Potential Group List**: A list of groups that *can* be assigned to the object.\n- **Potential User List**: A list of users that *can* be assigned to the object.\n- **User Group List**: A list of groups that the current authenticated user is a member of.\n\nThis endpoint is primarily used by the frontend in the \"Group and User\" section to retrieve relevant assignment data.\n\n---\n\n# 🧾 Parameters\n\n- **Destination**: The type of object you are querying. Must be one of:\n  - Kanban Card  \n  - Project  \n  - Request for Change  \n  - Requirement  \n  - Requirement Item  \n  - Task  \n\n- **Location ID**: The unique ID of the specific object instance.\n            ",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Groups And Users"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/GroupAndUser"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "group_and_user_create",
+                "description": "\n# 📌 Description\n\nThis endpoint allows you to add either a user or a group to a specific object (e.g., Project, Task, Kanban Card, etc.).\n\nTo obtain valid user and group IDs, use the GET method on this endpoint and refer to the 'potential_user_list' and \n'potential_group_list' fields in the response.\n\n\n# 🧾 Parameters\n\n- Destination: The type of object you're linking to. Must be one of the following:\n    - Kanban Card\n    - Project\n    - Request for Change\n    - Requirement\n    - Requirement Item\n    - Task\n- Location ID: The unique ID of the specific object you're modifying (e.g., the project ID or task ID).\n- ID: This should always be set to 0. (This is a required field for request formatting, but not used during creation.)\n\n# ✅ Notes\n- Make sure the user or group you are trying to add appears in the potential_user_list or potential_group_list \nrespectively. If not, they may already be associated with the object.\n        ",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Groups And Users"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GroupAndUser"
+                            },
+                            "examples": {
+                                "Example1": {
+                                    "value": {
+                                        "user_list": [
+                                            2,
+                                            3
+                                        ]
+                                    },
+                                    "summary": "Example 1",
+                                    "description": "Add both user 2, and 3 to the current object"
+                                },
+                                "Example2": {
+                                    "value": {
+                                        "group_list": 5
+                                    },
+                                    "summary": "Example 2",
+                                    "description": "Add the group 5 to the current project"
+                                }
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GroupAndUser"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GroupAndUser"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GroupAndUser"
+                                },
+                                "examples": {
+                                    "Example1": {
+                                        "value": {
+                                            "user_list": [
+                                                2,
+                                                3
+                                            ]
+                                        },
+                                        "summary": "Example 1",
+                                        "description": "Add both user 2, and 3 to the current object"
+                                    },
+                                    "Example2": {
+                                        "value": {
+                                            "group_list": 5
+                                        },
+                                        "summary": "Example 2",
+                                        "description": "Add the group 5 to the current project"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v0/{destination}/{location_id}/group_and_user/{id}/": {
+            "delete": {
+                "operationId": "group_and_user_destroy",
+                "description": "\nRemove either a single user or a single group from this object. The IDs for the users and groups can be obtained by\nusing the GET functionality.\n\nParameters\n\nDestination is the object you are looking up. It can only be;\n- Kanban Card\n- Project\n- Request for Change\n- Requirement\n- Requirement Item\n- Task\n\nThe Location Id, is the ID number of that specific object.\n\nThe ID is a integer field, just leave as 0\n        ",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Groups And Users"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v0/{destination}/{location_id}/link/": {
+            "get": {
+                "operationId": "link_list",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Link"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Link"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "link_create",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Link"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Link"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Link"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Link"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Link"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v0/{destination}/{location_id}/link/{id}/": {
+            "get": {
+                "operationId": "link_retrieve",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Link"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Link"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "link_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Link"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Link"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Link"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Link"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Link"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "link_partial_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Link"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedLink"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedLink"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedLink"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Link"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "link_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Link"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v0/{destination}/{location_id}/note/": {
+            "get": {
+                "operationId": "note_list",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Notes"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Note"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "note_create",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Notes"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Note"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Note"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Note"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Note"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v0/{destination}/{location_id}/note/{id}/": {
+            "put": {
+                "operationId": "note_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Notes"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Note"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Note"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Note"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Note"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "note_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Notes"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v0/{destination}/{location_id}/object_sprint/": {
+            "get": {
+                "operationId": "object_sprint_list",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Sprints"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ObjectSprint"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "object_sprint_create",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Sprints"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ObjectSprint"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ObjectSprint"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ObjectSprint"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ObjectSprint"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v0/{destination}/{location_id}/tag/": {
+            "get": {
+                "operationId": "tag_list",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Tags"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tag"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "tag_create",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Tags"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Tag"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Tag"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Tag"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tag"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v0/{destination}/{location_id}/tag/{id}/": {
+            "delete": {
+                "operationId": "tag_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "destination",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[\\w]+$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "location_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Object Data|Tags"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v0/available_data/customer_list/": {
+            "get": {
+                "operationId": "available_data_customer_list_list",
+                "tags": [
+                    "Available Data"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CustomerList"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v0/available_data/sprint_list/": {
+            "get": {
+                "operationId": "available_data_sprint_list_list",
+                "tags": [
+                    "Available Data"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SprintList"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v0/available_data/tag_list/": {
+            "get": {
+                "operationId": "available_data_tag_list_list",
+                "tags": [
+                    "Available Data"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TagList"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v0/coffee/": {
+            "get": {
+                "operationId": "coffee_retrieve",
+                "tags": [
+                    "coffee"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No response body"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "coffee_create",
+                "tags": [
+                    "coffee"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v0/coffee/{id}/": {
+            "get": {
+                "operationId": "coffee_retrieve_2",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "coffee"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No response body"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "coffee_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "coffee"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No response body"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "coffee_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "coffee"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v0/project/": {
+            "get": {
+                "operationId": "project_list",
+                "tags": [
+                    "project"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Project"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "project_create",
+                "tags": [
+                    "project"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Project"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Project"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Project"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Project"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v0/project/{project_id}/": {
+            "get": {
+                "operationId": "project_retrieve",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "project_id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this project.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "project"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Project"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "project_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "project_id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this project.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "project"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Project"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Project"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Project"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Project"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "project_partial_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "project_id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this project.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "project"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedProject"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedProject"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedProject"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Project"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "project_destroy",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "project_id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this project.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "project"
+                ],
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CustomerList": {
+                "type": "object",
+                "properties": {
+                    "customer_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "customer_first_name": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "customer_last_name": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "customer_email": {
+                        "type": "string",
+                        "maxLength": 200
+                    }
+                },
+                "required": [
+                    "customer_email",
+                    "customer_first_name",
+                    "customer_id",
+                    "customer_last_name"
+                ]
+            },
+            "GroupAndUser": {
+                "type": "object",
+                "properties": {
+                    "group": {
+                        "type": "integer"
+                    },
+                    "user": {
+                        "type": "integer"
+                    },
+                    "group_list": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "user_list": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            },
+            "Link": {
+                "type": "object",
+                "properties": {
+                    "change_task": {
+                        "type": "integer"
+                    },
+                    "link_relationship": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "object_assignment_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "object_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "object_title": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "object_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "object_type": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "parent_link": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "project": {
+                        "type": "integer"
+                    },
+                    "requirement": {
+                        "type": "integer"
+                    },
+                    "requirement_item": {
+                        "type": "integer"
+                    },
+                    "reverse_relation": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "task": {
+                        "type": "integer"
+                    },
+                    "object_relation": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "link_relationship",
+                    "object_assignment_id",
+                    "object_id",
+                    "object_status",
+                    "object_title",
+                    "object_type",
+                    "parent_link",
+                    "reverse_relation"
+                ]
+            },
+            "Note": {
+                "type": "object",
+                "properties": {
+                    "can_edit": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "date_modified": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "object_note_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "object_note": {
+                        "type": "string"
+                    },
+                    "profile_picture": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "username": {
+                        "type": "integer",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "can_edit",
+                    "date_modified",
+                    "first_name",
+                    "last_name",
+                    "object_note_id",
+                    "profile_picture",
+                    "username"
+                ]
+            },
+            "ObjectSprint": {
+                "type": "object",
+                "properties": {
+                    "sprint_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "sprint_name": {
+                        "type": "string"
+                    },
+                    "total_story_points": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "completed_story_points": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "sprint_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "sprint_start_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "sprint_end_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "completed_story_points",
+                    "sprint_id",
+                    "sprint_status",
+                    "total_story_points"
+                ]
+            },
+            "PatchedLink": {
+                "type": "object",
+                "properties": {
+                    "change_task": {
+                        "type": "integer"
+                    },
+                    "link_relationship": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "object_assignment_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "object_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "object_title": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "object_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "object_type": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "parent_link": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "project": {
+                        "type": "integer"
+                    },
+                    "requirement": {
+                        "type": "integer"
+                    },
+                    "requirement_item": {
+                        "type": "integer"
+                    },
+                    "reverse_relation": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "task": {
+                        "type": "integer"
+                    },
+                    "object_relation": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PatchedProject": {
+                "type": "object",
+                "properties": {
+                    "group_list": {
+                        "type": "integer",
+                        "writeOnly": true
+                    },
+                    "organisation_id": {
+                        "type": "integer"
+                    },
+                    "organisation_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "project_description": {
+                        "type": "string"
+                    },
+                    "project_end_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "project_higher_order_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "project_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "project_name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "project_priority": {
+                        "$ref": "#/components/schemas/ProjectPriorityEnum"
+                    },
+                    "project_priority_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "project_start_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "project_status": {
+                        "type": "integer"
+                    },
+                    "project_status_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "uuid": {
+                        "type": "string",
+                        "format": "uuid",
+                        "writeOnly": true
+                    }
+                }
+            },
+            "Project": {
+                "type": "object",
+                "properties": {
+                    "group_list": {
+                        "type": "integer",
+                        "writeOnly": true
+                    },
+                    "organisation_id": {
+                        "type": "integer"
+                    },
+                    "organisation_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "project_description": {
+                        "type": "string"
+                    },
+                    "project_end_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "project_higher_order_status": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "project_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "project_name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "project_priority": {
+                        "$ref": "#/components/schemas/ProjectPriorityEnum"
+                    },
+                    "project_priority_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "project_start_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "project_status": {
+                        "type": "integer"
+                    },
+                    "project_status_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "uuid": {
+                        "type": "string",
+                        "format": "uuid",
+                        "writeOnly": true
+                    }
+                },
+                "required": [
+                    "group_list",
+                    "organisation_id",
+                    "organisation_name",
+                    "project_description",
+                    "project_end_date",
+                    "project_higher_order_status",
+                    "project_id",
+                    "project_name",
+                    "project_priority",
+                    "project_priority_name",
+                    "project_start_date",
+                    "project_status",
+                    "project_status_name"
+                ]
+            },
+            "ProjectPriorityEnum": {
+                "enum": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "type": "integer",
+                "description": "* `0` - Highest\n* `1` - High\n* `2` - Normal\n* `3` - Low\n* `4` - Lowest"
+            },
+            "SprintList": {
+                "type": "object",
+                "properties": {
+                    "sprint_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "sprint_name": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "sprint_start_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "sprint_end_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "sprint_end_date",
+                    "sprint_id",
+                    "sprint_start_date"
+                ]
+            },
+            "Tag": {
+                "type": "object",
+                "properties": {
+                    "tag_assignment_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "tag_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "tag_list": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "tag_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "tag_colour": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "tag_text_colour": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "tag_assignment_id",
+                    "tag_colour",
+                    "tag_id",
+                    "tag_name",
+                    "tag_text_colour"
+                ]
+            },
+            "TagList": {
+                "type": "object",
+                "properties": {
+                    "tag_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "tag_name": {
+                        "type": "string",
+                        "maxLength": 50
+                    },
+                    "tag_colour": {
+                        "type": "string",
+                        "maxLength": 7
+                    },
+                    "tag_text_colour": {
+                        "type": "string",
+                        "maxLength": 7
+                    }
+                },
+                "required": [
+                    "tag_id",
+                    "tag_name"
+                ]
+            }
+        },
+        "securitySchemes": {
+            "basicAuth": {
+                "type": "http",
+                "scheme": "basic"
+            },
+            "cookieAuth": {
+                "type": "apiKey",
+                "in": "cookie",
+                "name": "sessionid"
+            },
+            "tokenAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization",
+                "description": "Token-based authentication with required prefix \"Token\""
+            }
+        }
+    }
+}
