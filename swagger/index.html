@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Load Swagger UI -->
+    <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script> 
+
+    <!-- Load the HierarchicalTags Plugin -->
+    <script src="https://unpkg.com/swagger-ui-plugin-hierarchical-tags"></script>
+
+    <!-- Load styles -->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
+
+    <script>
+      window.onload = function() {
+        SwaggerUIBundle({
+          url: "/swagger.json",
+          dom_id: "#swagger",
+          plugins: [
+            HierarchicalTagsPlugin
+          ],
+          hierarchicalTagSeparator: /[:|]/
+        })
+      }
+    </script>
+  </head>
+  <body>
+    <div id="swagger"></div>
+  </body>
+</html>
