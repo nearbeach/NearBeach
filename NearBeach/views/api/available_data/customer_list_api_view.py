@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
-from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
+from NearBeach.decorators.check_user_permissions.customer_permissions import check_user_customer_permissions
 from NearBeach.serializers.destination_serializer import DestinationSerializer
 from NearBeach.serializers.available_data.customer_list_serializer import CustomerListSerializer
 from NearBeach.models import (
@@ -32,10 +32,11 @@ class CustomerListViewSet(viewsets.ViewSet):
         request=DestinationSerializer,
         responses={200: CustomerListSerializer},
     )
-    @check_user_api_permissions(min_permission_level=1)
+    @check_user_customer_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
         # Serialise the data
-        serializer = DestinationSerializer(data=request.data)
+        serializer = DestinationSerializer(data=request.query_params)
+        # breakpoint()
         if not serializer.is_valid():
             return Response(
                 serializer.errors,
