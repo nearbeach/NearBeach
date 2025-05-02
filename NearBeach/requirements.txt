@@ -1,5 +1,5 @@
 # requirement.txt
-Django>=4.2.15
+Django>=4.2.17
 django-rest-framework
 django-two-factor-auth
 django-two-factor-auth[phonenumberslite]

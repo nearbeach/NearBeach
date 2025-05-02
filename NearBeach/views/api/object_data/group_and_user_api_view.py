@@ -221,6 +221,7 @@ The ID is a integer field, just leave as 0
             ObjectAssignment.objects.filter(
                 is_deleted=False,
                 group_id=group,
+                **{F"{destination}_id": location_id},
             ).update(
                 is_deleted=True,
             )
