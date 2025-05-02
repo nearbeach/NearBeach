@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "NearBeach"
 version = "$version"
 dependencies = [
-  "Django>=3.1",
+  "Django>=4.2.17",
   "simplejson",
   "pillow>=10.0.1",
   "urllib3",
