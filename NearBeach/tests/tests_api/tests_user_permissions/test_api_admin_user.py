@@ -215,7 +215,7 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT"
             ),
-            URLTest("/api/v0/organisation/1/", {}, 200, "DELETE"),
+            URLTest("/api/v0/organisation/2/", {}, 200, "DELETE"),
             URLTest("/api/v0/organisation", {}, 301, "GET"),
             URLTest("/api/v0/organisation", {}, 301, "POST"),
             URLTest("/api/v0/organisation/1", {}, 301, "GET"),
@@ -229,6 +229,8 @@ class ApiAdminPermissionTests(APITestCase):
             # 3. Incorrect object to delete note from
             # 4. Once the PUT method has been implemented, having a user create a note
             # 5. Create notes on Organisations for the users to delete
+            # 6. Create an organisation
+            # 7. Delete an organisation
             # TAGS
             URLTest("/api/v0/organisation/1/tag/", {}, 200, "GET"),
             URLTest("/api/v0/organisation/1/tag/", {"tag_id": 1}, 201, "POST"),
@@ -236,10 +238,41 @@ class ApiAdminPermissionTests(APITestCase):
             # TODO - Expand the above tag tests, we'll need to test;
             # 1. Deleting/Editing another objects tags - this should fail
             # 2. PUT method does not exist
+            # 3. Create a tag and then delete said tag
             #########
             # PROJECT
             #########
             URLTest("/api/v0/project/", {}, 200, "GET"),
+            URLTest(
+                "/api/v0/project/",
+                {
+                    "project_name": "API Project",
+                    "project_description": "<p>Hello World</p>",
+                    "project_start_date": "2024-12-19 15:49:37",
+                    "project_end_date": "2024-12-19 15:49:37",
+                    "organisation_id": 1,
+                    "group_list": 1,
+                    "group_list": 2,
+                },
+                201,
+                "POST"
+            ),
+            URLTest(
+                "/api/v0/project/1/",
+                {
+                    "project_name": "API Project updated",
+                    "project_description": "<p>Hello World again</p>",
+                    "project_start_date": "2024-12-19 15:49:37",
+                    "project_end_date": "2024-12-19 15:49:37",
+                    "project_status": 2,
+                    "project_priority": 2,
+                },
+                200,
+                "PUT"
+            ),
+            # URLTest("/api/v0/project/2/", {}, 200, "PUT"),
+            # URLTest("/api/v0/project/1/", {}, 200, "DELETE"),
+            # URLTest("/api/v0/project/2/", {}, 200, "DELETE"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied
