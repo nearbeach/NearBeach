@@ -102,7 +102,9 @@ export default {
 	},
 	data() {
 		return {
+			currentPage: 1,
 			isLoadingData: true,
+			numberOfPages: 1,
 			searchModel: "",
 			searchTimeout: "",
 			scheduleObjectResults: [],
@@ -135,6 +137,9 @@ export default {
 		getScheduleObjectResults() {
 			const data_to_send = new FormData();
 			data_to_send.set("search", this.searchModel);
+			data_to_send.set("array_of_objects", "project");
+			data_to_send.set("array_of_objects", "task");
+			data_to_send.set("destination_page", this.currentPage);
 
 			this.axios.post(
 				`${this.rootUrl}search/scheduled_objects/`,
