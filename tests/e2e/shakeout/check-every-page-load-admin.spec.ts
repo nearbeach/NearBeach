@@ -51,7 +51,10 @@ const page_array = [
     {test:'Admin - Sprint Information',url :'http://localhost:8000/sprint_information/1/', page_title: "Sprint Information 1", page_heading: "project-1 - Sprint 1 - 18 Mar 2024", screenshot_path:'./test-results/shakeout/team-leader/Sprint Information 2.jpg'},
     {test:'Admin - Task Information 1',url :'http://localhost:8000/task_information/1/', page_title:'Task Information 1',page_heading:'Task Information',screenshot_path:'./test-results/shakeout/admin/Task Information.jpg'},
     {test:'Admin - User Information 1',url :'http://localhost:8000/user_information/1/', page_title:'User Information 1',page_heading:'User Information',screenshot_path:'./test-results/shakeout/admin/User Information.jpg'},
+    {test:'Admin - Scheduled Objects',url :'http://localhost:8000/scheduled_objects/', page_title:'Scheduled Objects',page_heading:'Scheduled Objects',screenshot_path:'./test-results/shakeout/admin/Scheduled Objects.jpg'},
+    {test:'Admin - Scheduled Objects 1',url:'http://localhost:8000/scheduled_object_information/1/', page_title:'Scheduled Object 1',page_heading: 'Scheduled Object Information', screenshot_path: './test-results/shakeout/admin/Scheduled Objects 1.jpg'},
 ]
+
 //Loop through page_array
 page_array.forEach((row) => {
     test(row.test, async({ page }) : Promise<void> => {
