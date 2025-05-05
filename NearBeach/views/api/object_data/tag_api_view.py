@@ -111,11 +111,8 @@ class TagViewSet(viewsets.ViewSet):
             change_user=request.user,
         )
 
-        # Get the serialized data
-        serializer = self._get_tag_list(destination, location_id)
-
         return Response(
-            data=serializer.data,
+            data={"Tag has been removed from object"},
             status=status.HTTP_204_NO_CONTENT,
         )
 

@@ -100,7 +100,7 @@ class NoteViewSet(viewsets.ViewSet):
 
         return Response(
             data=serializer.data,
-            status=status.HTTP_200_OK
+            status=status.HTTP_201_CREATED
         )
 
     @api_object_data_permissions(min_permission_level=2)
