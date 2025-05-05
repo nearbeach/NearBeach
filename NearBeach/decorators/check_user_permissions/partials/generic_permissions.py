@@ -18,7 +18,7 @@ def generic_permissions(request, object_lookup, kwargs):
     )
 
     # If we are passing the object_lookup through, we will use a different function
-    if "location_id" in kwargs:
+    if "location_id" in kwargs and not object_lookup == "organisation":
         # Determine if there are any cross over with user groups and object_lookup groups
         group_results = Group.objects.filter(
             Q(

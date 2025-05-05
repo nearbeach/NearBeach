@@ -221,6 +221,25 @@ class ApiAdminPermissionTests(APITestCase):
             URLTest("/api/v0/organisation/1", {}, 301, "GET"),
             URLTest("/api/v0/organisation/1", {}, 301, "PUT"),
             URLTest("/api/v0/organisation/1", {}, 301, "DELETE"),
+            URLTest("/api/v0/organisation/1/note/", {}, 200, "GET"),
+            URLTest("/api/v0/organisation/1/note/", {"object_note": "Hello World"}, 201, "POST"),
+            # TODO - Expand the above note tests, we'll need to test;
+            # 1. Deleting/Editing another users note will fail
+            # 2. Can not delete already deleted notes
+            # 3. Incorrect object to delete note from
+            # 4. Once the PUT method has been implemented, having a user create a note
+            # 5. Create notes on Organisations for the users to delete
+            # TAGS
+            URLTest("/api/v0/organisation/1/tag/", {}, 200, "GET"),
+            URLTest("/api/v0/organisation/1/tag/", {"tag_id": 1}, 201, "POST"),
+            URLTest("/api/v0/organisation/1/tag/13/", {}, 204, "DELETE"),
+            # TODO - Expand the above tag tests, we'll need to test;
+            # 1. Deleting/Editing another objects tags - this should fail
+            # 2. PUT method does not exist
+            #########
+            # PROJECT
+            #########
+            URLTest("/api/v0/project/", {}, 200, "GET"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied
