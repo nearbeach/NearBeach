@@ -1,17 +1,19 @@
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from django.db.models import F
 
 from NearBeach.decorators.check_user_permissions.api_object_data_permissions_v0 import api_object_data_permissions
 from NearBeach.models import (
     Group,
+    KanbanCard,
     ObjectAssignment,
     User,
     UserGroup,
 )
 from NearBeach.serializers.object_data.group_and_user_serializer import GroupAndUserSerializer
 from NearBeach.views.object_data_views import get_group_and_user_list
-from NearBeach.views.tools.internal_functions import set_object_from_destination
+from NearBeach.views.tools.internal_functions import set_object_from_destination, get_object_from_destination
 
 
 @extend_schema(
@@ -19,6 +21,115 @@ from NearBeach.views.tools.internal_functions import set_object_from_destination
 )
 class GroupAndUserViewSet(viewsets.ViewSet):
     serializer_class = GroupAndUserSerializer
+
+    def _get_group_list(self, destination, location_id):
+        object_results = ObjectAssignment.objects.filter(
+            is_deleted=False,
+            group_id__isnull=False,
+        )
+
+        # If the destination is a kanban_card, we'll need to look at the kanban_board
+        if destination == "kanban_card":
+            destination = "kanban_board"
+
+        object_results = object_results.filter(
+            **{F"{destination}_id": location_id}
+        )
+
+        return object_results
+
+    def _get_group_and_user_list(self, destination, location_id, request):
+        # Get the data dependent on the object lookup
+        object_group_list = self._get_group_list(destination, location_id)
+        object_user_list = self._get_user_list(destination, location_id)
+        potential_user_list = self._get_potential_user_list(destination, location_id)
+
+        # potential groups are all groups except those in object_group_results
+        potential_group_list = Group.objects.filter(
+            is_deleted=False,
+        ).exclude(
+            group_id__in=object_group_list.values("group_id"),
+        )
+
+        # Get user objects
+        user_group_list = Group.objects.filter(
+            is_deleted=False,
+            group_id__in=UserGroup.objects.filter(
+                is_deleted=False,
+                username=request.user,
+            ).values("group_id"),
+        )
+
+        return GroupAndUserSerializer(
+            {
+                "object_group_list": object_group_list,
+                "object_user_list": object_user_list,
+                "potential_group_list": potential_group_list,
+                "potential_user_list": potential_user_list,
+                "user_group_list": user_group_list,
+            },
+        )
+
+    def _get_potential_user_list(self, destination, location_id):
+        # Get a list of users we want to exclude
+        object_results = ObjectAssignment.objects.filter(
+            is_deleted=False,
+            assigned_user_id__isnull=False,
+        )
+
+        # Get a list of all the groups associated with this destination
+        group_results = ObjectAssignment.objects.filter(
+            is_deleted=False,
+            group_id__isnull=False,
+        )
+
+        if destination != "kanban_card":
+            object_results = get_object_from_destination(
+                object_results, destination, location_id
+            )
+
+            group_results = get_object_from_destination(
+                group_results, destination, location_id
+            )
+        else:
+            # Get the kanban board information from the card
+            kanban_card_results = KanbanCard.objects.get(kanban_card_id=location_id)
+
+            object_results = get_object_from_destination(
+                object_results,
+                destination,
+                location_id
+            )
+
+            group_results = get_object_from_destination(
+                group_results, "kanban_board", kanban_card_results.kanban_board_id
+            )
+
+        # Get a list of users who are associated with these groups & not in the excluded list
+        return User.objects.filter(
+            id__in=UserGroup.objects.filter(
+                is_deleted=False,
+                group_id__in=group_results.values("group_id"),
+            ).values("username_id"),
+            is_active=True,
+        ).exclude(
+            id__in=object_results.values("assigned_user_id")
+        ).annotate(
+            profile_picture=F('userprofilepicture__document_id__document_key')
+        )
+
+    def _get_user_list(self, destination, location_id):
+        # Get the data we want
+        object_results = ObjectAssignment.objects.filter(
+            is_deleted=False,
+            assigned_user_id__isnull=False,
+            **{F"{destination}_id": location_id}
+        ).annotate(
+            profile_picture=F("assigned_user_id__userprofilepicture__document_id__document_key")
+        )
+
+        return object_results
+
 
     @extend_schema(
         description="""
@@ -132,28 +243,31 @@ respectively. If not, they may already be associated with the object.
             # Save
             submit_object_assignment.save()
 
-        return_data = get_group_and_user_list(
+        return_data = self._get_group_and_user_list(
             destination,
             location_id,
             request,
         )
-        status_code = status.HTTP_201_CREATED
 
         if len(error_array) > 0:
-            return_data["error_array"] = error_array
-            return_data["error_message"] = "Users in Error Array can not be added to object, as their groups are not assigned to object"
-            status_code = status.HTTP_403_FORBIDDEN
+            return Response(
+                data={
+                    "error_array": error_array,
+                    "error_message": "Users in Error Array can not be added to object, as their groups are not assigned to object",
+                    "error_note": "Please run the get command to get the latest groups and users list",
+                }
+            )
 
-        # TODO - 0.32 - move this to a Serializer. This will help with documentation AND is best practise :)
+        # TODO - 0.32 - Look at the obtaining the object_assignment_id from the database, so users can easily delete both users and groups from the object
         return Response(
-            return_data,
-            status_code,
+            data=return_data.data,
+            status=status.HTTP_201_CREATED,
         )
 
     @extend_schema(
         description="""
-Remove either a single user or a single group from this object. The IDs for the users and groups can be obtained by
-using the GET functionality.
+Remove either a single user or a single group from this object. The IDs for the users, groups, and object assignment can
+be obtained by using the GET functionality.
 
 Parameters
 
@@ -167,7 +281,7 @@ Destination is the object you are looking up. It can only be;
 
 The Location Id, is the ID number of that specific object.
 
-The ID is a integer field, just leave as 0
+The ID for the results should be the "Object Assignment" id
         """,
         examples=[
             OpenApiExample(
@@ -184,57 +298,24 @@ The ID is a integer field, just leave as 0
     )
     @api_object_data_permissions(min_permission_level=2)
     def destroy(self, request, pk=None, *args, **kwargs):
-        # Serialise the data
-        serializer = GroupAndUserSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # Flat pack the variables
         destination = kwargs["destination"]
         location_id = kwargs["location_id"]
-        group = serializer.data.get("group", None)
-        user = serializer.data.get("user", None)
 
-        if group is not None:
-            # First check that there are enough groups to delete.
-            check_object_groups = len(
-                ObjectAssignment.objects.filter(
-                    is_deleted=False,
-                    group_id__isnull=False,
-                    **{F"{destination}_id": location_id},
-                ).exclude(
-                    group_id=group,
-                )
+        remove_object_assignment = ObjectAssignment.objects.filter(
+            pk=pk,
+            **{F"{destination}_id": location_id}
+        )
+
+        if len(remove_object_assignment) == 0:
+            return Response(
+                data={"No Object Assignment found"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-            # If there is no data - we can't delete this last group
-            if check_object_groups == 0:
-                return Response(
-                    data={ "Error": "Can not remove last group" },
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-
-            # Delete the group
-            ObjectAssignment.objects.filter(
-                is_deleted=False,
-                group_id=group,
-                **{F"{destination}_id": location_id},
-            ).update(
-                is_deleted=True,
-            )
-
-        if user is not None:
-            # Delete the users
-            ObjectAssignment.objects.filter(
-                is_deleted=False,
-                assigned_user_id=user,
-                **{F"{destination}_id": location_id }
-            ).update(
-                is_deleted=True,
-            )
+        remove_object_assignment.update(
+            is_deleted=True,
+        )
 
         return Response(
             get_group_and_user_list(
@@ -283,10 +364,13 @@ This endpoint is primarily used by the frontend in the "Group and User" section 
 
         # TODO - Add in destination check - not all destination objects can be utilised for this function :)
 
+        serializer = self._get_group_and_user_list(
+            destination,
+            location_id,
+            request,
+        )
+
         return Response(
-            get_group_and_user_list(
-                destination,
-                location_id,
-                request,
-            )
+            data=serializer.data,
+            status=status.HTTP_200_OK
         )

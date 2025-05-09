@@ -80,7 +80,10 @@ class SprintViewSet(viewsets.ModelViewSet):
             change_user=request.user,
         )
 
-        return Response(data='sprint deleted')
+        return Response(
+            data='sprint deleted',
+            status=status.HTTP_204_NO_CONTENT
+        )
 
     def list(self, request, *args, **kwargs):
         # Setup Attributes

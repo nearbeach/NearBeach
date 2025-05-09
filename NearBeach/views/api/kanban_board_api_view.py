@@ -130,7 +130,10 @@ class KanbanBoardViewSet(viewsets.ModelViewSet):
         kanban_board.is_deleted = True
         kanban_board.change_user = request.user
         kanban_board.save()
-        return Response(data='kanban board deleted')
+        return Response(
+            data='kanban board deleted',
+            status=status.HTTP_204_NO_CONTENT
+        )
 
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):

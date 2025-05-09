@@ -92,7 +92,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project.is_deleted = True
         project.change_user = request.user
         project.save()
-        return Response(data='project deleted')
+        return Response(
+            data='project deleted',
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):

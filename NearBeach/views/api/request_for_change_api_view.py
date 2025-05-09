@@ -102,7 +102,10 @@ class RequirementViewSet(viewsets.ModelViewSet):
         request_for_change.is_deleted = True
         request_for_change.change_user = request.user
         request_for_change.save()
-        return Response(data='request for change deleted')
+        return Response(
+            data='request for change deleted',
+            status=status.HTTP_204_NO_CONTENT
+        )
 
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):

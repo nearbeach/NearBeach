@@ -45,7 +45,10 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         organisation.is_deleted = True
         organisation.change_user = request.user
         organisation.save()
-        return Response(data='organisation deleted')
+        return Response(
+            data='organisation deleted',
+            status=status.HTTP_204_NO_CONTENT
+        )
 
     @check_user_organisation_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
