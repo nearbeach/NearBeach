@@ -112,7 +112,7 @@ def initalize_permission_sets(user):
     }
 
 def initalize_admin_user(user, permission_set):
-    if not user.is_admin:
+    if not getattr(user, 'is_superuser', False):
         return
 
     # Create admin group
