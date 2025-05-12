@@ -1,0 +1,8 @@
+{% extends "NearBeach/partials/template_wide.html" %}
+{% load static %}
+{% block content %}
+    <gdpr-wizard
+            v-bind:root-url="`{% url 'dashboard' %}`"
+            v-bind:theme="`{{ theme }}`"
+    ></gdpr-wizard>
+{% endblock %}

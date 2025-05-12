@@ -151,6 +151,12 @@ export const
             "./components/gantt_chart/GanttInformation.vue"
             )
     ),
+    GdprWizard = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "gdpr-wizard" */
+            "./components/gdpr/GdprWizard.vue"
+            )
+    ),
     GroupInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "group-information" */

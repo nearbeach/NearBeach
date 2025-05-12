@@ -8,6 +8,7 @@ import {moduleConfirmDelete} from "./vuex/confirmDeleteVueX";
 import {moduleDestination} from "./vuex/destinationVueX";
 import {moduleDocuments} from "./vuex/documentsVueX";
 import {moduleGantChart} from "./vuex/ganttChartVueX";
+import {moduleGdpr} from "./vuex/gdprVueX";
 import {moduleGroupsAndUsers} from "./vuex/groupAndUsersVueX";
 import {moduleKanban} from "./vuex/kanbanVueX";
 import {moduleMouseDown} from "./vuex/mouseDownVueX";
@@ -36,6 +37,7 @@ export const store = createStore({
         destination: moduleDestination,
         documents: moduleDocuments,
         ganttChart: moduleGantChart,
+        gdpr: moduleGdpr,
         groupsAndUsers: moduleGroupsAndUsers,
         kanban: moduleKanban,
         mouseDown: moduleMouseDown,
