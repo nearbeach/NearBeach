@@ -57,7 +57,10 @@ class CustomerViewSet(viewsets.ModelViewSet):
         customer.is_deleted = True
         customer.change_user = request.user
         customer.save()
-        return Response(data='customer deleted')
+        return Response(
+            data='customer deleted',
+            status=status.HTTP_204_NO_CONTENT
+        )
 
     @check_user_customer_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):

@@ -96,7 +96,10 @@ class RequirementViewSet(viewsets.ModelViewSet):
         requirement.is_deleted = True
         requirement.change_user = request.user
         requirement.save()
-        return Response(data='requirement deleted')
+        return Response(
+            data='requirement deleted',
+            status=status.HTTP_204_NO_CONTENT
+        )
 
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):

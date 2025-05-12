@@ -1,166 +1,27 @@
-from django.contrib.auth import get_user_model
-from ...forms import PermissionSet, Group, LoginForm
-from ...models import UserGroup, Notification, Organisation
-from django.contrib.auth.models import User
-
 # Import Django Libraries
+from django.contrib.auth import get_user_model
 from django.contrib import auth
-from django.contrib.auth.decorators import login_required, settings
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
-from django.db.models import Q
-from random import SystemRandom
-from NearBeach.decorators.check_user_permissions.permission_denied import check_permission_denied
 
-# Import Python Libraries
-import json
-import urllib.parse
-import datetime
+from NearBeach.decorators.check_user_permissions.permission_denied import check_permission_denied
+from NearBeach.utils import initalize_base_values
+
 
 User = get_user_model()
 
 
 def check_first_time_login(request):
+    """Will initalize values if they do not exist
+        These values consist of
+            - Permission Sets
+            - Admin Group
+            - Admin UserGroup
+            - "No Organisation" Organisation
     """
-    The following function will check if it is the first time logged in by user. i.e. There are no permission sets.
-    If there are no permission sets - this function will create it.
-
-    If there are permission sets - nothing done.
-    :return:
-
-    The user has been authenticated. Now the system will store the user's permissions and group
-    into cookies. :)
-
-    First Setup
-    ~~~~~~~~~~~
-    If permission_set with id of 1 does not exist, go through first stage setup.
-    """
-    if not PermissionSet.objects.all():
-        # Create administration permission_set
-        submit_permission_set_1 = PermissionSet(
-            permission_set_name="Administration Permission Set",
-            administration_assign_user_to_group=4,
-            administration_create_group=4,
-            administration_create_permission_set=4,
-            administration_create_user=4,
-            bug_client=4,
-            customer=4,
-            kanban_board=4,
-            kanban_card=4,
-            organisation=4,
-            project=4,
-            request_for_change=4,
-            requirement=4,
-            task=4,
-            tag=4,
-            document=1,
-            kanban_note=1,
-            project_note=1,
-            task_note=1,
-            requirement_note=1,
-            requirement_item_note=1,
-            change_user=request.user,
-        )
-        submit_permission_set_1.save()
-
-        submit_permission_set_2 = PermissionSet(
-            permission_set_name="Power Permission Set",
-            administration_assign_user_to_group=0,
-            administration_create_group=0,
-            administration_create_permission_set=0,
-            administration_create_user=0,
-            bug_client=4,
-            customer=4,
-            kanban_card=4,
-            organisation=4,
-            project=4,
-            requirement=4,
-            task=4,
-            tag=4,
-            document=1,
-            kanban_note=1,
-            project_note=1,
-            task_note=1,
-            requirement_note=1,
-            requirement_item_note=1,
-            change_user=request.user,
-        )
-        submit_permission_set_2.save()
-
-        submit_permission_set_3 = PermissionSet(
-            permission_set_name="Normal Permission Set",
-            administration_assign_user_to_group=0,
-            administration_create_group=0,
-            administration_create_permission_set=0,
-            administration_create_user=0,
-            bug_client=3,
-            customer=3,
-            kanban_card=3,
-            organisation=3,
-            project=3,
-            requirement=3,
-            task=3,
-            tag=3,
-            document=1,
-            kanban_note=1,
-            project_note=1,
-            task_note=1,
-            requirement_note=1,
-            requirement_item_note=1,
-            change_user=request.user,
-        )
-        submit_permission_set_3.save()
-
-        submit_permission_set_3 = PermissionSet(
-            permission_set_name="Read Only Permission Set",
-            administration_assign_user_to_group=0,
-            administration_create_group=0,
-            administration_create_permission_set=0,
-            administration_create_user=0,
-            bug_client=1,
-            customer=1,
-            kanban_card=1,
-            organisation=1,
-            project=1,
-            requirement=1,
-            task=1,
-            tag=1,
-            document=1,
-            kanban_note=1,
-            project_note=1,
-            task_note=1,
-            requirement_note=1,
-            requirement_item_note=1,
-            change_user=request.user,
-        )
-        submit_permission_set_3.save()
-
-        # Create admin group
-        submit_group = Group(
-            group_name="Administration",
-            change_user=request.user,
-        )
-        submit_group.save()
-
-        # Add user to admin group
-        submit_user_group = UserGroup(
-            username=request.user,
-            group=submit_group,
-            permission_set=submit_permission_set_1,
-            change_user=request.user,
-        )
-        submit_user_group.save()
-
-        # Create no organisation
-        submit_organisation = Organisation(
-            organisation_name="No Organisation",
-            organisation_website="https://nearbeach.org",
-            organisation_email="noreply@nearbeach.org",
-            change_user=request.user,
-        )
-        submit_organisation.save()
-
+    initalize_base_values(request.user)
     request.session["is_superuser"] = request.user.is_superuser
 
 

@@ -91,7 +91,10 @@ class TaskViewSet(viewsets.ModelViewSet):
         task.is_deleted = True
         task.change_user = request.user
         task.save()
-        return Response(data='task deleted')
+        return Response(
+            data='task deleted',
+            status=status.HTTP_204_NO_CONTENT
+        )
 
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
