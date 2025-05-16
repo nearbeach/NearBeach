@@ -6,7 +6,9 @@
 			 :key="result.pk"
 		>
 			<div class="object-card--detail">
-				<a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`">
+				<a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`"
+					v-bind:target="target"
+				>
 					<div class="object-card--detail--link">
 						{{ importVariables.prefix }}{{ result[importVariables.id] }}
 					</div>
@@ -16,7 +18,9 @@
 				</a>
 			</div>
 			<div class="object-card--status">
-				<a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`">
+				<a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`"
+					v-bind:target="target"
+				>
 					<div class="object-card--status--status">
 						{{ result[importVariables.status] }}
 					</div>
@@ -63,6 +67,10 @@ export default {
 			default: () => {
 				return [];
 			},
+		},
+		target: {
+			type: String,
+			default: "",
 		},
 	},
 	computed: {

@@ -29,10 +29,6 @@ export default {
 	components: {
 		NSelect,
 	},
-	emits: [
-		"update_object",
-		"update_validation",
-	],
 	data() {
 		return {
 			objectOptions: [
@@ -54,16 +50,10 @@ export default {
 	},
 	watch: {
 		objectResults() {
-			//Make sure the object results has a value
-			const condition_1 = this.objectResults !== "";
-			const condition_2 = this.objectResults !== null;
-
-			this.$emit("update_validation", {
-				tab: 0,
-				value: condition_1 && condition_2,
+			//Send results up to VueX
+			this.$store.dispatch("processGdprObjectType", {
+				"gdprObject": this.objectResults,
 			});
-
-			this.$emit("update_object")
 		}
 	},
 	methods: {}

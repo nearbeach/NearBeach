@@ -251,6 +251,16 @@ urlpatterns = [
         gdpr_wizard_views.gdpr_wizard,
         name="gdpr_wizard",
     ),
+    path(
+        "gdpr_wizard/get_data/",
+        gdpr_wizard_views.gdpr_get_data,
+        name="gdpr_get_data",
+    ),
+    path(
+        "gdpr_wizard/search_data/",
+        gdpr_wizard_views.gdpr_search_data,
+        name="gdpr_search_data",
+    ),
     # Groups
     path(
         "group_information/<int:group_id>/",

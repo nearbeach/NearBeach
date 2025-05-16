@@ -106,7 +106,7 @@ export default {
 			pickedObject: "",
 		}
 	},
-	watch: {
+	computed: {
 		...mapGetters({
 			validationData: "getValidationData",
 		})
