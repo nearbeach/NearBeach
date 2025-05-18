@@ -198,10 +198,12 @@ def _get_customer_data(gdpr_object_id):
             **{F"{object_id}__isnull": False},
         ).annotate(
             object_id=F(object_id),
-            object_title=F(F"{object_id}__{object_title}")
+            object_title=F(F"{object_id}__{object_title}"),
+            object_status=F(F"{object_id}__{object_status}"),
         ).values(
             "object_id",
             "object_title",
+            "object_status",
         )
 
         delete_data = json.dumps(list(delete_data), cls=DjangoJSONEncoder)
@@ -215,12 +217,226 @@ def _get_customer_data(gdpr_object_id):
 
 # Internal Function
 def _get_organisation_data(gdpr_object_id):
-    return
+    object_list = [
+        {
+            "type": "project",
+            "object": Project.objects.filter(
+                organisation_id=gdpr_object_id,
+            ),
+            "object_id": "project_id",
+            "object_status": "project_status__project_status",
+            "object_title": "project_name",
+        },
+        {
+            "type": "requirement",
+            "object": Requirement.objects.filter(
+                organisation_id=gdpr_object_id,
+            ),
+            "object_id": "requirement_id",
+            "object_status": "requirement_status__requirement_status",
+            "object_title": "requirement_title",
+        },
+        {
+            "type": "requirement_item",
+            "object": RequirementItem.objects.filter(
+                requirement_id__in=Requirement.objects.filter(
+                    organisation_id=gdpr_object_id,
+                ).values("requirement_id"),
+            ),
+            "object_id": "requirement_item_id",
+            "object_status": "requirement_item_status__requirement_item_status",
+            "object_title": "requirement_item_scope",
+        },
+        {
+            "type": "task",
+            "object": Task.objects.filter(
+                organisation_id=gdpr_object_id,
+            ),
+            "object_id": "task_id",
+            "object_status": "task_status__task_status",
+            "object_title": "task_short_description",
+        }
+    ]
+
+    # Loop through object data and construct the data required
+    user_action_required = {}
+    data_to_be_deleted = {}
+    for object in object_list:
+        # Gather the variables
+        type = object["type"]
+        object_id = object["object_id"]
+        object_status = object["object_status"]
+        object_title = object["object_title"]
+        empty_queryset = object["object"].none()
+
+        # Process the data to be deleted
+        delete_data = object["object"].annotate(
+            object_id=F(object_id),
+            object_title=F(object_title),
+            object_status=F(object_status),
+        ).values(
+            "object_id",
+            "object_title",
+            "object_status",
+        )
+
+        delete_data = json.dumps(list(delete_data), cls=DjangoJSONEncoder)
+        data_to_be_deleted[type] = json.loads(delete_data)
+
+    return {
+        "user_action_required": user_action_required,
+        "data_to_be_deleted": data_to_be_deleted,
+    }
 
 
 # Internal Function
 def _get_user_data(gdpr_object_id):
-    return
+    user_results = User.objects.get(
+        id=gdpr_object_id,
+    )
+    object_assignment_results = ObjectAssignment.objects.filter(
+        Q(
+            change_user_id=gdpr_object_id,
+        ) |
+        Q(
+            assigned_user_id=gdpr_object_id,
+        )
+    )
+
+    # Flat pack
+    first_name = user_results.first_name
+    last_name = user_results.last_name
+    email = user_results.email
+
+    object_list = [
+        {
+            "type": "project",
+            "object": Project.objects.filter(
+                Q(
+                    change_user_id=gdpr_object_id,
+                ) |
+                Q(
+                    creation_user_id=gdpr_object_id,
+                )
+            ),
+            "object_id": "project_id",
+            "object_status": "project_status__project_status",
+            "object_title": "project_name",
+            "fields": [
+                "project_name",
+                "project_description",
+            ],
+        },
+        {
+            "type": "requirement",
+            "object": Requirement.objects.filter(
+                Q(
+                    change_user_id=gdpr_object_id,
+                ) |
+                Q(
+                    creation_user_id=gdpr_object_id,
+                )
+            ),
+            "object_id": "requirement_id",
+            "object_status": "requirement_status__requirement_status",
+            "object_title": "requirement_title",
+            "fields": [
+                "requirement_title",
+                "requirement_scope",
+            ],
+        },
+        {
+            "type": "requirement_item",
+            "object": RequirementItem.objects.filter(
+                Q(
+                    change_user_id=gdpr_object_id,
+                )
+            ),
+            "object_id": "requirement_item_id",
+            "object_status": "requirement_item_status__requirement_item_status",
+            "object_title": "requirement_item_scope",
+            "fields": [
+                "requirement_item_title",
+                "requirement_item_scope",
+            ],
+        },
+        {
+            "type": "task",
+            "object": Task.objects.filter(
+                Q(
+                    change_user_id=gdpr_object_id,
+                ) |
+                Q(
+                    creation_user_id=gdpr_object_id,
+                )
+            ),
+            "object_id": "task_id",
+            "object_status": "task_status__task_status",
+            "object_title": "task_short_description",
+            "fields": [
+                "task_short_description",
+                "task_long_description",
+            ],
+        },
+    ]
+
+    user_action_required = {}
+    data_to_be_deleted = {}
+    for object in object_list:
+        # Gather the variables
+        type = object["type"]
+        object_id = object["object_id"]
+        object_status = object["object_status"]
+        object_title = object["object_title"]
+        empty_queryset = object["object"].none()
+
+        # Loop through the fields to get the user_action_required
+        for object_field in object["fields"]:
+            # Store the data against the type
+            empty_queryset = empty_queryset | object["object"].filter(
+                Q(
+                    **{F"{object_field}__icontains": first_name}
+                ) |
+                Q(
+                    **{F"{object_field}__icontains": last_name}
+                ) |
+                Q(
+                    **{F"{object_field}__icontains": email}
+                )
+            ).annotate(
+                object_id=F(object_id),
+                object_status=F(object_status),
+                object_title=F(object_title),
+            ).values(
+                "object_id",
+                "object_status",
+                "object_title",
+            )
+
+        # Convert the json to a string, and then back into json format
+        empty_queryset = json.dumps(list(empty_queryset), cls=DjangoJSONEncoder)
+        user_action_required[type] = json.loads(empty_queryset)
+
+        # Process data to be deleted
+        delete_data = object_assignment_results.filter(
+            **{F"{object_id}__isnull": False},
+        ).annotate(
+            object_id=F(object_id),
+            object_title=F(F"{object_id}__{object_title}"),
+            object_status=F(F"{object_id}__{object_status}"),
+        ).values(
+            "object_id",
+            "object_title",
+            "object_status",
+        )
+
+        delete_data = json.dumps(list(delete_data), cls=DjangoJSONEncoder)
+        data_to_be_deleted[type] = json.loads(delete_data)
+
+    return {
+        "user_action_required": user_action_required,
+        "data_to_be_deleted": data_to_be_deleted,
+    }
 
 
 @login_required(login_url="login", redirect_field_name="")

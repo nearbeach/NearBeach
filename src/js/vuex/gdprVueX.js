@@ -59,6 +59,12 @@ export const moduleGdpr = {
                 tab_id: "tab_0",
                 value: condition_1 && condition_2,
             });
+
+            //Reset gdpr id
+            commit({
+                type: "updateGdprObjectId",
+                gdprObjectId: 0,
+            });
         },
     },
     getters: {
