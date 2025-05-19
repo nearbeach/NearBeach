@@ -20,42 +20,119 @@
 					Alternatively, you can go to the object and manually edit the data. Please untick the row if you would
 					like to take this step.
 				</p>
+				<p class="text-instructions">
+					Best practise is to review each of these action required, as there could be false positives.
+				</p>
 			</div>
 			<div class="col-md-8">
-				<render-object-card v-bind:search-results="projectResults"
-									v-bind:import-variables="projectVariables"
-									destination="project"
-									target="_blank"
-									v-if="projectResults.length > 0"
-				></render-object-card>
+				<render-object-card-checkbox v-bind:search-results="projectResults.userActionRequired"
+											 v-bind:import-variables="projectVariables"
+											 destination="project"
+											 model-target="project"
+											 target="_blank"
+											 v-on:update_checkbox_model="updateCheckboxModel"
+											 v-if="projectResults.userActionRequired.length > 0"
+				></render-object-card-checkbox>
+
+				<render-object-card-checkbox v-bind:search-results="requirementResults.userActionRequired"
+											 v-bind:import-variables="requirementVariables"
+											 destination="requirement"
+											 model-target="requirement"
+											 target="_blank"
+											 v-on:update_checkbox_model="updateCheckboxModel"
+											 v-if="requirementResults.userActionRequired.length > 0"
+				></render-object-card-checkbox>
+
+				<render-object-card-checkbox v-bind:search-results="requirementItemResults.userActionRequired"
+											 v-bind:import-variables="requirementItemVariables"
+											 destination="requirement_item"
+											 model-target="requirement_item"
+											 target="_blank"
+											 v-on:update_checkbox_model="updateCheckboxModel"
+											 v-if="requirementItemResults.userActionRequired.length > 0"
+				></render-object-card-checkbox>
+
+				<render-object-card-checkbox v-bind:search-results="taskResults.userActionRequired"
+											 v-bind:import-variables="taskVariables"
+											 destination="task"
+											 model-target="task"
+											 target="_blank"
+											 v-on:update_checkbox_model="updateCheckboxModel"
+											 v-if="taskResults.userActionRequired.length > 0"
+				></render-object-card-checkbox>
 			</div>
 			<div class="spacer"></div>
 		</div>
 
+		<div class="spacer"></div>
+		<hr/>
 		<div v-if="status!=='loading'"
 			 class="row"
 		>
 			<div class="col-md-4">
 				<strong>Data to be removed</strong>
+				<p v-if="gdprObjectType === 'customer'"
+				   class="text-instructions"
+				>
+					The following objects will have the customer removed from them. The objects will NOT be deleted,
+					just the connection to the customer.
+				</p>
 			</div>
 			<div class="col-md-8">
-				ADD DATA
+				<render-object-card v-bind:search-results="projectResults.dataToBeDeleted"
+									v-bind:import-variables="projectVariables"
+									destination="project"
+									target="_blank"
+									v-if="projectResults.dataToBeDeleted.length > 0"
+				></render-object-card>
+
+				<render-object-card v-bind:search-results="requirementResults.dataToBeDeleted"
+									v-bind:import-variables="requirementVariables"
+									destination="requirement"
+									target="_blank"
+									v-if="requirementResults.dataToBeDeleted.length > 0"
+				></render-object-card>
+
+				<render-object-card v-bind:search-results="requirementItemResults.dataToBeDeleted"
+									v-bind:import-variables="requirementItemVariables"
+									destination="requirement_item"
+									target="_blank"
+									v-if="requirementItemResults.dataToBeDeleted.length > 0"
+				></render-object-card>
+
+				<render-object-card v-bind:search-results="taskResults.dataToBeDeleted"
+									v-bind:import-variables="taskVariables"
+									destination="task"
+									target="_blank"
+									v-if="taskResults.dataToBeDeleted.length > 0"
+				></render-object-card>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+// VueX
 import { mapGetters } from "vuex";
+
+// Components
 import RenderObjectCard from "../../render/RenderObjectCard.vue";
+import RenderObjectCardCheckbox from "../../render/RenderObjectCardCheckbox.vue";
 
 export default {
 	name: "GdprWizardDataVerification",
-	components: {RenderObjectCard},
+	components: {
+		RenderObjectCard,
+		RenderObjectCardCheckbox,
+	},
 	data() {
 		return {
 			status: "loading",
-			projectResults: [],
+			projectModel: [],
+			projectResults: {
+				userActionRequired: [],
+				dataToBeDeleted: []
+			},
 			projectVariables: {
 				header: "Projects",
 				prefix: "Pro",
@@ -63,7 +140,11 @@ export default {
 				title: "object_title",
 				status: "object_status",
 			},
-			requirementResults: [],
+			requirementModel: [],
+			requirementResults: {
+				userActionRequired: [],
+				dataToBeDeleted: [],
+			},
 			requirementVariables: {
 				header: "Requirements",
 				prefix: "Req",
@@ -71,7 +152,11 @@ export default {
 				title: "object_title",
 				status: "object_status",
 			},
-			requirementItemResults: [],
+			requirementItemModel: [],
+			requirementItemResults: {
+				userActionRequired: [],
+				dataToBeDeleted: [],
+			},
 			requirementItemVariables: {
 				header: "Requirement Items",
 				prefix: "Item",
@@ -79,7 +164,11 @@ export default {
 				title: "object_title",
 				status: "object_status",
 			},
-			taskResults: [],
+			taskModel: [],
+			taskResults: {
+				userActionRequired: [],
+				dataToBeDeleted: [],
+			},
 			taskVariables: {
 				header: "Tasks",
 				prefix: "Task",
@@ -134,12 +223,21 @@ export default {
 				this.status = "loaded";
 
 				//Load data into structure
-				this.projectResults = response.data.user_action_required.project;
-				this.requirementResults = response.data.user_action_required.requirement;
-				this.requirementItemResults = response.data.user_action_required.requirement_item;
-				this.taskResults = response.data.user_action_required.task;
+				this.projectResults.dataToBeDeleted = response.data.data_to_be_deleted.project;
+				this.projectResults.userActionRequired =response.data.user_action_required.project;
+				this.requirementResults.dataToBeDeleted = response.data.data_to_be_deleted.requirement;
+				this.requirementResults.userActionRequired = response.data.user_action_required.requirement;
+				this.requirementItemResults.dataToBeDeleted = response.data.data_to_be_deleted.requirement_item;
+				this.requirementItemResults.userActionRequired = response.data.user_action_required.requirement_item;
+				this.taskResults.dataToBeDeleted = response.data.data_to_be_deleted.task;
+				this.taskResults.userActionRequired = response.data.user_action_required.task;
 
-				//ADD CODE
+				//Verifiy the tab
+				this.$store.commit({
+					type: "updateValidationData",
+					tab_id: "tab_2",
+					value: true,
+				});
 			}).catch(error => {
 				this.$store.dispatch("newToast", {
 					header: "Error Fetching Data",
@@ -149,7 +247,14 @@ export default {
 					unique_type: "gdpr_wizard",
 				});
 			})
-		}
+		},
+		updateCheckboxModel(data) {
+			this.$store.commit({
+				type: "updateUserActionToRemove",
+				modelTarget: data.modelTarget,
+				value: data.value,
+			});
+		},
 	}
 
 }

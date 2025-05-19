@@ -6,7 +6,7 @@ from django.db.models import F, Value, Q
 from django.db.models.functions import Concat
 from django.template.loader import get_template
 from NearBeach.views.theme_views import get_theme
-from NearBeach.forms import GdprObjectTypeForm, GdprDataRequestForm
+from NearBeach.forms import GdprObjectTypeForm, GdprDataRequestForm, GdprObjectSubmitForm
 from NearBeach.models import (
     Customer,
     Project,
@@ -74,6 +74,22 @@ GDPR_SEARCH = {
     ),
 }
 
+
+# Interal Function
+def _delete_customer_data(gdpr_object_id):
+    return
+
+
+# Internal Function
+def _delete_organisation_data(gdpr_object_id):
+    return
+
+
+# Internal Function
+def _delete_user_data(gdpr_object_id):
+    return
+
+
 # Internal Function
 def _get_customer_data(gdpr_object_id):
     """
@@ -135,7 +151,7 @@ def _get_customer_data(gdpr_object_id):
             ),
             "object_id": "requirement_item_id",
             "object_status": "requirement_item_status__requirement_item_status",
-            "object_title": "requirement_item_scope",
+            "object_title": "requirement_item_title",
             "fields": [
                 "requirement_item_title",
                 "requirement_item_scope",
@@ -184,6 +200,7 @@ def _get_customer_data(gdpr_object_id):
                 object_status=F(object_status),
                 object_title=F(object_title),
             ).values(
+                "pk",
                 "object_id",
                 "object_status",
                 "object_title",
@@ -201,6 +218,7 @@ def _get_customer_data(gdpr_object_id):
             object_title=F(F"{object_id}__{object_title}"),
             object_status=F(F"{object_id}__{object_status}"),
         ).values(
+            "pk",
             "object_id",
             "object_title",
             "object_status",
@@ -275,6 +293,7 @@ def _get_organisation_data(gdpr_object_id):
             object_title=F(object_title),
             object_status=F(object_status),
         ).values(
+            "pk",
             "object_id",
             "object_title",
             "object_status",
@@ -408,6 +427,7 @@ def _get_user_data(gdpr_object_id):
                 object_status=F(object_status),
                 object_title=F(object_title),
             ).values(
+                "pk",
                 "object_id",
                 "object_status",
                 "object_title",
@@ -425,6 +445,7 @@ def _get_user_data(gdpr_object_id):
             object_title=F(F"{object_id}__{object_title}"),
             object_status=F(F"{object_id}__{object_status}"),
         ).values(
+            "pk",
             "object_id",
             "object_title",
             "object_status",
@@ -454,6 +475,10 @@ def gdpr_get_data(request):
     elif gdpr_object_type == "organisation":
         results = _get_organisation_data(gdpr_object_id)
     elif gdpr_object_type == "user":
+        # in the odd case a user picks themselfs to delete, send back an error
+        if request.user.pk == gdpr_object_id:
+            return HttpResponseBadRequest("Don't delete yourself!")
+
         results = _get_user_data(gdpr_object_id)
     else:
         return HttpResponseBadRequest("GDPR Object Type does not exist")
@@ -466,10 +491,7 @@ def gdpr_get_data(request):
     results = json.dumps(results, cls=DjangoJSONEncoder)
 
     return JsonResponse(json.loads(results), safe=False)
-    # return HttpResponse(
-    #     json.loads(results),
-    #     content_type="application/json",
-    # )
+
 
 @login_required(login_url="login", redirect_field_name="")
 @user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name="")
@@ -479,15 +501,29 @@ def gdpr_search_data(request):
         return HttpResponseBadRequest(form.errors)
 
     # Get the results
+    gdpr_object_type = form.cleaned_data["gdpr_object_type"]
     results = GDPR_SEARCH[
-        form.cleaned_data["gdpr_object_type"]
+        gdpr_object_type
     ]
+
+    # Stop the user from picking themselfs to delete - as it will cause many issues
+    if gdpr_object_type == "user":
+        results = results.exclude(username=request.user)
 
     # Convert the results
     return HttpResponse(
         json.dumps(list(results), cls=DjangoJSONEncoder),
         content_type="application/json",
     )
+
+
+@login_required(login_url="login", redirect_field_name="")
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name="")
+def gdpr_submit(request):
+    form = GdprObjectSubmitForm(request.POST)
+    if not form.is_valid():
+        HttpResponseBadRequest(form.errors)
+    HttpResponseBadRequest("Need to fill out properly")
 
 
 @login_required(login_url="login", redirect_field_name="")

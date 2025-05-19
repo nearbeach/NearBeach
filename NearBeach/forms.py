@@ -475,6 +475,25 @@ class GdprDataRequestForm(GdprObjectTypeForm):
     )
 
 
+class GdprObjectSubmitForm(GdprDataRequestForm):
+    project = forms.ModelMultipleChoiceField(
+        queryset=Project.objects.all(),
+        required=False,
+    )
+    requirement = forms.ModelMultipleChoiceField(
+        queryset=Requirement.objects.all(),
+        required=False,
+    )
+    requirement_item = forms.ModelMultipleChoiceField(
+        queryset=RequirementItem.objects.all(),
+        required=False,
+    )
+    task = forms.ModelMultipleChoiceField(
+        queryset=Task.objects.all(),
+        required=False,
+    )
+
+
 class KanbanCardForm(forms.ModelForm):
     kanban_card_id = forms.ModelChoiceField(
         required=True,

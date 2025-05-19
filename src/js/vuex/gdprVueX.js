@@ -2,6 +2,12 @@ export const moduleGdpr = {
     state: () => ({
         gdprObjectId: 0,
         gdprObjectType: "",
+        userActionToRemove: {
+            project: [],
+            requirement: [],
+            requirement_item: [],
+            task: [],
+        },
         validationData: {
             tab_0: false,
             tab_1: false,
@@ -15,6 +21,9 @@ export const moduleGdpr = {
         },
         updateGdprObjectType(state, payload) {
             state.gdprObjectType = payload.gdprObject;
+        },
+        updateUserActionToRemove(state, payload) {
+            state.userActionToRemove[payload.modelTarget] = payload.value;
         },
         updateValidationData(state, payload) {
             //Get a copy of the validation data
@@ -73,6 +82,9 @@ export const moduleGdpr = {
         },
         getGdprObjectType: (state) => {
             return state.gdprObjectType;
+        },
+        getUserActionToRemove: (state) => {
+            return state.userActionToRemove;
         },
         getValidationData: (state) => {
             return state.validationData;

@@ -47,18 +47,18 @@
 						<!-- NEXT -->
 						<button class="btn btn-primary save-changes"
 								v-on:click="nextTab"
-								v-if="currentTab!==4"
+								v-if="currentTab!==3"
 						>
 							Next
 						</button>
 
 						<!-- SUBMIT -->
-						<button class="btn btn-primary save-changes"
+						<button class="btn btn-danger save-changes"
 								v-on:click="submitGdpr"
-								v-if="currentTab===4"
+								v-if="currentTab===3"
 								v-bind:disabled="disableSubmitButton"
 						>
-
+							SUBMIT GDPR DELETION
 						</button>
 					</div>
 				</div>
@@ -108,6 +108,9 @@ export default {
 	},
 	computed: {
 		...mapGetters({
+			gdprObjectId: "getGdprObjectId",
+			gdprObjectType: "getGdprObjectType",
+			userActionToRemove: "getUserActionToRemove",
 			validationData: "getValidationData",
 		})
 	},
@@ -154,7 +157,51 @@ export default {
 			this.currentTab = this.currentTab - 1;
 		},
 		submitGdpr() {
-			//ADD CODE
+			//Disable the button
+			this.disableSubmitButton = true;
+
+			//Create data to send
+			const data_to_send = new FormData();
+			data_to_send.set("gdpr_object_id", this.gdprObjectId);
+			data_to_send.set("gdpr_object_type", this.gdprObjectType);
+
+			// Loop through each of the user action to remove
+			this.userActionToRemove.forEach(object => {
+				object.forEach(row => {
+					data_to_send.set(object, row);
+				});
+			});
+
+			this.$store.dispatch("newToast", {
+				header: "GDPR Wizard Deletion",
+				message: "Please wait whilst we delete the data",
+				extra_classes: "bg-warning",
+				delay: 0,
+				unique_type: "gdpr_wizard_submit",
+			})
+
+			this.axios.post(
+				`${this.rootUrl}gdpr_wizard/submit/`,
+				data_to_send,
+			).then(() => {
+				this.$store.dispatch("newToast", {
+					header: "GDPR Wizard Deleted",
+					message: "Data deleted",
+					extra_classes: "bg-success",
+					delay: 0,
+					unique_type: "gdpr_wizard_submit",
+				});
+
+				window.location.href = `${this.rootUrl}gdpr_wizard/success/`;
+			}).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "GDPR Wizard Deletion ERROR",
+					message: `An error occurred whilst deleting data: Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+					unique_type: "gdpr_wizard_submit",
+				});
+			});
 		},
 	}
 }
