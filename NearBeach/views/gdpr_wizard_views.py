@@ -1,4 +1,5 @@
 import django.forms
+from django.apps import apps
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
@@ -18,7 +19,7 @@ from NearBeach.models import (
 )
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-import json
+import json, uuid, re
 
 
 GDPR_SEARCH = {
@@ -76,17 +77,119 @@ GDPR_SEARCH = {
 
 
 # Interal Function
-def _delete_customer_data(gdpr_object_id):
+def _delete_customer_data(gdpr_object_id, form: GdprObjectSubmitForm):
+    # Flat pack
+    project = form.cleaned_data["project"]
+    requirement = form.cleaned_data["requirement"]
+    requirement_item = form.cleaned_data["requirement_item"]
+    task = form.cleaned_data["task"]
+
+    # Get customer data
+    customer_data = Customer.objects.get(
+        customer_id=gdpr_object_id,
+    )
+    first_name = customer_data.customer_first_name
+    last_name = customer_data.customer_last_name
+    email = customer_data.customer_email
+
+    for single_project in project:
+        generated_uuid = uuid.uuid4()
+        single_project.project_name = re.sub(first_name, str(generated_uuid), single_project.project_name, flags=re.IGNORECASE)
+        single_project.project_name = re.sub(last_name, str(generated_uuid), single_project.project_name, flags=re.IGNORECASE)
+        single_project.project_name = re.sub(email, str(generated_uuid), single_project.project_name, flags=re.IGNORECASE)
+        single_project.project_description = re.sub(first_name, str(generated_uuid), single_project.project_description, flags=re.IGNORECASE)
+        single_project.project_description = re.sub(last_name, str(generated_uuid), single_project.project_description, flags=re.IGNORECASE)
+        single_project.project_description = re.sub(email, str(generated_uuid), single_project.project_description, flags=re.IGNORECASE)
+
+        single_project.save()
+
+    for single_requirement in requirement:
+        generated_uuid = uuid.uuid4()
+        single_requirement.requirement_title = re.sub(first_name, str(generated_uuid), single_requirement.requirement_title, flags=re.IGNORECASE)
+        single_requirement.requirement_title = re.sub(last_name, str(generated_uuid), single_requirement.requirement_title, flags=re.IGNORECASE)
+        single_requirement.requirement_title = re.sub(email, str(generated_uuid), single_requirement.requirement_title, flags=re.IGNORECASE)
+        single_requirement.requirement_scope = re.sub(first_name, str(generated_uuid), single_requirement.requirement_scope, flags=re.IGNORECASE)
+        single_requirement.requirement_scope = re.sub(last_name, str(generated_uuid), single_requirement.requirement_scope, flags=re.IGNORECASE)
+        single_requirement.requirement_scope = re.sub(email, str(generated_uuid), single_requirement.requirement_scope, flags=re.IGNORECASE)
+
+    for single_requirement_item in requirement_item:
+        generated_uuid = uuid.uuid4()
+        single_requirement_item.requirement_item_title = re.sub(first_name, str(generated_uuid), single_requirement_item.requirement_item_title, flags=re.IGNORECASE)
+        single_requirement_item.requirement_item_title = re.sub(last_name, str(generated_uuid), single_requirement_item.requirement_item_title, flags=re.IGNORECASE)
+        single_requirement_item.requirement_item_title = re.sub(email, str(generated_uuid), single_requirement_item.requirement_item_title, flags=re.IGNORECASE)
+        single_requirement_item.requirement_item_scope = re.sub(first_name, str(generated_uuid), single_requirement_item.requirement_item_scope, flags=re.IGNORECASE)
+        single_requirement_item.requirement_item_scope = re.sub(last_name, str(generated_uuid), single_requirement_item.requirement_item_scope, flags=re.IGNORECASE)
+        single_requirement_item.requirement_item_scope = re.sub(email, str(generated_uuid), single_requirement_item.requirement_item_scope, flags=re.IGNORECASE)
+
+    for single_task in task:
+        generated_uuid = uuid.uuid4()
+        single_task.task_short_description = re.sub(first_name, str(generated_uuid), single_task.task_short_description, flags=re.IGNORECASE)
+        single_task.task_short_description = re.sub(last_name, str(generated_uuid), single_task.task_short_description, flags=re.IGNORECASE)
+        single_task.task_short_description = re.sub(email, str(generated_uuid), single_task.task_short_description, flags=re.IGNORECASE)
+        single_task.task_long_description = re.sub(first_name, str(generated_uuid), single_task.task_long_description, flags=re.IGNORECASE)
+        single_task.task_long_description = re.sub(last_name, str(generated_uuid), single_task.task_long_description, flags=re.IGNORECASE)
+        single_task.task_long_description = re.sub(email, str(generated_uuid), single_task.task_long_description, flags=re.IGNORECASE)
+
+    # Delete the object assignment
+    ObjectAssignment.objects.filter(
+        customer_id=gdpr_object_id,
+    ).delete()
+
+    # Delete the customer
+    Customer.objects.get(
+        customer_id=gdpr_object_id,
+    ).delete()
+
     return
 
 
 # Internal Function
 def _delete_organisation_data(gdpr_object_id):
+    Organisation.objects.get(
+        organisation_id=gdpr_object_id,
+    ).delete()
+
     return
 
 
 # Internal Function
-def _delete_user_data(gdpr_object_id):
+def _delete_user_data(gdpr_object_id, request):
+    # Remove all Object Associations first
+    ObjectAssignment.objects.filter(
+        assigned_user_id=gdpr_object_id,
+    ).delete()
+
+    # Go through each table in NearBeach and for the creation/change user - change to current user
+    nearbeach_tables = apps.get_app_config("NearBeach").get_models()
+    for single_table in nearbeach_tables:
+        condition_1 = hasattr(single_table, "change_user")
+        condition_2 = hasattr(single_table, "creation_user")
+        
+        if condition_1 & condition_2:
+            single_table.objects.filter(
+                Q(
+                    change_user_id=gdpr_object_id,
+                ) |
+                Q(
+                    creation_user=gdpr_object_id,
+                )
+            ).update(
+                change_user=request.user,
+                creation_user=request.user,
+            )
+        elif condition_1:
+            single_table.objects.filter(
+                change_user_id=gdpr_object_id,
+            ).update(
+                change_user=request.user,
+            )
+        elif condition_2:
+            single_table.objects.filter(
+                creation_user_id=gdpr_object_id,
+            ).update(
+                creation_user=request.user,
+            )
+
     return
 
 
@@ -522,8 +625,20 @@ def gdpr_search_data(request):
 def gdpr_submit(request):
     form = GdprObjectSubmitForm(request.POST)
     if not form.is_valid():
-        HttpResponseBadRequest(form.errors)
-    HttpResponseBadRequest("Need to fill out properly")
+        return HttpResponseBadRequest(form.errors)
+
+    gdpr_object_type = form.cleaned_data["gdpr_object_type"]
+    gdpr_object_id = form.cleaned_data["gdpr_object_id"]
+    if gdpr_object_type == "customer":
+        _delete_customer_data(gdpr_object_id, form)
+    elif gdpr_object_type == "organisation":
+        _delete_organisation_data(gdpr_object_id)
+    elif gdpr_object_type == "user":
+        _delete_user_data(gdpr_object_id, request)
+    else:
+        return HttpResponseBadRequest("Object Type Not Found")
+
+    return HttpResponse(F"{gdpr_object_type} has been deleted")
 
 
 @login_required(login_url="login", redirect_field_name="")
