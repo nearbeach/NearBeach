@@ -6,6 +6,7 @@ from NearBeach.models import (
     KanbanCard,
 )
 from NearBeach.serializers.kanban_card_serializer import KanbanCardSerializer
+from NearBeach.serializers.tag_serializer import TagSerializer
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 
 
