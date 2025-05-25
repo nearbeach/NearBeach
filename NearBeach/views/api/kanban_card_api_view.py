@@ -19,14 +19,6 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
     queryset = KanbanCard.objects.filter(is_deleted=False)
     serializer_class = KanbanCardSerializer
 
-    @staticmethod
-    def _check_column(column : KanbanColumn, kanban_board: KanbanBoard):
-        return column.kanban_board_id == kanban_board.kanban_board_id
-
-    @staticmethod
-    def _check_level(level : KanbanColumn, kanban_board: KanbanBoard):
-        return level.kanban_board_id == kanban_board.kanban_board_id
-
     @check_user_api_permissions(min_permission_level=2)
     def create(self, request, *args, **kwargs):
         serializer = KanbanCardSerializer(data=request.data, context={'request': request})
@@ -193,13 +185,13 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
         new_column = serializer.validated_data['kanban_column_id']
         new_level = serializer.validated_data['kanban_level_id']
 
-        if not self._check_column(new_column, kwargs["kanban_board_id"]):
+        if int(new_column.kanban_board_id) != int(kwargs["kanban_board_id"]):
             return Response(
                 data={"Column does not exist for this Kanban Board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if not self._check_level(new_level, kwargs["kanban_board_id"]):
+        if int(new_level.kanban_board_id) != int(kwargs["kanban_board_id"]):
             return Response(
                 data={"Level does not exist for this Kanban Board"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -212,14 +204,21 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
         # Check to see if the card has been moved
         if new_column != old_column or new_level != old_level:
             # Card has been moved
-            update_kanban_card.kanban_column = new_column
-            update_kanban_card.kanban_level = new_level
-            update_kanban_card.kanban_card_sort_number = KanbanCard.objects.filter(
+            sort_number = KanbanCard.objects.filter(
                 kanban_column=new_column,
                 kanban_level=new_level,
             ).aggregate(
                 Max("kanban_card_sort_number"),
             )["kanban_card_sort_number__max"]
+
+            if sort_number is None:
+                sort_number = 0
+            else:
+                sort_number += 1
+
+            update_kanban_card.kanban_column = new_column
+            update_kanban_card.kanban_level = new_level
+            update_kanban_card.kanban_card_sort_number = sort_number
 
         update_kanban_card.kanban_card_text = serializer.validated_data['kanban_card_text']
         update_kanban_card.kanban_card_description = serializer.validated_data['kanban_card_description']
