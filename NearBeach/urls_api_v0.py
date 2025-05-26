@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import SimpleRouter
 from NearBeach.views.api import (
+    change_task_api_view,
     coffee_api_view,
     customer_api_view,
     kanban_board_api_view,
@@ -39,6 +40,7 @@ router.register(r'organisation', organisation_api_view.OrganisationViewSet, base
 router.register(r'project', project_api_view.ProjectViewSet, basename='project')
 router.register(r'requirement', requirement_api_view.RequirementViewSet, basename='requirement')
 router.register(r'request_for_change', request_for_change_api_view.RequirementViewSet, basename='request_for_change')
+router.register(r'request_for_change/(?P<request_for_change_id>[0-9]+)/change_task', change_task_api_view.ChangeTaskViewSet, basename='change_task')
 router.register(r'sprint', sprint_api_view.SprintViewSet, basename='sprint')
 router.register(r'task', task_api_view.TaskViewSet, basename='task')
 router.register(r'(?P<destination>[\w]+)/(?P<location_id>[0-9]+)/group_and_user', group_and_user_api_view.GroupAndUserViewSet, basename='group_and_user')
