@@ -458,6 +458,42 @@ class GanttDataUpdateDataForm(forms.Form):
     status_id = forms.IntegerField()
 
 
+class GdprObjectTypeForm(forms.Form):
+    gdpr_object_type = forms.ChoiceField(
+        required=True,
+        choices=(
+            ("customer", "customer"),
+            ("organisation", "organisation"),
+            ("user", "user"),
+        ),
+    )
+
+
+class GdprDataRequestForm(GdprObjectTypeForm):
+    gdpr_object_id = forms.IntegerField(
+        required=True,
+    )
+
+
+class GdprObjectSubmitForm(GdprDataRequestForm):
+    project = forms.ModelMultipleChoiceField(
+        queryset=Project.objects.all(),
+        required=False,
+    )
+    requirement = forms.ModelMultipleChoiceField(
+        queryset=Requirement.objects.all(),
+        required=False,
+    )
+    requirement_item = forms.ModelMultipleChoiceField(
+        queryset=RequirementItem.objects.all(),
+        required=False,
+    )
+    task = forms.ModelMultipleChoiceField(
+        queryset=Task.objects.all(),
+        required=False,
+    )
+
+
 class KanbanCardForm(forms.ModelForm):
     kanban_card_id = forms.ModelChoiceField(
         required=True,

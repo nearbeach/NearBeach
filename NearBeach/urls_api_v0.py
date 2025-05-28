@@ -1,12 +1,15 @@
 from django.urls import path, include
 from rest_framework.routers import SimpleRouter
 from NearBeach.views.api import (
+    change_task_api_view,
     coffee_api_view,
     customer_api_view,
     kanban_board_api_view,
+    kanban_card_api_view,
     organisation_api_view,
     project_api_view,
     requirement_api_view,
+    requirement_item_api_view,
     request_for_change_api_view,
     sprint_api_view,
     task_api_view,
@@ -33,10 +36,13 @@ router.register(r'available_data/tag_list', tag_list_api_view.TagListViewSet, ba
 router.register(r'coffee', coffee_api_view.CoffeeViewSet, basename='coffee')
 router.register(r'customer', customer_api_view.CustomerViewSet, basename='customer')
 router.register(r'kanban_board', kanban_board_api_view.KanbanBoardViewSet, basename='kanban_board')
+router.register(r'kanban_board/(?P<kanban_board_id>[0-9]+)/kanban_card', kanban_card_api_view.KanbanCardViewSet, basename='kanban_card')
 router.register(r'organisation', organisation_api_view.OrganisationViewSet, basename='organisation')
 router.register(r'project', project_api_view.ProjectViewSet, basename='project')
 router.register(r'requirement', requirement_api_view.RequirementViewSet, basename='requirement')
+router.register(r'requirement/(?P<requirement_id>[0-9]+)/requirement_item', requirement_item_api_view.RequirementItemViewSet, basename='requirement_item')
 router.register(r'request_for_change', request_for_change_api_view.RequirementViewSet, basename='request_for_change')
+router.register(r'request_for_change/(?P<request_for_change_id>[0-9]+)/change_task', change_task_api_view.ChangeTaskViewSet, basename='change_task')
 router.register(r'sprint', sprint_api_view.SprintViewSet, basename='sprint')
 router.register(r'task', task_api_view.TaskViewSet, basename='task')
 router.register(r'(?P<destination>[\w]+)/(?P<location_id>[0-9]+)/group_and_user', group_and_user_api_view.GroupAndUserViewSet, basename='group_and_user')

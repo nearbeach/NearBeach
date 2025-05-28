@@ -5,6 +5,13 @@
 			 v-for="result in searchResults"
 			 :key="result.pk"
 		>
+			<div class="object-card--checkbox">
+				<input type="checkbox"
+					   v-bind:value="result.pk"
+					   v-bind:id="`${modelTarget}_${result.pk}`"
+					   v-model="checkboxModel"
+			    />
+			</div>
 			<div class="object-card--detail">
 				<a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`"
 					v-bind:target="target"
@@ -41,10 +48,11 @@ import {mapGetters} from "vuex";
 import {useNiceDatetime} from "../../composables/datetime/useNiceDatetime";
 
 export default {
-	name: "RenderObjectCard",
+	name: "RenderObjectCardCheckbox",
 	methods: {
 		useNiceDatetime
 	},
+	emits: ["update_checkbox_model"],
 	props: {
 		destination: {
 			type: String,
@@ -62,6 +70,10 @@ export default {
 				};
 			},
 		},
+		modelTarget: {
+			type: String,
+			default: "",
+		},
 		searchResults: {
 			type: Array,
 			default: () => {
@@ -78,5 +90,18 @@ export default {
 			rootUrl: "getRootUrl",
 		}),
 	},
+	watch: {
+		checkboxModel() {
+			this.$emit("update_checkbox_model", {
+				"modelTarget": this.modelTarget,
+				"value": this.checkboxModel,
+			})
+		},
+	},
+	data() {
+		return {
+			checkboxModel: [],
+		}
+	}
 }
 </script>

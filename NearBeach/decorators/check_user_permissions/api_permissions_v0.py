@@ -23,7 +23,7 @@ def check_user_api_permissions(min_permission_level):
             destination = ""
             if len(url_list) == 1:
                 destination = url_list[0]
-            elif len(url_list) == 2:
+            elif len(url_list) >= 2:
                 destination = url_list[0]
                 kwargs["location_id"] = url_list[1]
 
