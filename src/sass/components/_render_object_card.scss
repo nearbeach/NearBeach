@@ -15,6 +15,12 @@
             flex-direction: row;
         }
 
+        .object-card--checkbox {
+            width: 45px;
+            display: flex;
+            justify-content: center;
+        }
+
         .object-card--detail {
             width: 100%;
 

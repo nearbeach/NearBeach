@@ -10,6 +10,7 @@ from .views import (
     dashboard_views,
     diagnostic_views,
     document_views,
+    gdpr_wizard_views,
     error_views,
     gantt_chart_views,
     group_views,
@@ -243,6 +244,27 @@ urlpatterns = [
         "gantt_data/<destination>/<int:location_id>/update_data/",
         gantt_chart_views.gantt_data_update_data,
         name="gantt_chart_update_data",
+    ),
+    # GDPR Wizard
+    path(
+        "gdpr_wizard/",
+        gdpr_wizard_views.gdpr_wizard,
+        name="gdpr_wizard",
+    ),
+    path(
+        "gdpr_wizard/get_data/",
+        gdpr_wizard_views.gdpr_get_data,
+        name="gdpr_get_data",
+    ),
+    path(
+        "gdpr_wizard/search_data/",
+        gdpr_wizard_views.gdpr_search_data,
+        name="gdpr_search_data",
+    ),
+    path(
+        "gdpr_wizard/submit/",
+        gdpr_wizard_views.gdpr_submit,
+        name="gdpr_submit",
     ),
     # Groups
     path(
