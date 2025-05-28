@@ -9,6 +9,7 @@ from NearBeach.views.api import (
     organisation_api_view,
     project_api_view,
     requirement_api_view,
+    requirement_item_api_view,
     request_for_change_api_view,
     sprint_api_view,
     task_api_view,
@@ -39,6 +40,7 @@ router.register(r'kanban_board/(?P<kanban_board_id>[0-9]+)/kanban_card', kanban_
 router.register(r'organisation', organisation_api_view.OrganisationViewSet, basename='organisation')
 router.register(r'project', project_api_view.ProjectViewSet, basename='project')
 router.register(r'requirement', requirement_api_view.RequirementViewSet, basename='requirement')
+router.register(r'requirement/(?P<requirement_id>[0-9]+)/requirement_item', requirement_item_api_view.RequirementItemViewSet, basename='requirement_item')
 router.register(r'request_for_change', request_for_change_api_view.RequirementViewSet, basename='request_for_change')
 router.register(r'request_for_change/(?P<request_for_change_id>[0-9]+)/change_task', change_task_api_view.ChangeTaskViewSet, basename='change_task')
 router.register(r'sprint', sprint_api_view.SprintViewSet, basename='sprint')
