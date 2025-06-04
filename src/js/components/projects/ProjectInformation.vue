@@ -78,6 +78,13 @@
 					</div>
 				</div>
 
+				<!-- STAKEHOLDER ORGANISATION -->
+				<hr/>
+				<stakeholder-information
+					v-bind:organisation-results="organisationResults"
+					v-bind:default-stakeholder-image="defaultStakeholderImage"
+				></stakeholder-information>
+
 				<!-- PROJECT STATUS AND PRIORITY -->
 				<hr/>
 				<div class="row">
@@ -107,12 +114,33 @@
 					</div>
 				</div>
 
-				<!-- STAKEHOLDER ORGANISATION -->
+				<!-- STORY POINTS-->
 				<hr/>
-				<stakeholder-information
-					v-bind:organisation-results="organisationResults"
-					v-bind:default-stakeholder-image="defaultStakeholderImage"
-				></stakeholder-information>
+				<div class="row">
+					<div class="col-md-4">
+						<strong>Story Points</strong>
+						<p class="text-instructions">
+							A story point reflects how complicated and time consuming a single project will take. The
+							larger the number, the larger the complexity and time.
+						</p>
+					</div>
+					<div class="col-md-8">
+						<label>Story Points</label>
+						<n-input-number
+							v-model:value="projectStoryPointModel"
+							placeholder="Min"
+							:min="1"
+							:max="10"
+							style="max-width: 150px;"
+						/>
+						<div v-if="projectStoryPointModel > 5"
+							 class="alert alert-info mt-3"
+							 role="alert"
+						>
+							INFO: This is a large project. It is best to break this up into smaller tasks.
+						</div>
+					</div>
+				</div>
 
 				<!-- START DATE & END DATE -->
 				<hr/>
@@ -145,7 +173,7 @@
 </template>
 
 <script>
-import {NSelect} from "naive-ui";
+import {NSelect, NInputNumber} from "naive-ui";
 import BetweenDates from "../dates/BetweenDates.vue";
 import StakeholderInformation from "../organisations/StakeholderInformation.vue";
 import Editor from "@tinymce/tinymce-vue";
@@ -170,6 +198,7 @@ export default {
 	components: {
 		BetweenDates,
 		editor: Editor,
+		NInputNumber,
 		NSelect,
 		StakeholderInformation,
 		ValidationRendering,
@@ -251,6 +280,7 @@ export default {
 				this.projectResults[0].fields.project_start_date
 			),
 			projectStatusModel: this.projectResults[0].fields.project_status,
+			projectStoryPointModel: this.projectResults[0].fields.project_story_point,
 		};
 	},
 	validations: {
@@ -324,6 +354,7 @@ export default {
 			);
 			data_to_send.set("project_status", this.projectStatusModel);
 			data_to_send.set("project_priority", this.projectPriorityModel);
+			data_to_send.set("project_story_point", this.projectStoryPointModel);
 
 			//Notify user of attempting to save
 			this.$store.dispatch("newToast", {

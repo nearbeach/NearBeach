@@ -236,6 +236,9 @@ def requirement_item_information_save(request, requirement_item_id, *args, **kwa
     requirement_item_submit.requirement_item_type = form.cleaned_data[
         "requirement_item_type"
     ]
+    requirement_item_submit.requirement_item_story_point = form.cleaned_data[
+        "requirement_item_story_point"
+    ]
     requirement_item_submit.requirement_item_priority = form.cleaned_data["requirement_item_priority"]
     requirement_item_submit.save()
 
