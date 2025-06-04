@@ -110,6 +110,10 @@ export default {
 				)
 				.then((response) => {
 					this.profilePicture = `${this.rootUrl}private/${response.data.profile_picture}`;
+
+					//Close the upload button
+					const closeButtons = document.getElementsByClassName("n-button__icon");
+					closeButtons[0].click();
 				})
 				.catch(() => {
 					this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;

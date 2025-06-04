@@ -1131,6 +1131,7 @@ class ProjectForm(forms.ModelForm):
             "project_end_date",
             "project_status",
             "project_priority",
+            "project_story_point",
         ]
 
 
@@ -1366,6 +1367,7 @@ class TaskInformationForm(forms.ModelForm):
             "task_short_description",
             "task_long_description",
             "task_start_date",
+            "task_story_point",
             "task_end_date",
             "task_status",
             "task_priority",
@@ -1417,6 +1419,7 @@ class UpdateRequirementItemForm(forms.ModelForm):
             "requirement_item_title",
             "requirement_item_scope",
             "requirement_item_status",
+            "requirement_item_story_point",
             "requirement_item_type",
             "requirement_item_priority",
         ]

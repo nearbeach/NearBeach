@@ -188,6 +188,7 @@ def project_information_save(request, project_id, *args, **kwargs):
     project_update.project_end_date = form.cleaned_data["project_end_date"]
     project_update.project_status = form.cleaned_data["project_status"]
     project_update.project_priority = form.cleaned_data["project_priority"]
+    project_update.project_story_point = form.cleaned_data["project_story_point"]
 
     # Save
     project_update.save()

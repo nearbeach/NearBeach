@@ -30,7 +30,13 @@
 				v-bind:data-title="element.title"
 				v-on:dblclick="editItem($event)"
 			>
-				<div class="content">
+				<div class="content"
+					 v-bind:key="element.id"
+					 v-bind:id="element.id"
+					 v-bind:data-id="element.id"
+					 v-bind:data-property="element.property"
+					 v-bind:data-title="element.title"
+				>
 					<strong
 						v-bind:key="element.id"
 						v-bind:id="element.id"

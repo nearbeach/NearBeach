@@ -78,6 +78,13 @@
 					</div>
 				</div>
 
+				<!-- STAKEHOLDER ORGANISATION -->
+				<hr/>
+				<stakeholder-information
+					v-bind:organisation-results="organisationResults"
+					v-bind:default-stakeholder-image="defaultStakeholderImage"
+				></stakeholder-information>
+
 				<!-- TASK STATUS AND PRIORITY -->
 				<hr/>
 				<div class="row">
@@ -106,12 +113,6 @@
 						></n-select>
 					</div>
 				</div>
-				<!-- STAKEHOLDER ORGANISATION -->
-				<hr/>
-				<stakeholder-information
-					v-bind:organisation-results="organisationResults"
-					v-bind:default-stakeholder-image="defaultStakeholderImage"
-				></stakeholder-information>
 
 				<!-- START DATE & END DATE -->
 				<hr/>
@@ -122,6 +123,28 @@
 					v-bind:end-date-model="taskEndDateModel.getTime()"
 					v-bind:is-read-only="isReadOnly"
 				></between-dates>
+
+				<!-- STORY POINTS-->
+				<hr/>
+				<div class="row">
+					<div class="col-md-4">
+						<strong>Story Points</strong>
+						<p class="text-instructions">
+							A story point reflects how complicated and time consuming a single task will take. The
+							larger the number, the larger the complexity and time.
+						</p>
+					</div>
+					<div class="col-md-8">
+						<label>Story Points</label>
+						<n-input-number
+							v-model:value="taskStoryPointModel"
+							placeholder="Min"
+							:min="1"
+							:max="10"
+							style="max-width: 150px;"
+						/>
+					</div>
+				</div>
 
 				<!-- Submit Button -->
 				<hr v-if="!isReadOnly"/>
@@ -148,7 +171,7 @@ import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 import Editor from "@tinymce/tinymce-vue";
-import {NSelect} from "naive-ui";
+import {NSelect, NInputNumber } from "naive-ui";
 import StakeholderInformation from "../organisations/StakeholderInformation.vue";
 import BetweenDates from "../dates/BetweenDates.vue";
 
@@ -167,6 +190,7 @@ export default {
 	components: {
 		BetweenDates,
 		editor: Editor,
+		NInputNumber,
 		NSelect,
 		StakeholderInformation,
 		ValidationRendering,
@@ -248,6 +272,7 @@ export default {
 				this.taskResults[0].fields.task_start_date
 			),
 			taskStatusModel: this.taskResults[0].fields.task_status,
+			taskStoryPointModel: this.taskResults[0].fields.task_story_point,
 		};
 	},
 	validations: {
@@ -336,6 +361,7 @@ export default {
 			);
 			data_to_send.set("task_status", this.taskStatusModel);
 			data_to_send.set("task_priority", this.taskPriorityModel);
+			data_to_send.set("task_story_point", this.taskStoryPointModel);
 
 			//Send data to backend
 			this.axios.post(

@@ -186,6 +186,35 @@
 					</div>
 				</div>
 
+				<!-- STORY POINTS-->
+				<hr/>
+				<div class="row">
+					<div class="col-md-4">
+						<strong>Story Points</strong>
+						<p class="text-instructions">
+							A story point reflects how complicated and time consuming a single requirement item will
+							take. The larger the number, the larger the complexity and time.
+						</p>
+					</div>
+					<div class="col-md-8">
+						<label>Story Points</label>
+						<n-input-number
+							v-model:value="requirementItemStoryPointModel"
+							placeholder="Min"
+							:min="1"
+							:max="10"
+							style="max-width: 150px;"
+						/>
+						<div v-if="requirementItemStoryPointModel > 5"
+							 class="alert alert-info mt-3"
+							 role="alert"
+						>
+							INFO: This is a large requirement item. Remember you will be able to break this down into
+							multiple projects and tasks.
+						</div>
+					</div>
+				</div>
+
 				<!-- Submit Button -->
 				<hr v-if="!isReadOnly"/>
 				<div
@@ -208,7 +237,7 @@
 <script>
 //JavaScript Libraries
 import Editor from "@tinymce/tinymce-vue";
-import {NSelect} from "naive-ui";
+import {NSelect, NInputNumber} from "naive-ui";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -233,6 +262,7 @@ export default {
 		CarbonEmail,
 		CarbonLink,
 		editor: Editor,
+		NInputNumber,
 		NSelect,
 		ValidationRendering,
 	},
@@ -307,6 +337,7 @@ export default {
 			],
 			requirementItemPriorityModel: this.requirementItemResults[0].fields.requirement_item_priority,
 			requirementItemScopeModel: this.requirementItemResults[0].fields.requirement_item_scope,
+			requirementItemStoryPointModel: this.requirementItemResults[0].fields.requirement_item_story_point,
 			requirementItemTitleModel: this.requirementItemResults[0].fields.requirement_item_title,
 			stakeholderModel: this.organisationResults[0].fields,
 
@@ -418,6 +449,7 @@ export default {
 			data_to_send.set("requirement_item_status", this.statusModel);
 			data_to_send.set("requirement_item_type", this.typeModel);
 			data_to_send.set("requirement_item_priority", this.requirementItemPriorityModel);
+			data_to_send.set("requirement_item_story_point", this.requirementItemStoryPointModel);
 
 			// Use Axion to send the data
 			this.axios.post(

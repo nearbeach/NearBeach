@@ -72,7 +72,6 @@ class ProjectViewTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
 
-
     def test_save_project_as_team_leader(self):
         # Form Data
         form_data = {
@@ -82,6 +81,7 @@ class ProjectViewTests(TestCase):
             "project_end_date": "2023-08-10T23:00:00.000Z",
             "project_status": "1",
             "project_priority": "2",
+            "project_story_point": "2",
         }
 
         # Use POST to submit the new project

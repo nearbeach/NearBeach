@@ -186,6 +186,7 @@ def task_information_save(request, task_id, *args, **kwargs):
     update_task.task_start_date = form.cleaned_data["task_start_date"]
     update_task.task_end_date = form.cleaned_data["task_end_date"]
     update_task.task_status = form.cleaned_data["task_status"]
+    update_task.task_story_point = form.cleaned_data["task_story_point"]
     update_task.task_priority = form.cleaned_data["task_priority"]
 
     update_task.save()

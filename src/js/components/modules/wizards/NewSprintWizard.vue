@@ -118,6 +118,9 @@ export default {
 		}
 	},
 	methods: {
+		closeModal() {
+			document.getElementById("createNewSprintButton").click();
+		},
 		createNewSprint() {
 			//Notify user that data is being sent
 			this.$store.dispatch("newToast", {

@@ -1401,8 +1401,7 @@ class Project(models.Model):
         "ListOfProjectStatus",
         on_delete=models.CASCADE,
     )
-    project_story_point_min = models.IntegerField(default=1)
-    project_story_point_max = models.IntegerField(default=4)
+    project_story_point = models.IntegerField(default=1)
     project_priority = models.IntegerField(
         choices=OBJECT_CARD_PRIORITY,
         default=2,
@@ -1647,8 +1646,7 @@ class RequirementItem(models.Model):
         "ListOfRequirementItemType",
         on_delete=models.CASCADE,
     )
-    ri_story_point_min = models.IntegerField(default=4)
-    ri_story_point_max = models.IntegerField(default=10)
+    requirement_item_story_point = models.IntegerField(default=1)
     requirement_item_priority = models.IntegerField(
         choices=OBJECT_CARD_PRIORITY,
         default=2,
@@ -1912,8 +1910,7 @@ class Task(models.Model):
         "ListOfTaskStatus",
         on_delete=models.CASCADE,
     )
-    task_story_point_min = models.IntegerField(default=4)
-    task_story_point_max = models.IntegerField(default=10)
+    task_story_point = models.IntegerField(default=1)
     task_priority = models.IntegerField(
         choices=OBJECT_CARD_PRIORITY,
         default=2,
