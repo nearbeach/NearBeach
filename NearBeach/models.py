@@ -1388,13 +1388,6 @@ class Project(models.Model):
         blank=True,
         null=True,
     )
-    # Only fill this field out if there are no organisation
-    customer = models.ForeignKey(
-        "customer",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
     project_start_date = models.DateTimeField()
     project_end_date = models.DateTimeField()
     project_status = models.ForeignKey(
