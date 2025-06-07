@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from NearBeach.models import KanbanCard, Project, OBJECT_CARD_PRIORITY, KanbanColumn, KanbanLevel
+from NearBeach.models import KanbanCard, Project, KanbanColumn, KanbanLevel
+from NearBeach.utils.enums import ObjectPriority
 from NearBeach.serializers.tag_serializer import TagSerializer
 from NearBeach.models import Tag, TagAssignment
 
@@ -9,7 +10,7 @@ class KanbanCardSerializer(serializers.ModelSerializer):
         required=True,
     )
     kanban_card_priority = serializers.ChoiceField(
-        choices=OBJECT_CARD_PRIORITY,
+        choices=ObjectPriority,
         required=True,
     )
     kanban_card_description = serializers.CharField(
@@ -82,10 +83,3 @@ class KanbanCardSerializer(serializers.ModelSerializer):
         )
 
         return TagSerializer(tag_results, many=True).data
-
-    # def get_fields(self):
-    #     fields = super().get_fields()
-    #
-    #     # Check to see if request exists in context
-    #     if "request" not in self.context:
-    #         return fields

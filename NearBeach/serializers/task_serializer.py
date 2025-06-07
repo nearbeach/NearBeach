@@ -2,9 +2,9 @@ from rest_framework import serializers
 from NearBeach.models import (
     Group,
     ListOfTaskStatus,
-    OBJECT_CARD_PRIORITY,
     Organisation,
 )
+from NearBeach.utils.enums import ObjectPriority
 
 
 class TaskSerializer(serializers.Serializer):
@@ -43,7 +43,7 @@ class TaskSerializer(serializers.Serializer):
         required=True,
     )
     task_priority = serializers.ChoiceField(
-        choices=OBJECT_CARD_PRIORITY,
+        choices=ObjectPriority,
     )
     task_priority_name = serializers.ReadOnlyField(
         source='get_task_priority_display',

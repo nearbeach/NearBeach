@@ -2,10 +2,7 @@ from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParamete
 from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach.models import (
-    Group,
-    ListOfProjectStatus,
     ObjectAssignment,
-    Organisation,
     Project,
     UserGroup,
 )
@@ -22,13 +19,40 @@ class ProjectViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
     queryset = Project.objects.filter(is_deleted=False)
     serializer_class = ProjectSerializer
+    http_method_names = ['get', 'post', 'delete']
 
     @extend_schema(
         description="""
 # 📌 Description
 
-This endpoint allows you to add a project within NearBeach.
-        """
+Create Projects to help manage your projects.
+
+# 🧾 Parameters
+
+- Project Name: The project's name. Should be short and under 255 characters.
+- Project Description: The description of the project. Can have basic HTML
+- Project Start Date
+- Project End Date
+- Organisation: The organisation that the project belongs too. Should be an int. Use the Organisation API to find the 
+correct organisation id.
+- Group List: All groups associated with this project. At least one of the user's groups will need to be included. The 
+group id's can be found using the Group List API.
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Create a new project",
+                value={
+                    "project_name": "My Project",
+                    "project_description": "<h1>Hello World</h1>",
+                    "project_start_date": "2024-12-19 15:49:37",
+                    "project_end_date": "2024-12-19 15:49:37",
+                    "organisation": 2,
+                    "group_list": [1, 2],
+                }
+
+            )
+        ],
     )
     @check_user_api_permissions(min_permission_level=3)
     def create(self, request, *args, **kwargs):
@@ -62,6 +86,18 @@ This endpoint allows you to add a project within NearBeach.
             status=status.HTTP_201_CREATED,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+        
+Delete projects.
+
+
+# ✅ Notes
+
+Users will need to have the permission to delete.
+        """
+    )
     @check_user_api_permissions(min_permission_level=4)
     def destroy(self, request, *args, **kwargs):
         project = self.get_object()
@@ -73,6 +109,14 @@ This endpoint allows you to add a project within NearBeach.
             status=status.HTTP_204_NO_CONTENT,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Lists all projects within NearBeach.
+
+    """
+    )
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
         # Setup Attributes
@@ -100,6 +144,14 @@ This endpoint allows you to add a project within NearBeach.
 
         return Response(serializer.data)
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Retrieves a single project.
+
+    """
+    )
     @check_user_api_permissions(min_permission_level=1)
     def retrieve(self, request, pk=None, *args, **kwargs):
         queryset = Project.objects.all()
@@ -110,6 +162,27 @@ This endpoint allows you to add a project within NearBeach.
         serializer = ProjectSerializer(project_results)
         return Response(serializer.data)
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Updates a single project.
+
+# 🧾 Parameters
+
+- Project Name: The project's name. Should be short and under 255 characters.
+- Project Description: The description of the project. Can have basic HTML
+- Project Start Date
+- Project End Date
+- Project Status: The status of the project.
+- Project Priority: The priority of the project.
+    - 0 = Highest
+    - 1 = High
+    - 2 = Normal
+    - 3 = Low
+    - 4 = Lowest
+    """
+    )
     @check_user_api_permissions(min_permission_level=2)
     def update(self, request, pk=None, *args, **kwargs):
         serializer = ProjectSerializer(data=request.data, context={'request': request})

@@ -6,7 +6,6 @@ from NearBeach.models import (
     KanbanCard,
     KanbanColumn,
     KanbanLevel,
-    OBJECT_CARD_PRIORITY,
     OBJECT_HIGHER_ORDER_STATUS,
 )
 from NearBeach.serializers.kanban_column_serializer import KanbanColumnSerializer

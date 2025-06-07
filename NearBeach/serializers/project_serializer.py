@@ -6,10 +6,11 @@ from NearBeach.models import (
     ObjectAssignment,
     Organisation,
     Project,
-    OBJECT_CARD_PRIORITY,
 )
+from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.serializers.project_status_serializer import ProjectStatusSerializer
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
+from NearBeach.utils.enums import ObjectPriority
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -40,12 +41,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         max_length=255,
         required=True,
     )
-    project_priority = serializers.ChoiceField(
-        choices=OBJECT_CARD_PRIORITY,
-    )
-    project_priority_name = serializers.ReadOnlyField(
-        source='get_project_priority_display',
-    )
+    project_priority = EnumField(enum=ObjectPriority)
     project_start_date = serializers.DateTimeField(
         required=True,
     )
@@ -122,6 +118,12 @@ class ProjectSerializer(serializers.ModelSerializer):
         instance.project_status = ListOfProjectStatus.objects.get(
             project_status_id=project_status_id,
         )
+
+        # Priority
+        project_priority = validated_data.pop("project_priority", 2)
+        instance.project_priority = project_priority["value"]
+
+        # Update instance
         instance = super().update(instance, validated_data)
         return instance
 
@@ -135,7 +137,6 @@ class ProjectSerializer(serializers.ModelSerializer):
             "project_status",
             "project_higher_order_status",
             "project_priority",
-            "project_priority_name",
             "project_story_point",
             "project_start_date",
             "project_end_date",
