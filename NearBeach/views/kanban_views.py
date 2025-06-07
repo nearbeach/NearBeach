@@ -36,6 +36,7 @@ from NearBeach.forms import (
     KanbanCardForm,
     SearchObjectsForm,
 )
+from NearBeach import event_hooks
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.db.models import Max
@@ -68,6 +69,8 @@ LOOKUP_FUNCS = {
     },
 }
 
+event_hooks.register_event_type("kanban_card.create", KanbanCard)
+event_hooks.register_event_type("kanban_card.changed_column", KanbanCard)
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
@@ -114,6 +117,7 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
 
     # Save the data
     kanban_card_submit.save()
+    event_hooks.emit("kanban_card.create", kanban_card_submit)
 
     # Send back the kanban card data
     kanban_card_results = KanbanCard.objects.filter(
@@ -430,36 +434,47 @@ def move_kanban_card(request, kanban_card_id, *args, **kwargs):
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
+    dest_column = form.cleaned_data["new_card_column"]
+    dest_level = form.cleaned_data["new_card_level"]
+
+    # Used later to figure out if it should emit an event
+    moved_column = kanban_card_update.kanban_column != dest_column
+
     # Update the card data
-    kanban_card_update.kanban_column = form.cleaned_data["new_card_column"]
-    kanban_card_update.kanban_level = form.cleaned_data["new_card_level"]
+    kanban_card_update.kanban_column = dest_column
+    kanban_card_update.kanban_level = dest_level
 
     """
     Update the sort order
     ~~~~~~~~~~~~~~~~~~~~~
-   
+
     The front end will send the following data;
     - new_destination
     - old_destination
-    
+
     This is a ()set of kanban cards that are in the correct order. We'll loop through these cards and update them.
-    
+
     The old destination ()set is optional.
     """
-    new_destination = form.cleaned_data['new_destination']
-    old_destination = form.cleaned_data['old_destination']
 
-    for index, card in enumerate(new_destination):
+    # Update new location's cards
+    for index, card in enumerate(form.cleaned_data['new_destination']):
         if card.kanban_card_id == kanban_card_update.kanban_card_id:
+            # Update ordering for the updated card
             kanban_card_update.kanban_card_sort_number = index
             kanban_card_update.save()
         else:
+            # Reorder untouched card
             card.kanban_card_sort_number = index
             card.save()
 
-    for index, card in enumerate(old_destination):
+    # Update old location's cards
+    for index, card in enumerate(form.cleaned_data['old_destination']):
         card.kanban_card_sort_number = index
         card.save()
+
+    if moved_column:
+        event_hooks.emit("kanban_card.changed_column", kanban_card_update)
 
     return HttpResponse("")
 

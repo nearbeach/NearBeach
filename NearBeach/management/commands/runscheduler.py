@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db.models import Q, F
+from NearBeach import event_hooks
 
 from NearBeach.models import (
     ObjectAssignment,
@@ -45,10 +46,12 @@ OBJECT_DICT = {
     }
 }
 
+event_hooks.register_event_type("task.create.scheduled_object", Task)
+event_hooks.register_event_type("project.create.scheduled_object", Project)
 
 class Command(BaseCommand):
     help = "Run this command to run the scheduled jobs within NearBeach. Setup a daily cron job"
-    
+
     def handle(self, *args, **kwargs):
         scheduled_objects = ScheduledObject.objects.none()
 
@@ -64,7 +67,7 @@ class Command(BaseCommand):
         # Loop through all objects and create them
         for single_object in scheduled_objects:
             self.create_object(single_object)
-            
+
     @staticmethod
     def get_today():
         return datetime.datetime.today()
@@ -124,9 +127,10 @@ class Command(BaseCommand):
                 object_dict["object_start_date"]: object_start_date,
                 object_dict["object_end_date"]: object_end_date,
                 object_dict["object_status"]: status,
-           },
+            },
         )
         submit_object.save()
+        event_hooks.emit(f"{object_string}.create.scheduled_object", submit_object)
 
         # Loop through the group list and add them
         object_template_groups = ObjectTemplateGroup.objects.filter(
