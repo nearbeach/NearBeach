@@ -12,7 +12,9 @@ from NearBeach.serializers.task_serializer import TaskSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from NearBeach.views.document_views import transfer_new_object_uploads
+from NearBeach import event_hooks
 
+event_hooks.register_event_type("task.create", Task)
 
 class TaskViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
@@ -58,6 +60,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         )
         task_submit.save()
+        event_hooks.emit("task.create", task_submit)
 
         # Assign task to the groups
         for single_group in group_list:

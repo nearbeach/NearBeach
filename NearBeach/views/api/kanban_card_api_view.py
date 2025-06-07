@@ -13,7 +13,10 @@ from NearBeach.models import (
 from NearBeach.serializers.kanban_card_serializer import KanbanCardSerializer
 from NearBeach.serializers.tag_serializer import TagSerializer
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
+from NearBeach import event_hooks
 
+
+event_hooks.register_event_type("kanban_card.create", KanbanCard)
 
 class KanbanCardViewSet(viewsets.ModelViewSet):
     queryset = KanbanCard.objects.filter(is_deleted=False)
@@ -85,6 +88,7 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
             change_user=request.user,
         )
         kanban_card_submit.save()
+        event_hooks.emit("kanban_card.create", kanban_card_submit)
 
         # Get the new kanban card and send to user
         kanban_card_results = KanbanCard.objects.get(
@@ -180,7 +184,7 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
 
         # Get the update kanban card
         update_kanban_card = update_kanban_card[0]
-        
+
         # Flatpack serializer data
         new_column = serializer.validated_data['kanban_column_id']
         new_level = serializer.validated_data['kanban_level_id']
@@ -200,7 +204,7 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
         # Get old level and column
         old_level = update_kanban_card.kanban_level
         old_column = update_kanban_card.kanban_column
-        
+
         # Check to see if the card has been moved
         if new_column != old_column or new_level != old_level:
             # Card has been moved
