@@ -9,6 +9,11 @@ export default defineConfig({
     test: {
         coverage: {
             enabled: true,
+            exclude: [
+                `./NearBeach/static/**/*`,
+                // `./NearBeach/tests/**/*`,
+                `./venv/**/*`,
+            ],
             provider: "v8",
             // provider: "istanbul",
             reporter: ['text','html','json']
