@@ -323,7 +323,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "project_description": "<p>Hello World</p>",
                     "project_start_date": "2024-12-19 15:49:37",
                     "project_end_date": "2024-12-19 15:49:37",
-                    "organisation_id": 1,
+                    "organisation": 1,
                     "group_list": 1,
                     "group_list": 2,
                 },

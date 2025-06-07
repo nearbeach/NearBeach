@@ -19,7 +19,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
     queryset = Project.objects.filter(is_deleted=False)
     serializer_class = ProjectSerializer
-    http_method_names = ['get', 'post', 'delete']
+    http_method_names = ['get', 'post', 'put', 'delete']
 
     @extend_schema(
         description="""
@@ -115,14 +115,18 @@ Users will need to have the permission to delete.
 
 Lists all projects within NearBeach.
 
+
+# ✅ Notes
+
+- Pagination is enabled on this list. Use `?Page=` to navigate to the appropriate page.
     """
     )
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
         # Setup Attributes
-        page_size = int(request.query_params.get("page_size", 100))
-        page_size = page_size if page_size <= 1000 else 1000
-        page = int(request.query_params.get("page", 1))
+        # page_size = int(request.query_params.get("page_size", 100))
+        # page_size = page_size if page_size <= 1000 else 1000
+        # page = int(request.query_params.get("page", 1))
 
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
@@ -137,8 +141,13 @@ Lists all projects within NearBeach.
         project_results = Project.objects.filter(
             is_deleted=False,
             project_id__in=object_assignment_results.values("project_id"),
-        # )[(page - 1) * page_size : page * page_size]
         )
+
+        # Handle pagination
+        page = self.paginate_queryset(project_results)
+        if page is not None:
+            serializer = ProjectSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
         serializer = ProjectSerializer(project_results, many=True)
 
