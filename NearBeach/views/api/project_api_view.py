@@ -123,11 +123,6 @@ Lists all projects within NearBeach.
     )
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
-        # Setup Attributes
-        # page_size = int(request.query_params.get("page_size", 100))
-        # page_size = page_size if page_size <= 1000 else 1000
-        # page = int(request.query_params.get("page", 1))
-
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             group_id__in=UserGroup.objects.filter(

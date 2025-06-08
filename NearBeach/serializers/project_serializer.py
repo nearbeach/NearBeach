@@ -71,10 +71,6 @@ class ProjectSerializer(serializers.ModelSerializer):
 
         # Create the group list
         for single_group in group_list:
-            # group_instance = Group.objects.get(
-            #     group_id=single_group,
-            # )
-
             # Save the group against the new project
             submit_object_assignment = ObjectAssignment(
                 group_id=single_group,

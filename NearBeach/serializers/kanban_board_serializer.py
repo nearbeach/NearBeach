@@ -6,7 +6,7 @@ from NearBeach.models import (
     KanbanCard,
     KanbanColumn,
     KanbanLevel,
-    OBJECT_HIGHER_ORDER_STATUS,
+    OBJECT_HIGHER_ORDER_STATUS, ObjectAssignment,
 )
 from NearBeach.serializers.kanban_column_serializer import KanbanColumnSerializer
 from NearBeach.serializers.kanban_level_serializer import KanbanLevelSerializer
@@ -65,6 +65,51 @@ class KanbanBoardSerializer(serializers.Serializer):
         required=False,
         write_only=True,
     )
+
+    def create(self, validated_data):
+        # Pop out the fields we don't need
+        group_list = validated_data.pop("group_list", [])
+        column_title_list = validated_data.pop("column_title_list", [])
+        column_property_list = validated_data.pop("column_property_list", [])
+        level_title_list = validated_data.pop("level_title_list", [])
+
+        # Extract data we need
+
+        # Create the kanban board
+        kanban_board = KanbanBoard.objects.create(**validated_data)
+
+        # Create the group list
+        for single_group in group_list:
+            # Save the group against the new project
+            submit_object_assignment = ObjectAssignment(
+                group_id=single_group,
+                kanban_board=kanban_board,
+                change_user=validated_data["change_user"],
+            )
+            submit_object_assignment.save()
+
+        # Create the required columns
+        for index, column_title in enumerate(column_title_list, start=0):
+            submit_kanban_column = KanbanColumn(
+                kanban_column_name=column_title,
+                kanban_column_property=column_property_list[index],
+                kanban_column_sort_number=index,
+                kanban_board=kanban_board,
+                change_user=validated_data["change_user"],
+            )
+            submit_kanban_column.save()
+
+        # Create the required levels
+        for index, level_title in enumerate(level_title_list, start=0):
+            submit_kanban_level = KanbanLevel(
+                kanban_level_name=level_title,
+                kanban_level_sort_number=index,
+                kanban_board=kanban_board,
+                change_user=validated_data["change_user"],
+            )
+            submit_kanban_level.save()
+
+        return kanban_board
 
     def get_fields(self):
         fields = super().get_fields()
