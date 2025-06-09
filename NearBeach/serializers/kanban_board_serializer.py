@@ -14,16 +14,8 @@ from NearBeach.serializers.kanban_card_serializer import KanbanCardSerializer
 
 
 class KanbanBoardSerializer(serializers.Serializer):
-    column_property = serializers.ChoiceField(
-        required=False,
-        choices=OBJECT_HIGHER_ORDER_STATUS,
-    )
-    column_title = serializers.CharField(
-        max_length=255,
-        required=False,
-    )
     group_list = serializers.PrimaryKeyRelatedField(
-        many=False,
+        many=True,
         queryset=Group.objects.filter(
             is_deleted=False,
         ),
@@ -42,15 +34,11 @@ class KanbanBoardSerializer(serializers.Serializer):
         choices=KANBAN_BOARD_STATUS_CHOICE,
         read_only=True,
     )
-    kanban_column = KanbanColumnSerializer(
-        many=True,
-        allow_null=True,
-        read_only=True,
+    kanban_column = serializers.ListSerializer(
+        child=KanbanColumnSerializer(),
     )
-    kanban_level = KanbanLevelSerializer(
-        many=True,
-        allow_null=True,
-        read_only=True,
+    kanban_level = serializers.ListSerializer(
+        child=KanbanLevelSerializer(),
     )
     kanban_card = KanbanCardSerializer(
         many=True,
@@ -69,9 +57,8 @@ class KanbanBoardSerializer(serializers.Serializer):
     def create(self, validated_data):
         # Pop out the fields we don't need
         group_list = validated_data.pop("group_list", [])
-        column_title_list = validated_data.pop("column_title_list", [])
-        column_property_list = validated_data.pop("column_property_list", [])
-        level_title_list = validated_data.pop("level_title_list", [])
+        kanban_column_list = validated_data.pop("kanban_column", [])
+        kanban_level_list = validated_data.pop("kanban_level", [])
 
         # Extract data we need
 
@@ -89,10 +76,10 @@ class KanbanBoardSerializer(serializers.Serializer):
             submit_object_assignment.save()
 
         # Create the required columns
-        for index, column_title in enumerate(column_title_list, start=0):
+        for index, kanban_column in enumerate(kanban_column_list, start=0):
             submit_kanban_column = KanbanColumn(
-                kanban_column_name=column_title,
-                kanban_column_property=column_property_list[index],
+                kanban_column_name=kanban_column["kanban_column_name"],
+                kanban_column_property=kanban_column["kanban_column_property"],
                 kanban_column_sort_number=index,
                 kanban_board=kanban_board,
                 change_user=validated_data["change_user"],
@@ -100,9 +87,9 @@ class KanbanBoardSerializer(serializers.Serializer):
             submit_kanban_column.save()
 
         # Create the required levels
-        for index, level_title in enumerate(level_title_list, start=0):
+        for index, kanban_level in enumerate(kanban_level_list, start=0):
             submit_kanban_level = KanbanLevel(
-                kanban_level_name=level_title,
+                kanban_level_name=kanban_level["kanban_level_name"],
                 kanban_level_sort_number=index,
                 kanban_board=kanban_board,
                 change_user=validated_data["change_user"],
@@ -121,9 +108,13 @@ class KanbanBoardSerializer(serializers.Serializer):
         # Creating a new task
         if self.context["request"].method == "POST":
             fields.pop("kanban_board_status", None)
-            fields["column_property"].required = True
-            fields["column_title"].required = True
-            fields["level_title"].required = True
+            # fields["column_property"].required = True
+            # fields["column_title"].required = True
+            # fields["level_title"].required = True
+            # fields["column_property"].many = True
+            # fields["column_title"].many = True
+            # fields["level_title"].many = True
+
 
         # Updating a new task
         if self.context['request'].method == "PUT":

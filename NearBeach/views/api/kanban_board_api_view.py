@@ -1,29 +1,87 @@
-from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach.models import (
-    Group,
     KanbanBoard,
     KanbanCard,
     KanbanColumn,
     KanbanLevel,
     ObjectAssignment,
-    Organisation,
     UserGroup,
 )
 from NearBeach.serializers.kanban_board_list_serializer import KanbanBoardListSerializer
 from NearBeach.serializers.kanban_board_serializer import KanbanBoardSerializer
-from NearBeach.serializers.kanban_card_serializer import KanbanCardSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from NearBeach.views.document_views import transfer_new_object_uploads
 
 
 class KanbanBoardViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
     queryset = KanbanBoard.objects.filter(is_deleted=False)
     serializer_class = KanbanBoardSerializer
+    http_method_names = ['get', 'post', 'put', 'delete']
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Create Kanban Board to help manage your projects/tasks.
+
+# 🧾 Parameters
+
+- Kanban Board Name: The kanban board name
+- Group List: All groups associated with this kanban board. At least one of the user's groups will need to be included. 
+The group id's can be found using the Group List API.
+- Kanban Column: List of the following properties
+    - Kanban Column Name: The name of the column
+    - Kanban Column Property: Will be one of the following options;
+        - Backlog
+        - Normal
+        - Blocked
+        - Closed
+
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Create a new kanban board",
+                value={
+                    "kanban_board_name": "My Kanban Board",
+                    "group_list": [1, 2],
+                    "kanban_column": [
+                        {
+                            "kanban_column_name": "Backlog",
+                            "kanban_column_property": "Backlog",
+                        },
+                        {
+                            "kanban_column_name": "Blocked",
+                            "kanban_column_property": "Blocked",
+                        },
+                        {
+                            "kanban_column_name": "In Progress",
+                            "kanban_column_property": "Normal",
+                        },
+                        {
+                            "kanban_column_name": "User Acceptance Testing",
+                            "kanban_column_property": "Normal",
+                        },
+                        {
+                            "kanban_column_name": "Closed",
+                            "kanban_column_property": "Closed",
+                        },
+                    ],
+                    "kanban_level": [
+                        {
+                            "kanban_level_name": "Swimlane 1",
+                        },
+                        {
+                            "kanban_level_name": "Swimlane 2",
+                        },
+                    ],
+                }
+            )
+        ],
+    )
     @check_user_api_permissions(min_permission_level=3)
     def create(self, request, *args, **kwargs):
         serializer = KanbanBoardSerializer(data=request.data, context={'request': request})
@@ -39,34 +97,6 @@ class KanbanBoardViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the column and level data
-        column_property_list = request.data.getlist("column_property", [])
-        if column_property_list is None or len(column_property_list) == 0:
-            return Response(
-                "Column Properties are missing",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        column_title_list = request.data.getlist("column_title", [])
-        if column_title_list is None or len(column_title_list) == 0:
-            return Response(
-                "Column Titles are missing",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if not len(column_title_list) == len(column_property_list):
-            return Response(
-                "Column Title count does not match Column Property count",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        level_title_list = request.data.getlist("level_title", [])
-        if level_title_list is None or len(level_title_list) == 0:
-            return Response(
-                "Level Titles are missing",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # Check to make sure the kanban_board_name is unique
         count_kanban_board_name = len(KanbanBoard.objects.filter(
             is_deleted=False,
@@ -78,10 +108,29 @@ class KanbanBoardViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        kanban_board = serializer.save(change_user=request.user, creation_user=request.user)
+        kanban_board_results = serializer.save(change_user=request.user, creation_user=request.user)
+
+        # Get Extra Attributes for the data
+        kanban_board_results.kanban_column = KanbanColumn.objects.filter(
+            is_deleted=False,
+            kanban_board_id=kanban_board_results.kanban_board_id,
+        )
+
+        kanban_board_results.kanban_level = KanbanLevel.objects.filter(
+            is_deleted=False,
+            kanban_board_id=kanban_board_results.kanban_board_id,
+        )
+
+        kanban_board_results.kanban_card = KanbanCard.objects.filter(
+            is_deleted=False,
+            kanban_board_id=kanban_board_results.kanban_board_id,
+        )
+
+        # Re-serialize the created project so it is in the same shape for the user
+        serializer = KanbanBoardSerializer(kanban_board_results, many=False)
 
         return Response(
-            data=kanban_board,
+            data=serializer.data,
             status=status.HTTP_201_CREATED,
         )
 
