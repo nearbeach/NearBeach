@@ -7,7 +7,7 @@ from django.template import loader
 from django.urls import reverse
 
 from NearBeach.decorators.check_user_permissions.permission_denied import check_permission_denied
-from NearBeach.utils import initalize_base_values
+from NearBeach.utils.admin import initalize_base_values
 
 
 User = get_user_model()

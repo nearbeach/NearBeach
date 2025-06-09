@@ -1,9 +1,9 @@
 from django.db.models import Max
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.generics import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from NearBeach.decorators.check_user_permissions.partials.kanban_card_permissions import kanban_card_permissions
 from NearBeach.models import (
     KanbanBoard,
     KanbanCard,
@@ -11,7 +11,6 @@ from NearBeach.models import (
     KanbanLevel,
 )
 from NearBeach.serializers.kanban_card_serializer import KanbanCardSerializer
-from NearBeach.serializers.tag_serializer import TagSerializer
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach import event_hooks
 
@@ -21,7 +20,73 @@ event_hooks.register_event_type("kanban_card.create", KanbanCard)
 class KanbanCardViewSet(viewsets.ModelViewSet):
     queryset = KanbanCard.objects.filter(is_deleted=False)
     serializer_class = KanbanCardSerializer
+    http_method_names = ['get', 'post', 'put', 'delete']
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Create Kanban Card against the kanban board.
+
+# 🧾 Parameters
+
+- Kanban Card Text: The kanban board name
+- Kanban Card Description: The description for the kanban card
+- Kanban Card Priority: The priority of the kanban card
+    - 0 = Highest
+    - 1 = High
+    - 2 = Normal
+    - 3 = Low
+    - 4 = Lowest
+- Kanban Column: The id of the kanban column you would like the card to be moved to
+- Kanban Level: The id of the kanban level you would like the card to be moved to
+
+
+# ✅ Notes
+
+Both the Column/Level id's will need to exist under the current kanban board. Or an error will occur.
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Create a new kanban board",
+                value={
+                    "kanban_board_name": "My Kanban Board",
+                    "group_list": [1, 2],
+                    "kanban_column": [
+                        {
+                            "kanban_column_name": "Backlog",
+                            "kanban_column_property": "Backlog",
+                        },
+                        {
+                            "kanban_column_name": "Blocked",
+                            "kanban_column_property": "Blocked",
+                        },
+                        {
+                            "kanban_column_name": "In Progress",
+                            "kanban_column_property": "Normal",
+                        },
+                        {
+                            "kanban_column_name": "User Acceptance Testing",
+                            "kanban_column_property": "Normal",
+                        },
+                        {
+                            "kanban_column_name": "Closed",
+                            "kanban_column_property": "Closed",
+                        },
+                    ],
+                    "kanban_level": [
+                        {
+                            "kanban_level_name": "Swimlane 1",
+                        },
+                        {
+                            "kanban_level_name": "Swimlane 2",
+                        },
+                    ],
+                }
+            )
+        ],
+    )
     @check_user_api_permissions(min_permission_level=2)
     def create(self, request, *args, **kwargs):
         serializer = KanbanCardSerializer(data=request.data, context={'request': request})
@@ -31,72 +96,41 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Flatpack
-        kanban_column_instance = serializer.validated_data['kanban_column_id']
-        kanban_level_instance = serializer.validated_data['kanban_level_id']
-        kanban_card_priority_instance = serializer.validated_data['kanban_card_priority']
-
         # Get the column and level data
-        kanban_board_instance = get_object_or_404(
-            queryset=KanbanBoard.objects.all(),
+        get_object_or_404(
+            queryset=KanbanBoard.objects.filter(
+                is_deleted=False,
+            ),
             kanban_board_id=kwargs['kanban_board_id'],
         )
 
-        column = KanbanColumn.objects.filter(
-            is_deleted=False,
-            kanban_board=kanban_board_instance,
-            kanban_column_id=kanban_column_instance.kanban_column_id,
-        )
-        if column is None or len(column) == 0:
+        # Do some data checking first
+        new_column = serializer.validated_data['kanban_column']
+        new_level = serializer.validated_data['kanban_level']
+
+        if int(new_column.kanban_board_id) != int(kwargs["kanban_board_id"]):
             return Response(
                 data={"Column does not exist for this Kanban Board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        level = KanbanLevel.objects.filter(
-            is_deleted=False,
-            kanban_board_id=kanban_board_instance,
-            kanban_level_id=kanban_level_instance.kanban_level_id,
-        )
-        if level is None or len(level) == 0:
+        if int(new_level.kanban_board_id) != int(kwargs["kanban_board_id"]):
             return Response(
                 data={"Level does not exist for this Kanban Board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Submit kanban card data
-        sort_number = KanbanCard.objects.filter(
-            kanban_column=column[0],
-            kanban_level=level[0],
-        ).aggregate(
-            Max("kanban_card_sort_number"),
-        )["kanban_card_sort_number__max"]
-
-        if sort_number is None:
-            sort_number = 0
-        else:
-            sort_number += 1
-
-        kanban_card_submit = KanbanCard(
-            kanban_board=kanban_board_instance,
-            kanban_card_text=serializer.data.get("kanban_card_text"),
-            kanban_card_description=serializer.data.get("kanban_card_description"),
-            kanban_card_priority=kanban_card_priority_instance,
-            kanban_column=column[0],
-            kanban_level=level[0],
-            kanban_card_sort_number=sort_number,
+        kanban_card = serializer.save(
             change_user=request.user,
-        )
-        kanban_card_submit.save()
-        event_hooks.emit("kanban_card.create", kanban_card_submit)
-
-        # Get the new kanban card and send to user
-        kanban_card_results = KanbanCard.objects.get(
-            kanban_card_id=kanban_card_submit.kanban_card_id,
+            kanban_board_id=kwargs["kanban_board_id"],
         )
 
+        # Apply the event hooks
+        event_hooks.emit("kanban_card.create", kanban_card)
+
+        # Re-serialize the results
         serializer = KanbanCardSerializer(
-            kanban_card_results,
+            kanban_card,
             many=False,
         )
 
@@ -105,6 +139,18 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Delete kanban card.
+
+
+# ✅ Notes
+
+Users will need to have the permission to delete. This entails having the ability to edit a kanban board.
+        """
+    )
     @check_user_api_permissions(min_permission_level=2)
     def destroy(self, request, *args, **kwargs):
         kanban_card = self.get_object()
@@ -117,6 +163,13 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
             status=status.HTTP_204_NO_CONTENT,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Lists all kanban cards within the kanban board.
+    """
+    )
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
         kanban_card_results = KanbanCard.objects.filter(
@@ -142,6 +195,14 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Retrieves a single kanban card.
+
+    """
+    )
     @check_user_api_permissions(min_permission_level=1)
     def retrieve(self, request, pk=None, *args, **kwargs):
         queryset = KanbanCard.objects.filter(
@@ -159,6 +220,31 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Updates a single kanban card under the kanban board
+
+# 🧾 Parameters
+
+- Kanban Card Text: The kanban card's title
+- Kanban Card Description: The description of the kanban card
+- Kanban Card Priority: The priority of the kanban card
+    - 0 = Highest
+    - 1 = High
+    - 2 = Normal
+    - 3 = Low
+    - 4 = Lowest
+- Kanban Column: The id of the kanban column you would like the card to be moved to
+- Kanban Level: The id of the kanban level you would like the card to be moved to
+
+
+# ✅ Notes
+
+Both the Column/Level id's will need to exist under the current kanban board. Or an error will occur.
+    """
+    )
     @check_user_api_permissions(min_permission_level=2)
     def update(self, request, pk=None, *args, **kwargs):
         serializer = KanbanCardSerializer(
@@ -171,23 +257,18 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Update the data - got to check the object etc.
-        update_kanban_card = KanbanCard.objects.filter(
-            kanban_card_id=pk,
-            kanban_board_id=kwargs["kanban_board_id"],
+        # Get the kanban card
+        update_kanban_card = get_object_or_404(
+            queryset=KanbanCard.objects.filter(
+                is_deleted=False,
+                kanban_board_id=kwargs["kanban_board_id"],
+            ),
+            pk=pk,
         )
-        if update_kanban_card is None or len(update_kanban_card) == 0:
-            return Response(
-                data={"Kanban Card does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Get the update kanban card
-        update_kanban_card = update_kanban_card[0]
-
-        # Flatpack serializer data
-        new_column = serializer.validated_data['kanban_column_id']
-        new_level = serializer.validated_data['kanban_level_id']
+        
+        # Do some data checking first
+        new_column = serializer.validated_data['kanban_column']
+        new_level = serializer.validated_data['kanban_level']
 
         if int(new_column.kanban_board_id) != int(kwargs["kanban_board_id"]):
             return Response(
@@ -201,35 +282,14 @@ class KanbanCardViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get old level and column
-        old_level = update_kanban_card.kanban_level
-        old_column = update_kanban_card.kanban_column
+        # Update the kanban card
+        update_kanban_card = serializer.update(
+            update_kanban_card,
+            serializer.data,
+        )
 
-        # Check to see if the card has been moved
-        if new_column != old_column or new_level != old_level:
-            # Card has been moved
-            sort_number = KanbanCard.objects.filter(
-                kanban_column=new_column,
-                kanban_level=new_level,
-            ).aggregate(
-                Max("kanban_card_sort_number"),
-            )["kanban_card_sort_number__max"]
-
-            if sort_number is None:
-                sort_number = 0
-            else:
-                sort_number += 1
-
-            update_kanban_card.kanban_column = new_column
-            update_kanban_card.kanban_level = new_level
-            update_kanban_card.kanban_card_sort_number = sort_number
-
-        update_kanban_card.kanban_card_text = serializer.validated_data['kanban_card_text']
-        update_kanban_card.kanban_card_description = serializer.validated_data['kanban_card_description']
-        update_kanban_card.kanban_card_priority = serializer.validated_data['kanban_card_priority']
-        update_kanban_card.save()
-
-        serializer = KanbanCardSerializer(update_kanban_card)
+        # Re-serializer everything
+        serializer = KanbanCardSerializer(update_kanban_card, many=False)
 
         return Response(
             data=serializer.data,

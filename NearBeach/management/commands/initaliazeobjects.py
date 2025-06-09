@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from NearBeach.utils import initalize_base_values
+from NearBeach.utils.admin import initalize_base_values
 
 
 User = get_user_model()
