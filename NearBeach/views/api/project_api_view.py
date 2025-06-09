@@ -1,12 +1,8 @@
-import datetime
-
+from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
 from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach.models import (
-    Group,
-    ListOfProjectStatus,
     ObjectAssignment,
-    Organisation,
     Project,
     UserGroup,
 )
@@ -16,11 +12,48 @@ from rest_framework.response import Response
 from NearBeach.views.document_views import transfer_new_object_uploads
 
 
+@extend_schema(
+    tags=["Projects"]
+)
 class ProjectViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
     queryset = Project.objects.filter(is_deleted=False)
     serializer_class = ProjectSerializer
+    http_method_names = ['get', 'post', 'put', 'delete']
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Create Projects to help manage your projects.
+
+# 🧾 Parameters
+
+- Project Name: The project's name. Should be short and under 255 characters.
+- Project Description: The description of the project. Can have basic HTML
+- Project Start Date
+- Project End Date
+- Organisation: The organisation that the project belongs too. Should be an int. Use the Organisation API to find the 
+correct organisation id.
+- Group List: All groups associated with this project. At least one of the user's groups will need to be included. The 
+group id's can be found using the Group List API.
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Create a new project",
+                value={
+                    "project_name": "My Project",
+                    "project_description": "<h1>Hello World</h1>",
+                    "project_start_date": "2024-12-19 15:49:37",
+                    "project_end_date": "2024-12-19 15:49:37",
+                    "organisation": 2,
+                    "group_list": [1, 2],
+                }
+
+            )
+        ],
+    )
     @check_user_api_permissions(min_permission_level=3)
     def create(self, request, *args, **kwargs):
         serializer = ProjectSerializer(data=request.data, context={'request': request})
@@ -36,56 +69,35 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Gather instances
-        organisation_instance = Organisation.objects.get(
-            organisation_id=serializer.data.get("organisation_id"),
-        )
-
-        # Get first project status
-        project_status = ListOfProjectStatus.objects.filter(
-            is_deleted=False
-        ).order_by(
-            "project_status_sort_order",
-        )
-
-        project_submit = Project(
-            project_name=serializer.data.get("project_name"),
-            project_description=serializer.data.get("project_description"),
-            organisation=organisation_instance,
-            project_start_date=serializer.data.get("project_start_date"),
-            project_end_date=serializer.data.get("project_end_date"),
-            project_status=project_status.first(),
-            change_user=request.user,
-            creation_user=request.user,
-        )
-        project_submit.save()
-
-        # Assign project to the groups
-        for single_group in group_list:
-            group_instance = Group.objects.get(
-                group_id=single_group,
-            )
-
-            # Save the group against the new project
-            submit_object_assignment = ObjectAssignment(
-                group_id=group_instance,
-                project=project_submit,
-                change_user=request.user,
-            )
-            submit_object_assignment.save()
+        created_project = serializer.save(change_user=request.user, creation_user=request.user)
 
         # Transfer any images to the new project id
         transfer_new_object_uploads(
             "project",
-            project_submit.project_id,
+            serializer.data.get("project_id"),
             serializer.data.get("uuid")
         )
 
+        # Re-serialize the created project so it is in the same shape for the user
+        serializer = ProjectSerializer(created_project, many=False)
+
         return Response(
-            data={ "project_id": project_submit.project_id },
+            data=serializer.data,
             status=status.HTTP_201_CREATED,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+        
+Delete projects.
+
+
+# ✅ Notes
+
+Users will need to have the permission to delete.
+        """
+    )
     @check_user_api_permissions(min_permission_level=4)
     def destroy(self, request, *args, **kwargs):
         project = self.get_object()
@@ -97,13 +109,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=status.HTTP_204_NO_CONTENT,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Lists all projects within NearBeach.
+
+
+# ✅ Notes
+
+- Pagination is enabled on this list. Use `?Page=` to navigate to the appropriate page.
+    """
+    )
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
-        # Setup Attributes
-        page_size = int(request.query_params.get("page_size", 100))
-        page_size = page_size if page_size <= 1000 else 1000
-        page = int(request.query_params.get("page", 1))
-
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             group_id__in=UserGroup.objects.filter(
@@ -117,15 +136,31 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project_results = Project.objects.filter(
             is_deleted=False,
             project_id__in=object_assignment_results.values("project_id"),
-        )[(page - 1) * page_size : page * page_size]
+        )
+
+        # Handle pagination
+        page = self.paginate_queryset(project_results)
+        if page is not None:
+            serializer = ProjectSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
         serializer = ProjectSerializer(project_results, many=True)
 
         return Response(serializer.data)
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Retrieves a single project.
+
+    """
+    )
     @check_user_api_permissions(min_permission_level=1)
     def retrieve(self, request, pk=None, *args, **kwargs):
-        queryset = Project.objects.all()
+        queryset = Project.objects.filter(
+            is_deleted=False,
+        )
         project_results = get_object_or_404(
             queryset,
             pk=pk
@@ -133,6 +168,27 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(project_results)
         return Response(serializer.data)
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Updates a single project.
+
+# 🧾 Parameters
+
+- Project Name: The project's name. Should be short and under 255 characters.
+- Project Description: The description of the project. Can have basic HTML
+- Project Start Date
+- Project End Date
+- Project Status: The status of the project.
+- Project Priority: The priority of the project.
+    - 0 = Highest
+    - 1 = High
+    - 2 = Normal
+    - 3 = Low
+    - 4 = Lowest
+    """
+    )
     @check_user_api_permissions(min_permission_level=2)
     def update(self, request, pk=None, *args, **kwargs):
         serializer = ProjectSerializer(data=request.data, context={'request': request})
@@ -142,22 +198,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Obtain Instances
-        project_status_instance = ListOfProjectStatus.objects.get(
-            project_status_id=serializer.data["project_status"],
+        # serializer.save(change_user=request.user)
+        queryset = Project.objects.filter(
+            is_deleted=False,
+        )
+        update_project = get_object_or_404(
+            queryset,
+            pk=pk
+        )
+        update_project = serializer.update(
+            update_project,
+            serializer.data
         )
 
-        # Update Project
-        update_project = Project.objects.get(pk=pk)
-        update_project.project_name = serializer.data["project_name"]
-        update_project.project_description = serializer.data["project_description"]
-        update_project.project_start_date = serializer.data["project_start_date"]
-        update_project.project_end_date = serializer.data["project_end_date"]
-        update_project.project_status = project_status_instance
-        update_project.project_priority = serializer.data["project_priority"]
-        update_project.date_modified = datetime.datetime.now()
-        update_project.change_user = request.user
-        update_project.save()
+        # Re-serialize the data to send back complete set to user
+        serializer = ProjectSerializer(
+            update_project,
+            many=False
+        )
 
         return Response(
             data=serializer.data,

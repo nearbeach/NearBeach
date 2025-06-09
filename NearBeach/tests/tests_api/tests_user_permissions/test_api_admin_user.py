@@ -73,6 +73,10 @@ class ApiAdminPermissionTests(APITestCase):
                 else:
                     AssertionError("Method Not allowed in API")
 
+                if not response.status_code == data.status_code:
+                    print(response)
+                    breakpoint()
+
                 self.assertEqual(response.status_code, data.status_code)
 
     def test_api_available_data(self):
@@ -177,18 +181,18 @@ class ApiAdminPermissionTests(APITestCase):
                     "kanban_board_name": "API Kanban Board - " + str(uuid.uuid4()),
                     "group_list": 1,
                     "group_list": 2,
-                    "column_title": "Backlog",
-                    "column_property": "Normal",
-                    "column_title": "In Progress",
-                    "column_property": "Normal",
-                    "column_title": "Blocked",
-                    "column_property": "Blocked",
-                    "column_title": "Review and QA",
-                    "column_property": "Normal",
-                    "column_title": "Completed",
-                    "column_property": "Closed",
-                    "level_title": "Swim Lane 1",
-                    "level_title": "Swim Lane 2",
+                    "kanban_column[0]kanban_column_name": "Backlog",
+                    "kanban_column[0]kanban_column_property": "Normal",
+                    "kanban_column[1]kanban_column_name": "In Progress",
+                    "kanban_column[1]kanban_column_property": "Normal",
+                    "kanban_column[2]kanban_column_name": "Blocked",
+                    "kanban_column[2]kanban_column_property": "Blocked",
+                    "kanban_column[3]kanban_column_name": "Review and QA",
+                    "kanban_column[3]kanban_column_property": "Normal",
+                    "kanban_column[4]kanban_column_name": "Completed",
+                    "kanban_column[4]kanban_column_property": "Closed",
+                    "kanban_level[0]kanban_level_name": "Swim Lane 1",
+                    "kanban_level[1]kanban_level_name": "Swim Lane 2",
                 },
                 201,
                 "POST"
@@ -323,7 +327,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "project_description": "<p>Hello World</p>",
                     "project_start_date": "2024-12-19 15:49:37",
                     "project_end_date": "2024-12-19 15:49:37",
-                    "organisation_id": 1,
+                    "organisation": 1,
                     "group_list": 1,
                     "group_list": 2,
                 },

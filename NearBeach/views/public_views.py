@@ -26,8 +26,8 @@ from NearBeach.decorators.check_user_permissions.object_permissions import check
 import json
 
 # Convert kanban card priorty to dict for easy lookup
-from NearBeach.models import OBJECT_CARD_PRIORITY
-DICT_OBJECT_CARD_PRIORITY = dict(OBJECT_CARD_PRIORITY)
+from NearBeach.utils.enums import ObjectPriority
+DICT_OBJECT_CARD_PRIORITY = {i.name: i.value for i in ObjectPriority}
 
 
 @require_http_methods(["POST"])
@@ -87,12 +87,15 @@ def delete_public_link(request, destination, location_id, *args, **kwargs):
 
 # Internal function
 def get_public_context_kanban_card(results):
+    # Get priority
+    priority = ObjectPriority(results.kanban_card_priority)
+
     return {
         "card_column": results.kanban_column.kanban_column_name,
         "card_description": results.kanban_card_description,
         "card_id": results.kanban_card_id,
         "card_level": results.kanban_level.kanban_level_name,
-        "card_priority": DICT_OBJECT_CARD_PRIORITY[results.kanban_card_priority],
+        "card_priority": priority.label,
         "card_text": results.kanban_card_text,
     }
 

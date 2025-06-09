@@ -96,7 +96,7 @@
 			v-bind:import-variables="kanbanVariables"
 			v-bind:number-of-pages="searchResults.kanban_board_number_of_pages"
 			v-on:get_search_results="getSearchResults($event)"
-			destination="kanban"
+			destination="kanban_board"
 		></list-search-results>
 
 		<!-- WHEN THERE ARE NO RESULTS -->

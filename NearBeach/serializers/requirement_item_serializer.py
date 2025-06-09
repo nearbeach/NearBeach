@@ -2,9 +2,10 @@ from rest_framework import serializers
 from NearBeach.models import (
     ListOfRequirementItemStatus,
     ListOfRequirementItemType,
-    OBJECT_CARD_PRIORITY,
     RequirementItem,
 )
+from NearBeach.utils.enums import ObjectPriority
+
 
 class RequirementItemSerializer(serializers.ModelSerializer):
     # requirement_item_status_id = serializers.PrimaryKeyRelatedField(
@@ -24,7 +25,7 @@ class RequirementItemSerializer(serializers.ModelSerializer):
         source="requirement_item_type.requirement_item_type",
     )
     requirement_item_priority = serializers.ChoiceField(
-        choices=OBJECT_CARD_PRIORITY,
+        choices=ObjectPriority,
         required=False,
     )
     requirement_item_priority_text = serializers.ReadOnlyField(
@@ -40,10 +41,6 @@ class RequirementItemSerializer(serializers.ModelSerializer):
             "date_modified",
             "change_user",
             "is_deleted",
-            "ri_story_point_min",
-            "ri_story_point_max",
-            # "requirement_item_status",
-            # "requirement_item_type",
             "requirement",
         ]
         

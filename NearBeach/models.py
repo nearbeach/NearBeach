@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 import uuid
 from django.conf import settings
-
+from NearBeach.utils.enums import ObjectPriority
 
 # If user has overwritten the AUTH_USER_MODEL, user that. Otherwise default to User
 USER_MODEL = getattr(settings, "AUTH_USER_MODEL", User)
@@ -32,14 +32,6 @@ NOTIFICATION_LOCATION = (
     ("all", "All Options"),
     ("dashboard", "Dashboard Screen"),
     ("login", "Login Screen"),
-)
-
-OBJECT_CARD_PRIORITY = (
-    (0, "Highest"),
-    (1, "High"),
-    (2, "Normal"),
-    (3, "Low"),
-    (4, "Lowest"),
 )
 
 OBJECT_HIGHER_ORDER_STATUS = (
@@ -666,8 +658,8 @@ class KanbanCard(models.Model):
         on_delete=models.CASCADE,
     )
     kanban_card_priority = models.IntegerField(
-        choices=OBJECT_CARD_PRIORITY,
-        default=2,
+        choices=ObjectPriority.choices,
+        default=ObjectPriority.NORMAL,
     )
     project = models.ForeignKey(
         "project",
@@ -1388,13 +1380,6 @@ class Project(models.Model):
         blank=True,
         null=True,
     )
-    # Only fill this field out if there are no organisation
-    customer = models.ForeignKey(
-        "customer",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
     project_start_date = models.DateTimeField()
     project_end_date = models.DateTimeField()
     project_status = models.ForeignKey(
@@ -1403,8 +1388,8 @@ class Project(models.Model):
     )
     project_story_point = models.IntegerField(default=1)
     project_priority = models.IntegerField(
-        choices=OBJECT_CARD_PRIORITY,
-        default=2,
+        choices=ObjectPriority.choices,
+        default=ObjectPriority.NORMAL,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1648,8 +1633,8 @@ class RequirementItem(models.Model):
     )
     requirement_item_story_point = models.IntegerField(default=1)
     requirement_item_priority = models.IntegerField(
-        choices=OBJECT_CARD_PRIORITY,
-        default=2,
+        choices=ObjectPriority.choices,
+        default=ObjectPriority.NORMAL,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -1912,8 +1897,8 @@ class Task(models.Model):
     )
     task_story_point = models.IntegerField(default=1)
     task_priority = models.IntegerField(
-        choices=OBJECT_CARD_PRIORITY,
-        default=2,
+        choices=ObjectPriority.choices,
+        default=ObjectPriority.NORMAL,
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
