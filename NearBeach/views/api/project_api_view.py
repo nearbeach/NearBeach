@@ -158,7 +158,9 @@ Retrieves a single project.
     )
     @check_user_api_permissions(min_permission_level=1)
     def retrieve(self, request, pk=None, *args, **kwargs):
-        queryset = Project.objects.all()
+        queryset = Project.objects.filter(
+            is_deleted=False,
+        )
         project_results = get_object_or_404(
             queryset,
             pk=pk
@@ -197,7 +199,13 @@ Updates a single project.
             )
 
         # serializer.save(change_user=request.user)
-        update_project = Project.objects.get(pk=pk)
+        queryset = Project.objects.filter(
+            is_deleted=False,
+        )
+        update_project = get_object_or_404(
+            queryset,
+            pk=pk
+        )
         update_project = serializer.update(
             update_project,
             serializer.data

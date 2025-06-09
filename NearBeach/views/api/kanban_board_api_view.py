@@ -19,7 +19,7 @@ class KanbanBoardViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
     queryset = KanbanBoard.objects.filter(is_deleted=False)
     serializer_class = KanbanBoardSerializer
-    http_method_names = ['get', 'post', 'put', 'delete']
+    http_method_names = ['get', 'post', 'delete']
 
     @extend_schema(
         description="""
