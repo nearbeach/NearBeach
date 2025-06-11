@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.customer_permissions import check_user_customer_permissions
 from NearBeach.models import (
@@ -16,6 +17,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
     queryset = Customer.objects.filter(is_deleted=False)
     serializer_class = CustomerSerializer
+    http_method_names = ["get", "post", "put", "delete"]
 
     @check_user_customer_permissions(min_permission_level=2)
     def create(self, request, *args, **kwargs):
@@ -62,31 +64,67 @@ class CustomerViewSet(viewsets.ModelViewSet):
             status=status.HTTP_204_NO_CONTENT
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Lists all customers within an organisation.
+
+    """
+    )
     @check_user_customer_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
-        # Setup Attributes
-        page_size = int(request.query_params.get("page_size", 100))
-        page_size = page_size if page_size <= 1000 else 1000
-        page = int(request.query_params.get("page", 1))
-
         customer_results = Customer.objects.filter(
             is_deleted=False,
-        )[(page - 1) * page_size : page * page_size]
+            organisation_id=kwargs["organisation_id"],
+        )
 
-        serializer = CustomerSerializer(customer_results, many=True)
+        serializer = CustomerSerializer(
+            customer_results,
+            many=True
+        )
 
-        return Response(serializer.data)
+        return Response(
+            data=serializer.data,
+            status=status.HTTP_200_OK,
+        )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Retrieves a single customer within an organisation
+        """
+    )
     @check_user_customer_permissions(min_permission_level=1)
     def retrieve(self, request, pk=None, *args, **kwargs):
-        queryset = Customer.objects.all()
+        # Customer Results
         customer_results = get_object_or_404(
-            queryset,
+            queryset=Customer.objects.filter(
+                is_deleted=False,
+                organisation_id=kwargs["organisation_id"],
+            ),
             pk=pk
         )
+
         serializer = CustomerSerializer(customer_results)
+
         return Response(serializer.data)
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Updates a single customer under an organisation.
+
+# 🧾 Parameters
+
+- Customer First Name
+- Customer Last Name
+- Customer Email
+- Customer Title: You can get a full list of title Id's from the database
+    """
+    )
     @check_user_customer_permissions(min_permission_level=2)
     def update(self, request, pk=None, *args, **kwargs):
         serializer = CustomerSerializer(data=request.data, context={'request': request})
@@ -96,20 +134,22 @@ class CustomerViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Obtain Instances
-        customer_title_instance = ListOfTitle.objects.get(
-            title_id=serializer.data.get("customer_title"),
+        # Get customer to update
+        update_customer = get_object_or_404(
+            queryset=Customer.objects.filter(
+                is_deleted=False,
+                organisation_id=kwargs["organisation_id"],
+            ),
+            pk=pk
+        )
+        update_customer.change_user = request.user
+        update_customer = serializer.update(
+            update_customer,
+            serializer.data,
         )
 
-        # Update Customer
-        update_customer = Customer.objects.get(pk=pk)
-        update_customer.customer_title = customer_title_instance
-        update_customer.customer_first_name = serializer.data.get("customer_first_name")
-        update_customer.customer_last_name = serializer.data.get("customer_last_name")
-        update_customer.customer_email = serializer.data.get("customer_email")
-        update_customer.data_modfield = datetime.datetime.now()
-        update_customer.change_user = request.user
-        update_customer.save()
+        # Re-serialize data
+        serializer = CustomerSerializer(update_customer, many=False)
 
         return Response(
             data=serializer.data,
