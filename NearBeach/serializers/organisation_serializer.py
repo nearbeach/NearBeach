@@ -16,25 +16,13 @@ class OrganisationSerializer(serializers.ModelSerializer):
     organisation_name = serializers.CharField(
         required=True,
     )
-    organisation_website = serializers.CharField(
+    organisation_website = serializers.URLField(
         required=True,
     )
-    organisation_email = serializers.CharField(
+    organisation_email = serializers.EmailField(
         required=True,
-    )
-    organisation_profile_picture = serializers.ImageField(
-        read_only=True,
     )
     organisation_profile_picture_path = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Organisation
-        exclude = [
-            "date_created",
-            "date_modified",
-            "change_user",
-            "is_deleted",
-        ]
 
     def get_organisation_profile_picture_path(self, obj):
         if obj.organisation_profile_picture is None:
@@ -59,3 +47,15 @@ class OrganisationSerializer(serializers.ModelSerializer):
             fields.pop("organisation_profile_picture_path", None)
 
         return fields
+
+    class Meta:
+        model = Organisation
+        fields = [
+            "organisation_id",
+            "organisation_name",
+            "organisation_website",
+            "organisation_email",
+            "organisation_profile_picture_path",
+            "customers",
+        ]
+

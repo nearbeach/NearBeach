@@ -13,7 +13,8 @@ from NearBeach.views.document_views import transfer_new_object_uploads
 
 
 @extend_schema(
-    tags=["Projects"]
+    tags=["Projects"],
+    methods=["GET", "POST", "PUT", "DELETE"],
 )
 class ProjectViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
@@ -50,7 +51,6 @@ group id's can be found using the Group List API.
                     "organisation": 2,
                     "group_list": [1, 2],
                 }
-
             )
         ],
     )
@@ -198,7 +198,7 @@ Updates a single project.
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # serializer.save(change_user=request.user)
+        # Double check the project exists
         queryset = Project.objects.filter(
             is_deleted=False,
         )
@@ -206,6 +206,7 @@ Updates a single project.
             queryset,
             pk=pk
         )
+        update_project.change_user = request.user
         update_project = serializer.update(
             update_project,
             serializer.data

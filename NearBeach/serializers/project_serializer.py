@@ -1,4 +1,3 @@
-import requests
 from rest_framework import serializers
 from NearBeach.models import (
     Group,

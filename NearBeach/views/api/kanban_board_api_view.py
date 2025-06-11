@@ -15,6 +15,9 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 
 
+@extend_schema(
+    tags=["Kanban Board"]
+)
 class KanbanBoardViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
     queryset = KanbanBoard.objects.filter(is_deleted=False)
@@ -166,7 +169,7 @@ Lists all kanban boards within NearBeach.
 
 # ✅ Notes
 
-- Pagination is enabled on this list. Use `?Page=` to navigate to the appropriate page.
+- Pagination is enabled on this list. Use `?page=` to navigate to the appropriate page.
     """
     )
     @check_user_api_permissions(min_permission_level=1)

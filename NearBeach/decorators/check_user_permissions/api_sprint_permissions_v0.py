@@ -13,9 +13,9 @@ def check_api_sprint_permissions(min_permission_level):
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
-            request = request.request if hasattr(request, "request") else request
+            _request = request.request if hasattr(request, "request") else request
 
-            serializer = SprintSerializer(data=request.data, context={'request': request})
+            serializer = SprintSerializer(data=_request.data, context={'request': _request})
             if not serializer.is_valid():
                 return Response(
                     data=serializer.errors,
@@ -23,7 +23,7 @@ def check_api_sprint_permissions(min_permission_level):
                 )
 
             # If user is admin - grant them all permissions
-            if request.user.is_superuser:
+            if _request.user.is_superuser:
                 # Return the function with a user_level of 4
                 return func(request, *args, **kwargs, user_level=4)
 
@@ -37,7 +37,7 @@ def check_api_sprint_permissions(min_permission_level):
 
             # User the FUNCTION_DICT to determine which partial permissions we need
             # to reference
-            passes, user_level, _ = FUNCTION_DICT[destination](request, kwargs)
+            passes, user_level, _ = FUNCTION_DICT[destination](_request, kwargs)
 
             if not passes:
                 raise PermissionDenied
