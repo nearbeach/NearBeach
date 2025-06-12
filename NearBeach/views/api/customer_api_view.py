@@ -12,13 +12,41 @@ from rest_framework.response import Response
 
 import datetime
 
-
+@extend_schema(
+    tags=['Customer'],
+)
 class CustomerViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
     queryset = Customer.objects.filter(is_deleted=False)
     serializer_class = CustomerSerializer
     http_method_names = ["get", "post", "put", "delete"]
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Create Customer.
+
+# 🧾 Parameters
+
+- Customer Title: Title IDs can be gathered from the database
+- Customer First Name
+- Customer Last Name
+- Customer Email
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Create a new customer",
+                value={
+                    "customer_title": "2",
+                    "customer_first_name": "Socks",
+                    "customer_last_name": "Fluffy",
+                    "customer_email": "socks@nearbeahc.org",
+                }
+            )
+        ],
+    )
     @check_user_customer_permissions(min_permission_level=2)
     def create(self, request, *args, **kwargs):
         serializer = CustomerSerializer(data=request.data, context={'request': request})
@@ -28,31 +56,31 @@ class CustomerViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Gather instances
-        organisation_instance = Organisation.objects.get(
-            organisation_id=serializer.data.get("organisation"),
-        )
-
-        customer_title_instance = ListOfTitle.objects.get(
-            title_id=serializer.data.get("customer_title"),
-        )
-
-        # Create Customer
-        customer_submit = Customer(
-            customer_title=customer_title_instance,
-            customer_first_name=serializer.data.get("customer_first_name"),
-            customer_last_name=serializer.data.get("customer_last_name"),
-            customer_email=serializer.data.get("customer_email"),
-            organisation=organisation_instance,
+        customer_submit = serializer.save(
             change_user=request.user,
+            organisation_id=kwargs.get('organisation_id'),
         )
-        customer_submit.save()
+
+        serializer = CustomerSerializer(customer_submit)
+
 
         return Response(
-            data={"customer_id": customer_submit.customer_id },
+            data=serializer.data,
             status=status.HTTP_201_CREATED,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Delete customer.
+
+
+# ✅ Notes
+
+Users will need to have the permission to delete.
+        """
+    )
     @check_user_customer_permissions(min_permission_level=4)
     def destroy(self, request, pk=None, *args, **kwargs):
         customer = Customer.objects.get(pk=pk)
