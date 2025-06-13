@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.db.models import Q, F, Value
@@ -60,6 +60,7 @@ OBJECT_TITLE = {
 )
 class LinkViewSet(viewsets.ModelViewSet):
     serializer_class = LinkSerializer
+    http_method_names = ["get", "post", "put", "delete"]
 
     def _get_list(self, destination, location_id):
         # Check objects that match the destination and location id
@@ -202,6 +203,61 @@ class LinkViewSet(viewsets.ModelViewSet):
             many=True,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+This endpoint allows you to link other objects to the current object. For example, those objects might;
+- Relate To
+- Is Blocked By
+- Is Currently Blocking
+- Is Sub Object
+- Is Parent Object
+- Has Duplicated Object Of
+- Is Duplicated Object Of
+
+
+# 🌏 Url
+
+- Destination: The type of object you're linking to. Must be one of the following:
+    - Project
+    - Requirement
+    - Requirement Item
+    - Task
+- Location ID: The unique ID of the specific object currently modifying
+
+
+# 🧾 Parameters
+
+- Object Type: The object we are currently trying to link. These will be;
+    - Requirement
+    - Requirement Item
+    - Project
+    - Task
+- Object Id: A list of ID's for the objects (of type) we are currently trying to link
+- Object Relation: The type of connection we are aiming for;
+    - relates
+    - blocked_by
+    - blocking
+    - sub_object_of
+    - parent_object_of
+    - has_duplicate
+    - duplicate_object
+
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Add both user 2, and 3 to the current object",
+                value={"user_list": [2, 3]},
+            ),
+            OpenApiExample(
+                "Example 2",
+                description="Add the group 5 to the current project",
+                value={"group_list": 5},
+            ),
+        ],
+    )
     @api_object_data_permissions(min_permission_level=2)
     def create(self, request, *args, **kwargs):
         serializer = LinkSerializer(
@@ -217,7 +273,16 @@ class LinkViewSet(viewsets.ModelViewSet):
         # Get the parent object of
         destination = kwargs["destination"]
         location_id = kwargs["location_id"]
+        object_type = serializer.data["object_type"]
         object_relation = serializer.data["object_relation"]
+
+        # Check to make sure the object_id exists
+        if not object_type in list(OBJECT_DICT.keys()):
+            return Response(
+                data={"Object Type not in system"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
         # Loop through the results and add them in.
         # We will loop through each object type, and add them in accordinly

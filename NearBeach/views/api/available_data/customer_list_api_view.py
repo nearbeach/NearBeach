@@ -23,20 +23,33 @@ OBJECT_DICT = {
 
 
 @extend_schema(
-    tags=["Available Data"]
+    tags=["Available Data|Customer List"]
 )
 class CustomerListViewSet(viewsets.ViewSet):
     serializer_class = CustomerListSerializer
 
     @extend_schema(
+        description="""
+# 📌 Description
+
+Gathers a list of customers that can be assigned to that object
+
+
+# 🧾 Parameters
+
+- destination - the object of choice. Choices are;
+    - Requirement
+    - Requirement Item
+    - Project
+    - Task
+- location id - the id of the object
+        """,
         request=DestinationSerializer,
         responses={200: CustomerListSerializer},
     )
     @check_user_customer_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
-        # Serialise the data
-        serializer = DestinationSerializer(data=request.query_params)
-        # breakpoint()
+        serializer = DestinationSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(
                 serializer.errors,

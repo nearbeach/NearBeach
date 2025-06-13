@@ -133,11 +133,12 @@ paths:
     delete:
       operationId: group_and_user_destroy
       description: "\nRemove either a single user or a single group from this object.\
-        \ The IDs for the users and groups can be obtained by\nusing the GET functionality.\n\
-        \nParameters\n\nDestination is the object you are looking up. It can only\
-        \ be;\n- Kanban Card\n- Project\n- Request for Change\n- Requirement\n- Requirement\
-        \ Item\n- Task\n\nThe Location Id, is the ID number of that specific object.\n\
-        \nThe ID is a integer field, just leave as 0\n        "
+        \ The IDs for the users, groups, and object assignment can\nbe obtained by\
+        \ using the GET functionality.\n\nParameters\n\nDestination is the object\
+        \ you are looking up. It can only be;\n- Kanban Card\n- Project\n- Request\
+        \ for Change\n- Requirement\n- Requirement Item\n- Task\n\nThe Location Id,\
+        \ is the ID number of that specific object.\n\nThe ID for the results should\
+        \ be the \"Object Assignment\" id\n        "
       parameters:
       - in: path
         name: destination
@@ -181,6 +182,12 @@ paths:
           type: string
           pattern: ^[0-9]+$
         required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - Object Data|Link
       security:
@@ -192,9 +199,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Link'
+                $ref: '#/components/schemas/PaginatedLinkList'
           description: ''
     post:
       operationId: link_create
@@ -302,50 +307,6 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/Link'
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Link'
-          description: ''
-    patch:
-      operationId: link_partial_update
-      parameters:
-      - in: path
-        name: destination
-        schema:
-          type: string
-          pattern: ^[\w]+$
-        required: true
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: location_id
-        schema:
-          type: string
-          pattern: ^[0-9]+$
-        required: true
-      tags:
-      - Object Data|Link
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedLink'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedLink'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedLink'
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -703,8 +664,13 @@ paths:
   /api/v0/available_data/customer_list/:
     get:
       operationId: available_data_customer_list_list
+      description: "\n# \U0001F4CC Description\n\nGathers a list of customers that\
+        \ can be assigned to that object\n\n\n# \U0001F9FE Parameters\n\n- destination\
+        \ - the object of choice. Choices are;\n    - Requirement\n    - Requirement\
+        \ Item\n    - Project\n    - Task\n- location id - the id of the object\n\
+        \        "
       tags:
-      - Available Data
+      - Available Data|Customer List
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -721,8 +687,10 @@ paths:
   /api/v0/available_data/sprint_list/:
     get:
       operationId: available_data_sprint_list_list
+      description: "\n# \U0001F4CC Description\n\nPresent a list of all sprints user\
+        \ has access too\n\n        "
       tags:
-      - Available Data
+      - Available Data|Sprint List
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -739,8 +707,10 @@ paths:
   /api/v0/available_data/tag_list/:
     get:
       operationId: available_data_tag_list_list
+      description: "\n# \U0001F4CC Description\n\nPresent a list of all tags to the\
+        \ user\n\n        "
       tags:
-      - Available Data
+      - Available Data|Tag List
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -829,11 +799,21 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/v0/project/:
+  /api/v0/kanban_board/:
     get:
-      operationId: project_list
+      operationId: kanban_board_list
+      description: "\n# \U0001F4CC Description\n\nLists all kanban boards within NearBeach.\n\
+        \n\n# ✅ Notes\n\n- Pagination is enabled on this list. Use `?page=` to navigate\
+        \ to the appropriate page.\n    "
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
-      - project
+      - Kanban Board
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -843,19 +823,763 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Project'
+                $ref: '#/components/schemas/PaginatedKanbanBoardList'
+          description: ''
+    post:
+      operationId: kanban_board_create
+      description: "\n# \U0001F4CC Description\n\nCreate Kanban Board to help manage\
+        \ your projects/tasks.\n\n# \U0001F9FE Parameters\n\n- Kanban Board Name:\
+        \ The kanban board name\n- Group List: All groups associated with this kanban\
+        \ board. At least one of the user's groups will need to be included. \nThe\
+        \ group id's can be found using the Group List API.\n- Kanban Column: List\
+        \ of the following properties\n    - Kanban Column Name: The name of the column\n\
+        \    - Kanban Column Property: Will be one of the following options;\n   \
+        \     - Backlog\n        - Normal\n        - Blocked\n        - Closed\n\n\
+        \        "
+      tags:
+      - Kanban Board
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KanbanBoard'
+            examples:
+              Example1:
+                value:
+                  kanban_board_name: My Kanban Board
+                  group_list:
+                  - 1
+                  - 2
+                  kanban_column:
+                  - kanban_column_name: Backlog
+                    kanban_column_property: Backlog
+                  - kanban_column_name: Blocked
+                    kanban_column_property: Blocked
+                  - kanban_column_name: In Progress
+                    kanban_column_property: Normal
+                  - kanban_column_name: User Acceptance Testing
+                    kanban_column_property: Normal
+                  - kanban_column_name: Closed
+                    kanban_column_property: Closed
+                  kanban_level:
+                  - kanban_level_name: Swimlane 1
+                  - kanban_level_name: Swimlane 2
+                summary: Example 1
+                description: Create a new kanban board
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/KanbanBoard'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/KanbanBoard'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KanbanBoard'
+              examples:
+                Example1:
+                  value:
+                    kanban_board_name: My Kanban Board
+                    group_list:
+                    - 1
+                    - 2
+                    kanban_column:
+                    - kanban_column_name: Backlog
+                      kanban_column_property: Backlog
+                    - kanban_column_name: Blocked
+                      kanban_column_property: Blocked
+                    - kanban_column_name: In Progress
+                      kanban_column_property: Normal
+                    - kanban_column_name: User Acceptance Testing
+                      kanban_column_property: Normal
+                    - kanban_column_name: Closed
+                      kanban_column_property: Closed
+                    kanban_level:
+                    - kanban_level_name: Swimlane 1
+                    - kanban_level_name: Swimlane 2
+                  summary: Example 1
+                  description: Create a new kanban board
+          description: ''
+  /api/v0/kanban_board/{kanban_board_id}/kanban_card/:
+    get:
+      operationId: kanban_board_kanban_card_list
+      description: "\n# \U0001F4CC Description\n\nLists all kanban cards within the\
+        \ kanban board.\n    "
+      parameters:
+      - in: path
+        name: kanban_board_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - kanban_board
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedKanbanCardList'
+          description: ''
+    post:
+      operationId: kanban_board_kanban_card_create
+      description: "\n# \U0001F4CC Description\n\nCreate Kanban Card against the kanban\
+        \ board.\n\n# \U0001F9FE Parameters\n\n- Kanban Card Text: The kanban board\
+        \ name\n- Kanban Card Description: The description for the kanban card\n-\
+        \ Kanban Card Priority: The priority of the kanban card\n    - 0 = Highest\n\
+        \    - 1 = High\n    - 2 = Normal\n    - 3 = Low\n    - 4 = Lowest\n- Kanban\
+        \ Column: The id of the kanban column you would like the card to be moved\
+        \ to\n- Kanban Level: The id of the kanban level you would like the card to\
+        \ be moved to\n\n\n# ✅ Notes\n\nBoth the Column/Level id's will need to exist\
+        \ under the current kanban board. Or an error will occur.\n        "
+      parameters:
+      - in: path
+        name: kanban_board_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - kanban_board
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KanbanCard'
+            examples:
+              Example1:
+                value:
+                  kanban_board_name: My Kanban Board
+                  group_list:
+                  - 1
+                  - 2
+                  kanban_column:
+                  - kanban_column_name: Backlog
+                    kanban_column_property: Backlog
+                  - kanban_column_name: Blocked
+                    kanban_column_property: Blocked
+                  - kanban_column_name: In Progress
+                    kanban_column_property: Normal
+                  - kanban_column_name: User Acceptance Testing
+                    kanban_column_property: Normal
+                  - kanban_column_name: Closed
+                    kanban_column_property: Closed
+                  kanban_level:
+                  - kanban_level_name: Swimlane 1
+                  - kanban_level_name: Swimlane 2
+                summary: Example 1
+                description: Create a new kanban board
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/KanbanCard'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/KanbanCard'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KanbanCard'
+              examples:
+                Example1:
+                  value:
+                    kanban_board_name: My Kanban Board
+                    group_list:
+                    - 1
+                    - 2
+                    kanban_column:
+                    - kanban_column_name: Backlog
+                      kanban_column_property: Backlog
+                    - kanban_column_name: Blocked
+                      kanban_column_property: Blocked
+                    - kanban_column_name: In Progress
+                      kanban_column_property: Normal
+                    - kanban_column_name: User Acceptance Testing
+                      kanban_column_property: Normal
+                    - kanban_column_name: Closed
+                      kanban_column_property: Closed
+                    kanban_level:
+                    - kanban_level_name: Swimlane 1
+                    - kanban_level_name: Swimlane 2
+                  summary: Example 1
+                  description: Create a new kanban board
+          description: ''
+  /api/v0/kanban_board/{kanban_board_id}/kanban_card/{kanban_card_id}/:
+    get:
+      operationId: kanban_board_kanban_card_retrieve
+      description: "\n# \U0001F4CC Description\n\nRetrieves a single kanban card.\n\
+        \n    "
+      parameters:
+      - in: path
+        name: kanban_board_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      - in: path
+        name: kanban_card_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this kanban card.
+        required: true
+      tags:
+      - kanban_board
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KanbanCard'
+          description: ''
+    put:
+      operationId: kanban_board_kanban_card_update
+      description: "\n# \U0001F4CC Description\n\nUpdates a single kanban card under\
+        \ the kanban board\n\n# \U0001F9FE Parameters\n\n- Kanban Card Text: The kanban\
+        \ card's title\n- Kanban Card Description: The description of the kanban card\n\
+        - Kanban Card Priority: The priority of the kanban card\n    - 0 = Highest\n\
+        \    - 1 = High\n    - 2 = Normal\n    - 3 = Low\n    - 4 = Lowest\n- Kanban\
+        \ Column: The id of the kanban column you would like the card to be moved\
+        \ to\n- Kanban Level: The id of the kanban level you would like the card to\
+        \ be moved to\n\n\n# ✅ Notes\n\nBoth the Column/Level id's will need to exist\
+        \ under the current kanban board. Or an error will occur.\n    "
+      parameters:
+      - in: path
+        name: kanban_board_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      - in: path
+        name: kanban_card_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this kanban card.
+        required: true
+      tags:
+      - kanban_board
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KanbanCard'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/KanbanCard'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/KanbanCard'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KanbanCard'
+          description: ''
+    delete:
+      operationId: kanban_board_kanban_card_destroy
+      description: "\n# \U0001F4CC Description\n\nDelete kanban card.\n\n\n# ✅ Notes\n\
+        \nUsers will need to have the permission to delete. This entails having the\
+        \ ability to edit a kanban board.\n        "
+      parameters:
+      - in: path
+        name: kanban_board_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      - in: path
+        name: kanban_card_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this kanban card.
+        required: true
+      tags:
+      - kanban_board
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v0/kanban_board/{kanban_board_id}/:
+    get:
+      operationId: kanban_board_retrieve
+      description: "\n# \U0001F4CC Description\n\nRetrieves a single kanban board.\n\
+        \n    "
+      parameters:
+      - in: path
+        name: kanban_board_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this kanban board.
+        required: true
+      tags:
+      - Kanban Board
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KanbanBoard'
+          description: ''
+    delete:
+      operationId: kanban_board_destroy
+      description: "\n# \U0001F4CC Description\n\nDelete kanban boards.\n\n\n# ✅ Notes\n\
+        \nUsers will need to have the permission to delete.\n        "
+      parameters:
+      - in: path
+        name: kanban_board_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this kanban board.
+        required: true
+      tags:
+      - Kanban Board
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v0/organisation/:
+    get:
+      operationId: organisation_list
+      description: "\n# \U0001F4CC Description\n\nLists all organisations within NearBeach.\n\
+        \n\n# ✅ Notes\n\n- Pagination is enabled on this list. Use `?page=` to navigate\
+        \ to the appropriate page.\n    "
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Organisation
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrganisationList'
+          description: ''
+    post:
+      operationId: organisation_create
+      description: "\n# \U0001F4CC Description\n\nCreate Organisations.\n\n# \U0001F9FE\
+        \ Parameters\n\n- Organisation Name: Name of the organisation\n- Organisation\
+        \ Email: A generic email for the organisation. Tip you can use noreply@organisation.com\n\
+        - Organisation Website: The website of the organisation\n\n        "
+      tags:
+      - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organisation'
+            examples:
+              Example1:
+                value:
+                  organisation_name: API Organisation
+                  organisation_website: https://nearbeach.org
+                  organisation_email: noreply@nearbeahc.org
+                summary: Example 1
+                description: Create a new organisation
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organisation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Organisation'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+              examples:
+                Example1:
+                  value:
+                    organisation_name: API Organisation
+                    organisation_website: https://nearbeach.org
+                    organisation_email: noreply@nearbeahc.org
+                  summary: Example 1
+                  description: Create a new organisation
+          description: ''
+  /api/v0/organisation/{organisation_id}/customer/:
+    get:
+      operationId: organisation_customer_list
+      description: "\n# \U0001F4CC Description\n\nLists all customers within an organisation.\n\
+        \n    "
+      parameters:
+      - in: path
+        name: organisation_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Customer
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCustomerList'
+          description: ''
+    post:
+      operationId: organisation_customer_create
+      description: "\n# \U0001F4CC Description\n\nCreate Customer.\n\n# \U0001F9FE\
+        \ Parameters\n\n- Customer Title: Title IDs can be gathered from the database\n\
+        - Customer First Name\n- Customer Last Name\n- Customer Email\n        "
+      parameters:
+      - in: path
+        name: organisation_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - Customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+            examples:
+              Example1:
+                value:
+                  customer_title: '2'
+                  customer_first_name: Socks
+                  customer_last_name: Fluffy
+                  customer_email: socks@nearbeahc.org
+                summary: Example 1
+                description: Create a new customer
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+              examples:
+                Example1:
+                  value:
+                    customer_title: '2'
+                    customer_first_name: Socks
+                    customer_last_name: Fluffy
+                    customer_email: socks@nearbeahc.org
+                  summary: Example 1
+                  description: Create a new customer
+          description: ''
+  /api/v0/organisation/{organisation_id}/customer/{customer_id}/:
+    get:
+      operationId: organisation_customer_retrieve
+      description: "\n# \U0001F4CC Description\n\nRetrieves a single customer within\
+        \ an organisation\n        "
+      parameters:
+      - in: path
+        name: customer_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this customer.
+        required: true
+      - in: path
+        name: organisation_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - Customer
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: ''
+    put:
+      operationId: organisation_customer_update
+      description: "\n# \U0001F4CC Description\n\nUpdates a single customer under\
+        \ an organisation.\n\n# \U0001F9FE Parameters\n\n- Customer First Name\n-\
+        \ Customer Last Name\n- Customer Email\n- Customer Title: You can get a full\
+        \ list of title Id's from the database\n    "
+      parameters:
+      - in: path
+        name: customer_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this customer.
+        required: true
+      - in: path
+        name: organisation_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - Customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Customer'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+          description: ''
+    delete:
+      operationId: organisation_customer_destroy
+      description: "\n# \U0001F4CC Description\n\nDelete customer.\n\n\n# ✅ Notes\n\
+        \nUsers will need to have the permission to delete.\n        "
+      parameters:
+      - in: path
+        name: customer_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this customer.
+        required: true
+      - in: path
+        name: organisation_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - Customer
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v0/organisation/{organisation_id}/:
+    get:
+      operationId: organisation_retrieve
+      description: "\n# \U0001F4CC Description\n\nRetrieves a single organisation.\n\
+        \n    "
+      parameters:
+      - in: path
+        name: organisation_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+          description: ''
+    put:
+      operationId: organisation_update
+      description: "\n# \U0001F4CC Description\n\nUpdates a single organisation.\n\
+        \n# \U0001F9FE Parameters\n\n- Organisation Name: Name of the organisation\n\
+        - Organisation Email: A generic email for the organisation. Tip you can use\
+        \ noreply@organisation.com\n- Organisation Website: The website of the organisation\n\
+        \n    "
+      parameters:
+      - in: path
+        name: organisation_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organisation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organisation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Organisation'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+          description: ''
+    delete:
+      operationId: organisation_destroy
+      description: "\n# \U0001F4CC Description\n\nDelete organisations.\n\n\n# ✅ Notes\n\
+        \nUsers will need to have the permission to delete.\n        "
+      parameters:
+      - in: path
+        name: organisation_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v0/project/:
+    get:
+      operationId: project_list
+      description: "\n# \U0001F4CC Description\n\nLists all projects within NearBeach.\n\
+        \n\n# ✅ Notes\n\n- Pagination is enabled on this list. Use `?Page=` to navigate\
+        \ to the appropriate page.\n    "
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Projects
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProjectList'
           description: ''
     post:
       operationId: project_create
+      description: "\n# \U0001F4CC Description\n\nCreate Projects to help manage your\
+        \ projects.\n\n# \U0001F9FE Parameters\n\n- Project Name: The project's name.\
+        \ Should be short and under 255 characters.\n- Project Description: The description\
+        \ of the project. Can have basic HTML\n- Project Start Date\n- Project End\
+        \ Date\n- Organisation: The organisation that the project belongs too. Should\
+        \ be an int. Use the Organisation API to find the \ncorrect organisation id.\n\
+        - Group List: All groups associated with this project. At least one of the\
+        \ user's groups will need to be included. The \ngroup id's can be found using\
+        \ the Group List API.\n        "
       tags:
-      - project
+      - Projects
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Project'
+            examples:
+              Example1:
+                value:
+                  project_name: My Project
+                  project_description: <h1>Hello World</h1>
+                  project_start_date: '2024-12-19 15:49:37'
+                  project_end_date: '2024-12-19 15:49:37'
+                  organisation: 2
+                  group_list:
+                  - 1
+                  - 2
+                summary: Example 1
+                description: Create a new project
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Project'
@@ -873,10 +1597,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Project'
+              examples:
+                Example1:
+                  value:
+                    project_name: My Project
+                    project_description: <h1>Hello World</h1>
+                    project_start_date: '2024-12-19 15:49:37'
+                    project_end_date: '2024-12-19 15:49:37'
+                    organisation: 2
+                    group_list:
+                    - 1
+                    - 2
+                  summary: Example 1
+                  description: Create a new project
           description: ''
   /api/v0/project/{project_id}/:
     get:
       operationId: project_retrieve
+      description: "\n# \U0001F4CC Description\n\nRetrieves a single project.\n\n\
+        \    "
       parameters:
       - in: path
         name: project_id
@@ -885,7 +1624,7 @@ paths:
         description: A unique integer value identifying this project.
         required: true
       tags:
-      - project
+      - Projects
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -899,6 +1638,13 @@ paths:
           description: ''
     put:
       operationId: project_update
+      description: "\n# \U0001F4CC Description\n\nUpdates a single project.\n\n# \U0001F9FE\
+        \ Parameters\n\n- Project Name: The project's name. Should be short and under\
+        \ 255 characters.\n- Project Description: The description of the project.\
+        \ Can have basic HTML\n- Project Start Date\n- Project End Date\n- Project\
+        \ Status: The status of the project.\n- Project Priority: The priority of\
+        \ the project.\n    - 0 = Highest\n    - 1 = High\n    - 2 = Normal\n    -\
+        \ 3 = Low\n    - 4 = Lowest\n    "
       parameters:
       - in: path
         name: project_id
@@ -907,7 +1653,7 @@ paths:
         description: A unique integer value identifying this project.
         required: true
       tags:
-      - project
+      - Projects
       requestBody:
         content:
           application/json:
@@ -920,39 +1666,6 @@ paths:
             schema:
               $ref: '#/components/schemas/Project'
         required: true
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Project'
-          description: ''
-    patch:
-      operationId: project_partial_update
-      parameters:
-      - in: path
-        name: project_id
-        schema:
-          type: integer
-        description: A unique integer value identifying this project.
-        required: true
-      tags:
-      - project
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedProject'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedProject'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedProject'
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -966,6 +1679,8 @@ paths:
           description: ''
     delete:
       operationId: project_destroy
+      description: "\n# \U0001F4CC Description\n        \nDelete projects.\n\n\n#\
+        \ ✅ Notes\n\nUsers will need to have the permission to delete.\n        "
       parameters:
       - in: path
         name: project_id
@@ -974,7 +1689,1029 @@ paths:
         description: A unique integer value identifying this project.
         required: true
       tags:
-      - project
+      - Projects
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v0/request_for_change/:
+    get:
+      operationId: request_for_change_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - request_for_change
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRequestForChangeList'
+          description: ''
+    post:
+      operationId: request_for_change_create
+      tags:
+      - request_for_change
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestForChange'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestForChange'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RequestForChange'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestForChange'
+          description: ''
+  /api/v0/request_for_change/{rfc_id}/:
+    get:
+      operationId: request_for_change_retrieve
+      parameters:
+      - in: path
+        name: rfc_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this request for change.
+        required: true
+      tags:
+      - request_for_change
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestForChange'
+          description: ''
+    put:
+      operationId: request_for_change_update
+      parameters:
+      - in: path
+        name: rfc_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this request for change.
+        required: true
+      tags:
+      - request_for_change
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestForChange'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestForChange'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RequestForChange'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestForChange'
+          description: ''
+    patch:
+      operationId: request_for_change_partial_update
+      parameters:
+      - in: path
+        name: rfc_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this request for change.
+        required: true
+      tags:
+      - request_for_change
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRequestForChange'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRequestForChange'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRequestForChange'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestForChange'
+          description: ''
+    delete:
+      operationId: request_for_change_destroy
+      parameters:
+      - in: path
+        name: rfc_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this request for change.
+        required: true
+      tags:
+      - request_for_change
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v0/request_for_change/{request_for_change_id}/change_task/:
+    get:
+      operationId: request_for_change_change_task_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: path
+        name: request_for_change_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - request_for_change
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChangeTaskList'
+          description: ''
+    post:
+      operationId: request_for_change_change_task_create
+      parameters:
+      - in: path
+        name: request_for_change_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - request_for_change
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeTask'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChangeTask'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChangeTask'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeTask'
+          description: ''
+  /api/v0/request_for_change/{request_for_change_id}/change_task/{change_task_id}/:
+    get:
+      operationId: request_for_change_change_task_retrieve
+      parameters:
+      - in: path
+        name: change_task_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this change task.
+        required: true
+      - in: path
+        name: request_for_change_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - request_for_change
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeTask'
+          description: ''
+    put:
+      operationId: request_for_change_change_task_update
+      parameters:
+      - in: path
+        name: change_task_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this change task.
+        required: true
+      - in: path
+        name: request_for_change_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - request_for_change
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeTask'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChangeTask'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChangeTask'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeTask'
+          description: ''
+    patch:
+      operationId: request_for_change_change_task_partial_update
+      parameters:
+      - in: path
+        name: change_task_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this change task.
+        required: true
+      - in: path
+        name: request_for_change_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - request_for_change
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedChangeTask'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedChangeTask'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedChangeTask'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeTask'
+          description: ''
+    delete:
+      operationId: request_for_change_change_task_destroy
+      parameters:
+      - in: path
+        name: change_task_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this change task.
+        required: true
+      - in: path
+        name: request_for_change_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - request_for_change
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v0/requirement/:
+    get:
+      operationId: requirement_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - requirement
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRequirementList'
+          description: ''
+    post:
+      operationId: requirement_create
+      tags:
+      - requirement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Requirement'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Requirement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Requirement'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Requirement'
+          description: ''
+  /api/v0/requirement/{requirement_id}/:
+    get:
+      operationId: requirement_retrieve
+      parameters:
+      - in: path
+        name: requirement_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this requirement.
+        required: true
+      tags:
+      - requirement
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Requirement'
+          description: ''
+    put:
+      operationId: requirement_update
+      parameters:
+      - in: path
+        name: requirement_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this requirement.
+        required: true
+      tags:
+      - requirement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Requirement'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Requirement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Requirement'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Requirement'
+          description: ''
+    patch:
+      operationId: requirement_partial_update
+      parameters:
+      - in: path
+        name: requirement_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this requirement.
+        required: true
+      tags:
+      - requirement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirement'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirement'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Requirement'
+          description: ''
+    delete:
+      operationId: requirement_destroy
+      parameters:
+      - in: path
+        name: requirement_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this requirement.
+        required: true
+      tags:
+      - requirement
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v0/requirement/{requirement_id}/requirement_item/:
+    get:
+      operationId: requirement_requirement_item_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: path
+        name: requirement_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - requirement
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRequirementItemList'
+          description: ''
+    post:
+      operationId: requirement_requirement_item_create
+      parameters:
+      - in: path
+        name: requirement_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      tags:
+      - requirement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequirementItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequirementItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RequirementItem'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequirementItem'
+          description: ''
+  /api/v0/requirement/{requirement_id}/requirement_item/{requirement_item_id}/:
+    get:
+      operationId: requirement_requirement_item_retrieve
+      parameters:
+      - in: path
+        name: requirement_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      - in: path
+        name: requirement_item_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this requirement item.
+        required: true
+      tags:
+      - requirement
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequirementItem'
+          description: ''
+    put:
+      operationId: requirement_requirement_item_update
+      parameters:
+      - in: path
+        name: requirement_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      - in: path
+        name: requirement_item_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this requirement item.
+        required: true
+      tags:
+      - requirement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequirementItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequirementItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RequirementItem'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequirementItem'
+          description: ''
+    patch:
+      operationId: requirement_requirement_item_partial_update
+      parameters:
+      - in: path
+        name: requirement_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      - in: path
+        name: requirement_item_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this requirement item.
+        required: true
+      tags:
+      - requirement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementItem'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequirementItem'
+          description: ''
+    delete:
+      operationId: requirement_requirement_item_destroy
+      parameters:
+      - in: path
+        name: requirement_id
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+        required: true
+      - in: path
+        name: requirement_item_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this requirement item.
+        required: true
+      tags:
+      - requirement
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v0/sprint/:
+    get:
+      operationId: sprint_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - sprint
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSprintList'
+          description: ''
+    post:
+      operationId: sprint_create
+      tags:
+      - sprint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sprint'
+          description: ''
+  /api/v0/sprint/{sprint_id}/:
+    get:
+      operationId: sprint_retrieve
+      parameters:
+      - in: path
+        name: sprint_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this sprint.
+        required: true
+      tags:
+      - sprint
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sprint'
+          description: ''
+    put:
+      operationId: sprint_update
+      parameters:
+      - in: path
+        name: sprint_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this sprint.
+        required: true
+      tags:
+      - sprint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sprint'
+          description: ''
+    patch:
+      operationId: sprint_partial_update
+      parameters:
+      - in: path
+        name: sprint_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this sprint.
+        required: true
+      tags:
+      - sprint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSprint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSprint'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSprint'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sprint'
+          description: ''
+    delete:
+      operationId: sprint_destroy
+      parameters:
+      - in: path
+        name: sprint_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this sprint.
+        required: true
+      tags:
+      - sprint
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v0/task/:
+    get:
+      operationId: task_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - task
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTaskList'
+          description: ''
+    post:
+      operationId: task_create
+      tags:
+      - task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Task'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Task'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: ''
+  /api/v0/task/{task_id}/:
+    get:
+      operationId: task_retrieve
+      parameters:
+      - in: path
+        name: task_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this task.
+        required: true
+      tags:
+      - task
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: ''
+    put:
+      operationId: task_update
+      parameters:
+      - in: path
+        name: task_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this task.
+        required: true
+      tags:
+      - task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Task'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Task'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: ''
+    patch:
+      operationId: task_partial_update
+      parameters:
+      - in: path
+        name: task_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this task.
+        required: true
+      tags:
+      - task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTask'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTask'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTask'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: ''
+    delete:
+      operationId: task_destroy
+      parameters:
+      - in: path
+        name: task_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this task.
+        required: true
+      tags:
+      - task
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -984,6 +2721,108 @@ paths:
           description: No response body
 components:
   schemas:
+    BlankEnum:
+      enum:
+      - ''
+    ChangeTask:
+      type: object
+      properties:
+        change_task_id:
+          type: integer
+          readOnly: true
+        change_task_seconds:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          readOnly: true
+        change_task_status_id:
+          allOf:
+          - $ref: '#/components/schemas/ChangeTaskStatusIdEnum'
+          readOnly: true
+        change_task_status_name:
+          type: string
+          readOnly: true
+        change_task_required_by:
+          type: string
+        is_downtime:
+          type: string
+        request_for_change:
+          type: integer
+          readOnly: true
+        change_task_assigned_user:
+          type: integer
+        change_task_qa_user:
+          type: integer
+        change_task_title:
+          type: string
+          maxLength: 255
+        change_task_description:
+          type: string
+        change_task_start_date:
+          type: string
+          format: date-time
+        change_task_end_date:
+          type: string
+          format: date-time
+      required:
+      - change_task_assigned_user
+      - change_task_end_date
+      - change_task_id
+      - change_task_qa_user
+      - change_task_seconds
+      - change_task_start_date
+      - change_task_status_id
+      - change_task_status_name
+      - change_task_title
+      - request_for_change
+    ChangeTaskStatusIdEnum:
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      type: integer
+      description: |-
+        * `1` - Draft
+        * `2` - Waiting for approval
+        * `3` - Approved
+        * `4` - Started
+        * `5` - Finished
+        * `6` - Rejected
+        * `7` - Paused
+        * `8` - Ready for QA
+        * `9` - Failed
+    Customer:
+      type: object
+      properties:
+        customer_id:
+          type: integer
+          readOnly: true
+        customer_title:
+          $ref: '#/components/schemas/CustomerTitle'
+        customer_first_name:
+          type: string
+        customer_last_name:
+          type: string
+        customer_email:
+          type: string
+          format: email
+        customer_profile_picture_path:
+          type: string
+          readOnly: true
+      required:
+      - customer_email
+      - customer_first_name
+      - customer_id
+      - customer_last_name
+      - customer_profile_picture_path
+      - customer_title
     CustomerList:
       type: object
       properties:
@@ -1004,21 +2843,253 @@ components:
       - customer_first_name
       - customer_id
       - customer_last_name
+    CustomerTitle:
+      type: object
+      properties:
+        title_id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 10
+      required:
+      - title
+      - title_id
+    DestinationEnum:
+      enum:
+      - requirement
+      - project
+      type: string
+      description: |-
+        * `requirement` - requirement
+        * `project` - project
+    Group:
+      type: object
+      properties:
+        group_id:
+          type: integer
+          readOnly: true
+        group_name:
+          type: string
+          maxLength: 50
+        parent_group:
+          type: integer
+          nullable: true
+      required:
+      - group_id
+      - group_name
     GroupAndUser:
       type: object
       properties:
-        group:
-          type: integer
-        user:
-          type: integer
         group_list:
           type: array
           items:
             type: integer
+        object_assignment:
+          type: string
+          readOnly: true
+        object_group_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectAssignmentGroup'
+          readOnly: true
+          nullable: true
+        object_user_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectAssignmentUser'
+          readOnly: true
+          nullable: true
+        potential_group_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+          readOnly: true
+          nullable: true
+        potential_user_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+          readOnly: true
+          nullable: true
+        user_group_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+          readOnly: true
+          nullable: true
         user_list:
           type: array
           items:
             type: integer
+      required:
+      - object_assignment
+      - object_group_list
+      - object_user_list
+      - potential_group_list
+      - potential_user_list
+      - user_group_list
+    KanbanBoard:
+      type: object
+      properties:
+        group_list:
+          type: array
+          items:
+            type: integer
+            writeOnly: true
+          writeOnly: true
+        kanban_board_id:
+          type: integer
+          readOnly: true
+        kanban_board_name:
+          type: string
+          maxLength: 255
+        kanban_board_status:
+          allOf:
+          - $ref: '#/components/schemas/KanbanBoardStatusEnum'
+          readOnly: true
+          default: Open
+        kanban_column:
+          type: array
+          items:
+            $ref: '#/components/schemas/KanbanColumn'
+        kanban_level:
+          type: array
+          items:
+            $ref: '#/components/schemas/KanbanLevel'
+        kanban_card:
+          type: array
+          items:
+            $ref: '#/components/schemas/KanbanCard'
+          readOnly: true
+          nullable: true
+        level_title:
+          type: string
+          maxLength: 255
+        uuid:
+          type: string
+          format: uuid
+          writeOnly: true
+      required:
+      - group_list
+      - kanban_board_id
+      - kanban_board_name
+      - kanban_board_status
+      - kanban_card
+      - kanban_column
+      - kanban_level
+    KanbanBoardStatusEnum:
+      enum:
+      - Open
+      - Closed
+      type: string
+      description: |-
+        * `Open` - Open
+        * `Closed` - Closed
+    KanbanCard:
+      type: object
+      properties:
+        kanban_card_id:
+          type: integer
+          readOnly: true
+        kanban_card_text:
+          type: string
+        kanban_card_description:
+          type: string
+        kanban_card_priority:
+          $ref: '#/components/schemas/KanbanCardPriorityEnum'
+        kanban_column:
+          $ref: '#/components/schemas/KanbanColumn'
+        kanban_level:
+          $ref: '#/components/schemas/KanbanLevel'
+        kanban_card_sort_number:
+          type: integer
+        tags:
+          type: string
+          readOnly: true
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        project:
+          type: integer
+          readOnly: true
+          nullable: true
+        requirement:
+          type: integer
+          readOnly: true
+          nullable: true
+        task:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - date_created
+      - kanban_card_description
+      - kanban_card_id
+      - kanban_card_priority
+      - kanban_card_text
+      - kanban_column
+      - kanban_level
+      - project
+      - requirement
+      - tags
+      - task
+    KanbanCardPriorityEnum:
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      type: integer
+      description: |-
+        * `0` - Highest
+        * `1` - High
+        * `2` - Normal
+        * `3` - Low
+        * `4` - Lowest
+    KanbanColumn:
+      type: object
+      properties:
+        kanban_column_id:
+          type: integer
+          readOnly: true
+        kanban_column_name:
+          type: string
+          maxLength: 255
+        kanban_column_property:
+          type: string
+        kanban_column_sort_number:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          readOnly: true
+      required:
+      - kanban_column_id
+      - kanban_column_name
+      - kanban_column_property
+      - kanban_column_sort_number
+    KanbanLevel:
+      type: object
+      properties:
+        kanban_level_id:
+          type: integer
+          readOnly: true
+        kanban_level_name:
+          type: string
+          maxLength: 255
+        kanban_level_sort_number:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          readOnly: true
+      required:
+      - kanban_level_id
+      - kanban_level_name
+      - kanban_level_sort_number
     Link:
       type: object
       properties:
@@ -1102,6 +3173,71 @@ components:
       - object_note_id
       - profile_picture
       - username
+    ObjectAssignmentGroup:
+      type: object
+      properties:
+        group_id:
+          type: integer
+          nullable: true
+        group_name:
+          type: string
+          readOnly: true
+        object_assignment_id:
+          type: integer
+          readOnly: true
+        parent_group_id:
+          type: integer
+          nullable: true
+          readOnly: true
+      required:
+      - group_name
+      - object_assignment_id
+      - parent_group_id
+    ObjectAssignmentUser:
+      type: object
+      properties:
+        assigned_user:
+          type: integer
+          nullable: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          readOnly: true
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+        object_assignment_id:
+          type: integer
+          readOnly: true
+        profile_picture:
+          type: string
+          format: uri
+          readOnly: true
+        profile_picture_path:
+          type: string
+          readOnly: true
+        user_id:
+          type: integer
+          nullable: true
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          readOnly: true
+      required:
+      - email
+      - first_name
+      - last_name
+      - object_assignment_id
+      - profile_picture
+      - profile_picture_path
+      - user_id
+      - username
     ObjectSprint:
       type: object
       properties:
@@ -1130,46 +3266,434 @@ components:
       - sprint_id
       - sprint_status
       - total_story_points
-    PatchedLink:
+    Organisation:
       type: object
       properties:
+        organisation_id:
+          type: integer
+          readOnly: true
+        organisation_name:
+          type: string
+        organisation_website:
+          type: string
+          format: uri
+        organisation_email:
+          type: string
+          format: email
+        organisation_profile_picture_path:
+          type: string
+          readOnly: true
+        customers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+          readOnly: true
+          nullable: true
+      required:
+      - customers
+      - organisation_email
+      - organisation_id
+      - organisation_name
+      - organisation_profile_picture_path
+      - organisation_website
+    PaginatedChangeTaskList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChangeTask'
+    PaginatedCustomerList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+    PaginatedKanbanBoardList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/KanbanBoard'
+    PaginatedKanbanCardList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/KanbanCard'
+    PaginatedLinkList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+    PaginatedOrganisationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organisation'
+    PaginatedProjectList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+    PaginatedRequestForChangeList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestForChange'
+    PaginatedRequirementItemList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequirementItem'
+    PaginatedRequirementList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Requirement'
+    PaginatedSprintList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sprint'
+    PaginatedTaskList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+    PatchedChangeTask:
+      type: object
+      properties:
+        change_task_id:
+          type: integer
+          readOnly: true
+        change_task_seconds:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          readOnly: true
+        change_task_status_id:
+          allOf:
+          - $ref: '#/components/schemas/ChangeTaskStatusIdEnum'
+          readOnly: true
+        change_task_status_name:
+          type: string
+          readOnly: true
+        change_task_required_by:
+          type: string
+        is_downtime:
+          type: string
+        request_for_change:
+          type: integer
+          readOnly: true
+        change_task_assigned_user:
+          type: integer
+        change_task_qa_user:
+          type: integer
+        change_task_title:
+          type: string
+          maxLength: 255
+        change_task_description:
+          type: string
+        change_task_start_date:
+          type: string
+          format: date-time
+        change_task_end_date:
+          type: string
+          format: date-time
+    PatchedRequestForChange:
+      type: object
+      properties:
+        rfc_id:
+          type: integer
+          readOnly: true
         change_task:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChangeTask'
+          readOnly: true
+          nullable: true
+        group_list:
           type: integer
-        link_relationship:
+          writeOnly: true
+        rfc_implementation_start_date:
+          type: string
+          format: date-time
+          readOnly: true
+        rfc_implementation_end_date:
+          type: string
+          format: date-time
+          readOnly: true
+        rfc_status:
+          type: integer
+        rfc_status_name:
           type: string
           readOnly: true
-        object_assignment_id:
-          type: integer
-          readOnly: true
-        object_id:
-          type: integer
-          readOnly: true
-        object_title:
+        rfc_type_name:
           type: string
           readOnly: true
-        object_status:
+        rfc_priority_name:
           type: string
           readOnly: true
-        object_type:
+        rfc_risk:
+          $ref: '#/components/schemas/RfcRiskEnum'
+        rfc_risk_name:
           type: string
           readOnly: true
-        parent_link:
+        rfc_impact:
+          $ref: '#/components/schemas/RfcImpactEnum'
+        rfc_impact_name:
           type: string
           readOnly: true
-        project:
-          type: integer
-        requirement:
-          type: integer
-        requirement_item:
-          type: integer
-        reverse_relation:
-          type: boolean
-          readOnly: true
-        task:
-          type: integer
-        object_relation:
+        rfc_version_number:
           type: string
-    PatchedProject:
+        rfc_priority:
+          $ref: '#/components/schemas/RfcPriorityEnum'
+        rfc_type:
+          $ref: '#/components/schemas/RfcTypeEnum'
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_modified:
+          type: string
+          format: date-time
+          readOnly: true
+        uuid:
+          type: string
+          format: uuid
+          writeOnly: true
+        rfc_title:
+          type: string
+          maxLength: 255
+        rfc_summary:
+          type: string
+        rfc_implementation_release_date:
+          type: string
+          format: date-time
+        rfc_risk_and_impact_analysis:
+          type: string
+        rfc_implementation_plan:
+          type: string
+        rfc_backout_plan:
+          type: string
+        rfc_test_plan:
+          type: string
+        rfc_lead:
+          type: integer
+    PatchedRequirement:
       type: object
       properties:
         group_list:
@@ -1180,31 +3704,156 @@ components:
         organisation_name:
           type: string
           readOnly: true
-        project_description:
-          type: string
-        project_end_date:
-          type: string
-          format: date-time
-        project_higher_order_status:
-          type: string
-          readOnly: true
-        project_id:
+        requirement_id:
           type: integer
           readOnly: true
-        project_name:
+        requirement_item:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequirementItem'
+          readOnly: true
+          nullable: true
+        requirement_scope:
+          type: string
+        requirement_status:
+          type: integer
+        requirement_status_name:
+          type: string
+          readOnly: true
+        requirement_title:
           type: string
           maxLength: 255
-        project_priority:
-          $ref: '#/components/schemas/ProjectPriorityEnum'
-        project_priority_name:
+        requirement_type:
+          type: integer
+        requirement_type_name:
           type: string
           readOnly: true
-        project_start_date:
+        uuid:
+          type: string
+          format: uuid
+          writeOnly: true
+    PatchedRequirementItem:
+      type: object
+      properties:
+        requirement_item_id:
+          type: integer
+          readOnly: true
+        requirement_item_status_name:
+          type: string
+          readOnly: true
+        requirement_item_type_name:
+          type: string
+          readOnly: true
+        requirement_item_priority:
+          $ref: '#/components/schemas/RequirementItemPriorityEnum'
+        requirement_item_priority_text:
+          type: string
+          readOnly: true
+        requirement_item_scope:
+          type: string
+        requirement_item_title:
+          type: string
+          maxLength: 255
+        requirement_item_story_point:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        date_created:
           type: string
           format: date-time
-        project_status:
+          readOnly: true
+        requirement_item_status:
           type: integer
-        project_status_name:
+        requirement_item_type:
+          type: integer
+    PatchedSprint:
+      type: object
+      properties:
+        sprint_id:
+          type: integer
+          readOnly: true
+        destination:
+          $ref: '#/components/schemas/DestinationEnum'
+        location_id:
+          type: integer
+        sprint_name:
+          type: string
+        sprint_start_date:
+          type: string
+          format: date-time
+        sprint_end_date:
+          type: string
+          format: date-time
+        requirement:
+          allOf:
+          - $ref: '#/components/schemas/Requirement'
+          readOnly: true
+          nullable: true
+        project:
+          allOf:
+          - $ref: '#/components/schemas/Project'
+          readOnly: true
+          nullable: true
+        sprint_status:
+          readOnly: true
+          oneOf:
+          - $ref: '#/components/schemas/SprintStatusEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_modified:
+          type: string
+          format: date-time
+          readOnly: true
+        total_story_points:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        completed_story_points:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+    PatchedTask:
+      type: object
+      properties:
+        group_list:
+          type: integer
+          writeOnly: true
+        organisation_id:
+          type: integer
+        organisation_name:
+          type: string
+          readOnly: true
+        task_end_date:
+          type: string
+          format: date-time
+        task_higher_order_status:
+          type: string
+          readOnly: true
+        task_id:
+          type: integer
+          readOnly: true
+        task_long_description:
+          type: string
+        task_short_description:
+          type: string
+          maxLength: 255
+        task_priority:
+          $ref: '#/components/schemas/TaskPriorityEnum'
+        task_priority_name:
+          type: string
+          readOnly: true
+        task_start_date:
+          type: string
+          format: date-time
+        task_status:
+          type: integer
+        task_status_name:
           type: string
           readOnly: true
         uuid:
@@ -1214,59 +3863,78 @@ components:
     Project:
       type: object
       properties:
-        group_list:
-          type: integer
-          writeOnly: true
-        organisation_id:
-          type: integer
-        organisation_name:
-          type: string
-          readOnly: true
-        project_description:
-          type: string
-        project_end_date:
-          type: string
-          format: date-time
-        project_higher_order_status:
-          type: string
-          readOnly: true
         project_id:
           type: integer
           readOnly: true
         project_name:
           type: string
           maxLength: 255
+        project_description:
+          type: string
+        organisation:
+          $ref: '#/components/schemas/Organisation'
+        project_status:
+          $ref: '#/components/schemas/ProjectStatus'
+        project_higher_order_status:
+          allOf:
+          - $ref: '#/components/schemas/ProjectHigherOrderStatusEnum'
+          readOnly: true
         project_priority:
           $ref: '#/components/schemas/ProjectPriorityEnum'
-        project_priority_name:
-          type: string
-          readOnly: true
+        project_story_point:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
         project_start_date:
           type: string
           format: date-time
-        project_status:
-          type: integer
-        project_status_name:
+        project_end_date:
           type: string
+          format: date-time
+        group_list:
+          type: array
+          items:
+            type: integer
+            writeOnly: true
+          writeOnly: true
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_modified:
+          type: string
+          format: date-time
           readOnly: true
         uuid:
           type: string
           format: uuid
           writeOnly: true
       required:
+      - date_created
+      - date_modified
       - group_list
-      - organisation_id
-      - organisation_name
+      - organisation
       - project_description
       - project_end_date
       - project_higher_order_status
       - project_id
       - project_name
       - project_priority
-      - project_priority_name
       - project_start_date
       - project_status
-      - project_status_name
+    ProjectHigherOrderStatusEnum:
+      enum:
+      - Backlog
+      - Normal
+      - Blocked
+      - Closed
+      type: string
+      description: |-
+        * `Backlog` - Backlog
+        * `Normal` - Normal
+        * `Blocked` - Blocked
+        * `Closed` - Closed
     ProjectPriorityEnum:
       enum:
       - 0
@@ -1281,6 +3949,346 @@ components:
         * `2` - Normal
         * `3` - Low
         * `4` - Lowest
+    ProjectStatus:
+      type: object
+      properties:
+        project_status_id:
+          type: integer
+          readOnly: true
+        project_status:
+          type: string
+          maxLength: 100
+      required:
+      - project_status
+      - project_status_id
+    RequestForChange:
+      type: object
+      properties:
+        rfc_id:
+          type: integer
+          readOnly: true
+        change_task:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChangeTask'
+          readOnly: true
+          nullable: true
+        group_list:
+          type: integer
+          writeOnly: true
+        rfc_implementation_start_date:
+          type: string
+          format: date-time
+          readOnly: true
+        rfc_implementation_end_date:
+          type: string
+          format: date-time
+          readOnly: true
+        rfc_status:
+          type: integer
+        rfc_status_name:
+          type: string
+          readOnly: true
+        rfc_type_name:
+          type: string
+          readOnly: true
+        rfc_priority_name:
+          type: string
+          readOnly: true
+        rfc_risk:
+          $ref: '#/components/schemas/RfcRiskEnum'
+        rfc_risk_name:
+          type: string
+          readOnly: true
+        rfc_impact:
+          $ref: '#/components/schemas/RfcImpactEnum'
+        rfc_impact_name:
+          type: string
+          readOnly: true
+        rfc_version_number:
+          type: string
+        rfc_priority:
+          $ref: '#/components/schemas/RfcPriorityEnum'
+        rfc_type:
+          $ref: '#/components/schemas/RfcTypeEnum'
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_modified:
+          type: string
+          format: date-time
+          readOnly: true
+        uuid:
+          type: string
+          format: uuid
+          writeOnly: true
+        rfc_title:
+          type: string
+          maxLength: 255
+        rfc_summary:
+          type: string
+        rfc_implementation_release_date:
+          type: string
+          format: date-time
+        rfc_risk_and_impact_analysis:
+          type: string
+        rfc_implementation_plan:
+          type: string
+        rfc_backout_plan:
+          type: string
+        rfc_test_plan:
+          type: string
+        rfc_lead:
+          type: integer
+      required:
+      - change_task
+      - date_created
+      - date_modified
+      - group_list
+      - rfc_backout_plan
+      - rfc_id
+      - rfc_impact
+      - rfc_impact_name
+      - rfc_implementation_end_date
+      - rfc_implementation_plan
+      - rfc_implementation_release_date
+      - rfc_implementation_start_date
+      - rfc_lead
+      - rfc_priority
+      - rfc_priority_name
+      - rfc_risk
+      - rfc_risk_and_impact_analysis
+      - rfc_risk_name
+      - rfc_status
+      - rfc_status_name
+      - rfc_summary
+      - rfc_test_plan
+      - rfc_title
+      - rfc_type
+      - rfc_type_name
+      - rfc_version_number
+    Requirement:
+      type: object
+      properties:
+        group_list:
+          type: integer
+          writeOnly: true
+        organisation_id:
+          type: integer
+        organisation_name:
+          type: string
+          readOnly: true
+        requirement_id:
+          type: integer
+          readOnly: true
+        requirement_item:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequirementItem'
+          readOnly: true
+          nullable: true
+        requirement_scope:
+          type: string
+        requirement_status:
+          type: integer
+        requirement_status_name:
+          type: string
+          readOnly: true
+        requirement_title:
+          type: string
+          maxLength: 255
+        requirement_type:
+          type: integer
+        requirement_type_name:
+          type: string
+          readOnly: true
+        uuid:
+          type: string
+          format: uuid
+          writeOnly: true
+      required:
+      - group_list
+      - organisation_id
+      - organisation_name
+      - requirement_id
+      - requirement_item
+      - requirement_scope
+      - requirement_status
+      - requirement_status_name
+      - requirement_title
+      - requirement_type
+      - requirement_type_name
+    RequirementItem:
+      type: object
+      properties:
+        requirement_item_id:
+          type: integer
+          readOnly: true
+        requirement_item_status_name:
+          type: string
+          readOnly: true
+        requirement_item_type_name:
+          type: string
+          readOnly: true
+        requirement_item_priority:
+          $ref: '#/components/schemas/RequirementItemPriorityEnum'
+        requirement_item_priority_text:
+          type: string
+          readOnly: true
+        requirement_item_scope:
+          type: string
+        requirement_item_title:
+          type: string
+          maxLength: 255
+        requirement_item_story_point:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        requirement_item_status:
+          type: integer
+        requirement_item_type:
+          type: integer
+      required:
+      - date_created
+      - requirement_item_id
+      - requirement_item_priority_text
+      - requirement_item_scope
+      - requirement_item_status
+      - requirement_item_status_name
+      - requirement_item_title
+      - requirement_item_type
+      - requirement_item_type_name
+    RequirementItemPriorityEnum:
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      type: integer
+      description: |-
+        * `0` - 0
+        * `1` - 1
+        * `2` - 2
+        * `3` - 3
+        * `4` - 4
+    RfcImpactEnum:
+      enum:
+      - 3
+      - 2
+      - 1
+      type: integer
+      description: |-
+        * `3` - High
+        * `2` - Medium
+        * `1` - Low
+    RfcPriorityEnum:
+      enum:
+      - 4
+      - 3
+      - 2
+      - 1
+      type: integer
+      description: |-
+        * `4` - Critical
+        * `3` - High
+        * `2` - Medium
+        * `1` - Low
+    RfcRiskEnum:
+      enum:
+      - 5
+      - 4
+      - 3
+      - 2
+      - 1
+      type: integer
+      description: |-
+        * `5` - Very High
+        * `4` - High
+        * `3` - Moderate
+        * `2` - Low
+        * `1` - None
+    RfcTypeEnum:
+      enum:
+      - 4
+      - 3
+      - 2
+      - 1
+      type: integer
+      description: |-
+        * `4` - Emergency
+        * `3` - High
+        * `2` - Medium
+        * `1` - Low
+    Sprint:
+      type: object
+      properties:
+        sprint_id:
+          type: integer
+          readOnly: true
+        destination:
+          $ref: '#/components/schemas/DestinationEnum'
+        location_id:
+          type: integer
+        sprint_name:
+          type: string
+        sprint_start_date:
+          type: string
+          format: date-time
+        sprint_end_date:
+          type: string
+          format: date-time
+        requirement:
+          allOf:
+          - $ref: '#/components/schemas/Requirement'
+          readOnly: true
+          nullable: true
+        project:
+          allOf:
+          - $ref: '#/components/schemas/Project'
+          readOnly: true
+          nullable: true
+        sprint_status:
+          readOnly: true
+          oneOf:
+          - $ref: '#/components/schemas/SprintStatusEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_modified:
+          type: string
+          format: date-time
+          readOnly: true
+        total_story_points:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        completed_story_points:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+      required:
+      - date_created
+      - date_modified
+      - destination
+      - location_id
+      - project
+      - requirement
+      - sprint_end_date
+      - sprint_id
+      - sprint_name
+      - sprint_start_date
+      - sprint_status
     SprintList:
       type: object
       properties:
@@ -1300,6 +4308,16 @@ components:
       - sprint_end_date
       - sprint_id
       - sprint_start_date
+    SprintStatusEnum:
+      enum:
+      - Draft
+      - Current
+      - Finished
+      type: string
+      description: |-
+        * `Draft` - Draft
+        * `Current` - Current
+        * `Finished` - Finished
     Tag:
       type: object
       properties:
@@ -1346,6 +4364,111 @@ components:
       required:
       - tag_id
       - tag_name
+    Task:
+      type: object
+      properties:
+        group_list:
+          type: integer
+          writeOnly: true
+        organisation_id:
+          type: integer
+        organisation_name:
+          type: string
+          readOnly: true
+        task_end_date:
+          type: string
+          format: date-time
+        task_higher_order_status:
+          type: string
+          readOnly: true
+        task_id:
+          type: integer
+          readOnly: true
+        task_long_description:
+          type: string
+        task_short_description:
+          type: string
+          maxLength: 255
+        task_priority:
+          $ref: '#/components/schemas/TaskPriorityEnum'
+        task_priority_name:
+          type: string
+          readOnly: true
+        task_start_date:
+          type: string
+          format: date-time
+        task_status:
+          type: integer
+        task_status_name:
+          type: string
+          readOnly: true
+        uuid:
+          type: string
+          format: uuid
+          writeOnly: true
+      required:
+      - group_list
+      - organisation_id
+      - organisation_name
+      - task_end_date
+      - task_higher_order_status
+      - task_id
+      - task_long_description
+      - task_priority
+      - task_priority_name
+      - task_short_description
+      - task_start_date
+      - task_status
+      - task_status_name
+    TaskPriorityEnum:
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      type: integer
+      description: |-
+        * `0` - 0
+        * `1` - 1
+        * `2` - 2
+        * `3` - 3
+        * `4` - 4
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        profile_picture:
+          type: string
+          format: uri
+          readOnly: true
+        profile_picture_path:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - profile_picture
+      - profile_picture_path
+      - username
   securitySchemes:
     basicAuth:
       type: http

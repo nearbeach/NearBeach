@@ -22,7 +22,8 @@ from NearBeach.views.tools.internal_functions import set_object_from_destination
 class GroupAndUserViewSet(viewsets.ViewSet):
     serializer_class = GroupAndUserSerializer
 
-    def _get_group_list(self, destination, location_id):
+    @staticmethod
+    def _get_group_list(destination, location_id):
         object_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             group_id__isnull=False,
@@ -70,7 +71,8 @@ class GroupAndUserViewSet(viewsets.ViewSet):
             },
         )
 
-    def _get_potential_user_list(self, destination, location_id):
+    @staticmethod
+    def _get_potential_user_list(destination, location_id):
         # Get a list of users we want to exclude
         object_results = ObjectAssignment.objects.filter(
             is_deleted=False,
@@ -118,7 +120,8 @@ class GroupAndUserViewSet(viewsets.ViewSet):
             profile_picture=F('userprofilepicture__document_id__document_key')
         )
 
-    def _get_user_list(self, destination, location_id):
+    @staticmethod
+    def _get_user_list(destination, location_id):
         # Get the data we want
         object_results = ObjectAssignment.objects.filter(
             is_deleted=False,
@@ -129,7 +132,6 @@ class GroupAndUserViewSet(viewsets.ViewSet):
         )
 
         return object_results
-
 
     @extend_schema(
         description="""
@@ -362,7 +364,12 @@ This endpoint is primarily used by the frontend in the "Group and User" section 
         destination = kwargs["destination"]
         location_id = kwargs["location_id"]
 
-        # TODO - Add in destination check - not all destination objects can be utilised for this function :)
+        # Sprints should not work - forbidden
+        if destination == "sprint":
+            return Response(
+                data={"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         serializer = self._get_group_and_user_list(
             destination,

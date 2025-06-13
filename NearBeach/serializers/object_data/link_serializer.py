@@ -9,10 +9,6 @@ from NearBeach.models import (
 
 
 class LinkSerializer(serializers.Serializer):
-    change_task = serializers.PrimaryKeyRelatedField(
-        queryset=ChangeTask.objects.all(),
-        required=False,
-    )
     link_relationship = serializers.CharField(
         read_only=True,
     )
@@ -34,26 +30,10 @@ class LinkSerializer(serializers.Serializer):
     parent_link = serializers.CharField(
         read_only=True,
     )
-    project = serializers.PrimaryKeyRelatedField(
-        queryset=Project.objects.all(),
-        required=False,
-    )
-    requirement = serializers.PrimaryKeyRelatedField(
-        queryset=Requirement.objects.all(),
-        required=False,
-    )
-    requirement_item = serializers.PrimaryKeyRelatedField(
-        queryset=RequirementItem.objects.all(),
-        required=False,
-    )
     reverse_relation = serializers.BooleanField(
         read_only=True,
     )
-    task = serializers.PrimaryKeyRelatedField(
-        queryset=Task.objects.all(),
-        required=False,
-    )
-    object_relation = serializers.CharField(
+    object_relation = serializers.CharField( #CHANGTO ENUM
         required=False,
     )
 
@@ -69,3 +49,15 @@ class LinkSerializer(serializers.Serializer):
             fields["object_relation"].required = True
 
         return fields
+
+    class Meta(object):
+        fields = (
+            "object_assignment_id",
+            "object_type",
+            "object_id",
+            "object_title",
+            "object_status",
+            "parent_link",
+            "link_relationship",
+            "reverse_relation",
+        )
