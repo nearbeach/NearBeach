@@ -2,11 +2,14 @@ from rest_framework import serializers
 from NearBeach.models import Tag
 
 
-class TagSerializer(serializers.Serializer):
+class TagSerializer(serializers.ModelSerializer):
+    tag_id = serializers.IntegerField(
+        read_only=True,
+    )
     tag_assignment_id = serializers.IntegerField(
         read_only=True,
     )
-    tag_id = serializers.IntegerField(
+    tag_colour = serializers.CharField(
         read_only=True,
     )
     tag_list = serializers.PrimaryKeyRelatedField(
@@ -15,9 +18,6 @@ class TagSerializer(serializers.Serializer):
         queryset=Tag.objects.all(),
     )
     tag_name = serializers.CharField(
-        read_only=True,
-    )
-    tag_colour = serializers.CharField(
         read_only=True,
     )
     tag_text_colour = serializers.CharField(
@@ -35,3 +35,14 @@ class TagSerializer(serializers.Serializer):
             fields["tag_list"].required = True
 
         return fields
+
+    class Meta:
+        model = Tag
+        fields = [
+            "tag_assignment_id",
+            "tag_id",
+            "tag_name",
+            "tag_list",
+            "tag_colour",
+            "tag_text_colour",
+        ]

@@ -65,10 +65,10 @@ def check_sprint_permission_with_sprint(min_permission_level):
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
-            request = request.request if hasattr(request, "request") else request
+            _request = request.request if hasattr(request, "request") else request
 
             # If user is admin - grant them all permissions
-            if request.user.is_superuser:
+            if _request.user.is_superuser:
                 # Return the function with a user_level of 4
                 return func(request, *args, **kwargs, user_level=4)
 
@@ -87,10 +87,10 @@ def check_sprint_permission_with_sprint(min_permission_level):
             if sprint_results.project is not None:
                 # We can assume this is a project
                 kwargs["project_id"] = sprint_results.project_id
-                passes, user_level, _ = FUNCTION_DICT["project"](request, kwargs)
+                passes, user_level, _ = FUNCTION_DICT["project"](_request, kwargs)
             else:
                 kwargs["requirement_id"] = sprint_results.requirement_id
-                passes, user_level, _ = FUNCTION_DICT["requirement"](request, kwargs)
+                passes, user_level, _ = FUNCTION_DICT["requirement"](_request, kwargs)
 
             # Check to see if it passes
             if not passes:

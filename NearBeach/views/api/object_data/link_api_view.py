@@ -1,11 +1,11 @@
 from collections import namedtuple
 
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.db.models import Q, F, Value
 from NearBeach.decorators.check_user_permissions.api_object_data_permissions_v0 import api_object_data_permissions
-from NearBeach.serializers.object_data.link_serializer import LinkSerializer
+from NearBeach.serializers.object_data.link_serializer import LinkSerializer, RELATION_DICT
 from NearBeach.models import (
     ChangeTask,
     KanbanCard,
@@ -28,6 +28,7 @@ OBJECT_STRUCTURE = namedtuple(
     ]
 )
 
+
 OBJECT_DICT = {
     "change_task": ChangeTask.objects,
     "project": Project.objects,
@@ -36,15 +37,6 @@ OBJECT_DICT = {
     "requirement_item": RequirementItem.objects,
 }
 
-RELATION_DICT = {
-    "relates": "Relate",
-    "blocked_by": "Block",
-    "blocking": "Block",
-    "sub_object_of": "Subobject",
-    "parent_object_of": "Subobject",
-    "has_duplicate": "Duplicate",
-    "duplicate_object": "Duplicate",
-}
 
 OBJECT_TITLE = {
     "change_task": "change_task_title",
@@ -60,6 +52,7 @@ OBJECT_TITLE = {
 )
 class LinkViewSet(viewsets.ModelViewSet):
     serializer_class = LinkSerializer
+    http_method_names = ["get", "post", "put", "delete"]
 
     def _get_list(self, destination, location_id):
         # Check objects that match the destination and location id
@@ -202,6 +195,69 @@ class LinkViewSet(viewsets.ModelViewSet):
             many=True,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+This endpoint allows you to link other objects to the current object. For example, those objects might;
+- Relate To
+- Is Blocked By
+- Is Currently Blocking
+- Is Sub Object
+- Is Parent Object
+- Has Duplicated Object Of
+- Is Duplicated Object Of
+
+
+# 🌏 Url
+
+- Destination: The type of object you're linking to. Must be one of the following:
+    - Project
+    - Requirement
+    - Requirement Item
+    - Task
+- Location ID: The unique ID of the specific object currently modifying
+
+
+# 🧾 Parameters
+
+- Object Type: The object we are currently trying to link. These will be;
+    - Requirement
+    - Requirement Item
+    - Project
+    - Task
+- Object Id: A list of ID's for the objects (of type) we are currently trying to link
+- Object Relation: The type of connection we are aiming for;
+    - relates
+    - blocked_by
+    - blocking
+    - sub_object_of
+    - parent_object_of
+    - has_duplicate
+    - duplicate_object
+
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Add Task 2 as Blocking Project 1. Please note the url will be `/api/v0/project/2/link/`",
+                value={
+                    "object_id": 2,
+                    "object_type": "task",
+                    "object_relation": "blocked_by"
+                },
+            ),
+            OpenApiExample(
+                "Example 2",
+                description="Add Task 2 as relating Project 2. Please note the url will be `/api/v0/project/2/link/`",
+                value={
+                    "object_id": 2,
+                    "object_type": "task",
+                    "object_relation": "relates"
+                },
+            ),
+        ],
+    )
     @api_object_data_permissions(min_permission_level=2)
     def create(self, request, *args, **kwargs):
         serializer = LinkSerializer(
@@ -217,57 +273,56 @@ class LinkViewSet(viewsets.ModelViewSet):
         # Get the parent object of
         destination = kwargs["destination"]
         location_id = kwargs["location_id"]
+        object_type = serializer.data["object_type"]
         object_relation = serializer.data["object_relation"]
 
-        # Loop through the results and add them in.
-        # We will loop through each object type, and add them in accordinly
-        for object_type in list(OBJECT_DICT.keys()):
-            # Get the results of each object type and add them
-            for row in request.POST.getlist(object_type):
-                single_object = OBJECT_DICT[object_type].get(pk=row)
+        # Check to make sure the object_id exists
+        if not object_type in list(OBJECT_DICT.keys()):
+            return Response(
+                data={"Object Type not in system"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-                submit_object_assignment = ObjectAssignment(
-                    change_user=request.user,
-                    **{object_type: single_object}
-                )
+        # We have the object type
+        # We have the object id
+        single_object = OBJECT_DICT[object_type].get(pk=serializer.validated_data["object_id"])
 
-                # Set the object destination
-                set_object_from_destination(
-                    submit_object_assignment, destination, location_id
-                )
+        submit_object_assignment = ObjectAssignment(
+            change_user=request.user,
+            **{object_type: single_object},
+            **{F"{destination}_id": location_id},
+        )
 
-                # Set the parent object if it relates. Depending on the wording - depends if the current
-                # Object is the parent object, or not.
-                if object_relation in ['relates', 'blocking', 'parent_object_of', 'has_duplicate']:
-                    submit_object_assignment.parent_link = destination
-                else:
-                    if destination == object_type:
-                        submit_object_assignment.parent_link = "meta_object"
-                    else:
-                        submit_object_assignment.parent_link = object_type
+        if object_relation in ['relates', 'blocking', 'parent_object_of', 'has_duplicate']:
+            submit_object_assignment.parent_link = destination
+        else:
+            if destination == object_type:
+                submit_object_assignment.parent_link = "meta_object"
+            else:
+                submit_object_assignment.parent_link = object_type
 
-                # Add the link relationship from the dictionary
-                submit_object_assignment.link_relationship = RELATION_DICT[object_relation]
+        # Add the link relationship from the dictionary
+        submit_object_assignment.link_relationship = RELATION_DICT[object_relation]
 
-                # If object destination is the same as the object type, add the meta_object value
-                if destination == object_type:
-                    # We need to set the meta object
-                    setattr(submit_object_assignment, "meta_object", row)
+        # If object destination is the same as the object type, add the meta_object value
+        if destination == object_type:
+            # We need to set the meta object
+            setattr(submit_object_assignment, "meta_object", row)
 
-                    # Update the status and the title with the correct data
-                    setattr(
-                        submit_object_assignment,
-                        "meta_object_title",
-                        getattr(single_object, OBJECT_TITLE[object_type]),
-                    )
+            # Update the status and the title with the correct data
+            setattr(
+                submit_object_assignment,
+                "meta_object_title",
+                getattr(single_object, OBJECT_TITLE[object_type]),
+            )
 
-                    setattr(
-                        submit_object_assignment,
-                        "meta_object_status",
-                        getattr(single_object, F"{object_type}_status"),
-                    )
+            setattr(
+                submit_object_assignment,
+                "meta_object_status",
+                getattr(single_object, F"{object_type}_status"),
+            )
 
-                submit_object_assignment.save()
+        submit_object_assignment.save()
 
         # Now get the new data
         serializer = self._get_list(destination, location_id)
@@ -276,6 +331,36 @@ class LinkViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED,
         )
 
+    @extend_schema(
+        description="""
+Remove a single link from this object. The IDs for the link can be obtained by using the GET functionality.
+
+Parameters
+
+Destination is the object you are looking up. It can only be;
+- Change Task
+- Project
+- Requirement
+- Requirement Item
+- Task
+
+The Location Id, is the ID number of that specific object.
+
+The ID for the results should be the "Object Assignment" id
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Remove link (2) from the current project",
+                value={"object_id": 2},
+            ),
+            OpenApiExample(
+                "Example 2",
+                description="Remove link (3) from the current project",
+                value={"object_id": 3},
+            ),
+        ],
+    )
     @api_object_data_permissions(min_permission_level=4)
     def destroy(self, request, pk=None, *args, **kwargs):
         # Get data from serializer
@@ -309,6 +394,46 @@ class LinkViewSet(viewsets.ModelViewSet):
             status=status.HTTP_204_NO_CONTENT
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+This API endpoint provides a list of all links for the specific object.
+
+# Returned Fields:
+
+- **Link Relationship**: The Links' relationship. Broken down into;
+    - Relate
+    - Block
+    - Subobject
+    - Duplicate
+- **Object Assignment Id**: The ID of the link
+- **Object Id**: The ID of the linked object
+- **Object Title**: The title of the linked object
+- **Object Status**: The status of the linked object
+- **Object Type**: The object type
+    - Change Task
+    - Project
+    - Requirement
+    - Requirement Item
+    - Task
+- **Parent Link**: The parent link of the linked object
+- **Reverse Relation**: If the Relationship is meant to be reversed (i.e. blocked -> is blocking)
+
+---
+
+# 🧾 Parameters
+
+- **Destination**: The type of object you are querying. Must be one of:
+  - Change Task
+  - Project  
+  - Requirement  
+  - Requirement Item  
+  - Task  
+
+- **Location ID**: The unique ID of the specific object instance.
+            """,
+    )
     @api_object_data_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
         destination = kwargs["destination"]

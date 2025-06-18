@@ -16,17 +16,17 @@ def check_user_organisation_permissions(min_permission_level):
         @wraps(func)
         def inner(request, *args, **kwargs):
             # Need to update request if we are using API
-            request = request.request if hasattr(request, "request") else request
+            _request = request.request if hasattr(request, "request") else request
 
             # if user is admin -grant them all permissions
-            if request.user.is_superuser:
+            if _request.user.is_superuser:
                 # Return the function with a user_level of 4
                 return func(request, *args, **kwargs, user_level=4)
 
             # Default user level is 0
             user_group_results = UserGroup.objects.filter(
                 is_deleted=False,
-                username=request.user,
+                username=_request.user,
             )
 
             # Get the max permission value from user_group_results
