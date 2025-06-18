@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.db.models import F
@@ -14,7 +14,8 @@ from NearBeach.models import Tag, TagAssignment
 class TagViewSet(viewsets.ViewSet):
     serializer_class = TagSerializer
     
-    def _get_tag_list(self, destination, location_id):
+    @staticmethod
+    def _get_tag_list(destination, location_id):
         # Get the data we want
         tag_results = TagAssignment.objects.filter(
             is_deleted=False,
@@ -38,6 +39,32 @@ class TagViewSet(viewsets.ViewSet):
             many=True,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+This endpoint allows you to add a tag to the specific object
+
+# 🧾 Parameters
+
+- Destination: The type of object you're linking to. Must be one of the following:
+    - Kanban Card
+    - Project
+    - Request for Change
+    - Requirement
+    - Requirement Item
+    - Task
+- Location ID: The unique ID of the specific object you're modifying (e.g., the project ID or task ID).
+- tag_list: A list of ID's connected to the tags. You can fet all tag data by hitting the available data tag list.
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Add Tag Id of 1 to current project. Url is `api/v0/project/2/tag/`",
+                value={"tag_id": [1]},
+            ),
+        ],
+    )
     @api_object_data_permissions(min_permission_level=2)
     def create(self, request, *args, **kwargs):
         serializer = TagSerializer(
@@ -75,6 +102,25 @@ class TagViewSet(viewsets.ViewSet):
             status=status.HTTP_201_CREATED
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Destroy a tag connected against the current object
+
+# 🧾 Parameters
+
+- Destination: The type of object you're linking to. Must be one of the following:
+    - Kanban Card
+    - Project
+    - Request for Change
+    - Requirement
+    - Requirement Item
+    - Task
+- Location ID: The unique ID of the specific object you're modifying (e.g., the project ID or task ID).
+- Tag Id: this can be found out using the list functionality.
+        """,
+    )
     @api_object_data_permissions(min_permission_level=2)
     def destroy(self, request, pk=None, *args, **kwargs):
         serializer = TagSerializer(
@@ -116,6 +162,24 @@ class TagViewSet(viewsets.ViewSet):
             status=status.HTTP_204_NO_CONTENT,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Lists all tags currently under the object
+
+# 🧾 Parameters
+
+- Destination: The type of object you're linking to. Must be one of the following:
+    - Kanban Card
+    - Project
+    - Request for Change
+    - Requirement
+    - Requirement Item
+    - Task
+- Location ID: The unique ID of the specific object you're modifying (e.g., the project ID or task ID).
+        """,
+    )
     @api_object_data_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
         serializer = TagSerializer(

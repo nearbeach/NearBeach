@@ -1,6 +1,7 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.generics import get_object_or_404
 from django.db.models import F, Case, When, Value
 
 from NearBeach.decorators.check_user_permissions.api_object_data_permissions_v0 import api_object_data_permissions
@@ -55,6 +56,65 @@ class NoteViewSet(viewsets.ViewSet):
             many=True,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Create a note against the current object
+
+# 🧾 Parameters
+
+- Object Note: The new note
+- destination - the object of choice. Choices are;
+    - Kanban Card
+    - Organisation
+    - Requirement
+    - Requirement Item
+    - Project
+    - Task
+- location id - the id of the object
+""",
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Create a new kanban board",
+                value={
+                    "kanban_board_name": "My Kanban Board",
+                    "group_list": [1, 2],
+                    "kanban_column": [
+                        {
+                            "kanban_column_name": "Backlog",
+                            "kanban_column_property": "Backlog",
+                        },
+                        {
+                            "kanban_column_name": "Blocked",
+                            "kanban_column_property": "Blocked",
+                        },
+                        {
+                            "kanban_column_name": "In Progress",
+                            "kanban_column_property": "Normal",
+                        },
+                        {
+                            "kanban_column_name": "User Acceptance Testing",
+                            "kanban_column_property": "Normal",
+                        },
+                        {
+                            "kanban_column_name": "Closed",
+                            "kanban_column_property": "Closed",
+                        },
+                    ],
+                    "kanban_level": [
+                        {
+                            "kanban_level_name": "Swimlane 1",
+                        },
+                        {
+                            "kanban_level_name": "Swimlane 2",
+                        },
+                    ],
+                }
+            )
+        ],
+    )
     @api_object_data_permissions(min_permission_level=2)
     def create(self, request, *args, **kwargs):
         serializer = NoteSerializer(
@@ -103,6 +163,14 @@ class NoteViewSet(viewsets.ViewSet):
             status=status.HTTP_201_CREATED
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+
+Deletes a single note. You can get the note id from the list
+    """
+    )
     @api_object_data_permissions(min_permission_level=2)
     def destroy(self, request, pk=None, *args, **kwargs):
         serializer = NoteSerializer(
@@ -145,6 +213,25 @@ class NoteViewSet(viewsets.ViewSet):
             status=status.HTTP_204_NO_CONTENT,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Gathers a list of notes assigned to the current object
+
+
+# 🧾 Parameters
+
+- destination - the object of choice. Choices are;
+    - Kanban Card
+    - Organisation
+    - Requirement
+    - Requirement Item
+    - Project
+    - Task
+- location id - the id of the object
+        """,
+    )
     @api_object_data_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
         serializer = NoteSerializer(
@@ -169,6 +256,24 @@ class NoteViewSet(viewsets.ViewSet):
             status=status.HTTP_200_OK
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Updates a single note under an object
+
+# 🧾 Parameters
+- Object Note: The new note
+- destination - the object of choice. Choices are;
+    - Kanban Card
+    - Organisation
+    - Requirement
+    - Requirement Item
+    - Project
+    - Task
+- location id - the id of the object
+    """
+    )
     @api_object_data_permissions(min_permission_level=2)
     def update(self, request, pk=None, *args, **kwargs):
         serializer = NoteSerializer(
@@ -181,23 +286,25 @@ class NoteViewSet(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Variables
-        destination = kwargs["destination"]
-        location_id = kwargs["location_id"]
-        object_note = serializer.data["object_note"]
-
         # Get the object to update
-        update_object_note = ObjectNote.objects.get(
-            object_note_id=pk,
+        update_object_note = get_object_or_404(
+            queryset=ObjectNote.objects.filter(
+                is_deleted=False,
+            ),
+            pk=pk,
         )
 
-        # Update the data
-        update_object_note.object_note = object_note
-        update_object_note.change_user = request.user
-        update_object_note.save()
+        serializer.update(
+            update_object_note,
+            serializer.data,
+        )
 
         # Get the serialized data
-        serializer = self._get_list(request, destination, location_id)
+        serializer = self._get_list(
+            request,
+            kwargs["destination"],
+            kwargs["location_id"]
+        )
 
         return Response(
             data=serializer.data,

@@ -1,7 +1,8 @@
 from rest_framework import serializers
+from NearBeach.models import ObjectNote
 
 
-class NoteSerializer(serializers.Serializer):
+class NoteSerializer(serializers.ModelSerializer):
     can_edit = serializers.BooleanField(
         read_only=True,
     )
@@ -26,6 +27,8 @@ class NoteSerializer(serializers.Serializer):
         read_only=True,
     )
 
+    # def create(self, validated_data):
+
     def get_fields(self):
         fields = super().get_fields()
 
@@ -40,3 +43,16 @@ class NoteSerializer(serializers.Serializer):
             fields["object_note"].required = False
 
         return fields
+
+    class Meta:
+        model = ObjectNote
+        fields = [
+            "object_note_id",
+            "object_note",
+            "first_name",
+            "last_name",
+            "username",
+            "profile_picture",
+            "date_modified",
+            "can_edit",
+        ]

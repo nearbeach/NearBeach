@@ -8,11 +8,19 @@ from NearBeach.models import (
 )
 
 
+
+RELATION_DICT = {
+    "relates": "Relate",
+    "blocked_by": "Block",
+    "blocking": "Block",
+    "sub_object_of": "Subobject",
+    "parent_object_of": "Subobject",
+    "has_duplicate": "Duplicate",
+    "duplicate_object": "Duplicate",
+}
+
+
 class LinkSerializer(serializers.Serializer):
-    change_task = serializers.PrimaryKeyRelatedField(
-        queryset=ChangeTask.objects.all(),
-        required=False,
-    )
     link_relationship = serializers.CharField(
         read_only=True,
     )
@@ -20,7 +28,8 @@ class LinkSerializer(serializers.Serializer):
         read_only=True,
     )
     object_id = serializers.IntegerField(
-        read_only=True,
+        # read_only=True,
+        required=True,
     )
     object_title = serializers.CharField(
         read_only=True,
@@ -29,33 +38,18 @@ class LinkSerializer(serializers.Serializer):
         read_only=True,
     )
     object_type = serializers.CharField(
-        read_only=True,
+        # read_only=True,
+        required=True,
     )
     parent_link = serializers.CharField(
         read_only=True,
     )
-    project = serializers.PrimaryKeyRelatedField(
-        queryset=Project.objects.all(),
-        required=False,
-    )
-    requirement = serializers.PrimaryKeyRelatedField(
-        queryset=Requirement.objects.all(),
-        required=False,
-    )
-    requirement_item = serializers.PrimaryKeyRelatedField(
-        queryset=RequirementItem.objects.all(),
-        required=False,
-    )
     reverse_relation = serializers.BooleanField(
         read_only=True,
     )
-    task = serializers.PrimaryKeyRelatedField(
-        queryset=Task.objects.all(),
-        required=False,
-    )
-    object_relation = serializers.CharField(
-        required=False,
-    )
+    # object_relation = serializers.CharField( #CHANGTO ENUM
+    #     required=True,
+    # )
 
     def get_fields(self):
         fields = super().get_fields()
@@ -66,6 +60,27 @@ class LinkSerializer(serializers.Serializer):
 
         # If creating a new link, we'll need the object relation
         if self.context["request"].method == "POST":
-            fields["object_relation"].required = True
+            fields["object_relation"] = serializers.ChoiceField(
+                required=True,
+                choices=RELATION_DICT,
+            )
+        #     fields["object_relation"].required = True
+        #     fields["object_type"].required = True
+        #     fields["object_id"].required = True
+
+        # if self.context["request"].method == "GET":
+        #     fields.pop("object_relation")
 
         return fields
+
+    class Meta(object):
+        fields = (
+            "object_assignment_id",
+            "object_type",
+            "object_id",
+            "object_title",
+            "object_status",
+            "parent_link",
+            "link_relationship",
+            "reverse_relation",
+        )

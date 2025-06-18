@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from django.db.models import Q
@@ -12,12 +12,20 @@ from NearBeach.serializers.available_data.sprint_list_serializer import SprintLi
 
 
 @extend_schema(
-    tags=["Available Data"]
+    tags=["Available Data|Sprint List"]
 )
 class SprintListViewSet(viewsets.ViewSet):
     serializer_class = SprintListSerializer
 
-    #TODO: Check to see if we need to implement permissions
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Present a list of all sprints user has access too
+
+        """,
+        responses={200: SprintListSerializer},
+    )
     def list(self, request, *args, **kwargs):
         object_assignment_results = ObjectAssignment.objects.filter(
             Q(
@@ -51,4 +59,7 @@ class SprintListViewSet(viewsets.ViewSet):
             many=True,
         )
 
-        return Response(serializer.data)
+        return Response(
+            data=serializer.data,
+            status=status.HTTP_200_OK,
+        )
