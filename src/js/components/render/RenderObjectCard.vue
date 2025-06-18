@@ -6,7 +6,7 @@
 			 :key="result.pk"
 		>
 			<div class="object-card--detail">
-				<a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`"
+				<a v-bind:href="`${rootUrl}${tempTranslate(destination)}_information/${result[importVariables.id]}/`"
 					v-bind:target="target"
 				>
 					<div class="object-card--detail--link">
@@ -43,7 +43,14 @@ import {useNiceDatetime} from "../../composables/datetime/useNiceDatetime";
 export default {
 	name: "RenderObjectCard",
 	methods: {
-		useNiceDatetime
+		useNiceDatetime,
+		tempTranslate(destination) {
+			if (destination === "kanban_board") {
+				return "kanban";
+			}
+
+			return destination;
+		}
 	},
 	props: {
 		destination: {
