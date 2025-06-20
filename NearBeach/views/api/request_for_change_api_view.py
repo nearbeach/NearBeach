@@ -7,11 +7,13 @@ from NearBeach.models import (
     Organisation,
     RequestForChange,
     User,
-    UserGroup, ListOfRFCStatus,
+    UserGroup,
 )
 from NearBeach.serializers.request_for_change_serializer import RequestForChangeSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+
+from NearBeach.utils.enums import RequestForChangeStatus
 from NearBeach.views.document_views import transfer_new_object_uploads
 import datetime
 
@@ -66,7 +68,7 @@ class RequirementViewSet(viewsets.ModelViewSet):
             rfc_implementation_release_date=default_date,
             change_user=request.user,
             creation_user=request.user,
-            rfc_status=ListOfRFCStatus.objects.get(rfc_status_id=1),
+            rfc_status=RequestForChangeStatus.DRAFT,
         )
         request_for_change_submit.save()
 

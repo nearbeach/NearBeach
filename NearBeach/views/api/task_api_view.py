@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
 from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach.models import (
@@ -16,11 +17,48 @@ from NearBeach import event_hooks
 
 event_hooks.register_event_type("task.create", Task)
 
+
+@extend_schema(
+    tags=["Tasks"],
+    methods=["GET", "POST", "PUT", "DELETE"],
+)
 class TaskViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
     queryset = Task.objects.filter(is_deleted=False)
     serializer_class = TaskSerializer
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Create Tasks to help manage your tasks.
+
+# 🧾 Parameters
+
+- Task Short Description: The task's title. Should be short and under 255 characters.
+- Task Long Description: The description of the project. Can have basic HTML
+- Task Start Date
+- Task End Date
+- Organisation: The organisation that the project belongs too. Should be an int. Use the Organisation API to find the 
+correct organisation id.
+- Group List: All groups associated with this project. At least one of the user's groups will need to be included. The 
+group id's can be found using the Group List API.
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Create a new project",
+                value={
+                    "task_short_description": "My Project",
+                    "task_long_description": "<h1>Hello World</h1>",
+                    "task_start_date": "2024-12-19 15:49:37",
+                    "task_end_date": "2024-12-19 15:49:37",
+                    "organisation": 2,
+                    "group_list": [1, 2],
+                }
+            )
+        ],
+    )
     @check_user_api_permissions(min_permission_level=3)
     def create(self, request, *args, **kwargs):
         serializer = TaskSerializer(data=request.data, context={'request': request})
@@ -36,58 +74,38 @@ class TaskViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Gather instances
-        organisation_instance = Organisation.objects.get(
-            organisation_id=serializer.data.get("organisation_id"),
-        )
-
-        # Get first task status
-        task_status = ListOfTaskStatus.objects.filter(
-            is_deleted=False
-        ).order_by(
-            "task_status_sort_order",
-        )
-
-        task_submit = Task(
-            task_short_description=serializer.data.get("task_short_description"),
-            task_long_description=serializer.data.get("task_long_description"),
-            organisation=organisation_instance,
-            task_start_date=serializer.data.get("task_start_date"),
-            task_end_date=serializer.data.get("task_end_date"),
-            task_status=task_status.first(),
+        created_task = serializer.save(
             change_user=request.user,
             creation_user=request.user,
-
         )
-        task_submit.save()
-        event_hooks.emit("task.create", task_submit)
-
-        # Assign task to the groups
-        for single_group in group_list:
-            group_instance = Group.objects.get(
-                group_id=single_group,
-            )
-
-            # Save the group against the new task
-            submit_object_assignment = ObjectAssignment(
-                group_id=group_instance,
-                change_user=request.user,
-                task=task_submit,
-            )
-            submit_object_assignment.save()
 
         # Transfer any images to the new task id
         transfer_new_object_uploads(
             "task",
-            task_submit.task_id,
+            created_task.task_id,
             serializer.data.get("uuid")
         )
 
+        # Re-serialize the created task so it is in the same format as other API
+        serializer = TaskSerializer(created_task, many=False)
+
         return Response(
-            data={ "task_id": task_submit.task_id },
+            data=serializer.data,
             status=status.HTTP_201_CREATED,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Delete tasks.
+
+
+# ✅ Notes
+
+Users will need to have the permission to delete.
+        """
+    )
     @check_user_api_permissions(min_permission_level=4)
     def destroy(self, request, *args, **kwargs):
         task = self.get_object()
@@ -99,13 +117,20 @@ class TaskViewSet(viewsets.ModelViewSet):
             status=status.HTTP_204_NO_CONTENT
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Lists all tasks within NearBeach.
+
+
+# ✅ Notes
+
+- Pagination is enabled on this list. Use `?Page=` to navigate to the appropriate page.
+    """
+    )
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
-        # Setup Attributes
-        page_size = int(request.query_params.get("page_size", 100))
-        page_size = page_size if page_size <= 1000 else 1000
-        page = int(request.query_params.get("page", 1))
-
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             group_id__in=UserGroup.objects.filter(
@@ -119,12 +144,26 @@ class TaskViewSet(viewsets.ModelViewSet):
         task_results = Task.objects.filter(
             is_deleted=False,
             task_id__in=object_assignment_results.values("task_id"),
-        )[(page - 1) * page_size : page * page_size]
+        )
+
+        # Handle pagination
+        page = self.paginate_queryset(task_results)
+        if page is not None:
+            serializer = TaskSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
         serializer = TaskSerializer(task_results, many=True)
 
         return Response(serializer.data)
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Retrieves a single task.
+
+    """
+    )
     @check_user_api_permissions(min_permission_level=1)
     def retrieve(self, request, pk=None, *args, **kwargs):
         queryset = Task.objects.all()
@@ -135,6 +174,27 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = TaskSerializer(task_results)
         return Response(serializer.data)
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Updates a single task.
+
+# 🧾 Parameters
+
+- Task Short Description: The project's name. Should be short and under 255 characters.
+- Task Long Description: The description of the project. Can have basic HTML
+- Task Start Date
+- Task End Date
+- Task Status: The status of the task.
+- Task Priority: The priority of the task.
+    - 0 = Highest
+    - 1 = High
+    - 2 = Normal
+    - 3 = Low
+    - 4 = Lowest
+    """
+    )
     @check_user_api_permissions(min_permission_level=2)
     def update(self, request, pk=None, *args, **kwargs):
         serializer = TaskSerializer(data=request.data, context={'request': request})
@@ -144,20 +204,25 @@ class TaskViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Obtain Instances
-        task_status_instance = ListOfTaskStatus.objects.get(
-            task_status_id=serializer.data["task_status"],
+        # Double check the task exists
+        queryset = Task.objects.filter(
+            is_deleted=False,
+        )
+        update_task = get_object_or_404(
+            queryset,
+            pk=pk,
+        )
+        update_task.change_user = request.user
+        update_task = serializer.update(
+            update_task,
+            serializer.data,
         )
 
-        # Update task
-        update_task = Task.objects.get(pk=pk)
-        update_task.task_short_description = serializer.data["task_short_description"]
-        update_task.task_long_description = serializer.data["task_long_description"]
-        update_task.task_start_date = serializer.data["task_start_date"]
-        update_task.task_end_date = serializer.data["task_end_date"]
-        update_task.task_status = task_status_instance
-        update_task.task_priority = serializer.data["task_priority"]
-        update_task.save()
+        # Re-serialize the data to send back complete set to user
+        serializer = TaskSerializer(
+            update_task,
+            many=False,
+        )
 
         return Response(
             data=serializer.data,

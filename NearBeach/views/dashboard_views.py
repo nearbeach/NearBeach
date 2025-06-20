@@ -27,6 +27,7 @@ from NearBeach.models import (
 )
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.user_job_views import get_my_planning_objects
+from ..utils.enums import RequestForChangeStatus
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -429,7 +430,7 @@ def rfc_approvals(request):
     # Get a list of RFC's that are awaiting approval
     rfc_results = RequestForChange.objects.filter(
         is_deleted=False,
-        rfc_status=2,  # Waiting for approval
+        rfc_status=RequestForChangeStatus.WAITING_FOR_APPROVAL,  # Waiting for approval
     )
 
     """
@@ -452,7 +453,7 @@ def rfc_approvals(request):
         "rfc_id",
         "rfc_title",
         "rfc_status",
-        "rfc_status__rfc_status",
+        # "rfc_status__rfc_status",
     )
 
     # Turn results into json

@@ -110,9 +110,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Project Status
         project_status_id = validated_data.pop("project_status", 0)
-        instance.project_status = ListOfProjectStatus.objects.get(
-            project_status_id=project_status_id,
-        )
+        instance.project_status_id = project_status_id
 
         # Priority
         project_priority = validated_data.pop("project_priority", 2)

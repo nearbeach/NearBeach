@@ -69,7 +69,10 @@ group id's can be found using the Group List API.
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        created_project = serializer.save(change_user=request.user, creation_user=request.user)
+        created_project = serializer.save(
+            change_user=request.user,
+            creation_user=request.user
+        )
 
         # Transfer any images to the new project id
         transfer_new_object_uploads(

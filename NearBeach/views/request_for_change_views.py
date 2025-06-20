@@ -12,6 +12,7 @@ from NearBeach.forms import (
     UpdateRFCStatus,
 )
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
+from NearBeach.utils.enums import RequestForChangeStatus
 from NearBeach.views.tools.internal_functions import get_all_groups, get_user_group_permission
 from NearBeach.models import (
     RequestForChange,
@@ -21,7 +22,6 @@ from NearBeach.models import (
     Group,
     ChangeTask,
     RequestForChangeGroupApproval,
-    ListOfRFCStatus,
 )
 from NearBeach.views.theme_views import get_theme
 from django.db.models import Q, F
@@ -167,7 +167,7 @@ def new_request_for_change_save(request, *args, **kwargs):
     rfc_submit = RequestForChange(
         change_user=request.user,
         creation_user=request.user,
-        rfc_status=ListOfRFCStatus.objects.get(rfc_status_id=1),
+        rfc_status=RequestForChangeStatus.DRAFT,
         rfc_title=form.cleaned_data["rfc_title"],
         rfc_summary=form.cleaned_data["rfc_summary"],
         rfc_type=form.cleaned_data["rfc_type"],
@@ -322,7 +322,7 @@ def rfc_information(request, rfc_id, *args, **kwargs):
     # If rfc is not in draft mode - send user away
     rfc_results = RequestForChange.objects.filter(is_deleted=False)
     rfc_results = get_object_or_404(rfc_results, rfc_id=rfc_id)
-    if not rfc_results.rfc_status_id == 1 or kwargs["user_level"] == 1:  # Draft
+    if not rfc_results.rfc_status == RequestForChangeStatus.DRAFT or kwargs["user_level"] == 1:  # Draft
         return HttpResponseRedirect(reverse("rfc_readonly", args={rfc_id}))
 
     # Get template
@@ -558,9 +558,7 @@ def rfc_status_check_approval_status(rfc_id, rfc_results, group_results):
     # If there are no waiting for approval results - we default up to approved
     print(f"NON APPROVED: {non_approved_group_approvals}")
     if non_approved_group_approvals == 0:
-        rfc_results.rfc_status = ListOfRFCStatus.objects.get(
-            rfc_status_id=3
-        )  # Approved value
+        rfc_results.rfc_status = RequestForChangeStatus.APPROVED
         rfc_results.save()
 
         print("GOT IN HERE!")

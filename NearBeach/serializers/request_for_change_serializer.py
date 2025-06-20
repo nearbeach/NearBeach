@@ -1,15 +1,14 @@
 from rest_framework import serializers
+from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.models import (
-    ChangeTask,
     Group,
-    ListOfRFCStatus,
     RequestForChange,
     RFC_TYPE,
     RFC_PRIORITY,
     RFC_RISK,
     RFC_IMPACT,
-    RFC_STATUS,
 )
+from NearBeach.utils.enums import RequestForChangeStatus
 from NearBeach.serializers.change_task_serializer import ChangeTaskSerializer
 
 
@@ -29,14 +28,7 @@ class RequestForChangeSerializer(serializers.ModelSerializer):
     )
     rfc_implementation_start_date = serializers.ReadOnlyField()
     rfc_implementation_end_date = serializers.ReadOnlyField()
-    rfc_status = serializers.PrimaryKeyRelatedField(
-        queryset=ListOfRFCStatus.objects.filter(
-            is_deleted=False,
-        ),
-    )
-    rfc_status_name = serializers.ReadOnlyField(
-        source="rfc_status.rfc_status",
-    )
+    rfc_status = EnumField(RequestForChangeStatus)
     rfc_type_name = serializers.CharField(
         source="get_rfc_type_display",
         read_only=True,
