@@ -43,7 +43,7 @@ class SearchObjects:
             "fields": {
                 "id": "rfc_id",
                 "title": "rfc_title",
-                "status": "rfc_status__rfc_status",
+                "status": "rfc_status",
             },
             "objects": RequestForChange.objects,
             "title": "rfc_title",
