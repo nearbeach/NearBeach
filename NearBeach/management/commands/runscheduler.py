@@ -233,7 +233,7 @@ class Command(BaseCommand):
                 Q(
                     last_run__isnull=True,
                 ) | Q(
-                    last_run__gte=last_run,
+                    last_run__lte=last_run,
                 )
             ) & Q(
                 Q(
