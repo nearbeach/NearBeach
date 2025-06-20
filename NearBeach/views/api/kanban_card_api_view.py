@@ -17,6 +17,10 @@ from NearBeach import event_hooks
 
 event_hooks.register_event_type("kanban_card.create", KanbanCard)
 
+
+@extend_schema(
+    tags=["Kanban Cards"],
+)
 class KanbanCardViewSet(viewsets.ModelViewSet):
     queryset = KanbanCard.objects.filter(is_deleted=False)
     serializer_class = KanbanCardSerializer

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 import uuid
 from django.conf import settings
-from NearBeach.utils.enums import ObjectPriority
+from NearBeach.utils.enums import ObjectPriority, RequestForChangeStatus
 
 # If user has overwritten the AUTH_USER_MODEL, user that. Otherwise default to User
 USER_MODEL = getattr(settings, "AUTH_USER_MODEL", User)
@@ -120,17 +120,17 @@ RFC_RISK = (
     (1, "None"),
 )
 
-RFC_STATUS = (
-    (1, "Draft"),
-    (2, "Waiting for approval"),
-    (3, "Approved"),
-    (4, "Started"),
-    (5, "Finished"),
-    (6, "Rejected"),
-    (7, "Paused"),
-    (8, "Ready for QA"),
-    (9, "Failed"),
-)
+# RFC_STATUS = (
+#     (1, "Draft"),
+#     (2, "Waiting for approval"),
+#     (3, "Approved"),
+#     (4, "Started"),
+#     (5, "Finished"),
+#     (6, "Rejected"),
+#     (7, "Paused"),
+#     (8, "Ready for QA"),
+#     (9, "Failed"),
+# )
 
 RFC_TYPE = (
     (4, "Emergency"),
@@ -291,7 +291,7 @@ class ChangeTask(models.Model):
         default="Stakeholder(s)",
     )
     change_task_status = models.IntegerField(
-        choices=RFC_STATUS,  # Similar FLOW to RFC
+        choices=RequestForChangeStatus, # Similar FLOW to RFC
     )
     is_downtime = models.BooleanField(
         default=False,
@@ -906,28 +906,6 @@ class ListOfRequirementType(models.Model):
         return str(self.requirement_type)
 
 
-class ListOfRFCStatus(models.Model):
-    rfc_status_id = models.BigAutoField(primary_key=True)
-    rfc_status = models.CharField(
-        max_length=100,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="%(class)s_change_user",
-        blank=True,
-        null=True,
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        return str(self.rfc_status)
-
-
 class ListOfTaskStatus(models.Model):
     task_status_id = models.BigAutoField(primary_key=True)
     task_status = models.CharField(
@@ -1495,9 +1473,8 @@ class RequestForChange(models.Model):
         blank=True,
         default='',
     )
-    rfc_status = models.ForeignKey(
-        "ListOfRfcStatus",
-        on_delete=models.CASCADE,
+    rfc_status = models.IntegerField(
+        choices=RequestForChangeStatus,
     )
     rfc_lead = models.ForeignKey(
         USER_MODEL,

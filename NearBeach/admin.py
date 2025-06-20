@@ -22,7 +22,6 @@ from .models import (
     ListOfRequirementItemType,
     ListOfRequirementStatus,
     ListOfRequirementType,
-    ListOfRFCStatus,
     ListOfTaskStatus,
     ListOfTitle,
     Notification,
@@ -68,7 +67,6 @@ admin.site.register(ListOfRequirementItemStatus)
 admin.site.register(ListOfRequirementItemType)
 admin.site.register(ListOfRequirementStatus)
 admin.site.register(ListOfRequirementType)
-admin.site.register(ListOfRFCStatus)
 admin.site.register(ListOfTaskStatus)
 admin.site.register(ListOfTitle)
 admin.site.register(Notification)
