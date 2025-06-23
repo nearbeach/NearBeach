@@ -3,7 +3,7 @@ from NearBeach.models import ChangeTask
 from django.contrib.auth.models import User
 from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.serializers.user_django_serializer import UserDjangoSerializer
-from NearBeach.utils.enums import RequestForChangeStatus
+from NearBeach.utils.enums.request_for_change_enums import RequestForChangeStatus
 
 
 class ChangeTaskSerializer(serializers.ModelSerializer):

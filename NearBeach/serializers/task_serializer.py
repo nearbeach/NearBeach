@@ -6,7 +6,7 @@ from NearBeach.models import (
 from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 from NearBeach.serializers.task_status_serializer import TaskStatusSerializer
-from NearBeach.utils.enums import ObjectPriority
+from NearBeach.utils.enums.object_enums import ObjectPriority
 
 
 class TaskSerializer(serializers.ModelSerializer):

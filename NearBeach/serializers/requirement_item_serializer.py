@@ -4,7 +4,7 @@ from NearBeach.models import (
     ListOfRequirementItemType,
     RequirementItem,
 )
-from NearBeach.utils.enums import ObjectPriority
+from NearBeach.utils.enums.object_enums import ObjectPriority
 
 
 class RequirementItemSerializer(serializers.ModelSerializer):

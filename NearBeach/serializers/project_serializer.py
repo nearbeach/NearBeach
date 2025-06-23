@@ -9,7 +9,7 @@ from NearBeach.models import (
 from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.serializers.project_status_serializer import ProjectStatusSerializer
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
-from NearBeach.utils.enums import ObjectPriority
+from NearBeach.utils.enums.object_enums import ObjectPriority
 
 
 class ProjectSerializer(serializers.ModelSerializer):

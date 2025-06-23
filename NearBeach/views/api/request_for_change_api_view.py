@@ -13,7 +13,7 @@ from NearBeach.serializers.request_for_change_serializer import RequestForChange
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from NearBeach.utils.enums import RequestForChangeStatus
+from NearBeach.utils.enums.request_for_change_enums import RequestForChangeStatus
 from NearBeach.views.document_views import transfer_new_object_uploads
 import datetime
 

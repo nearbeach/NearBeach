@@ -5,7 +5,7 @@ from NearBeach.models import (
     Group,
     RequestForChange, ObjectAssignment,
 )
-from NearBeach.utils.enums import RequestForChangeStatus, RequestForChangeType, RequestForChangePriority, \
+from NearBeach.utils.enums.request_for_change_enums import RequestForChangeStatus, RequestForChangeType, RequestForChangePriority, \
     RequestForChangeRisk, RequestForChangeImpact
 from NearBeach.serializers.change_task_serializer import ChangeTaskSerializer
 from NearBeach.serializers.user_django_serializer import UserDjangoSerializer

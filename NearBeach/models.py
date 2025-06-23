@@ -5,8 +5,14 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 import uuid
 from django.conf import settings
-from NearBeach.utils.enums import ObjectPriority, RequestForChangeStatus, RequestForChangeType, \
-    RequestForChangePriority, RequestForChangeRisk, RequestForChangeImpact
+from NearBeach.utils.enums.object_enums import ObjectPriority
+from NearBeach.utils.enums.request_for_change_enums import (
+    RequestForChangeStatus,
+    RequestForChangeType,
+    RequestForChangePriority,
+    RequestForChangeRisk,
+    RequestForChangeImpact,
+)
 
 # If user has overwritten the AUTH_USER_MODEL, user that. Otherwise default to User
 USER_MODEL = getattr(settings, "AUTH_USER_MODEL", User)
