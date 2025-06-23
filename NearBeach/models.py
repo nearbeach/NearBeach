@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 import uuid
 from django.conf import settings
-from NearBeach.utils.enums import ObjectPriority, RequestForChangeStatus
+from NearBeach.utils.enums import ObjectPriority, RequestForChangeStatus, RequestForChangeType, \
+    RequestForChangePriority, RequestForChangeRisk, RequestForChangeImpact
 
 # If user has overwritten the AUTH_USER_MODEL, user that. Otherwise default to User
 USER_MODEL = getattr(settings, "AUTH_USER_MODEL", User)
@@ -99,26 +100,9 @@ RFC_APPROVAL = (
     (4, "Cancel"),
 )
 
-RFC_IMPACT = (
-    (3, "High"),
-    (2, "Medium"),
-    (1, "Low"),
-)
 
-RFC_PRIORITY = (
-    (4, "Critical"),
-    (3, "High"),
-    (2, "Medium"),
-    (1, "Low"),
-)
 
-RFC_RISK = (
-    (5, "Very High"),
-    (4, "High"),
-    (3, "Moderate"),
-    (2, "Low"),
-    (1, "None"),
-)
+
 
 # RFC_STATUS = (
 #     (1, "Draft"),
@@ -132,12 +116,7 @@ RFC_RISK = (
 #     (9, "Failed"),
 # )
 
-RFC_TYPE = (
-    (4, "Emergency"),
-    (3, "High"),
-    (2, "Medium"),
-    (1, "Low"),
-)
+
 
 SCH_SET_DAY_OF_THE_WEEK = "Set Day of the Week"
 SCH_WEEKLY = "Weekly"
@@ -1463,7 +1442,7 @@ class RequestForChange(models.Model):
     )
     rfc_summary = models.TextField("rfc_summary")
     rfc_type = models.IntegerField(
-        choices=RFC_TYPE,
+        choices=RequestForChangeType,
     )
     rfc_implementation_start_date = models.DateTimeField()
     rfc_implementation_end_date = models.DateTimeField()
@@ -1482,15 +1461,15 @@ class RequestForChange(models.Model):
         related_name="RfcLead",
     )
     rfc_priority = models.IntegerField(
-        choices=RFC_PRIORITY,
+        choices=RequestForChangePriority,
         default=1,
     )
     rfc_risk = models.IntegerField(
-        choices=RFC_RISK,
+        choices=RequestForChangeRisk,
         default=1,
     )
     rfc_impact = models.IntegerField(
-        choices=RFC_IMPACT,
+        choices=RequestForChangeImpact,
         default=1,
     )
     rfc_risk_and_impact_analysis = models.TextField(

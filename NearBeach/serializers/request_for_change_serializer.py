@@ -1,15 +1,14 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.models import (
     Group,
-    RequestForChange,
-    RFC_TYPE,
-    RFC_PRIORITY,
-    RFC_RISK,
-    RFC_IMPACT,
+    RequestForChange, ObjectAssignment,
 )
-from NearBeach.utils.enums import RequestForChangeStatus
+from NearBeach.utils.enums import RequestForChangeStatus, RequestForChangeType, RequestForChangePriority, \
+    RequestForChangeRisk, RequestForChangeImpact
 from NearBeach.serializers.change_task_serializer import ChangeTaskSerializer
+from NearBeach.serializers.user_django_serializer import UserDjangoSerializer
 
 
 class RequestForChangeSerializer(serializers.ModelSerializer):
@@ -18,58 +17,58 @@ class RequestForChangeSerializer(serializers.ModelSerializer):
         allow_null=True,
         read_only=True,
     )
+    date_created = serializers.ReadOnlyField()
+    date_modified = serializers.ReadOnlyField()
     group_list = serializers.PrimaryKeyRelatedField(
-        many=False,
         queryset=Group.objects.filter(
             is_deleted=False,
         ),
+        many=True,
         required=True,
         write_only=True,
     )
-    rfc_implementation_start_date = serializers.ReadOnlyField()
+    rfc_impact = EnumField(
+        enum=RequestForChangeImpact,
+    )
     rfc_implementation_end_date = serializers.ReadOnlyField()
+    rfc_implementation_start_date = serializers.ReadOnlyField()
+    rfc_lead = UserDjangoSerializer(
+        many=False,
+    )
+    rfc_priority = EnumField(
+        enum=RequestForChangePriority,
+    )
     rfc_status = EnumField(RequestForChangeStatus)
-    rfc_type_name = serializers.CharField(
-        source="get_rfc_type_display",
-        read_only=True,
-    )
-    rfc_priority_name = serializers.CharField(
-        source="get_rfc_priority_display",
-        read_only=True,
-    )
-    rfc_risk = serializers.ChoiceField(
-        choices=RFC_RISK,
-        required=True,
-    )
-    rfc_risk_name = serializers.CharField(
-        source="get_rfc_risk_display",
-        read_only=True,
-    )
-    rfc_impact = serializers.ChoiceField(
-        choices=RFC_IMPACT,
-        required=True,
-    )
-    rfc_impact_name = serializers.CharField(
-        source="get_rfc_impact_display",
-        read_only=True,
+    rfc_risk = EnumField(
+        enum=RequestForChangeRisk,
     )
     rfc_version_number = serializers.CharField(
         required=True,
     )
-    rfc_priority = serializers.ChoiceField(
-        choices=RFC_PRIORITY,
-        required=True,
-    )
-    rfc_type = serializers.ChoiceField(
-        choices=RFC_TYPE,
-        required=True,
-    )
-    date_created = serializers.ReadOnlyField()
-    date_modified = serializers.ReadOnlyField()
+    rfc_type = EnumField(enum=RequestForChangeType)
     uuid = serializers.UUIDField(
         required=False,
         write_only=True,
     )
+    
+    def create(self, validated_data):
+        group_list = validated_data.pop("group_list")
+        user = validated_data["change_user"]
+        
+        # Create the request for change
+        request_for_change = RequestForChange.objects.create(**validated_data)
+        
+        # Assign requirement to the groups
+        for single_group in group_list:
+            # Save the group against the new requirement
+            submit_object_assignment = ObjectAssignment(
+                group_id=single_group,
+                request_for_change=request_for_change,
+                change_user=user,
+            )
+            submit_object_assignment.save()
+            
+        return request_for_change
 
     def get_fields(self):
         fields = super().get_fields()
@@ -82,6 +81,11 @@ class RequestForChangeSerializer(serializers.ModelSerializer):
         if self.context["request"].method == "POST":
             fields.pop("rfc_implementation_release_date", None)
             fields.pop("rfc_status", None)
+            fields["rfc_lead"] = serializers.PrimaryKeyRelatedField(
+                queryset=User.objects.filter(
+                    is_active=True,
+                )
+            )
 
         # Updating a new Request For Change
         if self.context['request'].method == "PUT":
@@ -100,9 +104,28 @@ class RequestForChangeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RequestForChange
-        exclude = [
-            "change_user",
-            "creation_user",
-            "is_deleted",
+        fields = [
+            "rfc_id",
+            "rfc_title",
+            "rfc_summary",
+            "rfc_type",
+            "rfc_version_number",
+            "rfc_lead",
+            "rfc_priority",
+            "rfc_risk",
+            "rfc_impact",
+            "rfc_risk_and_impact_analysis",
+            "rfc_implementation_plan",
+            "rfc_implementation_end_date",
+            "rfc_implementation_start_date",
+            "rfc_implementation_release_date",
+            "rfc_backout_plan",
+            "rfc_test_plan",
+            "date_created",
+            "date_modified",
+            "rfc_status",
+            "change_task",
+            "uuid",
+            "group_list",
         ]
 
