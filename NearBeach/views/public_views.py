@@ -26,7 +26,7 @@ from NearBeach.decorators.check_user_permissions.object_permissions import check
 import json
 
 # Convert kanban card priorty to dict for easy lookup
-from NearBeach.utils.enums import ObjectPriority
+from NearBeach.utils.enums.object_enums import ObjectPriority
 DICT_OBJECT_CARD_PRIORITY = {i.name: i.value for i in ObjectPriority}
 
 

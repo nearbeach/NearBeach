@@ -27,7 +27,7 @@ from NearBeach.models import (
 )
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.user_job_views import get_my_planning_objects
-from ..utils.enums import RequestForChangeStatus
+from ..utils.enums.request_for_change_enums import RequestForChangeStatus
 
 
 @login_required(login_url="login", redirect_field_name="")

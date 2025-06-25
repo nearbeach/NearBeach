@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach.models import (
@@ -18,11 +19,44 @@ from NearBeach.views.document_views import transfer_new_object_uploads
 import datetime
 
 
+@extend_schema(
+    tags=["Change Tasks"],
+)
 class RequirementViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
     queryset = Requirement.objects.filter(is_deleted=False)
     serializer_class = RequirementSerializer
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Create a Requirement to gather user requirements.
+
+# 🧾 Parameters
+
+- Requirement Title
+- Requirement Scope
+- Requirement Status
+- Requirement Type
+- Organisation
+- Group List
+        """,
+        examples=[
+            OpenApiExample(
+                "Example 1",
+                description="Create a new change task",
+                value={
+                    "requirement_title": "Requirement Title",
+                    "requirement_scope": "<p>Hello World</p>",
+                    "requirement_status": 5,
+                    "requirement_type": 3,
+                    "organisation": 1,
+                    "group_list": [1, 2],
+                }
+            )
+        ],
+    )
     @check_user_api_permissions(min_permission_level=3)
     def create(self, request, *args, **kwargs):
         serializer = RequirementSerializer(data=request.data, context={'request': request})
@@ -38,58 +72,42 @@ class RequirementViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Gather instances
-        organisation_instance = Organisation.objects.get(
-            organisation_id=serializer.data.get("organisation_id"),
-        )
-
-        # Get first requirement status
-        requirement_status = ListOfRequirementStatus.objects.get(
-            requirement_status_id=serializer.data["requirement_status"],
-        )
-
-        requirement_type = ListOfRequirementType.objects.get(
-            requirement_type_id=serializer.data["requirement_type"],
-        )
-
-        # Create the object
-        requirement_submit = Requirement(
-            requirement_title=serializer.data.get("requirement_title"),
-            requirement_scope=serializer.data.get("requirement_scope"),
-            requirement_status=requirement_status,
-            requirement_type=requirement_type,
-            organisation=organisation_instance,
+        # Create the requirement
+        create_requirement = serializer.save(
             change_user=request.user,
             creation_user=request.user,
         )
-        requirement_submit.save()
-
-        # Assign requirement to the groups
-        for single_group in group_list:
-            group_instance = Group.objects.get(
-                group_id=single_group,
-            )
-
-            # Save the group against the new requirement
-            submit_object_assignment = ObjectAssignment(
-                group_id=group_instance,
-                requirement=requirement_submit,
-                change_user=request.user,
-            )
-            submit_object_assignment.save()
 
         # Transfer any images to the new requirement id
         transfer_new_object_uploads(
             "requirement",
-            requirement_submit.requirement_id,
+            create_requirement.requirement_id,
             serializer.data.get("uuid")
         )
 
+        # Re-serialize
+        serializer = RequirementSerializer(
+            create_requirement,
+            many=False
+        )
+
         return Response(
-            data={ "requirement_id": requirement_submit.requirement_id },
+            data=serializer.data,
             status=status.HTTP_201_CREATED,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Delete the requirements.
+
+
+# ✅ Notes
+
+Users will need to have the permission to delete.
+        """
+    )
     @check_user_api_permissions(min_permission_level=4)
     def destroy(self, request, *args, **kwargs):
         requirement = self.get_object()
@@ -101,13 +119,15 @@ class RequirementViewSet(viewsets.ModelViewSet):
             status=status.HTTP_204_NO_CONTENT
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Lists all requirements
+    """
+    )
     @check_user_api_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
-        # Setup Attributes
-        page_size = int(request.query_params.get("page_size", 100))
-        page_size = page_size if page_size <= 1000 else 1000
-        page = int(request.query_params.get("page", 1))
-
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             group_id__in=UserGroup.objects.filter(
@@ -121,12 +141,26 @@ class RequirementViewSet(viewsets.ModelViewSet):
         requirement_results = Requirement.objects.filter(
             is_deleted=False,
             requirement_id__in=object_assignment_results.values("requirement_id"),
-        )[(page - 1) * page_size : page * page_size]
+        )
+
+        # Handle pagination
+        page = self.paginate_queryset(requirement_results)
+        if page is not None:
+            serializer = RequirementSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
         serializer = RequirementSerializer(requirement_results, many=True)
 
         return Response(serializer.data)
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Retrieves a single task.
+
+    """
+    )
     @check_user_api_permissions(min_permission_level=1)
     def retrieve(self, request, pk=None, *args, **kwargs):
         queryset = Requirement.objects.all()
@@ -144,6 +178,22 @@ class RequirementViewSet(viewsets.ModelViewSet):
         serializer = RequirementSerializer(requirement_results)
         return Response(serializer.data)
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Updates a single task.
+
+# 🧾 Parameters
+
+- Requirement Title
+- Requirement Scope
+- Requirement Status
+- Requirement Type
+- Organisation
+- Group List
+    """
+    )
     @check_user_api_permissions(min_permission_level=2)
     def update(self, request, pk=None, *args, **kwargs):
         serializer = RequirementSerializer(data=request.data, context={'request': request})
@@ -153,24 +203,27 @@ class RequirementViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Obtain Instances
-        requirement_status_instance = ListOfRequirementStatus.objects.get(
-            requirement_status_id=serializer.data["requirement_status"],
+        # Get the requirement
+        update_requirement = get_object_or_404(
+            queryset=Requirement.objects.filter(
+                is_deleted=False,
+            ),
+            pk=pk,
         )
 
-        requirement_type_instance = ListOfRequirementType.objects.get(
-            requirement_type_id=serializer.data["requirement_type"]
-        )
-
-        # Update Requirement
-        update_requirement = Requirement.objects.get(pk=pk)
-        update_requirement.requirement_title = serializer.data["requirement_title"]
-        update_requirement.requirement_scope = serializer.data["requirement_scope"]
-        update_requirement.requirement_status = requirement_status_instance
-        update_requirement.requirement_type = requirement_type_instance
-        update_requirement.date_modified = datetime.datetime.now()
+        # Update the requirement
         update_requirement.change_user = request.user
-        update_requirement.save()
+        update_requirement.date_modified = datetime.datetime.now()
+        update_requirement = serializer.update(
+            update_requirement,
+            serializer.validated_data,
+        )
+
+        # Re-serialize the data
+        serializer = RequirementSerializer(
+            update_requirement,
+            many=False
+        )
 
         return Response(
             data=serializer.data,
