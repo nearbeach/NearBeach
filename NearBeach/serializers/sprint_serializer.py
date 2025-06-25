@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from NearBeach.models import (
-    Project,
-    Requirement,
-    Sprint,
+    Sprint, Project, Requirement,
 )
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.serializers.requirement_serializer import RequirementSerializer
@@ -43,11 +41,40 @@ class SprintSerializer(serializers.ModelSerializer):
     date_created = serializers.ReadOnlyField()
     date_modified = serializers.ReadOnlyField()
 
+    object_dict = {
+        "project": Project.objects,
+        "requirement": Requirement.objects,
+    }
+
+    def create(self, validated_data):
+        # Connect the object
+        destination = validated_data.pop("destination")
+        location_id = validated_data.pop("location_id")
+
+        validated_data[destination] = self.object_dict[destination].get(
+            **{F"{destination}_id": location_id},
+        )
+
+        sprint = Sprint.objects.create(**validated_data)
+
+        return sprint
+
     class Meta:
         model = Sprint
-        exclude = [
-            "change_user",
-            "is_deleted",
+        fields = [
+            "sprint_id",
+            "sprint_name",
+            "sprint_status",
+            "destination",
+            "location_id",
+            "sprint_start_date",
+            "sprint_end_date",
+            "total_story_points",
+            "completed_story_points",
+            "requirement",
+            "project",
+            "date_created",
+            "date_modified",
         ]
 
     def get_fields(self):
