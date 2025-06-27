@@ -145,6 +145,41 @@ class TeamLeaderPermissionTests(TestCase):
                     {"object_note_id": 4, "object_note": "<p>Add note</p>", "date_modified": "2024-09-25T09:15:34.033Z",
                      "username": 7, "first_name": "Dark", "last_name": "Admin", "profile_picture": "",
                      "can_edit": "true"}, 200, "POST"),
+            URLTest("kanban_link_list", [1], {
+                "array_of_objects": "project",
+                "destination_page": 1,
+                "exclude_destination": "kanban_board",
+                "exclude_location_id": 1,
+                "search": "",
+            }, 403, "POST"),
+            URLTest("kanban_link_list", [2], {
+                "array_of_objects": "project",
+                "destination_page": 1,
+                "exclude_destination": "kanban_board",
+                "exclude_location_id": 1,
+                "search": "",
+            }, 200, "POST"),
+            URLTest("kanban_link_list", [1], {
+                "array_of_objects": "task",
+                "destination_page": 1,
+                "exclude_destination": "kanban_board",
+                "exclude_location_id": 1,
+                "search": "",
+            }, 403, "POST"),
+            URLTest("kanban_link_list", [2], {
+                "array_of_objects": "task",
+                "destination_page": 1,
+                "exclude_destination": "kanban_board",
+                "exclude_location_id": 1,
+                "search": "",
+            }, 200, "POST"),
+            URLTest("kanban_link_list", [1], {
+                "array_of_objects": "requirement",
+                "destination_page": 1,
+                "exclude_destination": "kanban_board",
+                "exclude_location_id": 1,
+                "search": "",
+            }, 403, "POST"),
         ]
 
         # Loop through each url to test to make sure the decorator is applied

@@ -447,7 +447,86 @@ class ApiAdminPermissionTests(APITestCase):
         self._run_test_array(data_list)
 
     def test_api_sprint_data(self):
-        data_list = []
+        data_list = [
+            ###############
+            # SPRINT DATA #
+            ###############
+            self.URLTest("/api/v0/sprint/", {}, 200, "GET"),
+            self.URLTest("/api/v0/sprint/1/", {}, 200, "GET"),
+            self.URLTest("/api/v0/sprint/2/", {}, 200, "GET"),
+            self.URLTest("/api/v0/sprint/", {
+                "destination": "project",
+                "location_id": 1,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/", {
+                "destination": "project",
+                "location_id": 2,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/", {
+                "destination": "requirement",
+                "location_id": 1,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/", {
+                "destination": "requirement",
+                "location_id": 2,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/1/", {
+                "destination": "project",
+                "location_id": 1,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 200, "PUT"),
+            self.URLTest("/api/v0/sprint/2/", {
+                "destination": "project",
+                "location_id": 2,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 200, "PUT"),
+            self.URLTest("/api/v0/sprint/1/", {
+                "destination": "project",
+                "location_id": 2,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 404, "PUT"),
+            self.URLTest("/api/v0/sprint/2/", {
+                "destination": "project",
+                "location_id": 1,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 404, "PUT"),
+            self.URLTest("/api/v0/sprint/1/", {
+                "destination": "project",
+                "location_id": 2,
+            }, 404, "DELETE"),
+            self.URLTest("/api/v0/sprint/2/", {
+                "destination": "project",
+                "location_id": 1,
+            }, 404, "DELETE"),
+            self.URLTest("/api/v0/sprint/1/", {
+                "destination": "project",
+                "location_id": 1,
+            }, 204, "DELETE"),
+            self.URLTest("/api/v0/sprint/2/", {
+                "destination": "project",
+                "location_id": 2,
+            }, 204, "DELETE"),
+        ]
 
         self._run_test_array(data_list)
 
