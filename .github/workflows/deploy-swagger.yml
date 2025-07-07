@@ -1,48 +1,38 @@
-name: Deploy Swagger files to Azure Static Web App
-
-env:
-  APP_LOCATION: "/"
-  OUTPUT_LOCATION: "swagger"
+name: Build Swagger and Deploy to Azure Static Web App
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    types: [closed]
-    branches:
-      - main
-
-permissions:
-  issues: write
-  contents: read
-  pull-requests: write
+      - develop  # or your deployment branch
+  workflow_dispatch:
 
 jobs:
-  build_and_deploy:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true)
+  build-swagger:
     runs-on: ubuntu-latest
-    name: Build and Deploy Swagger Documentation
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: 🧾 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.13.1
-      - name: Update Pip and Install Required Python Libraries
+          python-version: '3.11'  # Match your dev env
+
+      - name: 📦 Install Dependencies
         run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install virtualenv
-          virtualenv venv
-          source ./venv/bin/activate
-          pip install -r ./requirements.txt
-          pip install -r ./requirements-dev.txt
-          python3 ./manage.py spectacular --color --format openapi-json --file ./swagger/schema.json
-      - name: Deploy Swagger File
-        uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9
+          python -m pip install --upgrade pip
+          pip install django django-rest-framework simplejson pillow drf-spectacular drf-spectacular[sidecar] python-dotenv django_otp django-two-factor-auth django-two-factor-auth[phonenumberslite] azure-storage-blob azure-identity botocore boto3
+
+      - name: 🔧 Generate Swagger Schema
+        run: |
+          python manage.py spectacular --file swagger/swagger.json
+
+      - name: 🚀 Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: "upload"
           skip_app_build: true
-          app_location: ${{ env.APP_LOCATION }}
-          output_location: ${{ env.OUTPUT_LOCATION }}
+          app_location: "swagger"
+          output_location: ""
