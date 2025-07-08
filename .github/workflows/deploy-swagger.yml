@@ -35,4 +35,4 @@ jobs:
           action: "upload"
           skip_app_build: true
           app_location: "swagger"
-          output_location: ""
+          output_location: "swagger.json"
