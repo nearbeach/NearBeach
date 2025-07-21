@@ -1,12 +1,13 @@
 # requirement.txt
 Django>=4.2.17
-django-rest-framework
+# django-rest-framework
+djangorestframework
 django-two-factor-auth
 django-two-factor-auth[phonenumberslite]
 django_otp
 simplejson
 pillow>=10.0.1
-urllib3>=2.2.2
+urllib3>=2.5.0
 boto3
 botocore
 azure-storage-blob
@@ -15,7 +16,6 @@ drf-spectacular
 drf-spectacular[sidecar]
 
 # Security recommendations - packages are used by libraries used by NearBeach
-pip>=19.2
+pip>=25.1
 requests>=2.32.2
-djangorestframework
 sqlparse>=0.5.0
