@@ -620,7 +620,7 @@ def new_kanban_save(request, *args, **kwargs):
 
     # Send back project_information URL
     return HttpResponse(
-        reverse("kanban_information", args={submit_kanban_board.kanban_board_id})
+        reverse("kanban_information", args=[submit_kanban_board.kanban_board_id])
     )
 
 

@@ -48,7 +48,7 @@ def new_notification_save(request):
 
     # Return notification url back to user
     return HttpResponse(
-        reverse("notification_information", args={submit_notification.notification_id})
+        reverse("notification_information", args=[submit_notification.notification_id])
     )
 
 

@@ -192,4 +192,4 @@ def new_group_save(request, *args, **kwargs):
     group_submit.save()
 
     # Send back the URL for the group
-    return HttpResponse(reverse("group_information", args={group_submit.group_id}))
+    return HttpResponse(reverse("group_information", args=[group_submit.group_id]))

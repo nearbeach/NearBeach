@@ -90,7 +90,7 @@ class ContabTime:
                     return False
             elif "-" in v:
                 if not self._check_range(v, min_value, max_value):
-                    False
+                    return False
             elif "/" in v:
                 if not self._check_steps(v, min_value, max_value):
                     return False

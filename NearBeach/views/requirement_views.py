@@ -256,7 +256,7 @@ def new_requirement_save(request, *args, **kwargs):
 
     # Send back requirement_information URL
     return HttpResponse(
-        reverse("requirement_information", args={submit_requirement.requirement_id})
+        reverse("requirement_information", args=[submit_requirement.requirement_id])
     )
 
 

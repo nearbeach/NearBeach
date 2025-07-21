@@ -204,7 +204,7 @@ def new_request_for_change_save(request, *args, **kwargs):
         submit_object_assignment.save()
 
     # Send back requirement_information URL
-    return HttpResponse(reverse("rfc_information", args={rfc_submit.rfc_id}))
+    return HttpResponse(reverse("rfc_information", args=[rfc_submit.rfc_id]))
 
 
 @require_http_methods(["POST"])
@@ -323,7 +323,7 @@ def rfc_information(request, rfc_id, *args, **kwargs):
     rfc_results = RequestForChange.objects.filter(is_deleted=False)
     rfc_results = get_object_or_404(rfc_results, rfc_id=rfc_id)
     if not rfc_results.rfc_status == RequestForChangeStatus.DRAFT or kwargs["user_level"] == 1:  # Draft
-        return HttpResponseRedirect(reverse("rfc_readonly", args={rfc_id}))
+        return HttpResponseRedirect(reverse("rfc_readonly", args=[rfc_id]))
 
     # Get template
     t = loader.get_template("NearBeach/request_for_change/rfc_information.html")

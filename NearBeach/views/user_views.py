@@ -68,7 +68,7 @@ def new_user_save(request, *args, **kwargs):
     # Save
     submit_user.save()
 
-    return HttpResponse(reverse("user_information", args={submit_user.id}))
+    return HttpResponse(reverse("user_information", args=[submit_user.id]))
 
 
 @require_http_methods(["POST"])
