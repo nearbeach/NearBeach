@@ -234,5 +234,5 @@ def new_customer_save(request, *args, **kwargs):
 
     # Send back the URL to the new customer
     return HttpResponse(
-        reverse("customer_information", args={customer_submit.customer_id})
+        reverse("customer_information", args=[customer_submit.customer_id])
     )

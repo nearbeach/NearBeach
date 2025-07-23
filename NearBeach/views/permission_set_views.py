@@ -87,7 +87,7 @@ def new_permission_set_save(request, *args, **kwargs):
     # Return back the permission set information URL
     return HttpResponse(
         reverse(
-            "permission_set_information", args={submit_permission_set.permission_set_id}
+            "permission_set_information", args=[submit_permission_set.permission_set_id]
         )
     )
 

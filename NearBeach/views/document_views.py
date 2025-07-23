@@ -42,17 +42,17 @@ from botocore.config import Config
 
 
 # Internal function
-def connect_check_client_s3(botoInitValues):
+def connect_check_client_s3(boto_init_values):
     config = Config(
         connect_timeout=4,
         retries=dict(
             max_attempts=1,
         )
     )
-    botoInitValues.update(
+    boto_init_values.update(
         config=config
     )
-    client = boto3.client("s3", **botoInitValues)
+    client = boto3.client("s3", **boto_init_values)
 
     # Check to see if the connection works
     try:
@@ -611,14 +611,14 @@ class LocalFileHandler(FileHandler):
 
 class S3FileHandler(FileHandler):
     def __init__(self, local_settings):
-        botoInitValues = {
+        boto_init_values = {
             "aws_access_key_id": local_settings.AWS_ACCESS_KEY_ID,
             "aws_secret_access_key": local_settings.AWS_SECRET_ACCESS_KEY,
         }
         if getattr(local_settings, "AWS_S3_ENDPOINT_URL", None):
             # Assume the person is using minio  so defualts are the values
             # which will allow for connection to minio
-            botoInitValues.update(
+            boto_init_values.update(
                 endpoint_url=local_settings.AWS_S3_ENDPOINT_URL,
                 aws_session_token=getattr(local_settings, "AWS_S3_SESSION_TOKEN", None),
                 config=getattr(
@@ -630,9 +630,9 @@ class S3FileHandler(FileHandler):
                 **getattr(local_settings, "AWS_INIT_VALUES", {})
             )
             # Log any issues for the user
-            connect_check_client_s3(botoInitValues)
+            connect_check_client_s3(boto_init_values)
 
-        self._s3 = boto3.client("s3",   **botoInitValues)
+        self._s3 = boto3.client("s3",   **boto_init_values)
         self._bucket = local_settings.AWS_STORAGE_BUCKET_NAME
 
     def delete(self, document_key_id):

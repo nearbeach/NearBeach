@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from NearBeach.tests.function_tests import assertRedirectsToLogin, assertEqual405
+from NearBeach.tests.function_tests import assert_redirects_to_login, assert_equal405
 
 """
 The following test will;
@@ -64,7 +64,7 @@ class CheckDashboard(TestCase):
         ]
 
         # Check the data in the array
-        assertRedirectsToLogin(response_array, self)
+        assert_redirects_to_login(response_array, self)
 
         # Tell tester of results
 
@@ -85,7 +85,7 @@ class CheckDocumentation(TestCase):
         ]
 
         # Check the array
-        assertEqual405(response_get_array, self)
+        assert_equal405(response_get_array, self)
 
         # The POST components should be redirected
         response_post_array = [
@@ -98,7 +98,7 @@ class CheckDocumentation(TestCase):
         ]
 
         # Check the array
-        assertRedirectsToLogin(response_post_array, self)
+        assert_redirects_to_login(response_post_array, self)
 
 
 class CheckKanban(TestCase):
@@ -118,7 +118,7 @@ class CheckKanban(TestCase):
         ]
 
         # Check the array
-        assertRedirectsToLogin(response_array, self)
+        assert_redirects_to_login(response_array, self)
 
 
 class CheckPrivateDocument(TestCase):
@@ -206,7 +206,7 @@ class CheckObjects(TestCase):
         ]
 
         # Cheeck the array
-        assertEqual405(response_array, self)
+        assert_equal405(response_array, self)
 
     def test_objects_post(self):
         # Setup the client
@@ -240,4 +240,4 @@ class CheckObjects(TestCase):
         ]
 
         # Check the array
-        assertRedirectsToLogin(response_array, self)
+        assert_redirects_to_login(response_array, self)

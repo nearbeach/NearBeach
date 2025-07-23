@@ -83,7 +83,6 @@ class ChangeTaskSerializer(serializers.ModelSerializer):
         instance = super().update(instance, validated_data)
         return instance
         
-
     class Meta:
         model = ChangeTask
         fields = [

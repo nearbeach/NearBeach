@@ -98,7 +98,7 @@ def new_task_save(request, *args, **kwargs):
         submit_object_assignment.save()
 
     # Send back requirement_information URL
-    return HttpResponse(reverse("task_information", args={task_submit.task_id}))
+    return HttpResponse(reverse("task_information", args=[task_submit.task_id]))
 
 
 @login_required(login_url="login", redirect_field_name="")

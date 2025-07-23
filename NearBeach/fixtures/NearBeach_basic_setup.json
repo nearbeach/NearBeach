@@ -4358,70 +4358,6 @@
   }
 },
 {
-  "model": "authtoken.token",
-  "pk": "0299d30dcc2f5631089ade80a325cdfa58ae6b0d",
-  "fields": {
-    "user": 7,
-    "created": "2025-05-02T11:25:23.265Z"
-  }
-},
-{
-  "model": "authtoken.token",
-  "pk": "1313550785f1b04407f6e20c8f3bc466363811dd",
-  "fields": {
-    "user": 4,
-    "created": "2025-05-02T11:25:31.050Z"
-  }
-},
-{
-  "model": "authtoken.token",
-  "pk": "34a38dae597d674f6fb83fdc328102f44f9a34c6",
-  "fields": {
-    "user": 5,
-    "created": "2025-05-02T11:25:26.991Z"
-  }
-},
-{
-  "model": "authtoken.token",
-  "pk": "854482534d41fc8affc9b8d953409612ea37d144",
-  "fields": {
-    "user": 6,
-    "created": "2025-05-02T11:25:25.072Z"
-  }
-},
-{
-  "model": "authtoken.token",
-  "pk": "8e9477fd2018f9f43aad06f8a96c731a4ebc16f6",
-  "fields": {
-    "user": 3,
-    "created": "2025-05-02T11:25:35.316Z"
-  }
-},
-{
-  "model": "authtoken.token",
-  "pk": "b27af6ec65d2ba30b7cf04b1965f315f32b580cc",
-  "fields": {
-    "user": 8,
-    "created": "2025-05-02T11:25:28.990Z"
-  }
-},
-{
-  "model": "authtoken.token",
-  "pk": "bdf168eefb0e5d34cf7885a8eda630639f0e3914",
-  "fields": {
-    "user": 1,
-    "created": "2025-05-02T11:25:18.756Z"
-  }
-},
-{
-  "model": "authtoken.token",
-  "pk": "d8bc1d8c7873530e4bb74fdc80683b5da3d0a075",
-  "fields": {
-    "user": 2,
-    "created": "2025-05-02T11:25:33.261Z"
-  }
-},
-{
   "model": "admin.logentry",
   "pk": 1,
   "fields": {
@@ -7079,6 +7015,78 @@
   }
 },
 {
+  "model": "auth.permission",
+  "pk": 237,
+  "fields": {
+    "name": "Can add extends auth token",
+    "content_type": 60,
+    "codename": "add_extendsauthtoken"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 238,
+  "fields": {
+    "name": "Can change extends auth token",
+    "content_type": 60,
+    "codename": "change_extendsauthtoken"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 239,
+  "fields": {
+    "name": "Can delete extends auth token",
+    "content_type": 60,
+    "codename": "delete_extendsauthtoken"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 240,
+  "fields": {
+    "name": "Can view extends auth token",
+    "content_type": 60,
+    "codename": "view_extendsauthtoken"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 241,
+  "fields": {
+    "name": "Can add auth token",
+    "content_type": 61,
+    "codename": "add_authtoken"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 242,
+  "fields": {
+    "name": "Can change auth token",
+    "content_type": 61,
+    "codename": "change_authtoken"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 243,
+  "fields": {
+    "name": "Can delete auth token",
+    "content_type": 61,
+    "codename": "delete_authtoken"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 244,
+  "fields": {
+    "name": "Can view auth token",
+    "content_type": 61,
+    "codename": "view_authtoken"
+  }
+},
+{
   "model": "auth.user",
   "pk": 1,
   "fields": {
@@ -7692,6 +7700,22 @@
   "fields": {
     "app_label": "otp_email",
     "model": "emaildevice"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 60,
+  "fields": {
+    "app_label": "NearBeach",
+    "model": "extendsauthtoken"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 61,
+  "fields": {
+    "app_label": "knox",
+    "model": "authtoken"
   }
 },
 {

@@ -3,4 +3,5 @@ black
 bandit
 python-dotenv
 django-storages
+pip-tools
 -r ./requirements.txt

@@ -9,6 +9,8 @@ This file is only for the automatic testing and is not build for server use.
 
 import os
 from NearBeach import __version__ as VERSION
+from datetime import timedelta
+from rest_framework.settings import api_settings
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -30,12 +32,15 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '0.0.0.0', '192.168.1.105']
 
 
+KNOX_TOKEN_MODEL = 'knox.AuthToken'
+
+
 # Application definition
 
 INSTALLED_APPS = [
     'NearBeach.apps.NearBeachConfig',
     'rest_framework',
-    'rest_framework.authtoken',
+    'knox',
     'drf_spectacular',
     'drf_spectacular_sidecar',
     'django.contrib.admin',
@@ -118,7 +123,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'knox.auth.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -129,6 +134,20 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
+}
+
+REST_KNOX = {
+    'SECURE_HASH_ALGORITHM': 'hashlib.sha512',
+    'AUTH_TOKEN_CHARACTER_LENGTH': 64,
+    'TOKEN_TTL': None,
+    'USER_SERIALIZER': 'knox.serializers.UserSerializer',
+    'TOKEN_LIMIT_PER_USER': None,
+    'AUTO_REFRESH': False,
+    'AUTO_REFRESH_MAX_TTL': None,
+    'MIN_REFRESH_INTERVAL': 60,
+    'AUTH_HEADER_PREFIX': 'Token',
+    'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
+    'TOKEN_MODEL': 'NearBeach.ExtendsAuthToken',
 }
 
 

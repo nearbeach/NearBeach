@@ -351,6 +351,8 @@ def public_link(request, destination, location_id, public_link_id, *args, **kwar
         c = get_public_context_project(results)
     elif destination == "task":
         c = get_public_context_task(results)
+    else:
+        return HttpResponseBadRequest("Unknown destination")
 
     # Add tinymce flag
     c["need_tinymce"] = True

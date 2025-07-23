@@ -1,7 +1,6 @@
 from collections import namedtuple
 
 from django.urls import reverse
-from rest_framework import status
 from rest_framework.test import APITestCase, APIClient, APIRequestFactory
 
 import uuid
@@ -12,7 +11,7 @@ password = "Test1234$"
 
 
 
-def login_user(c: object, self: object) -> object:
+def login_user(c, self):
     response = c.post(
         reverse("login"),
         self.credentials,
@@ -38,7 +37,7 @@ class ApiAdminPermissionTests(APITestCase):
             "auth-password": password
         }
 
-        # Setup the client
+        # Set up the client
         self.client = APIClient()
         self.factory = APIRequestFactory()
 
@@ -173,8 +172,7 @@ class ApiAdminPermissionTests(APITestCase):
                 "/api/v0/kanban_board/",
                 {
                     "kanban_board_name": "API Kanban Board - " + str(uuid.uuid4()),
-                    "group_list": 1,
-                    "group_list": 2,
+                    "group_list": [1, 2],
                     "kanban_column[0]kanban_column_name": "Backlog",
                     "kanban_column[0]kanban_column_property": "Normal",
                     "kanban_column[1]kanban_column_name": "In Progress",
@@ -322,8 +320,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "project_start_date": "2024-12-19 15:49:37",
                     "project_end_date": "2024-12-19 15:49:37",
                     "organisation": 1,
-                    "group_list": 1,
-                    "group_list": 2,
+                    "group_list": [1, 2],
                 },
                 201,
                 "POST"
@@ -447,7 +444,86 @@ class ApiAdminPermissionTests(APITestCase):
         self._run_test_array(data_list)
 
     def test_api_sprint_data(self):
-        data_list = []
+        data_list = [
+            ###############
+            # SPRINT DATA #
+            ###############
+            self.URLTest("/api/v0/sprint/", {}, 200, "GET"),
+            self.URLTest("/api/v0/sprint/1/", {}, 200, "GET"),
+            self.URLTest("/api/v0/sprint/2/", {}, 200, "GET"),
+            self.URLTest("/api/v0/sprint/", {
+                "destination": "project",
+                "location_id": 1,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/", {
+                "destination": "project",
+                "location_id": 2,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/", {
+                "destination": "requirement",
+                "location_id": 1,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/", {
+                "destination": "requirement",
+                "location_id": 2,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/1/", {
+                "destination": "project",
+                "location_id": 1,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 200, "PUT"),
+            self.URLTest("/api/v0/sprint/2/", {
+                "destination": "project",
+                "location_id": 2,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 200, "PUT"),
+            self.URLTest("/api/v0/sprint/1/", {
+                "destination": "project",
+                "location_id": 2,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 404, "PUT"),
+            self.URLTest("/api/v0/sprint/2/", {
+                "destination": "project",
+                "location_id": 1,
+                "sprint_name": "Hello Sprint World",
+                "sprint_start_date": "2024-12-19 15:49:37",
+                "sprint_end_date": "2024-12-19 15:49:37",
+            }, 404, "PUT"),
+            self.URLTest("/api/v0/sprint/1/", {
+                "destination": "project",
+                "location_id": 2,
+            }, 404, "DELETE"),
+            self.URLTest("/api/v0/sprint/2/", {
+                "destination": "project",
+                "location_id": 1,
+            }, 404, "DELETE"),
+            self.URLTest("/api/v0/sprint/1/", {
+                "destination": "project",
+                "location_id": 1,
+            }, 204, "DELETE"),
+            self.URLTest("/api/v0/sprint/2/", {
+                "destination": "project",
+                "location_id": 2,
+            }, 204, "DELETE"),
+        ]
 
         self._run_test_array(data_list)
 

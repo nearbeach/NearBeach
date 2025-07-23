@@ -7,6 +7,8 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 from django.contrib.auth import update_session_auth_hash
+from knox.models import AuthToken
+
 from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
 from NearBeach.forms import NewUserForm, PasswordResetForm, UpdateUserForm, UserRemovePermissionForm
 from NearBeach.models import UserGroup
@@ -68,7 +70,7 @@ def new_user_save(request, *args, **kwargs):
     # Save
     submit_user.save()
 
-    return HttpResponse(reverse("user_information", args={submit_user.id}))
+    return HttpResponse(reverse("user_information", args=[submit_user.id]))
 
 
 @require_http_methods(["POST"])
@@ -113,6 +115,12 @@ def user_information(request, username, *args, **kwargs):
 
     user_list_results = get_user_permissions("username", username)
     user_list_results = json.dumps(list(user_list_results), cls=DjangoJSONEncoder)
+
+    # Get API results
+    # api_results = APIKeyMeta.objects.filter(
+    #     user=user_results,
+    # )
+    # api_results = json.dumps(list(api_results), cls=DjangoJSONEncoder)
 
     # Create the context
     c = {
