@@ -26,6 +26,9 @@ from NearBeach.views.api.object_data import (
     object_sprint_api_view,
     tag_api_view,
 )
+from NearBeach.views.api.user import(
+    user_api_api_view,
+)
 
 
 # Create the router for our view sets
@@ -45,6 +48,7 @@ router.register(r'request_for_change', request_for_change_api_view.RequirementVi
 router.register(r'request_for_change/(?P<request_for_change_id>[0-9]+)/change_task', change_task_api_view.ChangeTaskViewSet, basename='change_task')
 router.register(r'sprint', sprint_api_view.SprintViewSet, basename='sprint')
 router.register(r'task', task_api_view.TaskViewSet, basename='task')
+router.register(r'user/(?P<username>[0-9]+)/api_key', user_api_api_view.UserApiViewSet, basename='user_api')
 router.register(r'(?P<destination>[\w]+)/(?P<location_id>[0-9]+)/group_and_user', group_and_user_api_view.GroupAndUserViewSet, basename='group_and_user')
 router.register(r'(?P<destination>[\w]+)/(?P<location_id>[0-9]+)/link', link_api_view.LinkViewSet, basename='link')
 router.register(r'(?P<destination>[\w]+)/(?P<location_id>[0-9]+)/note', note_api_view.NoteViewSet, basename='note')

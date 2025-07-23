@@ -111,6 +111,7 @@ import {
     SprintInformation,
     TaskInformation,
     UpdateProfilePicture,
+    UserApiList,
     UserInformation,
     UserList,
 } from "./components";
@@ -200,6 +201,7 @@ const app = createApp({
         SprintInformation,
         TaskInformation,
         UpdateProfilePicture,
+        UserApiList,
         UserInformation,
         UserList,
     },

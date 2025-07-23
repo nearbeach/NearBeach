@@ -14,6 +14,7 @@ azure-storage-blob
 azure-identity>=1.16.1
 drf-spectacular
 drf-spectacular[sidecar]
+django-rest-knox
 
 # Security recommendations - packages are used by libraries used by NearBeach
 pip>=25.1

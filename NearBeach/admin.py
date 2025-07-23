@@ -9,6 +9,7 @@ from .models import (
     Customer,
     Document,
     DocumentPermission,
+    ExtendsAuthToken,
     Folder,
     GroupPermission,
     Group,
@@ -54,6 +55,7 @@ admin.site.register(ChangeTaskBlock)
 admin.site.register(Customer)
 admin.site.register(Document)
 admin.site.register(DocumentPermission)
+admin.site.register(ExtendsAuthToken)
 admin.site.register(Folder)
 admin.site.register(GroupPermission)
 admin.site.register(Group)

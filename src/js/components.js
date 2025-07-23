@@ -487,6 +487,12 @@ export const
             "./components/profile/UpdateProfilePicture.vue"
             )
     ),
+    UserApiList = defineAsyncComponent(() =>
+        import(
+            /* webpackChunkName: "user-api-list" */
+            "./components/users/UserApiList.vue"
+            )
+    ),
     UserInformation = defineAsyncComponent(() =>
         import(
             /* webpackChunkName: "user-information" */

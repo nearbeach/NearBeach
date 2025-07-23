@@ -13,6 +13,7 @@ from NearBeach.utils.enums.request_for_change_enums import (
     RequestForChangeRisk,
     RequestForChangeImpact,
 )
+from knox.models import AuthToken
 
 # If user has overwritten the AUTH_USER_MODEL, user that. Otherwise default to User
 USER_MODEL = getattr(settings, "AUTH_USER_MODEL", User)
@@ -174,6 +175,15 @@ WEBSITE_SOURCE = (
     ("Staff Page", "Staff page"),
     ("Other", "Other"),
 )
+
+
+class ExtendsAuthToken(AuthToken):
+    description = models.CharField(max_length=255, blank=True)
+    change_user = models.ForeignKey(
+        USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+    )
 
 
 # List of tables - in alphabetical order
