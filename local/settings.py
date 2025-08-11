@@ -276,5 +276,6 @@ The following documentation covers all API endpoints for NearBeach. You can use 
     'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',
+    'AUTHENTICATION_WHITELIST': [],
     # OTHER SETTINGS
 }
