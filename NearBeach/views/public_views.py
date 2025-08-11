@@ -91,12 +91,12 @@ def get_public_context_kanban_card(results):
     priority = ObjectPriority(results.kanban_card_priority)
 
     return {
-        "card_column": results.kanban_column.kanban_column_name,
-        "card_description": results.kanban_card_description,
+        "card_column": results.kanban_column.kanban_column_name.replace("`", "'"),
+        "card_description": results.kanban_card_description.replace("`", "'"),
         "card_id": results.kanban_card_id,
-        "card_level": results.kanban_level.kanban_level_name,
-        "card_priority": priority.label,
-        "card_text": results.kanban_card_text,
+        "card_level": results.kanban_level.kanban_level_name.replace("`", "'"),
+        "card_priority": priority.label.replace("`", "'"),
+        "card_text": results.kanban_card_text.replace("`", "&#96;"),
     }
 
 
