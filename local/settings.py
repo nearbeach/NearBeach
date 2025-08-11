@@ -243,9 +243,15 @@ LOGIN_REDIRECT_URL = 'dashboard'
 SPECTACULAR_SETTINGS = {
     'TITLE': 'NearBeach API',
     'DESCRIPTION': """
-# NearBeach
+# NearBeach API Guide
 
 NearBeach is an open source project management system, built using Django for the backend, and VueJS for the frontend.
+
+The following documentation covers all API endpoints for NearBeach. You can use these endpoints to help;
+- **C**reate objects
+- **R**ead objects
+- **U**pdate objects
+- **D**elete objects
 
 # Features
 
@@ -254,6 +260,13 @@ NearBeach is an open source project management system, built using Django for th
 - **Kanban Board**: Users will be able to track tasks within a kanban board
 - **Project/Tasks**: Users will be able to create projects/tasks
 - **Request for Change**: Users will be able to setup a RFC for deployment processes
+
+# Helpful Links
+
+[NearBeach Documentation Guide](https://nearbeach.readthedocs.io/en/latest/)
+[Discord](https://discord.gg/64uhRztS6n)
+[Self-hosting](https://nearbeach.org/self-hosting/)
+[Source Code](https://github.com/NearBeach/NearBeach)
     """,
     'VERSION': '0.0.1',
     'SERVE_INCLUDE_SCHEMA': False,
