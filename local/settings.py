@@ -264,8 +264,11 @@ The following documentation covers all API endpoints for NearBeach. You can use 
 # Helpful Links
 
 [NearBeach Documentation Guide](https://nearbeach.readthedocs.io/en/latest/)
+
 [Discord](https://discord.gg/64uhRztS6n)
+
 [Self-hosting](https://nearbeach.org/self-hosting/)
+
 [Source Code](https://github.com/NearBeach/NearBeach)
     """,
     'VERSION': '0.0.1',
