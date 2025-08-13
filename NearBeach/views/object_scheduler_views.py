@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseForbidden
 from django.template import loader
 from django.db.models import F, Max
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
+from pygments.lexer import default
 
 from NearBeach.models import (
     Group,
@@ -22,6 +23,34 @@ import json
 import uuid
 
 
+# Internal Function
+def does_user_have_access(username, object_type, group_list):
+    user_group_results = UserGroup.objects.filter(
+        is_deleted=False,
+        username=username,
+    ).annotate(
+        max_project_permissions=Max("permission_set__project", default=0),
+        max_task_permissions=Max("permission_set__task", default=0),
+    ).values(
+        "max_project_permissions",
+        "max_task_permissions",
+    )
+
+    if len(group_list) > 0:
+        user_group_results = user_group_results.filter(
+            group__in=group_list,
+        )
+
+    if len(user_group_results) == 0:
+        return HttpResponseForbidden()
+
+    if object_type == "":
+        return user_group_results[0]["max_project_permissions"] > 1 or user_group_results[0]["max_task_permissions"] > 1
+
+    return user_group_results[0][F"max_{object_type}_permissions"] > 1
+
+
+# Internal Function
 def get_frequency_attribute(scheduler_frequency, form):
     if scheduler_frequency == "Set Day of the Week":
         json_frequency_attribute = json.dumps(
@@ -51,12 +80,18 @@ def get_frequency_attribute(scheduler_frequency, form):
     return json.loads("{}")
 
 
+@login_required(login_url="login", redirect_field_name="")
 def new_scheduled_object(request):
     """
     New Scheduled Object
     ~~~~~~~~~~~~~~~~~~~~
     Renders the template for creating a new scheduled object.
     """
+
+    # Check user permissions
+    if not does_user_have_access(request.user, "", []):
+        return HttpResponseForbidden()
+
     t = loader.get_template("NearBeach/object_scheduler/new_scheduled_object.html")
 
     c = {
@@ -71,10 +106,19 @@ def new_scheduled_object(request):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url="login", redirect_field_name="")
 def new_scheduled_object_save(request):
     form = NewScheduledObjectForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
+
+    # Check user permissions
+    if not does_user_have_access(
+        request.user,
+        form.cleaned_data["object_type"].lower(),
+        form.cleaned_data["group_list"],
+    ):
+        return HttpResponseForbidden()
 
     # Setup the object_json
     organisation = form.cleaned_data["organisation"]
@@ -138,6 +182,7 @@ def new_scheduled_object_save(request):
     )
 
 
+@login_required(login_url="login", redirect_field_name="")
 def scheduled_objects(request):
     """
     Scheduled Objects
@@ -243,6 +288,15 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
     ).annotate(
         task_permission=Max("permission_set__task"),
     )
+
+    # Check user permissions here now we have the data
+    # def does_user_have_access(username, object_type, group_list):
+    if not does_user_have_access(
+            request.user,
+            object_template_results[0]["object_template_json"]["object_type"],
+            template_group_results
+        ):
+        return HttpResponseForbidden()
 
     # Get the USER groups
     user_group_results = (
