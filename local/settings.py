@@ -242,11 +242,40 @@ LOGIN_REDIRECT_URL = 'dashboard'
 # DRF - drf-spectacular
 SPECTACULAR_SETTINGS = {
     'TITLE': 'NearBeach API',
-    'DESCRIPTION': 'NearBeach is an open source project management system.',
+    'DESCRIPTION': """
+# NearBeach API Guide
+
+NearBeach is an open source project management system, built using Django for the backend, and VueJS for the frontend.
+
+The following documentation covers all API endpoints for NearBeach. You can use these endpoints to help;
+- **C**reate objects
+- **R**ead objects
+- **U**pdate objects
+- **D**elete objects
+
+# Features
+
+- **Basic Organisation/Customer**: Users will be able to gather information on Organisations/Customers
+- **Customer Requirements**: Users will be able to gather requirements from customers
+- **Kanban Board**: Users will be able to track tasks within a kanban board
+- **Project/Tasks**: Users will be able to create projects/tasks
+- **Request for Change**: Users will be able to setup a RFC for deployment processes
+
+# Helpful Links
+
+[NearBeach Documentation Guide](https://nearbeach.readthedocs.io/en/latest/)
+
+[Discord](https://discord.gg/64uhRztS6n)
+
+[Self-hosting](https://nearbeach.org/self-hosting/)
+
+[Source Code](https://github.com/NearBeach/NearBeach)
+    """,
     'VERSION': '0.0.1',
     'SERVE_INCLUDE_SCHEMA': False,
     'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',
+    'AUTHENTICATION_WHITELIST': [],
     # OTHER SETTINGS
 }

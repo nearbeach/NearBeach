@@ -22,7 +22,7 @@ jobs:
       - name: 📦 Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install django django-rest-framework simplejson pillow drf-spectacular drf-spectacular[sidecar] python-dotenv django_otp django-two-factor-auth django-two-factor-auth[phonenumberslite] azure-storage-blob azure-identity botocore boto3
+          pip install django django-rest-framework simplejson pillow drf-spectacular drf-spectacular[sidecar] python-dotenv django_otp django-two-factor-auth django-two-factor-auth[phonenumberslite] azure-storage-blob azure-identity botocore boto3 django-rest-knox
 
       - name: 🔧 Generate Swagger Schema
         run: |
