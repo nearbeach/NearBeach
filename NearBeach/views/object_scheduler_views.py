@@ -51,6 +51,7 @@ def get_frequency_attribute(scheduler_frequency, form):
     return json.loads("{}")
 
 
+@login_required(login_url="login", redirect_field_name="")
 def new_scheduled_object(request):
     """
     New Scheduled Object
@@ -71,6 +72,7 @@ def new_scheduled_object(request):
     return HttpResponse(t.render(c, request))
 
 
+@login_required(login_url="login", redirect_field_name="")
 def new_scheduled_object_save(request):
     form = NewScheduledObjectForm(request.POST)
     if not form.is_valid():
@@ -138,6 +140,7 @@ def new_scheduled_object_save(request):
     )
 
 
+@login_required(login_url="login", redirect_field_name="")
 def scheduled_objects(request):
     """
     Scheduled Objects
