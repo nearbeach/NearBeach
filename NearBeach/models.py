@@ -1287,6 +1287,10 @@ class PermissionSet(models.Model):
         default=0,
     )
     requirement = models.IntegerField(choices=PERMISSION_LEVEL, default=0)
+    schedule_object = models.IntegerField(
+        choices=PERMISSION_LEVEL,
+        default=0,
+    )
     task = models.IntegerField(
         choices=PERMISSION_LEVEL,
         default=0,

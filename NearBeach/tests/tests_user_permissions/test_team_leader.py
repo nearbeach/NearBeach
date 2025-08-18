@@ -180,6 +180,25 @@ class TeamLeaderPermissionTests(TestCase):
                 "exclude_location_id": 1,
                 "search": "",
             }, 403, "POST"),
+            URLTest("scheduled_objects", [], {}, 200, "GET"),
+            URLTest("schedule_object_information", [1], {}, 200, "GET"),
+            URLTest("schedule_object_information", [3], {}, 403, "GET"),
+            URLTest("schedule_object_information_save", [1], {
+                "object_type": 1,
+                "object_title": "trim beard",
+                "object_description": "object_description",
+                "object_start_date": "2024-10-17T22:00:00.000Z",
+                "object_end_date": "2024-10-17T22:00:00.000Z",
+                "group_list": [1,2],
+                "days_before": 0,
+                "number_of_repeats": -1,
+                "scheduler_frequency": "Fortnightly",
+                "scheduler_end_date": "2024-01-12",
+                "scheduler_start_date": "2024-01-01",
+                "single_day": "saturday",
+                "end_date_condition": "end-date",
+            }, 200, "POST"),
+            URLTest("schedule_object_information_save", [3], {}, 403, "POST")
         ]
 
         # Loop through each url to test to make sure the decorator is applied
@@ -193,7 +212,7 @@ class TeamLeaderPermissionTests(TestCase):
                     response = self.client.post(
                         reverse(data.url, args=data.args), data.data, follow=True
                     )
-
+                
                 self.assertEqual(response.status_code, data.status_code)
 
     def test_notification_pages_redirect_to_dashboard(self):

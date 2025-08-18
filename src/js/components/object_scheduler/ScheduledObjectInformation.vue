@@ -130,7 +130,6 @@
 							:options="groupResults"
 							label="group"
 							v-model:value="objectGroupModel"
-							v-on:update-value="checkObjectGroupModel"
 							multiple
 						></n-select>
 
@@ -186,6 +185,7 @@
 					<div class="col-md-12">
 						<button class="btn btn-primary save-changes"
 								v-on:click="updateSchedulerObject"
+								v-if="userLevel > 1"
 						>
 							Update Scheduled Object
 						</button>
@@ -217,7 +217,7 @@ import {useNBTheme} from "../../composables/theme/useNBTheme";
 import {useNewObjectUploadImage} from "../../composables/uploads/useNewObjectUploadImage";
 
 export default {
-	name: "NewScheduledObject",
+	name: "ScheduledObjectInformation",
 	setup() {
 		return {v$: useVuelidate()};
 	},
@@ -286,22 +286,19 @@ export default {
 			type: String,
 			default: "light",
 		},
-		userGroupAndLevel: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
 		userGroupResults: {
 			type: Array,
 			default: () => {
 				return [];
 			},
 		},
+		userLevel: {
+			type: Number,
+			default: 0,
+		},
 	},
 	data() {
 		return {
-			groupModelValidation: true,
 			displayGroupPermissionIssue: false,
 			objectDescriptionModel: this.objectTemplateResults[0].object_template_json.object_description,
 			objectEndDateModel: new Date(this.objectTemplateResults[0].object_template_json.object_end_date),
@@ -353,54 +350,17 @@ export default {
 			required,
 		},
 	},
+	watch: {
+		objectGroupModel(new_value) {
+			//Calculate to see if the user's groups exist in the objectGroupModel
+			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
+				return new_value.includes(row.group_id);
+			}).length === 0;
+		},
+	},
 	methods: {
 		useNewObjectUploadImage,
 		useNBTheme,
-		calculateUserLevel(data) {
-			//If there is no data to crunch, just return.
-			if (data.length === 0) return 0;
-
-			//Inside list we have two fields; project, and tasks. We want to grab the highest value from
-			//both of those fields. Then we want to grab the highest values out of those two results. This will be our
-			//user level.
-			const user_level_project = data.reduce((prev, current) => {
-				return (prev && prev.project_permission > current.project_permission) ? prev : current;
-			}).project_permission;
-
-			const user_level_task = data.reduce((prev, current) => {
-				return (prev && prev.task_permission > current.task_permission) ? prev : current;
-			}).task_permission;
-
-			if (user_level_task > user_level_project) {
-				return user_level_task;
-			}
-			return user_level_project;
-		},
-		checkObjectGroupModel() {
-			//Calculate to see if the user's groups exist in the objectGroupModel
-			this.displayGroupPermissionIssue = this.userGroupResults.filter(row => {
-				return this.objectGroupModel.includes(row.group_id);
-			}).length === 0;
-
-			//Calculate to see if the user has create permission for any of the selected groups
-			const filtered_user_and_group_level = this.userGroupAndLevel.filter((row) => {
-				return this.objectGroupModel.includes(row.group_id);
-			});
-
-			//Calulate the boolean result. We need to make sure the user can create (3 - create)
-			this.groupModelValidation = this.calculateUserLevel(filtered_user_and_group_level) >= 3;
-
-			//As there is no validation yet, we'll use a toast to notify the user
-			if (!this.groupModelValidation) {
-				this.$store.dispatch("newToast", {
-					header: "No CREATE permission for groups",
-					message: "Please note - for the current groups selected, you do not have create permissions. Please add in a group you have create permission with.",
-					extra_classes: "bg-danger",
-					delay: 5000,
-					unique_type: "group-model-validation",
-				});
-			}
-		},
 		getEndDateConditionModel() {
 			//If number of repeats
 			if (this.scheduledObjectResults.number_of_repeats >= 0) return "number-of-repeats";
@@ -463,17 +423,6 @@ export default {
                     extra_classes: "bg-danger",
                     delay: 0,
                 });
-
-				return;
-			}
-
-			if (!this.groupModelValidation) {
-				this.$store.dispatch("newToast", {
-					header: "No CREATE permission for groups",
-					message: "Please note - for the current groups selected, you do not have create permissions. Please add in a group you have create permission with.",
-					extra_classes: "bg-danger",
-					delay: 5000,
-				});
 
 				return;
 			}
@@ -552,10 +501,9 @@ export default {
 		});
 
 		//Update user level
-		const user_level = this.calculateUserLevel(this.userGroupAndLevel);
 		this.$store.commit({
 			type: "updateUserLevel",
-			userLevel: user_level,
+			userLevel: this.userLevel,
 		});
 	},
 }
