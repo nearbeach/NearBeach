@@ -104119,12 +104119,12 @@
     "project": 4,
     "request_for_change": 4,
     "requirement": 4,
+    "schedule_object": 4,
     "task": 4,
     "tag": 4,
     "document": 1,
     "kanban_note": 1,
     "project_note": 1,
-    "schedule_object": 4,
     "task_note": 1,
     "requirement_note": 1,
     "requirement_item_note": 1,
@@ -104152,12 +104152,12 @@
     "project": 4,
     "request_for_change": 0,
     "requirement": 4,
+    "schedule_object": 3,
     "task": 4,
     "tag": 4,
     "document": 1,
     "kanban_note": 1,
     "project_note": 1,
-    "schedule_object": 3,
     "task_note": 1,
     "requirement_note": 1,
     "requirement_item_note": 1,
@@ -104185,12 +104185,12 @@
     "project": 3,
     "request_for_change": 0,
     "requirement": 3,
+    "schedule_object": 2,
     "task": 3,
     "tag": 3,
     "document": 1,
     "kanban_note": 1,
     "project_note": 1,
-    "schedule_object": 2,
     "task_note": 1,
     "requirement_note": 1,
     "requirement_item_note": 1,
@@ -104218,12 +104218,12 @@
     "project": 1,
     "request_for_change": 0,
     "requirement": 1,
+    "schedule_object": 1,
     "task": 1,
     "tag": 1,
     "document": 1,
     "kanban_note": 1,
     "project_note": 1,
-    "schedule_object": 1,
     "task_note": 1,
     "requirement_note": 1,
     "requirement_item_note": 1,
@@ -104533,7 +104533,7 @@
     "project_priority": 3,
     "date_created": "2025-08-08T09:23:43Z",
     "date_modified": "2025-08-08T09:23:43Z",
-    "change_user": 1,
+    "change_user": 6,
     "creation_user": 1,
     "is_deleted": false
   }
@@ -104552,7 +104552,7 @@
     "project_priority": 1,
     "date_created": "2025-08-08T09:23:43Z",
     "date_modified": "2025-08-08T09:23:43Z",
-    "change_user": 1,
+    "change_user": 6,
     "creation_user": 1,
     "is_deleted": false
   }
@@ -104571,7 +104571,7 @@
     "project_priority": 2,
     "date_created": "2025-08-08T09:23:43Z",
     "date_modified": "2025-08-08T09:23:43Z",
-    "change_user": 1,
+    "change_user": 6,
     "creation_user": 1,
     "is_deleted": false
   }
@@ -104590,7 +104590,7 @@
     "project_priority": 3,
     "date_created": "2025-08-08T09:23:43Z",
     "date_modified": "2025-08-08T09:23:43Z",
-    "change_user": 1,
+    "change_user": 6,
     "creation_user": 1,
     "is_deleted": false
   }
@@ -107821,7 +107821,7 @@
     "date_created": "2025-08-08T09:23:43Z",
     "date_modified": "2025-08-08T09:23:43Z",
     "change_user": 1,
-    "creation_user": 1,
+    "creation_user": 6,
     "is_deleted": false
   }
 },
@@ -107840,7 +107840,7 @@
     "date_created": "2025-08-08T09:23:43Z",
     "date_modified": "2025-08-08T09:23:43Z",
     "change_user": 1,
-    "creation_user": 1,
+    "creation_user": 6,
     "is_deleted": false
   }
 },
@@ -107859,7 +107859,7 @@
     "date_created": "2025-08-08T09:23:43Z",
     "date_modified": "2025-08-08T09:23:43Z",
     "change_user": 1,
-    "creation_user": 1,
+    "creation_user": 6,
     "is_deleted": false
   }
 },
@@ -107897,7 +107897,7 @@
     "date_created": "2025-08-08T09:23:43Z",
     "date_modified": "2025-08-08T09:23:43Z",
     "change_user": 1,
-    "creation_user": 1,
+    "creation_user": 6,
     "is_deleted": false
   }
 },
@@ -123645,6 +123645,36 @@
   }
 },
 {
+  "model": "NearBeach.usergroup",
+  "pk": 7,
+  "fields": {
+    "username": 6,
+    "group": 2,
+    "permission_set": 2,
+    "report_to": null,
+    "group_leader": false,
+    "date_created": "2025-08-22T08:45:16.097Z",
+    "date_modified": "2025-08-22T08:45:16.097Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.usergroup",
+  "pk": 8,
+  "fields": {
+    "username": 6,
+    "group": 3,
+    "permission_set": 2,
+    "report_to": null,
+    "group_leader": false,
+    "date_created": "2025-08-22T08:45:16.099Z",
+    "date_modified": "2025-08-22T08:45:16.099Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.usersetting",
   "pk": 1,
   "fields": {
@@ -125748,7 +125778,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$1000000$JozGn3VDhWDjiAmCsa8jKo$sYx5JlYwHz5bB1XPh5dfZEMokBJ/PQaxZpjuFVveZ9s=",
-    "last_login": "2025-08-08T09:24:03.202Z",
+    "last_login": "2025-08-22T08:44:25.374Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "Admin",
@@ -125829,6 +125859,24 @@
     "is_staff": false,
     "is_active": true,
     "date_joined": "2025-07-05T03:53:20.506Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 6,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$irKAHvXoI41kND6FYXkNex$glkVCMfBNLcjOA+xmn9t/BpAhCdfUb1i2LRwtVZ0eN0=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "delete_user",
+    "first_name": "delete",
+    "last_name": "user",
+    "email": "support@nearbeach.org",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-22T08:44:57.212Z",
     "groups": [],
     "user_permissions": []
   }
@@ -126295,6 +126343,14 @@
   "fields": {
     "app_label": "otp_email",
     "model": "emaildevice"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "2i1e089i2lbcmsmehgcuj9i6qejhiqdu",
+  "fields": {
+    "session_data": ".eJxVjMtuwyAQRf-FdWU5BBvby-7zDWhghpgWmYhHXDXKvwenXtS7uXPuPQ-2ul-IqPIalAWTQ1Q-XN2i7o5WNj1YynRj01K8_3jfCiFDBc89Wucp_WX6yRH-8Tt4VxOhOgwrUVDyrEqiqByyiZ3Y4afBfNOyAfyC5RoaE5YcnW62SrPT1FwCkv_cuwfBDGmu67MkSygJqBM9H3riw7nruZYSxsFY5MIKJC1AtIitQDuejEaJmrc9dXasUpdUKjeKm5ZNORZ6vgB6_WwD:1upNNp:eIxNb2kDTXFOP30j36Hw70GyhFV2Wh7WKUvXbLeYfg4",
+    "expire_date": "2025-09-05T08:44:25.418Z"
   }
 },
 {
