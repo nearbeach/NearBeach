@@ -582,26 +582,6 @@ class Group(models.Model):
         return str(self.group_name)
 
 
-class GroupPermission(models.Model):
-    group_permission_id = models.BigAutoField(primary_key=True)
-    permission_set = models.ForeignKey(
-        "PermissionSet",
-        on_delete=models.CASCADE,
-    )
-    group = models.ForeignKey("group", on_delete=models.CASCADE)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        return str(self.permission_set)
-
-
 class KanbanBoard(models.Model):
     kanban_board_id = models.BigAutoField(primary_key=True)
     kanban_board_name = models.CharField(max_length=255)

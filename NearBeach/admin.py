@@ -11,7 +11,6 @@ from .models import (
     DocumentPermission,
     ExtendsAuthToken,
     Folder,
-    GroupPermission,
     Group,
     KanbanBoard,
     KanbanCard,
@@ -57,7 +56,6 @@ admin.site.register(Document)
 admin.site.register(DocumentPermission)
 admin.site.register(ExtendsAuthToken)
 admin.site.register(Folder)
-admin.site.register(GroupPermission)
 admin.site.register(Group)
 admin.site.register(KanbanBoard)
 admin.site.register(KanbanCard)
