@@ -17,11 +17,13 @@ from NearBeach.views.theme_views import get_theme
 from NearBeach.views.tools.internal_functions import lookup_choice_from_key, get_all_groups, get_user_group_permission
 from NearBeach.forms import NewScheduledObjectForm, ScheduledObjectForm
 from NearBeach.models import OBJECT_TEMPLATE_TYPE
+from NearBeach.decorators.check_user_permissions.schedule_object_permissions import check_schedule_object_permissions
 
 import json
 import uuid
 
 
+# Internal Function
 def get_frequency_attribute(scheduler_frequency, form):
     if scheduler_frequency == "Set Day of the Week":
         json_frequency_attribute = json.dumps(
@@ -52,7 +54,8 @@ def get_frequency_attribute(scheduler_frequency, form):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def new_scheduled_object(request):
+@check_schedule_object_permissions(min_permission_level=3)
+def new_scheduled_object(request, *args, **kwargs):
     """
     New Scheduled Object
     ~~~~~~~~~~~~~~~~~~~~
@@ -73,7 +76,8 @@ def new_scheduled_object(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def new_scheduled_object_save(request):
+@check_schedule_object_permissions(min_permission_level=3)
+def new_scheduled_object_save(request, *args, **kwargs):
     form = NewScheduledObjectForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
@@ -141,7 +145,8 @@ def new_scheduled_object_save(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
-def scheduled_objects(request):
+@check_schedule_object_permissions(min_permission_level=1)
+def scheduled_objects(request, *args, **kwargs):
     """
     Scheduled Objects
     ~~~~~~~~~~~~~~~~~
@@ -179,6 +184,7 @@ def scheduled_objects(request):
 
 
 @login_required(login_url="login", redirect_field_name="")
+@check_schedule_object_permissions(min_permission_level=1)
 def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
     # Template
     t = loader.get_template("NearBeach/object_scheduler/scheduled_object_information.html")
@@ -234,19 +240,6 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
         flat=True
     )
 
-    # User group and level results
-    user_group_and_level = UserGroup.objects.filter(
-        is_deleted=False,
-        username=request.user,
-    ).values(
-        "group_id",
-        "group__group_name",
-    ).annotate(
-        project_permission=Max("permission_set__project"),
-    ).annotate(
-        task_permission=Max("permission_set__task"),
-    )
-
     # Get the USER groups
     user_group_results = (
         UserGroup.objects.filter(
@@ -273,14 +266,11 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
         "scheduled_object_id": schedule_object_id,
         "scheduled_object_results": scheduled_object_results,
         "template_group_results": template_group_results,
-        "user_group_and_level": json.dumps(
-            list(user_group_and_level),
-            cls=DjangoJSONEncoder,
-        ),
         "user_group_results": json.dumps(
             list(user_group_results),
             cls=DjangoJSONEncoder
         ),
+        "user_level": kwargs["user_level"],
         "theme": get_theme(request),
     }
 
@@ -288,6 +278,7 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
 
 
 @login_required(login_url="login", redirect_field_name="")
+@check_schedule_object_permissions(min_permission_level=2)
 def scheduled_object_information_save(request, schedule_object_id, *args, **kwargs):
     form = ScheduledObjectForm(request.POST)
     if not form.is_valid():

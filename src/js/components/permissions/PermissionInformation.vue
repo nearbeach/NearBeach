@@ -256,6 +256,14 @@
 							property-label="Configure tags"
 							v-on:update_property_value="updatePropertyValue($event)"
 						></single-permission-properties>
+
+						<single-permission-properties
+							v-bind:property-value="scheduleObjectModel"
+							v-bind:list-of-choices="permissionLevel"
+							property="scheduleObjectModel"
+							property-label="Configure Schedule Object"
+							v-on:update_property_value="updatePropertyValue($event)"
+						></single-permission-properties>
 					</div>
 				</div>
 
@@ -354,6 +362,7 @@ export default {
 			documentModel: this.permissionSetResults[0].fields.document,
 			kanbanNoteModel: this.permissionSetResults[0].fields.kanban_note,
 			projectNoteModel: this.permissionSetResults[0].fields.project_note,
+			scheduleObjectModel: this.permissionSetResults[0].fields.schedule_object,
 			taskNoteModel: this.permissionSetResults[0].fields.task_note,
 			requirementNoteModel: this.permissionSetResults[0].fields.requirement_note,
 			requirementItemNoteModel: this.permissionSetResults[0].fields.requirement_item_note,
@@ -419,6 +428,7 @@ export default {
 			data_to_send.set("document", this.documentModel);
 			data_to_send.set("kanban_note", this.kanbanNoteModel);
 			data_to_send.set("project_note", this.projectNoteModel);
+			data_to_send.set("schedule_object", this.scheduleObjectModel);
 			data_to_send.set("task_note", this.taskNoteModel);
 			data_to_send.set("requirement_note", this.requirementNoteModel);
 			data_to_send.set("requirement_item_note", this.requirementItemNoteModel);

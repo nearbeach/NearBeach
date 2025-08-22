@@ -99,6 +99,23 @@ class CheckDocumentation(TestCase):
 
         # Check the array
         assert_redirects_to_login(response_post_array, self)
+        
+class CheckObjectScheduler(TestCase):
+    def test_object_scheduler(self):
+        # Make sure the user gets redirected to the login page
+        c = Client()
+
+        # The POST components should be redirected
+        response_post_array = [
+            c.post(reverse("scheduled_objects", args=[])),
+            c.post(reverse("schedule_object_information", args=[1])),
+            c.post(reverse("schedule_object_information", args=[3])),
+            c.post(reverse("schedule_object_information_save", args=[1])),
+            c.post(reverse("schedule_object_information_save", args=[3])),
+        ]
+
+        # Check the array
+        assert_redirects_to_login(response_post_array, self)
 
 
 class CheckKanban(TestCase):

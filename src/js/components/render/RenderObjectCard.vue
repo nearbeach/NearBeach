@@ -1,7 +1,8 @@
 <template>
 	<div class="object-card-list">
-		<h2>{{ importVariables.header }}</h2>
+		<h2 v-if="importVariables.header !== ''">{{ importVariables.header }}</h2>
 		<div class="object-card"
+			 v-if="searchResults.length > 0"
 			 v-for="result in searchResults"
 			 :key="result.pk"
 		>
@@ -28,6 +29,20 @@
 						{{ useNiceDatetime(result[importVariables.end_date]) }}
 					</p>
 				</a>
+			</div>
+		</div>
+
+		<!-- Loading state -->
+		<div class="object-card"
+			 v-if="searchResults.length === 0"
+		>
+			<div class="object-card--detail">
+				<p class="card-text placeholder-glow">
+					<span class="placeholder col-1"></span>
+				  	<span class="placeholder col-12"></span>
+				</p>
+			</div>
+			<div class="object-card--status">
 			</div>
 		</div>
 	</div>

@@ -180,6 +180,11 @@ class ReadOnlyPermissionTests(TestCase):
                 "exclude_location_id": 1,
                 "search": "",
             }, 403, "POST"),
+            URLTest("scheduled_objects", [], {}, 200, "GET"),
+            URLTest("schedule_object_information", [1], {}, 200, "GET"),
+            URLTest("schedule_object_information", [3], {}, 403, "GET"),
+            URLTest("schedule_object_information_save", [1], {}, 403, "POST"),
+            URLTest("schedule_object_information_save", [2], {}, 403, "POST")
 
         ]
 
