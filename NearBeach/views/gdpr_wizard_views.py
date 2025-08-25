@@ -388,7 +388,12 @@ def _get_organisation_data(gdpr_object_id):
     ]
 
     # Loop through object data and construct the data required
-    user_action_required = {}
+    user_action_required = {
+        "project": [],
+        "requirement": [],
+        "requirement_item": [],
+        "task": [],
+    }
     data_to_be_deleted = {}
     for object in object_list:
         # Gather the variables
