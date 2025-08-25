@@ -139,25 +139,25 @@
 								</div>
 
 								<nav aria-label="Pagination for New Link Wizard"
-									 v-if="numberOfPages > 1"
+									 v-if="setOfPages.length >= 1"
 								>
 									<ul class="pagination justify-content-center"
 									>
-										<li v-for="index in numberOfPages"
-											v-bind:key="index"
-											v-bind:class="getClasses(index)"
+										<li v-for="index in setOfPages"
+											v-bind:key="index.destinationPage"
+											v-bind:class="getClasses(index.destinationPage)"
 										>
-											<a v-if="parseInt(index) !== parseInt(currentPage)"
+											<a v-if="parseInt(index.destinationPage) !== parseInt(currentPage)"
 											   class="page-link"
 											   href="javascript:void(0)"
-											   v-on:click="changePage(index)"
+											   v-on:click="changePage(index.destinationPage)"
 											>
-												{{ index }}
+												{{ index.text }}
 											</a>
 											<span v-else
 												  class="page-link"
 											>
-												{{ index }}
+												{{ index.text }}
 											</span>
 										</li>
 									</ul>
@@ -194,6 +194,9 @@ import {NSelect} from "naive-ui";
 
 //VueX
 import {mapGetters} from "vuex";
+
+//Composable
+import { getSetOfPages } from "../../../composables/pagintation/getSetOfPages";
 
 export default {
 	name: "NewLinkWizard",
@@ -239,6 +242,7 @@ export default {
 			numberOfPages: 1,
 			searchModel: "",
 			searchTimeout: "",
+			setOfPages: [],
 			styleHeight: "height: 90px",
 		};
 	},
@@ -264,6 +268,7 @@ export default {
 		},
 	},
 	methods: {
+		getSetOfPages,
 		changePage(index) {
 			this.currentPage = index;
 			this.getObjects();
@@ -308,6 +313,7 @@ export default {
 				this.objectResults = response.data[this.objectModel.toLowerCase()];
 				this.numberOfPages = response.data[`${this.objectModel.toLowerCase()}_number_of_pages`];
 				this.currentPage = response.data[`${this.objectModel.toLowerCase()}_current_page`];
+				this.setOfPages = getSetOfPages(this.currentPage, this.numberOfPages);
 
 				//Tell the user we are no longer searching
 				this.isSearching = false;

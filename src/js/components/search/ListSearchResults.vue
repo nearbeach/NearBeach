@@ -45,6 +45,9 @@
 //Components
 import RenderObjectCard from "../render/RenderObjectCard.vue";
 
+//Composable
+import {getSetOfPages} from "../../composables/pagintation/getSetOfPages";
+
 export default {
 	name: "ListSearchResults",
 	components: {
@@ -106,6 +109,7 @@ export default {
 		};
 	},
 	methods: {
+		getSetOfPages,
 		changePage(destination_page) {
 			// Update the card class so the card does not collapse
 			this.cardClass = `height: ${this.$refs.searchCard.offsetHeight}px`
@@ -120,7 +124,7 @@ export default {
 			});
 
 			// Apply the new set of pages
-			this.updateSetOfPages(destination_page);
+			this.setOfPages = this.getSetOfPages(destination_page, this.numberOfPages);
 		},
 		getClasses(index) {
 			if (parseInt(index) === this.currentPage) {
@@ -129,73 +133,10 @@ export default {
 
 			return "page-item";
 		},
-		updateSetOfPages(destination_page) {
-			if (this.numberOfPages <= 7)
-			{
-				// There are not enough blocks to add in the first/previous/next/last buttons
-				// Array.from({length: 10}, (_, i) => i + 1)
-				this.setOfPages = Array.from(
-					{ length: this.numberOfPages },
-					(_, index) => {
-						return {
-							destinationPage: index + 1,
-							text: `${index + 1}`,
-						}
-					}
-				)
-
-				//Finished
-				return;
-			}
-
-			if (destination_page <= 4)
-			{
-				// At the start of the pagination
-				this.setOfPages = [
-					{ destinationPage: 1, text: "1"},
-					{ destinationPage: 2, text: "2"},
-					{ destinationPage: 3, text: "3"},
-					{ destinationPage: 4, text: "4"},
-					{ destinationPage: 5, text: "5"},
-					{ destinationPage: 6, text: ">"},
-					{ destinationPage: this.numberOfPages, text: ">>"},
-				]
-
-				// Done
-				return;
-			}
-
-			if (destination_page > this.numberOfPages - 4)
-			{
-				// At the end of the pagination
-				this.setOfPages = [
-					{ destinationPage: 1, text: "<<"},
-					{ destinationPage: this.numberOfPages - 5, text: `<`},
-					{ destinationPage: this.numberOfPages - 4, text: `${this.numberOfPages - 4}`},
-					{ destinationPage: this.numberOfPages - 3, text: `${this.numberOfPages - 3}`},
-					{ destinationPage: this.numberOfPages - 2, text: `${this.numberOfPages - 2}`},
-					{ destinationPage: this.numberOfPages - 1, text: `${this.numberOfPages - 1}`},
-					{ destinationPage: this.numberOfPages, text: `${this.numberOfPages}`},
-				]
-
-				// Done
-				return;
-			}
-
-			this.setOfPages = [
-				{ destinationPage: 1, text: "<<"},
-				{ destinationPage: destination_page - 2, text: "<"},
-				{ destinationPage: destination_page - 1, text: `${destination_page - 1}`},
-				{ destinationPage: destination_page, text: `${destination_page}`},
-				{ destinationPage: destination_page + 1, text: `${destination_page + 1}`},
-				{ destinationPage: destination_page + 2, text: ">"},
-				{ destinationPage: this.numberOfPages, text: ">>"},
-			]
-		}
 	},
 	mounted() {
 		// Sets the default array of pages
-		this.updateSetOfPages(1);
+		this.setOfPages = getSetOfPages(1, this.numberOfPages);
 	}
 };
 </script>

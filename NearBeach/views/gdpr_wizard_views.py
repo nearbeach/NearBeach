@@ -1,11 +1,14 @@
 import django.forms
+from django.urls import reverse
 from django.apps import apps
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.serializers.json import DjangoJSONEncoder
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.db.models import F, Value, Q
 from django.db.models.functions import Concat
 from django.template.loader import get_template
+from django.views.decorators.http import require_http_methods
+
 from NearBeach.views.theme_views import get_theme
 from NearBeach.forms import GdprObjectTypeForm, GdprDataRequestForm, GdprObjectSubmitForm
 from NearBeach.models import (
@@ -189,6 +192,11 @@ def _delete_user_data(gdpr_object_id, request):
             ).update(
                 creation_user=request.user,
             )
+
+    # It is safe to delete the user now?
+    User.objects.filter(
+        id=gdpr_object_id,
+    ).delete()
 
     return
 
@@ -380,7 +388,12 @@ def _get_organisation_data(gdpr_object_id):
     ]
 
     # Loop through object data and construct the data required
-    user_action_required = {}
+    user_action_required = {
+        "project": [],
+        "requirement": [],
+        "requirement_item": [],
+        "task": [],
+    }
     data_to_be_deleted = {}
     for object in object_list:
         # Gather the variables
@@ -563,6 +576,7 @@ def _get_user_data(gdpr_object_id):
     }
 
 
+@require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name="")
 def gdpr_get_data(request):
@@ -596,6 +610,7 @@ def gdpr_get_data(request):
     return JsonResponse(json.loads(results), safe=False)
 
 
+@require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name="")
 def gdpr_search_data(request):
@@ -620,6 +635,7 @@ def gdpr_search_data(request):
     )
 
 
+@require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name="")
 def gdpr_submit(request):
@@ -638,7 +654,7 @@ def gdpr_submit(request):
     else:
         return HttpResponseBadRequest("Object Type Not Found")
 
-    return HttpResponse(F"{gdpr_object_type} has been deleted")
+    return HttpResponse()
 
 
 @login_required(login_url="login", redirect_field_name="")
@@ -646,6 +662,20 @@ def gdpr_submit(request):
 def gdpr_wizard(request):
     # Get template
     t = get_template("NearBeach/gdpr/gdpr_wizard.html")
+
+    # Get context
+    c = {
+        "theme": get_theme(request),
+    }
+
+    return HttpResponse(t.render(c, request))
+
+
+@require_http_methods(["GET"])
+@login_required(login_url="login", redirect_field_name="")
+@user_passes_test(lambda u: u.is_superuser, login_url="/", redirect_field_name="")
+def gdpr_wizard_success(request):
+    t = get_template("NearBeach/gdpr/gdpr_success.html")
 
     # Get context
     c = {
