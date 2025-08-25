@@ -262,6 +262,11 @@ urlpatterns = [
         name="gdpr_search_data",
     ),
     path(
+        "gdpr_wizard/success/",
+        gdpr_wizard_views.gdpr_wizard_success,
+        name="gdpr_wizard_success",
+    ),
+    path(
         "gdpr_wizard/submit/",
         gdpr_wizard_views.gdpr_submit,
         name="gdpr_submit",
