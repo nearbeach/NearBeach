@@ -193,6 +193,11 @@ def _delete_user_data(gdpr_object_id, request):
                 creation_user=request.user,
             )
 
+    # It is safe to delete the user now?
+    User.objects.filter(
+        id=gdpr_object_id,
+    ).delete()
+
     return
 
 
