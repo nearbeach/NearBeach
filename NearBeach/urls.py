@@ -707,11 +707,6 @@ urlpatterns = [
         name="group_and_user_data",
     ),
     path(
-        "object_data/<destination>/<location_id>/<object_lookup>/potential_object_list/",
-        sprint_views.potential_object_list,
-        name="sprint_potential_object_list",
-    ),
-    path(
         "object_data/<destination>/<location_id>/delete_tag/",
         object_data_views.delete_tag,
         name="delete_tag"
@@ -1080,6 +1075,11 @@ urlpatterns = [
         "sprint_information/<int:sprint_id>/finish_sprint/",
         sprint_views.finish_sprint,
         name="sprint_information_finish_sprint",
+    ),
+    path(
+        "sprint_information/<int:sprint_id>/potential_object_list/",
+        sprint_views.potential_object_list,
+        name="sprint_information_potential_object_list",
     ),
     path(
         "sprint_information/<int:sprint_id>/start_sprint/",

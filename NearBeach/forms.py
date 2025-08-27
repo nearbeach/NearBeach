@@ -67,6 +67,12 @@ OBJECT_ARRAY = [
     ("task", "task"),
 ]
 
+SPRINT_POTENTIAL_OBJECT_ARRAY = [
+    ("requirement_item", "requirement_item"),
+    ("project", "project"),
+    ("task", "task"),
+]
+
 
 # CUSTOM Fields
 # https://stackoverflow.com/questions/10296333/django-multiplechoicefield-does-not-preserve-order-of-selected-values
@@ -1336,6 +1342,20 @@ class SearchObjectsForm(forms.Form):
     include_all_groups = forms.BooleanField(
         required=False,
         initial=False,
+    )
+    search = forms.CharField(
+        max_length=250,
+        required=False,
+    )
+
+
+class SprintPotentialObjectListForm(forms.Form):
+    object_lookup = forms.ChoiceField(
+        choices=SPRINT_POTENTIAL_OBJECT_ARRAY,
+        required=True,
+    )
+    destination_page = forms.IntegerField(
+        required=True,
     )
     search = forms.CharField(
         max_length=250,
