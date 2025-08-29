@@ -166,7 +166,15 @@ export default {
 				return row.user_job_id !== this.confirmIdToDelete;
 			});
 		},
+		resetAllowToMove() {
+			for (let index = 0; index < this.dateArray.length; index++) {
+				this.dateArray[index].allowMoveTo = true;
+			}
+		},
 		onEnd(event) {
+			//Reset the AllowToMove variables
+			this.resetAllowToMove();
+
 			//Short hand some variables
 			const new_elem = event.to;
 			const old_elem = event.from;
