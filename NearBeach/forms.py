@@ -45,6 +45,12 @@ from .models import (
 
 USER_MODEL = get_user_model()
 
+MY_PLANNER_OBJECT_TYPE = (
+    ("project", "project"),
+    ("task", "task"),
+    ("kanban_card", "kanban_card"),
+)
+
 OBJECT_STATUS_LOOKUP = {
     "requirement_item": ListOfRequirementItemStatus,
     "requirement": ListOfRequirementStatus,
@@ -625,6 +631,23 @@ class MyPlannerDeleteUserJobForm(forms.Form):
     user_job_id = forms.ModelChoiceField(
         required=True,
         queryset=UserJob.objects.all(),
+    )
+
+
+class MyPlannerGetObjectListForm(forms.Form):
+    object_type = forms.ChoiceField(
+        choices=MY_PLANNER_OBJECT_TYPE,
+        required=True,
+    )
+    job_date = forms.DateField(
+        required=True,
+    )
+    search = forms.CharField(
+        max_length=255,
+        required=False,
+    )
+    destination_page = forms.IntegerField(
+        required=True,
     )
 
 

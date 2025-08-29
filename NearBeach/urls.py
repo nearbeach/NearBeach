@@ -421,7 +421,7 @@ urlpatterns = [
         name="my_planner_delete_user_job",
     ),
     path(
-        "my_planner/get_object_list/<destination>/",
+        "my_planner/get_object_list/",
         user_job_views.my_planner_get_object_list,
         name="my_planner_get_object_list",
     ),
