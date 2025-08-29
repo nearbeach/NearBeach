@@ -34,7 +34,7 @@
 					:key="day.date"
 					:list="day.data"
 					@end="onEnd($event)"
-
+					@start="onStart($event)"
 				>
 					<template #item="{ element }">
 						<div class="list-group-item"
@@ -159,44 +159,22 @@ export default {
 			}
 		},
 		move(event) {
-			//Get object data
-			const new_elem = event.to;
-			const object_type = event.dragged.dataset.objectType;
-			const location_id = event.dragged.dataset.locationId;
-
-			//Check to make sure the object does not already exist in the final location
-			const object_exists = this.dateArray.filter((row) => {
-				return row.date === new_elem.dataset.jobDate;
-			})[0].data.filter((row) => {
-				const condition_1 = row.object_type.toLowerCase() === object_type.toLowerCase();
-				const condition_2 = parseInt(row.location_id) === parseInt(location_id);
-
-				return condition_1 && condition_2;
-			}).length > 0;
-
-			//Check to see if the object exists
-			if (object_exists) {
-				//Notify the user
-				this.$store.dispatch("newToast", {
-					header: "Object Already Exists",
-					message: `Sorry, the ${object_type} already exists on ${new_elem.dataset.jobDate}.`,
-					extra_classes: "bg-info",
-					unique_type: "move_planner_card",
-					delay: 1750,
-				});
-
-				//Do nothing
-				return false;
-			}
-
-			return true;
+			return this.dateArray[event.to.dataset.index].allowMoveTo;
 		},
 		removeUserJob() {
 			this.dateArray[this.confirmIndex].data = this.dateArray[this.confirmIndex].data.filter((row) => {
 				return row.user_job_id !== this.confirmIdToDelete;
 			});
 		},
+		resetAllowToMove() {
+			for (let index = 0; index < this.dateArray.length; index++) {
+				this.dateArray[index].allowMoveTo = true;
+			}
+		},
 		onEnd(event) {
+			//Reset the AllowToMove variables
+			this.resetAllowToMove();
+
 			//Short hand some variables
 			const new_elem = event.to;
 			const old_elem = event.from;
@@ -236,9 +214,42 @@ export default {
 				});
 			});
 		},
+		onStart(event) {
+			// Determine which column we can move the cards too
+			this.updateAllowMoveTo(
+				event.item.dataset.objectType,
+				event.item.dataset.locationId,
+				event.from.dataset.jobDate
+			);
+		},
 		showModal() {
 			const modal = new Modal(document.getElementById("newPlannerObjectWizardModal"));
 			modal.show();
+		},
+		updateAllowMoveTo(object_type, location_id, job_date) {
+			// Loop through the list of days (skip the current job_date) and update the allow move to appropriately
+			for (let index = 0; index < this.dateArray.length; index++) {
+				if (this.dateArray[index].date === job_date) {
+					// Don't need to apply any changes on this particular day
+					continue;
+				}
+
+				// Does the user_job_id exist on this day
+				const contains_user_job_id = this.dateArray[index]?.data?.some(
+					(row) => {
+						// Has to meet both conditions
+						const condition_1 = parseInt(location_id) === parseInt(row.location_id);
+						const condition_2 = object_type.toLowerCase() === row.object_type.toLowerCase();
+						return condition_1 && condition_2;
+					}
+				);
+
+				// Update the move to status
+				if (this.dateArray[index]?.allowMoveTo !== undefined && contains_user_job_id) {
+					// The date array contains the job id, do not allow the move to functionality
+					this.dateArray[index].allowMoveTo = false;
+				}
+			}
 		},
 		updateDateArray(data) {
 			this.dateArray = this.dateArray.map((row) => {
@@ -280,6 +291,7 @@ export default {
 			this.dateArray.push({
 				date: new_day.toFormat("yyyy-LL-dd"),
 				day: new_day.toFormat("cccc"),
+				allowMoveTo: true,
 				data,
 			});
 		}

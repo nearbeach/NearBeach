@@ -3,17 +3,19 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q, F
 from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse, Http404
 from django.template import loader
+from django.conf import settings
 
 import json
 
 from django.views.decorators.http import require_http_methods
+from pygments.lexers import q
 
 from NearBeach.forms import (
     NewSprintAssignmentForm,
     NewSprintForm,
     AddObjectToSprintForm,
     RemoveSprintForm,
-    UpdateSprintForm,
+    UpdateSprintForm, SprintPotentialObjectListForm,
 )
 from NearBeach.models import (
     ObjectAssignment,
@@ -33,6 +35,12 @@ from NearBeach.decorators.check_user_permissions.sprint_permissions import (
 )
 
 from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
+
+import math
+import json
+
+# Define global variables
+SEARCH_PAGE_SIZE = getattr(settings, 'SEARCH_PAGE_SIZE', 5)
 
 LOOKUP_FUNCS = {
     "project": {
@@ -224,15 +232,13 @@ def list_child_sprints(request, destination, location_id, *args, **kwargs):
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_sprint_permission_with_sprint(min_permission_level=1)
-def potential_object_list(request, destination, location_id, object_lookup, *args, **kwargs):
+def potential_object_list(request, sprint_id, *args, **kwargs):
     """
     Used to get a list of potential objects that can be assigned to a sprint.
     """
-    if not destination == "sprint":
-        return HttpResponseBadRequest("Object has to be a sprint")
-
-    if object_lookup not in LOOKUP_FUNCS:
-        return HttpResponseBadRequest("Sorry - but that object lookup does not exist")
+    form = SprintPotentialObjectListForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
 
     # Get user groups
     user_group_results = UserGroup.objects.filter(
@@ -241,10 +247,15 @@ def potential_object_list(request, destination, location_id, object_lookup, *arg
         group_id__isnull=False,
     ).values("group_id")
 
+    # Form data
+    object_lookup = form.cleaned_data["object_lookup"]
+    search = form.cleaned_data["search"]
+
     # Depending on the object, we might need to look at the parent. If an object does not have
     # A parent, it will refer itself. i.e. project will refer project
     parent = LOOKUP_FUNCS[object_lookup]["parent"]
     object = LOOKUP_FUNCS[object_lookup]["object"]
+    title = LOOKUP_FUNCS[object_lookup]["title"]
 
     # Get both object exclusion and inclusion
     object_inclusion = ObjectAssignment.objects.filter(
@@ -260,14 +271,15 @@ def potential_object_list(request, destination, location_id, object_lookup, *arg
     # Get the data dependent on the object lookup
     data_results = object.filter(
         is_deleted=False,
-        **{F"{parent}_id__in": object_inclusion}
+        **{F"{parent}_id__in": object_inclusion},
+        **{F"{title}__icontains": search}
     ).exclude(
         Q(
             **{F"{object_lookup}_status__{object_lookup}_higher_order_status": "Closed"},
         )
     ).annotate(
         id=F(F"{object_lookup}_id"),
-        description=F(F"{LOOKUP_FUNCS[object_lookup]['title']}"),
+        description=F(F"{title}"),
         status=F(F"{object_lookup}_status__{object_lookup}_status")
     ).values(
         'id',
@@ -275,24 +287,10 @@ def potential_object_list(request, destination, location_id, object_lookup, *arg
         'status',
     )
 
-    # If destination is requirement_item, we need to exclude any of it's
-    # deleted parents
-    if destination == "requirement_item":
-        data_results = data_results.exclude(
-            Q(
-                requirement_id__in=Requirement.objects.filter(
-                    is_deleted=True,
-                ).values("requirement_id")
-            )
-            | Q(
-                requirement_item_status__requirement_item_higher_order_status="Closed",
-            )
-        )
-
     # Exclude the data from data results
     data_results = data_results.filter().exclude(
         **{F"{object_lookup}_id__in": SprintObjectAssignment.objects.filter(
-            sprint_id=location_id,
+            sprint_id=sprint_id,
             **{F"{object_lookup}_id__isnull": False},
             is_deleted=False,
         ).values(
@@ -300,9 +298,23 @@ def potential_object_list(request, destination, location_id, object_lookup, *arg
         )},
     )
 
+    # Apply pagination
+    destination_page = form.cleaned_data["destination_page"]
+    total_count = len(data_results)
+
+    # Apply the shift of the destination page, as we should -1 the value. Due to the front end sending the actual
+    # page number
+    destination_page = 0 if destination_page <= 0 else destination_page - 1
+    data_results = data_results[destination_page * SEARCH_PAGE_SIZE:(destination_page + 1) * SEARCH_PAGE_SIZE]
+
+    return_results = {
+        object_lookup: list(data_results),
+        F"{object_lookup}_number_of_pages": math.ceil(total_count / SEARCH_PAGE_SIZE),
+        F"{object_lookup}_current_page": form.cleaned_data["destination_page"],
+    }
+
     # Send the data to the user
-    data_results = json.dumps(list(data_results), cls=DjangoJSONEncoder)
-    return JsonResponse(json.loads(data_results), safe=False)
+    return JsonResponse(return_results, safe=False)
 
 
 @require_http_methods(["POST"])

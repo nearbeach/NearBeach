@@ -50,7 +50,10 @@
 								Please select which of the objects you want to connect to this sprint.
 							</p>
 						</div>
-						<div class="col-md-8">
+						<div class="col-md-8"
+							 v-bind:style="styleHeight"
+							 ref="wizardResults"
+						>
 							<div
 								v-if="objectModel === ''"
 								class="alert alert-info"
@@ -58,18 +61,39 @@
 								Please select an object.
 							</div>
 
+							<div class="row"
+								 v-if="objectModel !== ''"
+							>
+								<div class="col-12">
+									<label class="form-label">Search Terms</label>
+									<input
+										id="search_terms"
+										class="form-control"
+										v-model="searchModel"
+										type="text"
+									/>
+								</div>
+							</div>
+
 							<div
 								v-if="searchStatus === 'currently_searching'"
-								class="alert alert-warning mb-4"
+								class="wizard-results"
 							>
-								Currently searching for potential objects...
+								<div class="wizard-results--card">
+									<div class="wizard-results--card--tick"></div>
+									<div class="wizard-results--card--content">
+										<span class="placeholder col-1"></span><br/>
+										<span class="placeholder col-11"></span>
+										<span class="placeholder col-8"></span>
+									</div>
+								</div>
 							</div>
 
 							<div class="wizard-results"
-								 v-if="searchResults.length > 0 && objectModel != null"
+								 v-if="objectResults.length > 0 && objectModel != null"
 							>
 								<div class="wizard-results--card"
-									 v-for="result in searchResults"
+									 v-for="result in objectResults"
 									 :key="result.id"
 								>
 									<div class="wizard-results--card--tick">
@@ -96,11 +120,35 @@
 									</div>
 								</div>
 							</div>
-							<div class="alert alert-info"
-								 v-if="searchResults.length === 0 && objectModel != null"
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4"></div>
+						<div class="col-md-8">
+							<nav aria-label="Pagination for New Link Sprint Wizard"
+								 v-if="setOfPages.length >= 1"
 							>
-								Sorry, could not find any applicable {{ objectModel }}s
-							</div>
+								<ul class="pagination justify-content-center"
+								>
+									<li v-for="index in setOfPages"
+										v-bind:key="index.destinationPage"
+										v-bind:class="getClasses(index.destinationPage)"
+									>
+										<a v-if="parseInt(index.destinationPage) !== parseInt(currentPage)"
+										   class="page-link"
+										   href="javascript:void(0)"
+										   v-on:click="changePage(index.destinationPage)"
+										>
+											{{ index.text }}
+										</a>
+										<span v-else
+											  class="page-link"
+										>
+											{{ index.text }}
+										</span>
+									</li>
+								</ul>
+							</nav>
 						</div>
 					</div>
 				</div>
@@ -133,6 +181,7 @@ import { NSelect } from "naive-ui";
 //VueX
 import { mapGetters } from "vuex";
 import {DateTime} from "luxon";
+import {getSetOfPages} from "../../composables/pagintation/getSetOfPages";
 
 export default {
 	name: "AddObjectWizard",
@@ -141,6 +190,7 @@ export default {
 	},
 	data() {
 		return {
+			currentPage: 1,
 			linkModel: [],
 			objectModel: "",
 			objectOptions: [
@@ -157,18 +207,41 @@ export default {
 					label: "Task",
 				},
 			],
-			searchResults: [],
+			objectResults: [],
+			searchModel: "",
 			searchStatus: "",
+			searchTimeout: "",
+			setOfPages: [],
+			styleHeight: "",
 		};
 	},
 	watch: {
 		objectModel(new_value) {
 			//Blank out the previous link model
 			this.linkModel = [];
+			this.setOfPages = [];
 
 			//Get new list of objects
-			this.getObjectList(new_value);
-		}
+			this.getObjectList(new_value, 1);
+		},
+		searchModel() {
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
+				// Solidify the height of the object
+				this.styleHeight = `height: ${this.$refs.wizardResults.offsetHeight}px`;
+
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getObjectList(this.objectModel, 1);
+				}, 500);
+			}
+		},
 	},
 	computed: {
 		...mapGetters({
@@ -245,16 +318,45 @@ export default {
 				});
 			});
 		},
-		getObjectList(new_value) {
+		changePage(destination_page)
+		{
+			// Solidify the height of the object
+			this.styleHeight = `height: ${this.$refs.wizardResults.offsetHeight}px`;
+
+			// Then fetch the data
+			this.getObjectList(this.objectModel, destination_page);
+		},
+		getClasses(index) {
+			if (parseInt(index) === this.currentPage) {
+				return "page-item active";
+			}
+
+			return "page-item";
+		},
+		getObjectList(new_value, destination_page) {
 			//Update the search status
 			this.searchStatus = "currently_searching";
 
+			// Clear out data
+			this.objectResults = [];
+
+			//Create form data
+			const data_to_send = new FormData();
+			data_to_send.set("object_lookup", new_value);
+			data_to_send.set("destination_page", destination_page);
+			data_to_send.set("search", this.searchModel);
+
 			//Use axios to get the list
 			this.axios.post(
-				`${this.rootUrl}object_data/sprint/${this.locationId}/${new_value}/potential_object_list/`,
+				`${this.rootUrl}sprint_information/${this.locationId}/potential_object_list/`,
+				data_to_send,
 			).then((response) => {
 				//Update local response
-				this.searchResults = response.data;
+				this.objectResults = response.data[this.objectModel.toLowerCase()];
+				this.numberOfPages = response.data[`${this.objectModel.toLowerCase()}_number_of_pages`];
+				this.currentPage = response.data[`${this.objectModel.toLowerCase()}_current_page`];
+				this.setOfPages = getSetOfPages(this.currentPage, this.numberOfPages);
+				this.styleHeight = "";
 
 				//Update status
 				this.searchStatus = 'search_completed';

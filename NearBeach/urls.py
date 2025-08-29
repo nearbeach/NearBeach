@@ -421,7 +421,7 @@ urlpatterns = [
         name="my_planner_delete_user_job",
     ),
     path(
-        "my_planner/get_object_list/<destination>/",
+        "my_planner/get_object_list/",
         user_job_views.my_planner_get_object_list,
         name="my_planner_get_object_list",
     ),
@@ -705,11 +705,6 @@ urlpatterns = [
         "object_data/<destination>/<location_id>/group_and_user_data/",
         object_data_views.group_and_user_data,
         name="group_and_user_data",
-    ),
-    path(
-        "object_data/<destination>/<location_id>/<object_lookup>/potential_object_list/",
-        sprint_views.potential_object_list,
-        name="sprint_potential_object_list",
     ),
     path(
         "object_data/<destination>/<location_id>/delete_tag/",
@@ -1080,6 +1075,11 @@ urlpatterns = [
         "sprint_information/<int:sprint_id>/finish_sprint/",
         sprint_views.finish_sprint,
         name="sprint_information_finish_sprint",
+    ),
+    path(
+        "sprint_information/<int:sprint_id>/potential_object_list/",
+        sprint_views.potential_object_list,
+        name="sprint_information_potential_object_list",
     ),
     path(
         "sprint_information/<int:sprint_id>/start_sprint/",

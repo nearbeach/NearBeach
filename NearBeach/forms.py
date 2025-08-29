@@ -45,6 +45,12 @@ from .models import (
 
 USER_MODEL = get_user_model()
 
+MY_PLANNER_OBJECT_TYPE = (
+    ("project", "project"),
+    ("task", "task"),
+    ("kanban_card", "kanban_card"),
+)
+
 OBJECT_STATUS_LOOKUP = {
     "requirement_item": ListOfRequirementItemStatus,
     "requirement": ListOfRequirementStatus,
@@ -64,6 +70,12 @@ OBJECT_ARRAY = [
     ("organisation", "organisation"),
     ("project", "project"),
     ("sprint", "sprint"),
+    ("task", "task"),
+]
+
+SPRINT_POTENTIAL_OBJECT_ARRAY = [
+    ("requirement_item", "requirement_item"),
+    ("project", "project"),
     ("task", "task"),
 ]
 
@@ -619,6 +631,23 @@ class MyPlannerDeleteUserJobForm(forms.Form):
     user_job_id = forms.ModelChoiceField(
         required=True,
         queryset=UserJob.objects.all(),
+    )
+
+
+class MyPlannerGetObjectListForm(forms.Form):
+    object_type = forms.ChoiceField(
+        choices=MY_PLANNER_OBJECT_TYPE,
+        required=True,
+    )
+    job_date = forms.DateField(
+        required=True,
+    )
+    search = forms.CharField(
+        max_length=255,
+        required=False,
+    )
+    destination_page = forms.IntegerField(
+        required=True,
     )
 
 
@@ -1336,6 +1365,20 @@ class SearchObjectsForm(forms.Form):
     include_all_groups = forms.BooleanField(
         required=False,
         initial=False,
+    )
+    search = forms.CharField(
+        max_length=250,
+        required=False,
+    )
+
+
+class SprintPotentialObjectListForm(forms.Form):
+    object_lookup = forms.ChoiceField(
+        choices=SPRINT_POTENTIAL_OBJECT_ARRAY,
+        required=True,
+    )
+    destination_page = forms.IntegerField(
+        required=True,
     )
     search = forms.CharField(
         max_length=250,

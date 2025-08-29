@@ -37,14 +37,7 @@
 								:options="objectSelection"
 								v-model:value="objectModel"
 								class="object-selection"
-								v-if="!isSearching"
 							></n-select>
-							<div
-								v-else
-								class="alert alert-success"
-							>
-								Searching for {{ objectModel }}s
-							</div>
 						</div>
 					</div>
 
@@ -84,33 +77,16 @@
 								connect to this requirement.
 							</p>
 						</div>
-						<div class="col-md-8">
-							<!-- LOADING PLACEHOLDER -->
-							<div
-								class="alert alert-info"
-								v-if="isSearching || objectModel == null"
-							>
-								Please select the object type.
-							</div>
-
-							<div
-								v-if="
-									objectResults.length === 0 &&
-									objectModel != null
-								"
-								class="alert alert-warning"
-							>
-                                Sorry. It currently looks like there are no {{ this.objectModel }}s assigned to you.
-                                Only assigned {{ this.objectModel }}s will show up here.
-							</div>
-
+						<div class="col-md-8"
+							 ref="wizard"
+							 v-bind:style="styleHeight"
+						>
 							<!-- SEARCH RESULTS -->
 							<div
 								class="form-group mb-4"
 								v-if="
-									!isSearching &&
-									objectResults.length > 0 &&
-									objectModel != null
+									objectModel !== null &&
+									dayModel !== null
 								"
 							>
 								<label>Search Terms</label>
@@ -122,13 +98,48 @@
 								/>
 							</div>
 
+							<!-- LOADING PLACEHOLDER -->
+							<div
+								class="alert alert-info"
+								v-if="objectModel == null || dayModel == null"
+							>
+								Please make sure you have populated the Object Type, and the Day.
+							</div>
+
+							<div
+								v-if="isSearching"
+								class="wizard-results"
+							>
+								<div class="wizard-results--card">
+									<div class="wizard-results--card--tick"></div>
+									<div class="wizard-results--card--content">
+										<span class="placeholder col-1"></span><br/>
+										<span class="placeholder col-11"></span>
+										<span class="placeholder col-8"></span>
+									</div>
+								</div>
+							</div>
+
+							<div
+								v-if="
+									objectResults.length === 0 &&
+									isSearching === false &&
+									objectModel != null &&
+									dayModel != null
+								"
+								class="alert alert-warning"
+							>
+                                Sorry. It currently looks like there are no {{ this.objectModel }}s assigned to you.
+                                Only assigned {{ this.objectModel }}s will show up here.
+							</div>
+
 							<div class="wizard-results"
 								 v-if="!isSearching &&
-										objectFilteredResults.length > 0 &&
+										objectResults.length > 0 &&
 										objectModel != null"
 							>
 								<div class="wizard-results--card"
-									 v-for="result in objectFilteredResults"
+									 v-for="result in objectResults"
 									 :key="result.location_id"
 								>
 									<div class="wizard-results--card--tick">
@@ -157,6 +168,35 @@
 							</div>
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-md-4"></div>
+						<div class="col-md-8">
+							<nav aria-label="Pagination for New Link Sprint Wizard"
+								 v-if="setOfPages.length > 1"
+							>
+								<ul class="pagination justify-content-center"
+								>
+									<li v-for="index in setOfPages"
+										v-bind:key="index.destinationPage"
+										v-bind:class="getClasses(index.destinationPage)"
+									>
+										<a v-if="parseInt(index.destinationPage) !== parseInt(currentPage)"
+										   class="page-link"
+										   href="javascript:void(0)"
+										   v-on:click="changePage(index.destinationPage)"
+										>
+											{{ index.text }}
+										</a>
+										<span v-else
+											  class="page-link"
+										>
+											{{ index.text }}
+										</span>
+									</li>
+								</ul>
+							</nav>
+						</div>
+					</div>
 				</div>
 				<div class="modal-footer">
 					<button
@@ -169,7 +209,7 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="filteredLinkModel.length === 0"
+						v-bind:disabled="linkModel.length === 0"
 						v-on:click="saveLinks"
 					>
 						Save changes
@@ -186,6 +226,7 @@ import {NSelect} from "naive-ui";
 //VueX
 import {mapGetters} from "vuex";
 import {DateTime} from "luxon";
+import {getSetOfPages} from "../../composables/pagintation/getSetOfPages";
 
 export default {
 	name: "NewPlannerObjectWizard",
@@ -193,14 +234,7 @@ export default {
 		NSelect,
 	},
 	emits: ['update_date_array'],
-	props: {
-		dateArray: {
-			type: Array,
-			default: () => {
-				return [];
-			},
-		},
-	},
+	props: {},
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",
@@ -209,13 +243,13 @@ export default {
 	},
 	data() {
 		return {
-			dayModel: "",
-			filteredLinkModel: [],
+			currentPage: 1,
+			dayModel: null,
 			isSearching: false,
 			linkModel: [],
 			listOfDays: [],
+			numberOfPages: 0,
 			objectModel: null,
-			objectFilteredResults: [],
 			objectResults: [],
 			objectSelection: [
 				{
@@ -231,66 +265,64 @@ export default {
 					label: "Task",
 				},
 			],
-			searchTermModel: "----",
+			searchTermModel: "",
+			setOfPages: [],
+			styleHeight: "",
 		};
 	},
 	methods: {
-		getFilteredLinkModel() {
-			//Filter the object results and exclude any objects that already exist on today
-			const data_array = this.dateArray.filter(row => row.date === this.dayModel);
+		changePage(destination_page) {
+			// SET THE STYLE HEIGHT
 
-			//Make sure we have data, if we don't silently fail
-			if (data_array.length === 0) return;
-
-			//Get the data from the first array
-			let existing_data = data_array[0].data;
-
-			this.filteredLinkModel = this.linkModel.filter((row) => {
-				const count = existing_data.filter((existing_row) => {
-					return parseInt(existing_row.location_id) === parseInt(row);
-				}).length
-
-				return count === 0;
-			});
+			// Get data
+			this.getObjectResults(this.dayModel, destination_page);
 		},
-		getFilteredResults() {
-			//Filter the object results and exclude any objects that already exist on today
-			const data_array = this.dateArray.filter(row => row.date === this.dayModel);
-
-			//Make sure we have data, if we don't silently fail
-			if (data_array.length === 0) return;
-
-			//Get the data from the first array
-			let data = data_array[0].data;
-
-
-			const object_results = this.objectResults.filter((row) => {
-				const count_of_already_existing = data.filter((row_object) => {
-					//Match the object results to those already existing on today
-					const condition_1 = row.destination.toLowerCase() === row_object.object_type.toLowerCase();
-					const condition_2 = parseInt(row.location_id) === parseInt(row_object.location_id);
-
-					return condition_1 && condition_2;
-				}).length;
-
-				//Only return if there are no objects on today
-				return count_of_already_existing === 0;
-			});
-
-			//If the search bar is empty - we don't do anything
-			if (
-				this.searchTermModel === "" ||
-				this.searchTermModel === null
-			) {
-				this.objectFilteredResults = object_results;
-				return;
+		getClasses(index) {
+			if (parseInt(index) === this.currentPage) {
+				return "page-item active";
 			}
 
-			//Update the filters by checking to see if the string matches
-			this.objectFilteredResults = object_results.filter((row) => {
-				return row.title.toLowerCase().includes(
-					this.searchTermModel.toLowerCase()
-				)
+			return "page-item";
+		},
+		getObjectResults(job_date, destination_page) {
+			// Before cleaning results - we set the object height
+			const height = this.$refs.wizard.offsetHeight > 182 ? this.$refs.wizard.offsetHeight : 182;
+			this.styleHeight = `height:${height}px`
+
+			//Clear data
+			this.objectResults = [];
+
+			//Tell the form that we are searching
+			this.isSearching = true;
+
+			// Setup data to send
+			const data_to_send = new FormData();
+			data_to_send.set("object_type", this.objectModel);
+			data_to_send.set("job_date", job_date);
+			data_to_send.set("destination_page", destination_page);
+			data_to_send.set("search", this.searchTermModel);
+
+			//Now to use axios to get the data we require
+			this.axios.post(
+				`${this.rootUrl}my_planner/get_object_list/`,
+				data_to_send,
+			).then((response) => {
+				//Update local response
+				this.objectResults = response.data[this.objectModel.toLowerCase()];
+				this.numberOfPages = response.data[`${this.objectModel.toLowerCase()}_number_of_pages`];
+				this.currentPage = response.data[`${this.objectModel.toLowerCase()}_current_page`];
+				this.setOfPages = getSetOfPages(this.currentPage, this.numberOfPages);
+				this.styleHeight = "";
+
+				//Tell the user we are no longer searching
+				this.isSearching = false;
+			}).catch((error) => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Object List",
+					message: `We had an issue getting Object List. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
 			});
 		},
 		renderObjectId(data) {
@@ -307,7 +339,7 @@ export default {
 		},
 		saveLinks() {
 			//Escape conditions
-			if (this.filteredLinkModel.length === 0) return;
+			if (this.linkModel.length === 0) return;
 
 			//Tell user we are updating their planner
 			this.$store.dispatch("newToast", {
@@ -328,7 +360,7 @@ export default {
 			);
 
 			//Set the data for the link Model
-			this.filteredLinkModel.forEach((row) => {
+			this.linkModel.forEach((row) => {
 				data_to_send.append(this.objectModel, row);
 			});
 
@@ -337,7 +369,6 @@ export default {
 
 			// Use axios to send data
 			this.axios.post(
-				// `${this.rootUrl}kanban_information/${this.locationId}/${this.objectModel.toLowerCase()}/add_link/`,
 				`${this.rootUrl}my_planner/add_object/`,
 				data_to_send
 			).then((response) => {
@@ -346,6 +377,9 @@ export default {
 
 				//Clear the object model
 				this.objectModel = null;
+				this.dayModel = null;
+				this.linkModel = [];
+				this.objectResults = [];
 
 				//Click on the close button - a hack, but it should close the modal
 				document.getElementById("newPlannerObjectButton").click();
@@ -368,65 +402,45 @@ export default {
 		},
 	},
 	watch: {
-		dateArray: {
-			handler() {
-				this.getFilteredLinkModel();
-				this.getFilteredResults();
-			},
-			deep: true,
-		},
-		dayModel() {
-			//The day has changed, update the filtered link models to exclude any duplicates
-			this.getFilteredLinkModel();
-
-			//Update filted results
-			this.getFilteredResults();
-		},
-		linkModel: {
-			handler() {
-				this.getFilteredLinkModel();
-			},
-			deep: true,
-		},
-		objectModel() {
-			//Clear data
-			this.linkModel = [];
-			this.getFilteredLinkModel();
-
-			//User has chosen an object.
-			if (this.objectModel === null) {
-				//Ok - then removed the objects. We don't need to do anything
+		dayModel(new_value) {
+			// If nothing - do nothing
+			if (new_value === null || this.objectModel === null)
+			{
 				this.isSearching = false;
 				return;
 			}
 
-			//Tell the form that we are searching
-			this.isSearching = true;
-
-			//Now to use axios to get the data we require
-			this.axios.post(
-				`${this.rootUrl}my_planner/get_object_list/${this.objectModel}/`,
-			).then((response) => {
-				//Load the data into the array
-				this.objectResults = response.data;
-				this.objectFilteredResults = response.data;
-
-				//Tell the user we are no longer searching
-				this.isSearching = false;
-
-				//Clear out search term model
-				this.searchTermModel = "";
-			}).catch((error) => {
-				this.$store.dispatch("newToast", {
-					header: "Error Getting Object List",
-					message: `We had an issue getting Object List. Error -> ${error}`,
-					extra_classes: "bg-danger",
-					delay: 0,
-				});
-			});
+			this.getObjectResults(new_value, 1);
 		},
-		searchTermModel() {
-			this.getFilteredResults();
+		objectModel(new_value) {
+			if (new_value === null)
+			{
+				this.isSearching = false;
+				return;
+			}
+
+			this.linkModel = [];
+
+			if (this.dayModel !== null)
+			{
+				//We could actually search
+				this.getObjectResults(this.dayModel, 1);
+			}
+		},
+		searchTermModel(new_value) {
+			if (this.searchTimeout !== "")
+			{
+				// Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup the time so there are either more than 3 characters, or blank results
+			if (new_value.length >= 3 || new_value.length === 0)
+			{
+				this.searchTimeout = setTimeout(() => {
+					this.getObjectResults(this.dayModel, 1);
+				}, 500);
+			}
 		},
 	},
 	mounted() {
@@ -444,9 +458,6 @@ export default {
 				value: new_day_date,
 			});
 		}
-
-		//Set the default to the first result
-		this.dayModel = this.listOfDays[0].value;
 	}
 };
 </script>

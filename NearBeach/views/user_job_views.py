@@ -1,11 +1,15 @@
+import math
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.template import loader
-from django.db.models import F, Value as V
+from django.conf import settings
+from django.db.models import F, Value as V, Q
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views.decorators.http import require_http_methods
 
-from NearBeach.forms import MyPlannerAddObjectForm, MyPlannerUpdateObjectListForm, MyPlannerDeleteUserJobForm
+from NearBeach.forms import MyPlannerAddObjectForm, MyPlannerUpdateObjectListForm, MyPlannerDeleteUserJobForm, \
+    MyPlannerGetObjectListForm
 from NearBeach.models import KanbanCard, ObjectAssignment, Project, Task, UserJob
 
 import datetime
@@ -13,6 +17,8 @@ import json
 
 from NearBeach.views.theme_views import get_theme
 
+
+SEARCH_PAGE_SIZE = getattr(settings, 'SEARCH_PAGE_SIZE', 5)
 
 DICT_PLANNING_OBJECTS = {
     "kanban_card": {
@@ -222,36 +228,58 @@ def my_planner_delete_user_job(request):
 
 @login_required(login_url="login", redirect_field_name="")
 @require_http_methods(["POST"])
-def my_planner_get_object_list(request, destination):
-    # Make sure the destination is correct
-    if destination not in ["kanban_card", "project", "task"]:
-        return HttpResponseBadRequest("Wrong object within destination")
+def my_planner_get_object_list(request):
+    form = MyPlannerGetObjectListForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Flat pack out the variables
+    object_type = form.cleaned_data["object_type"]
+    job_date = form.cleaned_data["job_date"]
+    search = form.cleaned_data["search"]
 
     # Get all objects assigned to the user
     object_assignment_results = ObjectAssignment.objects.filter(
         is_deleted=False,
-        **{F"{destination}__isnull": False},
+        **{F"{object_type}__isnull": False},
         assigned_user=request.user,
     ).annotate(
-        object_id=F(F"{destination}_id")
+        object_id=F(F"{object_type}_id")
+    ).values(
+        "object_id",
+    )
+
+    # Get the exclusion list (already assigned to the user)
+    exclude_objects = UserJob.objects.filter(
+        is_deleted=False,
+        job_date=job_date,
+        username=request.user,
+    ).annotate(
+        object_id=F(F"{object_type}_id")
     ).values(
         "object_id",
     )
 
     # Check to make sure the kanban cards are not archived
-    if destination == "kanban_card":
+    if object_type == "kanban_card":
         object_assignment_results = object_assignment_results.filter(
             kanban_card__is_archived=False,
         )
 
     # Using the list of ids. We now grab the objects
-    dict_object = DICT_PLANNING_OBJECTS[destination]
+    dict_object = DICT_PLANNING_OBJECTS[object_type]
 
-    results = dict_object["object"].objects.filter(
+    data_results = dict_object["object"].objects.filter(
         is_deleted=False,
-        **{F"{destination}_id__in": object_assignment_results.values("object_id")},
+        **{F"{object_type}_id__in": object_assignment_results.values("object_id")},
     ).exclude(
-        **{F"{dict_object['higher_order_status']}": "Closed"},
+        # Exclude anything that is close or in the exclude objects
+        Q(
+            **{F"{dict_object['higher_order_status']}": "Closed"},
+        ) |
+        Q (
+            **{F"{object_type}_id__in": exclude_objects.values("object_id")},
+        )
     ).annotate(
         destination=V(dict_object["destination"]),
         location_id=F(dict_object["location_id"]),
@@ -264,10 +292,27 @@ def my_planner_get_object_list(request, destination):
         "status",
     )
 
-    # Convert to JSON
-    results = json.dumps(list(results), cls=DjangoJSONEncoder)
+    data_results = data_results.filter(
+        title__icontains=search,
+    )
+    
+    # Apply pagination
+    destination_page = form.cleaned_data["destination_page"]
+    total_count = len(data_results)
 
-    return JsonResponse(json.loads(results), safe=False)
+    # Apply the shift of the destination page, as we should -1 the value. Due to the front end sending the actual
+    # page number
+    destination_page = 0 if destination_page <= 0 else destination_page - 1
+    data_results = data_results[destination_page * SEARCH_PAGE_SIZE:(destination_page + 1) * SEARCH_PAGE_SIZE]
+
+    return_results = {
+        object_type: list(data_results),
+        F"{object_type}_number_of_pages": math.ceil(total_count / SEARCH_PAGE_SIZE),
+        F"{object_type}_current_page": form.cleaned_data["destination_page"],
+    }
+
+    # Send the data to the user
+    return JsonResponse(return_results, safe=False)
 
 
 @login_required(login_url="login", redirect_field_name="")
