@@ -251,8 +251,7 @@ class CheckObjects(TestCase):
             c.post(reverse("lead_user_list")),
             c.post(reverse("my_planner_add_object")),
             c.post(reverse("my_planner_delete_user_job")),
-            c.post(reverse("my_planner_get_object_list", args=["project"])),
-            c.post(reverse("my_planner_get_object_list", args=["task"])),
+            c.post(reverse("my_planner_get_object_list")),
             c.post(reverse("my_planner_update_object_list")),
         ]
 
