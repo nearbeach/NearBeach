@@ -1,11 +1,8 @@
-from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach.models import (
-    Group,
-    ListOfTaskStatus,
     ObjectAssignment,
-    Organisation,
     Task,
     UserGroup,
 )

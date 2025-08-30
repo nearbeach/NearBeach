@@ -2,17 +2,12 @@ from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach.models import (
-    Group,
-    ListOfRequirementStatus,
-    ListOfRequirementType,
     Requirement,
     RequirementItem,
     ObjectAssignment,
-    Organisation,
     UserGroup,
 )
 from NearBeach.serializers.requirement_serializer import RequirementSerializer
-from NearBeach.serializers.requirement_item_serializer import RequirementItemSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from NearBeach.views.document_views import transfer_new_object_uploads

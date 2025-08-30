@@ -41,7 +41,6 @@ from .views.authentication import (
     authentication_views,
 )
 from .views.authentication.login_view import TwoFactorLoginView
-from .views.authentication.two_factor_setup_view import TwoFactorSetupView
 from .urls_two_factor import urlpatterns as tf_urls
 
 # The following two imports are for the static files

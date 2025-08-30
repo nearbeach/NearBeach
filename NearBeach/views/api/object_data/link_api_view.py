@@ -15,7 +15,6 @@ from NearBeach.models import (
     RequirementItem,
     Task,
 )
-from NearBeach.views.tools.internal_functions import set_object_from_destination
 
 OBJECT_STRUCTURE = namedtuple(
     "ObjectStructure",

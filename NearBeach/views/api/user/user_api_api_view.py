@@ -1,9 +1,6 @@
-from django.contrib.auth.decorators import user_passes_test
 from drf_spectacular.utils import extend_schema
-from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import viewsets, status
-from knox.auth import TokenAuthentication
 from NearBeach.utils.api.permissions import IsSuperUser
 from NearBeach.serializers.user.user_api_serializer import UserApiSerializer
 from NearBeach.models import ExtendsAuthToken
