@@ -1,6 +1,5 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path, include, include
-# from two_factor.urls import urlpatterns as tf_urls
 
 from .views import (
     admin_views,
@@ -399,8 +398,6 @@ urlpatterns = [
         kanban_views.update_card,
         name="kanban_update_card",
     ),
-    # Authentication
-    # path("login", authentication_views.login, name="login"),
     path("login", TwoFactorLoginView.as_view(), name="login"),
     path("logout", authentication_views.logout, name="logout"),
     # My Planner

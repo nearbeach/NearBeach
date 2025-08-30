@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from NearBeach.models import ExtendsAuthToken, User
-# from django.contrib.auth.models import User
 import datetime
 
 

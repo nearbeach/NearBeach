@@ -21,7 +21,6 @@ class LinkSerializer(serializers.Serializer):
         read_only=True,
     )
     object_id = serializers.IntegerField(
-        # read_only=True,
         required=True,
     )
     object_title = serializers.CharField(
@@ -31,7 +30,6 @@ class LinkSerializer(serializers.Serializer):
         read_only=True,
     )
     object_type = serializers.CharField(
-        # read_only=True,
         required=True,
     )
     parent_link = serializers.CharField(
@@ -40,9 +38,6 @@ class LinkSerializer(serializers.Serializer):
     reverse_relation = serializers.BooleanField(
         read_only=True,
     )
-    # object_relation = serializers.CharField( #CHANGTO ENUM
-    #     required=True,
-    # )
 
     def get_fields(self):
         fields = super().get_fields()
@@ -57,12 +52,7 @@ class LinkSerializer(serializers.Serializer):
                 required=True,
                 choices=RELATION_DICT,
             )
-        #     fields["object_relation"].required = True
-        #     fields["object_type"].required = True
-        #     fields["object_id"].required = True
 
-        # if self.context["request"].method == "GET":
-        #     fields.pop("object_relation")
 
         return fields
 
