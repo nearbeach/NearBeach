@@ -12,7 +12,6 @@ class ObjectSprintSerializer(serializers.ModelSerializer):
          read_only=True,
     )
     sprint_name = serializers.CharField(
-         # read_only=True,
     )
     sprint_start_date = serializers.DateTimeField()
     sprint_status = serializers.CharField(

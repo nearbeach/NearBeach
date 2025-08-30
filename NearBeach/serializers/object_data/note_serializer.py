@@ -27,7 +27,6 @@ class NoteSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
-    # def create(self, validated_data):
 
     def get_fields(self):
         fields = super().get_fields()

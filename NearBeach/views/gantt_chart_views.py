@@ -207,7 +207,6 @@ def get_object_results(location_id):
             """,
            [location_id]
         )
-        # object_results = cursor.fetchall()
         columns = [col[0] for col in cursor.description]
         object_results = [dict(zip(columns, row)) for row in cursor.fetchall()]
     

@@ -107,12 +107,6 @@ class KanbanBoardSerializer(serializers.Serializer):
         # Creating a new task
         if self.context["request"].method == "POST":
             fields.pop("kanban_board_status", None)
-            # fields["column_property"].required = True
-            # fields["column_title"].required = True
-            # fields["level_title"].required = True
-            # fields["column_property"].many = True
-            # fields["column_title"].many = True
-            # fields["level_title"].many = True
 
 
         # Updating a new task
