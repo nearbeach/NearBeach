@@ -1,9 +1,7 @@
-import django.forms
-from django.urls import reverse
 from django.apps import apps
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.serializers.json import DjangoJSONEncoder
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.db.models import F, Value, Q
 from django.db.models.functions import Concat
 from django.template.loader import get_template

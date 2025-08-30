@@ -11,7 +11,6 @@ from NearBeach.serializers.sprint_serializer import SprintSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.db.models import Q, Case, When, Value, F
-import datetime
 
 
 @extend_schema(

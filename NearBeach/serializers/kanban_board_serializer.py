@@ -3,10 +3,9 @@ from NearBeach.models import (
     Group,
     KANBAN_BOARD_STATUS_CHOICE,
     KanbanBoard,
-    KanbanCard,
     KanbanColumn,
     KanbanLevel,
-    OBJECT_HIGHER_ORDER_STATUS, ObjectAssignment,
+    ObjectAssignment,
 )
 from NearBeach.serializers.kanban_column_serializer import KanbanColumnSerializer
 from NearBeach.serializers.kanban_level_serializer import KanbanLevelSerializer

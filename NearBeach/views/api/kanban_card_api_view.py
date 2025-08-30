@@ -1,4 +1,3 @@
-from django.db.models import Max
 from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.generics import get_object_or_404
 from rest_framework import viewsets, status

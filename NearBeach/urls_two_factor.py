@@ -2,12 +2,8 @@ from django.apps.registry import apps
 from django.urls import include, path
 
 from two_factor.views import (
-    BackupTokensView,
-    DisableView,
-    ProfileView,
     QRGeneratorView,
-    SetupCompleteView,
-)
+    )
 
 from .views.authentication.two_factor_backup_tokens_view import TwoFactorBackupTokensView
 from .views.authentication.two_factor_disable_view import TwoFactorDisableView

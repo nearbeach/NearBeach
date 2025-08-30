@@ -1,11 +1,4 @@
 from rest_framework import serializers
-from NearBeach.models import (
-    ChangeTask,
-    Project,
-    Requirement,
-    RequirementItem,
-    Task,
-)
 
 
 

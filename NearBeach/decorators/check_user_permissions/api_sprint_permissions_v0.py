@@ -3,8 +3,6 @@ from functools import wraps
 from rest_framework import status
 from rest_framework.response import Response
 
-from NearBeach.models import Sprint
-
 from NearBeach.decorators.check_user_permissions.object_permissions import FUNCTION_DICT
 from NearBeach.serializers.sprint_serializer import SprintSerializer
 
