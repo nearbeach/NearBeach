@@ -141,16 +141,12 @@ def _delete_customer_data(gdpr_object_id, form: GdprObjectSubmitForm):
         customer_id=gdpr_object_id,
     ).delete()
 
-    return
-
 
 # Internal Function
 def _delete_organisation_data(gdpr_object_id):
     Organisation.objects.get(
         organisation_id=gdpr_object_id,
     ).delete()
-
-    return
 
 
 # Internal Function
@@ -195,8 +191,6 @@ def _delete_user_data(gdpr_object_id, request):
     User.objects.filter(
         id=gdpr_object_id,
     ).delete()
-
-    return
 
 
 # Internal Function
