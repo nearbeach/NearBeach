@@ -35,7 +35,7 @@ export function getSetOfPages(destination_page, number_of_pages) {
         // At the end of the pagination
         return [
             {destinationPage: 1, text: "<<"},
-            {destinationPage: number_of_pages - 5, text: `<`},
+            {destinationPage: number_of_pages - 5, text: "<"},
             {destinationPage: number_of_pages - 4, text: `${number_of_pages - 4}`},
             {destinationPage: number_of_pages - 3, text: `${number_of_pages - 3}`},
             {destinationPage: number_of_pages - 2, text: `${number_of_pages - 2}`},
