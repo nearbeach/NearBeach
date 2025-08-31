@@ -276,7 +276,7 @@ This endpoint allows you to link other objects to the current object. For exampl
         object_relation = serializer.data["object_relation"]
 
         # Check to make sure the object_id exists
-        if not object_type in list(OBJECT_DICT.keys()):
+        if not object_type in list(OBJECT_DICT):
             return Response(
                 data={"Object Type not in system"},
                 status=status.HTTP_400_BAD_REQUEST,
