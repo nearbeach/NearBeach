@@ -1,6 +1,6 @@
 from django.db.models import Max
 from rest_framework import serializers
-from NearBeach.models import KanbanCard, Project, KanbanColumn, KanbanLevel
+from NearBeach.models import KanbanCard, KanbanColumn, KanbanLevel
 from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.serializers.kanban_column_serializer import KanbanColumnSerializer
 from NearBeach.serializers.kanban_level_serializer import KanbanLevelSerializer

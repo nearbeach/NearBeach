@@ -10,8 +10,6 @@ from NearBeach.serializers.organiation_list_serializer import OrganisationListSe
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-import datetime
-
 
 @extend_schema(
     tags=["Organisation"]

@@ -111,17 +111,6 @@ RFC_APPROVAL = (
 
 
 
-# RFC_STATUS = (
-#     (1, "Draft"),
-#     (2, "Waiting for approval"),
-#     (3, "Approved"),
-#     (4, "Started"),
-#     (5, "Finished"),
-#     (6, "Rejected"),
-#     (7, "Paused"),
-#     (8, "Ready for QA"),
-#     (9, "Failed"),
-# )
 
 
 

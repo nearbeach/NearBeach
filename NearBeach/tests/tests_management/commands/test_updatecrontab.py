@@ -1,6 +1,5 @@
 from django.test import TestCase
-from collections import namedtuple
-from NearBeach.management.commands.updatecrontab import Command, ContabTime
+from NearBeach.management.commands.updatecrontab import ContabTime
 
 
 class ContabTimeTest(TestCase):

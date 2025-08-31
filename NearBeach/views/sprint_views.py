@@ -8,7 +8,6 @@ from django.conf import settings
 import json
 
 from django.views.decorators.http import require_http_methods
-from pygments.lexers import q
 
 from NearBeach.forms import (
     NewSprintAssignmentForm,
@@ -24,7 +23,7 @@ from NearBeach.models import (
     Sprint,
     Task,
     SprintObjectAssignment,
-    UserGroup, Requirement
+    UserGroup, 
 )
 from NearBeach.views.gantt_chart_views import get_object_results
 from NearBeach.views.theme_views import get_theme
@@ -37,7 +36,6 @@ from NearBeach.decorators.check_user_permissions.sprint_permissions import (
 from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
 
 import math
-import json
 
 # Define global variables
 SEARCH_PAGE_SIZE = getattr(settings, 'SEARCH_PAGE_SIZE', 5)

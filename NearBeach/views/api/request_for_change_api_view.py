@@ -3,10 +3,8 @@ from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach.models import (
     ChangeTask,
-    Group,
     ObjectAssignment,
     RequestForChange,
-    User,
     UserGroup,
 )
 from NearBeach.serializers.request_for_change_serializer import RequestForChangeSerializer

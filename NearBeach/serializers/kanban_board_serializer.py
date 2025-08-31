@@ -3,10 +3,9 @@ from NearBeach.models import (
     Group,
     KANBAN_BOARD_STATUS_CHOICE,
     KanbanBoard,
-    KanbanCard,
     KanbanColumn,
     KanbanLevel,
-    OBJECT_HIGHER_ORDER_STATUS, ObjectAssignment,
+    ObjectAssignment,
 )
 from NearBeach.serializers.kanban_column_serializer import KanbanColumnSerializer
 from NearBeach.serializers.kanban_level_serializer import KanbanLevelSerializer
@@ -108,12 +107,6 @@ class KanbanBoardSerializer(serializers.Serializer):
         # Creating a new task
         if self.context["request"].method == "POST":
             fields.pop("kanban_board_status", None)
-            # fields["column_property"].required = True
-            # fields["column_title"].required = True
-            # fields["level_title"].required = True
-            # fields["column_property"].many = True
-            # fields["column_title"].many = True
-            # fields["level_title"].many = True
 
 
         # Updating a new task

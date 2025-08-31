@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from NearBeach.models import (
     Customer,
-    ListOfTitle, Organisation,
-)
+    ListOfTitle, )
 from NearBeach.serializers.customer_title_serializer import CustomerTitleSerializer
 from django.conf import settings
 

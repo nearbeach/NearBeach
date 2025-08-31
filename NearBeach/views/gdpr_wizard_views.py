@@ -1,9 +1,8 @@
-import django.forms
-from django.urls import reverse
+import django
 from django.apps import apps
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.serializers.json import DjangoJSONEncoder
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.db.models import F, Value, Q
 from django.db.models.functions import Concat
 from django.template.loader import get_template
@@ -143,16 +142,12 @@ def _delete_customer_data(gdpr_object_id, form: GdprObjectSubmitForm):
         customer_id=gdpr_object_id,
     ).delete()
 
-    return
-
 
 # Internal Function
 def _delete_organisation_data(gdpr_object_id):
     Organisation.objects.get(
         organisation_id=gdpr_object_id,
     ).delete()
-
-    return
 
 
 # Internal Function
@@ -197,8 +192,6 @@ def _delete_user_data(gdpr_object_id, request):
     User.objects.filter(
         id=gdpr_object_id,
     ).delete()
-
-    return
 
 
 # Internal Function

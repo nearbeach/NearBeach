@@ -3,14 +3,10 @@ from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.customer_permissions import check_user_customer_permissions
 from NearBeach.models import (
     Customer,
-    ListOfTitle,
-    Organisation,
-)
+    )
 from NearBeach.serializers.customer_serializer import CustomerSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-
-import datetime
 
 @extend_schema(
     tags=['Customer'],

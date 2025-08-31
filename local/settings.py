@@ -9,7 +9,6 @@ This file is only for the automatic testing and is not build for server use.
 
 import os
 from NearBeach import __version__ as VERSION
-from datetime import timedelta
 from rest_framework.settings import api_settings
 
 from dotenv import load_dotenv

@@ -32,6 +32,7 @@
 					  data-bs-delay="200"
 				>
 					<a target="_blank"
+                       rel="noopener noreferrer"
 					   v-bind:href="getObjectUrl()"
 					>
 						<carbon-information></carbon-information>
