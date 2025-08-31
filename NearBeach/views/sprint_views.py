@@ -36,7 +36,6 @@ from NearBeach.decorators.check_user_permissions.sprint_permissions import (
 from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
 
 import math
-import json
 
 # Define global variables
 SEARCH_PAGE_SIZE = getattr(settings, 'SEARCH_PAGE_SIZE', 5)
