@@ -18,6 +18,17 @@
 			<b>#{{ element.pk }}</b
 			><br/>
 			{{ element.fields.kanban_card_text }}
+			<div v-if="element.tag_list.length > 0"
+				 class="tag-list"
+			>
+				<div v-for="single_tag in element.tag_list"
+					 :key="single_tag.tag_assignment_id"
+					 v-bind:style="`background-color:${single_tag.tag_colour};color:${single_tag.tag_text_colour};`"
+					 class="single-tag-thin"
+				>
+					{{ single_tag.tag_name }}
+				</div>
+			</div>
 			<carbon-information
 				class="kanban-card-info-icon"
 				width="25px"

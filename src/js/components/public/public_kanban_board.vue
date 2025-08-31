@@ -135,6 +135,12 @@ export default {
 				return [];
 			},
 		},
+		tagResults: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
 		theme: {
 			type: String,
 			default: "",
@@ -169,6 +175,7 @@ export default {
 				value: 4,
 			},
 		],
+		localKanbanCardResults: [],
 	}),
 	created() {
 		window.addEventListener("resize", this.resizeProcedure);
@@ -233,7 +240,7 @@ export default {
 			return priority[0].label;
 		},
 		filterCards(column_id, level_id) {
-			return this.kanbanCardResults.filter((row) => {
+			return this.localKanbanCardResults.filter((row) => {
 				const condition_1 = parseInt(row.fields.kanban_column) === parseInt(column_id);
 				const condition_2 = parseInt(row.fields.kanban_level) === parseInt(level_id);
 
@@ -310,6 +317,17 @@ export default {
 		},
 	},
 	mounted() {
+		//NOTE - we are moving all of this to the API functionality
+		//Map the tags onto "tag_list" field for the kanbanCardResults
+		this.localKanbanCardResults = this.kanbanCardResults.map((row) => {
+			//Add the field
+			row.tag_list = this.tagResults.filter((tag_row) => {
+				return parseInt(tag_row.kanban_card_id) === parseInt(row.pk);
+			});
+
+			return row;
+		});
+
 		this.$nextTick(() => {
 			this.resizeProcedure();
 		});
