@@ -25,7 +25,6 @@ class Registry(defaultdict):
             if self._types[event_type] != value_type:
                 raise ValueError(f"event with same name '{event_type}' but different types {self._types[event_type]} != {value_type}")
         else:
-            self[event_type]
             self._types[event_type] = value_type
 
     def _check_value_types(self, event_type, values):
