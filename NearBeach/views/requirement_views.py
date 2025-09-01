@@ -336,6 +336,7 @@ def requirement_information(request, requirement_id, *args, **kwargs):
         ),
         "status_options": json.dumps(list(status_options), cls=DjangoJSONEncoder),
         "type_options": json.dumps(list(type_options), cls=DjangoJSONEncoder),
+        "user_extra_permissions": get_user_group_permission(request.user, ["document", "requirement_note"]),
         "user_level": user_level,
         "theme": get_theme(request),
     }

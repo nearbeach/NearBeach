@@ -21,6 +21,7 @@
                     v-bind:is-read-only="{{ requirement_item_is_closed }}"
                     v-bind:location-id="{{requirement_item_id}}"
                     v-bind:user-level="{{ user_level }}"
+                    v-bind:user-extra-permissions="{{ user_extra_permissions }}"
                     v-bind:root-url="`{% url 'dashboard' %}`"
                     v-bind:static-url="`{% static '/' %}`"
                     v-bind:theme="`{{ theme }}`"
