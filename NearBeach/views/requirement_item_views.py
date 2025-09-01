@@ -27,6 +27,7 @@ from NearBeach.models import (
     Group,
 )
 from NearBeach.views.theme_views import get_theme
+from NearBeach.views.tools.internal_functions import get_user_group_permission
 
 
 @require_http_methods(["POST"])
@@ -197,6 +198,7 @@ def requirement_item_information(request, requirement_item_id, *args, **kwargs):
         "status_options": json.dumps(list(status_options), cls=DjangoJSONEncoder),
         "type_options": json.dumps(list(type_options), cls=DjangoJSONEncoder),
         "user_level": user_level,
+        "user_extra_permissions": get_user_group_permission(request.user, ["document", "requirement_item_note"]),
         "need_tinymce": True,
         "theme": get_theme(request),
     }

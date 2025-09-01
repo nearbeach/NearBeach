@@ -708,6 +708,11 @@ urlpatterns = [
         name="delete_tag"
     ),
     path(
+        "object_data/<destination>/<location_id>/migrate_link/",
+        object_data_views.migrate_link,
+        name="migrate_link",
+    ),
+    path(
         "object_data/<destination>/<location_id>/note_list/",
         note_views.note_list,
         name="note_list",

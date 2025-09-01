@@ -18,7 +18,7 @@ from NearBeach.models import KanbanCard, \
     ListOfRequirementItemType, \
     ListOfRequirementStatus, \
     ListOfRequirementType, \
-    ListOfTaskStatus
+    ListOfTaskStatus, TagAssignment
 from NearBeach.forms import PublicLinkDeleteForm, PublicLinkUpdateForm
 from NearBeach.views.kanban_views import get_context as kanban_get_context
 from NearBeach.decorators.check_user_permissions.object_permissions import check_user_generic_permissions
@@ -112,8 +112,28 @@ def get_public_context_kanban_board(results):
         kanban_board_id=results.kanban_board_id,
     ).order_by("kanban_card_sort_number")
 
+    tag_results = TagAssignment.objects.filter(
+        is_deleted=False,
+        object_enum="kanban_card",
+        object_id__in=kanban_card_results.values("kanban_card_id"),
+    ).annotate(
+        kanban_card_id=F("object_id"),
+        tag_name=F("tag__tag_name"),
+        tag_colour=F("tag__tag_colour"),
+        tag_text_colour=F("tag__tag_text_colour"),
+    ).values(
+        "kanban_card_id",
+        "tag_assignment_id",
+        "tag_id",
+        "tag_name",
+        "tag_colour",
+        "tag_text_colour",
+    )
+    tag_results = json.dumps(list(tag_results), cls=DjangoJSONEncoder)
+
     # Add kanban card results to context
     context["kanban_card_results"] = serializers.serialize("json", kanban_card_results)
+    context["tag_results"] = json.loads(tag_results)
 
     return context
 

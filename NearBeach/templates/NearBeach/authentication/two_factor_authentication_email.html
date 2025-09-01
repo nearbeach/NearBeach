@@ -62,7 +62,7 @@
               <tr>
                   <td>
                       <h1>NearBeach</h1>
-                      <h2>Password Reset</h2>
+                      <h2>Two Factor Password</h2>
                       <img src="https://cdn.nearbeach.org/nearbeach_logo.svg">
                   </td>
               </tr>
@@ -70,33 +70,19 @@
               <td>
                   <p>
                       Hello {{ user.first_name }},<br/>
-                      We have recieved a request to reset the password for your NearBeach account ({{ user.username }}).
-                      To initiate the password reset, please click the button below.
-                  </p>
-                  <!-- INSERT BUTTON HERE -->
-                  <p>
-                      <a target="_blank" 
-                         class="reset-password-button"
-                         rel="noopener noreferrer nofollow" 
-                         href="{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}"
-                      >
-                          <strong>Reset Password</strong>
-                      </a>
+                      Please see your Two Factor Password below. Do NOT give this to anyone else.
                   </p>
                   <p>
-                      Please note, the link can only be used once. If you need to send another password
-                      reset, please visit <a href="https://{{domain}}/password_reset/">
-                      https://{{domain}}/password_reset</a>
+                      If you did not make this request, please contact your system administrator right away!
                   </p>
                   <p>
-                      If you did not make this request, you can simply ignore this email.
+                      Token: <b>{{ token }}</b>
                   </p>
                   <p>
                       Sincerely,<br/>
                       NearBeach Team
                   </p>
               </td>
-            </td>
           </tr>
         </tbody>
       </table>

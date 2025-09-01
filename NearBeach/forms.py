@@ -1164,6 +1164,15 @@ class ProjectForm(forms.ModelForm):
         ]
 
 
+class ProcessLinkForm(forms.Form):
+    link_id = forms.IntegerField(
+        required=True,
+    )
+    link_connection = forms.CharField(
+        max_length=255,
+    )
+
+
 class PublicLinkDeleteForm(forms.Form):
     public_link_id = forms.ModelChoiceField(
         queryset=PublicLink.objects.all(),
@@ -1223,15 +1232,6 @@ class RemoveCustomerForm(forms.Form):
 
 class RemoveGroupForm(forms.Form):
     group_id = forms.ModelChoiceField(required=True, queryset=Group.objects.all())
-
-
-class RemoveLinkForm(forms.Form):
-    link_id = forms.IntegerField(
-        required=True,
-    )
-    link_connection = forms.CharField(
-        max_length=255,
-    )
 
 
 class RemoveUserForm(forms.Form):

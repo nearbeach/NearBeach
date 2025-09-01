@@ -368,6 +368,8 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
     if kanban_settings is None:
         kanban_settings = {}
 
+    user_extra_permissions = get_user_group_permission(request.user, ["document", "kanban_note"])
+
     # Get context
     c = get_context(kanban_board_id)
     c["theme"] = get_theme(request)
@@ -377,6 +379,7 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
     c["kanban_settings"] = json.dumps(kanban_settings)
     c["open_card_on_load"] = open_card_on_load
     c["tag_results"] = json.loads(tag_results)
+    c["user_extra_permissions"] = json.loads(user_extra_permissions)
 
     # Get the template
     t = loader.get_template("NearBeach/kanban/kanban_information.html")

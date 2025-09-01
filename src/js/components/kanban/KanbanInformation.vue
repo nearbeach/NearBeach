@@ -286,6 +286,12 @@ export default {
 			type: String,
 			default: "",
 		},
+		userExtraPermissions: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
 		userLevel: {
 			type: Number,
 			default: 0,
@@ -512,11 +518,17 @@ export default {
 			userLevel: this.userLevel,
 		});
 
+		//Send extra permissions upstream
+		this.$store.commit({
+			type: "updateUserExtraPermissions",
+			userExtraPermissions: this.userExtraPermissions,
+		});
+
 		//Update groups and users
 		this.$store.commit({
 			type: "updateGroupsAndUsers",
 			potentialUserList: this.potentialUserList,
-		})
+		});
 	},
 };
 </script>
