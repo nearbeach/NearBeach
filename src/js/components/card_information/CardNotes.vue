@@ -2,7 +2,7 @@
 	<div>
 		<div
 			class="row"
-			v-if="userLevel > 1"
+			v-if="userLevel > 1 || hasNotePermission"
 		>
 			<div class="col-md-4">
 				<strong>Notes</strong>
@@ -31,10 +31,10 @@
 				/>
 			</div>
 		</div>
-		<hr v-if="userLevel > 1"/>
+		<hr v-if="userLevel > 1 || hasNotePermission"/>
 		<div
 			class="row"
-			v-if="userLevel > 1"
+			v-if="userLevel > 1 || hasNotePermission"
 		>
 			<div class="col-md-12">
 				<button
@@ -52,7 +52,7 @@
 				</button>
 			</div>
 		</div>
-		<hr v-if="userLevel > 1"/>
+		<hr v-if="userLevel > 1 || hasNotePermission"/>
 
 		<!-- NOTE HISTORY -->
 		<list-notes
@@ -90,6 +90,12 @@ export default {
 			skin: "getSkin",
 			userLevel: "getUserLevel",
 		}),
+		...mapGetters([
+			"getUserExtraPermission",
+		]),
+		hasNotePermission() {
+			return this.getUserExtraPermission("kanban_note");
+		},
 	},
 	methods: {
 		addNote() {
