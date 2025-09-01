@@ -57,7 +57,7 @@ from NearBeach.forms import (
     DeleteTagForm,
     RemoveUserForm,
     QueryBugClientForm,
-    RemoveLinkForm,
+    ProcessLinkForm,
 )
 
 User = get_user_model()
@@ -1113,6 +1113,25 @@ def link_object(object_assignment_submit, destination, location_id, *args, **kwa
 @require_http_methods(["POST"])
 @login_required(login_url="login", redirect_field_name="")
 @check_destination()
+@check_user_generic_permissions(min_permission_level=2)
+def migrate_link(request, destination, location_id, *args, **kwargs):
+    form = ProcessLinkForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest(form.errors)
+
+    # Now we limit the data to what we want, and then soft delete it
+    ObjectAssignment.objects.filter(
+        is_deleted=False,
+        **{destination: location_id},
+        **{form.cleaned_data["link_connection"]: form.cleaned_data["link_id"]},
+    ).update(link_relationship="Relate")
+
+    return HttpResponse("")
+
+
+@require_http_methods(["POST"])
+@login_required(login_url="login", redirect_field_name="")
+@check_destination()
 @check_user_generic_permissions(min_permission_level=4)
 def object_delete(request, destination, location_id, *args, **kwargs):
     """
@@ -1407,7 +1426,7 @@ def remove_group(request, destination, location_id, *args, **kwargs):
 @check_destination()
 @check_user_generic_permissions(min_permission_level=2)
 def remove_link(request, destination, location_id, *args, **kwargs):
-    form = RemoveLinkForm(request.POST)
+    form = ProcessLinkForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
 
