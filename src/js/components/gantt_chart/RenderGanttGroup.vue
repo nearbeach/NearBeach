@@ -10,6 +10,7 @@
 		v-bind:parent-object-id="parentObjectId"
 		v-bind:parent-object-type="parentObjectType"
 		v-bind:higher-order-status="higherOrderStatus"
+		v-bind:sprint-object-assignment-id="sprintObjectAssignmentId"
 		v-bind:start-date="startDate"
 		v-bind:status-id="statusId"
 		v-bind:title="title"
@@ -79,6 +80,10 @@ export default {
 		parentObjectType: {
 			type: String,
 			default: "",
+		},
+		sprintObjectAssignmentId: {
+			type: Number,
+			default: 0,
 		},
 		startDate: {
 			type: Number,

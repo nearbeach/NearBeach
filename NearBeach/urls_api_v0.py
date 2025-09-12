@@ -12,7 +12,7 @@ from NearBeach.views.api import (
     requirement_item_api_view,
     request_for_change_api_view,
     sprint_api_view,
-    task_api_view,
+    task_api_view, sprint_link_api_view,
 )
 from NearBeach.views.api.available_data import (
     customer_list_api_view,
@@ -47,6 +47,7 @@ router.register(r'requirement/(?P<requirement_id>[0-9]+)/requirement_item', requ
 router.register(r'request_for_change', request_for_change_api_view.RequirementViewSet, basename='request_for_change')
 router.register(r'request_for_change/(?P<request_for_change_id>[0-9]+)/change_task', change_task_api_view.ChangeTaskViewSet, basename='change_task')
 router.register(r'sprint', sprint_api_view.SprintViewSet, basename='sprint')
+router.register(r'sprint/(?P<sprint_id>[0-9]+)/link', sprint_link_api_view.SprintLinkViewSet, basename='sprint_link_api')
 router.register(r'task', task_api_view.TaskViewSet, basename='task')
 router.register(r'user/(?P<username>[0-9]+)/api_key', user_api_api_view.UserApiViewSet, basename='user_api')
 router.register(r'(?P<destination>[\w]+)/(?P<location_id>[0-9]+)/group_and_user', group_and_user_api_view.GroupAndUserViewSet, basename='group_and_user')

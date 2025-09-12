@@ -4,12 +4,10 @@ from drf_spectacular.utils import extend_schema, OpenApiExample
 from NearBeach.decorators.check_user_permissions.api_sprint_permissions_v0 import check_api_sprint_permissions
 from NearBeach.decorators.check_user_permissions.sprint_permissions import check_sprint_permission_with_sprint
 from NearBeach.models import (
-    Project,
     ObjectAssignment,
     Sprint,
     SprintObjectAssignment,
-    Task,
-    UserGroup, RequirementItem,
+    UserGroup,
 )
 from NearBeach.serializers.sprint_serializer import SprintSerializer
 from rest_framework import viewsets, status
@@ -18,6 +16,7 @@ from django.db.models import Q, Case, When, Value, F
 from collections import namedtuple
 
 from NearBeach.utils.objects.object_dictionary import ObjectDictionary
+from NearBeach.utils.objects.object_status_dictionary import get_object_status_from_destination
 
 
 @extend_schema(
@@ -75,6 +74,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                 **{F"{permutation.destination}_id__in": sprint_object_assignment_results.filter(
                     **{F"{permutation.destination}_id__isnull": False}
                 ).values(F"{permutation.destination}_id")},
+                sprintobjectassignment__is_deleted=False,
             )
             
             # If there is a link relationship, apply it
@@ -96,6 +96,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                 )
 
             permutation_results = permutation_results.annotate(
+                sprint_object_assignment_id=F("sprintobjectassignment__pk"),
                 title=F(object.title),
                 description=F(object.description),
                 status_id=F(object.status),
@@ -130,6 +131,7 @@ class SprintViewSet(viewsets.ModelViewSet):
 
             results.extend(
                 permutation_results.values(
+                    "sprint_object_assignment_id",
                     "title",
                     "description",
                     "status_id",
@@ -143,6 +145,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                 ).distinct()
            )
 
+        # orig_list.sort(key=lambda x: x.count, reverse=True)
         return results
 
     @staticmethod
@@ -150,13 +153,14 @@ class SprintViewSet(viewsets.ModelViewSet):
         # Get the status of the objects
         status_results = {}
         for destination in ["requirement_item", "project", "task"]:
-            object = ObjectDictionary(destination)
-            status_results[destination] = object.objects.filter(
+            # object = ObjectDictionary(destination)
+            object = get_object_status_from_destination(destination)
+            status_results[destination] = object.filter(
                 is_deleted=False,
             ).annotate(
                 value=F(F"{destination}_status_id"),
                 label=F(F"{destination}_status"),
-                higher_order_status=F(F"{destination}_status__{destination}_higher_order_status"),
+                higher_order_status=F(F"{destination}_higher_order_status"),
             ).values(
                 "value",
                 "label",

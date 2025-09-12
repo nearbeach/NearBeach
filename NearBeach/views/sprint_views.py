@@ -25,7 +25,6 @@ from NearBeach.models import (
     SprintObjectAssignment,
     UserGroup, 
 )
-from NearBeach.views.gantt_chart_views import get_object_results
 from NearBeach.views.theme_views import get_theme
 
 from NearBeach.decorators.check_user_permissions.sprint_permissions import (
@@ -81,10 +80,10 @@ def add_object_to_sprint(request, destination, location_id, *args, **kwargs):
             )
             submit_object_assignment.save()
 
-    object_results = get_object_results(location_id)
+    # object_results = get_object_results(location_id)
 
     results = {
-        "gantt_chart_data": json.loads(object_results),
+        # "gantt_chart_data": json.loads(object_results),
     }
 
     return JsonResponse(

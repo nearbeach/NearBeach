@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from NearBeach.utils.objects.object_dictionary import ObjectDictionary
+
 
 class SprintObjectSerializer(serializers.Serializer):
     description = serializers.CharField(
@@ -16,12 +18,13 @@ class SprintObjectSerializer(serializers.Serializer):
         allow_null=True,
     )
     object_id = serializers.IntegerField(
-        read_only=True,
+        required=True,
         allow_null=True,
     )
-    object_type = serializers.CharField(
-        read_only=True,
+    object_type = serializers.ChoiceField(
+        required=True,
         allow_null=True,
+        choices=["requirement_item", "project", "task"]
     )
     parent_object_type = serializers.CharField(
         read_only=True,
@@ -30,6 +33,9 @@ class SprintObjectSerializer(serializers.Serializer):
     parent_object_id = serializers.IntegerField(
         read_only=True,
         allow_null=True,
+    )
+    sprint_object_assignment_id = serializers.IntegerField(
+        read_only=True,
     )
     start_date = serializers.DateTimeField(
         read_only=True,
@@ -44,3 +50,16 @@ class SprintObjectSerializer(serializers.Serializer):
         read_only=True,
         allow_null=True,
     )
+
+    def get_fields(self):
+        fields = super().get_fields()
+
+        # Check to see if request exists in context
+        if "request" not in self.context:
+            return fields
+
+        # Creating a new link
+        if self.context["request"].method == "POST":
+            fields["object_id"].many = True
+
+        return fields

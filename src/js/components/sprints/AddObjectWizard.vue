@@ -263,23 +263,20 @@ export default {
 
 			//Setup data_to_send
 			const data_to_send = new FormData();
+			data_to_send.set("object_type", this.objectType);
 
 			// Go through all link models to add to data_to_send
 			this.linkModel.forEach((link) => {
-				data_to_send.append(
-					`${this.objectModel.toLowerCase()}`,
-					link
-				);
+				data_to_send.append("object_id", link)
 			});
 
 			// Use axios to send data
 			this.axios.post(
-				`${this.rootUrl}object_data/sprint/${this.locationId}/add_object_to_sprint/`,
+				`${this.rootUrl}api/v0/sprint/${this.locationId}/link/`,
 				data_to_send,
 			).then((response) => {
-				//ADD CODE
 				//Get the gantt chart data
-				const gantt_chart_data = response.data.gantt_chart_data.map((row) => {
+				const gantt_chart_data = response.data.map((row) => {
 					//Convert the dates
 					const end_date = DateTime.fromISO(row.end_date);
 					const start_date = DateTime.fromISO(row.start_date);
