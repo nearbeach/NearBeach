@@ -160,6 +160,10 @@ export default {
 			type: String,
 			default: "",
 		},
+		sprintObjectAssignmentId: {
+			type: Number,
+			default: 0,
+		},
 		startDate: {
 			type: Number,
 			default: 0,
@@ -308,10 +312,7 @@ export default {
 			//Add this location into the confirm delete store
 			this.$store.commit({
 				type: "updateConfirmDelete",
-				objectType: this.objectType,
-				objectId: this.objectId,
-				parentObjectId: this.parentObjectId,
-				parentObjectType: this.parentObjectType,
+				objectId: this.sprintObjectAssignmentId,
 			});
 
 			//Open the modal

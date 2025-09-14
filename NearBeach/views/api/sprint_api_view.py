@@ -1,3 +1,4 @@
+from django.db.models.fields import CharField, IntegerField, DateTimeField
 from rest_framework.generics import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiExample
 from NearBeach.decorators.check_user_permissions.api_sprint_permissions_v0 import check_api_sprint_permissions
@@ -5,12 +6,17 @@ from NearBeach.decorators.check_user_permissions.sprint_permissions import check
 from NearBeach.models import (
     ObjectAssignment,
     Sprint,
+    SprintObjectAssignment,
     UserGroup,
 )
 from NearBeach.serializers.sprint_serializer import SprintSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.db.models import Q, Case, When, Value, F
+from collections import namedtuple
+
+from NearBeach.utils.objects.object_dictionary import ObjectDictionary
+from NearBeach.utils.objects.object_status_dictionary import get_object_status_from_destination
 
 
 @extend_schema(
@@ -20,6 +26,148 @@ class SprintViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
     queryset = Sprint.objects.filter(is_deleted=False)
     serializer_class = SprintSerializer
+
+    @staticmethod
+    def _get_object_results(sprint_id):
+        sprint_object_assignment_results = SprintObjectAssignment.objects.filter(
+            is_deleted=False,
+            sprint_id=sprint_id,
+        )
+
+        object_assignment_results = ObjectAssignment.objects.filter(
+            Q(
+                project_id__in=sprint_object_assignment_results.filter(project_id__isnull=False).values('project_id'),
+                is_deleted=False,
+                link_relationship="Subobject",
+                parent_link="project",
+            ) |
+            Q(
+                requirement_item_id__in=sprint_object_assignment_results.filter(requirement_item_id__isnull=False).values('requirement_item_id'),
+                is_deleted=False,
+                link_relationship="Subobject",
+                parent_link="requirement_item",
+            )
+        )
+
+        QueryStructure = namedtuple("QueryStructure", [
+            "destination",
+            "link_relationship",
+            "parent_link",
+            "exclude_parent_link",
+        ])
+
+        # Setup the variables
+        results = []
+        query_permutations = [
+            QueryStructure("requirement_item", "", "", []),
+            QueryStructure("project", "", "", ["requirement_item"]),
+            QueryStructure("project", "Subobject", "requirement_item", []),
+            QueryStructure("task", "", "", ["project", "requirement_item"]),
+            QueryStructure("task", "Subobject", "requirement_item", []),
+            QueryStructure("task", "Subobject", "project", []),
+        ]
+        
+        for permutation in query_permutations:
+            object = ObjectDictionary(permutation.destination)
+            permutation_results = object.objects.filter(
+                is_deleted=False,
+                **{F"{permutation.destination}_id__in": sprint_object_assignment_results.filter(
+                    **{F"{permutation.destination}_id__isnull": False}
+                ).values(F"{permutation.destination}_id")},
+                sprintobjectassignment__is_deleted=False,
+            )
+            
+            # If there is a link relationship, apply it
+            if not permutation.link_relationship == "":
+                permutation_results = permutation_results.filter(
+                    objectassignment__link_relationship=permutation.link_relationship,
+                    objectassignment__is_deleted=False,
+                    **{F"objectassignment__{permutation.parent_link}_id__in": sprint_object_assignment_results.filter(
+                        **{F"{permutation.parent_link}_id__isnull": False}
+                    ).values(F"{permutation.parent_link}_id")},
+                )
+            else:
+                # When we have objects that are not linked, make sure we are filtering out any with links
+                permutation_results = permutation_results.exclude(
+                    **{F"{permutation.destination}_id__in": object_assignment_results.filter(
+                        parent_link__in=permutation.exclude_parent_link,
+                        **{F"{permutation.destination}_id__isnull": False},
+                    ).values(F"{permutation.destination}_id")}
+                )
+
+            permutation_results = permutation_results.annotate(
+                sprint_object_assignment_id=F("sprintobjectassignment__pk"),
+                title=F(object.title),
+                description=F(object.description),
+                status_id=F(object.status),
+                higher_order_status=F(object.higher_order_status),
+                object_type=Value(permutation.destination),
+                object_id=F(object.id),
+            )
+
+            if object.start_date is not None:
+                permutation_results = permutation_results.annotate(
+                    start_date=F(F"{permutation.destination}_start_date"),
+                    end_date=F(F"{permutation.destination}_end_date"),
+                )
+            else:
+                permutation_results = permutation_results.annotate(
+                    start_date=Value(None, output_field=DateTimeField(null=True)),
+                    end_date=Value(None, output_field=DateTimeField(null=True)),
+                )
+
+
+            if not permutation.link_relationship == "":
+                permutation_results = permutation_results.annotate(
+                    parent_object_type=Value(permutation.parent_link),
+                    parent_object_id=F(F"objectassignment__{permutation.parent_link}_id"),
+                )
+            else:
+                permutation_results = permutation_results.annotate(
+                    parent_object_type=Value("", output_field=CharField(max_length=20,null=True)),
+                    parent_object_id=Value(None, output_field=IntegerField(null=True)),
+                )
+
+
+            results.extend(
+                permutation_results.values(
+                    "sprint_object_assignment_id",
+                    "title",
+                    "description",
+                    "status_id",
+                    "higher_order_status",
+                    "start_date",
+                    "end_date",
+                    "object_type",
+                    "object_id",
+                    "parent_object_type",
+                    "parent_object_id",
+                ).distinct()
+           )
+
+        # orig_list.sort(key=lambda x: x.count, reverse=True)
+        return results
+
+    @staticmethod
+    def _get_status_results():
+        # Get the status of the objects
+        status_results = {}
+        for destination in ["requirement_item", "project", "task"]:
+            # object = ObjectDictionary(destination)
+            object = get_object_status_from_destination(destination)
+            status_results[destination] = object.filter(
+                is_deleted=False,
+            ).annotate(
+                value=F(F"{destination}_status_id"),
+                label=F(F"{destination}_status"),
+                higher_order_status=F(F"{destination}_higher_order_status"),
+            ).values(
+                "value",
+                "label",
+                "higher_order_status",
+            )
+
+        return status_results
 
     @extend_schema(
         description="""
@@ -210,6 +358,9 @@ Retrieves a single sprint.
         if sprint_results.requirement is not None:
             sprint_results.destination = "requirement"
             sprint_results.location_id = sprint_results.requirement_id
+
+        sprint_results.status_results = self._get_status_results()
+        sprint_results.object_results = self._get_object_results(pk)
 
         serializer = SprintSerializer(sprint_results)
         return Response(serializer.data)

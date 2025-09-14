@@ -234,11 +234,6 @@ urlpatterns = [
     ),
     # Gantt
     path(
-        "gantt_data/<destination>/<int:location_id>/get_data/",
-        gantt_chart_views.gantt_data_get_data,
-        name="gantt_chart_get_data",
-    ),
-    path(
         "gantt_data/<destination>/<int:location_id>/update_data/",
         gantt_chart_views.gantt_data_update_data,
         name="gantt_chart_update_data",
