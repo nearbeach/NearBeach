@@ -154,6 +154,10 @@ class SearchObjects:
             results = results.exclude(
                 **{F"{object_name}_status__{object_name}_higher_order_status": "Closed"}
             )
+        elif not include_closed and object_name == "kanban_board":
+            results = results.exclude(
+                kanban_board_status="Closed",
+            )
 
         # Split the space results - then apply the filter of each split value
         for split_row in form.cleaned_data["search"].split(" "):
