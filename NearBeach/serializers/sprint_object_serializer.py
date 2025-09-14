@@ -60,6 +60,9 @@ class SprintObjectSerializer(serializers.Serializer):
 
         # Creating a new link
         if self.context["request"].method == "POST":
-            fields["object_id"].many = True
+            fields["object_id"] = serializers.ListField(
+                child=serializers.IntegerField(min_value=1),
+                required=True,
+            )
 
         return fields

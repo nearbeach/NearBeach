@@ -263,7 +263,7 @@ export default {
 
 			//Setup data_to_send
 			const data_to_send = new FormData();
-			data_to_send.set("object_type", this.objectType);
+			data_to_send.set("object_type", this.objectModel);
 
 			// Go through all link models to add to data_to_send
 			this.linkModel.forEach((link) => {

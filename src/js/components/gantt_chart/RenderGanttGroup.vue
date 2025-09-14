@@ -31,6 +31,7 @@
 			v-bind:parent-object-id="row.parent_object_id"
 			v-bind:parent-object-type="row.parent_object_type"
 			v-bind:higher-order-status="row.higher_order_status"
+            v-bind:sprint-object-assignment-id="row.sprint_object_assignment_id"
 			v-bind:start-date="row.start_date"
 			v-bind:status-id="row.status_id"
 			v-bind:title="row.title"

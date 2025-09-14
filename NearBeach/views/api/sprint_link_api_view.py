@@ -80,7 +80,7 @@ class SprintLinkViewSet(SprintViewSet):
             sprint_object_assignment = SprintObjectAssignment(
                 **{F"{serializer.data['object_type']}_id": single_id},
                 change_user=request.user,
-                sprint_id=kwargs['sprint_id'],
+                sprint_id_id=kwargs['sprint_id'],
             )
             sprint_object_assignment.save()
 
