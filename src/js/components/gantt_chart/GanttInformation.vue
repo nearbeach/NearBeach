@@ -22,6 +22,7 @@
 				v-bind:parent-object-id="0"
 				v-bind:parent-object-type="row.parent_object_type"
 				v-bind:higher-order-status="row.higher_order_status"
+				v-bind:sprint-object-assignment-id="row.sprint_object_assignment_id"
 				v-bind:start-date="row.start_date"
 				v-bind:status-id="row.status_id"
 				v-bind:title="row.title"
@@ -191,8 +192,9 @@ export default {
 			if (this.locationId === 0) return;
 
 			//Get Data from backend
-			this.axios.post(
-				`${this.rootUrl}gantt_data/${this.destination}/${this.locationId}/get_data/`,
+			this.axios.get(
+				// `${this.rootUrl}gantt_data/${this.destination}/${this.locationId}/get_data/`,
+				`${this.rootUrl}api/v0/${this.destination}/${this.locationId}/`,
 			).then((response) => {
 				//Get the dates
 				let end_date = DateTime.fromISO(this.ganttEndDate);

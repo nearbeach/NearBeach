@@ -34,7 +34,7 @@
 			</div>
 			<div
 				class="user-card--remove"
-				v-if="userLevel >= 3"
+				v-if="userLevel >= 2"
 			>
 				<carbon-trash-can
 					v-on:click="removeUser(user.username)"

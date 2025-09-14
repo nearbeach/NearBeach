@@ -131,12 +131,8 @@ export default {
 			this.closeModal();
 		},
 		removeObjectFromSprint() {
-			const data_to_send = new FormData();
-			data_to_send.set(this.objectType, this.objectId);
-
-			this.axios.post(
-				`${this.rootUrl}object_data/${this.destination}/${this.locationId}/remove_object_from_sprint/`,
-				data_to_send,
+			this.axios.delete(
+				`${this.rootUrl}api/v0/sprint/${this.locationId}/link/${this.objectId}/`,
 			).then(() => {
 				//Delete that particular data
 				this.$store.dispatch("removeGanttChartSingleRow", {

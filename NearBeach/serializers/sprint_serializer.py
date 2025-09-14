@@ -4,6 +4,8 @@ from NearBeach.models import (
 )
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.serializers.requirement_serializer import RequirementSerializer
+from NearBeach.serializers.sprint_status_serializer import SprintStatusSerializer
+from NearBeach.serializers.sprint_object_serializer import SprintObjectSerializer
 
 
 class SprintSerializer(serializers.ModelSerializer):
@@ -26,6 +28,16 @@ class SprintSerializer(serializers.ModelSerializer):
     )
     sprint_end_date = serializers.DateTimeField(
         required=True,
+    )
+    status_results = SprintStatusSerializer(
+        # many=True,
+        allow_null=True,
+        read_only=True,
+    )
+    object_results = SprintObjectSerializer(
+        many=True,
+        allow_null=True,
+        read_only=True,
     )
     requirement = RequirementSerializer(
         many=False,
@@ -73,6 +85,8 @@ class SprintSerializer(serializers.ModelSerializer):
             "completed_story_points",
             "requirement",
             "project",
+            "object_results",
+            "status_results",
             "date_created",
             "date_modified",
         ]
