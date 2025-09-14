@@ -30,7 +30,7 @@
 					{{ group.group_name }}
 				</div>
 				<div class="group-card--remove"
-					 v-if="userLevel >= 3 && objectGroupList.length > 1"
+					 v-if="userLevel >= 2 && objectGroupList.length > 1"
 				>
 					<carbon-trash-can
 						v-on:click="removeGroup(group.group_id)"
