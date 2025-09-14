@@ -81,7 +81,7 @@
 						<label for="id_organisation_email">
 							Organisation Email
 							<validation-rendering
-								v-bind:error-list="v$.organisationWebsiteModel.$errors"
+								v-bind:error-list="v$.organisationEmailModel.$errors"
 							></validation-rendering>
 						</label>
 						<input
