@@ -116,6 +116,8 @@ def _delete_customer_data(gdpr_object_id, form: GdprObjectSubmitForm):
         single_requirement.requirement_scope = re.sub(last_name, str(generated_uuid), single_requirement.requirement_scope, flags=re.IGNORECASE)
         single_requirement.requirement_scope = re.sub(email, str(generated_uuid), single_requirement.requirement_scope, flags=re.IGNORECASE)
 
+        single_requirement.save()
+
     for single_requirement_item in requirement_item:
         generated_uuid = uuid.uuid4()
         single_requirement_item.requirement_item_title = re.sub(first_name, str(generated_uuid), single_requirement_item.requirement_item_title, flags=re.IGNORECASE)
@@ -125,6 +127,8 @@ def _delete_customer_data(gdpr_object_id, form: GdprObjectSubmitForm):
         single_requirement_item.requirement_item_scope = re.sub(last_name, str(generated_uuid), single_requirement_item.requirement_item_scope, flags=re.IGNORECASE)
         single_requirement_item.requirement_item_scope = re.sub(email, str(generated_uuid), single_requirement_item.requirement_item_scope, flags=re.IGNORECASE)
 
+        single_requirement_item.save()
+
     for single_task in task:
         generated_uuid = uuid.uuid4()
         single_task.task_short_description = re.sub(first_name, str(generated_uuid), single_task.task_short_description, flags=re.IGNORECASE)
@@ -133,6 +137,8 @@ def _delete_customer_data(gdpr_object_id, form: GdprObjectSubmitForm):
         single_task.task_long_description = re.sub(first_name, str(generated_uuid), single_task.task_long_description, flags=re.IGNORECASE)
         single_task.task_long_description = re.sub(last_name, str(generated_uuid), single_task.task_long_description, flags=re.IGNORECASE)
         single_task.task_long_description = re.sub(email, str(generated_uuid), single_task.task_long_description, flags=re.IGNORECASE)
+
+        single_task.save()
 
     # Delete the object assignment
     ObjectAssignment.objects.filter(
