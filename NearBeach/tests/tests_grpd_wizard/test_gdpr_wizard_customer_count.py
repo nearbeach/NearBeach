@@ -38,7 +38,7 @@ We can loop through each table to create the counts.
 """
 
 
-class GdprWizardUserCount(TestCase):
+class GdprWizardCustomerCount(TestCase):
     fixtures = ['NearBeach_gdpr_setup.json']
     data_dict = {}
 
@@ -60,7 +60,7 @@ class GdprWizardUserCount(TestCase):
         for single_table in nearbeach_tables:
             results = single_table.objects.all()
 
-            with self.subTest(F"GDPR wizard user count: {single_table.__name__}"):
+            with self.subTest(F"GDPR wizard customer count: {single_table.__name__}"):
                 self.assertEqual(
                     len(results),
                     self.data_dict[single_table.__name__],
@@ -69,24 +69,18 @@ class GdprWizardUserCount(TestCase):
     def setup_baseline_count(self):
         nearbeach_tables = apps.get_app_config("NearBeach").get_models()
         for single_table in nearbeach_tables:
-            condition_1 = hasattr(single_table, "assigned_user")
-            condition_2 = hasattr(single_table, "username")
+            condition_1 = hasattr(single_table, "customer_id")
 
             results = single_table.objects.filter()
 
             if condition_1:
                 results = results.exclude(
-                    assigned_user_id=6,
+                    customer_id=23,
                 )
 
-            if condition_2:
-                results = results.exclude(
-                    username__pk=6,
-                )
-            
             self.data_dict[single_table.__name__] = results.count()
 
-    def test_gdpr_wizard_user_count_test(self):
+    def test_gdpr_wizard_customer_count_test(self):
         c = Client()
 
         # User will be logged in
@@ -102,8 +96,8 @@ class GdprWizardUserCount(TestCase):
                 args={}
             ),
             {
-                "gdpr_object_id": 6,
-                "gdpr_object_type": "user",
+                "gdpr_object_id": 23,
+                "gdpr_object_type": "customer",
             },
             follow=True
         )

@@ -1,6 +1,5 @@
 # requirement.txt
 Django>=4.2.17
-# django-rest-framework
 djangorestframework
 django-two-factor-auth
 django-two-factor-auth[phonenumberslite]
