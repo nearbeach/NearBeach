@@ -2,6 +2,12 @@ from django.apps import apps
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.db.models import Q
+from NearBeach.models import (
+    Requirement,
+    RequirementItem,
+    Project,
+    Task, Sprint,
+)
 
 # Declaration of Username and Password
 username = 'admin'
@@ -41,6 +47,11 @@ We can loop through each table to create the counts.
 class GdprWizardOrganisationCount(TestCase):
     fixtures = ['NearBeach_gdpr_setup.json']
     data_dict = {}
+    requirements_exclude = []
+    requirement_items_exclude = []
+    projects_exclude = []
+    sprint_exclude = []
+    tasks_exclude = []
 
     def setUp(self):
         # Login
@@ -54,7 +65,7 @@ class GdprWizardOrganisationCount(TestCase):
         self.client = Client()
 
         login_user(self.client, self)
-
+        
     def after_update_checking(self):
         nearbeach_tables = apps.get_app_config("NearBeach").get_models()
         for single_table in nearbeach_tables:
@@ -70,6 +81,11 @@ class GdprWizardOrganisationCount(TestCase):
         nearbeach_tables = apps.get_app_config("NearBeach").get_models()
         for single_table in nearbeach_tables:
             condition_1 = hasattr(single_table, "organisation_id")
+            condition_2 = hasattr(single_table, "requirement_id")
+            condition_3 = hasattr(single_table, "requirement_item_id")
+            condition_4 = hasattr(single_table, "project_id")
+            condition_5 = hasattr(single_table, "task_id")
+            condition_6 = hasattr(single_table, "sprint_id")
 
             results = single_table.objects.filter()
 
@@ -78,15 +94,50 @@ class GdprWizardOrganisationCount(TestCase):
                     organisation_id=10,
                 )
 
-            if single_table.__name__ == "Sprint":
+            if condition_2:
                 results = results.exclude(
-                    Q(project__organisation_id=10) |
-                    Q(requirement__organisation_id=10),
+                    requirement_id__in=self.requirements_exclude,
                 )
 
-            # if single_table.__name__ ==
+            if condition_3:
+                results = results.exclude(
+                    requirement_item_id__in=self.requirement_items_exclude,
+                )
+
+            if condition_4:
+                results = results.exclude(
+                    project_id__in=self.projects_exclude,
+                )
+
+            if condition_5:
+                results = results.exclude(
+                    task_id__in=self.tasks_exclude,
+                )
+
+            if condition_6:
+                results = results.exclude(
+                    sprint_id__in=self.sprint_exclude,
+                )
 
             self.data_dict[single_table.__name__] = results.count()
+    
+    def setup_exclusion_objects(self):
+        self.requirements_exclude = Requirement.objects.filter(
+            organisation_id=10,
+        ).values("requirement_id")
+        self.requirement_items_exclude = RequirementItem.objects.filter(
+            requirement_id__in=self.requirements_exclude,
+        ).values("requirement_item_id")
+        self.projects_exclude = Project.objects.filter(
+            organisation_id=10,
+        ).values("project_id")
+        self.tasks_exclude = Task.objects.filter(
+            organisation_id=10,
+        ).values("task_id")
+        self.sprint_exclude = Sprint.objects.filter(
+            Q(project_id__in=self.projects_exclude) |
+            Q(requirement_id__in=self.requirements_exclude)
+        )
 
     def test_gdpr_wizard_organisation_count_test(self):
         c = Client()
@@ -95,6 +146,7 @@ class GdprWizardOrganisationCount(TestCase):
         login_user(c, self)
         
         # Setup the baseline
+        self.setup_exclusion_objects()
         self.setup_baseline_count()
         
         # Run the GDPR wizard
@@ -113,5 +165,4 @@ class GdprWizardOrganisationCount(TestCase):
         self.assertTrue(response.status_code, 200)
 
         # Check the results
-        # self.after_update_checking()
-        # TODO - Implement the tables check
+        self.after_update_checking()

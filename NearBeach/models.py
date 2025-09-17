@@ -193,13 +193,13 @@ class Bug(models.Model):
         blank=True,
     )
     task = models.ForeignKey(
-        "task",
+        "Task",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     requirement = models.ForeignKey(
-        "requirement",
+        "Requirement",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -338,13 +338,13 @@ class Customer(models.Model):
     customer_last_name = models.CharField(max_length=50)
     customer_email = models.CharField(max_length=200)
     customer_profile_picture = models.ForeignKey(
-        "document",
+        "Document",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     organisation = models.ForeignKey(
-        "organisation",
+        "Organisation",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -407,35 +407,35 @@ class Document(models.Model):
 class DocumentPermission(models.Model):
     document_permisssion_id = models.BigAutoField(primary_key=True)
     document_key = models.ForeignKey(
-        "document",
+        "Document",
         on_delete=models.CASCADE,
     )
     project = models.ForeignKey(
-        "project",
+        "Project",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     task = models.ForeignKey(
-        "task",
+        "Task",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     organisation = models.ForeignKey(
-        "organisation",
+        "Organisation",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     customer = models.ForeignKey(
-        "customer",
+        "Customer",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
     )
     requirement = models.ForeignKey(
-        "requirement",
+        "Requirement",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
@@ -464,7 +464,7 @@ class DocumentPermission(models.Model):
         null=True,
     )
     folder = models.ForeignKey(
-        "folder",
+        "Folder",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -488,23 +488,23 @@ class DocumentPermission(models.Model):
 class Folder(models.Model):
     folder_id = models.BigAutoField(primary_key=True)
     project = models.ForeignKey(
-        "project", on_delete=models.CASCADE, blank=True, null=True
+        "Project", on_delete=models.CASCADE, blank=True, null=True
     )
     task = models.ForeignKey("task", on_delete=models.CASCADE, blank=True, null=True)
     customer = models.ForeignKey(
-        "customer",
+        "Customer",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     organisation = models.ForeignKey(
-        "organisation",
+        "Organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     requirement = models.ForeignKey(
-        "requirement",
+        "Requirement",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -575,7 +575,7 @@ class KanbanBoard(models.Model):
     kanban_board_id = models.BigAutoField(primary_key=True)
     kanban_board_name = models.CharField(max_length=255)
     requirement = models.ForeignKey(
-        "requirement",
+        "Requirement",
         null=True,
         blank=True,
         on_delete=models.CASCADE,
@@ -626,19 +626,19 @@ class KanbanCard(models.Model):
         default=ObjectPriority.NORMAL,
     )
     project = models.ForeignKey(
-        "project",
+        "Project",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     task = models.ForeignKey(
-        "task",
+        "Task",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     requirement = models.ForeignKey(
-        "requirement",
+        "Requirement",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -983,13 +983,13 @@ class ObjectAssignment(models.Model):
         blank=True,
     )
     group_id = models.ForeignKey(
-        "group",
+        "Group",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     requirement = models.ForeignKey(
-        "requirement",
+        "Requirement",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1001,13 +1001,13 @@ class ObjectAssignment(models.Model):
         null=True,
     )
     project = models.ForeignKey(
-        "project",
+        "Project",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     task = models.ForeignKey(
-        "task",
+        "Task",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1031,13 +1031,13 @@ class ObjectAssignment(models.Model):
         null=True,
     )
     customer = models.ForeignKey(
-        "customer",
+        "Customer",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     organisation = models.ForeignKey(
-        "organisation",
+        "Organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1098,13 +1098,13 @@ class ObjectNote(models.Model):
         null=True,
     )
     organisation = models.ForeignKey(
-        "organisation",
+        "Organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     requirement = models.ForeignKey(
-        "requirement",
+        "Requirement",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1116,13 +1116,13 @@ class ObjectNote(models.Model):
         null=True,
     )
     project = models.ForeignKey(
-        "project",
+        "Project",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     task = models.ForeignKey(
-        "task",
+        "Task",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1321,7 +1321,7 @@ class Project(models.Model):
     project_name = models.CharField(max_length=255)
     project_description = models.TextField("project_description")
     organisation = models.ForeignKey(
-        "organisation",
+        "Organisation",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1362,7 +1362,7 @@ class PublicLink(models.Model):
         default=True,
     )
     requirement = models.ForeignKey(
-        "requirement",
+        "Requirement",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1374,13 +1374,13 @@ class PublicLink(models.Model):
         null=True,
     )
     project = models.ForeignKey(
-        "project",
+        "Project",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     task = models.ForeignKey(
-        "task",
+        "Task",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -1496,7 +1496,7 @@ class RequestForChangeGroupApproval(models.Model):
         on_delete=models.CASCADE,
     )
     group = models.ForeignKey(
-        "group",
+        "Group",
         on_delete=models.CASCADE,
     )
     approval = models.IntegerField(
@@ -1560,7 +1560,7 @@ class Requirement(models.Model):
 class RequirementItem(models.Model):
     requirement_item_id = models.BigAutoField(primary_key=True)
     requirement = models.ForeignKey(
-        "requirement",
+        "Requirement",
         on_delete=models.CASCADE,
     )
     requirement_item_title = models.CharField(max_length=255)
@@ -1823,7 +1823,7 @@ class Task(models.Model):
     task_short_description = models.CharField(max_length=255)
     task_long_description = models.TextField()
     organisation = models.ForeignKey(
-        "organisation",
+        "Organisation",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -1868,7 +1868,7 @@ class UserGroup(models.Model):
         on_delete=models.CASCADE,
     )
     group = models.ForeignKey(
-        "group",
+        "Group",
         on_delete=models.CASCADE,
     )
     permission_set = models.ForeignKey(
