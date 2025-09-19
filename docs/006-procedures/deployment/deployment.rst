@@ -1,8 +1,5 @@
-.. _deployment:
-
-=======================
 Deployment of NearBeach
-=======================
+#######################
 
 .. note::
 
@@ -23,9 +20,8 @@ NearBeach deployment cycle.
 
 i.e Boto3 has a security patch, and we need to deploy
 
---------------
 Initial Checks
---------------
+==============
 
 Check 1: If NearBeach requires any new Python Packages, these will need to be noted within the following locations;
 
@@ -64,10 +60,8 @@ Check 3: Make sure Local Code will build and run
 TODO - Finish Check 3 code
 
 
---------------------
 Deployment Process 1
---------------------
-
+====================
 
 .. note::
 
@@ -131,9 +125,8 @@ Deployment Process 1
 #. Check the github actions for NearBeach, to see if the workflows are running correctly.
 
 
---------------------
-Deployment Process 1
---------------------
+Deployment Process 2
+====================
 
 This process should ONLY be followed when we just want to deploy a new version of NearBeach's core libraries without
 deploying any of the new code. i.e. separated from the development cycle.

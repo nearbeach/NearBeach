@@ -1,12 +1,10 @@
 .. _manage-users:
 
-==============
 Managing Users
-==============
+##############
 
-~~~~~~~~~~~~~~~~
 Create New Users
-~~~~~~~~~~~~~~~~
+================
 
 1. Log into NearBeach as an administrator
 
@@ -17,9 +15,8 @@ Create New Users
 4. Click the "Create a new User" to start creating a new user
 
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Assigning Permissions and Groups to Users
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=========================================
 
 1. Log into NearBeach as an administrator
 
@@ -44,9 +41,8 @@ Assigning Permissions and Groups to Users
     To annotate that the user is a team leader for that group - tick the checkbox for that group
 
 
-~~~~~~~~~~~~~~~~~~~~~~~~~
 Removing User from system
-~~~~~~~~~~~~~~~~~~~~~~~~~
+=========================
 
 1. Log into NearBeach as an administrator
 

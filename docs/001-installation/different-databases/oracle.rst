@@ -1,14 +1,10 @@
-.. _postgresql:
-
-=============
 Use Oracle DB
-=============
+#############
 
 You can use NearBeach with Oracle.
 
------------------
-External Database
------------------
+Oracle - External Database
+==========================
 
 .. note::
 

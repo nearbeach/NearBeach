@@ -1,8 +1,5 @@
-.. _index:
-
-=========================
 Using Different Databases
-=========================
+#########################
 
 We built NearBeach on the back of Django - which supports multiple databases.
 

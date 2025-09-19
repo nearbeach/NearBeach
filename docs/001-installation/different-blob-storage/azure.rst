@@ -1,8 +1,5 @@
-.. _azure:
-
-======================
 Use Azure Blob Storage
-======================
+######################
 
 .. note::
 
@@ -10,9 +7,8 @@ Use Azure Blob Storage
 
 NearBeach uses Azure's own toolset to connect to Azure Blob storage. `For more information please visit Microsoft's documentation <https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python>`_
 
-------------
 Instructions
-------------
+============
 
 Modify your docker-compose file to include the fields
 

@@ -1,8 +1,7 @@
 .. _nearbeach_flow:
 
-==============
 NearBeach Flow
-==============
+##############
 
 What is NearBeach Flow?
 =======================

@@ -1,14 +1,10 @@
-.. _maria-db:
-
-===========
 Use MariaDb
-===========
+###########
 
 You can use NearBeach with MariaDB. You can easily run MariaDB within the same docker-compose file, or alternatively you can run it separately (external).
 
------------------
-External Database
------------------
+Mariadb - External Database
+===========================
 
 .. note::
 
@@ -43,9 +39,9 @@ You will need to fill out the following fields. These fields should match how yo
 - DB_ENGINE=mysql
 - DB_PORT=<<please fill>>
 
----------------
-Docker Database
----------------
+
+MariaDb - Docker Database
+=========================
 
 .. note::
 

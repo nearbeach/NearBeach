@@ -1,8 +1,7 @@
 .. _quick-install-docker:
 
-=========================
 Quick Install with Docker
-=========================
+#########################
 
 Copy the following code and paste it into a file called `docker-compose.yaml`
 

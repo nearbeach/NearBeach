@@ -1,8 +1,5 @@
-.. _minio:
-
-======================
 Use Minio Blob Storage
-======================
+######################
 
 .. note::
 
@@ -10,9 +7,8 @@ Use Minio Blob Storage
 
 NearBeach uses Boto3 to connect to Minio. To find more information about Boto3 please go to `their documentation <https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html>`_
 
-------------
 Instructions
-------------
+============
 
 Modify your docker-compose file to include the fields
 

@@ -52,48 +52,54 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
     Quick Install with Podman </001-installation/quick-install-with-podman>
     Different Databases </001-installation/different-databases/index>
     Different Blob Storage </001-installation/different-blob-storage/index>
-    Install Against Existing Project </001-installation/install-against-existing-project/index>
-    Old Installation Process </001-installation/old-installation-process/index>
 
 
 .. toctree::
     :maxdepth: 2
     :hidden:
-    :caption: 🏸 Local Development Environment Setup
+    :caption: 🏸 For Developers
 
-    Local Development Environment </002-local-development-environment-setup/index>
+    Setup Local Dev Env </002-local-development-environment-setup/index>
 
 
 .. toctree::
     :maxdepth: 2
     :hidden:
-    :caption: 🎣 Administration Tasks
+    :caption: 🎣 For Administrators
 
-    First Time Setup </003-administration-tasks/index>
+    First Time Setup </003-administration-tasks/first-time-setup>
+    Manage Users </003-administration-tasks/manage-users>
+    Manage Groups </003-administration-tasks/manage-groups>
+    Manage Permission Sets </003-administration-tasks/manage-permission-sets>
+    System Variables </003-administration-tasks/system-variables>
+    API </003-administration-tasks/api>
 
 .. toctree::
     :maxdepth: 2
     :hidden:
     :caption: 🪀 Basic Usage
 
-    Basic Usage </004-basic-usage/index>
+    Organisations </004-basic-usage/organisation/organisation_crud>
+    Customers </004-basic-usage/customer/customer_crud>
+    Requirements </004-basic-usage/requirement/requirement_crud>
+    Kanban Board </004-basic-usage/kanban-board/kanban_board_crud>
+    Projects </004-basic-usage/project/project_crud>
+    Tasks </004-basic-usage/task/task_crud>
+    Request for Change </004-basic-usage/request-for-change/request_for_change_crud>
+    Common Usage </004-basic-usage/common-usage/index>
 
-.. toctree::
-    :maxdepth: 2
-    :hidden:
-    :caption: 🤕 Comman Usage
-
-    Common Usage </005-common-usage/index>
 
 .. toctree::
     :maxdepth: 2
     :hidden:
     :caption: 🛝 Procedure
 
-    Procedures </006-procedures/index>
+    Deployment of NearBeach </006-procedures/deployment/deployment>
+    Git Flow for NearBeach </006-procedures/git-flow/git-flow>
+
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :hidden:
     :caption: 🥋 Misc
 
