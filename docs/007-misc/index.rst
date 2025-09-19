@@ -3,7 +3,7 @@
 Misc Information
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 0
     :caption: Misc Information
 
     Cache Busting </007-misc/cache-busting/cache-busting>

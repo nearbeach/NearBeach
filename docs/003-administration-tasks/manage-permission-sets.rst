@@ -1,12 +1,10 @@
 .. _manage-permission-sets:
 
-=========================
 Managing Permissions Sets
-=========================
+#########################
 
-~~~~~~~~~~~~~~~~~~~~~~~~
 Setup of Permission Sets
-~~~~~~~~~~~~~~~~~~~~~~~~
+========================
 
 .. note::
     Permission Sets in NearBeach give you the ability to classify how much access a particular user can have to certain objecst, i.e. Projects and Tasks. The permission sets can be stacked on top of each other.

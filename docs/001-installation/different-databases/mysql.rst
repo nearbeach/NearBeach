@@ -1,14 +1,10 @@
-.. _mysql:
-
-=========
 Use MySQL
-=========
+#########
 
 You can use NearBeach with MySQL. You can easily run MySQL within the same docker-compose file, or alternatively you can run it separately (external).
 
------------------
-External Database
------------------
+MySQL - External Database
+=========================
 
 .. note::
 
@@ -43,9 +39,8 @@ You will need to fill out the following fields. These fields should match how yo
 - DB_ENGINE=mysql
 - DB_PORT=<<please fill>>
 
----------------
-Docker Database
----------------
+MySQL - Docker Database
+=======================
 
 .. note::
 

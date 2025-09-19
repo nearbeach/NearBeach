@@ -1,8 +1,5 @@
-.. _git-flow:
-
-========
 Git Flow
-========
+########
 
 NearBeach uses Git flow for it's development cycle.
 

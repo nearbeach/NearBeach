@@ -1,14 +1,10 @@
-.. _postgresql:
-
-==============
 Use PostgreSQL
-==============
+##############
 
 You can use NearBeach with PostgreSQL. You can easily run PostgreSQL within the same docker-compose file, or alternatively you can run it separately (external).
 
------------------
-External Database
------------------
+PostgreSQL - External Database
+==============================
 
 .. note::
 
@@ -45,9 +41,8 @@ You will need to fill out the following fields. These fields should match how yo
 - DB_PORT=<<please fill>>
 
 
----------------
-Docker Database
----------------
+PostgreSQL - Docker Database
+============================
 
 .. note::
 

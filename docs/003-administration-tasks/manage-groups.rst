@@ -1,12 +1,10 @@
 .. _manage-groups:
 
-===============
 Managing Groups
-===============
+###############
 
-~~~~~~~~~~~~~~~~~~
 Create User Groups
-~~~~~~~~~~~~~~~~~~
+==================
 
 .. note::
     Each group will require a unique name.

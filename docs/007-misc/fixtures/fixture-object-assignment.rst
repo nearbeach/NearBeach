@@ -1,7 +1,5 @@
-.. _fixture-object-assignment:
-
 Fixture Object Assignment
-=========================
+#########################
 
 The below table describes each object and who can gain access to that object.
 

@@ -1,8 +1,7 @@
 .. _features:
 
-========
 Features
-========
+########
 
 Currently NearBeach has the ability to;
 

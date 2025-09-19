@@ -1,8 +1,7 @@
 .. _local_development_environment:
 
-=============================
 Local Development Environment
-=============================
+#############################
 
 | The steps outlined here are to setup this project in local environment so that you can edit the project and test in your local. 
 | If you are want to have a demo or deploy this project. Please head over to :ref:`quick-install-docker`.
@@ -17,14 +16,13 @@ Contents:
    :local:
    :depth: 1
 
-------------
 Prerequsites
-------------
+============
 
 | The following prerequisites are required to run this project on your local machine.
 
-Install python 3.7+
-####################
+Install python 3.10+
+--------------------
 
     | Run the following command to check the installed python version
   
@@ -35,7 +33,7 @@ Install python 3.7+
     | If you have not installed Python 3.7+ on your local machine, head over to https://www.python.org/downloads/ and download latest version of Python.
 
 Install Git
-###########
+-----------
 
   | Run the following command to check the installed git version.
     
@@ -46,7 +44,7 @@ Install Git
   | If you have not installed Git on your local machine, head over to https://git-scm.com/downloads and download the latest version of Git.
 
 Install pip
-###########
+-----------
 
   | Run the following command to check the installed pip version.
     
@@ -57,7 +55,7 @@ Install pip
   | If you have not installed Pip on your local machine, head over to https://pip.pypa.io/en/stable/installation/ and download the latest version of pip.
 
 Install npm
-###############
+-----------
 
   | Run the following command to check the installed npm version.
     
@@ -67,9 +65,8 @@ Install npm
 
   | If you have not installed npm on your local machine, head over to https://nodejs.org/en/download/ and download the latest version of npm and Node.js.
 
------------------------
 Setting up the project
------------------------
+======================
 
   1. | Head over to https://github.com/nearbeach/NearBeach and fork the repository to your own github account. You can skip this step if dont want to fork.
 
@@ -183,9 +180,8 @@ Setting up the project
     | Now that the server is running, you can access the NearBeach login page by visiting http://127.0.0.1:8000/login
     | You can also access the Django admin page by visiting http://127.0.0.1:8000/admin
 
---------------
 NPM/JavaScript
---------------
+==============
 
   1. To install all NPM packages, please run the following code
 
@@ -205,10 +201,9 @@ NPM/JavaScript
 
       npm run watch
 
-----------------  
 Whats next
-----------------
-  
+==========
+
   Now the road is clear for you to start contributing.
   
   Head over to :code:`local/NearBeach` folder. This is where all the python code is stored.

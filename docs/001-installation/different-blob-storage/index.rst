@@ -1,14 +1,15 @@
-.. _index:
+Blob Storages
+#############
 
-=======================
-Different Blob Storages
-=======================
+NearBeach requires BLOB storage to house any uploads like documents, profile pictures etc. These will be stored in the BLOB storage. You have the choice of the following;
 
-NearBeach requires BLOB storage to house any uploads like documents, profile pictures etc. These will be stored in the BLOB storage.
+* Azure Blob Storage
+* Aws S3 Buckets
+* Minio Buckets
 
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 1
     :hidden:
     :caption: Use Different Blob Storages
 
