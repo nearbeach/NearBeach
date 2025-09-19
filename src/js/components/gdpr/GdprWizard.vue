@@ -168,7 +168,7 @@ export default {
 			// Loop through each of the user action to remove
 			Object.entries(this.userActionToRemove).forEach(([key, object]) => {
 				object.forEach(single_object => {
-					data_to_send.append(key, single_object);
+					data_to_send.append(key.toString(), single_object.toString());
 				});
 			});
 

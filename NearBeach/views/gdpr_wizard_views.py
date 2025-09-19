@@ -11,8 +11,10 @@ from django.views.decorators.http import require_http_methods
 from NearBeach.views.theme_views import get_theme
 from NearBeach.forms import GdprObjectTypeForm, GdprDataRequestForm, GdprObjectSubmitForm
 from NearBeach.models import (
+    ChangeTask,
     Customer,
     Project,
+    RequestForChange,
     Requirement,
     RequirementItem,
     Organisation,
@@ -114,6 +116,8 @@ def _delete_customer_data(gdpr_object_id, form: GdprObjectSubmitForm):
         single_requirement.requirement_scope = re.sub(last_name, str(generated_uuid), single_requirement.requirement_scope, flags=re.IGNORECASE)
         single_requirement.requirement_scope = re.sub(email, str(generated_uuid), single_requirement.requirement_scope, flags=re.IGNORECASE)
 
+        single_requirement.save()
+
     for single_requirement_item in requirement_item:
         generated_uuid = uuid.uuid4()
         single_requirement_item.requirement_item_title = re.sub(first_name, str(generated_uuid), single_requirement_item.requirement_item_title, flags=re.IGNORECASE)
@@ -123,6 +127,8 @@ def _delete_customer_data(gdpr_object_id, form: GdprObjectSubmitForm):
         single_requirement_item.requirement_item_scope = re.sub(last_name, str(generated_uuid), single_requirement_item.requirement_item_scope, flags=re.IGNORECASE)
         single_requirement_item.requirement_item_scope = re.sub(email, str(generated_uuid), single_requirement_item.requirement_item_scope, flags=re.IGNORECASE)
 
+        single_requirement_item.save()
+
     for single_task in task:
         generated_uuid = uuid.uuid4()
         single_task.task_short_description = re.sub(first_name, str(generated_uuid), single_task.task_short_description, flags=re.IGNORECASE)
@@ -131,6 +137,8 @@ def _delete_customer_data(gdpr_object_id, form: GdprObjectSubmitForm):
         single_task.task_long_description = re.sub(first_name, str(generated_uuid), single_task.task_long_description, flags=re.IGNORECASE)
         single_task.task_long_description = re.sub(last_name, str(generated_uuid), single_task.task_long_description, flags=re.IGNORECASE)
         single_task.task_long_description = re.sub(email, str(generated_uuid), single_task.task_long_description, flags=re.IGNORECASE)
+
+        single_task.save()
 
     # Delete the object assignment
     ObjectAssignment.objects.filter(
@@ -162,7 +170,7 @@ def _delete_user_data(gdpr_object_id, request):
     for single_table in nearbeach_tables:
         condition_1 = hasattr(single_table, "change_user")
         condition_2 = hasattr(single_table, "creation_user")
-        
+
         if condition_1 & condition_2:
             single_table.objects.filter(
                 Q(
@@ -187,6 +195,25 @@ def _delete_user_data(gdpr_object_id, request):
             ).update(
                 creation_user=request.user,
             )
+
+    # Handle Change Tasks special fields
+    ChangeTask.objects.filter(
+        change_task_assigned_user=gdpr_object_id,
+    ).update(
+        change_task_assigned_user = request.user,
+    )
+    ChangeTask.objects.filter(
+        change_task_qa_user=gdpr_object_id,
+    ).update(
+        change_task_qa_user=request.user,
+    )
+
+    # Handle Request for Change
+    RequestForChange.objects.filter(
+        rfc_lead_id=gdpr_object_id,
+    ).update(
+        rfc_lead_id=request.user,
+    )
 
     # It is safe to delete the user now?
     User.objects.filter(
