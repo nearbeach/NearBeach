@@ -433,8 +433,79 @@ class ApiAdminPermissionTests(APITestCase):
 
         self._run_test_array(data_list)
 
-    def test_api_request_for_change_data(self):
-        data_list = []
+    def test_api_request_for_change_task_data(self):
+        data_list = [
+            self.URLTest("/api/v0/request_for_change/1/change_task/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/2/change_task/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task", {}, 301, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task", {}, 301, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/1/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/2/change_task/2/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/1", {}, 301, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/2", {}, 301, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/2/", {}, 404, "GET"),
+            self.URLTest("/api/v0/request_for_change/2/change_task/1/", {}, 404, "GET"),
+            self.URLTest(
+                "/api/v0/request_for_change/1/change_task/",
+                {
+                    "change_task_assigned_user": 1,
+                    "change_task_qa_user": 2,
+                    "change_task_title": "Change Task Title",
+                    "change_task_start_date": "2024-12-19 15:49:37",
+                    "change_task_end_date": "2024-12-19 15:49:37",
+                    "is_downtime": "true",
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest(
+                "/api/v0/request_for_change/2/change_task/",
+                {
+                    "change_task_assigned_user": 1,
+                    "change_task_qa_user": 2,
+                    "change_task_title": "Change Task Title",
+                    "change_task_start_date": "2024-12-19 15:49:37",
+                    "change_task_end_date": "2024-12-19 15:49:37",
+                    "is_downtime": "true",
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest("/api/v0/request_for_change/1/change_task", {}, 301, "POST"),
+            self.URLTest("/api/v0/request_for_change/2/change_task", {}, 301, "POST"),
+            self.URLTest(
+                "/api/v0/request_for_change/1/change_task/3/",
+                {
+                    "change_task_assigned_user": 1,
+                    "change_task_qa_user": 2,
+                    "change_task_title": "Change Task Title",
+                    "change_task_start_date": "2024-12-19 15:49:37",
+                    "change_task_end_date": "2024-12-19 15:49:37",
+                    "is_downtime": "true",
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest(
+                "/api/v0/request_for_change/2/change_task/4/",
+                {
+                    "change_task_assigned_user": 1,
+                    "change_task_qa_user": 2,
+                    "change_task_title": "Change Task Title",
+                    "change_task_start_date": "2024-12-19 15:49:37",
+                    "change_task_end_date": "2024-12-19 15:49:37",
+                    "is_downtime": "true",
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest("/api/v0/request_for_change/2/change_task/1/", {}, 404, "DELETE"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/2/", {}, 404, "DELETE"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/1", {}, 301, "DELETE"),
+            self.URLTest("/api/v0/request_for_change/2/change_task/2", {}, 301, "DELETE"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/1/", {}, 204, "DELETE"),
+            self.URLTest("/api/v0/request_for_change/2/change_task/2/", {}, 204, "DELETE"),
+        ]
 
         self._run_test_array(data_list)
 
