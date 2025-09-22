@@ -249,6 +249,104 @@ class ApiAdminPermissionTests(APITestCase):
 
         self._run_test_array(data_list)
 
+    def test_api_kanban_card_data(self):
+        data_list = [
+            #############
+            # KANBAN CARD
+            #############
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card", {}, 301, "GET"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card", {}, 301, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/1/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/2/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/1", {}, 301, "GET"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/2", {}, 301, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/2/", {}, 404, "GET"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/1/", {}, 404, "GET"),
+            self.URLTest(
+                "/api/v0/kanban_board/1/kanban_card/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description":"I created this by the api. :D",
+                    "kanban_card_priority": 1,
+                    "kanban_column": 3,
+                    "kanban_level": 1,
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/kanban_board/2/kanban_card/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description": "I created this by the api. :D",
+                    "kanban_card_priority": 2,
+                    "kanban_column": 6,
+                    "kanban_level": 3,
+                },
+                201,
+                "POST",
+            ),
+            # TODO - Move these tests to specific kanban card tests, as it does not really test permissions here.
+            self.URLTest(
+                "/api/v0/kanban_board/1/kanban_card/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description": "I created this by the api. :D",
+                    "kanban_card_priority": 1,
+                    "kanban_column": 300,
+                    "kanban_level": 100,
+                },
+                403,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/kanban_board/2/kanban_card/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description": "I created this by the api. :D",
+                    "kanban_card_priority": 2,
+                    "kanban_column": 50,
+                    "kanban_level": 300,
+                },
+                403,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/kanban_board/1/kanban_card/3/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description": "I created this by the api. :D",
+                    "kanban_card_priority": 1,
+                    "kanban_column": 3,
+                    "kanban_level": 1,
+                },
+                200,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/kanban_board/2/kanban_card/4/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description": "I created this by the api. :D",
+                    "kanban_card_priority": 2,
+                    "kanban_column": 6,
+                    "kanban_level": 3,
+                },
+                200,
+                "POST",
+            ),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 400, "POST"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 400, "POST"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/3/", {}, 301, "POST"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/4/", {}, 301, "POST"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 400, "DELETE"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 400, "DELETE"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/3/", {}, 200, "DELETE"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/4/", {}, 200, "DELETE"),
+        ]
+
     def test_api_organisation_data(self):
         data_list = [
             ##############

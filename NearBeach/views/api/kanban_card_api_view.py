@@ -155,8 +155,14 @@ Users will need to have the permission to delete. This entails having the abilit
         """
     )
     @check_user_api_permissions(min_permission_level=2)
-    def destroy(self, request, *args, **kwargs):
-        kanban_card = self.get_object()
+    def destroy(self, request, pk, *args, **kwargs):
+        kanban_card = get_object_or_404(
+            queryset=KanbanCard.objects.filter(
+                is_deleted=False,
+                kanban_board_id=kwargs["kanban_board_id"],
+            ),
+            pk=pk,
+        )
         kanban_card.is_deleted = True
         kanban_card.change_user = request.user
         kanban_card.save()
@@ -210,6 +216,7 @@ Retrieves a single kanban card.
     def retrieve(self, request, pk=None, *args, **kwargs):
         queryset = KanbanCard.objects.filter(
             is_deleted=False,
+            kanban_board_id=kwargs["kanban_board_id"],
         )
         kanban_card_results = get_object_or_404(
             queryset,
