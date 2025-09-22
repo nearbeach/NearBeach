@@ -50,7 +50,6 @@ class ApiAdminPermissionTests(APITestCase):
                 if data.method == "GET":
                     response = self.client.get(
                         data.url,
-                        data.data,
                     )
                 elif data.method == "POST":
                     response = self.client.post(
@@ -79,26 +78,22 @@ class ApiAdminPermissionTests(APITestCase):
             ################
             # AVAILABLE DATA
             ################
-            # TODO - Check why this test is not working in the test stream. It works when manually tested
-            # self.URLTest(
-            #     "/api/v0/available_data/customer_list/",
-            #     {"destination": "project", "location_id": 2},
-            #     200,
-            #     "GET"
-            # ),
-            self.URLTest("/api/v0/available_data/customer_list", {"destination": "project", "location_id": 1}, 301,
-                         "GET"),
+            self.URLTest("/api/v0/available_data/customer_list/?destination=project&location_id=1", {}, 200, "GET"),
+            self.URLTest("/api/v0/available_data/customer_list?destination=project&location_id=1", {}, 301, "GET"),
+            self.URLTest("/api/v0/available_data/customer_list/?destination=project&location_id=2", {}, 200, "GET"),
+            self.URLTest("/api/v0/available_data/customer_list?destination=project&location_id=2", {}, 301, "GET"),
             self.URLTest("/api/v0/available_data/customer_list/", {}, 400, "GET"),
-            self.URLTest("/api/v0/available_data/customer_list/", {"destination": "project", "location_id": 1}, 405,
-                         "POST"),
+            self.URLTest("/api/v0/available_data/customer_list/", {"destination": "project", "location_id": 1}, 405, "POST"),
             self.URLTest("/api/v0/available_data/sprint_list/", {}, 200, "GET"),
-            self.URLTest("/api/v0/available_data/sprint_list", {"destination": "project", "location_id": 1}, 301,
-                         "GET"),
+            self.URLTest("/api/v0/available_data/sprint_list/1/", {}, 404, "GET"),
+            self.URLTest("/api/v0/available_data/sprint_list/1", {}, 404, "GET"),
+            self.URLTest("/api/v0/available_data/sprint_list", {}, 301, "GET"),
             self.URLTest("/api/v0/available_data/sprint_list/", {}, 405, "POST"),
             self.URLTest("/api/v0/available_data/tag_list/", {}, 200, "GET"),
-            self.URLTest("/api/v0/available_data/tag_list", {"destination": "project", "location_id": 1}, 301, "GET"),
+            self.URLTest("/api/v0/available_data/tag_list/1", {}, 404, "GET"),
+            self.URLTest("/api/v0/available_data/tag_list/1/", {}, 404, "GET"),
+            self.URLTest("/api/v0/available_data/tag_list", {}, 301, "GET"),
             self.URLTest("/api/v0/available_data/tag_list/", {}, 405, "POST"),
-
         ]
 
         self._run_test_array(data_list)
