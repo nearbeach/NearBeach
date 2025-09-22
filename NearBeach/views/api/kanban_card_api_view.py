@@ -139,7 +139,7 @@ Both the Column/Level id's will need to exist under the current kanban board. Or
 
         return Response(
             data=serializer.data,
-            status=status.HTTP_200_OK,
+            status=status.HTTP_201_CREATED,
         )
 
     @extend_schema(

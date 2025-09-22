@@ -298,7 +298,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "kanban_column": 300,
                     "kanban_level": 100,
                 },
-                403,
+                400,
                 "POST",
             ),
             self.URLTest(
@@ -310,7 +310,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "kanban_column": 50,
                     "kanban_level": 300,
                 },
-                403,
+                400,
                 "POST",
             ),
             self.URLTest(
@@ -323,7 +323,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "kanban_level": 1,
                 },
                 200,
-                "POST",
+                "PUT",
             ),
             self.URLTest(
                 "/api/v0/kanban_board/2/kanban_card/4/",
@@ -335,17 +335,19 @@ class ApiAdminPermissionTests(APITestCase):
                     "kanban_level": 3,
                 },
                 200,
-                "POST",
+                "PUT",
             ),
-            self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 400, "POST"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 400, "POST"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/3/", {}, 301, "POST"),
-            self.URLTest("/api/v0/kanban_board/2/kanban_card/4/", {}, 301, "POST"),
-            self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 400, "DELETE"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 400, "DELETE"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/3/", {}, 200, "DELETE"),
-            self.URLTest("/api/v0/kanban_board/2/kanban_card/4/", {}, 200, "DELETE"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 400, "PUT"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 400, "PUT"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/3", {}, 301, "POST"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/4", {}, 301, "POST"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 404, "DELETE"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 404, "DELETE"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/3/", {}, 204, "DELETE"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/4/", {}, 204, "DELETE"),
         ]
+
+        self._run_test_array(data_list)
 
     def test_api_organisation_data(self):
         data_list = [
