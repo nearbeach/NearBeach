@@ -97,7 +97,7 @@ Users will need to have the permission to delete. This entails having the abilit
         change_task.is_deleted = True
         change_task.change_user = request.user
         change_task.save()
-        
+
         return Response(
             data='change task deleted',
             status=status.HTTP_204_NO_CONTENT,
