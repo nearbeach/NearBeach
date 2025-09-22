@@ -483,7 +483,33 @@ class ApiAdminPermissionTests(APITestCase):
                 "POST",
             ),
             # TODO - 0.32 - Write the delete functionality for both users and groups. Waiting for the object_assignment_id to pass through into the GET data
-            # link tests
+            ######################
+            # Project - Link tests
+            ######################
+            self.URLTest('/api/v0/project/1/link/', {}, 200, "GET"),
+            self.URLTest('/api/v0/project/1/link/', {}, 200, "GET"),
+            self.URLTest(
+                '/api/v0/project/1/link/',
+                {
+                    "object_id": 2,
+                    "object_type": "task",
+                    "object_relation": "blocked_by",
+                },
+                201,"POST"
+            ),
+            self.URLTest(
+                '/api/v0/project/1/link/',
+                {
+                    "object_id": 2,
+                    "object_type": "task",
+                    "object_relation": "blocked_by",
+                },
+                201, "POST"
+            ),
+            self.URLTest('/api/v0/project/2/link/43/', {}, 400, "DELETE"),
+            self.URLTest('/api/v0/project/1/link/46/', {}, 400, "DELETE"),
+            self.URLTest('/api/v0/project/1/link/43/', {}, 204, "DELETE"),
+            self.URLTest('/api/v0/project/2/link/46/', {}, 204, "DELETE"),
             # TODO - Create more links against all objects, currently can not test as there is nothing to test but create
             # note tests
             self.URLTest('/api/v0/project/1/note/', {}, 200, "GET"),
