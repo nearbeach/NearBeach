@@ -22,6 +22,7 @@
 						</label>
 						<n-select
 							v-model:value="objectTypeModel"
+							v-bind:disabled="userLevel <= 1"
 							:options="objectTypeOptions"
 						/>
 					</div>
@@ -53,6 +54,7 @@
 								type="text"
 								v-model="objectTitleModel"
 								class="form-control"
+								v-bind:disabled="userLevel <= 1"
 							/>
 						</div>
 						<br/>
@@ -72,6 +74,7 @@
 						/>
 						<editor
 							license-key="gpl"
+							v-bind:disabled="userLevel <= 1"
 							:init="{
 							file_picker_types: 'image',
 							height: 500,
@@ -127,6 +130,7 @@
 							></validation-rendering>
 						</label>
 						<n-select
+							v-bind:disabled="userLevel <= 1"
 							:options="groupResults"
 							label="group"
 							v-model:value="objectGroupModel"
@@ -168,7 +172,9 @@
 						</p>
 					</div>
 					<div class="col-md-8">
-						<n-switch v-model:value="isActiveModel">
+						<n-switch v-model:value="isActiveModel"
+									v-bind:disabled="userLevel <= 1"
+						>
 							<template #checked>
 								Currently Active
 							</template>

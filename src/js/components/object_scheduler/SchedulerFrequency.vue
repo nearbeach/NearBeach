@@ -13,6 +13,7 @@
 				<n-select
 					v-bind:options="schedulerFrequencyOptions"
 					v-model:value="schedulerFrequencyModel"
+					v-bind:disabled="userLevel <= 1"
 				></n-select>
 			</div>
 
@@ -32,6 +33,7 @@
 						v-model:value="startDateModel"
 						v-bind:actions="[]"
 						v-bind:format="calendarFormat"
+						v-bind:disabled="userLevel <= 1"
 						:is-date-disabled="startDateDisabled"
 						month-format="MMM"
 					></n-date-picker>
@@ -41,6 +43,7 @@
 					<n-select
 						v-bind:options="endDateConditionList"
 						v-model:value="endDateConditionModel"
+						v-bind:disabled="userLevel <= 1"
 					></n-select>
 				</div>
 			</div>
@@ -62,6 +65,7 @@
 						v-model:value="endDateModel"
 						v-bind:actions="[]"
 						v-bind:format="calendarFormat"
+						v-bind:disabled="userLevel <= 1"
 						:is-date-disabled="endDateDisabled"
 					></n-date-picker>
 				</div>
@@ -81,6 +85,7 @@
 					</label>
 					<n-input-number
 						v-model:value="numberOfRepeatsModel"
+						v-bind:disabled="userLevel <= 1"
 						min="0"
 					></n-input-number>
 				</div>
@@ -98,6 +103,7 @@
 					<input type="checkbox"
 						   v-bind:value="dayLoop.value"
 						   v-bind:id="`checkbox_${dayLoop.value}`"
+						   v-bind:disabled="userLevel <= 1"
 						   v-model="dayModel"
 					/>
 				</div>
@@ -120,6 +126,7 @@
 					<n-select
 						:options="dayOfTheWeekArray"
 						v-model:value="singleDayModel"
+						v-bind:disabled="userLevel <= 1"
 						class="form-group"
 					></n-select>
 				</div>
@@ -140,6 +147,7 @@
 					</label>
 					<n-input-number
 						v-model:value="daysBeforeModel"
+						v-bind:disabled="userLevel <= 1"
 						min="0"
 						max="14"
 					></n-input-number>
@@ -152,6 +160,9 @@
 <script>
 //Components
 import { NDatePicker, NInputNumber, NSelect } from "naive-ui";
+
+//VueX
+import { mapGetters } from "vuex";
 
 export default {
 	name: "SchedulerFrequency",
@@ -236,6 +247,9 @@ export default {
 		}
 	},
 	computed: {
+		...mapGetters({
+			userLevel: "getUserLevel",
+		}),
 		calendarType() {
 			if (['Start of the Month', 'End of the Month'].includes(this.schedulerFrequencyModel)) {
 				return "month";

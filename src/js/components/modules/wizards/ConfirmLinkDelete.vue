@@ -53,7 +53,7 @@
 						Cancel
 					</button>
 					<button
-						v-if="objectLink.link_relationship.toLowerCase() === 'block'"
+						v-if="objectLink.link_relationship.toLowerCase() === 'block' && showMigrateButton"
 						type="button"
 						class="btn btn-info"
 						v-on:click="processLink('migrate')"
@@ -79,7 +79,12 @@ export default {
 	emits: [
 		'update_link_results',
 	],
-	props: {},
+	props: {
+		showMigrateButton: {
+			type: Boolean,
+			default: true,
+		},
+	},
 	computed: {
 		...mapGetters({
 			destination: "getDestination",

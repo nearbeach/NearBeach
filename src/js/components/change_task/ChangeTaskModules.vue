@@ -99,8 +99,6 @@
 				</div>
 			</div>
 		</div>
-
-		<confirm-link-delete></confirm-link-delete>
 	</n-config-provider>
 </template>
 

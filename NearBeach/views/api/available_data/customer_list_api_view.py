@@ -35,13 +35,13 @@ class CustomerListViewSet(viewsets.ViewSet):
 Gathers a list of customers that can be assigned to that object
 
 
-# 🧾 Parameters
+# 🧾 Query Parameters
 
 - destination - the object of choice. Choices are;
-    - Requirement
-    - Requirement Item
-    - Project
-    - Task
+    - requirement
+    - requirement_item
+    - project
+    - task
 - location id - the id of the object
         """,
         request=DestinationSerializer,
@@ -49,7 +49,7 @@ Gathers a list of customers that can be assigned to that object
     )
     @check_user_customer_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
-        serializer = DestinationSerializer(data=request.data)
+        serializer = DestinationSerializer(data=request.query_params)
         if not serializer.is_valid():
             return Response(
                 serializer.errors,

@@ -50,7 +50,6 @@ class ApiAdminPermissionTests(APITestCase):
                 if data.method == "GET":
                     response = self.client.get(
                         data.url,
-                        data.data,
                     )
                 elif data.method == "POST":
                     response = self.client.post(
@@ -79,26 +78,25 @@ class ApiAdminPermissionTests(APITestCase):
             ################
             # AVAILABLE DATA
             ################
-            # TODO - Check why this test is not working in the test stream. It works when manually tested
-            # self.URLTest(
-            #     "/api/v0/available_data/customer_list/",
-            #     {"destination": "project", "location_id": 2},
-            #     200,
-            #     "GET"
-            # ),
-            self.URLTest("/api/v0/available_data/customer_list", {"destination": "project", "location_id": 1}, 301,
-                         "GET"),
+            self.URLTest("/api/v0/available_data/customer_list/?destination=project&location_id=1", {}, 200, "GET"),
+            self.URLTest("/api/v0/available_data/customer_list?destination=project&location_id=1", {}, 301, "GET"),
+            self.URLTest("/api/v0/available_data/customer_list/?destination=project&location_id=2", {}, 200, "GET"),
+            self.URLTest("/api/v0/available_data/customer_list?destination=project&location_id=2", {}, 301, "GET"),
+            self.URLTest("/api/v0/available_data/customer_list/?destination=requirement_item&location_id=1", {}, 200, "GET"),
+            self.URLTest("/api/v0/available_data/customer_list/?destination=requirement_item&location_id=2", {}, 200, "GET"),
+            self.URLTest("/api/v0/available_data/customer_list/?destination=kanban_board&location_id=1", {}, 400, "GET"),
             self.URLTest("/api/v0/available_data/customer_list/", {}, 400, "GET"),
-            self.URLTest("/api/v0/available_data/customer_list/", {"destination": "project", "location_id": 1}, 405,
-                         "POST"),
+            self.URLTest("/api/v0/available_data/customer_list/", {"destination": "project", "location_id": 1}, 405, "POST"),
             self.URLTest("/api/v0/available_data/sprint_list/", {}, 200, "GET"),
-            self.URLTest("/api/v0/available_data/sprint_list", {"destination": "project", "location_id": 1}, 301,
-                         "GET"),
+            self.URLTest("/api/v0/available_data/sprint_list/1/", {}, 404, "GET"),
+            self.URLTest("/api/v0/available_data/sprint_list/1", {}, 404, "GET"),
+            self.URLTest("/api/v0/available_data/sprint_list", {}, 301, "GET"),
             self.URLTest("/api/v0/available_data/sprint_list/", {}, 405, "POST"),
             self.URLTest("/api/v0/available_data/tag_list/", {}, 200, "GET"),
-            self.URLTest("/api/v0/available_data/tag_list", {"destination": "project", "location_id": 1}, 301, "GET"),
+            self.URLTest("/api/v0/available_data/tag_list/1", {}, 404, "GET"),
+            self.URLTest("/api/v0/available_data/tag_list/1/", {}, 404, "GET"),
+            self.URLTest("/api/v0/available_data/tag_list", {}, 301, "GET"),
             self.URLTest("/api/v0/available_data/tag_list/", {}, 405, "POST"),
-
         ]
 
         self._run_test_array(data_list)
@@ -251,6 +249,106 @@ class ApiAdminPermissionTests(APITestCase):
 
         self._run_test_array(data_list)
 
+    def test_api_kanban_card_data(self):
+        data_list = [
+            #############
+            # KANBAN CARD
+            #############
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card", {}, 301, "GET"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card", {}, 301, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/1/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/2/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/1", {}, 301, "GET"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/2", {}, 301, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/2/", {}, 404, "GET"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/1/", {}, 404, "GET"),
+            self.URLTest(
+                "/api/v0/kanban_board/1/kanban_card/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description":"I created this by the api. :D",
+                    "kanban_card_priority": 1,
+                    "kanban_column": 3,
+                    "kanban_level": 1,
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/kanban_board/2/kanban_card/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description": "I created this by the api. :D",
+                    "kanban_card_priority": 2,
+                    "kanban_column": 6,
+                    "kanban_level": 3,
+                },
+                201,
+                "POST",
+            ),
+            # TODO - Move these tests to specific kanban card tests, as it does not really test permissions here.
+            self.URLTest(
+                "/api/v0/kanban_board/1/kanban_card/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description": "I created this by the api. :D",
+                    "kanban_card_priority": 1,
+                    "kanban_column": 300,
+                    "kanban_level": 100,
+                },
+                400,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/kanban_board/2/kanban_card/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description": "I created this by the api. :D",
+                    "kanban_card_priority": 2,
+                    "kanban_column": 50,
+                    "kanban_level": 300,
+                },
+                400,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/kanban_board/1/kanban_card/3/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description": "I created this by the api. :D",
+                    "kanban_card_priority": 1,
+                    "kanban_column": 3,
+                    "kanban_level": 1,
+                },
+                200,
+                "PUT",
+            ),
+            self.URLTest(
+                "/api/v0/kanban_board/2/kanban_card/4/",
+                {
+                    "kanban_card_text": "Created via the api",
+                    "kanban_card_description": "I created this by the api. :D",
+                    "kanban_card_priority": 2,
+                    "kanban_column": 6,
+                    "kanban_level": 3,
+                },
+                200,
+                "PUT",
+            ),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 400, "PUT"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 400, "PUT"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/3", {}, 301, "POST"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/4", {}, 301, "POST"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 404, "DELETE"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 404, "DELETE"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/3/", {}, 204, "DELETE"),
+            self.URLTest("/api/v0/kanban_board/2/kanban_card/4/", {}, 204, "DELETE"),
+        ]
+
+        self._run_test_array(data_list)
+
     def test_api_organisation_data(self):
         data_list = [
             ##############
@@ -387,7 +485,33 @@ class ApiAdminPermissionTests(APITestCase):
                 "POST",
             ),
             # TODO - 0.32 - Write the delete functionality for both users and groups. Waiting for the object_assignment_id to pass through into the GET data
-            # link tests
+            ######################
+            # Project - Link tests
+            ######################
+            self.URLTest('/api/v0/project/1/link/', {}, 200, "GET"),
+            self.URLTest('/api/v0/project/1/link/', {}, 200, "GET"),
+            self.URLTest(
+                '/api/v0/project/1/link/',
+                {
+                    "object_id": 2,
+                    "object_type": "task",
+                    "object_relation": "blocked_by",
+                },
+                201,"POST"
+            ),
+            self.URLTest(
+                '/api/v0/project/1/link/',
+                {
+                    "object_id": 2,
+                    "object_type": "task",
+                    "object_relation": "blocked_by",
+                },
+                201, "POST"
+            ),
+            self.URLTest('/api/v0/project/2/link/43/', {}, 400, "DELETE"),
+            self.URLTest('/api/v0/project/1/link/46/', {}, 400, "DELETE"),
+            self.URLTest('/api/v0/project/1/link/43/', {}, 204, "DELETE"),
+            self.URLTest('/api/v0/project/2/link/46/', {}, 204, "DELETE"),
             # TODO - Create more links against all objects, currently can not test as there is nothing to test but create
             # note tests
             self.URLTest('/api/v0/project/1/note/', {}, 200, "GET"),
@@ -438,8 +562,79 @@ class ApiAdminPermissionTests(APITestCase):
 
         self._run_test_array(data_list)
 
-    def test_api_request_for_change_data(self):
-        data_list = []
+    def test_api_request_for_change_task_data(self):
+        data_list = [
+            self.URLTest("/api/v0/request_for_change/1/change_task/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/2/change_task/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task", {}, 301, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task", {}, 301, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/1/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/2/change_task/2/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/1", {}, 301, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/2", {}, 301, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/2/", {}, 404, "GET"),
+            self.URLTest("/api/v0/request_for_change/2/change_task/1/", {}, 404, "GET"),
+            self.URLTest(
+                "/api/v0/request_for_change/1/change_task/",
+                {
+                    "change_task_assigned_user": 1,
+                    "change_task_qa_user": 2,
+                    "change_task_title": "Change Task Title",
+                    "change_task_start_date": "2024-12-19 15:49:37",
+                    "change_task_end_date": "2024-12-19 15:49:37",
+                    "is_downtime": "true",
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest(
+                "/api/v0/request_for_change/2/change_task/",
+                {
+                    "change_task_assigned_user": 1,
+                    "change_task_qa_user": 2,
+                    "change_task_title": "Change Task Title",
+                    "change_task_start_date": "2024-12-19 15:49:37",
+                    "change_task_end_date": "2024-12-19 15:49:37",
+                    "is_downtime": "true",
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest("/api/v0/request_for_change/1/change_task", {}, 301, "POST"),
+            self.URLTest("/api/v0/request_for_change/2/change_task", {}, 301, "POST"),
+            self.URLTest(
+                "/api/v0/request_for_change/1/change_task/3/",
+                {
+                    "change_task_assigned_user": 1,
+                    "change_task_qa_user": 2,
+                    "change_task_title": "Change Task Title",
+                    "change_task_start_date": "2024-12-19 15:49:37",
+                    "change_task_end_date": "2024-12-19 15:49:37",
+                    "is_downtime": "true",
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest(
+                "/api/v0/request_for_change/2/change_task/4/",
+                {
+                    "change_task_assigned_user": 1,
+                    "change_task_qa_user": 2,
+                    "change_task_title": "Change Task Title",
+                    "change_task_start_date": "2024-12-19 15:49:37",
+                    "change_task_end_date": "2024-12-19 15:49:37",
+                    "is_downtime": "true",
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest("/api/v0/request_for_change/2/change_task/1/", {}, 404, "DELETE"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/2/", {}, 404, "DELETE"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/1", {}, 301, "DELETE"),
+            self.URLTest("/api/v0/request_for_change/2/change_task/2", {}, 301, "DELETE"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/1/", {}, 204, "DELETE"),
+            self.URLTest("/api/v0/request_for_change/2/change_task/2/", {}, 204, "DELETE"),
+        ]
 
         self._run_test_array(data_list)
 

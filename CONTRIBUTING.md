@@ -1,22 +1,5 @@
 # Contributing to NearBeach
 
-<!---
-##  Hacktoberfest 2021
-
-Welcome to NearBeach, we are super glad you are here. In the following month of Hacktoberfest we are hoping to achieve the following goals/milestones.
-
-- Update our VueJS library to VueJS 3+
-- Update our Webpacker from version 4 to version 5
-- Increase our code coverage for both Django and VueJS
-- Increase our E2E testing with Cypress.io
-- Bug test whole application
-- Fix bugs listed in the [Github Issues](https://github.com/robotichead/NearBeach/issues).
-- Improve user documentation
-- Start working on Docker installation process
-
-This seems a lot to cover within such a short time frame, but we are hoping you are willing to help us. We greatly appreciate all the help we can get no matter how small the contribution.
---->
-
 If you would like to join our community, please join our [fun and exciting discord](https://discord.gg/64uhRztS6n).
 
 ## Contributing to NearBeach
@@ -37,7 +20,7 @@ and many many more. Join our [community on discord to see what you can do](https
 
 ## Code of Conduct
 
-Please read our [code of conduct here](https://github.com/robotichead/NearBeach/blob/main/CODE_OF_CONDUCT.md).
+Please read our [code of conduct here](https://github.com/NearBeach/NearBeach/blob/main/CODE_OF_CONDUCT.md).
 
 ## NearBeach Overview
 
@@ -60,7 +43,53 @@ Each object shall have it's own folder structure within the respected location, 
 
 ## Setting up local dev environment
 
-Please follow the instructions in our documentation: [Setting up local dev environment](https://nearbeach.readthedocs.io/en/documentation/002-local-development-environment-setup/index.html)
+Please follow the instructions in our documentation: [Setting up local dev environment](https://nearbeach.readthedocs.io/en/latest/002-local-development-environment-setup/index.html)
+
+## Coding Style Guides
+
+These style guides at the moment, are a recommendation. However are not followed strickly at the moment. We are looking at implementing automatic linting in the near future.
+
+### Vue 3
+
+Please refer to the [Vue 3 Style Guides located on their documentation](https://vuejs.org/style-guide/)
+
+Please note the following outliers
+
+- Local variables within a function are usually done in snake_case to differentiate them from the object and prop variables
+
+EXAMPLE CODE
+
+    <template>
+    ...
+    </template>
+    <script>
+        export default {
+            name: "ExampleComponent",
+            props: {
+                propVariable: {
+                    type: String,
+                    default: "value",
+                }
+                ...
+            },
+            data() {
+                return {
+                    dataVariable: "value",
+                    ...
+                }
+            },
+            methods: {
+                myMethod(input_variable) {
+                    // Notice the "input_variable" is in snake case.
+                    ...
+                },
+            },
+        }
+    </script>
+
+### Python
+
+Please refer to the [PEP 8 – Style Guide for Python Code](https://peps.python.org/pep-0008/)
 
 ## Donating
 
@@ -75,10 +104,6 @@ We are being transparent with all our costs and will try and provide a yearly co
 ## Bug Reporting
 
 Bug reporting is a very important role for NearBeach. During Hacktoberfest, you are more than welcome to submit issues.
-
-## CodeClimate Issues
-
-NearBeach currently has a number of easy tasks/issues located on our [CodeClimte - https://codeclimate.com/github/robotichead/NearBeach/issues](https://codeclimate.com/github/robotichead/NearBeach/issues)
 
 ## Pull Requests
 

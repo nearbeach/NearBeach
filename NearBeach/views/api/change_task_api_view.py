@@ -83,11 +83,21 @@ Users will need to have the permission to delete. This entails having the abilit
         """
     )
     @check_user_api_permissions(min_permission_level=4)
-    def destroy(self, request, *args, **kwargs):
-        change_task = self.get_object()
+    def destroy(self, request, pk, *args, **kwargs):
+        # Determine if the object exists for the request for change
+        change_task = get_object_or_404(
+            queryset=ChangeTask.objects.filter(
+                is_deleted=False,
+                request_for_change_id=kwargs["request_for_change_id"],
+            ),
+            pk=pk,
+        )
+
+        # Update to deleted
         change_task.is_deleted = True
         change_task.change_user = request.user
         change_task.save()
+
         return Response(
             data='change task deleted',
             status=status.HTTP_204_NO_CONTENT,
@@ -127,7 +137,10 @@ Retrieves a single change task.
     )
     @check_user_api_permissions(min_permission_level=1)
     def retrieve(self, request, pk=None, *args, **kwargs):
-        queryset = ChangeTask.objects.filter(is_deleted=False)
+        queryset = ChangeTask.objects.filter(
+            is_deleted=False,
+            request_for_change_id=kwargs["request_for_change_id"],
+        )
         change_task_results = get_object_or_404(
             queryset,
             pk=pk

@@ -48,6 +48,10 @@
 		<new-change-task-link-wizard-vue
 			v-on:update_link_results="updateLinkResults"
 		></new-change-task-link-wizard-vue>
+
+		<confirm-link-delete v-bind:show-migrate-button="false"
+							 v-on:update_link_results="updateLinkResults"
+		></confirm-link-delete>
 	</div>
 </template>
 
@@ -60,10 +64,12 @@ import SubObjectLinks from "../../modules/sub_modules/SubObjectLinks.vue";
 
 //VueX
 import {mapGetters} from "vuex";
+import ConfirmLinkDelete from "../../modules/wizards/ConfirmLinkDelete.vue";
 
 export default {
 	name: "ChangeTaskLinkList",
 	components: {
+		ConfirmLinkDelete,
 		NewChangeTaskLinkWizardVue,
 		SubObjectLinks,
 	},
