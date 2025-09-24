@@ -115,6 +115,7 @@ def change_task_save(request, change_task_id, *args, **kwargs):
     change_task_update.change_task_assigned_user = form.cleaned_data[
         "change_task_assigned_user"
     ]
+    change_task_update.change_user = request.user
 
     change_task_update.save()
 
