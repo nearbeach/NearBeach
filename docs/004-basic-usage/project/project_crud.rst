@@ -1,17 +1,15 @@
 .. _project_crud:
 
-========
 Projects
-========
+########
 
 .. image:: project-screenshot.png
     :width: 600
     :alt: Screenshot of the Project
 
 
---------------
 Create Project
---------------
+==============
 
 #. In the navigation menu at the top of the page. Click on the option "New Object"
 
@@ -20,9 +18,8 @@ Create Project
 #. The "New Project" page will load. Fill out the form appropriately and click on the "Create New Project"
 
 
---------------
 Search Project
---------------
+==============
 
 #. In the navigation menu at the top of the page. Click on the option "Find Objects"
 
@@ -32,17 +29,15 @@ Search Project
 
 .. note:: Spaces are considered wildcards in this search.
 
---------------
 Update Project
---------------
+==============
 
 #. Use the method above to find the appropriate Project you wish to edit.
 
 #. Edit the Project, and once completed click on the "Update Project" button
 
---------------------------
 Misc Project Functionality
---------------------------
+==========================
 
 .. image:: project_misc_functionality.png
     :width: 600

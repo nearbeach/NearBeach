@@ -1,8 +1,7 @@
 .. _customer_crud:
 
-=========
 Customers
-=========
+#########
 
 .. image:: customer-screenshot.png
     :width: 600
@@ -11,9 +10,8 @@ Customers
 Customers are used to store basic contact details, and track tasks and projects assigned to the customer.
 
 
----------------
 Create Customer
----------------
+===============
 
 #. In the navigation menu at the top of the page. Click on the "New Object"
 
@@ -26,9 +24,8 @@ Create Customer
 
 #. Click on the "Submit Customer" at the bottom of the page
 
----------------
 Search Customer
----------------
+===============
 
 #. In the navigation menu at the top of the page. Click on "Find Objects"
 
@@ -38,9 +35,8 @@ Search Customer
 
 .. note:: Spaces are considered wildcards in this search.
 
----------------
 Update Customer
----------------
+===============
 
 #. Use the method above to find the appropriate Customer you wish to edit.
 
@@ -51,9 +47,8 @@ Update Customer
     Profile pictures are updated automatically when saved.
 
 
--------------
 Misc Features
--------------
+=============
 
 .. image:: misc_features_customers.png
     :width: 600

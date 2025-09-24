@@ -1,8 +1,5 @@
-.. _quick-install-podman:
-
-=========================
 Quick Install with Podman
-=========================
+#########################
 
 Copy the following code and paste it into a file called `podman-compose.yaml`
 

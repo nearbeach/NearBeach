@@ -1,8 +1,7 @@
 .. _requirement_crud:
 
-===========
 Requirement
-===========
+###########
 
 .. image:: requirement-screenshot.png
     :width: 600
@@ -11,9 +10,8 @@ Requirement
 Requirement are used to gather customer's requirements. These requirements should be kept at a high/helicopter level
 and any extra details should be placed within the requirement items (sub objects of requirements).
 
-------------------
 Create Requirement
-------------------
+==================
 
 #. In the navigation menu at the top of the page. Click on the option "New Object"
 
@@ -22,9 +20,8 @@ Create Requirement
 #. The "New Requirement" page will load. Fill out the form appropriately and click on the "Create New Requirement"
 
 
-------------------
 Search Requirement
-------------------
+==================
 
 #. In the navigation menu at the top of the page. Click on the option "Find Objects"
 
@@ -34,17 +31,15 @@ Search Requirement
 
 .. note:: Spaces are considered wildcards in this search.
 
-------------------
 Update Requirement
-------------------
+==================
 
 #. Use the method above to find the appropriate Requirement you wish to edit.
 
 #. Edit the Requirement, and once completed click on the "Update Requirement" button
 
-------------------------------
 Misc Requirement Functionality
-------------------------------
+==============================
 
 .. image:: requirement_misc_functionality.png
     :width: 600
@@ -63,9 +58,8 @@ The following are misc/common functionality;
 * **Writing Notes for An Requirement -** :ref:`More Information <Writing Notes for An Object>`
 
 
---------------------------
 What is a Requirement Item
---------------------------
+==========================
 
 Requirements should be split up into smaller sections (or items). Requirement items are those sections. Requirements are
 higher helicopter looks, where as the Requirement Items are more detailed and closer to the ground level.
@@ -78,9 +72,8 @@ For example: The below section has a requirement, which then has three requireme
 * **Requirement Item:** Website design should match the new branding
 
 
------------------------
 Create Requirement Item
------------------------
+=======================
 
 .. image:: requirement-screenshot-requirement-items.png
     :width: 600

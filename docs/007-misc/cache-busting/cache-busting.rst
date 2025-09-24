@@ -1,8 +1,5 @@
-.. cache-busting:
-
-=============
 Cache Busting
-=============
+#############
 
 .. note::
 

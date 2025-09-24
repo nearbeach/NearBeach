@@ -1,8 +1,7 @@
 .. _features:
 
-========
-Features
-========
+NearBeach Features
+##################
 
 Currently NearBeach has the ability to;
 
@@ -14,4 +13,4 @@ Currently NearBeach has the ability to;
 * Request for Changes (RFC)
 
 We recommend reading :ref:`nearbeach_flow` first to get an understanding of how each of the different modules will work
-with each other. Once you are ready to use NearBeach, please read the :ref:`basic_usage_index`.
+with each other. Once you are ready to use NearBeach, please read the Basic Usage under this documentation.
