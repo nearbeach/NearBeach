@@ -1,8 +1,7 @@
 .. _organisation_crud:
 
-============
 Organisation
-============
+############
 
 .. image:: organisation-screenshot.png
     :width: 600
@@ -10,9 +9,8 @@ Organisation
 
 Organisations are used to store basic contact details.
 
-----------------------
 Create An Organisation
-----------------------
+======================
 
 #. In the navigation menu at the top of the page. Click on the option "New Object"
 
@@ -31,9 +29,8 @@ Create An Organisation
     :alt: Screenshot of Organisation inside NearBeach
 
 
-----------------------
 Search An Organisation
-----------------------
+======================
 
 #. In the navigation menu at the top of the page. Click on the option "Find Objects"
 
@@ -44,9 +41,8 @@ Search An Organisation
 .. note:: Spaces are considered wildcards in this search.
 
 
-----------------------
 Update An Organisation
-----------------------
+======================
 
 #. Use the method above to find the appropriate Organisation you wish to edit.
 
@@ -55,9 +51,8 @@ Update An Organisation
 .. note:: To update/change profile pictures. Click on the "Update Profile" button.
     Profile pictures are updated automatically when saved.
 
--------------
 Misc Features
--------------
+=============
 
 .. image:: misc_features_organisation.png
     :width: 600

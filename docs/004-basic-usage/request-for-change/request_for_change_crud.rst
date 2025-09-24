@@ -1,8 +1,7 @@
 .. _request_for_change:
 
-==================
 Request For Change
-==================
+##################
 
 .. image:: request-for-change-screenshot.png
     :width: 600
@@ -13,9 +12,8 @@ Request for changes are used to notify all stakeholders of a deployment and it's
 managed by the "Change Advisory Board" and should detail out which responsibilities falls on which users. Exactly
 what time a task will be implemented and how long it will take.
 
------------------------------
 Create New Request For Change
------------------------------
+=============================
 
 #. In the navigation menu at the top of the page. Click on the option "New Object"
 
@@ -39,9 +37,8 @@ Create New Request For Change
 
 #. You will now be able to create the run sheet, by adding in "Change Tasks". Once completed, submit the RFC for approval
 
------------------------------
 Search for Request For Change
------------------------------
+=============================
 
 #. In the navigation menu at the top of the page. Click on the option "Find Objects"
 
@@ -51,17 +48,15 @@ Search for Request For Change
 
 .. note:: Spaces are considered wildcards in this search.
 
--------------------------
 Update Request For Change
--------------------------
+=========================
 
 #. Use the method above to find the appropriate Request for Change you wish to edit.
 
 #. Edit the Request for change, and once completed click on the "Update Request for Change" button
 
--------------------
 Create Change Tasks
--------------------
+===================
 
 .. image:: run-sheet-screenshot.png
     :width: 600
@@ -82,9 +77,8 @@ Create Change Tasks
 #. Click either of the "Add" buttons to add the change task. The newly created change task will appear in the list.
 
 
--------------------
 Update Change Tasks
--------------------
+===================
 
 .. image:: run-sheet-list-screenshot.png
     :width: 600
@@ -106,9 +100,8 @@ Update Change Tasks
 
 #. To navigate back to the Request for Change, click on the "Go Back" link at the top of the page
 
----------------------------
 Starting Request For Change
----------------------------
+===========================
 
 **Assumption:** You are currently on a draft of a Request for Change
 

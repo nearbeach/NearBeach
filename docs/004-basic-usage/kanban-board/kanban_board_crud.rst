@@ -1,8 +1,7 @@
 .. _kanban_board_crud:
 
-============
 Kanban Board
-============
+############
 
 .. image:: kanban-board-screenshot.png
     :width: 600
@@ -11,9 +10,8 @@ Kanban Board
 Users will be able to create their own kanban board.
 
 
--------------------
 Create Kanban Board
--------------------
+===================
 
 #. In the navigation menu at the top of the page. Click the option "New Object"
 
@@ -39,9 +37,8 @@ Create Kanban Board
 
 #. Click on the "Add kanban" button for the kanban board to be created.
 
--------------------
 Search Kanban Board
--------------------
+===================
 
 #. In the navigation menu at the top of the page. Click on the option "Find Objects"
 
@@ -51,9 +48,8 @@ Search Kanban Board
 
 .. note:: Spaces are considered wildcards in this search.
 
-----------------------------
 Update Kanban Board Settings
-----------------------------
+============================
 
 .. image:: kanban-board-edit-screenshot.png
     :width: 600
@@ -72,13 +68,11 @@ Update Kanban Board Settings
 
 .. note:: Double clicking on either the column/level cards will open the edit modal for them.
 
------------------
 Create a New Card
------------------
+=================
 
-^^^^^^^^^^
 Using Menu
-^^^^^^^^^^
+----------
 
 #. On the kanban board information page, click on the drop down "Kanban Menu"
 
@@ -86,9 +80,8 @@ Using Menu
 
 #. The "New Card Modal" will appear, fill it out appropriately
 
-^^^^^^^^^^^
 Using Board
-^^^^^^^^^^^
+-----------
 
 #. On the kanban board information page, move your mouse across the board
 
@@ -96,13 +89,11 @@ Using Board
 
 #. The "New Card Modal" will appear, fill it out appropriately
 
------------------------------------
 Link in existing Projects and Tasks
------------------------------------
+===================================
 
-^^^^^^^^^^
 Using Menu
-^^^^^^^^^^
+----------
 
 #. On the kanban board information page, click on the drop down "Kanban Menu"
 
@@ -112,9 +103,8 @@ Using Menu
 
 #. Use the search options to find the appropriate object, select and then add to the board
 
-^^^^^^^^^^^
 Using Board
-^^^^^^^^^^^
+-----------
 
 #. On the kanban board information page, move your mouse across the board
 
@@ -124,17 +114,15 @@ Using Board
 
 #. Use the search options to find the appropriate object, select and then add to the board
 
--------------
 Editing Cards
--------------
+=============
 
 Users will be able to edit a card by either double clicking on the card, or clicking on the (i) information icon.
 
 .. note:: Any linked objects will not open the card modal. Instead they will go directly to that object.
 
----------------
 Card Edit Modal
----------------
+===============
 
 The card edit modal is broken up into the following sections;
 
