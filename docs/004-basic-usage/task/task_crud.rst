@@ -1,16 +1,14 @@
 .. _task_crud:
 
-====
 Task
-====
+####
 
 .. image:: task-screenshot.png
     :width: 600
     :alt: Screenshot of the task page
 
------------
 Create Task
------------
+===========
 
 #. In the navigation menu at the top of the page. Click on the option "New Object"
 
@@ -19,9 +17,8 @@ Create Task
 #. The "New Task" page will load. Fill out the form appropriately and click on the "Create New Task"
 
 
------------
 Search Task
------------
+===========
 
 #. In the navigation menu at the top of the page. Click on the option "Find Objects"
 
@@ -31,17 +28,15 @@ Search Task
 
 .. note:: Spaces are considered wildcards in this search.
 
------------
 Update Task
------------
+===========
 
 #. Use the method above to find the appropriate Task you wish to edit.
 
 #. Edit the Task, and once completed click on the "Update Task" button
 
------------------------
 Misc Task Functionality
------------------------
+=======================
 
 .. image:: task_misc_functionality.png
     :width: 600
