@@ -151,6 +151,12 @@ class AddKanbanLinkForm(forms.Form):
             is_deleted=False,
         ),
     )
+    requirement_item = forms.ModelChoiceField(
+        required=False,
+        queryset=RequirementItem.objects.filter(
+            is_deleted=False,
+        )
+    )
     task = forms.ModelChoiceField(
         required=False,
         queryset=Task.objects.filter(

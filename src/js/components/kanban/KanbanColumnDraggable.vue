@@ -318,6 +318,7 @@ export default {
 
 			if (object.project !== null && object.project !== undefined) results = "project";
 			if (object.requirement !== null && object.requirement !== undefined) results = "requirement";
+			if (object.requirement_item !== null && object.requirement_item !== undefined) results = "requirement_item";
 			if (object.task !== null && object.requirement !== undefined) results = "task";
 
 			return results;

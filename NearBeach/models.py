@@ -643,6 +643,12 @@ class KanbanCard(models.Model):
         null=True,
         blank=True,
     )
+    requirement_item = models.ForeignKey(
+        "RequirementItem",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     is_archived = models.BooleanField(
         default=False,
     )
