@@ -85,16 +85,14 @@ class Command(BaseCommand):
         object_dict = OBJECT_DICT[object_string]
 
         # Get the start and end date from the template
-        # template_start_date = datetime.datetime.strptime(
-        #     template.object_template_json["object_start_date"],
-        #     "%Y-%m-%dT%H:%M:%SZ"
-        # )
-        # template_end_date = datetime.datetime.strptime(
-        #     template.object_template_json["object_end_date"],
-        #     "%Y-%m-%dT%H:%M:%SZ"
-        # )
-        template_start_date = timezone.now()
-        template_end_date = timezone.now()
+        template_start_date = datetime.datetime.strptime(
+            template.object_template_json["object_start_date"],
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
+        template_end_date = datetime.datetime.strptime(
+            template.object_template_json["object_end_date"],
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
 
         # Setup the start date for the object
         object_start_date = timezone.now()

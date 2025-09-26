@@ -1,6 +1,5 @@
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.urls import reverse
-from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core import serializers
 from django.template import loader
@@ -42,8 +41,8 @@ def new_notification_save(request):
         notification_header=form.cleaned_data["notification_header"],
         notification_message=form.cleaned_data["notification_message"],
         notification_location=form.cleaned_data["notification_location"],
-        notification_start_date=timezone.make_aware(form.cleaned_data["notification_start_date"]),
-        notification_end_date=timezone.make_aware(form.cleaned_data["notification_end_date"]),
+        notification_start_date=form.cleaned_data["notification_start_date"],
+        notification_end_date=form.cleaned_data["notification_end_date"],
     )
     submit_notification.save()
 
@@ -108,8 +107,8 @@ def notification_information_save(request, notification_id):
     update_notification.notification_header = form.cleaned_data["notification_header"]
     update_notification.notification_message = form.cleaned_data["notification_message"]
     update_notification.notification_location = form.cleaned_data["notification_location"]
-    update_notification.notification_start_date = timezone.make_aware(form.cleaned_data["notification_start_date"])
-    update_notification.notification_end_date = timezone.make_aware(form.cleaned_data["notification_end_date"])
+    update_notification.notification_start_date = form.cleaned_data["notification_start_date"]
+    update_notification.notification_end_date = form.cleaned_data["notification_end_date"]
     update_notification.save()
 
     return HttpResponse("")
