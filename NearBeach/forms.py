@@ -1037,6 +1037,8 @@ class NotificationForm(forms.ModelForm):
         max_length=255,
         required=True,
     )
+    notification_end_date = forms.DateTimeField()
+    notification_start_date = forms.DateTimeField()
 
     class Meta:
         model = Notification
