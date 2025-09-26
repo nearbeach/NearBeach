@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Request For Change &mdash; NearBeach 0.30.27 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7ee76da"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Common Usage" href="../common-usage/index.html" />
+    <link rel="prev" title="Sprint" href="../sprint/sprint_crud.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NearBeach
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">🚀 About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../000-about/features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../000-about/nearbeach-flow.html">NearBeach Flow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💡 Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../001-installation/quick-install-with-docker.html">Quick Install with Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../001-installation/quick-install-with-podman.html">Quick Install with Podman</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../001-installation/different-databases/index.html">Different Databases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../001-installation/different-blob-storage/index.html">Different Blob Storage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🏸 For Developers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../002-local-development-environment-setup/index.html">Setup Local Dev Env</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🎣 For Administrators</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/first-time-setup.html">First Time Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/manage-users.html">Manage Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/manage-groups.html">Manage Groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/manage-permission-sets.html">Manage Permission Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/system-variables.html">System Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/api.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🪀 Basic Usage</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../organisation/organisation_crud.html">Organisations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../customer/customer_crud.html">Customers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirement/requirement_crud.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirement-item/requirement_item_crud.html">Requirement Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../kanban-board/kanban_board_crud.html">Kanban Board</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../project/project_crud.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task/task_crud.html">Tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sprint/sprint_crud.html">Spring</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Request for Change</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-new-request-for-change">Create New Request For Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search-for-request-for-change">Search for Request For Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#update-request-for-change">Update Request For Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-change-tasks">Create Change Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#update-change-tasks">Update Change Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#starting-request-for-change">Starting Request For Change</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../common-usage/index.html">Common Usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛝 Procedure</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../006-procedures/deployment/deployment.html">Deployment of NearBeach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../006-procedures/git-flow/git-flow.html">Git Flow for NearBeach</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🥋 Misc</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../007-misc/cache-busting/cache-busting.html">Cache Busting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../007-misc/fixtures/fixture-standards.html">Fixture Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../007-misc/fixtures/fixture-object-assignment.html">Fixture Object Assignment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NearBeach</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Request For Change</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/004-basic-usage/request-for-change/request_for_change_crud.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="request-for-change">
+<span id="id1"></span><h1>Request For Change<a class="headerlink" href="#request-for-change" title="Link to this heading"></a></h1>
+<a class="reference internal image-reference" href="../../_images/request-for-change-screenshot.png"><img alt="Screenshot of the Request for Change Wizard" src="../../_images/request-for-change-screenshot.png" style="width: 600px;" />
+</a>
+<p>Request for changes are used to notify all stakeholders of a deployment and it’s processes. These are usually
+managed by the “Change Advisory Board” and should detail out which responsibilities falls on which users. Exactly
+what time a task will be implemented and how long it will take.</p>
+<section id="create-new-request-for-change">
+<h2>Create New Request For Change<a class="headerlink" href="#create-new-request-for-change" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p>In the navigation menu at the top of the page. Click on the option “New Object”</p></li>
+<li><p>In the dropdown, click on the option “New Request for Change”</p></li>
+<li><p>The “New Request for Change” wizard will load. The steps are broken down into;</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><strong>Description</strong> - A basic description/summary of the RFC and what it entails</p></li>
+<li><p><strong>Detail</strong> - Detailing the priorty of the RFC along with those responsible</p></li>
+<li><p><strong>Risk</strong> - Outlining the risk of the RFC, and the implications if RFC is not implemented</p></li>
+<li><p><strong>Implementation</strong> - Outline of the process around implementing</p></li>
+<li><p><strong>Back out</strong> - Outline of the back out plan if something goes wrong</p></li>
+<li><p><strong>Test plan</strong> - Outline the test plan to make sure all services are functioning</p></li>
+</ol>
+</div></blockquote>
+</li>
+<li><p>Fill out all the fields with appropriate information and submit. You will be redirected to the newly created RFC draft.</p></li>
+<li><p>You will now be able to create the run sheet, by adding in “Change Tasks”. Once completed, submit the RFC for approval</p></li>
+</ol>
+</section>
+<section id="search-for-request-for-change">
+<h2>Search for Request For Change<a class="headerlink" href="#search-for-request-for-change" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>In the navigation menu at the top of the page. Click on the option “Find Objects”</p></li>
+<li><p>In the dropdown, click on the option “List all Objects”</p></li>
+<li><p>The “Search” page will load. Use the search field to search for your required request for change.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Spaces are considered wildcards in this search.</p>
+</div>
+</section>
+<section id="update-request-for-change">
+<h2>Update Request For Change<a class="headerlink" href="#update-request-for-change" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Use the method above to find the appropriate Request for Change you wish to edit.</p></li>
+<li><p>Edit the Request for change, and once completed click on the “Update Request for Change” button</p></li>
+</ol>
+</section>
+<section id="create-change-tasks">
+<h2>Create Change Tasks<a class="headerlink" href="#create-change-tasks" title="Link to this heading"></a></h2>
+<a class="reference internal image-reference" href="../../_images/run-sheet-screenshot.png"><img alt="Screenshot of the Run Sheet under the Request for Change" src="../../_images/run-sheet-screenshot.png" style="width: 600px;" />
+</a>
+<p><strong>Assumption:</strong> You are currently on a draft of a Request for Change</p>
+<ol class="arabic">
+<li><p>Under the “Run Sheet” section, click on the “New Change Item”</p></li>
+<li><p>The “Change Task” wizard will appear</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../../_images/change-task-wizard-screenshot.png"><img alt="Screenshot of the Change task wizard" src="../../_images/change-task-wizard-screenshot.png" style="width: 600px;" />
+</a>
+</div></blockquote>
+</li>
+<li><p>Fill out the form appropriately. Please note the datetime should reflect the start and end date of this particular task.</p></li>
+<li><p>Click either of the “Add” buttons to add the change task. The newly created change task will appear in the list.</p></li>
+</ol>
+</section>
+<section id="update-change-tasks">
+<h2>Update Change Tasks<a class="headerlink" href="#update-change-tasks" title="Link to this heading"></a></h2>
+<a class="reference internal image-reference" href="../../_images/run-sheet-list-screenshot.png"><img alt="Screenshot of the run sheet list" src="../../_images/run-sheet-list-screenshot.png" style="width: 600px;" />
+</a>
+<ol class="arabic">
+<li><p>Find the Change Task you would like to edit, and click on it</p></li>
+<li><p>Change Task information page will load</p></li>
+<li><p>Edit the fields appropriately and hit the “Save” button to update the change task</p></li>
+<li><p>The following information for the change task is located at the bottom of the page</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><strong>Change Task Links</strong> - Defines which changes tasks will be blocking this particular change task</p></li>
+<li><p><strong>Description</strong> - Further explaination of the change task (optional)</p></li>
+<li><p><strong>Misc</strong> - Defines if there is downtime, or defines who the stakeholders are for this task</p></li>
+</ol>
+</div></blockquote>
+</li>
+<li><p>To navigate back to the Request for Change, click on the “Go Back” link at the top of the page</p></li>
+</ol>
+</section>
+<section id="starting-request-for-change">
+<h2>Starting Request For Change<a class="headerlink" href="#starting-request-for-change" title="Link to this heading"></a></h2>
+<p><strong>Assumption:</strong> You are currently on a draft of a Request for Change</p>
+<ol class="arabic simple">
+<li><p>To start a RFC, click on the “Submit RFC for Approval”.</p></li>
+<li><p>The RFC is sent to all Team Leaders within the assigned groups.</p></li>
+<li><p>At least one team leader from each group has to approve with no rejections</p></li>
+<li><p>If there are no team leaders for the groups, an auto approval process will occur</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../sprint/sprint_crud.html" class="btn btn-neutral float-left" title="Sprint" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../common-usage/index.html" class="btn btn-neutral float-right" title="Common Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Luke Christopher Clarke.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
