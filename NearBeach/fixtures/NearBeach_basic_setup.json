@@ -1,5 +1,69 @@
 [
 {
+  "model": "NearBeach.extendsauthtoken",
+  "pk": "1cb749ee06e48ffb1ea912652dd74a991d05376fa2510bf814a186615d17024fdeb5fbfd972aeb95a00ffc9364fe7c81d1b3cc46feec9483a70adbb7372d4c9d",
+  "fields": {
+    "description": "",
+    "change_user": 1
+  }
+},
+{
+  "model": "NearBeach.extendsauthtoken",
+  "pk": "2cb4125ce45a670f42ae1915d78b5ec7a665eb8ba6a475a39e7234ffc400f069b26f4d51136396bf30767e3d4044558a690b6dd0643cc2bfa1954ec2949c6c4b",
+  "fields": {
+    "description": "",
+    "change_user": 1
+  }
+},
+{
+  "model": "NearBeach.extendsauthtoken",
+  "pk": "5c562553b64ec438cc36e85cf3eef33dbce7bfd719ecad9e2e29dd0ca085b57bfd9277f2b7ec12f638349a9949df0fc44fd56a8a9254839760f77e418dbba1be",
+  "fields": {
+    "description": "Api Key",
+    "change_user": 1
+  }
+},
+{
+  "model": "NearBeach.extendsauthtoken",
+  "pk": "608769efc72a579e4092e704b424db36c719d88e60dac9e544784dc9acab868ac9a8c53b2f8c27e69c2569d85e3a6476ee994d1b071c0ff335c63be035d8e5a4",
+  "fields": {
+    "description": "",
+    "change_user": 1
+  }
+},
+{
+  "model": "NearBeach.extendsauthtoken",
+  "pk": "9efa2641316d368480956df9c632f09973a7ef27b375eed8c77c41439cd7f30db38b6d4cafa676f3774e20b5200787419bc7ae53b08c70cfb5d35effbf3df518",
+  "fields": {
+    "description": "",
+    "change_user": 1
+  }
+},
+{
+  "model": "NearBeach.extendsauthtoken",
+  "pk": "b160c9b126e95d65566a3099c8de84bba41734b0877429e3359b4bd13ac9ddccdc779fd6cbd1b0e25ec74b53398b523f5b7cea97999ed8fb3058fe6274d4e2c5",
+  "fields": {
+    "description": "",
+    "change_user": 1
+  }
+},
+{
+  "model": "NearBeach.extendsauthtoken",
+  "pk": "b171178a441ac13f376013aebb2ec9190b5cd47d9e779f51e59cc33d017924ec170226a87fee8a314a840e80a08b84d76edd9587bbda3ee3b1a3936076f9fe98",
+  "fields": {
+    "description": "",
+    "change_user": 1
+  }
+},
+{
+  "model": "NearBeach.extendsauthtoken",
+  "pk": "fa9c312d26cc30d421425b2b15391dad85377ef824e010236cda6b1b86f8712acd4f07f39828c5bb9600960a470666e58b23b5fb31055c4621d33c76edb9618a",
+  "fields": {
+    "description": "",
+    "change_user": 1
+  }
+},
+{
   "model": "NearBeach.bugclient",
   "pk": 1,
   "fields": {
@@ -240,6 +304,7 @@
     "project": null,
     "task": null,
     "requirement": null,
+    "requirement_item": null,
     "is_archived": false,
     "date_created": "2023-02-15T09:12:40.336Z",
     "date_modified": "2024-02-05T09:45:14.014Z",
@@ -261,6 +326,7 @@
     "project": null,
     "task": null,
     "requirement": null,
+    "requirement_item": null,
     "is_archived": false,
     "date_created": "2023-02-15T09:13:24.890Z",
     "date_modified": "2023-02-20T11:00:44.424Z",
@@ -2472,6 +2538,60 @@
   }
 },
 {
+  "model": "NearBeach.objectnote",
+  "pk": 11,
+  "fields": {
+    "object_note": "<p>A simple note from the team lead</p>",
+    "kanban_card": null,
+    "organisation": null,
+    "requirement": 2,
+    "requirement_item": null,
+    "project": null,
+    "task": null,
+    "request_for_change": null,
+    "date_created": "2025-09-26T09:57:39.856Z",
+    "date_modified": "2025-09-26T09:57:39.856Z",
+    "change_user": 2,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objectnote",
+  "pk": 12,
+  "fields": {
+    "object_note": "<p>Requirement item note</p>",
+    "kanban_card": null,
+    "organisation": null,
+    "requirement": null,
+    "requirement_item": 1,
+    "project": null,
+    "task": null,
+    "request_for_change": null,
+    "date_created": "2025-09-26T09:58:05.659Z",
+    "date_modified": "2025-09-26T09:58:05.659Z",
+    "change_user": 1,
+    "is_deleted": false
+  }
+},
+{
+  "model": "NearBeach.objectnote",
+  "pk": 13,
+  "fields": {
+    "object_note": "<p>Requirement item notes</p>",
+    "kanban_card": null,
+    "organisation": null,
+    "requirement": null,
+    "requirement_item": 2,
+    "project": null,
+    "task": null,
+    "request_for_change": null,
+    "date_created": "2025-09-26T09:58:18.185Z",
+    "date_modified": "2025-09-26T09:58:18.185Z",
+    "change_user": 2,
+    "is_deleted": false
+  }
+},
+{
   "model": "NearBeach.objecttemplate",
   "pk": 1,
   "fields": {
@@ -4604,6 +4724,86 @@
     "setting_data": {
       "theme": "dark"
     }
+  }
+},
+{
+  "model": "knox.authtoken",
+  "pk": "1cb749ee06e48ffb1ea912652dd74a991d05376fa2510bf814a186615d17024fdeb5fbfd972aeb95a00ffc9364fe7c81d1b3cc46feec9483a70adbb7372d4c9d",
+  "fields": {
+    "token_key": "bac8cc33798cc3b",
+    "user": 6,
+    "created": "2025-09-26T09:17:47.304Z",
+    "expiry": "2025-10-26T09:17:47.303Z"
+  }
+},
+{
+  "model": "knox.authtoken",
+  "pk": "2cb4125ce45a670f42ae1915d78b5ec7a665eb8ba6a475a39e7234ffc400f069b26f4d51136396bf30767e3d4044558a690b6dd0643cc2bfa1954ec2949c6c4b",
+  "fields": {
+    "token_key": "f6c28afb644b55f",
+    "user": 5,
+    "created": "2025-09-26T09:18:03.319Z",
+    "expiry": "2025-10-26T09:18:03.317Z"
+  }
+},
+{
+  "model": "knox.authtoken",
+  "pk": "5c562553b64ec438cc36e85cf3eef33dbce7bfd719ecad9e2e29dd0ca085b57bfd9277f2b7ec12f638349a9949df0fc44fd56a8a9254839760f77e418dbba1be",
+  "fields": {
+    "token_key": "c8bee226f8ebf49",
+    "user": 7,
+    "created": "2025-09-26T09:17:42.614Z",
+    "expiry": "2025-10-26T09:17:42.613Z"
+  }
+},
+{
+  "model": "knox.authtoken",
+  "pk": "608769efc72a579e4092e704b424db36c719d88e60dac9e544784dc9acab868ac9a8c53b2f8c27e69c2569d85e3a6476ee994d1b071c0ff335c63be035d8e5a4",
+  "fields": {
+    "token_key": "364f6338fb985a6",
+    "user": 8,
+    "created": "2025-09-26T09:18:06.696Z",
+    "expiry": "2025-10-26T09:18:06.694Z"
+  }
+},
+{
+  "model": "knox.authtoken",
+  "pk": "9efa2641316d368480956df9c632f09973a7ef27b375eed8c77c41439cd7f30db38b6d4cafa676f3774e20b5200787419bc7ae53b08c70cfb5d35effbf3df518",
+  "fields": {
+    "token_key": "86f55dc80e69b39",
+    "user": 2,
+    "created": "2025-09-26T09:17:55.459Z",
+    "expiry": "2025-10-26T09:17:55.458Z"
+  }
+},
+{
+  "model": "knox.authtoken",
+  "pk": "b160c9b126e95d65566a3099c8de84bba41734b0877429e3359b4bd13ac9ddccdc779fd6cbd1b0e25ec74b53398b523f5b7cea97999ed8fb3058fe6274d4e2c5",
+  "fields": {
+    "token_key": "47547bf6d13728b",
+    "user": 4,
+    "created": "2025-09-26T09:17:51.641Z",
+    "expiry": "2025-10-26T09:17:51.640Z"
+  }
+},
+{
+  "model": "knox.authtoken",
+  "pk": "b171178a441ac13f376013aebb2ec9190b5cd47d9e779f51e59cc33d017924ec170226a87fee8a314a840e80a08b84d76edd9587bbda3ee3b1a3936076f9fe98",
+  "fields": {
+    "token_key": "9794242af5a9f41",
+    "user": 1,
+    "created": "2025-09-26T09:18:10.855Z",
+    "expiry": "2025-10-26T09:18:10.854Z"
+  }
+},
+{
+  "model": "knox.authtoken",
+  "pk": "fa9c312d26cc30d421425b2b15391dad85377ef824e010236cda6b1b86f8712acd4f07f39828c5bb9600960a470666e58b23b5fb31055c4621d33c76edb9618a",
+  "fields": {
+    "token_key": "bfe0ff0343f346d",
+    "user": 3,
+    "created": "2025-09-26T09:17:58.895Z",
+    "expiry": "2025-10-26T09:17:58.894Z"
   }
 },
 {
@@ -7340,7 +7540,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$1000000$KXozqanrdtkNtU5sIruh26$ZMqTWvF2Rhfy7feE3DdO1IYUUaAO8X6ry1pC6dQkIoQ=",
-    "last_login": "2025-09-22T11:19:49.399Z",
+    "last_login": "2025-09-26T09:17:17.663Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "Admin",
@@ -7357,8 +7557,8 @@
   "model": "auth.user",
   "pk": 2,
   "fields": {
-    "password": "pbkdf2_sha256$870000$dGZEylBdDKHXwooSAwSUUs$McnHkHw4DTH+33SqhZyQUeEOHoznNXb+tGSaLoAjZhg=",
-    "last_login": "2025-05-05T08:50:28.406Z",
+    "password": "pbkdf2_sha256$1000000$xQTdiET8crYOALsTR4ceXm$jTY/AjeXLKRciBk6bQTff0ia4mjgVDPKh7RqDEXHDlI=",
+    "last_login": "2025-09-26T09:57:16.274Z",
     "is_superuser": false,
     "username": "team_leader",
     "first_name": "Team",
@@ -8065,6 +8265,14 @@
 },
 {
   "model": "sessions.session",
+  "pk": "hsivqntbozocvws0hktri6tgslllmgf3",
+  "fields": {
+    "session_data": ".eJxVjEFuwyAQRe_CurIQxFC87L5nQMMwxLTIRIDjqlHuXtx6Ue_mz_v_PdgWv6F427ZsA2DLxaZ8jYu9R9rY9GC10Y1Ny5rSy-9tPTTo4HnEEBPVv0xfrcA_focUeyJvT8NOLKxttmulYqNnExPs9HOAn7TswH_Acs0D5qWV6Ia9Mhy0Du_ZU3o7uifBDHXua4kKTADtjXekpQoXLp3gKByHcJFaymBQjEGMynOnnX7FUaEyGnEEw7FLY7V1vVHZtWwKkCo9fwDQk2uv:1v25CW:AnCxkJJrX5amzXzniigm1WwYW01Z8luRGdBcKIU9fNY",
+    "expire_date": "2025-10-10T09:57:16.303Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "jf4rxb43g0qzwg0jblkwjg2xqtoz0ope",
   "fields": {
     "session_data": ".eJxVjjsOwjAQRO_iGln-yklKes5gjb1rEkAJipMKcXewlALaeTNP8xIR-zbGvfIaJxKDMOL0myXkO88N0A3zdZF5mbd1SrJV5EGrvCzEj_PR_ROMqON3nYKzSoOSt9YA1rJP8KZouD4HogJCVlmHYgz3Fsjadz5rx0oF17VXU411f_LatGIoeFR-fwDnpUAT:1s6R9m:qyY_lFApfV6G3NPniA1Nzshbmg-FY9fJYvUlZu5IFRs",
@@ -8109,6 +8317,14 @@
   "fields": {
     "session_data": ".eJxVjEEOwiAQRe_C2hAYoNQu3XsGwgyDrZrWQFkZ726bdKHb_95_bxFiW8fQKpcwJTEILU6_G0Z68LyDdI_zbZG0zGuZUO6KPGiV1yXx83K4f4Ex1nF7O0Ai68FFdqlPkdH1nBUmC-SzNqAUeaMMGtuBBsAz6q7LtrfaGqdoi0411PbismfFsJbGny-LGT7k:1t2n2j:YDC2Cf0jBM0mhlVVku3Qfo9aFHRcqtH62SD0b3-aheE",
     "expire_date": "2024-11-04T07:41:33.144Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "sdgouiw901aauhky41srywjl8b2ni96k",
+  "fields": {
+    "session_data": ".eJxVjs1uwyAQhN-Fc2XFCdjYx97zDGhhl5gWQcRPXDXKu9e0PtTay85-M6N9stV9Q0JV1qgsmBKT8vHmgno4Wtn8ZLnQnc2hev_2uyuEAht47dI6T_lP01dJ8I8_wLtNEapDcCMKallUzZSUQzaznh1uGswnhQbwA8ItdiaGkpzumqXbae6uEcm_795DwQJ5aWl-HocRLdqehOFSC3Om0wVQaDFpSTiglXJETsRPk5zsxQpr-6Hng92mfeWyyvVOqdWyuaRKrx97VGu6:1v25Bn:Ux7xcH9kSi6LISROyxG8PzcZCFuuf38NmA1BsGrpFXU",
+    "expire_date": "2025-10-10T09:56:31.597Z"
   }
 },
 {

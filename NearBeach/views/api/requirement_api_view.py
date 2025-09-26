@@ -15,7 +15,7 @@ import datetime
 
 
 @extend_schema(
-    tags=["Change Tasks"],
+    tags=["Requirement"],
 )
 class RequirementViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class

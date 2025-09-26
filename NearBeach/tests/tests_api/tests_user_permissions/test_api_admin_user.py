@@ -71,6 +71,9 @@ class ApiAdminPermissionTests(APITestCase):
                 else:
                     AssertionError("Method Not allowed in API")
 
+                if response.status_code != data.status_code:
+                    breakpoint()
+
                 self.assertEqual(response.status_code, data.status_code)
 
     def test_api_available_data(self):
@@ -558,11 +561,266 @@ class ApiAdminPermissionTests(APITestCase):
         self._run_test_array(data_list)
 
     def test_api_requirement_data(self):
-        data_list = []
+        data_list = [
+            #########
+            # REQUIREMENT
+            #########
+            self.URLTest("/api/v0/requirement/", {}, 200, "GET"),
+            self.URLTest(
+                "/api/v0/requirement/",
+                {
+                    "requirement_title": "API Requirement",
+                    "requirement_scope": "<p>Hello World</p>",
+                    "requirement_type": 1,
+                    "requirement_status": 2,
+                    "organisation": 1,
+                    "group_list": [1, 2],
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest(
+                "/api/v0/requirement/1/",
+                {
+                    "requirement_title": "API Requirement updated",
+                    "requirement_scope": "<p>Hello World again</p>",
+                    "requirement_type": 2,
+                    "requirement_status": 2,
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest(
+                "/api/v0/requirement/2/",
+                {
+                    "requirement_title": "API Requirement updated",
+                    "requirement_scope": "<p>Hello World again</p>",
+                    "requirement_type": 2,
+                    "requirement_status": 2,
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest("/api/v0/requirement/2/", {}, 204, "DELETE"),
+            self.URLTest("/api/v0/requirement/1/group_and_user/", {}, 200, "GET"),
+            self.URLTest("/api/v0/requirement/2/group_and_user/", {}, 200, "GET"),
+            self.URLTest(
+                "/api/v0/requirement/1/group_and_user/",
+                {
+                    "group_list": 2,
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/requirement/2/group_and_user/",
+                {
+                    "group_list": 1,
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/requirement/1/group_and_user/",
+                {
+                    "user_list": 2,
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/requirement/2/group_and_user/",
+                {
+                    "user_list": 1,
+                },
+                201,
+                "POST",
+            ),
+            # TODO - 0.32 - Write the delete functionality for both users and groups. Waiting for the object_assignment_id to pass through into the GET data
+            ######################
+            # Requirement - Link tests
+            ######################
+            self.URLTest('/api/v0/requirement/1/link/', {}, 200, "GET"),
+            self.URLTest('/api/v0/requirement/1/link/', {}, 200, "GET"),
+            self.URLTest(
+                '/api/v0/requirement/1/link/',
+                {
+                    "object_id": 2,
+                    "object_type": "task",
+                    "object_relation": "blocked_by",
+                },
+                201, "POST"
+            ),
+            self.URLTest(
+                '/api/v0/requirement/1/link/',
+                {
+                    "object_id": 2,
+                    "object_type": "task",
+                    "object_relation": "blocked_by",
+                },
+                201, "POST"
+            ),
+            self.URLTest('/api/v0/requirement/2/link/40/', {}, 400, "DELETE"),
+            self.URLTest('/api/v0/requirement/1/link/41/', {}, 400, "DELETE"),
+            self.URLTest('/api/v0/requirement/1/link/40/', {}, 204, "DELETE"),
+            self.URLTest('/api/v0/requirement/2/link/41/', {}, 204, "DELETE"),
+            # TODO - Create more links against all objects, currently can not test as there is nothing to test but create
+            # note tests
+            self.URLTest('/api/v0/requirement/1/note/', {}, 200, "GET"),
+            self.URLTest('/api/v0/requirement/2/note/', {}, 200, "GET"),
+            self.URLTest(
+                '/api/v0/requirement/1/note/',
+                {
+                    "object_note": "<p>Hello World</p>",
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                '/api/v0/requirement/2/note/',
+                {
+                    "object_note": "<p>Hello World</p>",
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                '/api/v0/requirement/1/note/4/',
+                {
+                    "object_note": "<h1>Hello World Updated</h1>",
+                },
+                200,
+                "PUT",
+            ),
+            self.URLTest(
+                '/api/v0/requirement/2/note/11/',
+                {
+                    "object_note": "<h1>Hello World Updated</h1>",
+                },
+                200,
+                "PUT",
+            ),
+            self.URLTest('/api/v0/requirement/1/note/4/', {}, 204, "DELETE"),
+            self.URLTest('/api/v0/requirement/2/note/11/', {}, 204, "DELETE"),
+            # object_sprint tests
+            # TODO - 0.32 - Add more sprints to objects for Unit Testing
+            # tag tests
+        ]
 
         self._run_test_array(data_list)
 
-    def test_api_request_for_change_task_data(self):
+    def test_api_request_for_change_data(self):
+        data_list = [
+            #########
+            # REQUEST FOR CHANGE
+            #########
+            self.URLTest("/api/v0/request_for_change/", {}, 200, "GET"),
+            self.URLTest(
+                "/api/v0/request_for_change/",
+                {
+                    "rfc_version_number": "0.32.0",
+                    "rfc_title": "Release of 0.32.0",
+                    "rfc_summary": "<p>Hello World</p>",
+                    "rfc_type": 1,
+                    "rfc_risk_and_impact_analysis": "Risk and Impact Analysis",
+                    "rfc_implementation_plan": "Implementation Plan",
+                    "rfc_backout_plan": "Backout Plan",
+                    "rfc_test_plan": "Test Plan",
+                    "rfc_lead": 1,
+                    "rfc_priority": 1,
+                    "rfc_risk": 1,
+                    "rfc_impact": 1,
+                    "organisation": 1,
+                    "group_list": [1, 2],
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest(
+                "/api/v0/request_for_change/1/",
+                {
+                    "rfc_version_number": "0.32.0",
+                    "rfc_title": "Release of 0.32.0",
+                    "rfc_summary": "<p>Hello World</p>",
+                    "rfc_type": 1,
+                    "rfc_risk_and_impact_analysis": "Risk and Impact Analysis",
+                    "rfc_implementation_plan": "Implementation Plan",
+                    "rfc_backout_plan": "Backout Plan",
+                    "rfc_test_plan": "Test Plan",
+                    "rfc_implementation_release_date": "2025-09-26T10:28:32.906Z",
+                    "rfc_lead": 1,
+                    "rfc_priority": 1,
+                    "rfc_risk": 1,
+                    "rfc_impact": 1,
+                    "organisation": 1,
+                    "group_list": [1, 2],
+
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest(
+                "/api/v0/request_for_change/2/",
+                {
+                    "rfc_version_number": "0.32.0",
+                    "rfc_title": "Release of 0.32.0",
+                    "rfc_summary": "<p>Hello World</p>",
+                    "rfc_type": 1,
+                    "rfc_risk_and_impact_analysis": "Risk and Impact Analysis",
+                    "rfc_implementation_plan": "Implementation Plan",
+                    "rfc_backout_plan": "Backout Plan",
+                    "rfc_test_plan": "Test Plan",
+                    "rfc_implementation_release_date": "2025-09-26T10:28:32.906Z",
+                    "rfc_lead": 1,
+                    "rfc_priority": 1,
+                    "rfc_risk": 1,
+                    "rfc_impact": 1,
+                    "organisation": 1,
+                    "group_list": [1, 2],
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest("/api/v0/request_for_change/2/", {}, 204, "DELETE"),
+            self.URLTest("/api/v0/request_for_change/1/group_and_user/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/2/group_and_user/", {}, 200, "GET"),
+            self.URLTest(
+                "/api/v0/request_for_change/1/group_and_user/",
+                {
+                    "group_list": 2,
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/request_for_change/2/group_and_user/",
+                {
+                    "group_list": 1,
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/request_for_change/1/group_and_user/",
+                {
+                    "user_list": 2,
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/request_for_change/2/group_and_user/",
+                {
+                    "user_list": 1,
+                },
+                201,
+                "POST",
+            ),
+        ]
+
+        self._run_test_array(data_list)
+
+    def test_api_request_for_change_change_task_data(self):
         data_list = [
             self.URLTest("/api/v0/request_for_change/1/change_task/", {}, 200, "GET"),
             self.URLTest("/api/v0/request_for_change/2/change_task/", {}, 200, "GET"),
@@ -723,7 +981,169 @@ class ApiAdminPermissionTests(APITestCase):
         self._run_test_array(data_list)
 
     def test_api_task_data(self):
-        data_list = []
+        data_list = [
+            #########
+            # TASK
+            #########
+            self.URLTest("/api/v0/task/", {}, 200, "GET"),
+            self.URLTest(
+                "/api/v0/task/",
+                {
+                    "task_short_description": "API Task",
+                    "task_long_description": "<p>Hello World</p>",
+                    "task_start_date": "2024-12-19 15:49:37",
+                    "task_end_date": "2024-12-19 15:49:37",
+                    "organisation": 1,
+                    "group_list": [1, 2],
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest(
+                "/api/v0/task/1/",
+                {
+                    "task_short_description": "API Task updated",
+                    "task_long_description": "<p>Hello World again</p>",
+                    "task_start_date": "2024-12-19 15:49:37",
+                    "task_end_date": "2024-12-19 15:49:37",
+                    "task_status": 2,
+                    "task_priority": 2,
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest(
+                "/api/v0/task/2/",
+                {
+                    "task_short_description": "API Task updated",
+                    "task_long_description": "<p>Hello World again</p>",
+                    "task_start_date": "2024-12-19 15:49:37",
+                    "task_end_date": "2024-12-19 15:49:37",
+                    "task_status": 2,
+                    "task_priority": 2,
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest("/api/v0/task/2/", {}, 204, "DELETE"),
+            self.URLTest("/api/v0/task/1/group_and_user/", {}, 200, "GET"),
+            self.URLTest("/api/v0/task/2/group_and_user/", {}, 200, "GET"),
+            self.URLTest(
+                "/api/v0/task/1/group_and_user/",
+                {
+                    "group_list": 2,
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/task/2/group_and_user/",
+                {
+                    "group_list": 1,
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/task/1/group_and_user/",
+                {
+                    "user_list": 2,
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v0/task/2/group_and_user/",
+                {
+                    "user_list": 1,
+                },
+                201,
+                "POST",
+            ),
+            # TODO - 0.32 - Write the delete functionality for both users and groups. Waiting for the object_assignment_id to pass through into the GET data
+            ######################
+            # Task - Link tests
+            ######################
+            self.URLTest('/api/v0/task/1/link/', {}, 200, "GET"),
+            self.URLTest('/api/v0/task/1/link/', {}, 200, "GET"),
+            self.URLTest(
+                '/api/v0/task/1/link/',
+                {
+                    "object_id": 2,
+                    "object_type": "requirement",
+                    "object_relation": "blocked_by",
+                },
+                201, "POST"
+            ),
+            self.URLTest(
+                '/api/v0/task/1/link/',
+                {
+                    "object_id": 2,
+                    "object_type": "requirement",
+                    "object_relation": "blocked_by",
+                },
+                201, "POST"
+            ),
+            self.URLTest('/api/v0/task/2/link/43/', {}, 400, "DELETE"),
+            self.URLTest('/api/v0/task/1/link/44/', {}, 400, "DELETE"),
+            self.URLTest('/api/v0/task/1/link/43/', {}, 204, "DELETE"),
+            self.URLTest('/api/v0/task/2/link/44/', {}, 204, "DELETE"),
+            # TODO - Create more links against all objects, currently can not test as there is nothing to test but create
+            # note tests
+            self.URLTest('/api/v0/task/1/note/', {}, 200, "GET"),
+            self.URLTest('/api/v0/task/2/note/', {}, 200, "GET"),
+            self.URLTest(
+                '/api/v0/task/1/note/',
+                {
+                    "object_note": "<p>Hello World</p>",
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                '/api/v0/task/2/note/',
+                {
+                    "object_note": "<p>Hello World</p>",
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                '/api/v0/task/1/note/5/',
+                {
+                    "object_note": "<h1>Hello World Updated</h1>",
+                },
+                200,
+                "PUT",
+            ),
+            self.URLTest(
+                '/api/v0/task/2/note/8/',
+                {
+                    "object_note": "<h1>Hello World Updated</h1>",
+                },
+                200,
+                "PUT",
+            ),
+            self.URLTest('/api/v0/task/1/note/5/', {}, 204, "DELETE"),
+            self.URLTest('/api/v0/task/2/note/8/', {}, 204, "DELETE"),
+            # object_sprint tests
+            # TODO - 0.32 - Add more sprints to objects for Unit Testing
+            # tag tests
+        ]
+
+        self._run_test_array(data_list)
+
+    def test_api_user_api_data(self):
+        data_list = [
+            self.URLTest("/api/v0/user/1/api_key/", {}, 200, "GET"),
+            self.URLTest("/api/v0/user/1/api_key/", {}, 201, "POST"),
+            self.URLTest(
+                "/api/v0/user/1/api_key/b171178a441ac13f376013aebb2ec9190b5cd47d9e779f51e59cc33d017924ec170226a87fee8a314a840e80a08b84d76edd9587bbda3ee3b1a3936076f9fe98/", 
+                {}, 
+                204,
+                "DELETE"
+            ),
+        ]
 
         self._run_test_array(data_list)
 
