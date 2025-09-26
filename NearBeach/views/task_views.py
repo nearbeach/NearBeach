@@ -12,6 +12,7 @@ from NearBeach.forms import NewTaskForm, TaskInformationForm
 from NearBeach.models import Group, ObjectAssignment, ListOfTaskStatus, KanbanCard
 from NearBeach.views.tools.internal_functions import Task, Organisation, get_all_groups, get_user_group_permission
 from NearBeach.views.theme_views import get_theme
+from NearBeach.views.kanban_views import update_linked_card_information
 
 import json, uuid
 
@@ -192,13 +193,11 @@ def task_information_save(request, task_id, *args, **kwargs):
     update_task.save()
 
     # Find any linked cards, and update the description and priorty
-    KanbanCard.objects.filter(
-        is_deleted=False,
-        is_archived=False,
-        task_id=task_id
-    ).update(
-        kanban_card_description=update_task.task_long_description,
-        kanban_card_priority=update_task.task_priority,
+    update_linked_card_information(
+        "task",
+        task_id,
+        update_task.task_short_description,
+        update_task.task_priority,
     )
 
     return HttpResponse("")

@@ -15,7 +15,9 @@ from NearBeach.forms import (
     Organisation,
     UpdateRequirementForm,
 )
+from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.views.tools.internal_functions import get_all_groups, get_user_group_permission
+from NearBeach.views.kanban_views import update_linked_card_information
 from NearBeach.models import (
     Requirement,
     ObjectAssignment,
@@ -373,12 +375,11 @@ def requirement_information_save(request, requirement_id, *args, **kwargs):
     requirement_result.save()
 
     # Find any linked cards, and update the description
-    KanbanCard.objects.filter(
-        is_deleted=False,
-        is_archived=False,
-        requirement_id=requirement_id,
-    ).update(
-        kanban_card_description=requirement_result.requirement_scope,
+    update_linked_card_information(
+        "requirement",
+        requirement_id,
+        requirement_result.requirement_title,
+        ObjectPriority.NORMAL
     )
 
     # Return a success

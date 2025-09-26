@@ -675,6 +675,17 @@ def update_card(request, *args, **kwargs):
 
     return HttpResponse("")
 
+# Internal Function
+def update_linked_card_information(destination, location_id, title, priority):
+    # Update the cards
+    KanbanCard.objects.filter(
+        is_deleted=False,
+        **{F"{destination}_id": location_id},
+    ).update(
+        kanban_card_text=title,
+        kanban_card_priority=priority,
+    )
+
 
 # Internal Function
 def update_sort_number(resort_array, delta):

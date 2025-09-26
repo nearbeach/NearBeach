@@ -139,10 +139,14 @@ class SearchObjects:
             )
 
             # shortcut variable
+            # TODO - 0.32 - make database generic so we don't deal with silly stuff like this.
+            id_field = self._get_id_name(object_name)
             parent_id_field = self.OBJECT_SETUP[object_name]["fields"]["parent_id"]
+            if object_name == "requirement_item":
+                id_field = "requirement_id"
 
             results = results.filter(
-                **{F"{parent_id_field}__in": object_assignment_results.filter(
+                **{F"{id_field}__in": object_assignment_results.filter(
                     **{F"{parent_id_field}__isnull": False}
                 ).values(parent_id_field)}
             )
