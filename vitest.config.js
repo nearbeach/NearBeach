@@ -10,9 +10,13 @@ export default defineConfig({
         coverage: {
             enabled: true,
             exclude: [
-                `./NearBeach/static/**/*`,
-                // `./NearBeach/tests/**/*`,
-                `./venv/**/*`,
+                `NearBeach/static/**/*`,
+                `venv/**/*`,
+                `node_modules/**/*`
+            ],
+            include: [
+                'src/js/components/**/*.vue',
+                'src/js/vuex/**/*.js'
             ],
             provider: "v8",
             // provider: "istanbul",
