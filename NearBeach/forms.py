@@ -184,6 +184,7 @@ class AddLinkForm(forms.Form):
     )
     document_url_location = forms.URLField(
         required=True,
+        assume_scheme='https',
     )
     parent_folder = forms.ModelChoiceField(
         required=False,

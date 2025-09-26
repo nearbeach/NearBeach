@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db.models import Q, F
 from NearBeach import event_hooks
+from django.utils import timezone
 
 from NearBeach.models import (
     ObjectAssignment,
@@ -70,7 +71,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def get_today():
-        return datetime.datetime.today()
+        return timezone.now().today()
 
     @staticmethod
     def create_object(scheduled_object, *args, **kwargs):
@@ -94,7 +95,7 @@ class Command(BaseCommand):
         )
 
         # Setup the start date for the object
-        object_start_date = datetime.datetime.today()
+        object_start_date = timezone.now()
         object_start_date = object_start_date.replace(
             hour=template_start_date.hour,
             minute=template_start_date.minute,

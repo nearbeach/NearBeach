@@ -8,6 +8,7 @@ from NearBeach.models import (
 )
 
 import datetime
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -42,7 +43,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def get_today():
-        return datetime.datetime.today()
+        return timezone.now().today()
 
     @staticmethod
     def purge_document_from_blob(_, document_key_id):

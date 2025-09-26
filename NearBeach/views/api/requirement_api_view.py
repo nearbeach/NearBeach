@@ -11,7 +11,7 @@ from NearBeach.serializers.requirement_serializer import RequirementSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from NearBeach.views.document_views import transfer_new_object_uploads
-import datetime
+from django.utils import timezone
 
 
 @extend_schema(
@@ -208,7 +208,7 @@ Updates a single task.
 
         # Update the requirement
         update_requirement.change_user = request.user
-        update_requirement.date_modified = datetime.datetime.now()
+        update_requirement.date_modified = timezone.now()
         update_requirement = serializer.update(
             update_requirement,
             serializer.validated_data,
