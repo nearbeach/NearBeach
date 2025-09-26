@@ -57,9 +57,7 @@ class RunSchedulerTest(TestCase):
         for data in data_array:
             # Arrange
             expected_results = ScheduledObject.objects.filter(pk__in=data.expected_ids)
-            mock_get_today.return_value = timezone.make_aware(
-                datetime.datetime(data.year, data.month, data.day)
-            ).date()
+            mock_get_today.return_value = datetime.date(data.year, data.month, data.day)
 
             # Act
             results = Command().run_set_day_of_the_week()
@@ -108,9 +106,7 @@ class RunSchedulerTest(TestCase):
         for data in data_array:
             # Arrange
             expected_results = ScheduledObject.objects.filter(pk__in=data.expected_ids)
-            mock_get_today.return_value = timezone.make_aware(
-                datetime.datetime(data.year, data.month, data.day)
-            ).date()
+            mock_get_today.return_value =datetime.date(data.year, data.month, data.day)
 
             # Act
             results = Command().run_weekly()
@@ -216,9 +212,7 @@ class RunSchedulerTest(TestCase):
         for data in data_array:
             # Arrange
             expected_results = ScheduledObject.objects.filter(pk__in=data.expected_ids)
-            mock_get_today.return_value = timezone.make_aware(
-                datetime.datetime(data.year, data.month, data.day)
-            ).date()
+            mock_get_today.return_value = datetime.date(data.year, data.month, data.day)
 
             # Act
             results = Command().run_fortnightly()
@@ -391,9 +385,7 @@ class RunSchedulerTest(TestCase):
         for data in data_array:
             # Arrange
             expected_results = ScheduledObject.objects.filter(pk__in=data.expected_ids)
-            mock_get_today.return_value = timezone.make_aware(
-                datetime.datetime(data.year, data.month, data.day)
-            ).date()
+            mock_get_today.return_value = datetime.date(data.year, data.month, data.day)
 
             # Act
             results = Command().run_monthly()
@@ -566,9 +558,7 @@ class RunSchedulerTest(TestCase):
         for data in data_array:
             # Arrange
             expected_results = ScheduledObject.objects.filter(pk__in=data.expected_ids)
-            mock_get_today.return_value = timezone.make_aware(
-                datetime.datetime(data.year, data.month, data.day)
-            ).date()
+            mock_get_today.return_value = datetime.date(data.year, data.month, data.day)
 
             # Act
             results = Command().run_start_of_the_month()
@@ -741,9 +731,7 @@ class RunSchedulerTest(TestCase):
         for data in data_array:
             # Arrange
             expected_results = ScheduledObject.objects.filter(pk__in=data.expected_ids)
-            mock_get_today.return_value = timezone.make_aware(
-                datetime.datetime(data.year, data.month, data.day)
-            ).date()
+            mock_get_today.return_value = datetime.datetime(data.year, data.month, data.day)
 
             # Act
             results = Command().run_end_of_the_month()
@@ -917,9 +905,7 @@ class RunSchedulerTest(TestCase):
         for data in data_array:
             # Arrange
             expected_results = ScheduledObject.objects.filter(pk__in=data.expected_ids)
-            mock_get_today.return_value = timezone.make_aware(
-                datetime.datetime(data.year, data.month, data.day)
-            ).date()
+            mock_get_today.return_value = datetime.date(data.year, data.month, data.day)
 
             # Act
             results = Command().run_x_days_before_end_of_the_month()
