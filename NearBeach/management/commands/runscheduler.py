@@ -71,7 +71,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def get_today():
-        return timezone.today()
+        return timezone.now().today()
 
     @staticmethod
     def create_object(scheduled_object, *args, **kwargs):
@@ -85,14 +85,16 @@ class Command(BaseCommand):
         object_dict = OBJECT_DICT[object_string]
 
         # Get the start and end date from the template
-        template_start_date = datetime.datetime.strptime(
-            template.object_template_json["object_start_date"],
-            "%Y-%m-%dT%H:%M:%SZ"
-        )
-        template_end_date = datetime.datetime.strptime(
-            template.object_template_json["object_end_date"],
-            "%Y-%m-%dT%H:%M:%SZ"
-        )
+        # template_start_date = datetime.datetime.strptime(
+        #     template.object_template_json["object_start_date"],
+        #     "%Y-%m-%dT%H:%M:%SZ"
+        # )
+        # template_end_date = datetime.datetime.strptime(
+        #     template.object_template_json["object_end_date"],
+        #     "%Y-%m-%dT%H:%M:%SZ"
+        # )
+        template_start_date = timezone.now()
+        template_end_date = timezone.now()
 
         # Setup the start date for the object
         object_start_date = timezone.now()
