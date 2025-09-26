@@ -33,10 +33,10 @@ from ..forms import (
 )
 from ..models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
 from azure.storage.blob import BlobServiceClient
+from django.utils import timezone
 
 import boto3
 import json
-import datetime
 from pathlib import Path
 from botocore.config import Config
 
@@ -231,7 +231,7 @@ def document_remove(request, destination, location_id, *args, **kwargs):
     # Get document from the form
     document_update = form.cleaned_data["document_key"]
     document_update.is_deleted = True
-    document_update.date_modified=datetime.datetime.now()
+    document_update.date_modified=timezone.now()
     document_update.save()
 
     document_permission_update = DocumentPermission.objects.get(
@@ -239,7 +239,7 @@ def document_remove(request, destination, location_id, *args, **kwargs):
         **{F"{destination}_id": location_id},
     )
     document_permission_update.is_deleted = True
-    document_permission_update.date_modified=datetime.datetime.now()
+    document_permission_update.date_modified=timezone.now()
     document_permission_update.save()
 
     return HttpResponse("")

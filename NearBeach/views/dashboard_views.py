@@ -7,9 +7,10 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count, Q, F
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # Import Python Libraries
-import json, datetime
+import json
 
 # Import NearBeach Models
 from NearBeach.models import (
@@ -45,8 +46,8 @@ def dashboard(request):
     notification_results = Notification.objects.filter(
         Q(
             is_deleted=False,
-            notification_start_date__lte=datetime.datetime.now().date(),
-            notification_end_date__gte=datetime.datetime.now().date(),
+            notification_start_date__lte=timezone.now().date(),
+            notification_end_date__gte=timezone.now().date(),
         )
         & Q(Q(notification_location="all") | Q(notification_location="dashboard"))
     )

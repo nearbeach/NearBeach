@@ -2,6 +2,7 @@ import json, uuid, datetime
 
 from django.shortcuts import get_object_or_404
 from django.db.models import Max, Min
+from django.utils import timezone
 
 from NearBeach.forms import (
     NewRequestForChangeForm,
@@ -158,7 +159,7 @@ def new_request_for_change_save(request, *args, **kwargs):
         return HttpResponseBadRequest(form.errors)
 
     # Setup the default dates for two weeks
-    default_date = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    default_date = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Add two weeks onto each date
     default_date = default_date + datetime.timedelta(weeks=2)
