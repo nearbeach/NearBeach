@@ -26,6 +26,7 @@ class SearchObjects:
                 "id": "kanban_board_id",
                 "title": "kanban_board_name",
                 "status": "kanban_board_status",
+                "parent_id": "kanban_board_id",
             },
             "objects": KanbanBoard.objects,
             "title": "kanban_board_name",
@@ -35,6 +36,7 @@ class SearchObjects:
                 "id": "project_id",
                 "title": "project_name",
                 "status": "project_status__project_status",
+                "parent_id": "project_id",
             },
             "objects": Project.objects,
             "title": "project_name",
@@ -44,6 +46,7 @@ class SearchObjects:
                 "id": "rfc_id",
                 "title": "rfc_title",
                 "status": "rfc_status",
+                "parent_id": "request_for_change_id",
             },
             "objects": RequestForChange.objects,
             "title": "rfc_title",
@@ -53,6 +56,7 @@ class SearchObjects:
                 "id": "requirement_id",
                 "title": "requirement_title",
                 "status": "requirement_status__requirement_status",
+                "parent_id": "requirement_id",
             },
             "objects": Requirement.objects,
             "title": "requirement_title",
@@ -62,6 +66,7 @@ class SearchObjects:
                 "id": "requirement_item_id",
                 "title": "requirement_item_title",
                 "status": "requirement_item_status__requirement_item_status",
+                "parent_id": "requirement_id",
             },
             "objects": RequirementItem.objects,
             "title": "requirement_item_title",
@@ -71,6 +76,7 @@ class SearchObjects:
                 "id": "task_id",
                 "title": "task_short_description",
                 "status": "task_status__task_status",
+                "parent_id": "task_id",
             },
             "objects": Task.objects,
             "title": "task_short_description",
@@ -133,13 +139,12 @@ class SearchObjects:
             )
 
             # shortcut variable
-            id_field = self._get_id_name(object_name)
+            parent_id_field = self.OBJECT_SETUP[object_name]["fields"]["parent_id"]
 
             results = results.filter(
-                # **{F"{data['id']}__isnull": False},
-                **{F"{id_field}__in": object_assignment_results.filter(
-                    **{F"{object_name}_id__isnull": False}
-                ).values(F"{object_name}_id")}
+                **{F"{parent_id_field}__in": object_assignment_results.filter(
+                    **{F"{parent_id_field}__isnull": False}
+                ).values(parent_id_field)}
             )
 
         # Check to see if we are searching for closed objects
