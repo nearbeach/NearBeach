@@ -1,0 +1,209 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Managing Users &mdash; NearBeach 0.30.27 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7ee76da"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Managing Groups" href="manage-groups.html" />
+    <link rel="prev" title="First Time Setup for NearBeach" href="first-time-setup.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NearBeach
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">🚀 About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../000-about/features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../000-about/nearbeach-flow.html">NearBeach Flow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💡 Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../001-installation/quick-install-with-docker.html">Quick Install with Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../001-installation/quick-install-with-podman.html">Quick Install with Podman</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../001-installation/different-databases/index.html">Different Databases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../001-installation/different-blob-storage/index.html">Different Blob Storage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🏸 For Developers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../002-local-development-environment-setup/index.html">Setup Local Dev Env</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🎣 For Administrators</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="first-time-setup.html">First Time Setup</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Manage Users</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-new-users">Create New Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#assigning-permissions-and-groups-to-users">Assigning Permissions and Groups to Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#removing-user-from-system">Removing User from system</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="manage-groups.html">Manage Groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manage-permission-sets.html">Manage Permission Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="system-variables.html">System Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🪀 Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../004-basic-usage/organisation/organisation_crud.html">Organisations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../004-basic-usage/customer/customer_crud.html">Customers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../004-basic-usage/requirement/requirement_crud.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../004-basic-usage/requirement-item/requirement_item_crud.html">Requirement Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../004-basic-usage/kanban-board/kanban_board_crud.html">Kanban Board</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../004-basic-usage/project/project_crud.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../004-basic-usage/task/task_crud.html">Tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../004-basic-usage/sprint/sprint_crud.html">Spring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../004-basic-usage/request-for-change/request_for_change_crud.html">Request for Change</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../004-basic-usage/common-usage/index.html">Common Usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛝 Procedure</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../006-procedures/deployment/deployment.html">Deployment of NearBeach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../006-procedures/git-flow/git-flow.html">Git Flow for NearBeach</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🥋 Misc</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../007-misc/cache-busting/cache-busting.html">Cache Busting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../007-misc/fixtures/fixture-standards.html">Fixture Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../007-misc/fixtures/fixture-object-assignment.html">Fixture Object Assignment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NearBeach</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Managing Users</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/003-administration-tasks/manage-users.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="managing-users">
+<span id="manage-users"></span><h1>Managing Users<a class="headerlink" href="#managing-users" title="Link to this heading"></a></h1>
+<section id="create-new-users">
+<h2>Create New Users<a class="headerlink" href="#create-new-users" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Log into NearBeach as an administrator</p></li>
+<li><p>Choose the “Administration” option in the menu and select the “Users”</p></li>
+<li><p>The “User List” page will load</p></li>
+<li><p>Click the “Create a new User” to start creating a new user</p></li>
+</ol>
+</section>
+<section id="assigning-permissions-and-groups-to-users">
+<h2>Assigning Permissions and Groups to Users<a class="headerlink" href="#assigning-permissions-and-groups-to-users" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Log into NearBeach as an administrator</p></li>
+<li><p>Choose the “Administration” option in the menu and select the “Users”</p></li>
+<li><p>The “User List” page will load</p></li>
+<li><p>Search for the user</p></li>
+<li><p>Click on the appropriate user</p></li>
+<li><p>User information page will load</p></li>
+<li><p>Scroll to the “User List” section</p></li>
+<li><p>Click on the “Add User” button</p></li>
+<li><p>A permission modal will appear. Select the correct permission set and group. Click “Add user” to add the permission sets and groups to the user</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To annotate that the user is a team leader for that group - tick the checkbox for that group</p>
+</div>
+</section>
+<section id="removing-user-from-system">
+<h2>Removing User from system<a class="headerlink" href="#removing-user-from-system" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Log into NearBeach as an administrator</p></li>
+<li><p>Choose the “Administration” option in the menu and select the “Users”</p></li>
+<li><p>The “User List” page will load</p></li>
+<li><p>Search for the user</p></li>
+<li><p>Click on the appropriate user</p></li>
+<li><p>User information page will load</p></li>
+<li><p>Scroll to the “User List” section</p></li>
+<li><p>Remove all groups and permissions the user has. This will effectively remove them from the system. They will not be able to log into NearBeach</p></li>
+<li><p>Un-tick the “User Active” tick box and then save</p></li>
+</ol>
+<p>NearBeach does not recommend deleting users. As a delete command will cause a cascade of deletes, and will delete any object that has been modified by the user, or created by them. This will result in data loss.</p>
+<p>If the user will need to go through a deletion process, brought on by GDPR (General Data Protection Regulation), we are currently writing functionality to tackle this. The functionality will;</p>
+<ol class="arabic simple">
+<li><p>Rename the user - and remove any credentials, and reset user’s password.</p></li>
+<li><p>Profile pictures will be delete from the blob storage</p></li>
+<li><p>The system will remove any object assignments to the user</p></li>
+<li><p>The system will migrate any “Change User” or “Creation user” records to a user id of choice.</p></li>
+</ol>
+<p>The user is essentially dead information at this point, without the need of a destructive delete.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="first-time-setup.html" class="btn btn-neutral float-left" title="First Time Setup for NearBeach" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manage-groups.html" class="btn btn-neutral float-right" title="Managing Groups" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Luke Christopher Clarke.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

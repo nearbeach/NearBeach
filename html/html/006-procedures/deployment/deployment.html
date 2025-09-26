@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deployment of NearBeach &mdash; NearBeach 0.30.27 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7ee76da"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Git Flow" href="../git-flow/git-flow.html" />
+    <link rel="prev" title="Common Usage" href="../../004-basic-usage/common-usage/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NearBeach
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">🚀 About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../000-about/features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../000-about/nearbeach-flow.html">NearBeach Flow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💡 Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../001-installation/quick-install-with-docker.html">Quick Install with Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../001-installation/quick-install-with-podman.html">Quick Install with Podman</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../001-installation/different-databases/index.html">Different Databases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../001-installation/different-blob-storage/index.html">Different Blob Storage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🏸 For Developers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../002-local-development-environment-setup/index.html">Setup Local Dev Env</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🎣 For Administrators</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/first-time-setup.html">First Time Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/manage-users.html">Manage Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/manage-groups.html">Manage Groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/manage-permission-sets.html">Manage Permission Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/system-variables.html">System Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../003-administration-tasks/api.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🪀 Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../004-basic-usage/organisation/organisation_crud.html">Organisations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../004-basic-usage/customer/customer_crud.html">Customers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../004-basic-usage/requirement/requirement_crud.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../004-basic-usage/requirement-item/requirement_item_crud.html">Requirement Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../004-basic-usage/kanban-board/kanban_board_crud.html">Kanban Board</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../004-basic-usage/project/project_crud.html">Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../004-basic-usage/task/task_crud.html">Tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../004-basic-usage/sprint/sprint_crud.html">Spring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../004-basic-usage/request-for-change/request_for_change_crud.html">Request for Change</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../004-basic-usage/common-usage/index.html">Common Usage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛝 Procedure</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Deployment of NearBeach</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#initial-checks">Initial Checks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deployment-process-1">Deployment Process 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deployment-process-2">Deployment Process 2</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../git-flow/git-flow.html">Git Flow for NearBeach</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🥋 Misc</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../007-misc/cache-busting/cache-busting.html">Cache Busting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../007-misc/fixtures/fixture-standards.html">Fixture Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../007-misc/fixtures/fixture-object-assignment.html">Fixture Object Assignment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NearBeach</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Deployment of NearBeach</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/006-procedures/deployment/deployment.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="deployment-of-nearbeach">
+<h1>Deployment of NearBeach<a class="headerlink" href="#deployment-of-nearbeach" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>NearBeach uses Pypi and Docker to deploy to customers.</p>
+<p><a class="reference external" href="https://pypi.org/project/NearBeach">NearBeach on Pypi can be found here</a></p>
+<p><a class="reference external" href="https://hub.docker.com/r/robotichead/nearbeach">NearBeach on Docker can be found here</a></p>
+</div>
+<p>There are two release processes.</p>
+<p>Process 1: should be used when there is new code for NearBeach, and any library updates</p>
+<p>Process 2: should be used when there is a security issue within any of the libraries used for NearBeach. This will
+deploy an update for those libraries without sending out any new NearBeach code. aka deploy separately from the
+NearBeach deployment cycle.</p>
+<p>i.e Boto3 has a security patch, and we need to deploy</p>
+<section id="initial-checks">
+<h2>Initial Checks<a class="headerlink" href="#initial-checks" title="Link to this heading"></a></h2>
+<p>Check 1: If NearBeach requires any new Python Packages, these will need to be noted within the following locations;</p>
+<p>NearBeach Source</p>
+<ul class="simple">
+<li><p>/requirements.txt</p></li>
+<li><p>/NearBeach/requirements.txt</p></li>
+<li><p>/.github/deployment_files/template_pyproject.toml</p></li>
+</ul>
+<p>The above will make sure the Python package is installed in the Docker build of NearBeach.</p>
+<p>Check 2: Make sure Docker will build and run</p>
+<ol class="arabic simple">
+<li><p>Using a terminal, cd into the NearBeach-Docker source directory</p></li>
+<li><p>Do a simple git pull and check that you are on the correct branch</p></li>
+<li><p>Run the following command to build a local version of NearBeach <cite>docker build –no-cache –file Dockerfile –tag robotichead/nearbeach:nearbeach-local .</cite></p></li>
+<li><p>Use the docker-compose example on <a class="reference external" href="https://nearbeach.org/self-hosting/">https://nearbeach.org/self-hosting/</a> and save in an appropriate location as docker-compose.yml</p></li>
+<li><p>Using the terminal, cd to the location of the docker-compose.yml file from previous instructions</p></li>
+<li><p>Modify the NearBeach image to match the build name. <cite>image: robotichead/nearbeach:nearbeach-local</cite></p></li>
+<li><p>Using docker compose up -D you can easily test the local docker build of NearBeach</p></li>
+</ol>
+<p>Check 3: Make sure Local Code will build and run</p>
+<ol class="arabic simple">
+<li><p>Use the docker-compose example on <a class="reference external" href="https://nearbeach.org/self-hosting/">https://nearbeach.org/self-hosting/</a> and save in an appropriate location</p></li>
+<li><p>Modify the Volumes to override the NearBeach installation directory - <a class="reference external" href="https://stackoverflow.com/questions/40905761/how-do-i-mount-a-host-directory-as-a-volume-in-docker-compose">https://stackoverflow.com/questions/40905761/how-do-i-mount-a-host-directory-as-a-volume-in-docker-compose</a></p></li>
+</ol>
+<p>TODO - Finish Check 3 code</p>
+</section>
+<section id="deployment-process-1">
+<h2>Deployment Process 1<a class="headerlink" href="#deployment-process-1" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please make sure you are in a terminal, that is in the root folder of the project.</p>
+</div>
+<ol class="arabic">
+<li><p>Make sure you are on the develop branch, and all required features have been finished. i.e. merged into the develop
+branch.</p></li>
+<li><p>Run audit tools and fix any packages</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">npm audit</span>
+</pre></div>
+</div>
+</li>
+<li><p>Compile the JavaScript into production mode</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">npm run prod</span>
+</pre></div>
+</div>
+</li>
+<li><p>Implement the End to End tests using playwright</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">npm run e2e</span>
+</pre></div>
+</div>
+<p>Please note - you’ll need a default instance of NearBeach running with the fixture “NearBeach_basic_setup.json”.</p>
+</li>
+<li><p>Check all screenshots from the End to End tests</p></li>
+<li><p>Make sure the development branch has been pushed into origin. This will include the compilation of the production
+JavaScript</p></li>
+<li><p>Check CircleCI’s latest build status for the development branch. All tests should be passing. If there are any tests
+that have failed, they’ll need to be fixed before deployment.</p></li>
+<li><p>Using gitflow, we’ll create a release.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git flow release start &lt;&lt;version_number&gt;&gt;</span>
+</pre></div>
+</div>
+<p>The version number should follow the format x.y.z. More information can be found at <a class="reference external" href="https://semver.org/">https://semver.org/</a></p>
+</li>
+<li><p>Using gitflow, we’ll finish the release.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git flow release finish &lt;&lt;version_number&gt;&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Push both the dev and main branch into the origin.</p></li>
+<li><p>Go to github, and do a release in github. Currently the release from the console does not trigger the github actions.</p></li>
+<li><p>Check the github actions for NearBeach, to see if the workflows are running correctly.</p></li>
+</ol>
+</section>
+<section id="deployment-process-2">
+<h2>Deployment Process 2<a class="headerlink" href="#deployment-process-2" title="Link to this heading"></a></h2>
+<p>This process should ONLY be followed when we just want to deploy a new version of NearBeach’s core libraries without
+deploying any of the new code. i.e. separated from the development cycle.</p>
+<p>Example 1: Boto3 has a security patch, we need to release this library into NearBeach’s docker containers and get
+everyone to use the newest versions.</p>
+<ol class="arabic simple">
+<li><p>Go to <a class="reference external" href="https://github.com/NearBeach/NearBeach">https://github.com/NearBeach/NearBeach</a></p></li>
+<li><p>On the NearBeach github page, click on the “Create a new release”</p></li>
+<li><p>Appropriately fill out the tag using the version x.y.z - for more information please read <a class="reference external" href="https://semver.org/">https://semver.org/</a></p></li>
+<li><p>Fill out the rest of the information as approprately as possible. Explain why there is a release, i.e. security patch
+for external library</p></li>
+<li><p>Make sure the target is “main”</p></li>
+<li><p>Deploy the release</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../../004-basic-usage/common-usage/index.html" class="btn btn-neutral float-left" title="Common Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../git-flow/git-flow.html" class="btn btn-neutral float-right" title="Git Flow" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Luke Christopher Clarke.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
