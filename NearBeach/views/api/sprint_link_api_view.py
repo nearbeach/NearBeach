@@ -1,6 +1,4 @@
 from drf_spectacular.utils import extend_schema, OpenApiExample
-
-from NearBeach.utils.objects.object_dictionary import ObjectDictionary
 from NearBeach.views.api.sprint_api_view import SprintViewSet
 from NearBeach.models import SprintObjectAssignment, Sprint
 from NearBeach.serializers.sprint_object_serializer import SprintObjectSerializer

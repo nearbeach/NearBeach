@@ -1,7 +1,6 @@
 from django.core.serializers.json import DjangoJSONEncoder
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.db.models import F
-from django.db import connection
 
 from NearBeach.forms import GanttDataUpdateDataForm
 from NearBeach.models import (
@@ -11,9 +10,6 @@ from NearBeach.models import (
     Project,
     RequirementItem,
     Task,
-)
-from NearBeach.decorators.check_user_permissions.gantt_chart_permissions import (
-    check_gantt_chart_permissions_with_destination,
 )
 from NearBeach.decorators.check_user_permissions.object_permissions import (
     check_user_generic_permissions,

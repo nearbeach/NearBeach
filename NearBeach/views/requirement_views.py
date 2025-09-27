@@ -28,8 +28,7 @@ from NearBeach.models import (
     ListOfRequirementItemType,
     ListOfRequirementStatus,
     ListOfRequirementType,
-    Group, KanbanCard,
-)
+    Group, )
 from NearBeach.views.theme_views import get_theme
 
 import uuid
