@@ -1,7 +1,6 @@
 from collections import namedtuple
 
 from django.test import TestCase
-from django.utils import timezone
 
 from NearBeach.management.commands.runscheduler import Command
 from NearBeach.models import ScheduledObject

@@ -1,7 +1,5 @@
 from rest_framework import serializers
 
-from NearBeach.utils.objects.object_dictionary import ObjectDictionary
-
 
 class SprintObjectSerializer(serializers.Serializer):
     description = serializers.CharField(
