@@ -80,7 +80,6 @@ def add_object_to_sprint(request, destination, location_id, *args, **kwargs):
             )
             submit_object_assignment.save()
 
-    # object_results = get_object_results(location_id)
 
     results = {
         # "gantt_chart_data": json.loads(object_results),
