@@ -38,7 +38,8 @@ class ObjectAssignmentUserSerializer(serializers.ModelSerializer):
             "username",
         ]
 
-    def get_profile_picture_path(self, obj):
+    @staticmethod
+    def get_profile_picture_path(obj):
         if obj.profile_picture is None:
             return None
 

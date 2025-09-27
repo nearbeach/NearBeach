@@ -53,7 +53,8 @@ class LinkViewSet(viewsets.ModelViewSet):
     serializer_class = LinkSerializer
     http_method_names = ["get", "post", "put", "delete"]
 
-    def _get_list(self, destination, location_id):
+    @staticmethod
+    def _get_list(destination, location_id):
         # Check objects that match the destination and location id
         # Also make sure we get any meta data where the destination is not null
         object_assignment_results = ObjectAssignment.objects.filter(

@@ -22,7 +22,8 @@ from NearBeach.views.tools.internal_functions import set_object_from_destination
 class NoteViewSet(viewsets.ViewSet):
     serializer_class = NoteSerializer
 
-    def _get_list(self, request, destination, location_id):
+    @staticmethod
+    def _get_list(request, destination, location_id):
         # Get the notes dependent on the user destination and location
         note_results = ObjectNote.objects.filter(
             is_deleted=False,
