@@ -30,7 +30,6 @@ class SprintSerializer(serializers.ModelSerializer):
         required=True,
     )
     status_results = SprintStatusSerializer(
-        # many=True,
         allow_null=True,
         read_only=True,
     )

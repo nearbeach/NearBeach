@@ -145,7 +145,6 @@ class SprintViewSet(viewsets.ModelViewSet):
                 ).distinct()
            )
 
-        # orig_list.sort(key=lambda x: x.count, reverse=True)
         return results
 
     @staticmethod
@@ -153,7 +152,6 @@ class SprintViewSet(viewsets.ModelViewSet):
         # Get the status of the objects
         status_results = {}
         for destination in ["requirement_item", "project", "task"]:
-            # object = ObjectDictionary(destination)
             object = get_object_status_from_destination(destination)
             status_results[destination] = object.filter(
                 is_deleted=False,
