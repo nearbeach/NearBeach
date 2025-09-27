@@ -71,9 +71,6 @@ class ApiAdminPermissionTests(APITestCase):
                 else:
                     AssertionError("Method Not allowed in API")
 
-                if response.status_code != data.status_code:
-                    breakpoint()
-
                 self.assertEqual(response.status_code, data.status_code)
 
     def test_api_available_data(self):
