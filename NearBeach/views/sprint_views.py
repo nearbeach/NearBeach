@@ -250,7 +250,7 @@ def potential_object_list(request, sprint_id, *args, **kwargs):
     # Depending on the object, we might need to look at the parent. If an object does not have
     # A parent, it will refer itself. i.e. project will refer project
     parent = LOOKUP_FUNCS[object_lookup]["parent"]
-    object = LOOKUP_FUNCS[object_lookup]["object"]
+    current_object = LOOKUP_FUNCS[object_lookup]["object"]
     title = LOOKUP_FUNCS[object_lookup]["title"]
 
     # Get both object exclusion and inclusion
@@ -265,7 +265,7 @@ def potential_object_list(request, sprint_id, *args, **kwargs):
     )
 
     # Get the data dependent on the object lookup
-    data_results = object.filter(
+    data_results = current_object.filter(
         is_deleted=False,
         **{F"{parent}_id__in": object_inclusion},
         **{F"{title}__icontains": search}

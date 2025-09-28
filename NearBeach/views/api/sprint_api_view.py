@@ -68,8 +68,8 @@ class SprintViewSet(viewsets.ModelViewSet):
         ]
         
         for permutation in query_permutations:
-            object = ObjectDictionary(permutation.destination)
-            permutation_results = object.objects.filter(
+            current_object = ObjectDictionary(permutation.destination)
+            permutation_results = current_object.objects.filter(
                 is_deleted=False,
                 **{F"{permutation.destination}_id__in": sprint_object_assignment_results.filter(
                     **{F"{permutation.destination}_id__isnull": False}
@@ -97,15 +97,15 @@ class SprintViewSet(viewsets.ModelViewSet):
 
             permutation_results = permutation_results.annotate(
                 sprint_object_assignment_id=F("sprintobjectassignment__pk"),
-                title=F(object.title),
-                description=F(object.description),
-                status_id=F(object.status),
-                higher_order_status=F(object.higher_order_status),
+                title=F(current_object.title),
+                description=F(current_object.description),
+                status_id=F(current_object.status),
+                higher_order_status=F(current_object.higher_order_status),
                 object_type=Value(permutation.destination),
-                object_id=F(object.id),
+                object_id=F(current_object.id),
             )
 
-            if object.start_date is not None:
+            if current_object.start_date is not None:
                 permutation_results = permutation_results.annotate(
                     start_date=F(F"{permutation.destination}_start_date"),
                     end_date=F(F"{permutation.destination}_end_date"),
@@ -152,8 +152,8 @@ class SprintViewSet(viewsets.ModelViewSet):
         # Get the status of the objects
         status_results = {}
         for destination in ["requirement_item", "project", "task"]:
-            object = get_object_status_from_destination(destination)
-            status_results[destination] = object.filter(
+            current_object = get_object_status_from_destination(destination)
+            status_results[destination] = current_object.filter(
                 is_deleted=False,
             ).annotate(
                 value=F(F"{destination}_status_id"),
