@@ -114,3 +114,6 @@ class KanbanBoardSerializer(serializers.Serializer):
             fields.pop("group_list", None)
 
         return fields
+
+    def update(self, instance, validated_data):
+        pass

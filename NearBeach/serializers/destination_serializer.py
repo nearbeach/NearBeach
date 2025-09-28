@@ -10,3 +10,9 @@ class DestinationSerializer(serializers.Serializer):
     location_id = serializers.IntegerField(
         required=True,
     )
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
