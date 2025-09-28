@@ -242,7 +242,7 @@ Users will need to have the permission to delete.
         """
     )
     @check_sprint_permission_with_sprint(min_permission_level=4)
-    def destroy(self, request, pk=None, *args, **kwargs):
+    def destroy(self, request, pk, *args, **kwargs):
         serializer = SprintSerializer(
             data=request.data,
             context={"request": request}
@@ -342,7 +342,7 @@ Retrieves a single sprint.
     """
     )
     @check_sprint_permission_with_sprint(min_permission_level=1)
-    def retrieve(self, request, pk=None, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         queryset = Sprint.objects.all()
         sprint_results = get_object_or_404(
             queryset,
@@ -379,7 +379,7 @@ Updates a single sprint.
     """
     )
     @check_sprint_permission_with_sprint(min_permission_level=2)
-    def update(self, request, pk=None, *args, **kwargs):
+    def update(self, request, pk, *args, **kwargs):
         serializer = SprintSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
             return Response(

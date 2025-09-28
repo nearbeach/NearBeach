@@ -91,7 +91,7 @@ class SprintLinkViewSet(SprintViewSet):
             status=status.HTTP_201_CREATED,
         )
 
-    def destroy(self, request, pk=None, *args, **kwargs):
+    def destroy(self, request, pk, *args, **kwargs):
         self._check_sprint(kwargs)
 
         SprintObjectAssignment.objects.filter(
@@ -125,7 +125,7 @@ class SprintLinkViewSet(SprintViewSet):
     @extend_schema(
         description="""Method not used"""
     )
-    def retrieve(self, request, pk=None, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         return Response(
             status=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
@@ -133,7 +133,7 @@ class SprintLinkViewSet(SprintViewSet):
     @extend_schema(
         description="""Method not used"""
     )
-    def update(self, request, pk=None, *args, **kwargs):
+    def update(self, request, pk, *args, **kwargs):
         return Response(
             status=status.HTTP_405_METHOD_NOT_ALLOWED,
         )

@@ -184,7 +184,7 @@ Retrieves a single Request for Change.
     """
     )
     @check_user_api_permissions(min_permission_level=1)
-    def retrieve(self, request, pk=None, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         queryset = RequestForChange.objects.all()
         request_for_change_results = get_object_or_404(
             queryset,
@@ -216,7 +216,7 @@ Updates a request for change.
     """
     )
     @check_user_api_permissions(min_permission_level=2)
-    def update(self, request, pk=None, *args, **kwargs):
+    def update(self, request, pk, *args, **kwargs):
         serializer = RequestForChangeSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
             return Response(

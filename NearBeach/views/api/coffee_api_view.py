@@ -38,7 +38,7 @@ class CoffeeViewSet(viewsets.ViewSet):
         )
 
     @staticmethod
-    def update(request, pk=None, *args, **kwargs):
+    def update(_, *args, **kwargs):
         return Response(
             data={"Teapot": "Sorry, teapot can not be upgraded to coffee pot"},
             status=status.HTTP_418_IM_A_TEAPOT,
