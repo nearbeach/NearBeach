@@ -307,7 +307,7 @@ This endpoint allows you to link other objects to the current object. For exampl
         # If object destination is the same as the object type, add the meta_object value
         if destination == object_type:
             # We need to set the meta object
-            setattr(submit_object_assignment, "meta_object", row)
+            setattr(submit_object_assignment, "meta_object", object_type)
 
             # Update the status and the title with the correct data
             setattr(
