@@ -35,6 +35,5 @@ class ContabTimeTest(TestCase):
         ]
 
         for tab in tests:
-            with self.subTest(teststr=str(tab)):
-                with self.assertRaises(ValueError):
-                    tab.validate()
+            with self.subTest(teststr=str(tab)), self.assertRaises(ValueError):
+                tab.validate()
