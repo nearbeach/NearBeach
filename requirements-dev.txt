@@ -4,4 +4,6 @@ bandit
 python-dotenv
 django-storages
 pip-tools
+hypothesis[django]
+pytest
 -r ./requirements.txt
