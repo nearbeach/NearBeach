@@ -20,7 +20,7 @@ class SprintStatusSerializer(serializers.Serializer):
     )
 
     def create(self, validated_data):
-        pass
+        raise NotImplementedError()
 
     def update(self, instance, validated_data):
-        pass
+        raise NotImplementedError()

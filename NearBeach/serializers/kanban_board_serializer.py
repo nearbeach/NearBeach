@@ -116,4 +116,4 @@ class KanbanBoardSerializer(serializers.Serializer):
         return fields
 
     def update(self, instance, validated_data):
-        pass
+        raise NotImplementedError()
