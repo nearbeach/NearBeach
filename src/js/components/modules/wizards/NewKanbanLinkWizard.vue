@@ -251,6 +251,10 @@ export default {
 					label: "Requirement",
 				},
 				{
+					value: "Requirement_Item",
+					label: "Requirement Item",
+				},
+				{
 					value: "Task",
 					label: "Task",
 				},

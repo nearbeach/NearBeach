@@ -24,6 +24,7 @@ class KanbanLinkList:
                 "id": "project_id",
                 "title": "project_name",
                 "status": "project_status__project_status",
+                "parent_id": "project_id",
             },
             "objects": Project.objects,
             "title": "project_name",
@@ -33,6 +34,7 @@ class KanbanLinkList:
                 "id": "task_id",
                 "title": "task_short_description",
                 "status": "task_status__task_status",
+                "parent_id": "task_id",
             },
             "objects": Task.objects,
             "title": "task_short_description",
@@ -42,6 +44,7 @@ class KanbanLinkList:
                 "id": "requirement_id",
                 "title": "requirement_title",
                 "status": "requirement_status__requirement_status",
+                "parent_id": "requirement_id",
             },
             "objects": Requirement.objects,
             "title": "requirement_title",
@@ -51,6 +54,7 @@ class KanbanLinkList:
                 "id": "requirement_item_id",
                 "title": "requirement_item_title",
                 "status": "requirement_item_status__requirement_item_status",
+                "parent_id": "requirement_id",
             },
             "objects": RequirementItem.objects,
             "title": "requirement_item_title",
@@ -82,7 +86,8 @@ class KanbanLinkList:
             return None
 
         # shortcut variable
-        id_field = self._get_id_name(object_name)
+        id_field = self.OBJECT_SETUP[object_name]["fields"]["id"]
+        parent_id_field = self.OBJECT_SETUP[object_name]["fields"]["parent_id"]
 
         # Used to shorten the code below
         data = self.OBJECT_SETUP[object_name]
@@ -97,9 +102,9 @@ class KanbanLinkList:
 
         results = data["objects"].filter(
             is_deleted=False,
-            **{F"{id_field}__in": object_assignment_results.filter(
-                **{F"{id_field}__isnull": False}
-            ).values(F"{id_field}")}
+            **{F"{parent_id_field}__in": object_assignment_results.filter(
+                **{F"{parent_id_field}__isnull": False}
+            ).values(F"{parent_id_field}")}
         ).exclude(
             **{F"{object_name}_status__{object_name}_higher_order_status": "Closed"},
         ).annotate(
@@ -120,7 +125,7 @@ class KanbanLinkList:
                     Q(
                         **{F"{data['title']}__icontains": split_row}
                     ) | Q(
-                        **{F"{self._get_id_name(object_name)}": split_row}
+                        **{F"{id_field}": split_row}
                     )
                 )
             else:
@@ -137,7 +142,7 @@ class KanbanLinkList:
         exclude_location_id = form.cleaned_data["exclude_location_id"]
         if exclude_destination and exclude_location_id:
             # shortcut variable
-            id_field = self._get_id_name(object_name)
+            id_field = self.OBJECT_SETUP[object_name]["fields"]["id"]
 
             results = results.exclude(
                 **{F"{id_field}__in": ObjectAssignment.objects.filter(
@@ -156,10 +161,3 @@ class KanbanLinkList:
 
         # Return the results, and length of the complete data set
         return results[destination_page * SEARCH_PAGE_SIZE:(destination_page + 1) * SEARCH_PAGE_SIZE], len(results)
-
-    @staticmethod
-    def _get_id_name(object_name):
-        if object_name == "request_for_change":
-            return "rfc_id"
-
-        return F"{object_name}_id"

@@ -15,6 +15,7 @@ from NearBeach.forms import (
     UpdateRequirementItemForm,
 )
 from NearBeach.views.requirement_views import get_requirement_items
+from NearBeach.views.kanban_views import update_linked_card_information
 from NearBeach.models import (
     RequirementItem,
     ObjectAssignment,
@@ -243,6 +244,14 @@ def requirement_item_information_save(request, requirement_item_id, *args, **kwa
     ]
     requirement_item_submit.requirement_item_priority = form.cleaned_data["requirement_item_priority"]
     requirement_item_submit.save()
+
+    # Update any linked kanban cards
+    update_linked_card_information(
+        "requirement_item",
+        requirement_item_id,
+        requirement_item_submit.requirement_item_title,
+        requirement_item_submit.requirement_item_priority,
+    )
 
     # Send back an empty response
     return HttpResponse("")

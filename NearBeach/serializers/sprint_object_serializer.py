@@ -1,7 +1,5 @@
 from rest_framework import serializers
 
-from NearBeach.utils.objects.object_dictionary import ObjectDictionary
-
 
 class SprintObjectSerializer(serializers.Serializer):
     description = serializers.CharField(
@@ -50,6 +48,9 @@ class SprintObjectSerializer(serializers.Serializer):
         read_only=True,
         allow_null=True,
     )
+    
+    def create(self, validated_data):
+        raise NotImplementedError()
 
     def get_fields(self):
         fields = super().get_fields()
@@ -66,3 +67,6 @@ class SprintObjectSerializer(serializers.Serializer):
             )
 
         return fields
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()

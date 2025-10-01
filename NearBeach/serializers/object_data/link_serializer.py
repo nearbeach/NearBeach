@@ -39,6 +39,9 @@ class LinkSerializer(serializers.Serializer):
         read_only=True,
     )
 
+    def create(self, validated_data):
+        raise NotImplementedError()
+
     def get_fields(self):
         fields = super().get_fields()
 
@@ -55,6 +58,9 @@ class LinkSerializer(serializers.Serializer):
 
 
         return fields
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()
 
     class Meta(object):
         fields = (

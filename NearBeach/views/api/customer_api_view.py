@@ -78,7 +78,7 @@ Users will need to have the permission to delete.
         """
     )
     @check_user_customer_permissions(min_permission_level=4)
-    def destroy(self, request, pk=None, *args, **kwargs):
+    def destroy(self, request, pk, *args, **kwargs):
         customer = Customer.objects.get(pk=pk)
         customer.is_deleted = True
         customer.change_user = request.user
@@ -121,7 +121,7 @@ Retrieves a single customer within an organisation
         """
     )
     @check_user_customer_permissions(min_permission_level=1)
-    def retrieve(self, request, pk=None, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         # Customer Results
         customer_results = get_object_or_404(
             queryset=Customer.objects.filter(
@@ -150,7 +150,7 @@ Updates a single customer under an organisation.
     """
     )
     @check_user_customer_permissions(min_permission_level=2)
-    def update(self, request, pk=None, *args, **kwargs):
+    def update(self, request, pk, *args, **kwargs):
         serializer = CustomerSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
             return Response(

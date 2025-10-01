@@ -22,7 +22,8 @@ from NearBeach.views.tools.internal_functions import set_object_from_destination
 class NoteViewSet(viewsets.ViewSet):
     serializer_class = NoteSerializer
 
-    def _get_list(self, request, destination, location_id):
+    @staticmethod
+    def _get_list(request, destination, location_id):
         # Get the notes dependent on the user destination and location
         note_results = ObjectNote.objects.filter(
             is_deleted=False,
@@ -172,7 +173,7 @@ Deletes a single note. You can get the note id from the list
     """
     )
     @api_object_data_permissions(min_permission_level=2)
-    def destroy(self, request, pk=None, *args, **kwargs):
+    def destroy(self, request, pk, *args, **kwargs):
         serializer = NoteSerializer(
             data=request.data,
             context={"request": request}
@@ -275,7 +276,7 @@ Updates a single note under an object
     """
     )
     @api_object_data_permissions(min_permission_level=2)
-    def update(self, request, pk=None, *args, **kwargs):
+    def update(self, request, pk, *args, **kwargs):
         serializer = NoteSerializer(
             data=request.data,
             context={"request": request}

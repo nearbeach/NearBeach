@@ -162,7 +162,6 @@ export default {
     },
     components: {
 		CarbonTrashCan,
-        Modal,
         NSelect,
     },
     data() {

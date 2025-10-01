@@ -160,7 +160,7 @@ Retrieves a single project.
     """
     )
     @check_user_api_permissions(min_permission_level=1)
-    def retrieve(self, request, pk=None, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         queryset = Project.objects.filter(
             is_deleted=False,
         )
@@ -193,7 +193,7 @@ Updates a single project.
     """
     )
     @check_user_api_permissions(min_permission_level=2)
-    def update(self, request, pk=None, *args, **kwargs):
+    def update(self, request, pk, *args, **kwargs):
         serializer = ProjectSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
             return Response(

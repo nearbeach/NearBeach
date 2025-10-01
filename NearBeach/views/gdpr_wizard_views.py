@@ -305,18 +305,18 @@ def _get_customer_data(gdpr_object_id):
 
     user_action_required = {}
     data_to_be_deleted = {}
-    for object in object_list:
+    for single_object in object_list:
         # Gather the variables
-        type = object["type"]
-        object_id = object["object_id"]
-        object_status = object["object_status"]
-        object_title = object["object_title"]
-        empty_queryset = object["object"].none()
+        type = single_object["type"]
+        object_id = single_object["object_id"]
+        object_status = single_object["object_status"]
+        object_title = single_object["object_title"]
+        empty_queryset = single_object["object"].none()
 
         # Loop through the fields to get the user_action_required
-        for object_field in object["fields"]:
+        for object_field in single_object["fields"]:
             # Store the data against the type
-            empty_queryset = empty_queryset | object["object"].filter(
+            empty_queryset = empty_queryset | single_object["object"].filter(
                 Q(
                     **{F"{object_field}__icontains": first_name}
                 ) |
@@ -415,16 +415,16 @@ def _get_organisation_data(gdpr_object_id):
         "task": [],
     }
     data_to_be_deleted = {}
-    for object in object_list:
+    for single_object in object_list:
         # Gather the variables
-        type = object["type"]
-        object_id = object["object_id"]
-        object_status = object["object_status"]
-        object_title = object["object_title"]
-        empty_queryset = object["object"].none()
+        type = single_object["type"]
+        object_id = single_object["object_id"]
+        object_status = single_object["object_status"]
+        object_title = single_object["object_title"]
+        empty_queryset = single_object["object"].none()
 
         # Process the data to be deleted
-        delete_data = object["object"].annotate(
+        delete_data = single_object["object"].annotate(
             object_id=F(object_id),
             object_title=F(object_title),
             object_status=F(object_status),
@@ -537,18 +537,18 @@ def _get_user_data(gdpr_object_id):
 
     user_action_required = {}
     data_to_be_deleted = {}
-    for object in object_list:
+    for single_object in object_list:
         # Gather the variables
-        type = object["type"]
-        object_id = object["object_id"]
-        object_status = object["object_status"]
-        object_title = object["object_title"]
-        empty_queryset = object["object"].none()
+        type = single_object["type"]
+        object_id = single_object["object_id"]
+        object_status = single_object["object_status"]
+        object_title = single_object["object_title"]
+        empty_queryset = single_object["object"].none()
 
         # Loop through the fields to get the user_action_required
-        for object_field in object["fields"]:
+        for object_field in single_object["fields"]:
             # Store the data against the type
-            empty_queryset = empty_queryset | object["object"].filter(
+            empty_queryset = empty_queryset | single_object["object"].filter(
                 Q(
                     **{F"{object_field}__icontains": first_name}
                 ) |

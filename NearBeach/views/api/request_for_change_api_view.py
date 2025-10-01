@@ -13,6 +13,7 @@ from rest_framework.response import Response
 
 from NearBeach.utils.enums.request_for_change_enums import RequestForChangeStatus
 from NearBeach.views.document_views import transfer_new_object_uploads
+from django.utils import timezone
 import datetime
 
 
@@ -85,7 +86,7 @@ Create a Request for Change to help you with your deployment processes
             )
 
         # Setup the default dates for two weeks
-        default_date = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        default_date = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
         # Add two weeks onto each date
         default_date = default_date + datetime.timedelta(weeks=2)
@@ -183,7 +184,7 @@ Retrieves a single Request for Change.
     """
     )
     @check_user_api_permissions(min_permission_level=1)
-    def retrieve(self, request, pk=None, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         queryset = RequestForChange.objects.all()
         request_for_change_results = get_object_or_404(
             queryset,
@@ -215,7 +216,7 @@ Updates a request for change.
     """
     )
     @check_user_api_permissions(min_permission_level=2)
-    def update(self, request, pk=None, *args, **kwargs):
+    def update(self, request, pk, *args, **kwargs):
         serializer = RequestForChangeSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
             return Response(
@@ -232,7 +233,7 @@ Updates a request for change.
         )
 
         # Update the request for change
-        update_request_for_change.date_modified = datetime.datetime.now()
+        update_request_for_change.date_modified = timezone.now()
         update_request_for_change.change_user = request.user
         update_request_for_change = serializer.update(
             update_request_for_change,

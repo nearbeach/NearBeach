@@ -208,7 +208,7 @@ Retrieves a single kanban board.
     """
     )
     @check_user_api_permissions(min_permission_level=1)
-    def retrieve(self, request, pk=None, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         queryset = KanbanBoard.objects.all()
         kanban_board_results = get_object_or_404(
             queryset,

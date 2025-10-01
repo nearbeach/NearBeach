@@ -136,7 +136,7 @@ Retrieves a single change task.
     """
     )
     @check_user_api_permissions(min_permission_level=1)
-    def retrieve(self, request, pk=None, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         queryset = ChangeTask.objects.filter(
             is_deleted=False,
             request_for_change_id=kwargs["request_for_change_id"],
@@ -165,7 +165,7 @@ Updates a single change task under the request for change
     """
     )
     @check_user_api_permissions(min_permission_level=2)
-    def update(self, request, pk=None, *args, **kwargs):
+    def update(self, request, pk, *args, **kwargs):
         serializer = ChangeTaskSerializer(
             data=request.data,
             context={'request': request}

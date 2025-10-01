@@ -112,6 +112,10 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     elif object_lookup == "requirement":
         kanban_card_submit.requirement = data
         kanban_card_submit.kanban_card_description = data.requirement_scope
+    elif object_lookup == "requirement_item":
+        kanban_card_submit.requirement_item = data
+        kanban_card_submit.kanban_card_description = data.requirement_item_scope
+        kanban_card_submit.kanban_card_priority = data.requirement_item_priority
 
     kanban_card_submit.kanban_card_text = form.cleaned_data[object_lookup]
 
@@ -123,16 +127,17 @@ def add_kanban_link(request, kanban_board_id, object_lookup, *args, **kwargs):
     kanban_card_results = KanbanCard.objects.filter(
         kanban_card_id=kanban_card_submit.kanban_card_id
     ).values(
-       "kanban_card_description",
-       "kanban_card_id",
-       "kanban_card_priority",
-       "kanban_card_sort_number",
-       "kanban_card_text",
-       "kanban_column",
-       "kanban_level",
-       "project",
-       "requirement",
-       "task",
+        "kanban_card_description",
+        "kanban_card_id",
+        "kanban_card_priority",
+        "kanban_card_sort_number",
+        "kanban_card_text",
+        "kanban_column",
+        "kanban_level",
+        "project",
+        "requirement",
+        "requirement_item",
+        "task",
     )
     kanban_card_results = json.dumps(list(kanban_card_results), cls=DjangoJSONEncoder)
 
@@ -330,6 +335,7 @@ def kanban_information(request, kanban_board_id, *args, open_card_on_load=0, **k
         "kanban_level",
         "project",
         "requirement",
+        "requirement_item",
         "task",
         "date_created",
         "date_modified",
@@ -668,6 +674,17 @@ def update_card(request, *args, **kwargs):
     kanban_card_update.save()
 
     return HttpResponse("")
+
+# Internal Function
+def update_linked_card_information(destination, location_id, title, priority):
+    # Update the cards
+    KanbanCard.objects.filter(
+        is_deleted=False,
+        **{F"{destination}_id": location_id},
+    ).update(
+        kanban_card_text=title,
+        kanban_card_priority=priority,
+    )
 
 
 # Internal Function

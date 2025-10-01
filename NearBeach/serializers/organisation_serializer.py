@@ -24,7 +24,8 @@ class OrganisationSerializer(serializers.ModelSerializer):
     )
     organisation_profile_picture_path = serializers.SerializerMethodField()
 
-    def get_organisation_profile_picture_path(self, obj):
+    @staticmethod
+    def get_organisation_profile_picture_path(obj):
         if obj.organisation_profile_picture is None:
             return None
 

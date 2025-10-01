@@ -13,3 +13,9 @@ class StatusSerializer(serializers.Serializer):
         required=True,
         max_length=10,
     )
+
+    def create(self, validated_data):
+        raise NotImplementedError()
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()

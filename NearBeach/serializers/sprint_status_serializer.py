@@ -18,3 +18,9 @@ class SprintStatusSerializer(serializers.Serializer):
         allow_null=True,
         read_only=True,
     )
+
+    def create(self, validated_data):
+        raise NotImplementedError()
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()

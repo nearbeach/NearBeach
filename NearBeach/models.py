@@ -367,6 +367,10 @@ class Customer(models.Model):
             + self.customer_last_name
         )
 
+    class Meta:
+        verbose_name_plural = "Customers"
+        ordering = ['customer_first_name']
+
 
 class Document(models.Model):
     document_key = models.UUIDField(
@@ -600,6 +604,10 @@ class KanbanBoard(models.Model):
     def __str__(self):
         return str(self.kanban_board_name)
 
+    class Meta:
+        verbose_name_plural = "Kanban Boards"
+        ordering = ['-kanban_board_id']
+
 
 class KanbanCard(models.Model):
     kanban_card_id = models.BigAutoField(primary_key=True)
@@ -643,6 +651,12 @@ class KanbanCard(models.Model):
         null=True,
         blank=True,
     )
+    requirement_item = models.ForeignKey(
+        "RequirementItem",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     is_archived = models.BooleanField(
         default=False,
     )
@@ -657,6 +671,10 @@ class KanbanCard(models.Model):
 
     def __str__(self):
         return str(self.kanban_card_text)
+
+    class Meta:
+        verbose_name_plural = "Kanban Cards"
+        ordering = ['-kanban_card_id']
 
 
 class KanbanColumn(models.Model):
@@ -684,6 +702,10 @@ class KanbanColumn(models.Model):
     def __str__(self):
         return str(self.kanban_column_name)
 
+    class Meta:
+        verbose_name_plural = "Kanban Columns"
+        ordering = ['kanban_column_sort_number', 'kanban_column_id']
+
 
 class KanbanLevel(models.Model):
     kanban_level_id = models.BigAutoField(primary_key=True)
@@ -704,6 +726,10 @@ class KanbanLevel(models.Model):
 
     def __str__(self):
         return str(self.kanban_level_name)
+
+    class Meta:
+        verbose_name_plural = "Kanban Levels"
+        ordering = ['kanban_level_sort_number', 'kanban_level_id']
 
 
 class ListOfBugClient(models.Model):
@@ -1204,6 +1230,10 @@ class Organisation(models.Model):
     def __str__(self):
         return str(self.organisation_name)
 
+    class Meta:
+        verbose_name_plural = "Organisations"
+        ordering = ('organisation_name',)
+
 
 class PermissionSet(models.Model):
     permission_set_id = models.BigAutoField(primary_key=True)
@@ -1352,6 +1382,10 @@ class Project(models.Model):
     def __str__(self):
         return str(self.project_name)
 
+    class Meta:
+        verbose_name_plural = "Projects"
+        ordering = ['-project_id']
+
 
 class PublicLink(models.Model):
     public_link_id = models.UUIDField(
@@ -1488,6 +1522,10 @@ class RequestForChange(models.Model):
     def __str__(self):
         return str(self.rfc_title)
 
+    class Meta:
+        verbose_name_plural = "RequestForChanges"
+        ordering = ['-rfc_id']
+
 
 class RequestForChangeGroupApproval(models.Model):
     rfc_group_approval_id = models.BigAutoField(primary_key=True)
@@ -1556,6 +1594,10 @@ class Requirement(models.Model):
     def __str__(self):
         return str(self.requirement_title)
 
+    class Meta:
+        verbose_name_plural = "Requirements"
+        ordering = ['-requirement_id']
+
 
 class RequirementItem(models.Model):
     requirement_item_id = models.BigAutoField(primary_key=True)
@@ -1592,6 +1634,10 @@ class RequirementItem(models.Model):
 
     def __str__(self):
         return str(self.requirement_item_title)
+
+    class Meta:
+        verbose_name_plural = "Requirement Items"
+        ordering = ['-requirement_item_id']
 
 
 class ScheduledObject(models.Model):
@@ -1679,6 +1725,10 @@ class Sprint(models.Model):
 
     def __str__(self):
         return str(self.sprint_name)
+
+    class Meta:
+        verbose_name_plural = "Sprints"
+        ordering = ['-sprint_id']
 
 
 class SprintAuditTable(models.Model):
@@ -1859,6 +1909,10 @@ class Task(models.Model):
 
     def __str__(self):
         return str(self.task_short_description)
+
+    class Meta:
+        verbose_name_plural = "Tasks"
+        ordering = ['-task_id']
 
 
 class UserGroup(models.Model):

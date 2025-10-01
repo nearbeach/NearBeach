@@ -48,3 +48,9 @@ class GroupAndUserSerializer(serializers.Serializer):
             is_active=True,
         )
     )
+
+    def create(self, validated_data):
+        raise NotImplementedError()
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()

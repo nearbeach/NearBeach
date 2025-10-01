@@ -117,9 +117,12 @@ export default {
 			// Default search results to nothing
 			this.localSearchResults = [];
 
+			// Translate destination - rfc -> request_for_change
+			const destination = this.destination === "rfc" ? "request_for_change" : this.destination;
+
 			//Emit up the change for search
 			this.$emit("get_search_results", {
-				"array_of_objects": [this.destination],
+				"array_of_objects": [destination],
 				"destination_page": destination_page
 			});
 

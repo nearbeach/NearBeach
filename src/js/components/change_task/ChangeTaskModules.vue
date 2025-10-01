@@ -107,7 +107,6 @@
 import ChangeTaskDescription from "./modules/ChangeTaskDescription.vue";
 import ChangeTaskLinkList from "./modules/ChangeTaskLinkList.vue";
 import ChangeTaskMisc from "./modules/ChangeTaskMisc.vue"
-import ConfirmLinkDelete from "../../components/modules/wizards/ConfirmLinkDelete.vue";
 
 //Naive UI
 import { NConfigProvider } from "naive-ui";
@@ -128,7 +127,6 @@ export default {
 		ChangeTaskDescription,
 		ChangeTaskLinkList,
 		ChangeTaskMisc,
-		ConfirmLinkDelete,
     	NConfigProvider,
 	},
 	beforeMount() {

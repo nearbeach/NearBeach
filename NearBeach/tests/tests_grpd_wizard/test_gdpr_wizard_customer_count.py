@@ -1,7 +1,6 @@
 from django.apps import apps
 from django.test import TestCase, Client
 from django.urls import reverse
-from NearBeach.models import Project
 
 # Declaration of Username and Password
 username = 'admin'

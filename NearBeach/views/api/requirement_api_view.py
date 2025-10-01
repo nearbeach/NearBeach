@@ -11,11 +11,11 @@ from NearBeach.serializers.requirement_serializer import RequirementSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from NearBeach.views.document_views import transfer_new_object_uploads
-import datetime
+from django.utils import timezone
 
 
 @extend_schema(
-    tags=["Change Tasks"],
+    tags=["Requirement"],
 )
 class RequirementViewSet(viewsets.ModelViewSet):
     # Setup the queryset and serialiser class
@@ -157,7 +157,7 @@ Retrieves a single task.
     """
     )
     @check_user_api_permissions(min_permission_level=1)
-    def retrieve(self, request, pk=None, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         queryset = Requirement.objects.all()
         requirement_results = get_object_or_404(
             queryset,
@@ -190,7 +190,7 @@ Updates a single task.
     """
     )
     @check_user_api_permissions(min_permission_level=2)
-    def update(self, request, pk=None, *args, **kwargs):
+    def update(self, request, pk, *args, **kwargs):
         serializer = RequirementSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
             return Response(
@@ -208,7 +208,7 @@ Updates a single task.
 
         # Update the requirement
         update_requirement.change_user = request.user
-        update_requirement.date_modified = datetime.datetime.now()
+        update_requirement.date_modified = timezone.now()
         update_requirement = serializer.update(
             update_requirement,
             serializer.validated_data,

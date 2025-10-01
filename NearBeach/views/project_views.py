@@ -8,11 +8,12 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.template import loader
 from NearBeach.forms import NewProjectForm, ProjectForm
-from NearBeach.models import Group, ObjectAssignment, ListOfProjectStatus, KanbanCard
+from NearBeach.models import Group, ObjectAssignment, ListOfProjectStatus
 from NearBeach.views.tools.internal_functions import Project, Organisation, get_user_group_permission, get_all_groups
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.document_views import transfer_new_object_uploads
+from NearBeach.views.kanban_views import update_linked_card_information
 
 import json, uuid
 
@@ -193,14 +194,12 @@ def project_information_save(request, project_id, *args, **kwargs):
     # Save
     project_update.save()
 
-    # Find any linked cards, and update the description
-    KanbanCard.objects.filter(
-        is_deleted=False,
-        is_archived=False,
-        project_id=project_id,
-    ).update(
-        kanban_card_description=project_update.project_description,
-        kanban_card_priority=project_update.project_priority,
+    # Update Linked Kanban Cards
+    update_linked_card_information(
+        "project",
+        project_id,
+        project_update.project_name,
+        project_update.project_priority
     )
 
     return HttpResponse("")

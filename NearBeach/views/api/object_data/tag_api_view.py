@@ -122,7 +122,7 @@ Destroy a tag connected against the current object
         """,
     )
     @api_object_data_permissions(min_permission_level=2)
-    def destroy(self, request, pk=None, *args, **kwargs):
+    def destroy(self, request, pk, *args, **kwargs):
         serializer = TagSerializer(
             data=request.data,
             context={"request": request},

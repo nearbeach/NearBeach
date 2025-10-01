@@ -53,7 +53,8 @@ class LinkViewSet(viewsets.ModelViewSet):
     serializer_class = LinkSerializer
     http_method_names = ["get", "post", "put", "delete"]
 
-    def _get_list(self, destination, location_id):
+    @staticmethod
+    def _get_list(destination, location_id):
         # Check objects that match the destination and location id
         # Also make sure we get any meta data where the destination is not null
         object_assignment_results = ObjectAssignment.objects.filter(
@@ -306,7 +307,7 @@ This endpoint allows you to link other objects to the current object. For exampl
         # If object destination is the same as the object type, add the meta_object value
         if destination == object_type:
             # We need to set the meta object
-            setattr(submit_object_assignment, "meta_object", row)
+            setattr(submit_object_assignment, "meta_object", object_type)
 
             # Update the status and the title with the correct data
             setattr(
@@ -361,7 +362,7 @@ The ID for the results should be the "Object Assignment" id
         ],
     )
     @api_object_data_permissions(min_permission_level=4)
-    def destroy(self, request, pk=None, *args, **kwargs):
+    def destroy(self, request, pk, *args, **kwargs):
         # Get data from serializer
         destination = kwargs["destination"]
         location_id = kwargs["location_id"]

@@ -213,7 +213,7 @@ Retrieves a single kanban card.
     """
     )
     @check_user_api_permissions(min_permission_level=1)
-    def retrieve(self, request, pk=None, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         queryset = KanbanCard.objects.filter(
             is_deleted=False,
             kanban_board_id=kwargs["kanban_board_id"],
@@ -256,7 +256,7 @@ Both the Column/Level id's will need to exist under the current kanban board. Or
     """
     )
     @check_user_api_permissions(min_permission_level=2)
-    def update(self, request, pk=None, *args, **kwargs):
+    def update(self, request, pk, *args, **kwargs):
         serializer = KanbanCardSerializer(
             data=request.data,
             context={'request': request},

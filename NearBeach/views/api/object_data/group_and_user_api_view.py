@@ -299,7 +299,7 @@ The ID for the results should be the "Object Assignment" id
         ],
     )
     @api_object_data_permissions(min_permission_level=2)
-    def destroy(self, request, pk=None, *args, **kwargs):
+    def destroy(self, request, pk, *args, **kwargs):
         # Flat pack the variables
         destination = kwargs["destination"]
         location_id = kwargs["location_id"]

@@ -127,7 +127,7 @@ Retrieves a single requirement item.
     """
     )
     @check_user_api_permissions(min_permission_level=1)
-    def retrieve(self, request, pk=None, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         queryset = RequirementItem.objects.filter(is_deleted=False)
         requirement_item_results = get_object_or_404(
             queryset,
@@ -157,7 +157,7 @@ Updates a single requirement item under the requirement
     """
     )
     @check_user_api_permissions(min_permission_level=2)
-    def update(self, request, pk=None, *args, **kwargs):
+    def update(self, request, pk, *args, **kwargs):
         instance = self.get_object()
         if int(instance.requirement_id) != int(kwargs["requirement_id"]):
             return Response(

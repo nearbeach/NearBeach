@@ -11,7 +11,7 @@ from django.views.decorators.http import require_http_methods
 from NearBeach.forms import MyPlannerAddObjectForm, MyPlannerUpdateObjectListForm, MyPlannerDeleteUserJobForm, \
     MyPlannerGetObjectListForm
 from NearBeach.models import KanbanCard, ObjectAssignment, Project, Task, UserJob
-
+from django.utils import timezone
 import datetime
 import json
 
@@ -57,7 +57,7 @@ def get_my_planning_objects(request, delta=7):
     delta = max(delta, 1)
 
     # Get todays date
-    today = datetime.date.today()
+    today = timezone.now().date()
 
     # Get all user jobs within the next 7 days
     userjob_results = UserJob.objects.filter(

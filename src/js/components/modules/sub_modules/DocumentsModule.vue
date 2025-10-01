@@ -68,7 +68,7 @@
 				<!-- REMOVE FOLDER -->
 				<div
 					class="document--remove"
-					v-if="userLevel >= 2"
+					v-if="hasDocumentPermission"
 				>
 					<carbon-trash-can
 						v-on:click="confirmFolderDelete(folder.pk)"
@@ -102,7 +102,7 @@
 				<!-- REMOVE DOCUMENT -->
 				<div
 					class="document--remove"
-					v-if="userLevel >= 2"
+					v-if="hasDocumentPermission"
 				>
 					<carbon-trash-can
 						v-on:click="confirmFileDelete(document.document_key_id)"
@@ -112,7 +112,7 @@
 		</div>
 
 		<!-- ADD DOCUMENTS AND FOLDER BUTTON -->
-		<hr v-if="userLevel > 1 || hasDocumentPermission" />
+		<hr v-if="hasDocumentPermission" />
 		<div class="btn-group save-changes"
 			 v-if="readOnly === false"
 		>
@@ -121,7 +121,7 @@
 				type="button"
 				data-bs-toggle="dropdown"
 				aria-expanded="false"
-				v-if="userLevel > 1 || hasDocumentPermission"
+				v-if="hasDocumentPermission"
 			>
 				New Document/File
 			</button>
@@ -219,7 +219,11 @@ export default {
 			"getUserExtraPermission",
 		]),
 		hasDocumentPermission() {
-      		return this.getUserExtraPermission("document");
+			// Either the user has native permissions, or they have the extra documentation permission
+      		const condition_1 = this.getUserExtraPermission("document");
+			const condition_2 = this.userLevel >= 2;
+
+			return condition_1 || condition_2;
     	},
 	},
 	watch: {
@@ -298,8 +302,8 @@ export default {
 			confirmFolderDeleteModal.show();
 		},
 		dragDocumentStart(event, moving_document_id) {
-			//If user is read only, do nothing
-			if (this.userLevel <= 1) return;
+			// If the user does not have any permissions, just return
+			if (!this.hasDocumentPermission) return;
 
 			event.dataTransfer.setData(
 				"moving_document_id",
@@ -312,8 +316,8 @@ export default {
 			);
 		},
 		dragleaveFolder(event, folder_id) {
-			//If user is read only, do nothing
-			if (this.userLevel <= 1) return;
+			// If the user does not have any permissions, just return
+			if (!this.hasDocumentPermission) return;
 
 			//Prevent Default
 			event.preventDefault();
@@ -323,8 +327,8 @@ export default {
 			folder_object.style.backgroundColor = "";
 		},
 		dragFolderStart(event, moving_folder_id) {
-			//If user is read only, do nothing
-			if (this.userLevel <= 1) return;
+			// If the user does not have any permissions, just return
+			if (!this.hasDocumentPermission) return;
 
 			event.dataTransfer.setData(
 				"moving_folder_id",
@@ -340,8 +344,8 @@ export default {
 			//Prevent default
 			event.preventDefault();
 
-			//If user is read only, do nothing
-			if (this.userLevel <= 1) return;
+			// If the user does not have any permissions, just return
+			if (!this.hasDocumentPermission) return;
 
 			//Manipulate the background colour
 			const folder_object = document.getElementById(folder_id);
@@ -350,8 +354,8 @@ export default {
 		drop(event, folder_id) {
 			event.preventDefault();
 
-			//If user is read only, do nothing
-			if (this.userLevel <= 1) return;
+			// If the user does not have any permissions, just return
+			if (!this.hasDocumentPermission) return;
 
 			//Look up the object type and apply the correct movement
 			const object_type = event.dataTransfer.getData("object_type");

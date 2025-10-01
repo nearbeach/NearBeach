@@ -61,7 +61,7 @@ Creates a single API Key against the user
 Deletes a single API Key from a user
         """
     )
-    def destroy(self, request, pk=None, *args, **kwargs):
+    def destroy(self, request, pk, *args, **kwargs):
         extend_auth_token = ExtendsAuthToken.objects.get(pk=pk)
         extend_auth_token.delete()
         return Response(
