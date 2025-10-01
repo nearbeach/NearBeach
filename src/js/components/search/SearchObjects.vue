@@ -107,12 +107,6 @@
 			Sorry - but there are no results for this search term. Please try
 			searching for a different search term.
 		</div>
-
-		<div v-if="isCurrentlySearching"
-			 class="alert alert-info"
-		 >
-			Please wait. Searching for results.
-		</div>
 	</div>
 </template>
 
