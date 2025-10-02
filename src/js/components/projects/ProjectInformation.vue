@@ -128,6 +128,7 @@
 						<label>Story Points</label>
 						<n-input-number
 							v-model:value="projectStoryPointModel"
+							v-bind:disabled="isReadOnly"
 							placeholder="Min"
 							:min="1"
 							:max="10"
