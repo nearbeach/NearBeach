@@ -928,7 +928,7 @@ class NewScheduledObjectForm(forms.Form):
     object_description = forms.CharField()
     organisation = forms.ModelChoiceField(
         queryset=Organisation.objects.all(),
-        required=True,
+        required=False,
     )
     object_start_date = forms.DateTimeField(
         input_formats=["c"],
@@ -945,6 +945,16 @@ class NewScheduledObjectForm(forms.Form):
     uuid = forms.UUIDField(
         required=False,
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        object_type = cleaned_data.get("object_type")
+        organisation = cleaned_data.get("organisation")
+
+        if object_type != "2" and not organisation:
+            self.add_error("organisation", "Organisation is required")
+
+        return cleaned_data
 
 
 class NewSprintAssignmentForm(forms.Form):

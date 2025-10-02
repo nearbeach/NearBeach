@@ -93,11 +93,15 @@
 				<!-- STAKEHOLDER ORGANISATION -->
 				<hr/>
 				<get-stakeholders
+					v-if="objectTypeModel !== 2"
 					v-on:update_stakeholder_model="updateStakeholderModel($event)"
 					v-bind:is-dirty="v$.stakeholderModel.$dirty"
 				></get-stakeholders>
 
-                <get-kanban-settings></get-kanban-settings>
+                <get-kanban-settings
+	                v-if="objectTypeModel === 2"
+	                v-on:update_kanban_settings="updateKanbanSettings($event)"
+                ></get-kanban-settings>
 
 				<!-- START DATE & END DATE -->
 				<hr/>
@@ -280,8 +284,16 @@ export default {
             },
         };
 
-        if (this.objectTypeModel.toLowerCase() === "kanban card") {
-            //ADD CODE
+        if (this.objectTypeModel === 2) {
+			localRules.kanbanBoardModel = {
+				required,
+			}
+	        localRules.kanbanColumnModel = {
+		        required,
+	        }
+	        localRules.kanbanLevelModel = {
+		        required,
+	        }
         } else {
             localRules.stakeholderModel = {
                 required,
@@ -418,6 +430,11 @@ export default {
 
 				return condition_1 && condition_2;
 			}).length === 0;
+		},
+		updateKanbanSettings(data) {
+			this.kanbanBoardModel = data.kanbanBoardModel;
+			this.kanbanColumnModel = data.kanbanColumnModel;
+			this.kanbanLevelModel = data.kanbanLevelModel;
 		},
 		updateSchedulerFrequency(data) {
 			this.daysBeforeModel = data.daysBeforeModel;

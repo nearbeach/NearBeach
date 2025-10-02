@@ -52,6 +52,7 @@ OBJECT_HIGHER_ORDER_STATUS = (
 OBJECT_TEMPLATE_TYPE = (
     (0, "project"),
     (1, "task"),
+    (2, "kanban_card"),
 )
 
 PAGE_LAYOUT = (
