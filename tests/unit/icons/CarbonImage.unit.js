@@ -8,7 +8,7 @@ import CarbonImage from "/src/js/components/icons/CarbonImage.vue";
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('NewChangeTask.vue - rendering component', () => {
+describe('CarbonImage.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(CarbonImage, {
         props: {

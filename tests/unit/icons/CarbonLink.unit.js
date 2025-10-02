@@ -8,7 +8,7 @@ import CarbonLink from "/src/js/components/icons/CarbonLink.vue";
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('NewChangeTask.vue - rendering component', () => {
+describe('CarbonLink.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(CarbonLink, {
         props: {

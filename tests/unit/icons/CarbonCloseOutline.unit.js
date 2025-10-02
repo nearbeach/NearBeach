@@ -8,7 +8,7 @@ import CarbonCloseOutline from "/src/js/components/icons/CarbonCloseOutline.vue"
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('NewChangeTask.vue - rendering component', () => {
+describe('CarbonCloseOutline.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(CarbonCloseOutline, {
         props: {

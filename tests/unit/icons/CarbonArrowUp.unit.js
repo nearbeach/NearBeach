@@ -8,7 +8,7 @@ import CarbonArrowUp from "/src/js/components/icons/CarbonArrowUp.vue";
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('NewChangeTask.vue - rendering component', () => {
+describe('CarbonArrowUp.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(CarbonArrowUp, {
         props: {

@@ -8,7 +8,7 @@ import CarbonDocumentPdf from "/src/js/components/icons/CarbonDocumentPdf.vue";
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('NewChangeTask.vue - rendering component', () => {
+describe('CarbonDocumentPdf.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(CarbonDocumentPdf, {
         props: {

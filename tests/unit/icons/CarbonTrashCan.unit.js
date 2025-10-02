@@ -8,7 +8,7 @@ import CarbonTrashCan from "/src/js/components/icons/CarbonTrashCan.vue";
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('NewChangeTask.vue - rendering component', () => {
+describe('CarbonTrashCan.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(CarbonTrashCan, {
         props: {
