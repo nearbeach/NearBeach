@@ -96,9 +96,18 @@
 				<!-- STAKEHOLDER ORGANISATION -->
 				<hr/>
 				<stakeholder-information
+					v-if="objectTypeModel !== 2"
 					v-bind:organisation-results="organisationResults"
 					v-bind:default-stakeholder-image="defaultStakeholderImage"
 				></stakeholder-information>
+
+				<get-kanban-settings
+					v-if="objectTypeModel === 2"
+					v-bind:init-kanban-board-id="kanbanBoardModel"
+					v-bind:init-kanban-column-id="kanbanColumnModel"
+					v-bind:init-kanban-level-id="kanbanLevelModel"
+					v-on:update_kanban_settings="updateKanbanSettings($event)"
+				></get-kanban-settings>
 
 				<!-- START DATE & END DATE -->
 				<hr/>
@@ -221,6 +230,7 @@ import StakeholderInformation from "../organisations/StakeholderInformation.vue"
 //Composable
 import {useNBTheme} from "../../composables/theme/useNBTheme";
 import {useNewObjectUploadImage} from "../../composables/uploads/useNewObjectUploadImage";
+import GetKanbanSettings from "../kanban/GetKanbanSettings.vue";
 
 export default {
 	name: "ScheduledObjectInformation",
@@ -228,6 +238,7 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
+		GetKanbanSettings,
 		StakeholderInformation,
 		BetweenDates,
 		editor,
@@ -306,6 +317,9 @@ export default {
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
+			kanbanBoardModel: this.objectTemplateResults[0].object_template_json.kanban_card_setup?.kanban_board ?? 0,
+			kanbanColumnModel: this.objectTemplateResults[0].object_template_json.kanban_card_setup?.kanban_column ?? 0,
+			kanbanLevelModel: this.objectTemplateResults[0].object_template_json.kanban_card_setup?.kanban_level ?? 0,
 			objectDescriptionModel: this.objectTemplateResults[0].object_template_json.object_description,
 			objectEndDateModel: new Date(this.objectTemplateResults[0].object_template_json.object_end_date),
 			objectGroupModel: this.templateGroupResults,
@@ -320,6 +334,10 @@ export default {
 				{
 					value: 1,
 					label: "Task",
+				},
+				{
+					value: 2,
+					label: "Kanban Card",
 				},
 			],
 
@@ -343,6 +361,15 @@ export default {
 		}),
 	},
 	validations: {
+		kanbanBoardModel: {
+			required,
+		},
+		kanbanLevelModel: {
+			required,
+		},
+		kanbanColumnModel: {
+			required,
+		},
 		objectDescriptionModel: {
 			required,
 		},
@@ -407,6 +434,11 @@ export default {
 			this.objectStartDateModel = new Date(data.start_date);
 			this.objectEndDateModel = new Date(data.end_date);
 		},
+		updateKanbanSettings(data) {
+			this.kanbanBoardModel = data.kanbanBoardModel;
+			this.kanbanColumnModel = data.kanbanColumnModel;
+			this.kanbanLevelModel = data.kanbanLevelModel;
+		},
 		updateSchedulerFrequency(data) {
 			this.daysBeforeModel = data.daysBeforeModel;
 			this.dayModel = data.dayModel;
@@ -446,6 +478,14 @@ export default {
 				"object_end_date",
 				this.objectEndDateModel.toISOString()
 			);
+
+			// If the type is of kanban card - send the kanban card setup information
+			if (this.objectTypeModel === 2)
+			{
+				data_to_send.set("kanban_board", this.kanbanBoardModel);
+				data_to_send.set("kanban_column", this.kanbanColumnModel);
+				data_to_send.set("kanban_level", this.kanbanLevelModel);
+			}
 
 			// Insert a new row for each group list item
 			this.objectGroupModel.forEach((row) => {

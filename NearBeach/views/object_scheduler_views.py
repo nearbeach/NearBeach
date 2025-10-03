@@ -81,17 +81,37 @@ def new_scheduled_object_save(request, *args, **kwargs):
     form = NewScheduledObjectForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest(form.errors)
+    
+    # Get object type
+    object_type = int(form.cleaned_data["object_type"])
+
+    # Get organisation id
+    organisation = form.cleaned_data["organisation"]
+    organisation_id = organisation.organisation_id if organisation is not None else None
+
+    # Get kanban card setup
+    kanban_card_setup = {}
+    if object_type == 2: # Kanban card
+        kanban_board = form.cleaned_data["kanban_board"]
+        kanban_column = form.cleaned_data["kanban_column"]
+        kanban_level = form.cleaned_data["kanban_level"]
+
+        kanban_card_setup = {
+            "kanban_board": kanban_board.kanban_board_id,
+            "kanban_column": kanban_column.kanban_column_id,
+            "kanban_level": kanban_level.kanban_level_id,
+        }
 
     # Setup the object_json
-    organisation = form.cleaned_data["organisation"]
     object_json = json.dumps({
+        "kanban_card_setup": kanban_card_setup,
         "object_type": lookup_choice_from_key(
             OBJECT_TEMPLATE_TYPE,
             int(form.cleaned_data["object_type"]),
         ),
         "object_title": form.cleaned_data["object_title"],
         "object_description": form.cleaned_data["object_description"],
-        "object_organisation": organisation.organisation_id,
+        "object_organisation": organisation_id,
         "object_start_date": form.cleaned_data["object_start_date"],
         "object_end_date": form.cleaned_data["object_end_date"],
         "uuid": form.cleaned_data["uuid"],
@@ -191,7 +211,8 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
 
     # Get data
     scheduled_object_results = ScheduledObject.objects.filter(
-        schedule_object_id=schedule_object_id
+        schedule_object_id=schedule_object_id,
+        is_deleted=False,
     ).values(
         "schedule_object_id",
         "object_template_id",
@@ -216,9 +237,13 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
         'object_template_type',
     )
 
-    organisation_information = Organisation.objects.get(
-        organisation_id=object_template_results[0]["object_template_json"]["object_organisation"],
-    )
+    organisation_results = ""
+    organisation_id = object_template_results[0]["object_template_json"]["object_organisation"]
+    if organisation_id is not None:
+        organisation_information = Organisation.objects.get(
+            organisation_id = organisation_id,
+        )
+        organisation_results = serializers.serialize("json", [organisation_information])
 
     group_results = Group.objects.filter(
         is_deleted=False,
@@ -262,7 +287,7 @@ def scheduled_object_information(request, schedule_object_id, *args, **kwargs):
         "nearbeach_title": f"Scheduled Object {schedule_object_id}",
         "need_tinymce": True,
         "object_template_results": object_template_results,
-        "organisation_results": serializers.serialize("json", [organisation_information]),
+        "organisation_results": organisation_results,
         "scheduled_object_id": schedule_object_id,
         "scheduled_object_results": scheduled_object_results,
         "template_group_results": template_group_results,
@@ -288,19 +313,29 @@ def scheduled_object_information_save(request, schedule_object_id, *args, **kwar
     update_scheduled_object = ScheduledObject.objects.get(schedule_object_id=schedule_object_id)
     update_object_template = update_scheduled_object.object_template
 
-    # Update the object template
-    organisation_information = Organisation.objects.get(
-        organisation_id=update_object_template.object_template_json["object_organisation"],
-    )
+    # Get kanban card setup
+    object_type = form.cleaned_data["object_type"]
+    kanban_card_setup = {}
+    if int(object_type) == 2: # Kanban card
+        kanban_board = form.cleaned_data["kanban_board"]
+        kanban_column = form.cleaned_data["kanban_column"]
+        kanban_level = form.cleaned_data["kanban_level"]
+
+        kanban_card_setup = {
+            "kanban_board": kanban_board.kanban_board_id,
+            "kanban_column": kanban_column.kanban_column_id,
+            "kanban_level": kanban_level.kanban_level_id,
+        }
 
     object_json = json.dumps({
+        "kanban_card_setup": kanban_card_setup,
         "object_type": lookup_choice_from_key(
             OBJECT_TEMPLATE_TYPE,
             int(form.cleaned_data["object_type"]),
         ),
         "object_title": form.cleaned_data["object_title"],
         "object_description": form.cleaned_data["object_description"],
-        "object_organisation": organisation_information.organisation_id,
+        "object_organisation": update_object_template.object_template_json["object_organisation"],
         "object_start_date": form.cleaned_data["object_start_date"],
         "object_end_date": form.cleaned_data["object_end_date"],
         "uuid": update_object_template.object_template_json["uuid"],

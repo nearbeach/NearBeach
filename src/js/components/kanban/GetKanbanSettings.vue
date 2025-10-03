@@ -38,7 +38,7 @@
 		<div class="col-md-4">
 			<div class="form-group">
 				<label for="kanban_column">
-					Kanban Board
+					Kanban Column
 					<validation-rendering
 						v-bind:error-list="v$.kanbanBoardModel.$errors"
 					></validation-rendering>
@@ -56,7 +56,7 @@
 		<div class="col-md-4">
 			<div class="form-group">
 				<label for="kanban_board">
-					Kanban Board
+					Kanban Level
 					<validation-rendering
 						v-bind:error-list="v$.kanbanBoardModel.$errors"
 					></validation-rendering>
@@ -94,14 +94,28 @@ export default {
 	emits: [
 		"update_kanban_settings",
 	],
+	props: {
+		initKanbanBoardId: {
+			type: Number,
+			default: undefined,
+		},
+		initKanbanColumnId: {
+			type: Number,
+			default: undefined,
+		},
+		initKanbanLevelId: {
+			type: Number,
+			default: undefined,
+		},
+	},
     data() {
         return {
-            kanbanBoardModel: "",
+            kanbanBoardModel: this.initKanbanBoardId === 0 ? "" : this.initKanbanBoardId,
             kanbanBoardOptions: [],
-            kanbanLevelModel: "",
-            kanbanLevelOptions: [],
-            kanbanColumnModel: "",
+            kanbanColumnModel: this.initKanbanColumnId === 0 ? "" : this.initKanbanColumnId,
             kanbanColumnOptions: [],
+			kanbanLevelModel: this.initKanbanLevelId === 0 ? "" : this.initKanbanLevelId,
+			kanbanLevelOptions: [],
         };
     },
 	computed: {
@@ -122,6 +136,10 @@ export default {
 	},
     watch: {
         kanbanBoardModel() {
+			// Clear results
+			this.kanbanColumnModel = "";
+			this.kanbanLevelModel = "";
+
             this.fetchKanbanProperties();
 			this.updateDetails();
         },
@@ -138,21 +156,21 @@ export default {
                 `${this.rootUrl}api/v0/kanban_board/`
             ).then((response) => {
                 this.kanbanBoardOptions = response.data.results;
+
+				// If there exists data already, also get the properties
+				if (this.initKanbanBoardId > 0) {
+					this.fetchKanbanProperties();
+				}
             }).catch((error) => {
 				this.$store.dispatch("newToast", {
 					header: "Fetching Kanban List",
 					message: `Sorry, could not fetch the list of kanban board. ${error}`,
 					extra_classes: "bg-warning text-dark",
 					delay: 0,
-				})
+				});
             })
         },
         fetchKanbanProperties() {
-			// Clear results
-	        this.kanbanColumnModel = "";
-			this.kanbanLevelModel = "";
-
-	        // Get data
 			this.axios.get(
 				`${this.rootUrl}api/v0/kanban_board/${this.kanbanBoardModel}/`
 			).then(response => {
@@ -169,9 +187,9 @@ export default {
         },
         updateDetails() {
 			this.$emit("update_kanban_settings", {
-				"kanbanBoardModel": this.kanbanBoardModel,
-				"kanbanColumnModel": this.kanbanColumnModel,
-				"kanbanLevelModel": this.kanbanLevelModel,
+				"kanbanBoardModel": parseInt(this.kanbanBoardModel),
+				"kanbanColumnModel": parseInt(this.kanbanColumnModel),
+				"kanbanLevelModel": parseInt(this.kanbanLevelModel),
 			});
         },
     },

@@ -369,6 +369,14 @@ export default {
 				this.uuid,
 			);
 
+			// If the type is of kanban card - send the kanban card setup information
+			if (this.objectTypeModel === 2)
+			{
+				data_to_send.set("kanban_board", this.kanbanBoardModel);
+				data_to_send.set("kanban_column", this.kanbanColumnModel);
+				data_to_send.set("kanban_level", this.kanbanLevelModel);
+			}
+
 			// Insert a new row for each group list item
 			this.groupModel.forEach((row) => {
 				data_to_send.append("group_list", row);
