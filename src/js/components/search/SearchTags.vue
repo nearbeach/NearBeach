@@ -39,14 +39,14 @@
 				</div>
 
 				<!-- ADD NEW TAG BUTTON -->
-				<hr/>
+				<hr v-if="userLevel >= 3"/>
 				<div class="row submit-row">
 					<div class="col-md-12">
 						<a
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
 							v-on:click="addTag"
-							v-if="userLevel >= 2"
+							v-if="userLevel >= 3"
 						>Add Tag</a
 						>
 					</div>
