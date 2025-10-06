@@ -917,6 +917,24 @@ class NewScheduledObjectForm(forms.Form):
         ),
         required=True,
     )
+    kanban_board = forms.ModelChoiceField(
+        queryset=KanbanBoard.objects.filter(
+            is_deleted=False,
+        ),
+        required=False,
+    )
+    kanban_column = forms.ModelChoiceField(
+        queryset=KanbanColumn.objects.filter(
+            is_deleted=False,
+        ),
+        required=False,
+    )
+    kanban_level = forms.ModelChoiceField(
+        queryset=KanbanLevel.objects.filter(
+            is_deleted=False,
+        ),
+        required=False,
+    )
     object_type = forms.ChoiceField(
         choices=OBJECT_TEMPLATE_TYPE,
         required=True,
@@ -928,7 +946,7 @@ class NewScheduledObjectForm(forms.Form):
     object_description = forms.CharField()
     organisation = forms.ModelChoiceField(
         queryset=Organisation.objects.all(),
-        required=True,
+        required=False,
     )
     object_start_date = forms.DateTimeField(
         input_formats=["c"],
@@ -945,6 +963,28 @@ class NewScheduledObjectForm(forms.Form):
     uuid = forms.UUIDField(
         required=False,
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        object_type = cleaned_data.get("object_type")
+        organisation = cleaned_data.get("organisation")
+        kanban_board = cleaned_data.get("kanban_board")
+        kanban_column = cleaned_data.get("kanban_column")
+        kanban_level = cleaned_data.get("kanban_level")
+
+        # If object is project/task, then the organisation is required
+        if object_type != "2" and not organisation:
+            self.add_error("organisation", "Organisation is required")
+
+        # If object is kanban card, then the kanban fields are required
+        if object_type == "2" and not kanban_board:
+            self.add_error("kanban_board", "Kanban board is required")
+        if object_type == "2" and not kanban_column:
+            self.add_error("kanban_column", "Kanban column is required")
+        if object_type == "2" and not kanban_level:
+            self.add_error("kanban_level", "Kanban level is required")
+
+        return cleaned_data
 
 
 class NewSprintAssignmentForm(forms.Form):
@@ -1293,6 +1333,24 @@ class ScheduledObjectForm(forms.Form):
             ("sunday", "sunday"),
         ),
     )
+    kanban_board = forms.ModelChoiceField(
+        queryset=KanbanBoard.objects.filter(
+            is_deleted=False,
+        ),
+        required=False,
+    )
+    kanban_column = forms.ModelChoiceField(
+        queryset=KanbanColumn.objects.filter(
+            is_deleted=False,
+        ),
+        required=False,
+    )
+    kanban_level = forms.ModelChoiceField(
+        queryset=KanbanLevel.objects.filter(
+            is_deleted=False,
+        ),
+        required=False,
+    )
     number_of_repeats = forms.IntegerField(
         required=False,
     )
@@ -1340,6 +1398,23 @@ class ScheduledObjectForm(forms.Form):
     is_active = forms.BooleanField(
         required=False,
     )
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        object_type = cleaned_data.get("object_type")
+        kanban_board = cleaned_data.get("kanban_board")
+        kanban_column = cleaned_data.get("kanban_column")
+        kanban_level = cleaned_data.get("kanban_level")
+
+        # If object is kanban card, then the kanban fields are required
+        if object_type == "2" and not kanban_board:
+            self.add_error("kanban_board", "Kanban board is required")
+        if object_type == "2" and not kanban_column:
+            self.add_error("kanban_column", "Kanban column is required")
+        if object_type == "2" and not kanban_level:
+            self.add_error("kanban_level", "Kanban level is required")
+
+        return cleaned_data
 
 
 class SearchForm(forms.Form):

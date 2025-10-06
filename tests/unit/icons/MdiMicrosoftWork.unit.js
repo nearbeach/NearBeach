@@ -8,7 +8,7 @@ import MdiMicrosoftWord from "/src/js/components/icons/MdiMicrosoftWord.vue";
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('NewChangeTask.vue - rendering component', () => {
+describe('MdiMicrosoftWord.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(MdiMicrosoftWord, {
         props: {

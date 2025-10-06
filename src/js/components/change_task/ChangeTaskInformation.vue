@@ -349,7 +349,6 @@ export default {
 			//Is user has permissions <= 1 then read only
 			if (this.userLevel <= 1) {
 				this.isReadOnly = true;
-				// this.isReadOnly = true;
 			}
 
 			//If the status is not in draft - we don't want to edit

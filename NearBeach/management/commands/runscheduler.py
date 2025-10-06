@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
-from django.db.models import Q, F
+from django.db.models import Q, F, Max
 from NearBeach import event_hooks
 from django.utils import timezone
 
@@ -16,7 +16,7 @@ from NearBeach.models import (
     SCH_END_OF_THE_MONTH,
     SCH_X_DAYS_BEFORE_END_OF_THE_MONTH,
     ScheduledObject,
-    Task, Organisation, ListOfTaskStatus, ListOfProjectStatus, ObjectTemplateGroup,
+    Task, Organisation, ListOfTaskStatus, ListOfProjectStatus, ObjectTemplateGroup, KanbanCard,
 )
 
 User = get_user_model()
@@ -73,8 +73,7 @@ class Command(BaseCommand):
     def get_today():
         return timezone.now().today()
 
-    @staticmethod
-    def create_object(scheduled_object, *args, **kwargs):
+    def create_object(self, scheduled_object, *args, **kwargs):
         #TODO: Print off a log when creating these tasks/projects
 
         # Get the template
@@ -82,6 +81,25 @@ class Command(BaseCommand):
 
         # Get the correct dictionary
         object_string = template.object_template_json["object_type"]
+
+        # Use "create_kanban_card_object" for any kanban cards
+        if object_string == "kanban_card":
+            self.create_kanban_card_object(scheduled_object, template, *args, **kwargs)
+        else:
+            self.create_base_object(scheduled_object, object_string, template, *args, **kwargs)
+
+        # Update the database for the last run
+        scheduled_object.last_run = datetime.date.today()
+
+        # If scheduled object has number of repeats, we increase the run count
+        if scheduled_object.number_of_repeats >= 0:
+            scheduled_object.run_count = scheduled_object.run_count + 1
+
+        scheduled_object.save()
+
+    @staticmethod
+    def create_base_object(scheduled_object, object_string, template, *args, **kwargs):
+        # Set object dict
         object_dict = OBJECT_DICT[object_string]
 
         # Get the start and end date from the template
@@ -146,14 +164,49 @@ class Command(BaseCommand):
             )
             submit_object_assignment.save()
 
-        # Update the database for the last run
-        scheduled_object.last_run = datetime.date.today()
+    @staticmethod
+    def create_kanban_card_object(scheduled_object, template, *args, **kwargs):
+        # Flatpack variables
+        kanban_card_text = template.object_template_json["object_title"]
+        kanban_board_id = template.object_template_json["kanban_card_setup"]["kanban_board"]
+        kanban_column_id = template.object_template_json["kanban_card_setup"]["kanban_column"]
+        kanban_level_id = template.object_template_json["kanban_card_setup"]["kanban_level"]
 
-        # If scheduled object has number of repetes, we increase the run count
-        if scheduled_object.number_of_repeats >= 0:
-            scheduled_object.run_count = scheduled_object.run_count + 1
+        # Check to make sure the name is unique - otherwise place date at the end of the title
+        existing_title = len(KanbanCard.objects.filter(
+            is_deleted=False,
+            is_archived=False,
+            kanban_board_id=kanban_board_id,
+            kanban_card_text=kanban_card_text
+        )) > 0
+        if existing_title:
+            kanban_card_text = kanban_card_text[0:244] if len(kanban_card_text) > 244 else kanban_card_text
+            kanban_card_text = kanban_card_text + F" {datetime.date.today()}"
+            
+        # Get the max sort number
+        sort_array = KanbanCard.objects.filter(
+            is_deleted=False,
+            kanban_board_id=kanban_board_id,
+            kanban_column_id=kanban_column_id,
+            kanban_level_id=kanban_level_id,
+        ).annotate(
+            max=Max("kanban_card_sort_number"),
+        ).values("max")
 
-        scheduled_object.save()
+        # If there is data, we want the max results + 1, else default to 0
+        kanban_card_sort_number = sort_array.first().get("max") + 1 if len(sort_array) > 0 else 0
+
+        submit_object = KanbanCard(
+            change_user=User.objects.get(pk=1),
+            kanban_card_text=kanban_card_text,
+            kanban_card_description=template.object_template_json["object_description"],
+            kanban_board_id=kanban_board_id,
+            kanban_column_id=kanban_column_id,
+            kanban_level_id=kanban_level_id,
+            kanban_card_sort_number=kanban_card_sort_number,
+        )
+
+        submit_object.save()
 
     def run_set_day_of_the_week(self):
         # Get today's date and day of the week

@@ -93,9 +93,15 @@
 				<!-- STAKEHOLDER ORGANISATION -->
 				<hr/>
 				<get-stakeholders
+					v-if="objectTypeModel !== 2"
 					v-on:update_stakeholder_model="updateStakeholderModel($event)"
 					v-bind:is-dirty="v$.stakeholderModel.$dirty"
 				></get-stakeholders>
+
+                <get-kanban-settings
+	                v-if="objectTypeModel === 2"
+	                v-on:update_kanban_settings="updateKanbanSettings($event)"
+                ></get-kanban-settings>
 
 				<!-- START DATE & END DATE -->
 				<hr/>
@@ -148,7 +154,7 @@ import SchedulerFrequency from "./SchedulerFrequency.vue";
 
 //Validations
 import useVuelidate from "@vuelidate/core";
-import {required} from "@vuelidate/validators";
+import {required, sameAs } from "@vuelidate/validators";
 import ValidationRendering from "../validation/ValidationRendering.vue";
 
 //VueX
@@ -157,6 +163,7 @@ import { mapGetters } from "vuex";
 //Composables
 import {useNBTheme} from "../../composables/theme/useNBTheme";
 import {useNewObjectUploadImage} from "../../composables/uploads/useNewObjectUploadImage";
+import GetKanbanSettings from "../kanban/GetKanbanSettings.vue";
 
 export default {
 	name: "NewScheduledObject",
@@ -164,6 +171,7 @@ export default {
 		return {v$: useVuelidate()};
 	},
 	components: {
+        GetKanbanSettings,
 		BetweenDates,
 		editor,
 		GetStakeholders,
@@ -208,6 +216,12 @@ export default {
 			groupModel: {},
 			groupModelValidation: true,
 			displayGroupPermissionIssue: false,
+            kanbanBoardModel: "",
+            kanbanBoardOptions: [],
+            kanbanColumnModel: "",
+            kanbanColumnOptions: [],
+            kanbanLevelModel: "",
+            kanbanLevelOptions: [],
 			objectDescriptionModel: "",
 			objectEndDateModel: "",
 			objectStartDateModel: "",
@@ -222,6 +236,10 @@ export default {
 					value: 1,
 					label: "Task",
 				},
+                {
+                    value: 2,
+                    label: "Kanban Card",
+                }
 			],
 			stakeholderModel: "",
 
@@ -243,22 +261,46 @@ export default {
 			skin: "getSkin",
 		}),
 	},
-	validations: {
-		groupModel: {
-			required,
-		},
-		objectDescriptionModel: {
-			required,
-		},
-		objectTitleModel: {
-			required,
-		},
-		objectTypeModel: {
-			required,
-		},
-		stakeholderModel: {
-			required,
-		},
+	validations() {
+        // Dynamic validations depend on which object type we pick
+        const localRules = {
+            displayGroupPermissionIssue: {
+                sameAs: sameAs(false),
+            },
+            groupModel: {
+                required,
+            },
+            isFormValid: {
+                sameAs: sameAs(true),
+            },
+            objectDescriptionModel: {
+                required,
+            },
+            objectTitleModel: {
+                required,
+            },
+            objectTypeModel: {
+                required,
+            },
+        };
+
+        if (this.objectTypeModel === 2) {
+			localRules.kanbanBoardModel = {
+				required,
+			}
+	        localRules.kanbanColumnModel = {
+		        required,
+	        }
+	        localRules.kanbanLevelModel = {
+		        required,
+	        }
+        } else {
+            localRules.stakeholderModel = {
+                required,
+            }
+        }
+
+        return localRules;
 	},
 	methods: {
 		useNewObjectUploadImage,
@@ -285,7 +327,7 @@ export default {
 		},
 		async submitNewScheduledObject() {
 			const isFormCorrect = await this.v$.$validate();
-			if (!isFormCorrect || this.displayGroupPermissionIssue || !this.isFormValid) {
+			if (!isFormCorrect) {
                 //Tell the user to fix the validation issues
                 this.$store.dispatch("newToast", {
                     header: "Please check all validation",
@@ -326,6 +368,14 @@ export default {
 				"uuid",
 				this.uuid,
 			);
+
+			// If the type is of kanban card - send the kanban card setup information
+			if (this.objectTypeModel === 2)
+			{
+				data_to_send.set("kanban_board", this.kanbanBoardModel);
+				data_to_send.set("kanban_column", this.kanbanColumnModel);
+				data_to_send.set("kanban_level", this.kanbanLevelModel);
+			}
 
 			// Insert a new row for each group list item
 			this.groupModel.forEach((row) => {
@@ -388,6 +438,11 @@ export default {
 
 				return condition_1 && condition_2;
 			}).length === 0;
+		},
+		updateKanbanSettings(data) {
+			this.kanbanBoardModel = data.kanbanBoardModel;
+			this.kanbanColumnModel = data.kanbanColumnModel;
+			this.kanbanLevelModel = data.kanbanLevelModel;
 		},
 		updateSchedulerFrequency(data) {
 			this.daysBeforeModel = data.daysBeforeModel;

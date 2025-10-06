@@ -3,14 +3,14 @@ import { describe, expect, test } from "vitest";
 import {mount, VueWrapper} from "@vue/test-utils";
 
 // Import vue component
-import CarbonDocument from "/src/js/components/icons/CarbonDocument.vue";
+import CarbonConnectionFlowUsage from "/src/js/components/icons/CarbonConnectionFlowUsage.vue";
 
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('CarbonDocument.vue - rendering component', () => {
+describe('CarbonConnectionFlowUsage.vue - rendering component', () => {
     //Using mount - insert data
-    const wrapper = mount(CarbonDocument, {
+    const wrapper = mount(CarbonConnectionFlowUsage, {
         props: {
         },
     });

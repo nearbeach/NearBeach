@@ -180,7 +180,7 @@
 						<label>Requirement Item Priority</label>
 						<n-select
 							v-bind:options="priorityOptions"
-							v-bind:disabled="userLevel <= 2"
+							v-bind:disabled="userLevel <= 1"
 							v-model:value="requirementItemPriorityModel"
 						></n-select>
 					</div>
@@ -203,6 +203,7 @@
 							placeholder="Min"
 							:min="1"
 							:max="10"
+							v-bind:disabled="userLevel <= 1"
 							style="max-width: 150px;"
 						/>
 						<div v-if="requirementItemStoryPointModel > 5"

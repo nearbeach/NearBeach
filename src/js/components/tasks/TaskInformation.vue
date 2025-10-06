@@ -100,7 +100,7 @@
 						<label>Task Status</label>
 						<n-select
 							v-bind:options="statusOptions"
-							v-bind:disabled="userLevel <= 2"
+							v-bind:disabled="userLevel <= 1"
 							v-model:value="taskStatusModel"
 						></n-select>
 					</div>
@@ -108,7 +108,7 @@
 						<label>Task Priority</label>
 						<n-select
 							v-bind:options="priorityOptions"
-							v-bind:disabled="userLevel <= 2"
+							v-bind:disabled="userLevel <= 1"
 							v-model:value="taskPriorityModel"
 						></n-select>
 					</div>
@@ -138,6 +138,7 @@
 						<label>Story Points</label>
 						<n-input-number
 							v-model:value="taskStoryPointModel"
+							v-bind:disabled="userLevel <= 1"
 							placeholder="Min"
 							:min="1"
 							:max="10"

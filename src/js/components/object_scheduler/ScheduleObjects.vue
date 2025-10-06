@@ -160,8 +160,9 @@ export default {
 		},
 		getType(type) {
 			if (type === 0 || type === "0") return "Project";
+			if (type === 1 || type === "1") return "Task";
 
-			return "Task";
+			return "Kanban Card";
 		},
 	},
 	mounted() {

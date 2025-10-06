@@ -8,7 +8,7 @@ import MdiMicrosoftPowerPoint from "/src/js/components/icons/MdiMicrosoftPowerPo
 // VueX
 import { store } from "/src/js/vuex-store";
 
-describe('NewChangeTask.vue - rendering component', () => {
+describe('MdiMicrosoftPowerPoint.vue - rendering component', () => {
     //Using mount - insert data
     const wrapper = mount(MdiMicrosoftPowerPoint, {
         props: {
