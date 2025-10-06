@@ -97,6 +97,9 @@ export default {
 
 				// Remove the forced styling
 				this.cardClass = "";
+
+				// Update set of pages
+				this.setOfPages = getSetOfPages(this.currentPage, this.numberOfPages);
 			},
 			deep: true,
 		}
