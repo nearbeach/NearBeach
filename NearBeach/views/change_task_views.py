@@ -56,7 +56,7 @@ def change_task_information(request, change_task_id, *args, **kwargs):
         "change_task_results": serializers.serialize("json", [change_task_results]),
         "need_tinymce": True,
         "nearbeach_title": f"Change Task {change_task_id}",
-        "rfc_status": rfc_results.rfc_status,
+        "rfc_status": rfc_results.get_rfc_status_display(),
         "user_level": kwargs["user_level"],
         "user_list": user_list,
         "theme": get_theme(request),

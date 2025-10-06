@@ -59,10 +59,15 @@ export default {
 	},
 	methods: {
 		isDowntime() {
-			if (this.isDowntimeModel) {
-				return "Downtime Scheduled - click to remove";
+			let downtimeMessage = this.isDowntimeModel ? "Downtime Scheduled" : "No Downtime";
+
+			let appendMessage = "";
+			if (!this.isReadOnly) {
+				// Currently in edit mode - so we append an appropriate message
+				appendMessage = this.isDowntimeModel ? " - click to remove" : " - click to Schedule";
 			}
-			return "No Downtime - click to Schedule";
+
+			return downtimeMessage + appendMessage;
 		},
 		updateIsDowntime(isDowntime) {
 			this.$store.dispatch("newToast", {
