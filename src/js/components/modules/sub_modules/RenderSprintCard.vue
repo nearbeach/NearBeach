@@ -49,7 +49,7 @@ import { mapGetters } from "vuex";
 import {CarbonTrashCan} from "../../../components";
 
 //Composables
-import {useNiceDate} from "../../../composables/datetime/useNiceDate";
+import {useNiceDate} from "Composables/datetime/useNiceDate";
 
 export default {
 	name: "RenderSprintCard",

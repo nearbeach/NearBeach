@@ -13,10 +13,10 @@
 
 <script>
 //Components
-import GroupsAndUsersModule from "../modules/sub_modules/GroupsAndUsersModule.vue";
+import GroupsAndUsersModule from "Modules/sub_modules/GroupsAndUsersModule.vue";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "KanbanGroupPermissions",

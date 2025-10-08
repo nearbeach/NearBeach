@@ -79,8 +79,8 @@ import ConfirmSprintDelete from "./ConfirmSprintDelete.vue";
 import AddObjectWizard from "./AddObjectWizard.vue";
 
 //Composables
-import { useNiceDatetime } from "../../composables/datetime/useNiceDatetime";
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import { useNiceDatetime } from "Composables/datetime/useNiceDatetime";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 //Bootstrap
 import { Modal } from "bootstrap";

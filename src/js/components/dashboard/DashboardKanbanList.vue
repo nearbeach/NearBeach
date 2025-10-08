@@ -19,7 +19,7 @@
 
 <script>
 //Components
-import RenderObjectCard from "../render/RenderObjectCard.vue";
+import RenderObjectCard from "Components/render/RenderObjectCard.vue";
 
 export default {
 	name: "DashboardKanbanList",

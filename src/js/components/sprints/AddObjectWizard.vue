@@ -181,7 +181,7 @@ import { NSelect } from "naive-ui";
 //VueX
 import { mapGetters } from "vuex";
 import {DateTime} from "luxon";
-import {getSetOfPages} from "../../composables/pagintation/getSetOfPages";
+import {getSetOfPages} from "Composables/pagintation/getSetOfPages";
 
 export default {
 	name: "AddObjectWizard",

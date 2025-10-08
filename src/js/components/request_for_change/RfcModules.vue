@@ -317,14 +317,14 @@ import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
 import RfcRisk from "./tabs/RfcRisk.vue";
 // import RfcRunSheetList from "./modules/ChangeTaskList.vue";
 import RfcTestPlan from "./tabs/RfcTestPlan.vue";
-import GroupsAndUsersModule from "../modules/sub_modules/GroupsAndUsersModule.vue";
+import GroupsAndUsersModule from "Modules/sub_modules/GroupsAndUsersModule.vue";
 
 //VueX
 import {mapGetters} from "vuex";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import DeleteObject from "../modules/sub_modules/DeleteObject.vue";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import DeleteObject from "Modules/sub_modules/DeleteObject.vue";
 
 export default {
 	name: "RfcModules",

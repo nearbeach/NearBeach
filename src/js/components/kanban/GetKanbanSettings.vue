@@ -77,7 +77,7 @@
 
 <script>
 import {mapGetters} from "vuex";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 import {NSelect} from "naive-ui";
 import {required} from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";

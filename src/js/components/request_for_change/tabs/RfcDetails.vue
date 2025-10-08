@@ -91,7 +91,7 @@
 
 <script>
 import {NSelect} from "naive-ui";
-import GroupPermissions from "../../permissions/GroupPermissions.vue";
+import GroupPermissions from "Components/permissions/GroupPermissions.vue";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -99,7 +99,7 @@ import {mapGetters} from "vuex";
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
-import ValidationRendering from "../../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "RfcDetails",

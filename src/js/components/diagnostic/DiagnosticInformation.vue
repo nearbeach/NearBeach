@@ -165,7 +165,7 @@
 //Components
 import DiagnosticUpload from "./DiagnosticUploadTest.vue";
 import DiagnosticEmailTest from "./DiagnosticEmailTest.vue";
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "DiagnosticInformation",

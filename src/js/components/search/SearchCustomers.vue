@@ -46,7 +46,7 @@
 
 <script>
 //Vue Components
-import ListCustomers from "../customers/ListCustomers.vue";
+import ListCustomers from "Components/customers/ListCustomers.vue";
 
 export default {
 	name: "SearchCustomers",

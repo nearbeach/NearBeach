@@ -59,12 +59,12 @@
 import {Modal} from "bootstrap";
 
 //Components
-import NewChangeTaskLinkWizardVue from "../../modules/wizards/NewChangeTaskLinkWizard.vue";
-import SubObjectLinks from "../../modules/sub_modules/SubObjectLinks.vue";
+import NewChangeTaskLinkWizardVue from "Modules/wizards/NewChangeTaskLinkWizard.vue";
+import SubObjectLinks from "Modules/sub_modules/SubObjectLinks.vue";
 
 //VueX
 import {mapGetters} from "vuex";
-import ConfirmLinkDelete from "../../modules/wizards/ConfirmLinkDelete.vue";
+import ConfirmLinkDelete from "Modules/wizards/ConfirmLinkDelete.vue";
 
 export default {
 	name: "ChangeTaskLinkList",

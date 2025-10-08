@@ -383,7 +383,7 @@ import NewHistoryNoteWizard from "./wizards/NewHistoryNoteWizard.vue";
 import ConfirmNoteDelete from "./wizards/ConfirmNoteDelete.vue";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 import ConfirmPublicLinkDelete from "./wizards/ConfirmPublicLinkDelete.vue";
 import DeleteObject from "./sub_modules/DeleteObject.vue";
 

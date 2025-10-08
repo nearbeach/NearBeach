@@ -68,7 +68,7 @@
 //Validations
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
-import ValidationRendering from "../../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 //TinyMce
 import Editor from "@tinymce/tinymce-vue";
@@ -77,8 +77,8 @@ import Editor from "@tinymce/tinymce-vue";
 import {mapGetters} from "vuex";
 
 //Composables
-import {useNewObjectUploadImage} from "../../../composables/uploads/useNewObjectUploadImage";
-import {useUploadImage} from "../../../composables/uploads/useUploadImage";
+import {useNewObjectUploadImage} from "Composables/uploads/useNewObjectUploadImage";
+import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 export default {
 	name: "RfcDescription",

@@ -89,8 +89,8 @@ import NewPlannerObjectWizard from "./NewPlannerObjectWizard.vue";
 import {CarbonTrashCan} from "../../components";
 
 //Composables
-import { useNiceDatetime } from "../../composables/datetime/useNiceDatetime";
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import { useNiceDatetime } from "Composables/datetime/useNiceDatetime";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "MyPlanner",

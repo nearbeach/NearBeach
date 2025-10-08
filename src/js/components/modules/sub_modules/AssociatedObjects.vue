@@ -52,7 +52,7 @@
 //VueX
 import {mapGetters} from "vuex";
 
-import RenderObjectCard from "../../render/RenderObjectCard.vue";
+import RenderObjectCard from "Components/render/RenderObjectCard.vue";
 
 export default {
 	name: "AssociatedObjects",

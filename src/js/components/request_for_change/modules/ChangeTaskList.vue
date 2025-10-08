@@ -176,13 +176,13 @@
 <script>
 import {Modal} from "bootstrap";
 import ConfirmChangeTaskClosure from "./ConfirmChangeTaskClosure.vue";
-import NewChangeTask from "../../change_task/NewChangeTask.vue";
+import NewChangeTask from "Components/change_task/NewChangeTask.vue";
 
 //VueX
 import {mapGetters} from "vuex";
 
 //Composables
-import {useNiceDatetime} from "../../../composables/datetime/useNiceDatetime";
+import {useNiceDatetime} from "Composables/datetime/useNiceDatetime";
 
 export default {
 	name: "ChangeTaskList",

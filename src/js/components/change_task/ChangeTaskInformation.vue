@@ -179,7 +179,7 @@
 
 <script>
 //Widgets
-import BetweenDates from "../dates/BetweenDates.vue";
+import BetweenDates from "Components/dates/BetweenDates.vue";
 import {NSelect} from "naive-ui";
 import {Modal} from "bootstrap";
 
@@ -188,7 +188,7 @@ import {mapGetters} from "vuex";
 
 //Components
 import ConfirmChangeTaskDelete from "./modules/ConfirmChangeTaskDelete.vue";
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "ChangeTaskInformation",

@@ -64,7 +64,7 @@
 
 <script>
 import Editor from "@tinymce/tinymce-vue";
-import ListNotes from "../modules/sub_modules/ListNotes.vue";
+import ListNotes from "Modules/sub_modules/ListNotes.vue";
 
 //VueX
 import {mapGetters} from "vuex";

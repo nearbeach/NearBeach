@@ -88,18 +88,18 @@
 </template>
 
 <script>
-import BetweenDates from "../dates/BetweenDates.vue";
+import BetweenDates from "Components/dates/BetweenDates.vue";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 //Naive ui
 import { NSelect } from "naive-ui";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 
 export default {

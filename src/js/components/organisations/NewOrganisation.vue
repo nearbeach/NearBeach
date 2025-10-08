@@ -147,7 +147,7 @@ import ListOrganisations from "./ListOrganisations.vue";
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {email, maxLength, required, url} from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "NewOrganisation",

@@ -124,10 +124,10 @@ import {mapGetters} from "vuex";
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {email, maxLength, required, url} from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 //Composables
-import {useToken} from "../../composables/security/useToken";
+import {useToken} from "Composables/security/useToken";
 
 export default {
 	name: "OrganisationInformation",

@@ -75,8 +75,8 @@ import NewCustomerForm from "./NewCustomerForm.vue";
 import {NSelect} from "naive-ui";
 
 //Composable
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "NewCustomer",

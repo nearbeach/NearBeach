@@ -212,7 +212,7 @@ import {NSelect} from "naive-ui";
 import {mapGetters} from "vuex";
 
 // Composable
-import {getSetOfPages} from "../../../composables/pagintation/getSetOfPages";
+import {getSetOfPages} from "Composables/pagintation/getSetOfPages";
 
 export default {
 	name: "NewKanbanLinkWizard",

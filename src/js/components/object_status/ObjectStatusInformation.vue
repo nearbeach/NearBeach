@@ -103,7 +103,7 @@ import { Modal } from "bootstrap";
 import ObjectStatusConfirmDelete from "./ObjectStatusConfirmDelete.vue";
 import ObjectStatusModal from "./ObjectStatusModal.vue";
 import {CarbonCloseOutline} from "../../components";
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "ObjectStatusInformation",

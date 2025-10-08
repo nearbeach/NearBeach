@@ -108,7 +108,7 @@ import ConfirmPermissionDelete from "./ConfirmPermissionDelete.vue"
 import {CarbonTrashCan} from "../../components";
 
 //Composable
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "UserList",

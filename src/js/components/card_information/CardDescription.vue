@@ -69,7 +69,7 @@ import Editor from "@tinymce/tinymce-vue";
 //VueX
 import {mapGetters} from "vuex";
 
-import {useUploadImage} from "../../composables/uploads/useUploadImage";
+import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 export default {
 	name: "CardDescription",

@@ -70,10 +70,10 @@
 import {Modal} from "bootstrap";
 
 //Composable
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 //Components
-import ConfirmDeleteObject from "../modules/wizards/ConfirmDeleteObject.vue";
+import ConfirmDeleteObject from "Modules/wizards/ConfirmDeleteObject.vue";
 
 export default {
 	name: "KanbanDangerZone",

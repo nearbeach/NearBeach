@@ -150,7 +150,7 @@ import {Modal} from "bootstrap";
 import {NSelect} from "naive-ui";
 import {mapGetters} from "vuex";
 import {CarbonTrashCan} from "../../components";
-import {useNiceDatetime} from "../../composables/datetime/useNiceDatetime";
+import {useNiceDatetime} from "Composables/datetime/useNiceDatetime";
 
 export default {
     name: "UserApiList",

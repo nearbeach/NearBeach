@@ -306,7 +306,7 @@ import ConfirmPermissionSetDelete from "./ConfirmPermissionSetDelete.vue";
 import { Modal } from "bootstrap";
 
 //Composable
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "PermissionInformation",

@@ -80,4 +80,11 @@ module.exports = {
         path: path.resolve(__dirname, 'NearBeach/static/NearBeach'),
         filename: '[name].min.js'
     },
+    resolve: {
+        alias: {
+            Components: path.resolve(__dirname, 'src/js/components/'),
+            Composables: path.resolve(__dirname, 'src/js/composables/'),
+            Modules: path.resolve(__dirname, 'src/js/components/modules/'),
+        }
+    }
 };

@@ -68,13 +68,13 @@ import {DateTime} from "luxon";
 
 
 //Components
-import ConfirmObjectRemove from "../modules/wizards/ConfirmObjectRemove.vue";
+import ConfirmObjectRemove from "Modules/wizards/ConfirmObjectRemove.vue";
 import RenderGanttDaysHeader from "./RenderGanttDaysHeader.vue";
 import RenderGanttMonthlyHeader from "./RenderGanttMonthlyHeader.vue";
 import RenderBlankGanttRow from "./RenderBlankGanttRow.vue";
 
 //Composable
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 import RenderGanttGroup from "./RenderGanttGroup.vue";
 
 export default {

@@ -220,13 +220,13 @@ import CardDetails from "./CardDetails.vue";
 import CardNotes from "./CardNotes.vue";
 import CardDescription from "./CardDescription.vue";
 import CardUsers from "./CardUsers.vue";
-import DocumentsModule from '../modules/sub_modules/DocumentsModule.vue';
-import ListPublicLinks from "../modules/sub_modules/ListPublicLinks.vue";
+import DocumentsModule from 'Modules/sub_modules/DocumentsModule.vue';
+import ListPublicLinks from "Modules/sub_modules/ListPublicLinks.vue";
 
 //VueX
 import {mapGetters} from "vuex";
 
-import ListTagsModule from "../modules/sub_modules/ListTagsModule.vue";
+import ListTagsModule from "Modules/sub_modules/ListTagsModule.vue";
 
 export default {
 	name: "CardInformation",

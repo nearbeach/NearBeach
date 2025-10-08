@@ -171,7 +171,7 @@ import {NSelect} from "naive-ui";
 import {mapGetters} from "vuex";
 
 // Composibales
-import { getSetOfPages } from "../../../composables/pagintation/getSetOfPages";
+import { getSetOfPages } from "Composables/pagintation/getSetOfPages";
 
 export default {
 	name: "NewRequirementLinkWizard",

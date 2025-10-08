@@ -47,7 +47,7 @@ import {NDatePicker} from "naive-ui";
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 //VueX
 import { mapGetters } from "vuex";

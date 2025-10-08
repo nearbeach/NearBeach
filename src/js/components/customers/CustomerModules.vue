@@ -80,12 +80,12 @@
 </template>
 
 <script>
-import AssociatedObjects from "../modules/sub_modules/AssociatedObjects.vue";
+import AssociatedObjects from "Modules/sub_modules/AssociatedObjects.vue";
 import { mapGetters } from "vuex";
 
 //Composable
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import DeleteObject from "../modules/sub_modules/DeleteObject.vue";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import DeleteObject from "Modules/sub_modules/DeleteObject.vue";
 
 export default {
 	name: "CustomerModule",

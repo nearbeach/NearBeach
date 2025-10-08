@@ -102,7 +102,7 @@ import PublicCardInformation from "./public_card_information.vue"
 import { Modal } from "bootstrap";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 export default {
 	name: "PublicKanbanBoard",
 	components: {

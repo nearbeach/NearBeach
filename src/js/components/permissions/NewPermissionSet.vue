@@ -63,10 +63,10 @@ import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 
 //Components
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 //Composable
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "NewPermissionSet",

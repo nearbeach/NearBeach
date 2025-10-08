@@ -115,18 +115,18 @@
 <script>
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 import Editor from "@tinymce/tinymce-vue";
-import BetweenDates from "../dates/BetweenDates.vue";
-import GroupPermissions from "../permissions/GroupPermissions.vue";
-import GetStakeholders from "../organisations/GetStakeholders.vue";
+import BetweenDates from "Components/dates/BetweenDates.vue";
+import GroupPermissions from "Components/permissions/GroupPermissions.vue";
+import GetStakeholders from "Components/organisations/GetStakeholders.vue";
 
 //VueX
 import { mapGetters } from "vuex";
 
 //Composables
-import { useNewObjectUploadImage } from "../../composables/uploads/useNewObjectUploadImage";
-import { useNBTheme } from "../../composables/theme/useNBTheme";
+import { useNewObjectUploadImage } from "Composables/uploads/useNewObjectUploadImage";
+import { useNBTheme } from "Composables/theme/useNBTheme";
 
 export default {
 	name: "NewTask",

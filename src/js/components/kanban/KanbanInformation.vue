@@ -173,27 +173,27 @@ import {mapGetters} from "vuex";
 import {NSwitch} from "naive-ui";
 
 //Components
-import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
-import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
-import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
-import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
-import ConfirmFolderDelete from "../modules/wizards/ConfirmFolderDelete.vue";
-import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
-import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
-import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
-import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
-import AddUserToCard from "../card_information/AddUserToCard.vue";
+import UploadDocumentWizard from "Modules/wizards/UploadDocumentWizard.vue";
+import AddFolderWizard from "Modules/wizards/AddFolderWizard.vue";
+import AddLinkWizard from "Modules/wizards/AddLinkWizard.vue";
+import ConfirmFileDeleteVue from "Modules/wizards/ConfirmFileDelete.vue";
+import ConfirmFolderDelete from "Modules/wizards/ConfirmFolderDelete.vue";
+import EditHistoryNoteWizard from "Modules/wizards/EditHistoryNoteWizard.vue";
+import NewHistoryNoteWizard from "Modules/wizards/NewHistoryNoteWizard.vue";
+import ConfirmNoteDelete from "Modules/wizards/ConfirmNoteDelete.vue";
+import AddTagWizard from "Modules/wizards/AddTagWizard.vue";
+import AddUserToCard from "Components/card_information/AddUserToCard.vue";
 import ArchiveCards from "./ArchiveCards.vue";
 import BlockedNotesModal from "./BlockedNotesModal.vue";
 import KanbanBoard from "./KanbanBoard.vue";
-import NewKanbanCard from "../modules/wizards/NewKanbanCard.vue";
-import CardInformation from "../card_information/CardInformation.vue";
-import NewKanbanLinkWizard from "../modules/wizards/NewKanbanLinkWizard.vue";
+import NewKanbanCard from "Modules/wizards/NewKanbanCard.vue";
+import CardInformation from "Components/card_information/CardInformation.vue";
+import NewKanbanLinkWizard from "Modules/wizards/NewKanbanLinkWizard.vue";
 import ConfirmCardArchive from "./ConfirmCardArchive.vue";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import ConfirmPublicLinkDelete from "../modules/wizards/ConfirmPublicLinkDelete.vue";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import ConfirmPublicLinkDelete from "Modules/wizards/ConfirmPublicLinkDelete.vue";
 
 export default {
 	name: "KanbanInformation",
