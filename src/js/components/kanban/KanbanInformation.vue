@@ -129,12 +129,12 @@
 			<confirm-note-delete></confirm-note-delete>
 
 			<add-folder-wizard
-				v-bind:location-id="locationId"
+				v-bind:location-id="cardId"
 				destination="kanban_card"
 			></add-folder-wizard>
 
 			<add-link-wizard
-				v-bind:location-id="locationId"
+				v-bind:location-id="cardId"
 				destination="kanban_card"
 			></add-link-wizard>
 
