@@ -9,7 +9,6 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, 'src'),
             'Components': path.resolve(__dirname, 'src/js/components'),
             'Composables': path.resolve(__dirname, 'src/js/composables'),
             'Modules': path.resolve(__dirname, 'src/js/components/modules'),
