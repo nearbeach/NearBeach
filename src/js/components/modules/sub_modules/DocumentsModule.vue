@@ -482,7 +482,7 @@ export default {
 			}
 
 			this.axios.post(
-				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/update_document/`,
+				`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/update_document/`,
 				data_to_send,
 			).catch(error => {
 				this.$store.dispatch("newToast", {
@@ -515,7 +515,7 @@ export default {
 			}
 
 			this.axios.post(
-				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/update_folder/`,
+				`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/update_folder/`,
 				data_to_send,
 			).catch(error => {
 				this.$store.dispatch("newToast", {
