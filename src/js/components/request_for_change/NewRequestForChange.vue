@@ -103,8 +103,8 @@ import RfcImplementationPlan from "./tabs/RfcImplementationPlan.vue";
 import RfcWizard from "./RfcWizard.vue";
 
 //Composable
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import {useReplaceIncorrectImageUrl} from "../../composables/uploads/useReplaceIncorrectImageUrl";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import {useReplaceIncorrectImageUrl} from "Composables/uploads/useReplaceIncorrectImageUrl";
 
 export default {
 	name: "NewRequestForChange",

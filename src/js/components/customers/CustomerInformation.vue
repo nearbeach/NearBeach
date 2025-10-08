@@ -122,16 +122,16 @@
 
 <script>
 import {NButton, NSelect, NUpload} from "naive-ui";
-import StakeholderInformation from "../organisations/StakeholderInformation.vue";
+import StakeholderInformation from "Components/organisations/StakeholderInformation.vue";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, email} from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue"
+import ValidationRendering from "Components/validation/ValidationRendering.vue"
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import {useToken} from "../../composables/security/useToken";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import {useToken} from "Composables/security/useToken";
 
 export default {
 	name: "CustomerInformation",

@@ -45,7 +45,7 @@
 import {mapGetters} from "vuex";
 
 //Composables
-import {useNiceDatetime} from "../../composables/datetime/useNiceDatetime";
+import {useNiceDatetime} from "Composables/datetime/useNiceDatetime";
 
 export default {
 	name: "RenderObjectCardCheckbox",

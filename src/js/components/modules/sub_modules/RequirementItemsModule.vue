@@ -57,7 +57,7 @@ import {Modal} from "bootstrap";
 
 //Components
 import NewRequirementItemWizard from "../wizards/NewRequirementItemWizard.vue";
-import RenderObjectCard from "../../render/RenderObjectCard.vue";
+import RenderObjectCard from "Components/render/RenderObjectCard.vue";
 
 //VueX
 import {mapGetters} from "vuex";

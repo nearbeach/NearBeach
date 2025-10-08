@@ -86,7 +86,7 @@ import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "KanbanEditBoard",

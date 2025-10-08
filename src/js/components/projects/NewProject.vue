@@ -117,20 +117,20 @@
 import Editor from "@tinymce/tinymce-vue";
 
 //Components
-import BetweenDates from "../dates/BetweenDates.vue";
-import GroupPermissions from "../permissions/GroupPermissions.vue";
-import GetStakeholders from "../organisations/GetStakeholders.vue";
+import BetweenDates from "Components/dates/BetweenDates.vue";
+import GroupPermissions from "Components/permissions/GroupPermissions.vue";
+import GetStakeholders from "Components/organisations/GetStakeholders.vue";
 
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 //VueX
 import { mapGetters } from "vuex";
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import {useNewObjectUploadImage} from "../../composables/uploads/useNewObjectUploadImage";
-import {useReplaceIncorrectImageUrl} from "../../composables/uploads/useReplaceIncorrectImageUrl";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import {useNewObjectUploadImage} from "Composables/uploads/useNewObjectUploadImage";
+import {useReplaceIncorrectImageUrl} from "Composables/uploads/useReplaceIncorrectImageUrl";
 
 export default {
 	name: "NewProject",

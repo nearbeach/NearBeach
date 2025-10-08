@@ -49,8 +49,8 @@
 import {Modal} from "bootstrap";
 
 //Components
-import CarbonInformation from "../icons/CarbonInformation.vue"
-import CarbonLink from "../icons/CarbonLink.vue"
+import CarbonInformation from "Components/icons/CarbonInformation.vue"
+import CarbonLink from "Components/icons/CarbonLink.vue"
 
 
 //VUEX MAP GETTERS

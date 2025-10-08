@@ -246,12 +246,12 @@ import {mapGetters} from "vuex";
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 import {CarbonEmail, CarbonLink} from "../../components";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import {useUploadImage} from "../../composables/uploads/useUploadImage";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 
 export default {

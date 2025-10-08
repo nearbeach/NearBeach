@@ -106,15 +106,15 @@
 
 <script>
 import KanbanPropertyOrder from "./KanbanPropertyOrder.vue";
-import GroupPermissions from "../permissions/GroupPermissions.vue";
+import GroupPermissions from "Components/permissions/GroupPermissions.vue";
 
 // Validation
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "NewKanban",

@@ -147,23 +147,23 @@
 //Components
 import editor from "@tinymce/tinymce-vue";
 import { NSelect, NConfigProvider } from "naive-ui";
-import BetweenDates from "../dates/BetweenDates.vue";
-import GetStakeholders from "../organisations/GetStakeholders.vue";
-import GroupPermissions from "../permissions/GroupPermissions.vue";
+import BetweenDates from "Components/dates/BetweenDates.vue";
+import GetStakeholders from "Components/organisations/GetStakeholders.vue";
+import GroupPermissions from "Components/permissions/GroupPermissions.vue";
 import SchedulerFrequency from "./SchedulerFrequency.vue";
 
 //Validations
 import useVuelidate from "@vuelidate/core";
 import {required, sameAs } from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 //VueX
 import { mapGetters } from "vuex";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import {useNewObjectUploadImage} from "../../composables/uploads/useNewObjectUploadImage";
-import GetKanbanSettings from "../kanban/GetKanbanSettings.vue";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import {useNewObjectUploadImage} from "Composables/uploads/useNewObjectUploadImage";
+import GetKanbanSettings from "Components/kanban/GetKanbanSettings.vue";
 
 export default {
 	name: "NewScheduledObject",

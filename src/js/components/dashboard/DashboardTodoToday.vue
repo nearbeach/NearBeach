@@ -40,7 +40,7 @@
 
 <script>
 //Composables
-import {useNiceDatetime} from "../../composables/datetime/useNiceDatetime";
+import {useNiceDatetime} from "Composables/datetime/useNiceDatetime";
 
 export default {
 	name: "DashboardTodoToday",

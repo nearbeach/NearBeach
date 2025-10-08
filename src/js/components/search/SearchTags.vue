@@ -74,7 +74,7 @@ import {Modal} from "bootstrap";
 
 //Components
 import EditTagModal from "../tags/EditTagModal.vue";
-import CarbonInformation from "../icons/CarbonInformation.vue";
+import CarbonInformation from "Components/icons/CarbonInformation.vue";
 
 export default {
 	name: "SearchTags",

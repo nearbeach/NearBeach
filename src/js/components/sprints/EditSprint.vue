@@ -71,10 +71,10 @@
 
 <script>
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 //Components
-import BetweenDates from "../dates/BetweenDates.vue";
+import BetweenDates from "Components/dates/BetweenDates.vue";
 
 //NaiveUi
 import {NSelect} from "naive-ui";

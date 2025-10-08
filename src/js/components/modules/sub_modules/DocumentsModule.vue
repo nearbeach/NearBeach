@@ -162,14 +162,14 @@
 import {Modal} from "bootstrap";
 
 //Icons
-import CarbonArrowUp from "../../icons/CarbonArrowUp.vue";
-import CarbonDocument from "../../icons/CarbonDocument.vue";
-import CarbonDocumentPdf from "../../icons/CarbonDocumentPdf.vue"
-import CarbonFolder from "../../icons/CarbonFolder.vue";
-import CarbonImage from "../../icons/CarbonImage.vue";
-import MdiMicrosoftExcel from "../../icons/MdiMicrosoftExcel.vue";
-import MdiMicrosoftPowerPoint from "../../icons/MdiMicrosoftPowerPoint.vue";
-import MdiMicrosoftWord from "../../icons/MdiMicrosoftWord.vue";
+import CarbonArrowUp from "Components/icons/CarbonArrowUp.vue";
+import CarbonDocument from "Components/icons/CarbonDocument.vue";
+import CarbonDocumentPdf from "Components/icons/CarbonDocumentPdf.vue"
+import CarbonFolder from "Components/icons/CarbonFolder.vue";
+import CarbonImage from "Components/icons/CarbonImage.vue";
+import MdiMicrosoftExcel from "Components/icons/MdiMicrosoftExcel.vue";
+import MdiMicrosoftPowerPoint from "Components/icons/MdiMicrosoftPowerPoint.vue";
+import MdiMicrosoftWord from "Components/icons/MdiMicrosoftWord.vue";
 
 //VueX
 import {mapGetters} from "vuex";
@@ -482,7 +482,7 @@ export default {
 			}
 
 			this.axios.post(
-				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/update_document/`,
+				`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/update_document/`,
 				data_to_send,
 			).catch(error => {
 				this.$store.dispatch("newToast", {
@@ -515,7 +515,7 @@ export default {
 			}
 
 			this.axios.post(
-				`${this.rootUrl}documentation/${this.destination}/${this.locationId}/update_folder/`,
+				`${this.rootUrl}documentation/${this.getDestination()}/${this.getLocationId()}/update_folder/`,
 				data_to_send,
 			).catch(error => {
 				this.$store.dispatch("newToast", {

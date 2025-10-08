@@ -69,7 +69,7 @@ import { mapGetters } from "vuex";
 import PublicRequirementItemInformation from "./public_requirement_item_information.vue";
 
 //Composables
-import {useNiceDatetime} from "../../composables/datetime/useNiceDatetime";
+import {useNiceDatetime} from "Composables/datetime/useNiceDatetime";
 
 export default {
 	name: "PublicRequirementItemList",

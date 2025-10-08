@@ -54,7 +54,7 @@
 import { mapGetters } from "vuex";
 
 //Composables
-import {useRandomID} from "../../composables/security/useRandomID";
+import {useRandomID} from "Composables/security/useRandomID";
 
 export default {
 	name: "DiagnosticUpload",

@@ -118,7 +118,7 @@ import { Modal, Tooltip } from "bootstrap";
 
 //Datetime
 import { DateTime } from "luxon";
-import CarbonDragVertical from "../icons/CarbonDragVertical.vue";
+import CarbonDragVertical from "Components/icons/CarbonDragVertical.vue";
 
 export default {
 	name: "RenderGanttRow",

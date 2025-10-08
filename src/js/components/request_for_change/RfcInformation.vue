@@ -275,7 +275,7 @@
 
 <script>
 import RfcDescription from "./tabs/RfcDescription.vue";
-import UpdateChangeLead from "../modules/wizards/UpdateChangeLead.vue"
+import UpdateChangeLead from "Modules/wizards/UpdateChangeLead.vue"
 import {NSelect, NDatePicker} from "naive-ui";
 import {mapGetters} from "vuex";
 import {Modal} from "bootstrap";
@@ -283,12 +283,12 @@ import {Modal} from "bootstrap";
 //Validation
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 //Composables
-import { useNiceDatetimeFromInt } from "../../composables/datetime/useNiceDatetimeFromInt";
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import {useDisableDate} from "../../composables/datetime/useDisableDate";
+import { useNiceDatetimeFromInt } from "Composables/datetime/useNiceDatetimeFromInt";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import {useDisableDate} from "Composables/datetime/useDisableDate";
 
 export default {
 	name: "RfcInformation",

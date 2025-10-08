@@ -24,7 +24,7 @@ import {Modal} from "bootstrap";
 
 //Vuex components
 import {mapGetters} from "vuex";
-import RenderUserCardList from "../render/RenderUserCardList.vue";
+import RenderUserCardList from "Components/render/RenderUserCardList.vue";
 
 export default {
 	name: "CardUsers",

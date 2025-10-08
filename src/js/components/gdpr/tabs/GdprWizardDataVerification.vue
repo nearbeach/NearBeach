@@ -116,8 +116,8 @@
 import { mapGetters } from "vuex";
 
 // Components
-import RenderObjectCard from "../../render/RenderObjectCard.vue";
-import RenderObjectCardCheckbox from "../../render/RenderObjectCardCheckbox.vue";
+import RenderObjectCard from "Components/render/RenderObjectCard.vue";
+import RenderObjectCardCheckbox from "Components/render/RenderObjectCardCheckbox.vue";
 
 export default {
 	name: "GdprWizardDataVerification",

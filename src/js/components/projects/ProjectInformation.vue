@@ -175,8 +175,8 @@
 
 <script>
 import {NSelect, NInputNumber} from "naive-ui";
-import BetweenDates from "../dates/BetweenDates.vue";
-import StakeholderInformation from "../organisations/StakeholderInformation.vue";
+import BetweenDates from "Components/dates/BetweenDates.vue";
+import StakeholderInformation from "Components/organisations/StakeholderInformation.vue";
 import Editor from "@tinymce/tinymce-vue";
 
 //VueX
@@ -185,11 +185,11 @@ import {mapGetters} from "vuex";
 //Validations
 import useVuelidate from "@vuelidate/core";
 import {required, maxLength} from "@vuelidate/validators";
-import ValidationRendering from "../validation/ValidationRendering.vue";
+import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import {useUploadImage} from "../../composables/uploads/useUploadImage";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 export default {
 	name: "ProjectInformation",

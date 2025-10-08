@@ -46,7 +46,7 @@
 
 <script>
 //Vue Components
-import ListOrganisations from "../organisations/ListOrganisations.vue";
+import ListOrganisations from "Components/organisations/ListOrganisations.vue";
 
 export default {
 	name: "SearchOrganisations",

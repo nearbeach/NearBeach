@@ -255,24 +255,24 @@
 import {Modal} from "bootstrap";
 
 //Components
-import CustomersListModule from "../modules/sub_modules/CustomersListModule.vue";
-import ListTagsModule from "../modules/sub_modules/ListTagsModule.vue";
-import NewCustomerModal from "../customers/NewCustomerModal.vue";
-import NotesModule from "../modules/sub_modules/NotesModule.vue";
-import AssociatedObjects from "../modules/sub_modules/AssociatedObjects.vue";
-import DocumentsModule from "../modules/sub_modules/DocumentsModule.vue";
-import ConfirmFileDeleteVue from "../modules/wizards/ConfirmFileDelete.vue";
-import UploadDocumentWizard from "../modules/wizards/UploadDocumentWizard.vue";
-import AddLinkWizard from "../modules/wizards/AddLinkWizard.vue";
-import AddFolderWizard from "../modules/wizards/AddFolderWizard.vue";
-import EditHistoryNoteWizard from "../modules/wizards/EditHistoryNoteWizard.vue";
-import NewHistoryNoteWizard from "../modules/wizards/NewHistoryNoteWizard.vue";
-import ConfirmNoteDelete from "../modules/wizards/ConfirmNoteDelete.vue";
-import AddTagWizard from "../modules/wizards/AddTagWizard.vue";
-import DeleteObject from "../modules/sub_modules/DeleteObject.vue";
+import CustomersListModule from "Modules/sub_modules/CustomersListModule.vue";
+import ListTagsModule from "Modules/sub_modules/ListTagsModule.vue";
+import NewCustomerModal from "Components/customers/NewCustomerModal.vue";
+import NotesModule from "Modules/sub_modules/NotesModule.vue";
+import AssociatedObjects from "Modules/sub_modules/AssociatedObjects.vue";
+import DocumentsModule from "Modules/sub_modules/DocumentsModule.vue";
+import ConfirmFileDeleteVue from "Modules/wizards/ConfirmFileDelete.vue";
+import UploadDocumentWizard from "Modules/wizards/UploadDocumentWizard.vue";
+import AddLinkWizard from "Modules/wizards/AddLinkWizard.vue";
+import AddFolderWizard from "Modules/wizards/AddFolderWizard.vue";
+import EditHistoryNoteWizard from "Modules/wizards/EditHistoryNoteWizard.vue";
+import NewHistoryNoteWizard from "Modules/wizards/NewHistoryNoteWizard.vue";
+import ConfirmNoteDelete from "Modules/wizards/ConfirmNoteDelete.vue";
+import AddTagWizard from "Modules/wizards/AddTagWizard.vue";
+import DeleteObject from "Modules/sub_modules/DeleteObject.vue";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "OrganisationModules",

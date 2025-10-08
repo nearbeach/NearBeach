@@ -55,7 +55,7 @@
 import {mapGetters} from "vuex";
 
 //Composers
-import {useReopenCardInformation} from "../../../composables/card_information/useReopenCardinformation";
+import {useReopenCardInformation} from "Composables/card_information/useReopenCardinformation";
 
 export default {
 	name: "confirmPublicLinkDelete",

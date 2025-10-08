@@ -73,7 +73,7 @@ import { Modal } from "bootstrap";
 import ConfirmGroupDelete from "./ConfirmGroupDelete.vue";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "GroupInformation",

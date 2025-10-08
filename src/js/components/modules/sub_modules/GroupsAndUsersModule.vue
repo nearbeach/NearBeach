@@ -114,7 +114,7 @@ import ConfirmUserDelete from "../wizards/ConfirmUserDelete.vue";
 import {mapGetters} from "vuex";
 
 //Components
-import RenderUserCardList from "../../render/RenderUserCardList.vue";
+import RenderUserCardList from "Components/render/RenderUserCardList.vue";
 import {CarbonTrashCan} from "../../../components";
 
 export default {

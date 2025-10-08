@@ -43,10 +43,10 @@
 
 <script>
 //Components
-import RenderObjectCard from "../render/RenderObjectCard.vue";
+import RenderObjectCard from "Components/render/RenderObjectCard.vue";
 
 //Composable
-import {getSetOfPages} from "../../composables/pagintation/getSetOfPages";
+import {getSetOfPages} from "Composables/pagintation/getSetOfPages";
 
 export default {
 	name: "ListSearchResults",

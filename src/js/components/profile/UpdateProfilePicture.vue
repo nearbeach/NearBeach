@@ -41,8 +41,8 @@ import {NUpload, NButton} from "naive-ui";
 import {mapGetters} from "vuex";
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
-import {useToken} from "../../composables/security/useToken";
+import {useNBTheme} from "Composables/theme/useNBTheme";
+import {useToken} from "Composables/security/useToken";
 
 export default {
 	name: "UpdateProfilePicture",

@@ -75,7 +75,7 @@ import GdprWizardDataVerification from "./tabs/GdprWizardDataVerification.vue";
 import GdprWizardConfirmation from "./tabs/GdprWizardConfirmation.vue";
 
 //Composable
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 //VueX
 import { mapGetters } from "vuex";

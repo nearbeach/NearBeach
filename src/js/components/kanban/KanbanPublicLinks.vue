@@ -14,10 +14,10 @@
 
 <script>
 //Component
-import ListPublicLinks from "../modules/sub_modules/ListPublicLinks.vue"
+import ListPublicLinks from "Modules/sub_modules/ListPublicLinks.vue"
 
 //Composables
-import {useNBTheme} from "../../composables/theme/useNBTheme";
+import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "KanbanPublicLinks",

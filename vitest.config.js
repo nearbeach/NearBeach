@@ -1,11 +1,19 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import path from 'path' // Import the path module
 
 export default defineConfig({
     plugins: [
         vue()
     ],
+    resolve: {
+        alias: {
+            'Components': path.resolve(__dirname, 'src/js/components'),
+            'Composables': path.resolve(__dirname, 'src/js/composables'),
+            'Modules': path.resolve(__dirname, 'src/js/components/modules'),
+        }
+    },
     test: {
         coverage: {
             enabled: true,
