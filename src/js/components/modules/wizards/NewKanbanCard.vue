@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="addKanbanCardModal"
+		class="modal fade"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
 		tabindex="-1"
@@ -15,11 +15,11 @@
 						Add Kanban Card Wizard
 					</h2>
 					<button
+						id="addKanbanCardCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="addKanbanCardCloseButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -44,8 +44,8 @@
 							<input
 								id="kanbanCardText"
 								v-model="kanbanCardTextModel"
-								v-on:keydown.enter="addKanbanCard"
 								class="form-control"
+								@keydown.enter="addKanbanCard"
 							/>
 						</div>
 					</div>
@@ -62,8 +62,8 @@
 						<div class="col-md-8">
 							<label>Card Priority</label>
 							<n-select
-								v-bind:options="listPriority"
 								v-model:value="kanbanCardPriorityModal"
+								:options="listPriority"
 							></n-select>
 						</div>
 					</div>
@@ -81,6 +81,7 @@
 						</div>
 						<div class="col-md-8">
 							<editor
+								v-model="kanbanCardDescriptionModel"
 								license-key="gpl"
 								:init="{
 									license_key: 'gpl',
@@ -92,11 +93,10 @@
 									plugins: ['lists', 'image', 'codesample', 'table'],
             						toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 											 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-            						skin: `${this.skin}`,
-						            content_css: `${this.contentCss}`,
+            						skin: `${skin}`,
+						            content_css: `${contentCss}`,
 						            relative_urls: false,
 								}"
-								v-model="kanbanCardDescriptionModel"
 							/>
 						</div>
 					</div>
@@ -105,8 +105,9 @@
 					<hr
 						v-if="newCardLocation.userCanSelectLocation"
 					/>
-					<div class="row"
-						 v-if="newCardLocation.userCanSelectLocation"
+					<div
+v-if="newCardLocation.userCanSelectLocation"
+						 class="row"
 					>
 						<div class="col-md-4">
 							<strong>Card Location</strong>
@@ -120,18 +121,18 @@
 								<div class="col-md-6 mt-4">
 									<label>Card Column</label>
 									<n-select
-										v-bind:options="listColumns"
-										label="column"
 										v-model:value="localColumnId"
+										:options="listColumns"
+										label="column"
 									></n-select>
 								</div>
 
 								<div class="col-md-6 mt-4">
 									<label>Card Level</label>
 									<n-select
-										v-bind:options="listLevels"
-										label="level"
 										v-model:value="localLevelId"
+										:options="listLevels"
+										label="level"
 									></n-select>
 								</div>
 							</div>
@@ -149,8 +150,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="addKanbanCard"
-						v-bind:disabled="disableAddButton"
+						:disabled="disableAddButton"
+						@click="addKanbanCard"
 					>
 						Add Card
 					</button>
@@ -175,9 +176,6 @@ export default {
 		editor: Editor,
 		NSelect,
 	},
-	emits: [
-		'new_card',
-	],
 	props: {
 		columnResults: {
 			type: Array,
@@ -198,6 +196,9 @@ export default {
 			},
 		},
 	},
+	emits: [
+		'new_card',
+	],
 	data() {
 		return {
 			disableAddButton: true,
@@ -240,6 +241,43 @@ export default {
 			rootUrl: "getRootUrl",
 			skin: "getSkin",
 		}),
+	},
+	watch: {
+		kanbanCardTextModel() {
+			// If the model is blank OR the text already exists - turn disableAddButton to true
+			this.disableAddButton = false; //People can click the "Add" button
+
+			if (this.kanbanCardTextModel.length === 0) {
+				this.disableAddButton = true;
+			}
+
+			//Check to make sure it does not exist
+			const filtered_results = this.kanbanCardResults.filter((row) => {
+				return (
+					row.kanban_card_text === this.kanbanCardTextModel
+				);
+			});
+
+			if (filtered_results.length > 0) {
+				this.disableAddButton = true;
+			}
+
+			//If there are no rows or levels - we don't want the user to submit a card
+			if (
+				this.columnResults.length === 0 ||
+				this.levelResults.length === 0
+			) {
+				this.disableAddButton = true;
+			}
+		},
+		newCardLocation: {
+			handler(new_value) {
+				this.localColumnId = new_value.columnId;
+				this.localLevelId = new_value.levelId;
+			},
+			deep: true,
+			immediate: true,
+		},
 	},
 	methods: {
 		useUploadImage,
@@ -309,43 +347,6 @@ export default {
 					unique_type: "new_card",
 				});
 			});
-		},
-	},
-	watch: {
-		kanbanCardTextModel() {
-			// If the model is blank OR the text already exists - turn disableAddButton to true
-			this.disableAddButton = false; //People can click the "Add" button
-
-			if (this.kanbanCardTextModel.length === 0) {
-				this.disableAddButton = true;
-			}
-
-			//Check to make sure it does not exist
-			const filtered_results = this.kanbanCardResults.filter((row) => {
-				return (
-					row.kanban_card_text === this.kanbanCardTextModel
-				);
-			});
-
-			if (filtered_results.length > 0) {
-				this.disableAddButton = true;
-			}
-
-			//If there are no rows or levels - we don't want the user to submit a card
-			if (
-				this.columnResults.length === 0 ||
-				this.levelResults.length === 0
-			) {
-				this.disableAddButton = true;
-			}
-		},
-		newCardLocation: {
-			handler(new_value) {
-				this.localColumnId = new_value.columnId;
-				this.localLevelId = new_value.levelId;
-			},
-			deep: true,
-			immediate: true,
 		},
 	},
 };

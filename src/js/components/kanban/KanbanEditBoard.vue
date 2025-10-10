@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-body">
 				<h1>{{ kanbanBoardResults[0].fields.kanban_board_name }}</h1>
-				<a v-bind:href="`${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/`">
+				<a :href="`${rootUrl}kanban_information/${kanbanBoardResults[0].pk}/`">
 					Go back to kanban board
 				</a>
 				<hr/>
@@ -21,7 +21,8 @@
 							To rename any level or object, double click on the card.
 							This will bring up the card's properties.
 						</p>
-						<n-switch v-model:value="canDragCards"
+						<n-switch
+v-model:value="canDragCards"
 								  @update:value="updateCanDragCards"
 						>
 							<template #checked>
@@ -34,26 +35,26 @@
 					</div>
 					<div class="col-md-4">
 						<kanban-property-order
-							v-bind:is-read-only="isReadOnly"
-							v-bind:property-list="columnModel"
-							v-bind:is-dirty="v$.columnModel.$dirty"
-							v-bind:is-new-mode="false"
-							v-bind:kanban-board-id="kanbanBoardResults[0].pk"
+							:is-read-only="isReadOnly"
+							:property-list="columnModel"
+							:is-dirty="v$.columnModel.$dirty"
+							:is-new-mode="false"
+							:kanban-board-id="kanbanBoardResults[0].pk"
 							property-name="Column"
 							source="columnModel"
-							v-on:update_property_list="updatePropertyList($event)"
+							@update_property_list="updatePropertyList($event)"
 						></kanban-property-order>
 					</div>
 					<div class="col-md-4">
 						<kanban-property-order
-							v-bind:is-read-only="isReadOnly"
-							v-bind:property-list="levelModel"
-							v-bind:is-dirty="v$.columnModel.$dirty"
-							v-bind:is-new-mode="false"
-							v-bind:kanban-board-id="kanbanBoardResults[0].pk"
+							:is-read-only="isReadOnly"
+							:property-list="levelModel"
+							:is-dirty="v$.columnModel.$dirty"
+							:is-new-mode="false"
+							:kanban-board-id="kanbanBoardResults[0].pk"
 							property-name="Level"
 							source="levelModel"
-							v-on:update_propety_list="udatePropertyList($event)"
+							@update_propety_list="udatePropertyList($event)"
 						></kanban-property-order>
 					</div>
 				</div>
@@ -64,7 +65,7 @@
 					<div class="col-md-12">
 						<button
 							class="btn btn-primary save-changes"
-							v-on:click="backToBoard"
+							@click="backToBoard"
 						>
 							Back to Kanban Board
 						</button>
@@ -90,9 +91,6 @@ import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "KanbanEditBoard",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		KanbanPropertyOrder,
 		NSwitch,
@@ -141,6 +139,9 @@ export default {
 			default: 0,
 		},
 	},
+	setup() {
+		return {v$: useVuelidate()};
+	},
 	data() {
 		return {
 			canDragCards: false,
@@ -154,25 +155,6 @@ export default {
 		},
 		levelModel: {
 			required,
-		},
-	},
-	methods: {
-		useNBTheme,
-		backToBoard() {
-			window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/`;
-		},
-		updateCanDragCards(value) {
-			this.$store.commit({
-			  type: "updateCanDragCards",
-			  canDragCards: value,
-			})
-			// this.$store.dispatch({
-			// 	type: "updateCanDragCards",
-			// 	canDragCards: value,
-			// });
-		},
-		updatePropertyList(data) {
-			this[data.source] = data.data;
 		},
 	},
 	mounted() {
@@ -218,6 +200,25 @@ export default {
 
 		//Update Can Drag Cards value
 		this.updateCanDragCards(false);
+	},
+	methods: {
+		useNBTheme,
+		backToBoard() {
+			window.location.href = `${this.rootUrl}kanban_information/${this.kanbanBoardResults[0].pk}/`;
+		},
+		updateCanDragCards(value) {
+			this.$store.commit({
+			  type: "updateCanDragCards",
+			  canDragCards: value,
+			})
+			// this.$store.dispatch({
+			// 	type: "updateCanDragCards",
+			// 	canDragCards: value,
+			// });
+		},
+		updatePropertyList(data) {
+			this[data.source] = data.data;
+		},
 	},
 };
 </script>

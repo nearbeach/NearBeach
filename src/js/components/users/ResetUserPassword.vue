@@ -19,7 +19,7 @@
 						<button
 							type="button"
 							class="btn btn-warning"
-							v-on:click="passwordResetClicked"
+							@click="passwordResetClicked"
 						>
 							Password Reset
 						</button>
@@ -30,8 +30,8 @@
 
 		<!-- PASSWORD RESET MODAL -->
 		<div
-			class="modal fade"
 			id="passwordResetModal"
+			class="modal fade"
 			tabindex="-1"
 			aria-labelledby="exampleModalLabel"
 			aria-hidden="true"
@@ -43,11 +43,11 @@
 							Reset User Password
 						</h2>
 						<button
+							id="passwordResetCloseButton"
 							type="button"
 							class="btn-close"
 							data-bs-dismiss="modal"
 							aria-label="Close"
-							id="passwordResetCloseButton"
 						>
 							<span aria-hidden="true"></span>
 						</button>
@@ -57,27 +57,28 @@
 							<div class="col-md-6">
 								<label>Password</label>
 								<input
+									v-model="password1Model"
 									type="password"
 									class="form-control"
-									v-model="password1Model"
 								/>
 							</div>
 							<div class="col-md-6">
 								<label>Confirm Password</label>
 								<input
+									v-model="password2Model"
 									type="password"
 									class="form-control"
-									v-model="password2Model"
 								/>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-md-12">
 								<validation-rendering
-									v-bind:error-list="v$.password1Model.$errors"
+									:error-list="v$.password1Model.$errors"
 								></validation-rendering>
-								<div class="col-md-12"
-									 v-if="password1Model !== password2Model"
+								<div
+v-if="password1Model !== password2Model"
+									 class="col-md-12"
 								>
 									<span class="error">Passwords need to be the same
 									</span>
@@ -89,15 +90,15 @@
 						<button
 							type="button"
 							class="btn btn-secondary"
-							v-on:click="closeModal"
+							@click="closeModal"
 						>
 							Close
 						</button>
 						<button
 							type="button"
 							class="btn btn-primary"
-							v-on:click="updatePassword"
-							v-bind:disabled="disableButton"
+							:disabled="disableButton"
+							@click="updatePassword"
 						>
 							Update Password
 						</button>
@@ -122,9 +123,6 @@ import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "ResetUserPassword",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		ValidationRendering,
 	},
@@ -138,6 +136,9 @@ export default {
 			default: 0,
 		},
 	},
+	setup() {
+		return {v$: useVuelidate()};
+	},
 	data() {
 		return {
 			password1Model: "",
@@ -149,16 +150,6 @@ export default {
 			required,
 			minLength: minLength(8),
 		},
-	},
-	watch: {
-		password1Model() {
-			//Validate the passwords as users are typing
-			this.v$.$validate();
-		},
-		password2Model() {
-			//Validate the passwords as users are typing
-			this.v$.$validate();
-		}
 	},
 	computed: {
 		...mapGetters({
@@ -174,6 +165,16 @@ export default {
 			//If all conditions are true, send back false (to enable the button)
 			return !(condition_1 && condition_2 === true);
 		},
+	},
+	watch: {
+		password1Model() {
+			//Validate the passwords as users are typing
+			this.v$.$validate();
+		},
+		password2Model() {
+			//Validate the passwords as users are typing
+			this.v$.$validate();
+		}
 	},
 	methods: {
 		closeModal() {

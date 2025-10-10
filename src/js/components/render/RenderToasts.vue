@@ -1,20 +1,22 @@
 <template>
 	<div class="toast-container">
-		<div v-for="(single_toast, index) in toastList"
+		<div
+v-for="(single_toast, index) in toastList"
 			 :key="index"
-			 v-bind:class="`toast ${single_toast.extra_classes}`"
+			 :class="`toast ${single_toast.extra_classes}`"
 			 role="alert"
 			 aria-live="assertive"
 			 aria-atomic="true"
-			 v-bind:data-delay="single_toast.delay"
+			 :data-delay="single_toast.delay"
 		>
 			<div class="toast-header">
 				<strong class="me-auto">{{ single_toast.header }}</strong>
 				<small>{{ getTime(single_toast.timestamp) }}</small>
-				<button type="button"
+				<button
+type="button"
 						class="btn-close"
 						aria-label="Close"
-						v-on:click="removeToast(single_toast.unique_uuid)"
+						@click="removeToast(single_toast.unique_uuid)"
 				></button>
 			</div>
 			<div class="toast-body">

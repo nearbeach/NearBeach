@@ -46,13 +46,13 @@
 									<input
 										class="form-check-input"
 										type="checkbox"
-										v-bind:checked="user.group_leader"
-										v-bind:data-group="user.group"
-										v-bind:data-permission-set="
+										:checked="user.group_leader"
+										:data-group="user.group"
+										:data-permission-set="
 											user.permission_set
 										"
-										v-bind:data-user="user.username"
-										v-on:change="updateGroupLeader"
+										:data-user="user.username"
+										@change="updateGroupLeader"
 									/>
 								</td>
 								<td>
@@ -60,7 +60,7 @@
 										class="remove-link"
 									>
 										<carbon-trash-can
-											v-on:click="deletePermission(user.user_group_id)"
+											@click="deletePermission(user.user_group_id)"
 										></carbon-trash-can>
 									</span>
 								</td>
@@ -76,7 +76,7 @@
 						<a
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
-							v-on:click="addUser"
+							@click="addUser"
 						>{{ addButtonText() }}</a
 						>
 					</div>
@@ -85,13 +85,13 @@
 
 			<!-- MODALS -->
 			<admin-add-user
-				v-bind:destination="destination"
-				v-bind:location-id="locationId"
+				:destination="destination"
+				:location-id="locationId"
 			></admin-add-user>
 
 			<confirm-permission-delete
-				v-bind:permission-delete-id="permissionDeleteId"
-				v-on:remove_permission="removePermission"
+				:permission-delete-id="permissionDeleteId"
+				@remove_permission="removePermission"
 			></confirm-permission-delete>
 		</div>
 	</n-config-provider>
@@ -142,6 +142,9 @@ export default {
 			localListResults: [],
 			permissionDeleteId: 0,
 		};
+	},
+	mounted() {
+		this.localListResults = this.userListResults;
 	},
 	methods: {
 		useNBTheme,
@@ -238,9 +241,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		this.localListResults = this.userListResults;
 	},
 };
 </script>

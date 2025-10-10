@@ -17,24 +17,24 @@
 						<label>
 							Permission Set Name
 							<validation-rendering
-								v-bind:error-list="v$.permissionSetNameModel.$errors"
+								:error-list="v$.permissionSetNameModel.$errors"
 							></validation-rendering>
 							<span
-								class="error"
 								v-if="!uniquePermissionSetName"
+								class="error"
 							>
 								Please select a unique permission set name
 							</span>
 							<span
-								class="error"
 								v-if="checkingPermissionSetName"
+								class="error"
 							>
 								Please wait. Checking Name
 							</span>
 						</label>
 						<input
-							type="text"
 							v-model="permissionSetNameModel"
+							type="text"
 							class="form-control"
 						/>
 					</div>
@@ -46,8 +46,8 @@
 					<div class="col-md-12">
 						<button
 							class="btn btn-primary save-changes"
-							v-on:click="addNewPermissionSet"
-							v-bind:disabled="isSubmitDisabled"
+							:disabled="isSubmitDisabled"
+							@click="addNewPermissionSet"
 						>
 							Create new Permission Set
 						</button>
@@ -70,9 +70,6 @@ import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "NewPermissionSet",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		ValidationRendering
 	},
@@ -86,6 +83,9 @@ export default {
 			default: "",
 		},
 	},
+	setup() {
+		return {v$: useVuelidate()};
+	},
 	data() {
 		return {
 			checkingPermissionSetName: false,
@@ -98,6 +98,18 @@ export default {
 		permissionSetNameModel: {
 			required,
 		}
+	},
+	computed: {
+		isSubmitDisabled() {
+			//If we are searching, or if the name is not unique
+			//Disable if;
+			//- the name is not unique
+			//- or we are checking the permission set name
+			//- if the permission set length is 0
+			return !this.uniquePermissionSetName
+				|| this.checkingPermissionSetName
+				|| this.permissionSetNameModel.length === 0;
+		},
 	},
 	watch: {
 		permissionSetNameModel() {
@@ -114,18 +126,6 @@ export default {
 			this.searchTimeout = setTimeout(() => {
 				this.checkPermissionSetName();
 			}, 500);
-		},
-	},
-	computed: {
-		isSubmitDisabled() {
-			//If we are searching, or if the name is not unique
-			//Disable if;
-			//- the name is not unique
-			//- or we are checking the permission set name
-			//- if the permission set length is 0
-			return !this.uniquePermissionSetName
-				|| this.checkingPermissionSetName
-				|| this.permissionSetNameModel.length === 0;
 		},
 	},
 	methods: {

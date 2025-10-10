@@ -1,8 +1,9 @@
 <template>
 	<n-config-provider :theme="useNBTheme(theme)">
 		<h1 class="planner-header">My Planner</h1>
-		<button class="btn btn-primary planner-button"
-				v-on:click="showModal"
+		<button
+class="btn btn-primary planner-button"
+				@click="showModal"
 		>Add Object</button>
 
 		<div class="my-planner">
@@ -23,39 +24,41 @@
 			<!-- BODY -->
 			<div class="my-planner--body">
 				<draggable
+					v-for="(day, index) in dateArray"
+					:key="day.date"
 					class="my-planner--single-day list-group"
 					group="objects"
 					ghost-class="ghost"
-					itemKey="user_job_id"
-					v-for="(day, index) in dateArray"
-					v-bind:data-job-date="day.date"
-					v-bind:data-index="index"
-					v-bind:move="move"
-					:key="day.date"
+					item-key="user_job_id"
+					:data-job-date="day.date"
+					:data-index="index"
+					:move="move"
 					:list="day.data"
 					@end="onEnd($event)"
 					@start="onStart($event)"
 				>
 					<template #item="{ element }">
-						<div class="list-group-item"
-							 v-bind:data-user-job-id="element.user_job_id"
-							 v-bind:data-object-type="element.object_type"
-							 v-bind:data-location-id="element.location_id"
+						<div
+class="list-group-item"
+							 :data-user-job-id="element.user_job_id"
+							 :data-object-type="element.object_type"
+							 :data-location-id="element.location_id"
 						>
-							<div v-if="element.higher_order_status !== 'Closed'"
+							<div
+v-if="element.higher_order_status !== 'Closed'"
 								class="card-priority-line priority-normal"></div>
 							<div class="text-instructions">
 								  {{ formatObjectId(element) }}
 							</div>
-							<div><strong v-bind:class="getClass(element.higher_order_status)">
+							<div><strong :class="getClass(element.higher_order_status)">
 								{{ element.title }}
 							</strong></div>
 							<div>Status: <span class="text-instructions">{{ element.status }}</span></div>
 							<carbon-trash-can
 								class="kanban-card-info-icon"
 								style="color: red;"
-								v-on:click="confirmCardDelete(element.user_job_id, index)"
-								v-on:dblclick="confirmCardDelete(element.user_job_id, index)"
+								@click="confirmCardDelete(element.user_job_id, index)"
+								@dblclick="confirmCardDelete(element.user_job_id, index)"
 							></carbon-trash-can>
 						</div>
 					</template>
@@ -65,13 +68,13 @@
 		</div>
 
 		<confirm-user-job-delete
-			v-bind:user-job-id="confirmIdToDelete"
-			v-on:remove_user_job="removeUserJob"
+			:user-job-id="confirmIdToDelete"
+			@remove_user_job="removeUserJob"
 		></confirm-user-job-delete>
 
 		<new-planner-object-wizard
-			v-bind:date-array="dateArray"
-			v-on:update_date_array="updateDateArray($event)"
+			:date-array="dateArray"
+			@update_date_array="updateDateArray($event)"
 		></new-planner-object-wizard>
 	</n-config-provider>
 </template>
@@ -125,6 +128,36 @@ export default {
 			confirmIdToDelete: 0,
 			confirmIndex: 0,
 			dateArray: [],
+		}
+	},
+	mounted() {
+		//Send root url to the vuex
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		//Create an array for the next 7 days, starting from today.
+		const today = DateTime.now();
+
+		//Loop for the days
+		for (let i = 0; i < 7; i++) {
+			//Getting the day information
+			const new_day = today.plus({days: i})
+
+			//Filter for the data for this specific day
+			const data = this.objectData.filter((row) => {
+				return row.job_date === new_day.toFormat("yyyy-LL-dd");
+			});
+
+			//Push the data into the data array
+			this.dateArray.push({
+				date: new_day.toFormat("yyyy-LL-dd"),
+				day: new_day.toFormat("cccc"),
+				allowMoveTo: true,
+				data,
+			});
 		}
 	},
 	methods: {
@@ -265,36 +298,6 @@ export default {
 				};
 			});
 		},
-	},
-	mounted() {
-		//Send root url to the vuex
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-
-		//Create an array for the next 7 days, starting from today.
-		const today = DateTime.now();
-
-		//Loop for the days
-		for (let i = 0; i < 7; i++) {
-			//Getting the day information
-			const new_day = today.plus({days: i})
-
-			//Filter for the data for this specific day
-			const data = this.objectData.filter((row) => {
-				return row.job_date === new_day.toFormat("yyyy-LL-dd");
-			});
-
-			//Push the data into the data array
-			this.dateArray.push({
-				date: new_day.toFormat("yyyy-LL-dd"),
-				day: new_day.toFormat("cccc"),
-				allowMoveTo: true,
-				data,
-			});
-		}
 	},
 }
 </script>

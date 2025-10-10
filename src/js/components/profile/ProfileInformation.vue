@@ -19,13 +19,13 @@
 								<label>
 									First Name:
 									<validation-rendering
-										v-bind:error-list="v$.firstNameModel.$errors"
+										:error-list="v$.firstNameModel.$errors"
 									></validation-rendering>
 									<br/>
 								</label>
 								<input
-									type="text"
 									v-model="firstNameModel"
+									type="text"
 									class="form-control"
 								/>
 							</div>
@@ -33,13 +33,13 @@
 								<label>
 									Last Name:
 									<validation-rendering
-										v-bind:error-list="v$.firstNameModel.$errors"
+										:error-list="v$.firstNameModel.$errors"
 									></validation-rendering>
 									<br/>
 								</label>
 								<input
-									type="text"
 									v-model="lastNameModel"
+									type="text"
 									class="form-control"
 								/>
 							</div>
@@ -51,8 +51,8 @@
 							<div class="col-md-6">
 								<label> Email: </label>
 								<input
-									type="email"
 									v-model="emailModel"
+									type="email"
 									class="form-control"
 									disabled="true"
 								/>
@@ -75,8 +75,9 @@
 								v-model:value="themeModel"
 								:options="themeList"
 							/>
-							<p class="error"
-							   v-if="showMessage">
+							<p
+v-if="showMessage"
+							   class="error">
 								Please update user details to save.
 							</p>
 						</div>
@@ -103,7 +104,7 @@
 						<a
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
-							v-on:click="updateUser"
+							@click="updateUser"
 						>
 							Update User Details
 						</a>
@@ -127,8 +128,9 @@ import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "ProfileInformation",
-	setup() {
-		return {v$: useVuelidate()};
+	components: {
+		NSelect,
+		ValidationRendering,
 	},
 	props: {
 		rootUrl: {
@@ -150,9 +152,8 @@ export default {
 			},
 		},
 	},
-	components: {
-		NSelect,
-		ValidationRendering,
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -190,6 +191,14 @@ export default {
 				maxLength: maxLength(255),
 			},
 		};
+	},
+	mounted() {
+		//Send Root URL to VueX
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
 	},
 	methods: {
 		useNBTheme,
@@ -256,14 +265,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		//Send Root URL to VueX
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
 	},
 };
 </script>

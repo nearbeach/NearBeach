@@ -1,6 +1,7 @@
 <template>
-	<div class="modal fade"
-		 id="item_modal"
+	<div
+id="item_modal"
+		 class="modal fade"
 		 tabindex="-1"
 		 role="dialog"
 		 aria-hidden="true"
@@ -9,7 +10,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2>Requirement Item Information</h2>
-					<button type="button"
+					<button
+type="button"
 							class="btn-close"
 							data-bs-dismiss="modal"
 							aria-label="Close"
@@ -49,11 +51,12 @@
 								</label>
 								<br/>
 								<img
-									v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
+									:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 									class="loader-image"
 									alt="loading image for Tinymce"
 								/>
 								<editor
+									v-model="requirementItemScopeModel"
 									license-key="gpl"
 									:init="{
 									license_key: 'gpl',
@@ -62,12 +65,11 @@
 									plugins: ['lists', 'image', 'codesample', 'table'],
             						toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 											 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-									skin: `${this.skin}`,
-									content_css: `${this.contentCss}`,
+									skin: `${skin}`,
+									content_css: `${contentCss}`,
 									relative_urls: false,
 								}"
-									v-model="requirementItemScopeModel"
-									v-bind:disabled="true"
+									:disabled="true"
 								/>
 							</div>
 						</div>
@@ -82,7 +84,7 @@
 						</div>
 						<div class="col-md-8 organisation-details">
 							<img
-								v-bind:src="getStakeholderImage"
+								:src="getStakeholderImage"
 								alt="Stakeholder Logo"
 								class="organisation-image"
 							/>
@@ -93,7 +95,7 @@
 								<carbon-link></carbon-link>
 								Website:
 								<a
-									v-bind:href="stakeholderModel.organisation_website"
+									:href="stakeholderModel.organisation_website"
 									target="_blank"
 									rel="noopener noreferrer"
 								>
@@ -104,7 +106,7 @@
 								<carbon-email></carbon-email>
 								Email:
 								<a
-									v-bind:href="`mailto:${stakeholderModel.organisation_email}`"
+									:href="`mailto:${stakeholderModel.organisation_email}`"
 								>
 									{{ stakeholderModel.organisation_email }}
 								</a>
@@ -125,9 +127,9 @@
 							<div class="form-group">
 								<label>Requirement Status</label>
 								<n-select
+									v-model:value="statusModel"
 									:options="statusFixList"
 									label="status"
-									v-model:value="statusModel"
 									disabled
 								></n-select>
 							</div>
@@ -136,9 +138,9 @@
 							<div class="form-group">
 								<label>Requirement Type</label>
 								<n-select
+									v-model:value="typeModel"
 									:options="typeFixList"
 									label="type"
-									v-model:value="typeModel"
 									disabled
 								></n-select>
 							</div>
@@ -147,7 +149,8 @@
 
 				</div>
 				<div class="modal-footer">
-					<button type="button"
+					<button
+type="button"
 							class="btn btn-secondary"
 							data-bs-dismiss="modal"
 					>

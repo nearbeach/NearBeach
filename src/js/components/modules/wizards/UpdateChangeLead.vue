@@ -1,11 +1,11 @@
 <template>
 	<div
-		class="modal fade"
+		v-if="userLevel > 1"
 		id="updateChangeLeadModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
-		v-if="userLevel > 1"
 	>
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
@@ -14,11 +14,11 @@
 						Change Lead Wizard
 					</h2>
 					<button
+						id="updateChangeLeadCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="updateChangeLeadCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -34,8 +34,8 @@
 						</div>
 						<div class="col-md-8">
 							<n-select
-								:options="userFixList"
 								v-model:value="userModel"
+								:options="userFixList"
 							></n-select>
 						</div>
 					</div>
@@ -51,8 +51,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="userModel.length === 0"
-						v-on:click="changeLead"
+						:disabled="userModel.length === 0"
+						@click="changeLead"
 					>
 						Change Lead
 					</button>
@@ -76,6 +76,12 @@ export default {
 	emits: [
 		'update_change_lead'
 	],
+	data() {
+		return {
+			userFixList: [],
+			userModel: [],
+		};
+	},
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -85,12 +91,6 @@ export default {
 			staticURL: "getStaticUrl",
 			userLevel: "getUserLevel",
 		}),
-	},
-	data() {
-		return {
-			userFixList: [],
-			userModel: [],
-		};
 	},
 	watch: {
 		potentialUserList(new_value) {

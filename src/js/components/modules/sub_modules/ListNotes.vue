@@ -9,16 +9,18 @@
 				Sorry - but there are no notes for this {{ destination }}.
 			</div>
 		</div>
-		<div class="note-history"
-			 v-else
+		<div
+v-else
+			 class="note-history"
 		>
-			<div class="note-history--row"
-				 v-for="note in noteList"
-				 v-bind:key="note.object_note_id"
+			<div
+v-for="note in noteList"
+				 :key="note.object_note_id"
+				 class="note-history--row"
 			>
 				<div class="note-history--profile">
 					<img
-						v-bind:src="profilePicture(note.profile_picture)"
+						:src="profilePicture(note.profile_picture)"
 						alt="default profile"
 						class="note-history--profile-picture"
 					/>
@@ -29,18 +31,21 @@
 						{{useNiceDatetime(note.date_modified)}}
 					</div>
 
-					<div class="note-history--edit-button"
-						 v-if="note.can_edit === 'true'"
+					<div
+v-if="note.can_edit === 'true'"
+						 class="note-history--edit-button"
 					>
-						<button type="button"
+						<button
+type="button"
 								class="btn btn-outline-secondary"
-								v-on:click="editNote(note.object_note_id)"
+								@click="editNote(note.object_note_id)"
 						>
 							Edit Note
 						</button>
-						<button type="button"
+						<button
+type="button"
 								class="btn btn-outline-danger"
-								v-on:click="deleteNote(note.object_note_id)"
+								@click="deleteNote(note.object_note_id)"
 						>
 							Delete Note
 						</button>
@@ -48,6 +53,7 @@
 				</div>
 				<div class="note-history--note">
 					<editor
+						v-model="note.object_note"
 						license-key="gpl"
 						:init="{
 						license_key: 'gpl',
@@ -55,12 +61,11 @@
 						menubar: false,
 						plugins: ['lists', 'image', 'codesample', 'table'],
 						toolbar: [],
-						skin: `${this.skin}`,
-						content_css: `${this.contentCss}`,
+						skin: `${skin}`,
+						content_css: `${contentCss}`,
 						relative_urls: false,
 					}"
-						v-model="note.object_note"
-						v-bind:disabled="true"
+						:disabled="true"
 					/>
 				</div>
 			</div>

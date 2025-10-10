@@ -15,7 +15,7 @@
 			<td>
 				<!-- LINK -->
 				<a
-					v-bind:href="`${rootUrl}${destination}_information/${
+					:href="`${rootUrl}${destination}_information/${
 							result[importVariables.id]
 						}/`"
 				>

@@ -1,15 +1,16 @@
 <template>
-	<div v-for="organisation in organisationResults"
+	<div
+v-for="organisation in organisationResults"
 		 :key="organisation.id"
 		 class="organisation-details">
 		<img
-			v-bind:src="getProfilePicture(organisation)"
+			:src="getProfilePicture(organisation)"
 			alt="Stakeholder Logo"
 			class="organisation-image"
 		/>
 		<div class="organisation-name">
 			<a
-				v-bind:href="`${rootUrl}organisation_information/${organisation.pk}/`"
+				:href="`${rootUrl}organisation_information/${organisation.pk}/`"
 			>
 				{{ organisation.fields.organisation_name }}
 			</a>
@@ -18,7 +19,7 @@
 			<carbon-link></carbon-link>
 			Website:
 			<a
-				v-bind:href="organisation.fields.organisation_website"
+				:href="organisation.fields.organisation_website"
 				target="_blank"
 				rel="noopener noreferrer"
 			>
@@ -29,7 +30,7 @@
 			<carbon-email></carbon-email>
 			Email:
 			<a
-				v-bind:href="`mailto:${organisation.fields.organisation_email}`"
+				:href="`mailto:${organisation.fields.organisation_email}`"
 			>
 				{{ organisation.fields.organisation_email }}
 			</a>

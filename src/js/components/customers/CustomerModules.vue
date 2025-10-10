@@ -4,8 +4,8 @@
 			<div class="card-body">
 				<!-- The MENU Items -->
 				<ul
-					class="nav nav-tabs"
 					id="misc_module_tabs"
+					class="nav nav-tabs"
 					role="tablist"
 				>
 					<!-- Associated Projects & Tasks -->
@@ -14,8 +14,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link active"
 							id="associated-objects-tab"
+							class="nav-link active"
 							data-bs-toggle="tab"
 							data-bs-target="#associated-objects"
 							type="button"
@@ -29,13 +29,13 @@
 
 					<!-- ADMIN -->
 					<li
+						v-if="userLevel === 4"
 						class="nav-item"
 						role="presentation"
-						v-if="userLevel === 4"
 					>
 						<button
-							class="nav-link"
 							id="admin-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#admin"
 							type="button"
@@ -51,12 +51,12 @@
 
 				<!-- The Modules -->
 				<div
-					class="tab-content"
 					id="misc_module_content"
+					class="tab-content"
 				>
 					<div
-						class="tab-pane fade active show"
 						id="associated-objects"
+						class="tab-pane fade active show"
 						role="tabpanel"
 						aria-labelledby="profile-tab"
 					>
@@ -65,11 +65,11 @@
 					</div>
 
 					<div
-						class="tab-pane fade bg-danger"
+						v-if="userLevel === 4"
 						id="admin"
+						class="tab-pane fade bg-danger"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
-						v-if="userLevel === 4"
 					>
 						<delete-object></delete-object>
 					</div>
@@ -89,7 +89,6 @@ import DeleteObject from "Modules/sub_modules/DeleteObject.vue";
 
 export default {
 	name: "CustomerModule",
-	methods: {useNBTheme},
 	components: {
 		DeleteObject,
 		AssociatedObjects,
@@ -100,6 +99,7 @@ export default {
 			userLevel: "getUserLevel",
 		}),
 	},
+	methods: {useNBTheme},
 };
 </script>
 

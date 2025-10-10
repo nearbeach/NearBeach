@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmChangeTaskDeleteModal"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,18 +12,18 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="confirmChangeTaskDelete"
+						class="modal-title"
 					>
 						Please confirm Change Task Deletion
 					</h5>
 					<!-- TASK INFORMATION -->
 					<button
+						id="confirmChangeTaskDeleteButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmChangeTaskDeleteButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -33,14 +33,14 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						No
 					</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="deleteChangeTask"
+						@click="deleteChangeTask"
 					>
 						Yes
 					</button>

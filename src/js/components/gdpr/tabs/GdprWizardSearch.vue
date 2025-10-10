@@ -11,9 +11,9 @@
 			<div class="form-group">
 				<label>Search {{ gdprObjectType }}</label>
 				<n-select
+					v-model:value="searchResults"
 					:options="searchObjects"
 					:placeholder="`Please search for a ${ gdprObjectType}`"
-					v-model:value="searchResults"
 					filterable
 				/>
 			</div>

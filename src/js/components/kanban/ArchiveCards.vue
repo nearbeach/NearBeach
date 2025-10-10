@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="archiveCardsModal"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,8 +12,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="exampleModalLabel"
+						class="modal-title"
 					>
 						Are you sure?
 					</h5>
@@ -21,7 +21,7 @@
 						type="button"
 						class="btn-close"
 						aria-label="Close"
-						v-on:click="closeModal"
+						@click="closeModal"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -32,14 +32,14 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						No
 					</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="archiveCards"
+						@click="archiveCards"
 					>
 						Yes
 					</button>

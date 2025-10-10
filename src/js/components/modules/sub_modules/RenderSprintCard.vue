@@ -1,12 +1,13 @@
 <template>
 	<div
 		v-for="sprint in sprintResults"
-		v-bind:key="sprint.sprint_id"
+		:key="sprint.sprint_id"
 		class="row object-link"
 	>
 		<!-- Sprint ID + Sprint Name -->
 		<div class="col-md-10 object-link--details">
-			<a v-bind:href="`${this.rootUrl}sprint_information/${sprint.sprint_id}/`"
+			<a
+:href="`${rootUrl}sprint_information/${sprint.sprint_id}/`"
 			   target="_blank"
 			   rel="noopener noreferrer"
 			>
@@ -33,11 +34,11 @@
 
 		<!-- Object Delete -->
 		<div
-			class="object-link--remove"
 			v-if="userLevel >= 2 && canDelete === true"
+			class="object-link--remove"
 		>
 			<carbon-trash-can
-				v-on:click="confirmRemoveSprintFunction(sprint)"
+				@click="confirmRemoveSprintFunction(sprint)"
 			></carbon-trash-can>
 		</div>
 	</div>
@@ -66,15 +67,15 @@ export default {
 			},
 		},
 	},
+	emits: [
+		"confirm_remove_sprint",
+	],
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",
 			userLevel: "getUserLevel",
 		})
 	},
-	emits: [
-		"confirm_remove_sprint",
-	],
 	methods: {
 		useNiceDate,
 		confirmRemoveSprintFunction(sprint) {

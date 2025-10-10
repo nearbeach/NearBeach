@@ -16,26 +16,30 @@
 			</ul>
 		</div>
 		<div class="col-md-8">
-			<button class="btn btn-warning"
-					v-if="emailState === 'not_started'"
-					v-on:click="sendEmail"
+			<button
+v-if="emailState === 'not_started'"
+					class="btn btn-warning"
+					@click="sendEmail"
 			>Send Email</button>
 
-			<div class="alert alert-warning"
-				 v-if="emailState === 'sending_email'"
+			<div
+v-if="emailState === 'sending_email'"
+				 class="alert alert-warning"
 			>
 				Currently sending the email. Please wait.
 			</div>
 
-			<div class="alert alert-success"
-				 v-if="emailState === 'sent_email'"
+			<div
+v-if="emailState === 'sent_email'"
+				 class="alert alert-success"
 			>
 				Email sent by backend. Please check your inbox. If you do not receive the email, please check to make
 				sure it is not in spam.
 			</div>
 
-			<div class="alert alert-danger"
-				 v-if="emailState === 'failed_sending'"
+			<div
+v-if="emailState === 'failed_sending'"
+				 class="alert alert-danger"
 			>
 				Sorry. The backend server could not send the email. Please check logs
 			</div>
@@ -48,15 +52,15 @@ import {mapGetters} from "vuex";
 
 export default {
 	name: "DiagnosticEmailTest",
-	computed: {
-		...mapGetters({
-			rootUrl: "getRootUrl",
-		}),
-	},
 	data() {
 		return {
 			emailState: "not_started",
 		}
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+		}),
 	},
 	methods: {
 		sendEmail() {

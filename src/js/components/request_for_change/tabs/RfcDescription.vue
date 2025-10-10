@@ -16,14 +16,14 @@
 				<label>
 					Request for Change Title:
 					<validation-rendering
-						v-bind:error-list="v$.rfcTitleModel.$errors"
+						:error-list="v$.rfcTitleModel.$errors"
 					></validation-rendering>
 				</label>
 				<input
+					v-model="rfcTitleModel"
 					type="text"
 					maxlength="255"
 					class="form-control"
-					v-model="rfcTitleModel"
 				/>
 			</div>
 			<br/>
@@ -32,16 +32,17 @@
 			<label>
 				Request for Change Summary:
 				<validation-rendering
-					v-bind:error-list="v$.rfcSummaryModel.$errors"
+					:error-list="v$.rfcSummaryModel.$errors"
 				></validation-rendering>
 			</label
 			><br/>
 			<img
-				v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
+				:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 				class="loader-image"
 				alt="loading image for Tinymce"
 			/>
 			<editor
+				v-model="rfcSummaryModel"
 				license-key="gpl"
 				:init="{
 					license_key: 'gpl',
@@ -53,12 +54,11 @@
 					plugins: ['lists', 'image', 'codesample', 'table'],
             		toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 							 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-					skin: `${this.skin}`,
-					content_css: `${this.contentCss}`,
+					skin: `${skin}`,
+					content_css: `${contentCss}`,
 					relative_urls: false,
 				}"
-				v-bind:disabled="isReadOnly"
-				v-model="rfcSummaryModel"
+				:disabled="isReadOnly"
 			/>
 		</div>
 	</div>
@@ -82,17 +82,10 @@ import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 export default {
 	name: "RfcDescription",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		editor: Editor,
 		ValidationRendering,
 	},
-	emits: [
-		'update_validation',
-		'update_values'
-	],
 	props: {
 		isReadOnly: {
 			type: Boolean,
@@ -108,6 +101,13 @@ export default {
 			type: String,
 			default: "",
 		},
+	},
+	emits: [
+		'update_validation',
+		'update_values'
+	],
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data: () => ({
 		rfcSummaryModel: "",
@@ -129,6 +129,26 @@ export default {
 			required,
 			maxLength: maxLength(250),
 		},
+	},
+	watch: {
+		rfcSummaryModel() {
+			this.updateValues("rfcSummaryModel", this.rfcSummaryModel);
+			this.updateValidation();
+		},
+		rfcTitleModel() {
+			this.updateValues("rfcTitleModel", this.rfcTitleModel);
+			this.updateValidation();
+		},
+	},
+	mounted() {
+		//If there is data in the rfcResults - we will update the rfcSummary and rfcTitle
+		if (this.rfcResults.length > 0) {
+			this.rfcSummaryModel = this.rfcResults[0].fields.rfc_summary;
+			this.rfcTitleModel = this.rfcResults[0].fields.rfc_title;
+		}
+
+		//Just run the validations to show the error messages
+		this.v$.$touch();
 	},
 	methods: {
 		handleUploadImage(blobInfo, progress) {
@@ -152,26 +172,6 @@ export default {
 				modelValue,
 			});
 		},
-	},
-	watch: {
-		rfcSummaryModel() {
-			this.updateValues("rfcSummaryModel", this.rfcSummaryModel);
-			this.updateValidation();
-		},
-		rfcTitleModel() {
-			this.updateValues("rfcTitleModel", this.rfcTitleModel);
-			this.updateValidation();
-		},
-	},
-	mounted() {
-		//If there is data in the rfcResults - we will update the rfcSummary and rfcTitle
-		if (this.rfcResults.length > 0) {
-			this.rfcSummaryModel = this.rfcResults[0].fields.rfc_summary;
-			this.rfcTitleModel = this.rfcResults[0].fields.rfc_title;
-		}
-
-		//Just run the validations to show the error messages
-		this.v$.$touch();
 	},
 };
 </script>

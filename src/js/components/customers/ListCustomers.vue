@@ -1,16 +1,16 @@
 <template>
 	<div
 		v-for="customer in customerResults"
-		v-bind:key="customer.pk"
+		:key="customer.pk"
 		class="customer-details">
 		<img
-			v-bind:src="getProfilePicture(customer)"
+			:src="getProfilePicture(customer)"
 			alt="Stakeholder Logo"
 			class="customer-image"
 		/>
 		<div class="customer-name">
 			<a
-				v-bind:href="`${rootUrl}customer_information/${customer.pk}/`"
+				:href="`${rootUrl}customer_information/${customer.pk}/`"
 			>
 				{{ customer.fields.customer_first_name }}
 				{{ customer.fields.customer_last_name }}
@@ -19,7 +19,7 @@
 		<div class="customer-email">
 			<carbon-email></carbon-email>
 			Email:
-			<a v-bind:href="`mailto:${customer.fields.customer_email}`">
+			<a :href="`mailto:${customer.fields.customer_email}`">
 				{{ customer.fields.customer_email }}
 			</a>
 		</div>

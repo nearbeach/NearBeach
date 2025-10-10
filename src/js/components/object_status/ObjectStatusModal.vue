@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="objectStatusModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -11,25 +11,26 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="exampleModalLabel"
+						class="modal-title"
 					>
 						Add/Edit Status
 					</h5>
 					<button
+						id="objectStatusModalClose"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="objectStatusModalClose"
 					></button>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
 						<label>
 							Status
-							<span class="error"
-								  v-if="isDuplicate"
+							<span
+v-if="isDuplicate"
+								  class="error"
 							>
 								Sorry, there is a status of that name already
 							</span>
@@ -62,8 +63,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="isDuplicate"
-						v-on:click="saveChanges"
+						:disabled="isDuplicate"
+						@click="saveChanges"
 					>
 						Save changes
 					</button>
@@ -85,10 +86,6 @@ export default {
 	components: {
 		NSelect,
 	},
-	emits: [
-		'add_status',
-		'update_status',
-	],
 	props: {
 		statusData: {
 			type: Object,
@@ -110,12 +107,10 @@ export default {
 			},
 		},
 	},
-	computed: {
-		...mapGetters({
-			destination: "getDestination",
-			rootUrl: "getRootUrl",
-		}),
-	},
+	emits: [
+		'add_status',
+		'update_status',
+	],
 	data() {
 		return {
 			higherOrderStatusList: [
@@ -140,6 +135,12 @@ export default {
 			isDuplicate: false,
 			localStatusModel: "",
 		}
+	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			rootUrl: "getRootUrl",
+		}),
 	},
 	watch: {
 		statusId() {

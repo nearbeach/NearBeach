@@ -3,6 +3,7 @@
   "version": "0.31",
   "description": "NearBeach - an Open Source project management system built with Django web framework",
   "main": "/src/js/app.js",
+  "type": "module",
   "directories": {
     "doc": "docs",
     "test": "tests"
@@ -14,6 +15,7 @@
     "e2e": "npx playwright test",
     "e2e-report": "npx playwright show-report",
     "e2e-ui": "npx playwright test --ui",
+    "lint-js": "eslint src",
     "unit-test": "npx vitest --coverage"
   },
   "repository": {
@@ -48,6 +50,10 @@
     "compression-webpack-plugin": "^9.2.0",
     "copy-webpack-plugin": "^10.2.0",
     "css-loader": "^6.5.1",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.5.0",
+    "globals": "^16.4.0",
     "jsdom": "^26.0.0",
     "luxon": "^2.5.2",
     "mini-css-extract-plugin": "^2.4.5",
@@ -58,6 +64,7 @@
     "sass-loader": "^12.4.0",
     "style-loader": "^3.3.1",
     "tinymce": "^7.6.0",
+    "typescript-eslint": "^8.46.0",
     "vitest": "^3.0.7",
     "vue": "^3.5.13",
     "vue-loader": "^17.4.2",

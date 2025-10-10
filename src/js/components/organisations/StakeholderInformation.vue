@@ -6,13 +6,13 @@
 		</div>
 		<div class="col-md-8 organisation-details">
 			<img
-				v-bind:src="getStakeholderImage"
+				:src="getStakeholderImage"
 				alt="Stakeholder Logo"
 				class="organisation-image"
 			/>
 			<div class="organisation-name">
 				<a
-					v-bind:href="`${rootUrl}organisation_information/${organisationResults[0].pk}/`"
+					:href="`${rootUrl}organisation_information/${organisationResults[0].pk}/`"
 				>
 					{{ stakeholderModel.organisation_name }}
 				</a>
@@ -21,7 +21,7 @@
 				<carbon-link></carbon-link>
 				Website:
 				<a
-					v-bind:href="stakeholderModel.organisation_website"
+					:href="stakeholderModel.organisation_website"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
@@ -32,7 +32,7 @@
 				<carbon-email></carbon-email>
 				Email:
 				<a
-					v-bind:href="`mailto:${stakeholderModel.organisation_email}`"
+					:href="`mailto:${stakeholderModel.organisation_email}`"
 				>
 					{{ stakeholderModel.organisation_email }}
 				</a>

@@ -6,22 +6,22 @@
 			<div class="form-group">
 				<label>Search:</label>
 				<input
-					class="form-control search-groups"
 					v-model="searchModel"
+					class="form-control search-groups"
 				/>
 			</div>
 			<hr/>
 
 			<!-- Search Results -->
 			<div
-				class="list-group"
 				v-if="userList.length > 0"
+				class="list-group"
 			>
 				<a
-					class="list-group-item list-group-item-action"
 					v-for="user in userList"
-					v-bind:key="user.username"
-					v-bind:href="`/user_information/${user.id}/`"
+					:key="user.username"
+					class="list-group-item list-group-item-action"
+					:href="`/user_information/${user.id}/`"
 				>
 					<strong>
 						{{ user.username }}: {{ user.first_name }}
@@ -33,8 +33,8 @@
 			</div>
 
 			<div
-				class="alert alert-warning"
 				v-else
+				class="alert alert-warning"
 			>
 				Sorry, there are no groups.
 			</div>
@@ -43,7 +43,7 @@
 			<div class="row submit-row">
 				<div class="col-md-12">
 					<a
-						v-bind:href="`${rootUrl}new_user/`"
+						:href="`${rootUrl}new_user/`"
 						class="btn btn-primary save-changes"
 					>
 						Add new User
@@ -77,6 +77,23 @@ export default {
 			userList: this.userResults,
 		};
 	},
+	watch: {
+		searchModel() {
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getSearchResults();
+				}, 500);
+			}
+		},
+	},
 	methods: {
 		getSearchResults() {
 			//Setup data_to_send
@@ -97,23 +114,6 @@ export default {
 						delay: 0,
 					});
 				});
-		},
-	},
-	watch: {
-		searchModel() {
-			//Clear timer if it already exists
-			if (this.searchTimeout !== "") {
-				//Stop the clock
-				clearTimeout(this.searchTimeout);
-			}
-
-			//Setup timer if there are 3 characters or more
-			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
-				//Start the potential search
-				this.searchTimeout = setTimeout(() => {
-					this.getSearchResults();
-				}, 500);
-			}
 		},
 	},
 };

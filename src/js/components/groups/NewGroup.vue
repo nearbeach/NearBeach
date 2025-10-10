@@ -18,32 +18,32 @@
 							<label>
 								Group Name
 								<validation-rendering
-									v-bind:error-list="v$.groupNameModel.$errors"
+									:error-list="v$.groupNameModel.$errors"
 								></validation-rendering>
 								<span
-									class="error"
 									v-if="!uniqueGroupName"
+									class="error"
 								>
 								Please supply a unique name</span
 								>
 								<span
-									class="error"
 									v-if="checkingGroupName"
+									class="error"
 								>
 								Checking group name...</span
 								>
 							</label>
 							<input
-								class="form-control"
 								v-model="groupNameModel"
+								class="form-control"
 							/>
 						</div>
 
 						<div class="form-group">
 							<label> Parent Group (optional) </label>
 							<n-select
-								:options="groupResultsFixList"
 								v-model:value="parentGroupModel"
+								:options="groupResultsFixList"
 								label="group_name"
 							/>
 						</div>
@@ -57,7 +57,7 @@
 						<a
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
-							v-on:click="addNewGroup"
+							@click="addNewGroup"
 						>Create new Group</a
 						>
 					</div>
@@ -80,9 +80,6 @@ import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "NewGroup",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		NSelect,
 		ValidationRendering,
@@ -102,6 +99,9 @@ export default {
 			type: String,
 			default: "",
 		},
+	},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -137,6 +137,15 @@ export default {
 				}, 500);
 			}
 		},
+	},
+	mounted() {
+		//This will map reconstruct the JSON data into a V-SELECT friendly data
+		this.groupResultsFixList = this.groupResults.map((row) => {
+			return {
+				label: row.fields.group_name,
+				value: row.pk,
+			};
+		});
 	},
 	methods: {
 		useNBTheme,
@@ -205,15 +214,6 @@ export default {
 				})
 			});
 		},
-	},
-	mounted() {
-		//This will map reconstruct the JSON data into a V-SELECT friendly data
-		this.groupResultsFixList = this.groupResults.map((row) => {
-			return {
-				label: row.fields.group_name,
-				value: row.pk,
-			};
-		});
 	},
 };
 </script>

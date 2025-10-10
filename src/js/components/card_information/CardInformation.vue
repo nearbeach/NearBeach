@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="cardInformationModal"
+		class="modal fade"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
 		tabindex="-1"
@@ -15,11 +15,11 @@
 						Card Information - {{ cardId }}
 					</h2>
 					<button
+						id="cardInformationModalCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="cardInformationModalCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -36,8 +36,8 @@
 							role="presentation"
 						>
 							<button
-								class="nav-link active"
 								id="details-tab"
+								class="nav-link active"
 								data-bs-toggle="tab"
 								data-bs-target="#card_details"
 								type="button"
@@ -53,8 +53,8 @@
 							role="presentation"
 						>
 							<button
-								class="nav-link"
 								id="description-tab"
+								class="nav-link"
 								data-bs-toggle="tab"
 								data-bs-target="#card_description"
 								type="button"
@@ -70,8 +70,8 @@
 							role="presentation"
 						>
 							<button
-								class="nav-link"
 								id="notes-tab"
+								class="nav-link"
 								data-bs-toggle="tab"
 								data-bs-target="#card_notes"
 								type="button"
@@ -87,8 +87,8 @@
 							role="presentation"
 						>
 							<button
-								class="nav-link"
 								id="users-tab"
+								class="nav-link"
 								data-bs-toggle="tab"
 								data-bs-target="#user_permissions"
 								type="button"
@@ -104,8 +104,8 @@
 							role="presentation"
 						>
 							<button
-								class="nav-link"
 								id="downloads-tab"
+								class="nav-link"
 								data-bs-toggle="tab"
 								data-bs-target="#downloads"
 								type="button"
@@ -121,8 +121,8 @@
 							role="presentation"
 						>
 							<button
-								class="nav-link"
 								id="misc-tab"
+								class="nav-link"
 								data-bs-toggle="tab"
 								data-bs-target="#misc"
 								type="button"
@@ -138,34 +138,34 @@
 
 					<!-- CONTENT OF TABS -->
 					<div
-						class="tab-content"
 						id="myTabContent"
+						class="tab-content"
 					>
 						<div
-							class="tab-pane fade show active"
 							id="card_details"
+							class="tab-pane fade show active"
 							role="tabpanel"
 							aria-labelledby="details-tab"
 						>
 							<card-details
-								v-on:update_card="updateCard($event)"
+								@update_card="updateCard($event)"
 							></card-details>
 						</div>
 
 						<div
-							class="tab-pane fade"
 							id="card_description"
+							class="tab-pane fade"
 							role="tabpanel"
 							aria-labelledby="description-tab"
 						>
 							<card-description
-								v-on:update_card="updateCard($event)"
+								@update_card="updateCard($event)"
 							></card-description>
 						</div>
 
 						<div
-							class="tab-pane fade"
 							id="card_notes"
+							class="tab-pane fade"
 							role="tabpanel"
 							aria-labelledby="notes-tab"
 						>
@@ -173,39 +173,41 @@
 						</div>
 
 						<div
-							class="tab-pane fade"
 							id="user_permissions"
+							class="tab-pane fade"
 							role="tabpanel"
 							aria-labelledby="user-tab"
 						>
 							<card-users></card-users>
 						</div>
 						<div
-							class="tab-pane fade"
 							id="downloads"
+							class="tab-pane fade"
 							role="tabpanel"
 							aria-labelledby="user-tab"
 						>
 							<documents-module
 								override-destination="kanban_card"
-								v-bind:override-location-id="cardId"
-								v-bind:read-only="kanbanStatus === 'Closed'"
+								:override-location-id="cardId"
+								:read-only="kanbanStatus === 'Closed'"
 							></documents-module>
 						</div>
 						<div
-							class="tab-pane fade"
 							id="misc"
+							class="tab-pane fade"
 							role="tabpanel"
 							aria-labelledby="user-tab"
 						>
-							<list-tags-module override-destination="kanban_card"
+							<list-tags-module
+override-destination="kanban_card"
 											  close-modal-before="cardInformationModalCloseButton"
-											  v-bind:override-location-id="cardId"
+											  :override-location-id="cardId"
 							></list-tags-module>
 
-							<list-public-links override-destination="kanban_card"
-											   v-bind:override-location-id="cardId"
-											   v-bind:is-read-only="kanbanStatus === 'Closed'"
+							<list-public-links
+override-destination="kanban_card"
+											   :override-location-id="cardId"
+											   :is-read-only="kanbanStatus === 'Closed'"
 							></list-public-links>
 						</div>
 					</div>

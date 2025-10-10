@@ -3,10 +3,10 @@
 		<div class="gantt-header--information"></div>
 		<div class="gantt-header--months">
 			<div
-				v-for="month in this.monthArray"
+				v-for="month in monthArray"
 				:key="month.index"
 				class="gantt-header--month"
-				v-bind:style="`width: ${month.width}px`"
+				:style="`width: ${month.width}px`"
 			>
 				<span>{{month.month}} {{month.year}}</span>
 			</div>

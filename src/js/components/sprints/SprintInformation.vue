@@ -4,7 +4,8 @@
 			<h1>{{sprintResults[0].sprint_name}}</h1>
 			<strong>Sprint Status:</strong> {{ sprintStatus }}
 			<div class="dropdown">
-				<button class="btn btn-secondary btn-sm dropdown-toggle"
+				<button
+class="btn btn-secondary btn-sm dropdown-toggle"
 						type="button"
 						data-bs-toggle="dropdown"
 						aria-expanded="false">
@@ -12,16 +13,18 @@
 				</button>
 				<ul class="dropdown-menu">
 					<li>
-						<a class="dropdown-item"
-						   v-bind:href="getParentUrl()"
+						<a
+class="dropdown-item"
+						   :href="getParentUrl()"
 						>
 							Go to Parent Object
 						</a>
 					</li>
 					<li v-if="userLevel >= 2 && sprintStatus !== 'Finished'">
-						<a class="dropdown-item"
+						<a
+class="dropdown-item"
 						   href="#"
-						   v-on:click="showAddObjectWizard"
+						   @click="showAddObjectWizard"
 						>
 							Add Object Wizard
 						</a>
@@ -30,31 +33,35 @@
 						<hr class="dropdown-divider">
 					</li>
 					<li v-if="userLevel >= 2 && sprintStatus === 'Draft'">
-						<a class="dropdown-item"
+						<a
+class="dropdown-item"
 						   href="#"
-						   v-on:click="startSprint"
+						   @click="startSprint"
 						>
 							Start Sprint
 						</a>
 					</li>
 					<li v-if="userLevel >= 2 && sprintStatus === 'Current'">
-						<a class="dropdown-item"
+						<a
+class="dropdown-item"
 						   href="#"
-						   v-on:click="finishSprint"
+						   @click="finishSprint"
 						>
 							Finish Sprint
 						</a>
 					</li>
 					<li v-if="userLevel >= 2">
 						<hr class="dropdown-divider">
-						<a class="dropdown-item"
-						   v-bind:href="`${this.rootUrl}sprint_information/${this.sprintId}/edit/`"
+						<a
+class="dropdown-item"
+						   :href="`${rootUrl}sprint_information/${sprintId}/edit/`"
 						>Edit Sprint</a>
 					</li>
 					<li v-if="userLevel >= 2 && sprintStatus !== 'Finished'">
-						<a class="dropdown-item"
+						<a
+class="dropdown-item"
 						   href="#"
-						   v-on:click="confirmDeleteSprint"
+						   @click="confirmDeleteSprint"
 						>
 							Delete Sprint
 						</a>
@@ -64,8 +71,8 @@
 		</div>
 
 		<confirm-sprint-delete
-			v-bind:parent-object-destination="parentObjectDestination"
-			v-bind:parent-object-location-id="parentObjectLocationId"
+			:parent-object-destination="parentObjectDestination"
+			:parent-object-location-id="parentObjectLocationId"
 		></confirm-sprint-delete>
 
 		<add-object-wizard></add-object-wizard>
@@ -119,6 +126,45 @@ export default {
 			sprintStatus: this.sprintResults[0].sprint_status,
 		}
 	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		//Send data to VueX
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+		});
+
+		this.$store.commit({
+			type: "updateDestination",
+			destination: "sprint",
+			locationId: this.sprintResults[0].sprint_id,
+		});
+
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
+		});
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.sprintResults[0].sprint_name,
+		});
+
+		//Define what parent object and it's ID is
+		const project_id = this.sprintResults[0].project;
+		const requirement_id = this.sprintResults[0].requirement_id;
+		if (project_id !== null && project_id !== undefined && project_id !== "") {
+			this.parentObjectLocationId = project_id;
+			this.parentObjectDestination = "project";
+		} else if (requirement_id !== null && requirement_id !== undefined && requirement_id !== "") {
+			this.parentObjectLocationId = requirement_id;
+			this.parentObjectDestination = "requirement";
+		}
+	},
 	methods: {
 		useNBTheme,
 		useNiceDatetime,
@@ -161,45 +207,6 @@ export default {
 				});
 			});
 		},
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		//Send data to VueX
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-		});
-
-		this.$store.commit({
-			type: "updateDestination",
-			destination: "sprint",
-			locationId: this.sprintResults[0].sprint_id,
-		});
-
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: this.userLevel,
-		});
-
-		this.$store.commit({
-			type: "updateTitle",
-			title: this.sprintResults[0].sprint_name,
-		});
-
-		//Define what parent object and it's ID is
-		const project_id = this.sprintResults[0].project;
-		const requirement_id = this.sprintResults[0].requirement_id;
-		if (project_id !== null && project_id !== undefined && project_id !== "") {
-			this.parentObjectLocationId = project_id;
-			this.parentObjectDestination = "project";
-		} else if (requirement_id !== null && requirement_id !== undefined && requirement_id !== "") {
-			this.parentObjectLocationId = requirement_id;
-			this.parentObjectDestination = "requirement";
-		}
 	},
 };
 </script>

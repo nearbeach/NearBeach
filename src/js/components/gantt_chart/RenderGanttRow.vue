@@ -1,39 +1,45 @@
 <template>
-	<div class="gantt-row"
-		v-bind:id="getGanttRowId()"
+	<div
+:id="getGanttRowId()"
+		class="gantt-row"
 	>
-		<div class="gantt-row--information"
-			 v-on:dragleave="dragleaveRow"
-			 v-on:dragover="dragoverRow"
-			 v-on:drop="drop"
+		<div
+class="gantt-row--information"
+			 @dragleave="dragleaveRow"
+			 @dragover="dragoverRow"
+			 @drop="drop"
 		>
-			<div class="gantt-row--title"
-				v-bind:style="`padding-left:${levelNumber * 32}px`"
+			<div
+class="gantt-row--title"
+				:style="`padding-left:${levelNumber * 32}px`"
 			>
 				<span style="margin-right:10px;">
 					<carbon-trash-can
-						v-on:click="confirmRemoval()"
+						@click="confirmRemoval()"
 					></carbon-trash-can>
 				</span>
-				<span style="margin-right:10px;"
-					  v-on:mousedown="handleVerticalMove"
-					  v-if="objectType !== 'requirement_item'"
+				<span
+v-if="objectType !== 'requirement_item'"
+					  style="margin-right:10px;"
+					  @mousedown="handleVerticalMove"
 				>
 					<a href="javascript:void(0)">
 						<carbon-drag-vertical
 						></carbon-drag-vertical>
 					</a>
 				</span>
-				<span style="margin-right:10px"
+				<span
+style="margin-right:10px"
 					  :data-bs-title="description"
 					  data-bs-toggle="tooltip"
 					  data-bs-html="true"
 					  data-bs-custom-class="tooltip-description"
 					  data-bs-delay="200"
 				>
-					<a target="_blank"
+					<a
+target="_blank"
                        rel="noopener noreferrer"
-					   v-bind:href="getObjectUrl()"
+					   :href="getObjectUrl()"
 					>
 						<carbon-information></carbon-information>
 					</a>
@@ -44,22 +50,22 @@
   				<n-date-picker
 					v-if="objectType !== 'requirement_item'"
 					v-model:value="localStartDate"
-					@update:value="modifiedStartDate"
-                    :disabled="userLevel <= 1 || isClosed"
-					:format="datePickerFormat"
+					:disabled="userLevel <= 1 || isClosed"
+                    :format="datePickerFormat"
 					size="small"
 					type="datetime"
+					@update:value="modifiedStartDate"
 				/>
 			</div>
 			<div class="gantt-row--end-date">
 				<n-date-picker
 					v-if="objectType !== 'requirement_item'"
 					v-model:value="localEndDate"
-					@update:value="modifiedEndDate"
-                    :disabled="userLevel <= 1 || isClosed"
-					:format="datePickerFormat"
+					:disabled="userLevel <= 1 || isClosed"
+                    :format="datePickerFormat"
 					size="small"
 					type="datetime"
+					@update:value="modifiedEndDate"
 				></n-date-picker>
 			</div>
 			<div class="gantt-row--status">
@@ -74,31 +80,32 @@
 		</div>
 
 		<div class="gantt-row--render">
-			<div v-bind:class="`gantt-row--render-bar gantt-row--level-${levelNumber}`"
-				 v-if="renderBar"
+			<div
+v-if="renderBar"
+				 :class="`gantt-row--render-bar gantt-row--level-${levelNumber}`"
 			>
 				<div
 					class="gantt-row--spacer"
-					v-bind:style="`width: ${spacerWidth}px`"
+					:style="`width: ${spacerWidth}px`"
 				></div>
 				<div
 					class="gantt-row--bar"
-					v-bind:style="`width: ${barWidth}px`"
+					:style="`width: ${barWidth}px`"
 				>
 					<div
 						class="gantt-row--bar-start"
 						data-column="start"
-						v-on:mousedown="mouseDown"
+						@mousedown="mouseDown"
 					></div>
 					<div
 						class="gantt-row--bar-middle"
 						data-column="middle"
-						v-on:mousedown="mouseDown"
+						@mousedown="mouseDown"
 					></div>
 					<div
 						class="gantt-row--bar-end"
 						data-column="end"
-						v-on:mousedown="mouseDown"
+						@mousedown="mouseDown"
 					></div>
 				</div>
 			</div>
@@ -122,7 +129,13 @@ import CarbonDragVertical from "Components/icons/CarbonDragVertical.vue";
 
 export default {
 	name: "RenderGanttRow",
-	emits: ['mouse_down'],
+	components: {
+		CarbonDragVertical,
+		CarbonInformation,
+		CarbonTrashCan,
+		NDatePicker,
+		NSelect,
+	},
 	props: {
 		description: {
 			type: String,
@@ -177,13 +190,7 @@ export default {
 			default: "",
 		},
 	},
-	components: {
-		CarbonDragVertical,
-		CarbonInformation,
-		CarbonTrashCan,
-		NDatePicker,
-		NSelect,
-	},
+	emits: ['mouse_down'],
 	data() {
 		return {
 			datePickerFormat: "yyyy-MM-dd HH:mm",
@@ -197,17 +204,6 @@ export default {
 				"task": "Task",
 			},
 		};
-	},
-	watch: {
-		endDate(new_value) {
-			this.localEndDate = new_value;
-		},
-		startDate(new_value) {
-			this.localStartDate = new_value;
-		},
-		statusId(new_value) {
-			this.localStatusId = new_value;
-		},
 	},
 	computed: {
 		...mapGetters({
@@ -275,6 +271,26 @@ export default {
 			//Return the number of days multiplied by 35 pixels
 			return delta * 2;
 		},
+	},
+	watch: {
+		endDate(new_value) {
+			this.localEndDate = new_value;
+		},
+		startDate(new_value) {
+			this.localStartDate = new_value;
+		},
+		statusId(new_value) {
+			this.localStatusId = new_value;
+		},
+	},
+	mounted() {
+		this.getStatusList();
+
+		//This code is used the for tooltip when user is hovering over the (i) icon.
+		setTimeout(() => {
+			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+			// const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
+		}, 500);
 	},
 	methods: {
 		canBeDestination() {
@@ -413,7 +429,7 @@ export default {
 			//Get the status list dependent on the object type
 			this.statusList = this.$store.getters.getGanttStatusList(this.objectType);
 		},
-		handleVerticalMove(event) {
+		handleVerticalMove() {
 			//Send data up stream
 			this.$store.commit("updateMouseDown", {
 				isMouseDown: true,
@@ -506,15 +522,6 @@ export default {
 
 			this.updateGanttData();
 		},
-	},
-	mounted() {
-		this.getStatusList();
-
-		//This code is used the for tooltip when user is hovering over the (i) icon.
-		setTimeout(() => {
-			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
-		}, 500);
 	}
 }
 </script>

@@ -20,15 +20,17 @@
 		</div>
 		<div v-else>
 			<!-- Project Links -->
-			<sub-object-links title="Project Links"
-							  v-bind:link-results="linkProject"
-							  v-on:update_link_results="updateLinkResults($event)"
+			<sub-object-links
+title="Project Links"
+							  :link-results="linkProject"
+							  @update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Task Links -->
-			<sub-object-links title="Task Links"
-							  v-bind:link-results="linkTask"
-							  v-on:update_link_results="updateLinkResults($event)"
+			<sub-object-links
+title="Task Links"
+							  :link-results="linkTask"
+							  @update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 		</div>
 
@@ -39,10 +41,10 @@
 		>
 			<div class="col-md-12">
 				<a
+					v-if="userLevel > 1"
 					href="javascript:void(0)"
 					class="btn btn-primary save-changes"
-					v-on:click="newRequirementLink"
-					v-if="userLevel > 1"
+					@click="newRequirementLink"
 				>Create new Link</a
 				>
 			</div>
@@ -65,28 +67,30 @@
 		</div>
 		<div v-else>
 			<!-- Project Links -->
-			<sub-object-links title="Project Links"
-							  v-bind:link-results="itemLinkProject"
-							  v-bind:can-delete="false"
+			<sub-object-links
+title="Project Links"
+							  :link-results="itemLinkProject"
+							  :can-delete="false"
 			></sub-object-links>
 
 			<!-- Task Links -->
-			<sub-object-links title="Task Links"
-							  v-bind:link-results="itemLinkTask"
-							  v-bind:can-delete="false"
+			<sub-object-links
+title="Task Links"
+							  :link-results="itemLinkTask"
+							  :can-delete="false"
 			></sub-object-links>
 		</div>
 
 		<!-- LINKING MODAL -->
 		<new-requirement-link-wizard
-			v-bind:location-id="locationId"
+			:location-id="locationId"
 			destination="requirement"
-			v-on:update_module="updateLinkResults"
+			@update_module="updateLinkResults"
 		></new-requirement-link-wizard>
 
 		<!-- MODAL FOR CONFIRM DELETE LINK -->
 		<confirm-link-delete
-			v-on:update_link_results="updateLinkResults"
+			@update_link_results="updateLinkResults"
 		></confirm-link-delete>
 	</div>
 </template>
@@ -127,6 +131,11 @@ export default {
 			rootUrl: "getRootUrl",
 			userLevel: "getUserLevel",
 		}),
+	},
+	mounted() {
+		this.$nextTick(() => {
+			this.updateLinkResults();
+		});
 	},
 	methods: {
 		newRequirementLink() {
@@ -197,11 +206,6 @@ export default {
 				});
 			});
 		}
-	},
-	mounted() {
-		this.$nextTick(() => {
-			this.updateLinkResults();
-		});
 	},
 };
 </script>

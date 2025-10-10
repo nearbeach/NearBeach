@@ -1,8 +1,8 @@
 <template>
 	<!-- NEW HISTORY NOTE -->
 	<div
-		class="modal fade"
 		id="newNoteModal"
+		class="modal fade"
 		tabindex="-1"
 		role="dialog"
 		aria-labelledby="exampleModalLabel"
@@ -18,11 +18,11 @@
 						New Note
 					</h2>
 					<button
+						id="newNoteCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="newNoteCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -33,6 +33,7 @@
 						submit button to submit the note.
 					</p>
 					<editor
+						v-model="newNoteModel"
 						license-key="gpl"
 						:init="{
 							license_key: 'gpl',
@@ -41,19 +42,18 @@
 							plugins: ['lists', 'codesample', 'table'],
             				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 				 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-            				skin: `${this.skin}`,
-			            	content_css: `${this.contentCss}`,
+            				skin: `${skin}`,
+			            	content_css: `${contentCss}`,
 			            	relative_urls: false,
 						}"
-						v-model="newNoteModel"
 					/>
 				</div>
 				<div class="modal-footer">
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="newNoteModel == ''"
-						v-on:click="submitNote"
+						:disabled="newNoteModel == ''"
+						@click="submitNote"
 					>
 						Submit Note
 					</button>

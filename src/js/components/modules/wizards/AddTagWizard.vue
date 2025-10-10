@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="addTagModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -13,11 +13,11 @@
 						Add Tags Wizard
 					</h2>
 					<button
+						id="addTagsCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="addTagsCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -34,10 +34,10 @@
 						<div class="col-md-8">
 							<label>All Tag List</label>
 							<n-select
+								v-model:value="tagModel"
 								label="tag"
 								multiple
 								:options="availableTagList"
-								v-model:value="tagModel"
 							></n-select>
 						</div>
 					</div>
@@ -53,7 +53,7 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="addTag"
+						@click="addTag"
 					>
 						Add Tag
 					</button>
@@ -104,6 +104,16 @@ export default {
 			locationId: "getLocationId",
 			rootUrl: "getRootUrl",
 		}),
+	},
+	mounted() {
+		//If the location is inside the array - don't bother getting the data
+		const escape_array = ["requirement_item"];
+		if (escape_array.indexOf(this.getDestination()) >= 0) return;
+
+		this.$nextTick(() => {
+			//Get the tag list
+			this.getTagList();
+		});
 	},
 	methods: {
 		addTag() {
@@ -185,16 +195,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		//If the location is inside the array - don't bother getting the data
-		const escape_array = ["requirement_item"];
-		if (escape_array.indexOf(this.getDestination()) >= 0) return;
-
-		this.$nextTick(() => {
-			//Get the tag list
-			this.getTagList();
-		});
 	},
 };
 </script>

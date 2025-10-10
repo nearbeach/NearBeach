@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="uploadDocumentModal"
+		class="modal fade"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
 		tabindex="-1"
@@ -15,11 +15,11 @@
 						Upload Document Wizard
 					</h2>
 					<button
+						id="uploadDocumentCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="uploadDocumentCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -49,8 +49,8 @@
 						</div>
 						<div class="col-md-8">
 							<div
-								class="form-file"
 								v-if="documentModel.length === 0"
+								class="form-file"
 							>
 								<div class="mb-3">
 									<label
@@ -60,18 +60,18 @@
 										Please upload a file<br/>
 										{{ maxUploadString }}
 										<div
-											class="alert alert-warning"
 											v-if="maxUploadWarning"
+											class="alert alert-warning"
 										>
 											Sorry - file too large
 										</div>
 									</label>
 									<input
+										id="document"
 										type="file"
 										class="form-control"
-										id="document"
-										v-bind:accept="acceptedDocuments"
-										v-on:change="
+										:accept="acceptedDocuments"
+										@change="
 											handleFileUploads(
 												$event.target.files
 											)
@@ -80,8 +80,8 @@
 								</div>
 							</div>
 							<div
-								class="form-group"
 								v-else-if="uploadPercentage == ''"
+								class="form-group"
 							>
 								<!-- DOCUMENT DESCRIPTION -->
 								<div class="form-group">
@@ -99,8 +99,8 @@
 								<!-- RESET FORM BUTTON -->
 								<div class="form-row mt-4">
 									<button
-										v-on:click="resetForm"
 										class="btn btn-warning"
+										@click="resetForm"
 									>
 										Reset Form
 									</button>
@@ -155,8 +155,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="disableUploadButton"
-						v-on:click="uploadFile"
+						:disabled="disableUploadButton"
+						@click="uploadFile"
 					>
 						Upload File
 					</button>
@@ -204,6 +204,71 @@ export default {
 			staticUrl: "getStaticUrl",
 			rootUrl: "getRootUrl",
 		}),
+	},
+	watch: {
+		maxUploadSize() {
+			//If the user has set 0 -> just say "No Upload Limit"
+			if (this.maxUploadSize === 0) {
+				return "No Upload Limit";
+			}
+
+			//Define the constants we wish to use
+			const k = 1024;
+			const sizes = [
+				"Bytes",
+				"KB",
+				"MB",
+				"GB",
+				"TB",
+				"PB",
+				"EB",
+				"ZB",
+				"YB",
+			];
+
+			//Use math to find out which array section we are going to use from sizes
+			const i = Math.floor(
+				Math.log(this.maxUploadSize) / Math.log(k)
+			);
+
+			this.maxUploadString = `Max Upload Size: ${parseFloat(
+				(this.maxUploadSize / Math.pow(k, i)).toFixed(2)
+			)} ${sizes[i]}`;
+
+			return "";
+		},
+	},
+	updated() {
+		const match = this.excludeDocuments.filter((row) => {
+			return (
+				row.document_key__document_description ===
+				this.documentDescriptionModel
+			);
+		});
+
+		this.disableUploadButton =
+			this.documentModel === "" ||
+			this.documentDescriptionModel.length === 0 ||
+			match.length > 0;
+	},
+	mounted() {
+		//Wait a few seconds before getting the max file upload size
+		this.$nextTick(() => {
+			//Get the max file upload size
+			this.axios.post(
+				`${this.rootUrl}documentation/get/max_upload/`
+			).then((response) => {
+				//Set the value
+				this.maxUploadSize = response.data.max_upload_size;
+			}).catch(() => {
+				this.$store.dispatch("newToast", {
+					header: "Failed to get the max upload size",
+					message: `Had an issue getting data from backend. ${this.maxUploadString}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		});
 	},
 	methods: {
 		useReopenCardInformation,
@@ -299,71 +364,6 @@ export default {
 				});
 			});
 		},
-	},
-	watch: {
-		maxUploadSize() {
-			//If the user has set 0 -> just say "No Upload Limit"
-			if (this.maxUploadSize === 0) {
-				return "No Upload Limit";
-			}
-
-			//Define the constants we wish to use
-			const k = 1024;
-			const sizes = [
-				"Bytes",
-				"KB",
-				"MB",
-				"GB",
-				"TB",
-				"PB",
-				"EB",
-				"ZB",
-				"YB",
-			];
-
-			//Use math to find out which array section we are going to use from sizes
-			const i = Math.floor(
-				Math.log(this.maxUploadSize) / Math.log(k)
-			);
-
-			this.maxUploadString = `Max Upload Size: ${parseFloat(
-				(this.maxUploadSize / Math.pow(k, i)).toFixed(2)
-			)} ${sizes[i]}`;
-
-			return "";
-		},
-	},
-	updated() {
-		const match = this.excludeDocuments.filter((row) => {
-			return (
-				row.document_key__document_description ===
-				this.documentDescriptionModel
-			);
-		});
-
-		this.disableUploadButton =
-			this.documentModel === "" ||
-			this.documentDescriptionModel.length === 0 ||
-			match.length > 0;
-	},
-	mounted() {
-		//Wait a few seconds before getting the max file upload size
-		this.$nextTick(() => {
-			//Get the max file upload size
-			this.axios.post(
-				`${this.rootUrl}documentation/get/max_upload/`
-			).then((response) => {
-				//Set the value
-				this.maxUploadSize = response.data.max_upload_size;
-			}).catch(() => {
-				this.$store.dispatch("newToast", {
-					header: "Failed to get the max upload size",
-					message: `Had an issue getting data from backend. ${this.maxUploadString}`,
-					extra_classes: "bg-danger",
-					delay: 0,
-				});
-			});
-		});
 	},
 };
 </script>

@@ -11,25 +11,29 @@
 
 	<!-- LOOP FOR CHANGE TASKS -->
 	<div v-if="changeTaskList.length > 0">
-		<div v-for="changeTask in changeTaskList"
-			 v-bind:key="changeTask.change_task_id"
-             v-bind:class="detailClasses(changeTask.change_task_status)"
+		<div
+v-for="changeTask in changeTaskList"
+			 :key="changeTask.change_task_id"
+             :class="detailClasses(changeTask.change_task_status)"
     >
-			<a class="change-task--name"
-			   v-bind:href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
+			<a
+class="change-task--name"
+			   :href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
 			>
 				{{ changeTask.change_task_title }}
 			</a>
 
-			<a class="change-task--dates"
-			   v-bind:href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
+			<a
+class="change-task--dates"
+			   :href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
 			>
 				{{ useNiceDatetime(changeTask.change_task_start_date) }} -
 				{{ useNiceDatetime(changeTask.change_task_end_date) }}
 			</a>
 
-			<a class="change-task--responsibility"
-			   v-bind:href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
+			<a
+class="change-task--responsibility"
+			   :href="`${rootUrl}change_task_information/${changeTask.change_task_id}/`"
 			>
 				<div>
 					Assigned User:
@@ -58,10 +62,11 @@
 				<div class="change-task--blocked-by">
 					Change task currently blocked by;
 					<ul>
-						<li v-for="singleBlock in blockedBy(changeTask.change_task_id)"
+						<li
+v-for="singleBlock in blockedBy(changeTask.change_task_id)"
 							:key="singleBlock.object_assignment_id"
 						>
-							<a v-bind:href="`${this.rootUrl}change_task_information/${singleBlock.change_task_id}/`"
+							<a :href="`${rootUrl}change_task_information/${singleBlock.change_task_id}/`"
 							>
 								{{ singleBlock.change_task_title }}
 							</a>
@@ -69,45 +74,51 @@
 					</ul>
 				</div>
 			</div>
-			<div v-else-if="userLevel > 1 && rfcStatus === 4"
+			<div
+v-else-if="userLevel > 1 && rfcStatus === 4"
 				 class="change-task--buttons"
 			>
 				<!-- START TASK -->
-				<button class="btn btn-primary"
-						v-on:click="updateChangeTaskStatus(changeTask.change_task_id, 4)"
-						v-if="[3, 7, 8].includes(changeTask.change_task_status)"
+				<button
+v-if="[3, 7, 8].includes(changeTask.change_task_status)"
+						class="btn btn-primary"
+						@click="updateChangeTaskStatus(changeTask.change_task_id, 4)"
 				>
 					Start Task
 				</button>
 
 				<!-- PAUSE -->
-				<button class="btn btn-secondary"
-						v-on:click="updateChangeTaskStatus(changeTask.change_task_id, 7)"
-						v-if="[4].includes(changeTask.change_task_status)"
+				<button
+v-if="[4].includes(changeTask.change_task_status)"
+						class="btn btn-secondary"
+						@click="updateChangeTaskStatus(changeTask.change_task_id, 7)"
 				>
 					Pause Task
 				</button>
 
 				<!-- READY FOR QA -->
-				<button class="btn btn-info"
-						v-on:click="updateChangeTaskStatus(changeTask.change_task_id, 8)"
-						v-if="[4].includes(changeTask.change_task_status)"
+				<button
+v-if="[4].includes(changeTask.change_task_status)"
+						class="btn btn-info"
+						@click="updateChangeTaskStatus(changeTask.change_task_id, 8)"
 				>
 					Set Task Ready for QA
 				</button>
 
 				<!-- SUCCESS -->
-				<button class="btn btn-success"
-						v-on:click="openConfirmModal(changeTask.change_task_id, 'Success', 5)"
-						v-if="[8].includes(changeTask.change_task_status)"
+				<button
+v-if="[8].includes(changeTask.change_task_status)"
+						class="btn btn-success"
+						@click="openConfirmModal(changeTask.change_task_id, 'Success', 5)"
 				>
 					Set Task to Success
 				</button>
 
 				<!-- FAIL -->
-				<button class="btn btn-danger"
-						v-on:click="openConfirmModal(changeTask.change_task_id, 'Failure', 9)"
-						v-if="[4, 8].includes(changeTask.change_task_status)"
+				<button
+v-if="[4, 8].includes(changeTask.change_task_status)"
+						class="btn btn-danger"
+						@click="openConfirmModal(changeTask.change_task_id, 'Failure', 9)"
 				>
 					Set Task to Fail
 				</button>
@@ -116,8 +127,8 @@
 	</div>
 
 	<div
-		class="alert alert-primary"
 		v-else
+		class="alert alert-primary"
 	>
 		Currently there are no Change Tasks associated with this Request
 		for Change. Please add some by clicking on the button below.
@@ -125,15 +136,15 @@
 	<div class="row">
 		<!-- ADD NEW CHANGE TASK TO RUN SHEET -->
 		<div
-			class="row submit-row"
 			v-if="!isReadOnly"
+			class="row submit-row"
 		>
 			<div class="col-md-12">
 				<a
+					v-if="userLevel > 1"
 					href="javascript:void(0)"
 					class="btn btn-primary save-changes"
-					v-on:click="addNewChangeItem"
-					v-if="userLevel > 1"
+					@click="addNewChangeItem"
 				>New Change Item</a
 				>
 			</div>
@@ -141,15 +152,15 @@
 
 		<!-- If ALL Change Tasks have been completed - you can close the RFC -->
 		<div
-			class="row submit-row"
 			v-if="isCompleted"
+			class="row submit-row"
 		>
 			<div class="col-md-12">
 				<a
+					v-if="userLevel > 1"
 					href="javascript:void(0)"
 					class="btn btn-warning save-changes"
-					v-on:click="closeRfc"
-					v-if="userLevel > 1"
+					@click="closeRfc"
 				>Close Request for Change</a
 				>
 			</div>
@@ -157,19 +168,19 @@
 
 		<!-- Modal -->
 		<new-change-task
-			v-bind:location-id="locationId"
-			v-bind:user-list="userList"
-			v-on:update_change_task_list="updateChangeTaskList($event)"
 			v-if="!isReadOnly"
+			:location-id="locationId"
+			:user-list="userList"
+			@update_change_task_list="updateChangeTaskList($event)"
 		></new-change-task>
 	</div>
 
 	<!-- Confirm Change Task Closure -->
 	<confirm-change-task-closure
-		v-bind:closure-id="closureId"
-		v-bind:closure-status="closureStatus"
-		v-bind:closure-status-id="closureStatusId"
-		v-on:close_change_task="closeChangeTask($event)"
+		:closure-id="closureId"
+		:closure-status="closureStatus"
+		:closure-status-id="closureStatusId"
+		@close_change_task="closeChangeTask($event)"
 	></confirm-change-task-closure>
 </template>
 
@@ -246,6 +257,10 @@ export default {
 				(this.rfcStatus === 3 || this.rfcStatus === 4)
 			);
 		},
+	},
+	mounted() {
+		// Get the run sheet list
+		this.getRunSheetList();
 	},
 	methods: {
 		useNiceDatetime,
@@ -504,10 +519,6 @@ export default {
 				startDateModel: start_date.getTime(),
 			});
 		},
-	},
-	mounted() {
-		// Get the run sheet list
-		this.getRunSheetList();
 	},
 };
 </script>

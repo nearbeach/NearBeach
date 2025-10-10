@@ -2,13 +2,15 @@
 	<h3 v-if="linkResults.length > 0">
 		{{ title }}
 	</h3>
-	<div v-for="link in linkResults"
-		 v-bind:key="link.pk"
+	<div
+v-for="link in linkResults"
+		 :key="link.pk"
 		 class="row object-link"
 	>
 		<!-- Object ID + Title -->
 		<div class="col-md-10 object-link--details">
-			<a v-bind:href="`${this.rootUrl}${link.object_type}_information/${link.object_id}/`"
+			<a
+:href="`${rootUrl}${link.object_type}_information/${link.object_id}/`"
 			   target="_blank"
 			   rel="noopener noreferrer"
 			>
@@ -27,16 +29,17 @@
 
 		<!-- Object Delete -->
 		<div
-			class="object-link--remove"
 			v-if="userLevel >= 2 && canDelete === true"
+			class="object-link--remove"
 		>
 			<carbon-trash-can
-				v-on:click="confirmRemoveLink(link)"
+				@click="confirmRemoveLink(link)"
 			></carbon-trash-can>
 		</div>
 	</div>
-	<div class="spacer-extra"
-		 v-if="linkResults.length > 0"
+	<div
+v-if="linkResults.length > 0"
+		 class="spacer-extra"
 	></div>
 </template>
 
@@ -51,7 +54,6 @@ export default {
 	components: {
 		CarbonTrashCan,
 	},
-	emits: ["update_link_results"],
 	props: {
 		canDelete: {
 			type: Boolean,
@@ -68,6 +70,7 @@ export default {
 			default: "Relates",
 		},
 	},
+	emits: ["update_link_results"],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",

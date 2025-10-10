@@ -18,13 +18,15 @@
 			</div>
 			<div v-else>
 				<div class="object-card-list">
-					<div class="object-card"
-						 v-for="result in requirementItemResults"
+					<div
+v-for="result in requirementItemResults"
 						 :key="result.pk"
+						 class="object-card"
 					>
 						<div class="object-card--detail">
-							<a href="javascript:void(0)"
-							   v-on:click="requirementItemClicked(result)"
+							<a
+href="javascript:void(0)"
+							   @click="requirementItemClicked(result)"
 							>
 								<div class="object-card--detail--link">
 									RI-{{ result.pk}}
@@ -48,11 +50,11 @@
 
 			<!-- REQUIREMENT ITEM MODAL -->
 			<public-requirement-item-information
-				v-bind:requirement-item-results="selectedReqirementItem"
-				v-bind:organisation-results="organisationResults"
-				v-bind:default-stakeholder-image="defaultStakeholderImage"
-				v-bind:status-list="statusList"
-				v-bind:type-list="typeList"
+				:requirement-item-results="selectedReqirementItem"
+				:organisation-results="organisationResults"
+				:default-stakeholder-image="defaultStakeholderImage"
+				:status-list="statusList"
+				:type-list="typeList"
 			></public-requirement-item-information>
 		</div>
 	</div>

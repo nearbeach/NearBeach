@@ -1,7 +1,8 @@
 <template>
-    <span class="error"
-		  v-for="error of errorList"
+    <span
+v-for="error of errorList"
 		  :key="error.$uid"
+		  class="error"
 	>
         {{ error.$message }}
     </span>

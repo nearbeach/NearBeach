@@ -1,8 +1,9 @@
 <template>
 	<span class="icon">
-		<svg xmlns="http://www.w3.org/2000/svg"
-			 v-bind:width="width"
-			 v-bind:height="height"
+		<svg
+xmlns="http://www.w3.org/2000/svg"
+			 :width="width"
+			 :height="height"
 			 viewBox="0 0 32 32"
 		>
 			<path fill="currentColor" d="M19 14a3 3 0 1 0-3-3a3 3 0 0 0 3 3m0-4a1 1 0 1 1-1 1a1 1 0 0 1 1-1" />

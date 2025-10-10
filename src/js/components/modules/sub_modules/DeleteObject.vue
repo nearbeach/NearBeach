@@ -4,8 +4,9 @@
 		<p>
 			WARNING! This will delete the follow {{ destination }} from the system. This can not be undone.
 		</p>
-		<button class="btn btn-outline-dark"
-				v-on:click="confirmDeleteObject"
+		<button
+class="btn btn-outline-dark"
+				@click="confirmDeleteObject"
 		>
 			DELETE {{ destination }}
 		</button>

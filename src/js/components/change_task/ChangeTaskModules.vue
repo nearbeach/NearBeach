@@ -3,8 +3,8 @@
 		<div class="card">
 			<div class="card-body">
 				<ul
-					class="nav nav-tabs"
 					id="misc_module_tabs"
+					class="nav nav-tabs"
 					role="tablist"
 				>
 					<!-- CHANGE TASK LINKS -->
@@ -13,8 +13,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link active"
 							id="change-task-links-tab"
+							class="nav-link active"
 							data-bs-toggle="tab"
 							data-bs-target="#change_task_links"
 							type="button"
@@ -32,8 +32,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="description-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#description"
 							type="button"
@@ -51,8 +51,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="misc-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#misc"
 							type="button"
@@ -67,12 +67,12 @@
 				<hr/>
 
 				<div
-					class="tab-content"
 					id="misc_module_content"
+					class="tab-content"
 				>
 					<div
-						class="tab-pane fade active show"
 						id="change_task_links"
+						class="tab-pane fade active show"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
 					>
@@ -80,8 +80,8 @@
 						<change-task-link-list></change-task-link-list>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="description"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="home-tab"
 					>
@@ -89,8 +89,8 @@
 					</div>
 
 					<div
-						class="tab-pane fade"
 						id="misc"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="home-tab"
 					>
@@ -116,24 +116,24 @@ import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "ChangeTaskModules",
-	methods: {useNBTheme},
-	props: {
-		theme: {
-			type: String,
-			default: "light",
-		}
-	},
 	components: {
 		ChangeTaskDescription,
 		ChangeTaskLinkList,
 		ChangeTaskMisc,
     	NConfigProvider,
 	},
+	props: {
+		theme: {
+			type: String,
+			default: "light",
+		}
+	},
 	beforeMount() {
 		this.$store.dispatch("processThemeUpdate", {
 			theme: this.theme,
 		});
-	}
+	},
+	methods: {useNBTheme}
 };
 </script>
 

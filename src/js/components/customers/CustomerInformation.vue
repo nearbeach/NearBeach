@@ -4,7 +4,7 @@
 			<div class="card-body">
 				<!-- TITLE -->
 				<h1 class="mb-4">Customer Information</h1>
-				<a v-bind:href="`${rootUrl}search/customer/`"
+				<a :href="`${rootUrl}search/customer/`"
 				>Go back to customer search</a
 				>
 				<hr/>
@@ -23,7 +23,7 @@
 						<div class="row customer-profile-image">
 							<!-- PROFILE IMAGE -->
 							<img
-								v-bind:src="profilePicture"
+								:src="profilePicture"
 								alt="User Profile Picture"
 								class="customer-profile-image"
 							/>
@@ -34,9 +34,9 @@
 								'X-CSRFTOKEN': useToken('csrftoken'),
 							}"
 								:data="{}"
+								accept=".jpg, .jpeg, .png, *.webp"
 								@finish="updateProfilePicture"
 								@error="showErrorToast"
-								accept=".jpg, .jpeg, .png, *.webp"
 							>
 								<n-button>Update Profile Picture</n-button>
 							</n-upload>
@@ -49,26 +49,26 @@
 								<label>
 									Title:
 									<validation-rendering
-										v-bind:error-list="v$.customerTitleModel.$errors"
+										:error-list="v$.customerTitleModel.$errors"
 									></validation-rendering>
 								</label>
 								<n-select
+									v-model:value="customerTitleModel"
 									:options="titleFixList"
 									:disabled="userLevel <= 1"
-									v-model:value="customerTitleModel"
 								></n-select>
 							</div>
 							<div class="form-group col-sm-4">
 								<label>
 									First Name:
 									<validation-rendering
-										v-bind:error-list="v$.customerFirstNameModel.$errors"
+										:error-list="v$.customerFirstNameModel.$errors"
 									></validation-rendering>
 								</label>
 								<input
+									v-model="customerFirstNameModel"
 									type="text"
 									class="form-control"
-									v-model="customerFirstNameModel"
 									:disabled="userLevel <= 1"
 								/>
 							</div>
@@ -76,13 +76,13 @@
 								<label>
 									Last Name:
 									<validation-rendering
-										v-bind:error-list="v$.customerLastNameModel.$errors"
+										:error-list="v$.customerLastNameModel.$errors"
 									></validation-rendering>
 								</label>
 								<input
+									v-model="customerLastNameModel"
 									type="text"
 									class="form-control"
-									v-model="customerLastNameModel"
 									:disabled="userLevel <= 1"
 								/>
 							</div>
@@ -92,14 +92,15 @@
 				<!-- STAKEHOLDER ORGANISATION -->
 				<hr/>
 				<stakeholder-information
-					v-bind:organisation-results="organisationResults"
-					v-bind:default-stakeholder-image="defaultStakeholderImage"
 					v-if="organisationResults.length > 0"
+					:organisation-results="organisationResults"
+					:default-stakeholder-image="defaultStakeholderImage"
 				></stakeholder-information>
 
 				<!-- NEED TO APPLY PERMISSIONS -->
 				<!-- Submit Button -->
-				<hr v-if="userLevel > 1"
+				<hr
+v-if="userLevel > 1"
 					class="mt-4"
 				/>
 				<div
@@ -110,7 +111,7 @@
 						<a
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
-							v-on:click="updateCustomer"
+							@click="updateCustomer"
 						>Update Customer</a
 						>
 					</div>
@@ -135,9 +136,6 @@ import {useToken} from "Composables/security/useToken";
 
 export default {
 	name: "CustomerInformation",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		NButton,
 		NSelect,
@@ -185,6 +183,9 @@ export default {
 			default: 0,
 		},
 	},
+	setup() {
+		return {v$: useVuelidate()};
+	},
 	data() {
 		return {
 			customerEmailModel:
@@ -213,6 +214,40 @@ export default {
 		customerTitleModel: {
 			required,
 		},
+	},
+	mounted() {
+		//Send up root and static url
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
+		});
+
+		this.$store.commit({
+			type: "updateDestination",
+			destination: "customer",
+			locationId: this.customerResults[0].pk,
+		});
+		this.$store.commit({
+			type: "updateTitle",
+			title: `${this.customerFirstNameModel} ${this.customerLastNameModel}`,
+		});
+
+		//Convert the title list data into a format NSelect can use
+		this.titleFixList = this.titleList.map((row) => {
+			return {
+				value: row.pk,
+				label: row.fields.title,
+			};
+		});
+
+		//See if there is a profile picture
+		this.setProfilePicture();
 	},
 	methods: {
 		useToken,
@@ -310,40 +345,6 @@ export default {
 				this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
 			});
 		},
-	},
-	mounted() {
-		//Send up root and static url
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: this.userLevel,
-		});
-
-		this.$store.commit({
-			type: "updateDestination",
-			destination: "customer",
-			locationId: this.customerResults[0].pk,
-		});
-		this.$store.commit({
-			type: "updateTitle",
-			title: `${this.customerFirstNameModel} ${this.customerLastNameModel}`,
-		});
-
-		//Convert the title list data into a format NSelect can use
-		this.titleFixList = this.titleList.map((row) => {
-			return {
-				value: row.pk,
-				label: row.fields.title,
-			};
-		});
-
-		//See if there is a profile picture
-		this.setProfilePicture();
 	},
 };
 </script>

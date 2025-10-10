@@ -3,9 +3,9 @@
 		<div class="card">
 			<div class="card-body">
 				<list-public-links
-					v-bind:is-read-only="isReadOnly"
+					:is-read-only="isReadOnly"
 					override-destination="kanban_board"
-					v-bind:override-location-id="locationId"
+					:override-location-id="locationId"
 				></list-public-links>
 			</div>
 		</div>
@@ -21,7 +21,9 @@ import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "KanbanPublicLinks",
-	methods: {useNBTheme},
+	components: {
+		ListPublicLinks,
+	},
 	props: {
 		isReadOnly: {
 			type: Boolean,
@@ -36,8 +38,6 @@ export default {
 			default: "",
 		},
 	},
-	components: {
-		ListPublicLinks,
-	},
+	methods: {useNBTheme},
 }
 </script>

@@ -1,20 +1,23 @@
 <template>
 	<div class="object-card-list">
 		<h2>{{ importVariables.header }}</h2>
-		<div class="object-card"
-			 v-for="result in searchResults"
+		<div
+v-for="result in searchResults"
 			 :key="result.pk"
+			 class="object-card"
 		>
 			<div class="object-card--checkbox">
-				<input type="checkbox"
-					   v-bind:value="result.pk"
-					   v-bind:id="`${modelTarget}_${result.pk}`"
+				<input
+:id="`${modelTarget}_${result.pk}`"
 					   v-model="checkboxModel"
+					   type="checkbox"
+					   :value="result.pk"
 			    />
 			</div>
 			<div class="object-card--detail">
-				<a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`"
-					v-bind:target="target"
+				<a
+:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`"
+					:target="target"
 				>
 					<div class="object-card--detail--link">
 						{{ importVariables.prefix }}{{ result[importVariables.id] }}
@@ -25,8 +28,9 @@
 				</a>
 			</div>
 			<div class="object-card--status">
-				<a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`"
-					v-bind:target="target"
+				<a
+:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`"
+					:target="target"
 				>
 					<div class="object-card--status--status">
 						{{ result[importVariables.status] }}
@@ -49,10 +53,6 @@ import {useNiceDatetime} from "Composables/datetime/useNiceDatetime";
 
 export default {
 	name: "RenderObjectCardCheckbox",
-	methods: {
-		useNiceDatetime
-	},
-	emits: ["update_checkbox_model"],
 	props: {
 		destination: {
 			type: String,
@@ -85,6 +85,12 @@ export default {
 			default: "",
 		},
 	},
+	emits: ["update_checkbox_model"],
+	data() {
+		return {
+			checkboxModel: [],
+		}
+	},
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",
@@ -98,10 +104,8 @@ export default {
 			})
 		},
 	},
-	data() {
-		return {
-			checkboxModel: [],
-		}
-	}
+	methods: {
+		useNiceDatetime
+	},
 }
 </script>

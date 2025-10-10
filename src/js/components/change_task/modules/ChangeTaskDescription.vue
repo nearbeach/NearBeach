@@ -5,6 +5,7 @@
 		description, please hit the "Update Descritpion" button
 	</p>
 	<editor
+		v-model="changeDescriptionModel"
 		license-key="gpl"
 		:init="{
 			license_key: 'gpl',
@@ -16,23 +17,22 @@
             plugins: ['lists', 'image', 'codesample', 'table'],
             toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-            skin: `${this.skin}`,
-            content_css: `${this.contentCss}`,
+            skin: `${skin}`,
+            content_css: `${contentCss}`,
             relative_urls: false,
         }"
-		v-model="changeDescriptionModel"
-		v-bind:disabled="isReadOnly"
+		:disabled="isReadOnly"
 	/>
 
 	<hr v-if="!isReadOnly"/>
 	<div
-		class="row submit-row"
 		v-if="!isReadOnly"
+		class="row submit-row"
 	>
 		<div class="col-md-12">
 			<button
 				class="btn btn-primary save-changes"
-				v-on:click="updateDescription"
+				@click="updateDescription"
 			>
 				Update Description
 			</button>

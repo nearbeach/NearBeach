@@ -5,7 +5,8 @@
 				<h1>Project Information</h1>
 				<hr/>
 
-				<div v-if="projectIsClosed"
+				<div
+v-if="projectIsClosed"
 					 class="alert alert-info"
 				>
 					Project is currently closed
@@ -31,14 +32,14 @@
 							<label
 							>Project Name
 								<validation-rendering
-									v-bind:error-list="v$.projectNameModel.$errors"
+									:error-list="v$.projectNameModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
-								type="text"
 								v-model="projectNameModel"
+								type="text"
 								class="form-control"
-								v-bind:disabled="isReadOnly"
+								:disabled="isReadOnly"
 							/>
 						</div>
 						<br/>
@@ -47,16 +48,17 @@
 						<label>
 							Project Description:
 							<validation-rendering
-								v-bind:error-list="v$.projectDescriptionModel.$errors"
+								:error-list="v$.projectDescriptionModel.$errors"
 							></validation-rendering>
 						</label>
 						<br/>
 						<img
-							v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
+							:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 							class="loader-image"
 							alt="loading image for Tinymce"
 						/>
 						<editor
+							v-model="projectDescriptionModel"
 							license-key="gpl"
 							:init="{
 							license_key: 'gpl',
@@ -68,12 +70,11 @@
 							plugins: ['lists', 'image', 'codesample', 'table'],
             				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 				 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-							skin: `${this.skin}`,
-							content_css: `${this.contentCss}`,
+							skin: `${skin}`,
+							content_css: `${contentCss}`,
 							relative_urls: false,
 						}"
-							v-bind:disabled="isReadOnly"
-							v-model="projectDescriptionModel"
+							:disabled="isReadOnly"
 						/>
 					</div>
 				</div>
@@ -81,8 +82,8 @@
 				<!-- STAKEHOLDER ORGANISATION -->
 				<hr/>
 				<stakeholder-information
-					v-bind:organisation-results="organisationResults"
-					v-bind:default-stakeholder-image="defaultStakeholderImage"
+					:organisation-results="organisationResults"
+					:default-stakeholder-image="defaultStakeholderImage"
 				></stakeholder-information>
 
 				<!-- PROJECT STATUS AND PRIORITY -->
@@ -99,17 +100,17 @@
 					<div class="col-md-4">
 						<label>Project Status</label>
 						<n-select
-							v-bind:options="statusOptions"
-							v-bind:disabled="userLevel<=1"
 							v-model:value="projectStatusModel"
+							:options="statusOptions"
+							:disabled="userLevel<=1"
 						></n-select>
 					</div>
 					<div class="col-md-4">
 						<label>Project Priority</label>
 						<n-select
-							v-bind:options="priorityOptions"
-							v-bind:disabled="userLevel<=1"
 							v-model:value="projectPriorityModel"
+							:options="priorityOptions"
+							:disabled="userLevel<=1"
 						></n-select>
 					</div>
 				</div>
@@ -128,13 +129,14 @@
 						<label>Story Points</label>
 						<n-input-number
 							v-model:value="projectStoryPointModel"
-							v-bind:disabled="isReadOnly"
+							:disabled="isReadOnly"
 							placeholder="Min"
 							:min="1"
 							:max="10"
 							style="max-width: 150px;"
 						/>
-						<div v-if="projectStoryPointModel > 5"
+						<div
+v-if="projectStoryPointModel > 5"
 							 class="alert alert-info mt-3"
 							 role="alert"
 						>
@@ -147,22 +149,23 @@
 				<hr/>
 				<between-dates
 					destination="project"
-					v-on:update_dates="updateDates($event)"
-					v-bind:is-read-only="isReadOnly"
-					v-bind:end-date-model="projectEndDateModel.getTime()"
-					v-bind:start-date-model="projectStartDateModel.getTime()"
+					:is-read-only="isReadOnly"
+					:end-date-model="projectEndDateModel.getTime()"
+					:start-date-model="projectStartDateModel.getTime()"
+					@update_dates="updateDates($event)"
 				></between-dates>
 
 				<!-- Submit and Close Button -->
 				<hr v-if="!isReadOnly"/>
 				<div
-					class="row submit-row"
 					v-if="!isReadOnly"
+					class="row submit-row"
 				>
 					<div class="col-md-12">
 						<!-- Update Project -->
-						<button class="btn btn-primary save-changes"
-							v-on:click="updateProject"
+						<button
+class="btn btn-primary save-changes"
+							@click="updateProject"
 						>
 							Update Project
 						</button>
@@ -193,9 +196,6 @@ import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 export default {
 	name: "ProjectInformation",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		BetweenDates,
 		editor: Editor,
@@ -240,6 +240,9 @@ export default {
 			default: 1,
 		},
 	},
+	setup() {
+		return {v$: useVuelidate()};
+	},
 	computed: {
 		...mapGetters({
 			contentCss: "getContentCss",
@@ -247,19 +250,6 @@ export default {
 			skin: "getSkin",
 			staticUrl: "getStaticUrl",
 		}),
-	},
-	watch: {
-		async projectStatusModel() {
-			//Escape condition 1 - if the project is NOT already closed
-			if (!this.projectIsClosed) return;
-
-			//Escape condition 2 - if the NEW status is closed
-			if (this.checkStatusIsClosed()) return;
-
-			//Method - we want to resave the data and then reload
-			await this.updateProject();
-			window.location.reload();
-		},
 	},
 	data() {
 		return {
@@ -284,6 +274,19 @@ export default {
 			projectStoryPointModel: this.projectResults[0].fields.project_story_point,
 		};
 	},
+	watch: {
+		async projectStatusModel() {
+			//Escape condition 1 - if the project is NOT already closed
+			if (!this.projectIsClosed) return;
+
+			//Escape condition 2 - if the NEW status is closed
+			if (this.checkStatusIsClosed()) return;
+
+			//Method - we want to resave the data and then reload
+			await this.updateProject();
+			window.location.reload();
+		},
+	},
 	validations: {
 		projectDescriptionModel: {
 			required,
@@ -299,6 +302,20 @@ export default {
 		projectStartDateModel: {
 			required,
 		},
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		//Set the read only status
+		this.setReadOnly();
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.projectNameModel,
+		});
 	},
 	methods: {
 		useUploadImage,
@@ -393,20 +410,6 @@ export default {
 				});
 			});
 		},
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		//Set the read only status
-		this.setReadOnly();
-
-		this.$store.commit({
-			type: "updateTitle",
-			title: this.projectNameModel,
-		});
 	},
 };
 </script>

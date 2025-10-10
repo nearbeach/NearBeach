@@ -5,7 +5,8 @@
 				<h1>Task Information</h1>
 				<hr/>
 
-				<div v-if="taskIsClosed"
+				<div
+v-if="taskIsClosed"
 					 class="alert alert-info"
 				>
 					Task is currently closed
@@ -31,13 +32,13 @@
 							<label
 							>Task Short Description:
 								<validation-rendering
-									v-bind:error-list="v$.taskShortDescriptionModel.$errors"
+									:error-list="v$.taskShortDescriptionModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
-								type="text"
 								v-model="taskShortDescriptionModel"
-								v-bind:disabled="isReadOnly"
+								type="text"
+								:disabled="isReadOnly"
 								class="form-control"
 							/>
 						</div>
@@ -47,16 +48,17 @@
 						<label>
 							Task Long Description:
 							<validation-rendering
-								v-bind:error-list="v$.taskDescriptionModel.$errors"
+								:error-list="v$.taskDescriptionModel.$errors"
 							></validation-rendering>
 						</label>
 						<br/>
 						<img
-							v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
+							:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 							class="loader-image"
 							alt="loading image for Tinymce"
 						/>
 						<editor
+							v-model="taskDescriptionModel"
 							license-key="gpl"
 							:init="{
 							license_key: 'gpl',
@@ -68,12 +70,11 @@
 							plugins: ['lists', 'image', 'codesample', 'table'],
             				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 									 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-							skin: `${this.skin}`,
-							content_css: `${this.contentCss}`,
+							skin: `${skin}`,
+							content_css: `${contentCss}`,
 							relative_urls: false,
 						}"
-							v-bind:disabled="isReadOnly"
-							v-model="taskDescriptionModel"
+							:disabled="isReadOnly"
 						/>
 					</div>
 				</div>
@@ -81,8 +82,8 @@
 				<!-- STAKEHOLDER ORGANISATION -->
 				<hr/>
 				<stakeholder-information
-					v-bind:organisation-results="organisationResults"
-					v-bind:default-stakeholder-image="defaultStakeholderImage"
+					:organisation-results="organisationResults"
+					:default-stakeholder-image="defaultStakeholderImage"
 				></stakeholder-information>
 
 				<!-- TASK STATUS AND PRIORITY -->
@@ -99,17 +100,17 @@
 					<div class="col-md-4">
 						<label>Task Status</label>
 						<n-select
-							v-bind:options="statusOptions"
-							v-bind:disabled="userLevel <= 1"
 							v-model:value="taskStatusModel"
+							:options="statusOptions"
+							:disabled="userLevel <= 1"
 						></n-select>
 					</div>
 					<div class="col-md-4">
 						<label>Task Priority</label>
 						<n-select
-							v-bind:options="priorityOptions"
-							v-bind:disabled="userLevel <= 1"
 							v-model:value="taskPriorityModel"
+							:options="priorityOptions"
+							:disabled="userLevel <= 1"
 						></n-select>
 					</div>
 				</div>
@@ -118,10 +119,10 @@
 				<hr/>
 				<between-dates
 					destination="task"
-					v-on:update_dates="updateDates($event)"
-					v-bind:start-date-model="taskStartDateModel.getTime()"
-					v-bind:end-date-model="taskEndDateModel.getTime()"
-					v-bind:is-read-only="isReadOnly"
+					:start-date-model="taskStartDateModel.getTime()"
+					:end-date-model="taskEndDateModel.getTime()"
+					:is-read-only="isReadOnly"
+					@update_dates="updateDates($event)"
 				></between-dates>
 
 				<!-- STORY POINTS-->
@@ -138,7 +139,7 @@
 						<label>Story Points</label>
 						<n-input-number
 							v-model:value="taskStoryPointModel"
-							v-bind:disabled="userLevel <= 1"
+							:disabled="userLevel <= 1"
 							placeholder="Min"
 							:min="1"
 							:max="10"
@@ -150,13 +151,14 @@
 				<!-- Submit Button -->
 				<hr v-if="!isReadOnly"/>
 				<div
-					class="row submit-row"
 					v-if="!isReadOnly"
+					class="row submit-row"
 				>
 					<div class="col-md-12">
 						<!-- Update Task -->
-						<button class="btn btn-primary save-changes"
-								v-on:click="updateTask"
+						<button
+class="btn btn-primary save-changes"
+								@click="updateTask"
 						>
 							Update task
 						</button>
@@ -185,9 +187,6 @@ import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 export default {
 	name: "TaskInformation",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		BetweenDates,
 		editor: Editor,
@@ -232,26 +231,8 @@ export default {
 			default: 1,
 		},
 	},
-	computed: {
-		...mapGetters({
-			contentCss: "getContentCss",
-			rootUrl: "getRootUrl",
-			skin: "getSkin",
-			staticUrl: "getStaticUrl",
-		}),
-	},
-	watch: {
-		async taskStatusModel() {
-			//Escape condition 1 - if the task is NOT already closed
-			if (!this.taskIsClosed) return;
-
-			//Escape condition 2 - if the NEW status is closed
-			if (this.checkStatusIsClosed()) return;
-
-			//Method - we want to resave the data and then reload
-			await this.updateTask();
-			window.location.reload();
-		},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -276,6 +257,27 @@ export default {
 			taskStoryPointModel: this.taskResults[0].fields.task_story_point,
 		};
 	},
+	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			rootUrl: "getRootUrl",
+			skin: "getSkin",
+			staticUrl: "getStaticUrl",
+		}),
+	},
+	watch: {
+		async taskStatusModel() {
+			//Escape condition 1 - if the task is NOT already closed
+			if (!this.taskIsClosed) return;
+
+			//Escape condition 2 - if the NEW status is closed
+			if (this.checkStatusIsClosed()) return;
+
+			//Method - we want to resave the data and then reload
+			await this.updateTask();
+			window.location.reload();
+		},
+	},
 	validations: {
 		taskDescriptionModel: {
 			required,
@@ -290,6 +292,20 @@ export default {
 		taskStartDateModel: {
 			required,
 		},
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		//Set the read only on mount :)
+		this.setReadOnly();
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.taskShortDescriptionModel,
+		});
 	},
 	methods: {
 		useUploadImage,
@@ -397,20 +413,6 @@ export default {
 		updateGroupModel(data) {
 			this.groupModel = data;
 		},
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		//Set the read only on mount :)
-		this.setReadOnly();
-
-		this.$store.commit({
-			type: "updateTitle",
-			title: this.taskShortDescriptionModel,
-		});
 	},
 };
 </script>

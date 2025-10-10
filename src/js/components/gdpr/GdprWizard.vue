@@ -5,7 +5,7 @@
 				<h1>GDPR Wizard</h1>
 				<hr/>
 
-				<gdpr-wizard-steps v-bind:current-tab="currentTab"></gdpr-wizard-steps>
+				<gdpr-wizard-steps :current-tab="currentTab"></gdpr-wizard-steps>
 
 				<div class="alert alert-info gdpr-wizard-alert">
 					Please use a larger monitor, as there is a large amount of data to process. Doing this task on a
@@ -14,22 +14,22 @@
 
 				<!-- OBJECT-->
 				<gdpr-wizard-object
-					v-bind:style="displayTab(0)"
+					:style="displayTab(0)"
 				></gdpr-wizard-object>
 
 				<!-- SEARCH-->
 				<gdpr-wizard-search
-					v-bind:style="displayTab(1)"
+					:style="displayTab(1)"
 				></gdpr-wizard-search>
 
 				<!-- DATA VERIFICATION-->
 				<gdpr-wizard-data-verification
-					v-bind:style="displayTab(2)"
+					:style="displayTab(2)"
 				></gdpr-wizard-data-verification>
 
 				<!-- CONFIRMATION-->
 				<gdpr-wizard-confirmation
-					v-bind:style="displayTab(3)"
+					:style="displayTab(3)"
 				></gdpr-wizard-confirmation>
 
 				<!-- NAVIGATION -->
@@ -37,26 +37,29 @@
 				<div class="row submit-row">
 					<div class="col-md-12">
 						<!-- PREVIOUS -->
-						<button class="btn btn-primary"
-								v-on:click="previousTab"
-								v-if="currentTab!==0"
+						<button
+v-if="currentTab!==0"
+								class="btn btn-primary"
+								@click="previousTab"
 						>
 							Previous
 						</button>
 
 						<!-- NEXT -->
-						<button class="btn btn-primary save-changes"
-								v-on:click="nextTab"
-								v-if="currentTab!==3"
+						<button
+v-if="currentTab!==3"
+								class="btn btn-primary save-changes"
+								@click="nextTab"
 						>
 							Next
 						</button>
 
 						<!-- SUBMIT -->
-						<button class="btn btn-danger save-changes"
-								v-on:click="submitGdpr"
-								v-if="currentTab===3"
-								v-bind:disabled="disableSubmitButton"
+						<button
+v-if="currentTab===3"
+								class="btn btn-danger save-changes"
+								:disabled="disableSubmitButton"
+								@click="submitGdpr"
 						>
 							SUBMIT GDPR DELETION
 						</button>

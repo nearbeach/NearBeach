@@ -5,7 +5,8 @@
 	</p>
 
 	<div v-if="allowedObjects.includes(destination)">
-		<div v-if="sprintResults.length === 0"
+		<div
+v-if="sprintResults.length === 0"
 			 class="alert alert-info"
 		>
 			Currently there are no current sprints.
@@ -13,17 +14,19 @@
 
 		<!-- CURRENT SPRINTS-->
 		<render-sprint-card
-			v-bind:sprint-results="sprintResults"
-			v-bind:can-delete="false"
+			:sprint-results="sprintResults"
+			:can-delete="false"
 		></render-sprint-card>
 
 		<!-- BUTTONS-->
-		<div class="row submit-row"
-			v-if="userLevel >= 2"
+		<div
+v-if="userLevel >= 2"
+			class="row submit-row"
 		>
 			<div class="col-md-12">
-				<button class="btn btn-primary save-changes"
-					v-on:click="openCreateModal"
+				<button
+class="btn btn-primary save-changes"
+					@click="openCreateModal"
 				>
 					Create New Sprint
 				</button>
@@ -34,7 +37,7 @@
 
 	<new-sprint-wizard
 		v-if="allowedObjects.includes(destination)"
-		v-bind:sprint-results-length="sprintResults.length"
+		:sprint-results-length="sprintResults.length"
 	></new-sprint-wizard>
 </template>
 
@@ -72,6 +75,14 @@ export default {
 			userLevel: "getUserLevel",
 		}),
 	},
+	mounted() {
+		this.$nextTick(() => {
+			//Only run the get sprints if the destination is correct
+			if (this.allowedObjects.includes(this.destination)) {
+				this.getSprints();
+			}
+		});
+	},
 	methods: {
 		closeModal() {
 			document.getElementById("createNewSprintButton").click();
@@ -97,14 +108,6 @@ export default {
 			const modal = new Modal(document.getElementById("createNewSprintModal"));
 			modal.show();
 		},
-	},
-	mounted() {
-		this.$nextTick(() => {
-			//Only run the get sprints if the destination is correct
-			if (this.allowedObjects.includes(this.destination)) {
-				this.getSprints();
-			}
-		});
 	},
 }
 </script>

@@ -13,8 +13,9 @@
 			</p>
 
 
-			<render-object-card v-bind:search-results="rfcApprovalsList"
-								v-bind:import-variables="rfcVariables"
+			<render-object-card
+:search-results="rfcApprovalsList"
+								:import-variables="rfcVariables"
 								destination="rfc"
 			></render-object-card>
 		</div>
@@ -25,7 +26,7 @@
 import RenderObjectCard from "Components/render/RenderObjectCard.vue";
 
 export default {
-	name: "DashboardRfcApprovals.vue",
+	name: "DashboardRfcApprovals",
 	components: {RenderObjectCard},
 	props: {
 		rootUrl: {
@@ -45,6 +46,9 @@ export default {
 			},
 		};
 	},
+	mounted() {
+		this.getRfcApprovalsList();
+	},
 	methods: {
 		getRfcApprovalsList() {
 			//Use axios to get data
@@ -62,9 +66,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		this.getRfcApprovalsList();
 	},
 };
 </script>

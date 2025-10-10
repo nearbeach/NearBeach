@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmKanbanBoardReopen"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,18 +12,18 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="confirmKanbanBoardOpen"
+						class="modal-title"
 					>
 						Please confirm Kanban Board Reopen
 					</h5>
 					<!-- TASK INFORMATION -->
 					<button
+						id="confirmKanbanCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmKanbanCloseButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -33,14 +33,14 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						No
 					</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="reopenKanbanBoard"
+						@click="reopenKanbanBoard"
 					>
 						Yes
 					</button>
@@ -54,7 +54,7 @@
 import {mapGetters} from "vuex";
 
 export default {
-	name: "confirmKanbanBoardOpen",
+	name: "ConfirmKanbanBoardOpen",
 	computed: {
 		...mapGetters({
 			destination: "getDestination",

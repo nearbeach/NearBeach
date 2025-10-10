@@ -1,12 +1,14 @@
 <template>
 	<div class="row">
-		<div v-if="status==='loading'"
+		<div
+v-if="status==='loading'"
 			class="alert alert-info"
 		>
 			Please wait. Fetching data.
 		</div>
 
-		<div v-if="status!=='loading'"
+		<div
+v-if="status!=='loading'"
 			 class="row"
 		>
 			<div class="col-md-4">
@@ -25,40 +27,44 @@
 				</p>
 			</div>
 			<div class="col-md-8">
-				<render-object-card-checkbox v-bind:search-results="projectResults.userActionRequired"
-											 v-bind:import-variables="projectVariables"
+				<render-object-card-checkbox
+v-if="projectResults.userActionRequired.length > 0"
+											 :search-results="projectResults.userActionRequired"
+											 :import-variables="projectVariables"
 											 destination="project"
 											 model-target="project"
 											 target="_blank"
-											 v-on:update_checkbox_model="updateCheckboxModel"
-											 v-if="projectResults.userActionRequired.length > 0"
+											 @update_checkbox_model="updateCheckboxModel"
 				></render-object-card-checkbox>
 
-				<render-object-card-checkbox v-bind:search-results="requirementResults.userActionRequired"
-											 v-bind:import-variables="requirementVariables"
+				<render-object-card-checkbox
+v-if="requirementResults.userActionRequired.length > 0"
+											 :search-results="requirementResults.userActionRequired"
+											 :import-variables="requirementVariables"
 											 destination="requirement"
 											 model-target="requirement"
 											 target="_blank"
-											 v-on:update_checkbox_model="updateCheckboxModel"
-											 v-if="requirementResults.userActionRequired.length > 0"
+											 @update_checkbox_model="updateCheckboxModel"
 				></render-object-card-checkbox>
 
-				<render-object-card-checkbox v-bind:search-results="requirementItemResults.userActionRequired"
-											 v-bind:import-variables="requirementItemVariables"
+				<render-object-card-checkbox
+v-if="requirementItemResults.userActionRequired.length > 0"
+											 :search-results="requirementItemResults.userActionRequired"
+											 :import-variables="requirementItemVariables"
 											 destination="requirement_item"
 											 model-target="requirement_item"
 											 target="_blank"
-											 v-on:update_checkbox_model="updateCheckboxModel"
-											 v-if="requirementItemResults.userActionRequired.length > 0"
+											 @update_checkbox_model="updateCheckboxModel"
 				></render-object-card-checkbox>
 
-				<render-object-card-checkbox v-bind:search-results="taskResults.userActionRequired"
-											 v-bind:import-variables="taskVariables"
+				<render-object-card-checkbox
+v-if="taskResults.userActionRequired.length > 0"
+											 :search-results="taskResults.userActionRequired"
+											 :import-variables="taskVariables"
 											 destination="task"
 											 model-target="task"
 											 target="_blank"
-											 v-on:update_checkbox_model="updateCheckboxModel"
-											 v-if="taskResults.userActionRequired.length > 0"
+											 @update_checkbox_model="updateCheckboxModel"
 				></render-object-card-checkbox>
 			</div>
 			<div class="spacer"></div>
@@ -66,12 +72,14 @@
 
 		<div class="spacer"></div>
 		<hr/>
-		<div v-if="status!=='loading'"
+		<div
+v-if="status!=='loading'"
 			 class="row"
 		>
 			<div class="col-md-4">
 				<strong>Data to be removed</strong>
-				<p v-if="gdprObjectType === 'customer'"
+				<p
+v-if="gdprObjectType === 'customer'"
 				   class="text-instructions"
 				>
 					The following objects will have the customer removed from them. The objects will NOT be deleted,
@@ -79,32 +87,36 @@
 				</p>
 			</div>
 			<div class="col-md-8">
-				<render-object-card v-bind:search-results="projectResults.dataToBeDeleted"
-									v-bind:import-variables="projectVariables"
+				<render-object-card
+v-if="projectResults.dataToBeDeleted.length > 0"
+									:search-results="projectResults.dataToBeDeleted"
+									:import-variables="projectVariables"
 									destination="project"
 									target="_blank"
-									v-if="projectResults.dataToBeDeleted.length > 0"
 				></render-object-card>
 
-				<render-object-card v-bind:search-results="requirementResults.dataToBeDeleted"
-									v-bind:import-variables="requirementVariables"
+				<render-object-card
+v-if="requirementResults.dataToBeDeleted.length > 0"
+									:search-results="requirementResults.dataToBeDeleted"
+									:import-variables="requirementVariables"
 									destination="requirement"
 									target="_blank"
-									v-if="requirementResults.dataToBeDeleted.length > 0"
 				></render-object-card>
 
-				<render-object-card v-bind:search-results="requirementItemResults.dataToBeDeleted"
-									v-bind:import-variables="requirementItemVariables"
+				<render-object-card
+v-if="requirementItemResults.dataToBeDeleted.length > 0"
+									:search-results="requirementItemResults.dataToBeDeleted"
+									:import-variables="requirementItemVariables"
 									destination="requirement_item"
 									target="_blank"
-									v-if="requirementItemResults.dataToBeDeleted.length > 0"
 				></render-object-card>
 
-				<render-object-card v-bind:search-results="taskResults.dataToBeDeleted"
-									v-bind:import-variables="taskVariables"
+				<render-object-card
+v-if="taskResults.dataToBeDeleted.length > 0"
+									:search-results="taskResults.dataToBeDeleted"
+									:import-variables="taskVariables"
 									destination="task"
 									target="_blank"
-									v-if="taskResults.dataToBeDeleted.length > 0"
 				></render-object-card>
 			</div>
 		</div>

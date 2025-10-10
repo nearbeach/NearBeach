@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="card"
 		v-if="kanbanList.length > 0"
+		class="card"
 	>
 		<div class="card-body">
 			<h1>Open Kanban Boards</h1>
@@ -9,8 +9,8 @@
 
 			<!-- List all kanban boards -->
 			<render-object-card
-				v-bind:search-results="kanbanList"
-				v-bind:import-variables="kanbanVariables"
+				:search-results="kanbanList"
+				:import-variables="kanbanVariables"
 				destination="kanban"
 			></render-object-card>
 		</div>
@@ -43,6 +43,10 @@ export default {
 			end_date: "end_date",
 		},
 	}),
+	mounted() {
+		//Get list of kanban items
+		this.getMyKanbanList();
+	},
 	methods: {
 		getMyKanbanList() {
 			//Use axios to get data
@@ -68,10 +72,6 @@ export default {
 					});
 				});
 		},
-	},
-	mounted() {
-		//Get list of kanban items
-		this.getMyKanbanList();
 	},
 };
 </script>

@@ -1,8 +1,9 @@
 <template>
 	<span class="icon">
-		<svg xmlns="http://www.w3.org/2000/svg"
-			 v-bind:width="width"
-			 v-bind:height="height"
+		<svg
+xmlns="http://www.w3.org/2000/svg"
+			 :width="width"
+			 :height="height"
 			 viewBox="0 0 32 32"
 		>
 			<polygon fill="currentColor" points="4 20 15 20 15 26.17 12.41 23.59 11 25 16 30 21 25 19.59 23.59 17 26.17 17 20 28 20 28 18 4 18 4 20"/>

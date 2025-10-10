@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmDeleteObjectModal"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,18 +12,18 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="confirmDeleteObject"
+						class="modal-title"
 					>
 						Please confirm {{destination}} deletion
 					</h5>
 					<!-- TASK INFORMATION -->
 					<button
+						id="confirmDeleteObjectButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmDeleteObjectButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -35,8 +35,8 @@
 					<div class="form-group mt-2">
 						<label>Confirm Title: </label>
 						<input
-							type="text"
 							v-model="confirmTitle"
+							type="text"
 							class="form-control"
 							onpaste="return false"
 							ondrop="return false"
@@ -48,15 +48,15 @@
 					<button
 						type="button"
 						class="btn btn-primary btn-sm"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						No - Keep {{ destination }}
 					</button>
 					<button
 						type="button"
 						class="btn btn-danger btn-sm"
-						v-on:click="deleteObject"
-						v-bind:disabled="isButtonDisabled"
+						:disabled="isButtonDisabled"
+						@click="deleteObject"
 					>
 						Yes - Delete {{ destination }}
 					</button>

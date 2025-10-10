@@ -1,35 +1,41 @@
 <template>
-	<div class="card search-card"
-		 v-bind:style="cardClass"
-		 ref="searchCard"
+	<div
+ref="searchCard"
+		 class="card search-card"
+		 :style="cardClass"
 	>
 	  	<div class="card-header">
 			<h2>{{ importVariables.header }} Search Results</h2>
 		</div>
 		<div class="card-body">
-			<render-object-card v-bind:search-results="localSearchResults"
-								v-bind:import-variables="importVariables"
-								v-bind:destination="destination"
+			<render-object-card
+:search-results="localSearchResults"
+								:import-variables="importVariables"
+								:destination="destination"
 			></render-object-card>
 		</div>
 		<div class="card-footer">
-			<nav v-bind:aria-label="`Pagination for ${importVariables.header}`"
-				v-if="setOfPages.length > 1"
+			<nav
+v-if="setOfPages.length > 1"
+				:aria-label="`Pagination for ${importVariables.header}`"
 			>
 				<ul class="pagination justify-content-center m-0"
 				>
-					<li v-for="index in setOfPages"
-						v-bind:key="index.destinationPage"
-						v-bind:class="getClasses(index.destinationPage)"
+					<li
+v-for="index in setOfPages"
+						:key="index.destinationPage"
+						:class="getClasses(index.destinationPage)"
 					>
-						<a v-if="parseInt(index.destinationPage) !== parseInt(currentPage)"
+						<a
+v-if="parseInt(index.destinationPage) !== parseInt(currentPage)"
 							class="page-link"
 						   	href="javascript:void(0)"
-						   	v-on:click="changePage(index.destinationPage)"
+						   	@click="changePage(index.destinationPage)"
 						>
 							{{ index.text }}
 						</a>
-						<span v-else
+						<span
+v-else
 							  class="page-link"
 						>
 							{{ index.text }}
@@ -53,9 +59,6 @@ export default {
 	components: {
 		RenderObjectCard,
 	},
-	emits: [
-		"get_search_results",
-	],
 	props: {
 		currentPage: {
 			type: Number,
@@ -89,6 +92,16 @@ export default {
 			},
 		},
 	},
+	emits: [
+		"get_search_results",
+	],
+	data() {
+		return {
+			cardClass: "",
+			localSearchResults: this.searchResults,
+			setOfPages: [],
+		};
+	},
 	watch: {
 		searchResults: {
 			handler(new_value) {
@@ -104,12 +117,9 @@ export default {
 			deep: true,
 		}
 	},
-	data() {
-		return {
-			cardClass: "",
-			localSearchResults: this.searchResults,
-			setOfPages: [],
-		};
+	mounted() {
+		// Sets the default array of pages
+		this.setOfPages = getSetOfPages(1, this.numberOfPages);
 	},
 	methods: {
 		getSetOfPages,
@@ -139,10 +149,6 @@ export default {
 
 			return "page-item";
 		},
-	},
-	mounted() {
-		// Sets the default array of pages
-		this.setOfPages = getSetOfPages(1, this.numberOfPages);
 	}
 };
 </script>

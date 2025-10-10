@@ -29,7 +29,7 @@
 				<input
 					v-model="cardTitle"
 					class="form-control"
-					v-bind:disabled="userLevel<=1"
+					:disabled="userLevel<=1"
 				/>
 			</div>
 		</div>
@@ -45,8 +45,8 @@
 			<div class="col-md-4">
 				<label>Card Priority</label>
 				<n-select
-					v-bind:options="listPriority"
 					v-model:value="cardPriority"
+					:options="listPriority"
 					:disabled="kanbanStatus === 'Closed' || userLevel <= 1"
 				></n-select>
 			</div>
@@ -67,9 +67,9 @@
 					<div class="col-md-6 mt-4">
 						<label>Card Column</label>
 						<n-select
-							v-bind:options="listColumns"
-							label="column"
 							v-model:value="cardColumn"
+							:options="listColumns"
+							label="column"
 							:disabled="kanbanStatus === 'Closed' || userLevel <= 1"
 						></n-select>
 					</div>
@@ -77,9 +77,9 @@
 					<div class="col-md-6 mt-4">
 						<label>Card Level</label>
 						<n-select
-							v-bind:options="listLevels"
-							label="level"
 							v-model:value="cardLevel"
+							:options="listLevels"
+							label="level"
 							:disabled="kanbanStatus === 'Closed' || userLevel <= 1"
 						></n-select>
 					</div>
@@ -112,34 +112,34 @@
 
 		<hr v-if="userLevel > 1"/>
 		<div
-			class="row"
 			v-if="userLevel > 1"
+			class="row"
 		>
 			<div class="col-md-12 card-detail--buttons">
 				<button
 					class="btn btn-warning"
-					v-on:click="closeModal"
+					@click="closeModal"
 				>
 					Close & Discard Changes
 				</button>
 				<button
-					class="btn btn-danger archive-card"
-					v-on:click="archiveCard"
 					v-if="kanbanStatus !== 'Closed'"
+					class="btn btn-danger archive-card"
+					@click="archiveCard"
 				>
 					Archive Card
 				</button>
 				<button
-					class="btn btn-primary save-changes"
-					v-on:click="updateCard(true)"
 					v-if="kanbanStatus !== 'Closed'"
+					class="btn btn-primary save-changes"
+					@click="updateCard(true)"
 				>
 					Save & Close
 				</button>
 				<button
-					class="btn btn-success save-changes"
-					v-on:click="updateCard(false)"
 					v-if="kanbanStatus !== 'Closed'"
+					class="btn btn-success save-changes"
+					@click="updateCard(false)"
 				>
 					Save & Continue
 				</button>

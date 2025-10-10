@@ -1,11 +1,13 @@
 <template>
-	<div class="gantt-row"
-		 id="gantt_row_parent"
+	<div
+id="gantt_row_parent"
+		 class="gantt-row"
 	>
-		<div class="gantt-row--information"
-			 v-on:dragleave="dragleaveRow"
-			 v-on:dragover="dragoverRow"
-			 v-on:drop="drop"
+		<div
+class="gantt-row--information"
+			 @dragleave="dragleaveRow"
+			 @dragover="dragoverRow"
+			 @drop="drop"
 		>
 			<div class="gantt-row--title"></div>
 			<div class="gantt-row--start-date"></div>

@@ -1,14 +1,16 @@
 <template>
-	<div class="gdpr-wizard--loading-bar"
-		 v-bind:style="getStyle()"
+	<div
+class="gdpr-wizard--loading-bar"
+		 :style="getStyle()"
 	></div>
 
 	<div class="gdpr-wizard">
-		<div v-for="(tab, index) in tabContents"
+		<div
+v-for="(tab, index) in tabContents"
 			 :key="tab"
 			 class="gdpr-wizard--tab"
 		>
-			<div v-bind:class="getClasses(index)">
+			<div :class="getClasses(index)">
 				<span>{{ index + 1 }}</span>
 			</div>
 			<div class="gdpr-wizard--tab-title">{{ tab }}</div>

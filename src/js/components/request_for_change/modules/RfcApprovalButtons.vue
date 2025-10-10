@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="card submit-rfc-card"
 		v-if="showApprovalButton"
+		class="card submit-rfc-card"
 	>
 		<div class="card-body">
 			<!-- TEXT -->
@@ -23,14 +23,14 @@
 					<a
 						href="javascript:void(0)"
 						class="btn btn-primary"
-						v-on:click="approveRfc"
+						@click="approveRfc"
 					>Approve RFC</a
 					>
 
 					<a
 						href="javascript:void(0)"
 						class="btn btn-danger reject-rfc"
-						v-on:click="rejectRfc"
+						@click="rejectRfc"
 					>REJECT RFC</a
 					>
 				</div>

@@ -17,12 +17,12 @@
 				aria-label="Basic checkbox toggle button group"
 			>
 				<input
-					type="checkbox"
 					id="isDowntime"
+					v-model="isDowntimeModel"
+					type="checkbox"
 					class="btn-check"
 					autocomplete="off"
-					v-bind:disabled="isReadOnly"
-					v-model="isDowntimeModel"
+					:disabled="isReadOnly"
 				/>
 				<label
 					class="btn btn-outline-primary"
@@ -59,7 +59,7 @@ export default {
 	},
 	methods: {
 		isDowntime() {
-			let downtimeMessage = this.isDowntimeModel ? "Downtime Scheduled" : "No Downtime";
+			const downtimeMessage = this.isDowntimeModel ? "Downtime Scheduled" : "No Downtime";
 
 			let appendMessage = "";
 			if (!this.isReadOnly) {

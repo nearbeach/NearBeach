@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmChangeTaskClosure"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,18 +12,18 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="confirmChangeTaskClosure"
+						class="modal-title"
 					>
 						Set Task to {{ closureStatus }}
 					</h5>
 					<!-- TASK INFORMATION -->
 					<button
+						id="confirmChangeTaskCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmChangeTaskCloseButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -34,14 +34,14 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						No
 					</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="closeChangeTask"
+						@click="closeChangeTask"
 					>
 						Yes
 					</button>
@@ -56,9 +56,6 @@
 
 export default {
 	name: "ConfirmChangeTaskClosure",
-	emits: [
-		'close_change_task',
-	],
 	props: {
 		closureId: {
 			type: Number,
@@ -73,6 +70,9 @@ export default {
 			default: 0,
 		},
 	},
+	emits: [
+		'close_change_task',
+	],
 	methods: {
 		closeChangeTask() {
 			//Emit the data upstream

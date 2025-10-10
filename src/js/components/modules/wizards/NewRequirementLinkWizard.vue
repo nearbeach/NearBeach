@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="newRequirementLinkModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="requirementLinkModal"
 		aria-hidden="true"
@@ -13,11 +13,11 @@
 						New Requirement Link Wizard
 					</h2>
 					<button
+						id="requirementLinkCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="requirementLinkCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -36,8 +36,8 @@
 							<div class="form-group">
 								<label>Object Selection</label>
 								<n-select
-									:options="objectSelection"
 									v-model:value="objectModel"
+									:options="objectSelection"
 									class="object-selection"
 								></n-select>
 							</div>
@@ -46,9 +46,10 @@
 					<hr/>
 
 					<!-- SELECTING WHICH OBJECTS TO LINK TO -->
-					<div id="select_links"
+					<div
+id="select_links"
 						 class="row"
-						 v-bind:style="styleHeight"
+						 :style="styleHeight"
 					>
 						<div class="col-md-4">
 							<strong>Select Links</strong>
@@ -67,36 +68,38 @@
 
 							<!-- SEARCH RESULTS -->
 							<div
-								class="form-group"
 								v-if="objectModel != null"
+								class="form-group"
 							>
 								<label>Filter</label>
 								<input
 									id="search_terms"
-									class="form-control"
 									v-model="searchModel"
+									class="form-control"
 									type="text"
 								/>
 							</div>
 							<br/>
 
-							<div class="wizard-results"
-								 v-if="!isSearching &&
+							<div
+v-if="!isSearching &&
 										objectResults.length > 0 &&
 										objectModel != null"
+								 class="wizard-results"
 							>
-								<div class="wizard-results--card"
-									 v-for="result in objectResults"
+								<div
+v-for="result in objectResults"
 									 :key="result.id"
+									 class="wizard-results--card"
 								>
 									<div class="wizard-results--card--tick">
 										<input
+											:id="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
+											v-model="linkModel"
 											class="form-check-input"
 											type="checkbox"
 											name="link-option"
-											v-bind:value="result.id"
-											v-bind:id="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
-											v-model="linkModel"
+											:value="result.id"
 										/>
 									</div>
 									<div class="wizard-results--card--content">
@@ -113,23 +116,27 @@
 									</div>
 								</div>
 
-								<nav aria-label="Pagination for New Link Wizard"
-									 v-if="setOfPages.length > 1"
+								<nav
+v-if="setOfPages.length > 1"
+									 aria-label="Pagination for New Link Wizard"
 								>
 									<ul class="pagination justify-content-center"
 									>
-										<li v-for="index in setOfPages"
-											v-bind:key="index.destinationPage"
-											v-bind:class="getClasses(index.destinationPage)"
+										<li
+v-for="index in setOfPages"
+											:key="index.destinationPage"
+											:class="getClasses(index.destinationPage)"
 										>
-											<a v-if="parseInt(index.destinationPage) !== parseInt(currentPage)"
+											<a
+v-if="parseInt(index.destinationPage) !== parseInt(currentPage)"
 											   class="page-link"
 											   href="javascript:void(0)"
-											   v-on:click="changePage(index.destinationPage)"
+											   @click="changePage(index.destinationPage)"
 											>
 												{{ index.text }}
 											</a>
-											<span v-else
+											<span
+v-else
 												  class="page-link"
 											>
 												{{ index.text }}
@@ -152,8 +159,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="linkModel.length === 0"
-						v-on:click="saveLinks"
+						:disabled="linkModel.length === 0"
+						@click="saveLinks"
 					>
 						Save changes
 					</button>
@@ -178,7 +185,6 @@ export default {
 	components: {
 		NSelect,
 	},
-	emits: ['update_module'],
 	props: {
 		destination: {
 			type: String,
@@ -189,12 +195,7 @@ export default {
 			default: 0,
 		},
 	},
-	computed: {
-		...mapGetters({
-			rootUrl: "getRootUrl",
-			staticUrl: "getStaticUrl",
-		}),
-	},
+	emits: ['update_module'],
 	data() {
 		return {
 			currentPage: 1,
@@ -211,6 +212,12 @@ export default {
 			searchTimeout: "",
 			styleHeight: "height: 90px",
 		};
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+		}),
 	},
 	watch: {
 		objectModel() {

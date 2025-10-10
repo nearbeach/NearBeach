@@ -24,17 +24,17 @@
 							<label for="id_requirement_title"
 							>Requirement Title:
 								<validation-rendering
-									v-bind:error-list="v$.requirementTitleModel.$errors"
+									:error-list="v$.requirementTitleModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
 								id="id_requirement_title"
+								v-model="requirementTitleModel"
 								class="form-control"
 								name="requirement_title"
 								type="text"
 								required="true"
 								maxlength="255"
-								v-model="requirementTitleModel"
 							/>
 						</div>
 
@@ -42,16 +42,17 @@
 						<label>
 							Requirement Scope:
 							<validation-rendering
-								v-bind:error-list="v$.requirementScopeModel.$errors"
+								:error-list="v$.requirementScopeModel.$errors"
 							></validation-rendering>
 						</label>
 						<br/>
 						<img
-							v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
+							:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 							class="loader-image"
 							alt="loading image for Tinymce"
 						/>
 						<editor
+							v-model="requirementScopeModel"
 							license-key="gpl"
 							:init="{
 							license_key: 'gpl',
@@ -63,11 +64,10 @@
 							plugins: ['lists', 'image', 'codesample', 'table'],
             				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 									 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-							skin: `${this.skin}`,
-							content_css: `${this.contentCss}`,
+							skin: `${skin}`,
+							content_css: `${contentCss}`,
 							relative_urls: false,
 						}"
-							v-model="requirementScopeModel"
 						/>
 					</div>
 				</div>
@@ -75,8 +75,8 @@
 				<!-- Stakeholder Organisation -->
 				<hr/>
 				<get-stakeholders
-					v-on:update_stakeholder_model="updateStakeholderModel($event)"
-					v-bind:is-dirty="v$.stakeholderModel.$dirty"
+					:is-dirty="v$.stakeholderModel.$dirty"
+					@update_stakeholder_model="updateStakeholderModel($event)"
 				></get-stakeholders>
 
 				<!-- Status -->
@@ -93,13 +93,13 @@
 							<label
 							>Requirement Status
 								<validation-rendering
-									v-bind:error-list="v$.statusModel.$errors"
+									:error-list="v$.statusModel.$errors"
 								></validation-rendering>
 							</label>
 							<n-select
+								v-model:value="statusModel"
 								:options="statusFixList"
 								label="status"
-								v-model:value="statusModel"
 							></n-select>
 						</div>
 					</div>
@@ -108,13 +108,13 @@
 							<label
 							>Requirement Type
 								<validation-rendering
-									v-bind:error-list="v$.typeModel.$errors"
+									:error-list="v$.typeModel.$errors"
 								></validation-rendering>
 							</label>
 							<n-select
+								v-model:value="typeModel"
 								:options="typeFixList"
 								label="type"
-								v-model:value="typeModel"
 							></n-select>
 						</div>
 					</div>
@@ -123,12 +123,12 @@
 				<!-- Group Permissions -->
 				<hr/>
 				<group-permissions
-					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
-					v-bind:group-results="groupResults"
-					v-bind:user-group-permissions="userGroupPermissions"
-					v-on:update_group_model="updateGroupModel($event)"
-					v-bind:is-dirty="v$.groupModel.$dirty"
+					:display-group-permission-issue="displayGroupPermissionIssue"
+					:group-results="groupResults"
+					:user-group-permissions="userGroupPermissions"
+					:is-dirty="v$.groupModel.$dirty"
 					destination="requirement"
+					@update_group_model="updateGroupModel($event)"
 				></group-permissions>
 
 				<!-- Submit Button -->
@@ -138,8 +138,8 @@
 						<button
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
-							v-on:click="submitNewRequirement"
-							v-bind:disabled="disableSubmitButton"
+							:disabled="disableSubmitButton"
+							@click="submitNewRequirement"
 						>Create new Requirement</button
 						>
 					</div>
@@ -172,9 +172,6 @@ import {useReplaceIncorrectImageUrl} from "Composables/uploads/useReplaceIncorre
 
 export default {
 	name: "NewRequirement",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		editor: Editor,
 		GetStakeholders,
@@ -224,6 +221,9 @@ export default {
 			default: "",
 		},
 	},
+	setup() {
+		return {v$: useVuelidate()};
+	},
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
@@ -264,6 +264,34 @@ export default {
 		typeModel: {
 			required,
 		},
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		//VueX
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		//We need to map "fields" array from the statusList/typeList json data
+		this.statusFixList = this.statusList.map((row) => {
+			return {
+				value: row.pk,
+				label: row.fields.requirement_status,
+			};
+		});
+
+		this.typeFixList = this.typeList.map((row) => {
+			return {
+				value: row.pk,
+				label: row.fields.requirement_type,
+			};
+		});
 	},
 	methods: {
 		useNewObjectUploadImage,
@@ -341,34 +369,6 @@ export default {
 		updateStakeholderModel(newStakeholderModel) {
 			this.stakeholderModel = newStakeholderModel;
 		},
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		//VueX
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-
-		//We need to map "fields" array from the statusList/typeList json data
-		this.statusFixList = this.statusList.map((row) => {
-			return {
-				value: row.pk,
-				label: row.fields.requirement_status,
-			};
-		});
-
-		this.typeFixList = this.typeList.map((row) => {
-			return {
-				value: row.pk,
-				label: row.fields.requirement_type,
-			};
-		});
 	},
 };
 </script>

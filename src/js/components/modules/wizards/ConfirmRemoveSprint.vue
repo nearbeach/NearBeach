@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmSprintRemoveModal"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,18 +12,18 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="confirmSprintRemoveLabel"
+						class="modal-title"
 					>
 						Please confirm the sprint removal
 					</h5>
 					<!-- TASK INFORMATION -->
 					<button
+						id="confirmSprintRemovalButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmSprintRemovalButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -33,14 +33,14 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						No
 					</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="removeSprint"
+						@click="removeSprint"
 					>
 						Yes
 					</button>
@@ -56,7 +56,6 @@ import {mapGetters} from "vuex";
 
 export default {
 	name: "ConfirmRemoveSprint",
-	emits: ['update_sprint_list'],
 	props: {
 		confirmRemoveSprint: {
 			type: Object,
@@ -68,6 +67,7 @@ export default {
 			},
 		},
 	},
+	emits: ['update_sprint_list'],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",

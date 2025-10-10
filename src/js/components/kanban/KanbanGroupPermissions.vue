@@ -4,7 +4,7 @@
 			<div class="card-body">
 				<!-- Group Permissions -->
 				<groups-and-users-module
-					v-bind:is-read-only="isReadOnly"
+					:is-read-only="isReadOnly"
 				></groups-and-users-module>
 			</div>
 		</div>
@@ -20,7 +20,9 @@ import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "KanbanGroupPermissions",
-	methods: {useNBTheme},
+	components: {
+		GroupsAndUsersModule,
+	},
 	props: {
 		isReadOnly: {
 			type: Boolean,
@@ -31,8 +33,6 @@ export default {
 			default: "",
 		},
 	},
-	components: {
-		GroupsAndUsersModule,
-	},
+	methods: {useNBTheme},
 };
 </script>

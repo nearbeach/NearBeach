@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<div
-			class="row"
 			v-if="userLevel > 1 || hasNotePermission"
+			class="row"
 		>
 			<div class="col-md-4">
 				<strong>Notes</strong>
@@ -14,6 +14,7 @@
 			<div class="col-md-8">
 				<label>Note Box</label>
 				<editor
+					v-model="cardNoteModel"
 					license-key="gpl"
 					:init="{
 						license_key: 'gpl',
@@ -22,31 +23,30 @@
 						plugins: ['lists', 'codesample', 'table'],
             			toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 			 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-            			skin: `${this.skin}`,
-			            content_css: `${this.contentCss}`,
+            			skin: `${skin}`,
+			            content_css: `${contentCss}`,
 			            relative_urls: false,
 					}"
-					v-model="cardNoteModel"
-					v-bind:disabled="kanbanStatus === 'Closed'"
+					:disabled="kanbanStatus === 'Closed'"
 				/>
 			</div>
 		</div>
 		<hr v-if="userLevel > 1 || hasNotePermission"/>
 		<div
-			class="row"
 			v-if="userLevel > 1 || hasNotePermission"
+			class="row"
 		>
 			<div class="col-md-12">
 				<button
 					class="btn btn-secondary"
-					v-on:click="closeModal"
+					@click="closeModal"
 				>
 					Close
 				</button>
 				<button
 					class="btn btn-primary save-changes"
-					v-on:click="addNote"
-					v-bind:disabled="cardNoteModel === ''"
+					:disabled="cardNoteModel === ''"
+					@click="addNote"
 				>
 					Add Note
 				</button>
@@ -56,7 +56,7 @@
 
 		<!-- NOTE HISTORY -->
 		<list-notes
-			v-bind:note-history-results="cardNotes"
+			:note-history-results="cardNotes"
 			destination="card"
 		></list-notes>
 	</div>

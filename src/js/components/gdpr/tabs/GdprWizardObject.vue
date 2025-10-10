@@ -15,7 +15,7 @@
 		<div class="col-md-8">
 			<div class="form-group">
 				<label>Selected Object</label>
-				<n-select :options="objectOptions" v-model:value="objectResults" />
+				<n-select v-model:value="objectResults" :options="objectOptions" />
 			</div>
 		</div>
 	</div>

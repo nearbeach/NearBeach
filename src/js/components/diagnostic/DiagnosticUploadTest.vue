@@ -1,5 +1,6 @@
 <template>
-	<div v-if="uploadState === 'before_upload'"
+	<div
+v-if="uploadState === 'before_upload'"
 		 class="row"
 	>
 		<div class="col-md-4">
@@ -10,13 +11,15 @@
 			</p>
 		</div>
 		<div class="col-md-8">
-			<button class="btn btn-primary"
-					v-on:click="uploadFile"
+			<button
+class="btn btn-primary"
+					@click="uploadFile"
 			>
 				Upload Test
 			</button>
 
-			<div v-if="uploadIssues !== ''"
+			<div
+v-if="uploadIssues !== ''"
 				class="alert alert-danger"
 			>
 				<h1>Upload Issues</h1>
@@ -33,7 +36,8 @@
 		</div>
 		<iframe :srcdoc="uploadError"></iframe>
 	</div>
-	<div v-else
+	<div
+v-else
 		 class="row"
 	>
 		<div class="col-md-4">
@@ -43,7 +47,7 @@
 			</p>
 		</div>
 		<div class="col-md-8">
-			<p><a v-bind:href="downloadLocation" target="_blank" rel="noopener noreferrer">Please click here to download the file.</a></p>
+			<p><a :href="downloadLocation" target="_blank" rel="noopener noreferrer">Please click here to download the file.</a></p>
 			<p>It's contents should match the UUID: {{ uuidVerification }}</p>
 		</div>
 	</div>

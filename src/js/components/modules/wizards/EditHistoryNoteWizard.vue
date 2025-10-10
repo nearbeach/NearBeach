@@ -1,8 +1,8 @@
 <template>
 	<!-- EDIT HISTORY NOTE -->
 	<div
-		class="modal fade"
 		id="editNoteModal"
+		class="modal fade"
 		tabindex="-1"
 		role="dialog"
 		aria-labelledby="exampleModalLabel"
@@ -18,11 +18,11 @@
 						Edit Note
 					</h2>
 					<button
+						id="editNoteCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="editNoteCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -33,6 +33,7 @@
 						to submit the changes.
 					</p>
 					<editor
+						v-model="noteModel"
 						license-key="gpl"
 						:init="{
 							license_key: 'gpl',
@@ -41,26 +42,25 @@
 							plugins: ['lists', 'codesample', 'table'],
             				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 				 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-            				skin: `${this.skin}`,
-			            	content_css: `${this.contentCss}`,
+            				skin: `${skin}`,
+			            	content_css: `${contentCss}`,
 			            	relative_urls: false,
 						}"
-						v-model="noteModel"
 					/>
 				</div>
 				<div class="modal-footer">
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="noteModel == ''"
-						v-on:click="updateNote"
+						:disabled="noteModel == ''"
+						@click="updateNote"
 					>
 						Update Note
 					</button>
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						Close
 					</button>

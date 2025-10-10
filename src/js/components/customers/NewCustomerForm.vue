@@ -19,40 +19,40 @@
 					<label>
 						Title:
 						<validation-rendering
-							v-bind:error-list="v$.titleModel.$errors"
+							:error-list="v$.titleModel.$errors"
 						></validation-rendering>
 					</label>
 					<n-select
+						v-model:value="titleModel"
 						:options="titleFixList"
 						label="title"
 						placeholder=""
-						v-model:value="titleModel"
 					></n-select>
 				</div>
 				<div class="form-group col-sm-4">
 					<label>
 						First Name:
 						<validation-rendering
-							v-bind:error-list="v$.customerFirstNameModel.$errors"
+							:error-list="v$.customerFirstNameModel.$errors"
 						></validation-rendering>
 					</label>
 					<input
+						v-model="customerFirstNameModel"
 						type="text"
 						class="form-control"
-						v-model="customerFirstNameModel"
 					/>
 				</div>
 				<div class="form-group col-sm-5">
 					<label>
 						Last Name:
 						<validation-rendering
-							v-bind:error-list="v$.customerLastNameModel.$errors"
+							:error-list="v$.customerLastNameModel.$errors"
 						></validation-rendering>
 					</label>
 					<input
+						v-model="customerLastNameModel"
 						type="text"
 						class="form-control"
-						v-model="customerLastNameModel"
 					/>
 				</div>
 			</div>
@@ -62,13 +62,13 @@
 				<label>
 					Email:
 					<validation-rendering
-						v-bind:error-list="v$.customerEmailModel.$errors"
+						:error-list="v$.customerEmailModel.$errors"
 					></validation-rendering>
 				</label>
 				<input
+					v-model="customerEmailModel"
 					type="text"
 					class="form-control"
-					v-model="customerEmailModel"
 				/>
 			</div>
 		</div>
@@ -85,16 +85,10 @@ import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "NewCustomerForm",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		NSelect,
 		ValidationRendering,
 	},
-	emits: [
-		'update_customer_data',
-	],
 	props: {
 		flagValidationCheck: {
 			type: Boolean,
@@ -106,6 +100,12 @@ export default {
 				return [];
 			},
 		},
+	},
+	emits: [
+		'update_customer_data',
+	],
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -133,7 +133,6 @@ export default {
 			required,
 		},
 	},
-	methods: {},
 	watch: {
 		customerEmailModel() {
 			//Emit up this function's data
@@ -181,6 +180,7 @@ export default {
 			};
 		});
 	},
+	methods: {},
 };
 </script>
 

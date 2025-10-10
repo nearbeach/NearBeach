@@ -1,6 +1,7 @@
 <template>
-	<div class="modal fade"
-		 id="addSprintWizardModal"
+	<div
+id="addSprintWizardModal"
+		 class="modal fade"
 		 tabindex="-1"
 		 aria-labelledby="addSprintWizard"
 		 aria-hidden="true"
@@ -8,7 +9,7 @@
 		<div class="modal-dialog modal-lg modal-fullscreen-lg-down">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="addSprintWizard">Add Object to Sprint</h5>
+					<h5 id="addSprintWizard" class="modal-title">Add Object to Sprint</h5>
 					<button
 						id="addSprintWizardButton"
 						type="button"
@@ -30,7 +31,7 @@
 								<label>Sprint</label>
 								<n-select
 									v-model:value="sprintModel"
-									v-bind:options="sprintOptions"
+									:options="sprintOptions"
 									filterable
 									placeholder="Please select a sprint from the list"
 								></n-select>
@@ -60,10 +61,10 @@
 						Close
 					</button>
 					<button
-						v-bind:disabled="sprintModel === undefined"
-						v-on:click="addSprint"
+						:disabled="sprintModel === undefined"
 						type="button"
 						class="btn btn-primary"
+						@click="addSprint"
 					>
 						Add to Sprint
 					</button>
@@ -111,6 +112,11 @@ export default {
 				return parseInt(row.value) === parseInt(new_value);
 			})
 		},
+	},
+	mounted() {
+		this.$nextTick(() => {
+			this.getSprintOptions();
+		});
 	},
 	methods: {
 		useNiceDatetime,
@@ -176,11 +182,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		this.$nextTick(() => {
-			this.getSprintOptions();
-		});
 	},
 }
 </script>

@@ -15,12 +15,12 @@
 					<label>
 						Request for Change Type:
 						<validation-rendering
-							v-bind:error-list="v$.rfcTypeModel.$errors"
+							:error-list="v$.rfcTypeModel.$errors"
 						></validation-rendering>
 					</label>
 					<n-select
-						v-bind:options="rfcType"
 						v-model:value="rfcTypeModel"
+						:options="rfcType"
 					></n-select>
 				</div>
 			</div>
@@ -29,14 +29,14 @@
 					<label>
 						Version/Release Number
 						<validation-rendering
-							v-bind:error-list="v$.rfcVersionModel.$errors"
+							:error-list="v$.rfcVersionModel.$errors"
 						></validation-rendering>
 					</label>
 					<input
+						v-model="rfcVersionModel"
 						type="text"
 						maxlength="25"
 						class="form-control"
-						v-model="rfcVersionModel"
 					/>
 				</div>
 			</div>
@@ -45,12 +45,12 @@
 		<!-- Group Permissions -->
 		<hr/>
 		<group-permissions
-			v-bind:display-group-permission-issue="displayGroupPermissionIssue"
-			v-bind:group-results="groupResults"
+			:display-group-permission-issue="displayGroupPermissionIssue"
+			:group-results="groupResults"
 			destination="request_for_change"
-			v-bind:is-dirty="v$.groupModel.$dirty"
-			v-bind:user-group-permissions="userGroupPermissions"
-			v-on:update_group_model="updateGroupModel($event)"
+			:is-dirty="v$.groupModel.$dirty"
+			:user-group-permissions="userGroupPermissions"
+			@update_group_model="updateGroupModel($event)"
 		></group-permissions>
 
 		<!-- RFC Change Lead User -->
@@ -68,7 +68,7 @@
 					<label>
 						LEAD:
 						<validation-rendering
-							v-bind:error-list="v$.rfcChangeLeadModel.$errors"
+							:error-list="v$.rfcChangeLeadModel.$errors"
 						></validation-rendering>
 						<span
 							v-if="updatingLeadList"
@@ -78,8 +78,8 @@
 						</span>
 					</label>
 					<n-select
-						:options="rfcChangeLeadFixList"
 						v-model:value="rfcChangeLeadModel"
+						:options="rfcChangeLeadFixList"
 						:disabled="updatingLeadList"
 					></n-select>
 					<!-- TO DO FIX THIS -->
@@ -103,18 +103,11 @@ import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "RfcDetails",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		GroupPermissions,
 		NSelect,
 		ValidationRendering,
 	},
-	emits: [
-		'update_values',
-		'update_validation',
-	],
 	props: {
 		groupResults: {
 			type: Array,
@@ -128,6 +121,13 @@ export default {
 				return [];
 			},
 		},
+	},
+	emits: [
+		'update_values',
+		'update_validation',
+	],
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -174,6 +174,40 @@ export default {
 			rootUrl: "getRootUrl",
 			staticUrl: "getStaticUrl",
 		}),
+	},
+	watch: {
+		rfcChangeLeadModel() {
+			this.updateValues(
+				"rfcChangeLeadModel",
+				this.rfcChangeLeadModel
+			);
+			this.updateValidation();
+		},
+		rfcStatus() {
+			this.updateValues("rfcStatus", this.rfcStatus);
+			this.updateValidation();
+		},
+		rfcType() {
+			this.updateValues("rfcType", this.rfcType);
+			this.updateValidation();
+		},
+		rfcTypeModel() {
+			this.updateValues("rfcTypeModel", this.rfcTypeModel);
+			this.updateValidation();
+		},
+		rfcVersionModel() {
+			this.updateValues("rfcVersionModel", this.rfcVersionModel);
+			this.updateValidation();
+		},
+	},
+	mounted() {
+		//Get the lead user data
+		this.$nextTick(() => {
+			this.getChangeLeadData();
+		});
+
+		//Just run the validations to show the error messages
+		this.v$.$touch();
 	},
 	methods: {
 		getChangeLeadData() {
@@ -267,40 +301,6 @@ export default {
 				modelValue,
 			});
 		},
-	},
-	watch: {
-		rfcChangeLeadModel() {
-			this.updateValues(
-				"rfcChangeLeadModel",
-				this.rfcChangeLeadModel
-			);
-			this.updateValidation();
-		},
-		rfcStatus() {
-			this.updateValues("rfcStatus", this.rfcStatus);
-			this.updateValidation();
-		},
-		rfcType() {
-			this.updateValues("rfcType", this.rfcType);
-			this.updateValidation();
-		},
-		rfcTypeModel() {
-			this.updateValues("rfcTypeModel", this.rfcTypeModel);
-			this.updateValidation();
-		},
-		rfcVersionModel() {
-			this.updateValues("rfcVersionModel", this.rfcVersionModel);
-			this.updateValidation();
-		},
-	},
-	mounted() {
-		//Get the lead user data
-		this.$nextTick(() => {
-			this.getChangeLeadData();
-		});
-
-		//Just run the validations to show the error messages
-		this.v$.$touch();
 	},
 };
 </script>

@@ -8,22 +8,22 @@
 			<div class="form-group mt-4">
 				<label>Search:</label>
 				<input
+					v-model="searchModel"
 					type="text"
 					class="form-control search-organisation"
-					v-model="searchModel"
 				/>
 			</div>
 
 			<!-- LIST OUT SEARCH RESULTS -->
 			<hr/>
 			<list-organisations
-				v-bind:organisation-results="localOrganisationResults"
+				:organisation-results="localOrganisationResults"
 			></list-organisations>
 
 			<!-- SHOW IF NO RESULTS -->
 			<div
-				class="alert alert-warning"
 				v-if="localOrganisationResults.length === 0"
+				class="alert alert-warning"
 			>
 				There are no organisations with the search parameters used.
 				Please try again.
@@ -33,7 +33,7 @@
 			<div class="row submit-row">
 				<div class="col-md-12">
 					<a
-						v-bind:href="`${rootUrl}new_organisation/`"
+						:href="`${rootUrl}new_organisation/`"
 						class="btn btn-primary save-changes"
 					>
 						Add new Organisation
@@ -76,28 +76,6 @@ export default {
 			searchTimeout: "",
 		};
 	},
-	methods: {
-		getSearchResults() {
-			//Create the data_to_send
-			const data_to_send = new FormData();
-			data_to_send.set("search", this.searchModel);
-
-			//Use axios to obtain the data we require
-			this.axios.post(
-				`${this.rootUrl}search/organisation/data/`,
-				data_to_send
-			).then((response) => {
-				this.localOrganisationResults = response.data;
-			}).catch(error => {
-				this.$store.dispatch("newToast", {
-					header: "Error Getting Search Results",
-					message: `Sorry, we could not get search results. Error -> ${error}`,
-					extra_classes: "bg-danger",
-					delay: 0,
-				});
-			});
-		},
-	},
 	watch: {
 		searchModel() {
 			//Clear timer if it already exists
@@ -121,6 +99,28 @@ export default {
 			rootUrl: this.rootUrl,
 			staticUrl: this.staticUrl,
 		});
+	},
+	methods: {
+		getSearchResults() {
+			//Create the data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("search", this.searchModel);
+
+			//Use axios to obtain the data we require
+			this.axios.post(
+				`${this.rootUrl}search/organisation/data/`,
+				data_to_send
+			).then((response) => {
+				this.localOrganisationResults = response.data;
+			}).catch(error => {
+				this.$store.dispatch("newToast", {
+					header: "Error Getting Search Results",
+					message: `Sorry, we could not get search results. Error -> ${error}`,
+					extra_classes: "bg-danger",
+					delay: 0,
+				});
+			});
+		},
 	},
 };
 </script>

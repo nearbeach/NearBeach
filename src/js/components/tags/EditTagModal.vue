@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="editTagModal"
+		class="modal fade"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
 		tabindex="-1"
@@ -12,14 +12,14 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="editTagModalLabel"
+						class="modal-title"
 					>
 						Edit Tag
 					</h5>
 					<button
-						type="button"
 						id="editTagCloseModal"
+						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
@@ -45,9 +45,9 @@
                                 </span>
                             </label>
 							<input
-								class="form-control"
-								v-bind:disabled="userLevel <= 1"
 								v-model="tagNameModel"
+								class="form-control"
+								:disabled="userLevel <= 1"
 							/>
 						</div>
 					</div>
@@ -63,9 +63,10 @@
 						<div class="col-md-8">
 							<div class="form-group">
 								<label>Background Colour</label>
-								<n-color-picker :show-alpha="false"
-												v-bind:disabled="userLevel <= 1"
-												v-model:value="tagColourModel"
+								<n-color-picker
+v-model:value="tagColourModel"
+												:show-alpha="false"
+												:disabled="userLevel <= 1"
 												:modes="['hex']"
 								></n-color-picker>
 							</div>
@@ -73,8 +74,9 @@
 							<div class="form-group">
 								<label>Text Colour</label>
 
-								<n-color-picker v-model:value="tagTextColourModel"
-												v-bind:disabled="userLevel <= 1"
+								<n-color-picker
+v-model:value="tagTextColourModel"
+												:disabled="userLevel <= 1"
 												:show-alpha="false"
 												:modes="['hex']"
 								/>
@@ -83,8 +85,9 @@
 
 							<hr>
 
-							<div class="single-tag"
-								 v-bind:style="`margin-right:0;background-color:${tagColourModel};color:${tagTextColourModel};`"
+							<div
+class="single-tag"
+								 :style="`margin-right:0;background-color:${tagColourModel};color:${tagTextColourModel};`"
 							>
 								{{ tagNameModel }}
 							</div>
@@ -93,10 +96,10 @@
 				</div>
 				<div class="modal-footer">
 					<button
+						v-if="tagId !== 0 && userLevel > 1"
 						type="button"
 						class="btn btn-danger delete-tag"
-						v-on:click="deleteTag"
-						v-if="tagId !== 0 && userLevel > 1"
+						@click="deleteTag"
 					>
 						Delete Tag
 					</button>
@@ -109,11 +112,11 @@
 						Close
 					</button>
 					<button
+						v-if="userLevel > 1"
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="!canSave"
-						v-on:click="saveTag"
-						v-if="userLevel > 1"
+						:disabled="!canSave"
+						@click="saveTag"
 					>
 						Save Tag
 					</button>
@@ -136,11 +139,6 @@ export default {
 	components: {
 		NColorPicker,
 	},
-	emits: [
-		'update_tags',
-		'new_tag',
-		'delete_tag',
-	],
 	props: {
 		existingTags: {
 			type: Array,
@@ -165,23 +163,17 @@ export default {
 			default: "",
 		},
 	},
+	emits: [
+		'update_tags',
+		'new_tag',
+		'delete_tag',
+	],
 	data() {
 		return {
 			tagColourModel: this.tagColour,
 			tagNameModel: this.tagName,
 			tagTextColourModel: this.tagTextColour,
 		};
-	},
-	watch: {
-		tagColour() {
-			this.tagColourModel = this.tagColour;
-		},
-		tagName() {
-			this.tagNameModel = this.tagName;
-		},
-		tagTextColour() {
-			this.tagTextColourModel = this.tagTextColour;
-		}
 	},
 	computed: {
 		...mapGetters({
@@ -201,6 +193,17 @@ export default {
 			//Return true if there is no duplicate
 			return count === 0;
 		},
+	},
+	watch: {
+		tagColour() {
+			this.tagColourModel = this.tagColour;
+		},
+		tagName() {
+			this.tagNameModel = this.tagName;
+		},
+		tagTextColour() {
+			this.tagTextColourModel = this.tagTextColour;
+		}
 	},
 	methods: {
 		deleteTag() {

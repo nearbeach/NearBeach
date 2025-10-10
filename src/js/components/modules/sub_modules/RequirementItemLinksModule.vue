@@ -16,15 +16,17 @@
 		</div>
 		<div v-else>
 			<!-- Project Links -->
-			<sub-object-links title="Project Links"
-							  v-bind:link-results="itemLinkProject"
-							  v-on:update_link_results="updateLinkResults($event)"
+			<sub-object-links
+title="Project Links"
+							  :link-results="itemLinkProject"
+							  @update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Task Links -->
-			<sub-object-links title="Task Links"
-							  v-bind:link-results="itemLinkTask"
-							  v-on:update_link_results="updateLinkResults($event)"
+			<sub-object-links
+title="Task Links"
+							  :link-results="itemLinkTask"
+							  @update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 		</div>
 
@@ -38,7 +40,7 @@
 				<a
 					href="javascript:void(0)"
 					class="btn btn-primary save-changes"
-					v-on:click="newRequirementItemLink"
+					@click="newRequirementItemLink"
 				>Create new Link</a
 				>
 			</div>
@@ -47,14 +49,14 @@
 		<!-- LINKING MODAL -->
 		<!-- need to build something that resets the requirement links when adding links -->
 		<new-requirement-link-wizard
-			v-bind:location-id="locationId"
-			v-bind:destination="destination"
-			v-on:update_module="updateLinkResults($event)"
+			:location-id="locationId"
+			:destination="destination"
+			@update_module="updateLinkResults($event)"
 		></new-requirement-link-wizard>
 
     <!-- MODAL FOR CONFIRM DELETE LINK -->
     <confirm-link-delete
-        v-on:update_link_results="updateLinkResults($event)"
+        @update_link_results="updateLinkResults($event)"
     ></confirm-link-delete>
 	</div>
 </template>
@@ -91,6 +93,12 @@ export default {
 			userLevel: "getUserLevel",
 		}),
 	},
+	mounted() {
+		//Get the required data we need
+    this.$nextTick(() => {
+      this.updateLinkResults();
+    })
+	},
 	methods: {
 		updateLinkResults() {
 			//Get the data from the database
@@ -120,12 +128,6 @@ export default {
 			);
 			elem_modal.show();
 		},
-	},
-	mounted() {
-		//Get the required data we need
-    this.$nextTick(() => {
-      this.updateLinkResults();
-    })
 	},
 };
 </script>

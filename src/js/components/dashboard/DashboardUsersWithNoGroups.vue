@@ -20,10 +20,10 @@
 						v-for="user in userList"
 						:key="user.id"
 						class="user-card-big"
-						v-on:click="goToUser(user.id)"
+						@click="goToUser(user.id)"
 					>
 						<img
-							v-bind:src="profilePicture(user.profile_picture)"
+							:src="profilePicture(user.profile_picture)"
 							alt="default profile"
 							class="user-card--profile"
 						/>
@@ -62,6 +62,9 @@ export default {
 			userList: [],
 		};
 	},
+	mounted() {
+		this.getUserList();
+	},
 	methods: {
 		getUserList() {
 			//Get the data from the database
@@ -89,9 +92,6 @@ export default {
 
 			return `${this.staticUrl}NearBeach/images/placeholder/people_tax.svg`;
 		},
-	},
-	mounted() {
-		this.getUserList();
 	},
 };
 </script>

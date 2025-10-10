@@ -1,8 +1,8 @@
 <template>
 	<strong>{{ propertyName }}</strong>
 	<span
-		class="error"
 		v-if="!v$.localPropertyList.required && isDirty"
+		class="error"
 	>
 		Please create at least one {{ propertyName }}.</span
 	>
@@ -13,8 +13,8 @@
 		:disabled="!canDragCards || isReadOnly"
 		item-key="pk"
 		ghost-class="ghost"
-		@change="sendPropertyListUp"
 		class="kanban-property-order"
+		@change="sendPropertyListUp"
 	>
 		<template
 			#item="{ element }"
@@ -22,41 +22,44 @@
 			name="flip-list"
 		>
 			<div
+				:id="element.id"
+				:key="element.id"
 				class="sortable"
-				v-bind:key="element.id"
-				v-bind:id="element.id"
-				v-bind:data-property="element.property"
-				v-bind:data-id="element.id"
-				v-bind:data-title="element.title"
-				v-on:dblclick="editItem($event)"
+				:data-property="element.property"
+				:data-id="element.id"
+				:data-title="element.title"
+				@dblclick="editItem($event)"
 			>
-				<div class="content"
-					 v-bind:key="element.id"
-					 v-bind:id="element.id"
-					 v-bind:data-id="element.id"
-					 v-bind:data-property="element.property"
-					 v-bind:data-title="element.title"
+				<div
+:id="element.id"
+					 :key="element.id"
+					 class="content"
+					 :data-id="element.id"
+					 :data-property="element.property"
+					 :data-title="element.title"
 				>
 					<strong
-						v-bind:key="element.id"
-						v-bind:id="element.id"
-						v-bind:data-id="element.id"
-						v-bind:data-property="element.property"
-						v-bind:data-title="element.title"
+						:id="element.id"
+						:key="element.id"
+						:data-id="element.id"
+						:data-property="element.property"
+						:data-title="element.title"
 					>
 						{{ element.title }}
 					</strong>
-					<span v-if="!canDragCards"
-						  v-bind:id="element.id"
-						  v-bind:data-id="element.id"
-						  v-bind:data-property="element.property"
-						  v-bind:data-title="element.title"
+					<span
+v-if="!canDragCards"
+						  :id="element.id"
+						  :data-id="element.id"
+						  :data-property="element.property"
+						  :data-title="element.title"
 						  style="font-weight: lighter"
 					> - Movement Locked!</span>
 				</div>
-				<div class="icon"
-					 v-on:click="removeItem(element.id)"
-					 v-if="localPropertyList.length > 1"
+				<div
+v-if="localPropertyList.length > 1"
+					 class="icon"
+					 @click="removeItem(element.id)"
 				>
 					<carbon-close-outline></carbon-close-outline>
 				</div>
@@ -66,17 +69,17 @@
 
 	<!-- ADD BUTTON -->
 	<button
-		class="btn btn-primary"
-		v-on:click="openModal"
 		v-if="isReadOnly===false"
+		class="btn btn-primary"
+		@click="openModal"
 	>
 		Add {{ propertyName }} Item
 	</button>
 
 	<!-- MODAL FOR ADDING AN EXTRA ROW -->
 	<div
+		:id="`addItem${propertyName}`"
 		class="modal fade"
-		v-bind:id="`addItem${propertyName}`"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -85,17 +88,17 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="exampleModalLabel"
+						class="modal-title"
 					>
 						Add/Edit {{ propertyName }}
 					</h5>
 					<button
+						:id="`addItemClose${propertyName}`"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						v-bind:id="`addItemClose${propertyName}`"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -108,8 +111,8 @@
 						/>
 					</div>
 					<div
-						class="form-group"
 						v-if="propertyName.toLowerCase() === 'column'"
+						class="form-group"
 					>
 						<label>{{ propertyName }} Property</label>
 						<n-select
@@ -129,7 +132,7 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="addItem"
+						@click="addItem"
 					>
 						Save changes
 					</button>
@@ -140,8 +143,8 @@
 
 	<!-- MODAL FOR DELETING ITEM -->
 	<div
+		:id="`deleteItem${propertyName}`"
 		class="modal fade"
-		v-bind:id="`deleteItem${propertyName}`"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -151,11 +154,11 @@
 				<div class="modal-header">
 					<h5 class="modal-title">Delete {{ propertyName }}</h5>
 					<button
+						:id="`deleteItemClose${propertyName}`"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						v-bind:id="`deleteItemClose${propertyName}`"
 					></button>
 				</div>
 				<div class="modal-body pb-4">
@@ -180,10 +183,12 @@
 						<p>Would you like to remove the cards within the {{ propertyName }}?</p>
 						<n-radio-group v-model:value="removeCardsModel" name="radiogroup">
 							<n-space>
-								<n-radio v-bind:value="true"
+								<n-radio
+:value="true"
 										 label="Yes - please remove cards"
 								/>
-								<n-radio v-bind:value="false"
+								<n-radio
+:value="false"
 										 label="No - please MOVE cards"
 								/>
 							</n-space>
@@ -192,7 +197,8 @@
 
 					<!-- CARD DESTINATIONS -->
 					<div class="spacer"></div>
-					<div v-if="!removeCardsModel"
+					<div
+v-if="!removeCardsModel"
 						 class="row"
 					>
 						<p>Please select an appropriate destination for the current cards.</p>
@@ -200,8 +206,8 @@
 						><strong>Destination for Cards</strong></label
 						>
 						<n-select
-							v-bind:options="newCardDestinationList"
 							v-model:value="destinationItemId"
+							:options="newCardDestinationList"
 							style="z-index: 9999"
 							class="new-card-destination"
 						></n-select>
@@ -216,11 +222,11 @@
 						Close
 					</button>
 					<button
+						v-if="isReadOnly===false"
 						type="button"
 						class="btn btn-primary"
-						v-if="isReadOnly===false"
-						v-on:click="deleteItem"
-						v-bind:disabled="this.destinationItemId == null"
+						:disabled="destinationItemId == null"
+						@click="deleteItem"
 					>
 						Delete {{ propertyName }}
 					</button>
@@ -244,12 +250,6 @@ import {CarbonCloseOutline} from "../../components";
 
 export default {
 	name: "KanbanPropertyOrder",
-	setup() {
-		return {v$: useVuelidate()};
-	},
-	emits: [
-		"update_property_list",
-	],
 	components: {
 		CarbonCloseOutline,
 		draggable,
@@ -290,6 +290,12 @@ export default {
 			default: "",
 		},
 	},
+	emits: [
+		"update_property_list",
+	],
+	setup() {
+		return {v$: useVuelidate()};
+	},
 	data() {
 		return {
 			columnPropertyModel: "Normal",
@@ -325,16 +331,16 @@ export default {
 			required,
 		},
 	},
-	watch: {
-		propertyList() {
-			this.localPropertyList = this.propertyList;
-		},
-	},
 	computed: {
 		...mapGetters({
 			canDragCards: "getCanDragCards",
 			rootUrl: "getRootUrl",
 		}),
+	},
+	watch: {
+		propertyList() {
+			this.localPropertyList = this.propertyList;
+		},
 	},
 	methods: {
 		addItem() {

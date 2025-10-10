@@ -17,39 +17,39 @@
 					<label>
 						Priority of Change
 						<validation-rendering
-							v-bind:error-list="v$.rfcPriorityModel.$errors"
+							:error-list="v$.rfcPriorityModel.$errors"
 						></validation-rendering>
 					</label>
 					<n-select
-						v-bind:options="rfcPriority"
-						v-bind:disabled="isReadOnly"
 						v-model:value="rfcPriorityModel"
+						:options="rfcPriority"
+						:disabled="isReadOnly"
 					></n-select>
 				</div>
 				<div class="col-md-4">
 					<label>
 						Risk of Change
 						<validation-rendering
-							v-bind:error-list="v$.rfcRiskModel.$errors"
+							:error-list="v$.rfcRiskModel.$errors"
 						></validation-rendering>
 					</label>
 					<n-select
-						v-bind:options="rfcRisk"
-						v-bind:disabled="isReadOnly"
 						v-model:value="rfcRiskModel"
+						:options="rfcRisk"
+						:disabled="isReadOnly"
 					></n-select>
 				</div>
 				<div class="col-md-4">
 					<label>
 						Impact of Change
 						<validation-rendering
-							v-bind:error-list="v$.rfcImpactModel.$errors"
+							:error-list="v$.rfcImpactModel.$errors"
 						></validation-rendering>
 					</label>
 					<n-select
-						v-bind:options="rfcImpact"
-						v-bind:disabled="isReadOnly"
 						v-model:value="rfcImpactModel"
+						:options="rfcImpact"
+						:disabled="isReadOnly"
 					></n-select>
 				</div>
 			</div>
@@ -59,11 +59,12 @@
 			<label>
 				Risk Association:
 				<validation-rendering
-					v-bind:error-list="v$.rfcRiskSummaryModel.$errors"
+					:error-list="v$.rfcRiskSummaryModel.$errors"
 				></validation-rendering>
 			</label>
 			<br/>
 			<editor
+				v-model="rfcRiskSummaryModel"
 				license-key="gpl"
 				:init="{
 					license_key: 'gpl',
@@ -75,12 +76,11 @@
 					plugins: ['lists', 'image', 'codesample', 'table'],
             		toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 							 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-					skin: `${this.skin}`,
-					content_css: `${this.contentCss}`,
+					skin: `${skin}`,
+					content_css: `${contentCss}`,
 					relative_urls: false,
 				}"
-				v-bind:disabled="isReadOnly"
-				v-model="rfcRiskSummaryModel"
+				:disabled="isReadOnly"
 			/>
 		</div>
 	</div>
@@ -103,18 +103,11 @@ import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 export default {
 	name: "RfcRisk",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		editor: Editor,
 		NSelect,
 		ValidationRendering,
 	},
-	emits: [
-		'update_values',
-		'update_validation',
-	],
 	props: {
 		isReadOnly: {
 			type: Boolean,
@@ -131,11 +124,12 @@ export default {
 			default: "",
 		},
 	},
-	computed: {
-		...mapGetters({
-			contentCss: "getContentCss",
-			skin: "getSkin",
-		}),
+	emits: [
+		'update_values',
+		'update_validation',
+	],
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data: () => ({
 		rfcPriority: [
@@ -161,6 +155,12 @@ export default {
 		],
 		rfcImpactModel: "",
 	}),
+	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			skin: "getSkin",
+		}),
+	},
 	validations: {
 		rfcPriorityModel: {
 			required,
@@ -174,29 +174,6 @@ export default {
 		},
 		rfcImpactModel: {
 			required,
-		},
-	},
-	methods: {
-		handleUploadImage(blobInfo, progress) {
-			//If we have passed a UUID down, this is a new object
-			//We'll need to use the new object upload
-			//Otherwise use the usual method
-			if (this.uuid === "") return useUploadImage(blobInfo, progress);
-			return useNewObjectUploadImage(blobInfo, progress)
-		},
-		updateValidation() {
-			this.v$.$touch();
-
-			this.$emit("update_validation", {
-				tab: "tab_2",
-				value: !this.v$.$invalid,
-			});
-		},
-		updateValues(modelName, modelValue) {
-			this.$emit("update_values", {
-				modelName,
-				modelValue,
-			});
 		},
 	},
 	watch: {
@@ -250,6 +227,29 @@ export default {
 
 		//Just run the validations to show the error messages
 		this.v$.$touch();
+	},
+	methods: {
+		handleUploadImage(blobInfo, progress) {
+			//If we have passed a UUID down, this is a new object
+			//We'll need to use the new object upload
+			//Otherwise use the usual method
+			if (this.uuid === "") return useUploadImage(blobInfo, progress);
+			return useNewObjectUploadImage(blobInfo, progress)
+		},
+		updateValidation() {
+			this.v$.$touch();
+
+			this.$emit("update_validation", {
+				tab: "tab_2",
+				value: !this.v$.$invalid,
+			});
+		},
+		updateValues(modelName, modelValue) {
+			this.$emit("update_values", {
+				modelName,
+				modelValue,
+			});
+		},
 	},
 };
 </script>

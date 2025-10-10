@@ -5,7 +5,7 @@
 		</h2>
 		<p class="text-instructions">
 			The following is a folder structure of all documents uploaded to
-			this {{ this.getDestination() }}
+			this {{ getDestination() }}
 		</p>
 
 		<!-- DOCUMENT FOLDER TREE -->
@@ -23,10 +23,10 @@
 		>
 			<!-- GO TO PARENT DIRECTORY -->
 			<div
+				v-if="currentFolder !== 0"
 				id="folder_parent_directory"
-				v-if="this.currentFolder !== 0"
-				v-on:click="goToParentDirectory()"
 				class="document--child"
+				@click="goToParentDirectory()"
 				@dragenter.prevent
 				@dragover="dragoverFolder($event, 'folder_parent_directory')"
 				@dragleave="dragleaveFolder($event, 'folder_parent_directory')"
@@ -41,20 +41,20 @@
 
 			<!-- RENDER THE FOLDERS -->
 			<div
-				v-bind:id="`folder_${folder.pk}`"
 				v-for="folder in folderFilteredList"
+				:id="`folder_${folder.pk}`"
 				:key="folder.pk"
 				class="document--child"
+				draggable="true"
 				@dragenter.prevent
 				@dragover="dragoverFolder($event, `folder_${folder.pk}`)"
 				@dragleave="dragleaveFolder($event, `folder_${folder.pk}`)"
 				@drop="drop($event, folder.pk)"
 				@dragstart="dragFolderStart($event, folder.pk)"
-				draggable="true"
 			>
 				<a
 					href="javascript:void(0)"
-					v-on:click="updateCurrentFolder(folder.pk)"
+					@click="updateCurrentFolder(folder.pk)"
 				>
 					<carbon-folder
 						width="80px"
@@ -67,11 +67,11 @@
 
 				<!-- REMOVE FOLDER -->
 				<div
-					class="document--remove"
 					v-if="hasDocumentPermission"
+					class="document--remove"
 				>
 					<carbon-trash-can
-						v-on:click="confirmFolderDelete(folder.pk)"
+						@click="confirmFolderDelete(folder.pk)"
 					></carbon-trash-can>
 				</div>
 			</div>
@@ -81,16 +81,16 @@
 				v-for="document in documentFilteredList"
 				:key="document.document_key_id"
 				class="document--child"
-				@dragstart="dragDocumentStart($event, document.document_key_id)"
 				draggable="true"
+				@dragstart="dragDocumentStart($event, document.document_key_id)"
 			>
 				<a
-					v-bind:href="`/private/${document.document_key_id}/`"
+					:href="`/private/${document.document_key_id}/`"
 					rel="noopener noreferrer"
 					target="_blank"
 				>
 					<component
-						v-bind:is="getIcon(document)"
+						:is="getIcon(document)"
 						width="80px"
 						height="80px"
 					></component>
@@ -101,11 +101,11 @@
 
 				<!-- REMOVE DOCUMENT -->
 				<div
-					class="document--remove"
 					v-if="hasDocumentPermission"
+					class="document--remove"
 				>
 					<carbon-trash-can
-						v-on:click="confirmFileDelete(document.document_key_id)"
+						@click="confirmFileDelete(document.document_key_id)"
 					></carbon-trash-can>
 				</div>
 			</div>
@@ -113,15 +113,16 @@
 
 		<!-- ADD DOCUMENTS AND FOLDER BUTTON -->
 		<hr v-if="hasDocumentPermission" />
-		<div class="btn-group save-changes"
-			 v-if="readOnly === false"
+		<div
+v-if="readOnly === false"
+			 class="btn-group save-changes"
 		>
 			<button
+				v-if="hasDocumentPermission"
 				class="btn btn-primary dropdown-toggle"
 				type="button"
 				data-bs-toggle="dropdown"
 				aria-expanded="false"
-				v-if="hasDocumentPermission"
 			>
 				New Document/File
 			</button>
@@ -130,7 +131,7 @@
 					<a
 						class="dropdown-item"
 						href="javascript:void(0)"
-						v-on:click="uploadDocument"
+						@click="uploadDocument"
 					>
 						Upload Document
 					</a>
@@ -139,7 +140,7 @@
 					<a
 						class="dropdown-item"
 						href="javascript:void(0)"
-						v-on:click="addLink"
+						@click="addLink"
 					>
 						Add Link
 					</a>
@@ -148,7 +149,7 @@
 					<a
 						class="dropdown-item"
 						href="javascript:void(0)"
-						v-on:click="addFolder"
+						@click="addFolder"
 					>
 						Add Folder
 					</a>
@@ -232,6 +233,12 @@ export default {
 			this.getDocumentList();
 			this.getFolderList();
 		},
+	},
+	mounted() {
+		this.$nextTick(() => {
+			this.getDocumentList();
+			this.getFolderList();
+		});
 	},
 	methods: {
 		addFolder() {
@@ -562,12 +569,6 @@ export default {
 			);
 			uploadDocumentModal.show();
 		},
-	},
-	mounted() {
-		this.$nextTick(() => {
-			this.getDocumentList();
-			this.getFolderList();
-		});
 	},
 };
 </script>

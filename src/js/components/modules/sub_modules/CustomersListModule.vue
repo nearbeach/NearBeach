@@ -7,7 +7,7 @@
 		>
 			<!-- CUSOMER PROFILE -->
 			<img
-				v-bind:src="getCustomerImage(customer)"
+				:src="getCustomerImage(customer)"
 				alt="default profile picture"
 			/>
 
@@ -15,7 +15,7 @@
 			<div class="customer-card--details">
 				<div class="customer-card--name">
 					<a
-						v-bind:href="`${rootUrl}customer_information/${customer.pk}/`"
+						:href="`${rootUrl}customer_information/${customer.pk}/`"
 					>
 						{{ customer.fields.customer_first_name }}
 						{{ customer.fields.customer_last_name }}
@@ -28,19 +28,19 @@
 			</div>
 
 			<div
-				class="customer-card--remove"
 				v-if="userLevel >= 2"
+				class="customer-card--remove"
 			>
 				<carbon-trash-can
-					v-on:click="confirmRemoveCustomer(customer.pk)"
+					@click="confirmRemoveCustomer(customer.pk)"
 				></carbon-trash-can>
 			</div>
 		</div>
 	</div>
 
 	<confirm-customer-removal
-		v-bind:customer-object="customerObject"
-		v-on:remove_customer="removeCustomer($event)"
+		:customer-object="customerObject"
+		@remove_customer="removeCustomer($event)"
 	></confirm-customer-removal>
 </template>
 
@@ -67,6 +67,18 @@ export default {
 			},
 		},
 	},
+	emits: ["remove_customer"],
+	data() {
+		return {
+			customerObject: {
+				customer_id: 0,
+				customer_email: "",
+				customer_first_name: "",
+				customer_last_name: "",
+				customer_profile_picture: "",
+			},
+		};
+	},
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -79,18 +91,7 @@ export default {
 			return `${this.staticUrl}/NearBeach/images/placeholder/people_tax.svg`;
 		},
 	},
-	data() {
-		return {
-			customerObject: {
-				customer_id: 0,
-				customer_email: "",
-				customer_first_name: "",
-				customer_last_name: "",
-				customer_profile_picture: "",
-			},
-		};
-	},
-	emits: ["remove_customer"],
+
 	methods: {
 		confirmRemoveCustomer(customer_id) {
 			//Update the customer object

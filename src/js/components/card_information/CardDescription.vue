@@ -10,6 +10,7 @@
 			</div>
 			<div class="col-md-8">
 				<editor
+					v-model="cardDescription"
 					license-key="gpl"
 					:init="{
 						license_key: 'gpl',
@@ -21,39 +22,38 @@
 						plugins: ['lists', 'image', 'codesample', 'table'],
             			toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 			'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-            			skin: `${this.skin}`,
-			            content_css: `${this.contentCss}`,
+            			skin: `${skin}`,
+			            content_css: `${contentCss}`,
 						relative_urls: false,
 					}"
-					v-model="cardDescription"
-					v-bind:disabled="editorIsDisabled"
+					:disabled="editorIsDisabled"
 				/>
 			</div>
 		</div>
 		<hr/>
 
 		<div
-			class="row"
 			v-if="userLevel > 1"
+			class="row"
 		>
 			<div class="col-md-12">
 				<button
 					class="btn btn-warning"
-					v-on:click="closeModal"
+					@click="closeModal"
 				>
 					Close & Discard Changes
 				</button>
 				<button
-					class="btn btn-primary save-changes"
-					v-on:click="updateCard(true)"
 					v-if="kanbanStatus !== 'Closed'"
+					class="btn btn-primary save-changes"
+					@click="updateCard(true)"
 				>
 					Save & Close
 				</button>
 				<button
-					class="btn btn-success save-changes"
-					v-on:click="updateCard(false)"
 					v-if="kanbanStatus !== 'Closed'"
+					class="btn btn-success save-changes"
+					@click="updateCard(false)"
 				>
 					Save & Continue
 				</button>
@@ -76,10 +76,10 @@ export default {
 	components: {
 		editor: Editor,
 	},
+	props: {},
 	emits: [
 		"update_card",
 	],
-	props: {},
 	data() {
 		return {
 			editorIsDisabled: false,
@@ -104,6 +104,13 @@ export default {
 			},
 		},
 	},
+	mounted() {
+		//BUG - if we use the following condition it won't work. We need to wait at least 500ms before apply it.
+		//I hate this :'(
+		setTimeout(() => {
+			this.editorIsDisabled = this.kanbanStatus === "Closed" || this.userLevel <= 1;
+		}, 500);
+	},
 	methods: {
 		useUploadImage,
 		closeModal() {
@@ -116,13 +123,6 @@ export default {
 				close_modal,
 			});
 		},
-	},
-	mounted() {
-		//BUG - if we use the following condition it won't work. We need to wait at least 500ms before apply it.
-		//I hate this :'(
-		setTimeout(() => {
-			this.editorIsDisabled = this.kanbanStatus === "Closed" || this.userLevel <= 1;
-		}, 500);
 	}
 };
 </script>

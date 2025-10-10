@@ -5,17 +5,18 @@
 				<h1>Request for Change</h1>
 				<br/>
 				<h2>{{ getStatus() }}</h2>
-				<a v-if="userLevel >= 2 && isReadOnly && getStatus() === 'Draft'"
-				   v-bind:href="`${rootUrl}rfc_information/${rfcResults[0].pk}/`"
+				<a
+v-if="userLevel >= 2 && isReadOnly && getStatus() === 'Draft'"
+				   :href="`${rootUrl}rfc_information/${rfcResults[0].pk}/`"
 				>
 					Edit RFC
 				</a>
 				<hr/>
 
 				<rfc-description
-					v-bind:rfc-results="rfcResults"
-					v-bind:is-read-only="isReadOnly"
-					v-on:update_values="updateValues($event)"
+					:rfc-results="rfcResults"
+					:is-read-only="isReadOnly"
+					@update_values="updateValues($event)"
 				></rfc-description>
 
 				<!-- Request for Change Types and Release Number -->
@@ -34,13 +35,13 @@
 							<label>
 								Request for Change Type:
 								<validation-rendering
-									v-bind:error-list="v$.rfcTypeModel.$errors"
+									:error-list="v$.rfcTypeModel.$errors"
 								></validation-rendering>
 							</label>
 							<n-select
-								v-bind:options="rfcType"
-								v-bind:disabled="isReadOnly"
 								v-model:value="rfcTypeModel"
+								:options="rfcType"
+								:disabled="isReadOnly"
 							></n-select>
 						</div>
 					</div>
@@ -48,10 +49,10 @@
 						<div class="form-group">
 							<label>Version/Release Number</label>
 							<input
+								v-model="rfcVersionModel"
 								type="text"
 								maxlength="25"
 								class="form-control"
-								v-model="rfcVersionModel"
 							/>
 						</div>
 					</div>
@@ -80,8 +81,8 @@
 						<!-- Validation row -->
 						<div class="col-md-12">
 						<span
-							class="error"
 							v-if="checkDateValidation"
+							class="error"
 						>
 							Please select an appropriate date for ALL
 							fields.</span
@@ -93,9 +94,9 @@
 							<div class="form-group">
 								<label>Release Date: </label>
 								<n-date-picker
-									type="datetime"
 									v-model:value="localReleaseDate"
-									v-bind:disabled="isReadOnly"
+									type="datetime"
+									:disabled="isReadOnly"
 									:is-date-disabled="checkDisableDate"
 								></n-date-picker>
 							</div>
@@ -112,8 +113,9 @@
 							Please supply the LEAD who will be leading this Request
 							for Change.<br/>
 							<strong v-if="!isReadOnly">
-								<a v-on:click="openChangeLeadModal"
-								   class="update-change-lead"
+								<a
+class="update-change-lead"
+								   @click="openChangeLeadModal"
 								>Update Change Lead</a>
 							</strong>
 						</p>
@@ -121,7 +123,7 @@
 					<div class="col-md-8 user-card-list">
 						<div class="user-card wide">
 							<img
-								v-bind:src="profilePicture(localChangeLead[0].profile_picture)"
+								:src="profilePicture(localChangeLead[0].profile_picture)"
 								alt="default profile"
 								class="user-card--profile"
 							/>
@@ -138,7 +140,8 @@
 				</div>
 
 				<hr v-if="parseInt(rfcResults[0].fields.rfc_status) === 2"/>
-				<div v-if="parseInt(rfcResults[0].fields.rfc_status) === 2"
+				<div
+v-if="parseInt(rfcResults[0].fields.rfc_status) === 2"
 					 class="row"
 				>
 					<div class="col-md-4">
@@ -147,20 +150,23 @@
 							The following users will be able to approve or reject this RFC. Please contact them.
 						</p>
 					</div>
-					<div v-if="approvalUsersList.length === 0"
+					<div
+v-if="approvalUsersList.length === 0"
 						class="col-md-8"
 					>
 						Currently gathering User Approval List.
 					</div>
-					<div v-else
+					<div
+v-else
 						 class="user-card-list col-md-8"
 					>
-						<div v-for="user in approvalUsersList"
-							 v-bind:key="user.username"
+						<div
+v-for="user in approvalUsersList"
+							 :key="user.username"
 							 class="user-card wide"
 						>
 							<img
-								v-bind:src="profilePicture(user.profile_picture)"
+								:src="profilePicture(user.profile_picture)"
 								alt="default profile"
 								class="user-card--profile"
 							/>
@@ -180,86 +186,86 @@
 				<!-- Update Button -->
 				<hr v-if="!isReadOnly"/>
 				<div
-					class="row submit-row"
 					v-if="!isReadOnly"
+					class="row submit-row"
 				>
 					<div class="col-md-12">
 						<a
+							v-if="userLevel > 1 && changeTaskCount > 0"
 							href="javascript:void(0)"
 							class="btn btn-secondary"
-							v-on:click="updateRFCStatus"
-							v-if="userLevel > 1 && changeTaskCount > 0"
+							@click="updateRFCStatus"
 						>Submit RFC for Approval</a
 						>
 
 						<a
+							v-if="userLevel > 1"
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
-							v-on:click="updateRFC"
-							v-if="userLevel > 1"
+							@click="updateRFC"
 						>Update Request for Change</a
 						>
 					</div>
 				</div>
 				<div
-					class="row submit-row"
 					v-else-if="userLevel >= 2"
+					class="row submit-row"
 				>
 					<div class="col-md-12">
 						<a
-							href="javascript:void(0)"
-							class="reject-rfc-button"
-							aria-disabled=""
-							v-on:click="rejectRFCStatus"
 							v-if="
 							groupLeaderCount > 0 &&
 							rfcResults[0].fields.rfc_status == 2
 						"
+							href="javascript:void(0)"
+							class="reject-rfc-button"
+							aria-disabled=""
+							@click="rejectRFCStatus"
 						>
 							Reject RFC
 						</a>
 
 						<a
-							href="javascript:void(0)"
-							class="accept-rfc-button save-changes"
-							v-on:click="startRFCStatus"
 							v-if="
 							userLevel > 1 &&
 							rfcResults[0].fields.rfc_status == 3
 						"
+							href="javascript:void(0)"
+							class="accept-rfc-button save-changes"
+							@click="startRFCStatus"
 						>
 							Start RFC
 						</a>
 
 						<a
-							href="javascript:void(0)"
-							class="accept-rfc-button save-changes"
-							v-on:click="approveRFCStatus"
 							v-if="
 							groupLeaderCount > 0 &&
 							rfcResults[0].fields.rfc_status == 2
 						"
+							href="javascript:void(0)"
+							class="accept-rfc-button save-changes"
+							@click="approveRFCStatus"
 						>
 							Approve RFC
 						</a>
 
 						<a
+							v-if="rfcResults[0].fields.rfc_status == 4"
 							href="javascript:void(0)"
 							class="pause-rfc-button save-changes"
-							v-on:click="pauseRFCStatus"
-							v-if="rfcResults[0].fields.rfc_status == 4"
+							@click="pauseRFCStatus"
 						>
 							Pause RFC
 						</a>
 
 						<a
-							href="javascript:void(0)"
-							class="restart-rfc-button save-changes"
-							v-on:click="startRFCStatus"
 							v-if="
 								userLevel > 1 &&
 								rfcResults[0].fields.rfc_status == 7
 							"
+							href="javascript:void(0)"
+							class="restart-rfc-button save-changes"
+							@click="startRFCStatus"
 						>
 							Restart RFC
 						</a>
@@ -269,7 +275,7 @@
 		</div>
 
 		<!-- RFC MODALS -->
-		<update-change-lead v-on:update_change_lead="updateChangeLead"></update-change-lead>
+		<update-change-lead @update_change_lead="updateChangeLead"></update-change-lead>
 	</n-config-provider>
 </template>
 
@@ -292,9 +298,6 @@ import {useDisableDate} from "Composables/datetime/useDisableDate";
 
 export default {
 	name: "RfcInformation",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		NDatePicker,
 		NSelect,
@@ -340,29 +343,8 @@ export default {
 			default: 0,
 		},
 	},
-	watch: {
-		localReleaseDate() {
-			//If endDate > releaseDate - update the releaseDate to the end date
-			if (this.localEndDate > this.localReleaseDate) {
-				this.localReleaseDate = this.localEndDate;
-			}
-
-			//Update State Management
-			this.updateReleaseDate();
-		},
-	},
-	computed: {
-		...mapGetters({
-			changeTaskCount: "getChangeTaskCount",
-			rfcImplementationEndModel: "getEndDate",
-			rfcImplementationStartModel: "getStartDate",
-			rfcReleaseModel: "getReleaseDate",
-		}),
-		checkDateValidation() {
-			//Check the validation for each date
-			return !this.v$.rfcReleaseModel.required &&
-					this.v$.rfcReleaseModel.$dirty;
-		},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -399,6 +381,30 @@ export default {
 			rfcVersionModel: this.rfcResults[0].fields.rfc_version_number,
 		};
 	},
+	computed: {
+		...mapGetters({
+			changeTaskCount: "getChangeTaskCount",
+			rfcImplementationEndModel: "getEndDate",
+			rfcImplementationStartModel: "getStartDate",
+			rfcReleaseModel: "getReleaseDate",
+		}),
+		checkDateValidation() {
+			//Check the validation for each date
+			return !this.v$.rfcReleaseModel.required &&
+					this.v$.rfcReleaseModel.$dirty;
+		},
+	},
+	watch: {
+		localReleaseDate() {
+			//If endDate > releaseDate - update the releaseDate to the end date
+			if (this.localEndDate > this.localReleaseDate) {
+				this.localReleaseDate = this.localEndDate;
+			}
+
+			//Update State Management
+			this.updateReleaseDate();
+		},
+	},
 	validations: {
 		rfcTitleModel: {
 			required,
@@ -416,6 +422,58 @@ export default {
 		rfcVersionModel: {
 			maxLength: maxLength(25),
 		},
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		//Set the type model
+		this.rfcTypeModel = this.rfcResults[0].fields.rfc_type;
+
+		//Send root and static url to VueX
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.rfcTitleModel,
+		});
+
+		//Send user level to VueX
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
+		});
+
+		//Send release dates up
+		const end_date = new Date(
+			this.rfcResults[0].fields.rfc_implementation_end_date
+		);
+		const release_date = new Date(
+			this.rfcResults[0].fields.rfc_implementation_release_date
+		);
+		const start_date = new Date(
+			this.rfcResults[0].fields.rfc_implementation_start_date
+		);
+
+		//Update the local release date :)
+		this.localReleaseDate = release_date.getTime();
+
+		//Update the VueX datetimes :)
+		this.$store.commit({
+			type: "updateRfcDates",
+			endDateModel: end_date.getTime(),
+			releaseDateModel: release_date.getTime(),
+			startDateModel: start_date.getTime(),
+		})
+
+		//Get the list of users who can approve
+		this.getApprovalUserList();
 	},
 	methods: {
 		useNiceDatetimeFromInt,
@@ -587,58 +645,6 @@ export default {
 			//Update the value
 			this[data.modelName] = data.modelValue;
 		},
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		//Set the type model
-		this.rfcTypeModel = this.rfcResults[0].fields.rfc_type;
-
-		//Send root and static url to VueX
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-
-		this.$store.commit({
-			type: "updateTitle",
-			title: this.rfcTitleModel,
-		});
-
-		//Send user level to VueX
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: this.userLevel,
-		});
-
-		//Send release dates up
-		const end_date = new Date(
-			this.rfcResults[0].fields.rfc_implementation_end_date
-		);
-		const release_date = new Date(
-			this.rfcResults[0].fields.rfc_implementation_release_date
-		);
-		const start_date = new Date(
-			this.rfcResults[0].fields.rfc_implementation_start_date
-		);
-
-		//Update the local release date :)
-		this.localReleaseDate = release_date.getTime();
-
-		//Update the VueX datetimes :)
-		this.$store.commit({
-			type: "updateRfcDates",
-			endDateModel: end_date.getTime(),
-			releaseDateModel: release_date.getTime(),
-			startDateModel: start_date.getTime(),
-		})
-
-		//Get the list of users who can approve
-		this.getApprovalUserList();
 	},
 };
 </script>

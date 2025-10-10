@@ -32,7 +32,7 @@
 				>
 					<td>
 						<a
-							v-bind:href="getBugHyperLink(bug)"
+							:href="getBugHyperLink(bug)"
 							rel="noopener noreferrer"
 							target="_blank"
 						>
@@ -49,11 +49,11 @@
 					<td>
 						{{ bug.bug_status }}
 						<span
-							class="remove-link"
 							v-if="userLevel >= 2"
+							class="remove-link"
 						>
 								<carbon-trash-can
-									v-on:click="removeBug(bug.bug_id)"
+									@click="removeBug(bug.bug_id)"
 								></carbon-trash-can>
 							</span>
 					</td>
@@ -68,9 +68,9 @@
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<button
-					class="btn btn-primary save-changes"
-					v-on:click="addNewBug"
 					v-if="userLevel > 1"
+					class="btn btn-primary save-changes"
+					@click="addNewBug"
 				>
 					Add Bug
 				</button>
@@ -79,9 +79,9 @@
 
 		<!-- Modals -->
 		<add-bug-wizard
-			v-bind:destination="destination"
-			v-bind:location-id="locationId"
-			v-on:append_bug_list="appendBugList($event)"
+			:destination="destination"
+			:location-id="locationId"
+			@append_bug_list="appendBugList($event)"
 		></add-bug-wizard>
 	</div>
 </template>
@@ -113,6 +113,15 @@ export default {
 			userLevel: "getUserLevel",
 			rootUrl: "getRootUrl",
 		}),
+	},
+	mounted() {
+		//If the location is inside the array - don't bother getting the data
+		const escape_array = ["requirement_item"];
+		if (escape_array.indexOf(this.destination) >= 0) return;
+
+		this.$nextTick(() => {
+			this.getBugList();
+		});
 	},
 	methods: {
 		addNewBug() {
@@ -186,15 +195,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		//If the location is inside the array - don't bother getting the data
-		const escape_array = ["requirement_item"];
-		if (escape_array.indexOf(this.destination) >= 0) return;
-
-		this.$nextTick(() => {
-			this.getBugList();
-		});
 	},
 };
 </script>

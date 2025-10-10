@@ -142,21 +142,21 @@ Static files and assets
 
 ## Adding features (typical steps)
 
-1) Backend
-- Add/modify models in NearBeach/models.py or domain-specific modules and create migrations.
-- Add/extend serializers in NearBeach/serializers/.
-- Implement API views in NearBeach/views/api/ and add URL routes.
-- Add permission checks as required.
+1. Backend
+   - Add/modify models in NearBeach/models.py or domain-specific modules and create migrations.
+   - Add/extend serializers in NearBeach/serializers/.
+   - Implement API views in NearBeach/views/api/ and add URL routes.
+   - Add permission checks as required.
 
-2) Frontend
-- Build or extend Vue components under src/js/components/<domain>/.
-- Wire components in src/js/app.js or feature entry points.
-- Call the new API endpoints and handle responses with appropriate validation and error states.
+2. Frontend
+   - Build or extend Vue components under src/js/components/<domain>/.
+   - Wire components in src/js/app.js or feature entry points.
+   - Call the new API endpoints and handle responses with appropriate validation and error states.
 
-3) Tests
-- Add/extend backend unit tests in tests/ or NearBeach/tests/.
-- Add/extend frontend tests with Vitest.
-- Update any E2E scenarios if user flows change.
+3. Tests
+   - Add/extend backend unit tests in tests/ or NearBeach/tests/.
+   - Add/extend frontend tests with Vitest.
+   - Update any E2E scenarios if user flows change.
 
 
 ## Conventions and guidelines

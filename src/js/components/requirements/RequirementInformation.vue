@@ -5,7 +5,8 @@
 				<h1>Requirement Information</h1>
 				<hr/>
 
-				<div v-if="requirementIsClosed"
+				<div
+v-if="requirementIsClosed"
 					 class="alert alert-info"
 				>
 					Requirement is currently closed.
@@ -31,18 +32,18 @@
 							<label for="id_requirement_title"
 							>Requirement Title:
 								<validation-rendering
-									v-bind:error-list="v$.requirementTitleModel.$errors"
+									:error-list="v$.requirementTitleModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
 								id="id_requirement_title"
+								v-model="requirementTitleModel"
 								class="form-control"
 								name="requirement_title"
 								type="text"
 								required="true"
 								maxlength="255"
-								v-model="requirementTitleModel"
-								v-bind:disabled="isReadOnly"
+								:disabled="isReadOnly"
 							/>
 						</div>
 
@@ -50,16 +51,17 @@
 						<label>
 							Requirement Scope:
 							<validation-rendering
-								v-bind:error-list="v$.requirementScopeModel.$errors"
+								:error-list="v$.requirementScopeModel.$errors"
 							></validation-rendering>
 						</label>
 						<br/>
 						<img
-							v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
+							:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 							class="loader-image"
 							alt="loading image for Tinymce"
 						/>
 						<editor
+							v-model="requirementScopeModel"
 							license-key="gpl"
 							:init="{
 							license_key: 'gpl',
@@ -71,12 +73,11 @@
 							plugins: ['lists', 'image', 'codesample', 'table'],
             				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 									 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-							skin: `${this.skin}`,
-							content_css: `${this.contentCss}`,
+							skin: `${skin}`,
+							content_css: `${contentCss}`,
 							relative_urls: false,
 						}"
-							v-bind:disabled="isReadOnly"
-							v-model="requirementScopeModel"
+							:disabled="isReadOnly"
 						/>
 					</div>
 				</div>
@@ -84,8 +85,8 @@
 				<!-- Stakeholder Information -->
 				<hr/>
 				<stakeholder-information
-					v-bind:organisation-results="organisationResults"
-					v-bind:default-stakeholder-image="defaultStakeholderImage"
+					:organisation-results="organisationResults"
+					:default-stakeholder-image="defaultStakeholderImage"
 				></stakeholder-information>
 
 				<!-- Status -->
@@ -104,15 +105,15 @@
 									<label
 									>Requirement Status
 										<validation-rendering
-											v-bind:error-list="v$.statusModel.$errors"
+											:error-list="v$.statusModel.$errors"
 										></validation-rendering>
 									</label>
 									<n-select
-										:options="statusOptions"
-										v-bind:disabled="userLevel <= 1"
-										v-bind:clearable="false"
-										label="status"
 										v-model:value="statusModel"
+										:options="statusOptions"
+										:disabled="userLevel <= 1"
+										:clearable="false"
+										label="status"
 									></n-select>
 								</div>
 							</div>
@@ -121,15 +122,15 @@
 									<label
 									>Requirement Type
 										<validation-rendering
-											v-bind:error-list="v$.typeModel.$errors"
+											:error-list="v$.typeModel.$errors"
 										></validation-rendering>
 									</label>
 									<n-select
-										:options="typeList"
-										v-bind:disabled="isReadOnly"
-										v-bind:clearable="false"
-										label="type"
 										v-model:value="typeModel"
+										:options="typeList"
+										:disabled="isReadOnly"
+										:clearable="false"
+										label="type"
 									></n-select>
 								</div>
 							</div>
@@ -140,12 +141,13 @@
 				<!-- Submit Button -->
 				<hr v-if="!isReadOnly" />
 				<div
-					class="row submit-row"
 					v-if="!isReadOnly"
+					class="row submit-row"
 				>
 					<div class="col-md-12">
-						<button class="btn btn-primary save-changes"
-								v-on:click="updateRequirement"
+						<button
+class="btn btn-primary save-changes"
+								@click="updateRequirement"
 						>
 							Update Requirement
 						</button>
@@ -176,9 +178,6 @@ import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 export default {
 	name: "RequirementInformation",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		editor: Editor,
 		NSelect,
@@ -227,13 +226,8 @@ export default {
 			default: 0
 		},
 	},
-	computed: {
-		...mapGetters({
-			contentCss: "getContentCss",
-			rootUrl: "getRootUrl",
-			skin: "getSkin",
-			staticUrl: "getStaticUrl",
-		}),
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -244,6 +238,14 @@ export default {
 			statusModel: this.requirementResults[0].fields.requirement_status,
 			typeModel: this.requirementResults[0].fields.requirement_type,
 		};
+	},
+	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			rootUrl: "getRootUrl",
+			skin: "getSkin",
+			staticUrl: "getStaticUrl",
+		}),
 	},
 	watch: {
 		async statusModel() {
@@ -272,6 +274,20 @@ export default {
 		typeModel: {
 			required,
 		},
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		//Check for the read only
+		this.setReadOnly();
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.requirementTitleModel,
+		});
 	},
 	methods: {
 		useUploadImage,
@@ -365,20 +381,6 @@ export default {
 				});
 			});
 		},
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		//Check for the read only
-		this.setReadOnly();
-
-		this.$store.commit({
-			type: "updateTitle",
-			title: this.requirementTitleModel,
-		});
 	},
 };
 </script>

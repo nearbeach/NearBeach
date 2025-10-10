@@ -3,18 +3,18 @@
 		<div class="card">
 			<div class="card-body">
 				<ul
-					class="nav nav-tabs"
 					id="misc_module_tabs"
+					class="nav nav-tabs"
 					role="tablist"
 				>
 					<li
+						v-if="userLevel === 4"
 						class="nav-item"
 						role="presentation"
-						v-if="userLevel === 4"
 					>
 						<button
-							class="nav-link"
 							id="admin-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#admin"
 							type="button"
@@ -31,8 +31,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="group-and-users-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#group-and-users"
 							type="button"
@@ -50,8 +50,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="rfc-risk-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#rfc-risk"
 							type="button"
@@ -69,8 +69,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="rfc-implementation-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#rfc-implementation"
 							type="button"
@@ -88,8 +88,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="rfc-backout-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#rfc-backout"
 							type="button"
@@ -107,8 +107,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="rfc-test-plan-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#rfc-test"
 							type="button"
@@ -126,8 +126,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link active"
 							id="rfc-run-sheet-tab"
+							class="nav-link active"
 							data-bs-toggle="tab"
 							data-bs-target="#rfc-run-sheet"
 							type="button"
@@ -142,55 +142,55 @@
 				<hr/>
 
 				<div
-					class="tab-content"
 					id="misc_module_content"
+					class="tab-content"
 				>
 					<div
-						class="tab-pane fade bg-danger"
+						v-if="userLevel === 4"
 						id="admin"
+						class="tab-pane fade bg-danger"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
-						v-if="userLevel === 4"
 					>
 						<delete-object></delete-object>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="group-and-users"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
 					>
 						<groups-and-users-module
-							v-bind:location-id="locationId"
-							v-bind:destination="destination"
-							v-bind:is-read-only="isReadOnly"
+							:location-id="locationId"
+							:destination="destination"
+							:is-read-only="isReadOnly"
 						></groups-and-users-module>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="rfc-risk"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="home-tab"
 					>
 						<rfc-risk
-							v-bind:rfc-results="rfcResults"
-							v-bind:is-read-only="isReadOnly"
-							v-on:update_validation="updateValidation($event)"
-							v-on:update_values="updateValues($event)"
+							:rfc-results="rfcResults"
+							:is-read-only="isReadOnly"
+							@update_validation="updateValidation($event)"
+							@update_values="updateValues($event)"
 						></rfc-risk>
 
 						<!-- Update Button -->
 						<hr v-if="!isReadOnly"/>
 						<div
-							class="row submit-row"
 							v-if="!isReadOnly"
+							class="row submit-row"
 						>
 							<div class="col-md-12">
 								<a
+									v-if="userLevel > 1"
 									href="javascript:void(0)"
 									class="btn btn-primary save-changes"
-									v-on:click="updateRisk"
-									v-if="userLevel > 1"
+									@click="updateRisk"
 								>Update Risks</a
 								>
 							</div>
@@ -198,30 +198,30 @@
 					</div>
 
 					<div
-						class="tab-pane fade"
 						id="rfc-implementation"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="home-tab"
 					>
 						<rfc-implementation-plan
-							v-bind:rfc-results="rfcResults"
-							v-bind:is-read-only="isReadOnly"
-							v-on:update_validation="updateValidation($event)"
-							v-on:update_values="updateValues($event)"
+							:rfc-results="rfcResults"
+							:is-read-only="isReadOnly"
+							@update_validation="updateValidation($event)"
+							@update_values="updateValues($event)"
 						></rfc-implementation-plan>
 
 						<!-- Update Button -->
 						<hr v-if="!isReadOnly"/>
 						<div
-							class="row submit-row"
 							v-if="!isReadOnly"
+							class="row submit-row"
 						>
 							<div class="col-md-12">
 								<a
+									v-if="userLevel > 1"
 									href="javascript:void(0)"
 									class="btn btn-primary save-changes"
-									v-on:click="updateImplementation"
-									v-if="userLevel > 1"
+									@click="updateImplementation"
 								>Update Implementation Plan</a
 								>
 							</div>
@@ -229,30 +229,30 @@
 					</div>
 
 					<div
-						class="tab-pane fade"
 						id="rfc-backout"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="home-tab"
 					>
 						<rfc-backout-plan
-							v-bind:rfc-results="rfcResults"
-							v-bind:is-read-only="isReadOnly"
-							v-on:update_validation="updateValidation($event)"
-							v-on:update_values="updateValues($event)"
+							:rfc-results="rfcResults"
+							:is-read-only="isReadOnly"
+							@update_validation="updateValidation($event)"
+							@update_values="updateValues($event)"
 						></rfc-backout-plan>
 
 						<!-- Update Button -->
 						<hr v-if="!isReadOnly"/>
 						<div
-							class="row submit-row"
 							v-if="!isReadOnly"
+							class="row submit-row"
 						>
 							<div class="col-md-12">
 								<a
+									v-if="userLevel > 1"
 									href="javascript:void(0)"
 									class="btn btn-primary save-changes"
-									v-on:click="updateBackoutPlan"
-									v-if="userLevel > 1"
+									@click="updateBackoutPlan"
 								>Update Backout Plan</a
 								>
 							</div>
@@ -260,30 +260,30 @@
 					</div>
 
 					<div
-						class="tab-pane fade"
 						id="rfc-test"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="home-tab"
 					>
 						<rfc-test-plan
-							v-bind:rfc-results="rfcResults"
-							v-bind:is-read-only="isReadOnly"
-							v-on:update_validation="updateValidation($event)"
-							v-on:update_values="updateValues($event)"
+							:rfc-results="rfcResults"
+							:is-read-only="isReadOnly"
+							@update_validation="updateValidation($event)"
+							@update_values="updateValues($event)"
 						></rfc-test-plan>
 
 						<!-- Update Button -->
 						<hr v-if="!isReadOnly"/>
 						<div
-							class="row submit-row"
 							v-if="!isReadOnly"
+							class="row submit-row"
 						>
 							<div class="col-md-12">
 								<a
+									v-if="userLevel > 1"
 									href="javascript:void(0)"
 									class="btn btn-primary save-changes"
-									v-on:click="updateTestPlan"
-									v-if="userLevel > 1"
+									@click="updateTestPlan"
 								>Update Test Plan</a
 								>
 							</div>
@@ -291,17 +291,17 @@
 					</div>
 
 					<div
-						class="tab-pane fade active show"
 						id="rfc-run-sheet"
+						class="tab-pane fade active show"
 						role="tabpanel"
 						aria-labelledby="home-tab"
 					>
 						<change-task-list
-							v-bind:is-read-only="isReadOnly"
-							v-bind:location-id="locationId"
-							v-bind:user-list="userList"
-							v-bind:rfc-id="rfcResults[0].pk"
-							v-bind:rfc-status="rfcResults[0].fields.rfc_status"
+							:is-read-only="isReadOnly"
+							:location-id="locationId"
+							:user-list="userList"
+							:rfc-id="rfcResults[0].pk"
+							:rfc-status="rfcResults[0].fields.rfc_status"
 						></change-task-list>
 					</div>
 				</div>
@@ -353,7 +353,9 @@ export default {
 		},
 		rfcResults: {
 			type: Array,
-			default: [],
+			default: () => {
+				return [];
+			},
 		},
 		theme: {
 			type: String,
@@ -389,6 +391,14 @@ export default {
 			rootUrl: "getRootUrl",
 			userLevel: "getUserLevel",
 		}),
+	},
+	mounted() {
+		//Send data to required VueX states
+		this.$store.commit({
+			type: "updateDestination",
+			destination: this.destination,
+			locationId: this.locationId,
+		});
 	},
 	methods: {
 		useNBTheme,
@@ -544,14 +554,6 @@ export default {
 			//Update the value
 			this.rfcData[data.modelName] = data.modelValue;
 		},
-	},
-	mounted() {
-		//Send data to required VueX states
-		this.$store.commit({
-			type: "updateDestination",
-			destination: this.destination,
-			locationId: this.locationId,
-		});
 	},
 };
 </script>
