@@ -75,6 +75,7 @@ class SprintViewSet(viewsets.ModelViewSet):
                     **{F"{permutation.destination}_id__isnull": False}
                 ).values(F"{permutation.destination}_id")},
                 sprintobjectassignment__is_deleted=False,
+                sprintobjectassignment__sprint_id=sprint_id,
             )
             
             # If there is a link relationship, apply it

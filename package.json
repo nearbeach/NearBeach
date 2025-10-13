@@ -3,7 +3,6 @@
   "version": "0.31",
   "description": "NearBeach - an Open Source project management system built with Django web framework",
   "main": "/src/js/app.js",
-  "type": "module",
   "directories": {
     "doc": "docs",
     "test": "tests"
