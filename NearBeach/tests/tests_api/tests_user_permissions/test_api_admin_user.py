@@ -1106,6 +1106,41 @@ class ApiAdminPermissionTests(APITestCase):
 
         self._run_test_array(data_list)
 
+    def test_api_sprint_link_data(self):
+        data_list = [
+            #############
+            # SPRINT LINK
+            #############
+            self.URLTest("/api/v0/sprint/1/link/", {}, 200, "GET"),
+            self.URLTest("/api/v0/sprint/2/link/", {}, 200, "GET"),
+            self.URLTest("/api/v0/sprint/1/link/", {
+                "object_type": "requirement_item",
+                "object_id": 1,
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/1/link/", {
+                "object_type": "project",
+                "object_id": 1,
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/1/link/", {
+                "object_type": "task",
+                "object_id": 1,
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/2/link/", {
+                "object_type": "requirement_item",
+                "object_id": 1,
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/2/link/", {
+                "object_type": "project",
+                "object_id": 1,
+            }, 201, "POST"),
+            self.URLTest("/api/v0/sprint/2/link/", {
+                "object_type": "task",
+                "object_id": 1,
+            }, 201, "POST"),
+        ]
+
+        self._run_test_array(data_list)
+
     def test_api_task_data(self):
         data_list = [
             #########

@@ -35,21 +35,12 @@ class SprintLinkViewSet(SprintViewSet):
     - Projects
     - Tasks
 
-
-    # 🌏 Url
-
-    - Destination: The parent object of the sprint:
-        - Project
-        - Requirement
-    - Location ID: The unique ID of the parent object.
-
-
     # 🧾 Parameters
 
     - Object Type: The object we are currently trying to link. These will be;
-        - Requirement Item
-        - Project
-        - Task
+        - requirement_item
+        - project
+        - task
     - Object Id: A list of ID's for the objects (of type) we are currently trying to link
             """,
         examples=[
@@ -91,6 +82,13 @@ class SprintLinkViewSet(SprintViewSet):
             status=status.HTTP_201_CREATED,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Destroy a object link to the current sprint. The "sprint object assignment id" can be gathered from the list
+        """
+    )
     def destroy(self, request, pk, *args, **kwargs):
         self._check_sprint(kwargs)
 
@@ -110,6 +108,13 @@ class SprintLinkViewSet(SprintViewSet):
             status=status.HTTP_204_NO_CONTENT,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Gathers a list of all object links associated with the current sprint.
+        """
+    )
     def list(self, request, *args, **kwargs):
         self._check_sprint(kwargs)
         
@@ -123,7 +128,8 @@ class SprintLinkViewSet(SprintViewSet):
         )
 
     @extend_schema(
-        description="""Method not used"""
+        description="""Method not used""",
+        exclude=True,
     )
     def retrieve(self, request, pk, *args, **kwargs):
         return Response(
@@ -131,7 +137,8 @@ class SprintLinkViewSet(SprintViewSet):
         )
 
     @extend_schema(
-        description="""Method not used"""
+        description="""Method not used""",
+        exclude=True,
     )
     def update(self, request, pk, *args, **kwargs):
         return Response(
