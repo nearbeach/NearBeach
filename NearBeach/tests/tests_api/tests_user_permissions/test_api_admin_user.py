@@ -1141,6 +1141,53 @@ class ApiAdminPermissionTests(APITestCase):
 
         self._run_test_array(data_list)
 
+    def test_api_object_sprint_data(self):
+        data_list = [
+            ###############
+            # OBJECT SPRINT
+            ###############
+            self.URLTest("/api/v0/requirement/1/object_sprint/", {}, 200, "GET"),
+            self.URLTest("/api/v0/project/1/object_sprint/", {}, 200, "GET"),
+            self.URLTest("/api/v0/requirement/2/object_sprint/", {}, 200, "GET"),
+            self.URLTest("/api/v0/project/2/object_sprint/", {}, 200, "GET"),
+            self.URLTest("/api/v0/requirement/1/object_sprint/",
+                {
+                    "sprint_start_date": "2024-12-19T15:49:37Z",
+                    "sprint_end_date": "2024-12-19T15:49:37Z",
+                    "sprint_name": "sprint test",
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest("/api/v0/project/1/object_sprint/", {
+                    "sprint_start_date": "2024-12-19T15:49:37Z",
+                    "sprint_end_date": "2024-12-19T15:49:37Z",
+                    "sprint_name": "sprint test",
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest("/api/v0/requirement/2/object_sprint/",
+                         {
+                             "sprint_start_date": "2024-12-19T15:49:37Z",
+                             "sprint_end_date": "2024-12-19T15:49:37Z",
+                             "sprint_name": "sprint test",
+                         },
+                         201,
+                         "POST"
+                         ),
+            self.URLTest("/api/v0/project/2/object_sprint/", {
+                "sprint_start_date": "2024-12-19T15:49:37Z",
+                "sprint_end_date": "2024-12-19T15:49:37Z",
+                "sprint_name": "sprint test",
+            },
+                         201,
+                         "POST"
+            ),
+        ]
+
+        self._run_test_array(data_list)
+
     def test_api_task_data(self):
         data_list = [
             #########
