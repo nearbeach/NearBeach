@@ -84,8 +84,14 @@ Users will need to have the permission to delete. This entails having the abilit
         """
     )
     @check_user_api_permissions(min_permission_level=4)
-    def destroy(self, request, *args, **kwargs):
-        requirement_item = self.get_object()
+    def destroy(self, request, pk, *args, **kwargs):
+        requirement_item = get_object_or_404(
+            RequirementItem.objects.filter(
+                is_deleted=False,
+                requirement_id=kwargs["requirement_id"],
+            ),
+            pk=pk
+        )
         requirement_item.is_deleted = True
         requirement_item.change_user = request.user
         requirement_item.save()

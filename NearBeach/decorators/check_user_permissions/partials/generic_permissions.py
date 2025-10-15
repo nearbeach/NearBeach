@@ -1,6 +1,6 @@
 from django.db.models import Max, Q
 
-from NearBeach.models import Group, ObjectAssignment, UserGroup
+from NearBeach.models import Group, ObjectAssignment, UserGroup, RequirementItem
 
 
 def generic_permissions(request, object_lookup, kwargs):
@@ -19,6 +19,15 @@ def generic_permissions(request, object_lookup, kwargs):
 
     # If we are passing the object_lookup through, we will use a different function
     if "location_id" in kwargs and not object_lookup == "organisation":
+        # Set the location id
+        location_id = kwargs["location_id"]
+
+        # If destination is requirement_item, we'll need to use the parents data
+        if object_lookup == "requirement_item":
+            requirement_item_results = RequirementItem.objects.get(pk=kwargs["location_id"])
+            object_lookup = "requirement"
+            location_id = requirement_item_results.requirement_id
+
         # Determine if there are any cross over with user groups and object_lookup groups
         group_results = Group.objects.filter(
             Q(
@@ -26,7 +35,7 @@ def generic_permissions(request, object_lookup, kwargs):
                 # The object_lookup groups
                 group_id__in=ObjectAssignment.objects.filter(
                     is_deleted=False,
-                    **{object_lookup: kwargs["location_id"]},
+                    **{object_lookup: location_id},
                 ).values("group_id"),
             )
             & Q(group_id__in=user_group_results.values("group_id"))

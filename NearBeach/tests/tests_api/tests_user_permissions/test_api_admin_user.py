@@ -705,6 +705,135 @@ class ApiAdminPermissionTests(APITestCase):
         ]
 
         self._run_test_array(data_list)
+        
+    def test_api_requirement_item_data(self):
+        data_list = [
+            #########
+            # REQUIREMENT ITEM
+            #########
+            self.URLTest("/api/v0/requirement/1/requirement_item/", {}, 200, "GET"),
+            self.URLTest(
+                "/api/v0/requirement/1/requirement_item/",
+                {
+                    "requirement_item_title": "API Requirement Item",
+                    "requirement_item_scope": "<p>Hello World</p>",
+                    "requirement_item_type": 1,
+                    "requirement_item_status": 2,
+                    "requirement_item_story_point": 1,
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest(
+                "/api/v0/requirement/2/requirement_item/",
+                {
+                    "requirement_item_title": "API Requirement Item",
+                    "requirement_item_scope": "<p>Hello World</p>",
+                    "requirement_item_type": 1,
+                    "requirement_item_status": 2,
+                    "requirement_item_story_point": 1,
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest(
+                "/api/v0/requirement/1/requirement_item/1/",
+                {
+                    "requirement_item_title": "API Requirement Item updated",
+                    "requirement_item_scope": "<p>Hello World again</p>",
+                    "requirement_item_type": 2,
+                    "requirement_item_status": 2,
+                    "requirement_item_priority": 1,
+                    "requirement_item_story_point": 1,
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest(
+                "/api/v0/requirement/2/requirement_item/2/",
+                {
+                    "requirement_item_title": "API Requirement item updated",
+                    "requirement_item_scope": "<p>Hello World again</p>",
+                    "requirement_item_type": 2,
+                    "requirement_item_status": 2,
+                    "requirement_item_priority": 1,
+                    "requirement_item_story_point": 1,
+                },
+                200,
+                "PUT"
+            ),
+            self.URLTest("/api/v0/requirement/1/requirement_item/2/", {}, 404, "DELETE"),
+            self.URLTest("/api/v0/requirement/2/requirement_item/1/", {}, 404, "DELETE"),
+            self.URLTest("/api/v0/requirement/1/requirement_item/3/", {}, 204, "DELETE"),
+            self.URLTest("/api/v0/requirement/2/requirement_item/4/", {}, 204, "DELETE"),
+
+            ######################
+            # Requirement - Link tests
+            ######################
+            self.URLTest('/api/v0/requirement_item/1/link/', {}, 200, "GET"),
+            self.URLTest('/api/v0/requirement_item/2/link/', {}, 200, "GET"),
+            self.URLTest(
+                '/api/v0/requirement_item/1/link/',
+                {
+                    "object_id": 2,
+                    "object_type": "task",
+                    "object_relation": "blocked_by",
+                },
+                201, "POST"
+            ),
+            self.URLTest(
+                '/api/v0/requirement_item/2/link/',
+                {
+                    "object_id": 2,
+                    "object_type": "task",
+                    "object_relation": "blocked_by",
+                },
+                201, "POST"
+            ),
+            # TODO - Figure out how we can delete the links - might need a separate fixture for this.
+            # self.URLTest('/api/v0/requirement/2/link/40/', {}, 400, "DELETE"),
+            # self.URLTest('/api/v0/requirement/1/link/41/', {}, 400, "DELETE"),
+            # self.URLTest('/api/v0/requirement/1/link/40/', {}, 204, "DELETE"),
+            # self.URLTest('/api/v0/requirement/2/link/41/', {}, 204, "DELETE"),
+            # TODO - Create more links against all objects, currently can not test as there is nothing to test but create
+            # note tests
+            self.URLTest('/api/v0/requirement_item/1/note/', {}, 200, "GET"),
+            self.URLTest('/api/v0/requirement_item/2/note/', {}, 200, "GET"),
+            self.URLTest(
+                '/api/v0/requirement_item/1/note/',
+                {
+                    "object_note": "<p>Hello World</p>",
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                '/api/v0/requirement_item/2/note/',
+                {
+                    "object_note": "<p>Hello World</p>",
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                '/api/v0/requirement_item/1/note/4/',
+                {
+                    "object_note": "<h1>Hello World Updated</h1>",
+                },
+                200,
+                "PUT",
+            ),
+            self.URLTest(
+                '/api/v0/requirement_item/2/note/11/',
+                {
+                    "object_note": "<h1>Hello World Updated</h1>",
+                },
+                200,
+                "PUT",
+            ),
+        ]
+
+        self._run_test_array(data_list)
 
     def test_api_request_for_change_data(self):
         data_list = [
