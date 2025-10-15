@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase, APIClient, APIRequestFactory
 import uuid
 
 # Declaration of Username and Password
-username = "admin"
+username = "team_leader"
 password = "Test1234$"
 
 
@@ -62,12 +62,6 @@ class ApiAdminPermissionTests(APITestCase):
                         data.data,
                         format="json"
                     )
-                elif data.method == "DELETE":
-                    response = self.client.delete(
-                        data.url,
-                        data.data,
-                        format="json"
-                    )
                 else:
                     AssertionError("Method Not allowed in API")
 
@@ -106,7 +100,6 @@ class ApiAdminPermissionTests(APITestCase):
             self.URLTest("/api/v0/coffee/", {}, 418, "POST"),
             self.URLTest("/api/v0/coffee/1/", {}, 418, "GET"),
             self.URLTest("/api/v0/coffee/1/", {}, 418, "PUT"),
-            self.URLTest("/api/v0/coffee/1/", {}, 418, "DELETE"),
         ]
 
         self._run_test_array(data_list)
@@ -141,7 +134,6 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT"
             ),
-            self.URLTest("/api/v0/organisation/1/customer/1/", {}, 204, "DELETE"),
         ]
 
         self._run_test_array(data_list)
@@ -173,56 +165,14 @@ class ApiAdminPermissionTests(APITestCase):
                 201,
                 "POST"
             ),
-            self.URLTest("/api/v0/kanban_board/1/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/", {}, 403, "GET"),
             self.URLTest("/api/v0/kanban_board/2/", {}, 200, "GET"),
-            self.URLTest("/api/v0/kanban_board/1/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/kanban_board/2/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/kanban_board/1/group_and_user/", {}, 200, "GET"),
-            self.URLTest("/api/v0/kanban_board/1/group_and_user/", {"group_list": 2, "user_list": 2}, 201, "POST"),
-            # TODO - 0.32 - Rewrite these once we have applied the object_assignment_id into the data
-            # self.URLTest(
-            #     "/api/v0/kanban_board/1/group_and_user/0/",
-            #     {
-            #         "user": 2,
-            #     },
-            #     204,
-            #     "DELETE"
-            # ),
-            # self.URLTest(
-            #     "/api/v0/kanban_board/1/group_and_user/0/",
-            #     {
-            #         "group": 2,
-            #     },
-            #     204,
-            #     "DELETE"
-            # ),
-            # self.URLTest(
-            #     "/api/v0/kanban_board/1/group_and_user/0/",
-            #     {
-            #         "group": 1,
-            #     },
-            #     403,
-            #     "DELETE"
-            # ),
+            self.URLTest("/api/v0/kanban_board/1/group_and_user/", {}, 403, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/group_and_user/", {"group_list": 2, "user_list": 2}, 403, "POST"),
+            self.URLTest("/api/v0/kanban_board/2/group_and_user/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/2/group_and_user/", {"group_list": 2, "user_list": 2}, 201, "POST"),
             self.URLTest("/api/v0/kanban_board/2/group_and_user/", {}, 200, "GET"),
             self.URLTest("/api/v0/kanban_board/2/group_and_user/", {"group_list": 3}, 201, "POST"),
-            # TODO - 0.32 - Currently missing the object_assignment_id, will need to write these in after we deploy that
-            # self.URLTest(
-            #     "/api/v0/kanban_board/2/group_and_user/0/",
-            #     {
-            #         "user": 2,
-            #     },
-            #     204,
-            #     "DELETE"
-            # ),
-            # self.URLTest(
-            #     "/api/v0/kanban_board/2/group_and_user/0/",
-            #     {
-            #         "group": 1,
-            #     },
-            #     204,
-            #     "DELETE"
-            # ),
         ]
 
         self._run_test_array(data_list)
@@ -232,11 +182,11 @@ class ApiAdminPermissionTests(APITestCase):
             #############
             # KANBAN CARD
             #############
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/", {}, 403, "GET"),
             self.URLTest("/api/v0/kanban_board/2/kanban_card/", {}, 200, "GET"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/1/", {}, 200, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/1/", {}, 403, "GET"),
             self.URLTest("/api/v0/kanban_board/2/kanban_card/2/", {}, 200, "GET"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/2/", {}, 404, "GET"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/2/", {}, 403, "GET"),
             self.URLTest("/api/v0/kanban_board/2/kanban_card/1/", {}, 404, "GET"),
             self.URLTest(
                 "/api/v0/kanban_board/1/kanban_card/",
@@ -247,7 +197,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "kanban_column": 3,
                     "kanban_level": 1,
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -260,31 +210,6 @@ class ApiAdminPermissionTests(APITestCase):
                     "kanban_level": 3,
                 },
                 201,
-                "POST",
-            ),
-            # TODO - Move these tests to specific kanban card tests, as it does not really test permissions here.
-            self.URLTest(
-                "/api/v0/kanban_board/1/kanban_card/",
-                {
-                    "kanban_card_text": "Created via the api",
-                    "kanban_card_description": "I created this by the api. :D",
-                    "kanban_card_priority": 1,
-                    "kanban_column": 300,
-                    "kanban_level": 100,
-                },
-                400,
-                "POST",
-            ),
-            self.URLTest(
-                "/api/v0/kanban_board/2/kanban_card/",
-                {
-                    "kanban_card_text": "Created via the api",
-                    "kanban_card_description": "I created this by the api. :D",
-                    "kanban_card_priority": 2,
-                    "kanban_column": 50,
-                    "kanban_level": 300,
-                },
-                400,
                 "POST",
             ),
             self.URLTest(
@@ -296,11 +221,11 @@ class ApiAdminPermissionTests(APITestCase):
                     "kanban_column": 3,
                     "kanban_level": 1,
                 },
-                200,
+                403,
                 "PUT",
             ),
             self.URLTest(
-                "/api/v0/kanban_board/2/kanban_card/4/",
+                "/api/v0/kanban_board/2/kanban_card/2/",
                 {
                     "kanban_card_text": "Created via the api",
                     "kanban_card_description": "I created this by the api. :D",
@@ -312,11 +237,7 @@ class ApiAdminPermissionTests(APITestCase):
                 "PUT",
             ),
             self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 400, "PUT"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 400, "PUT"),
-            self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 404, "DELETE"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 404, "DELETE"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/3/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/kanban_board/2/kanban_card/4/", {}, 204, "DELETE"),
+            self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 403, "PUT"),
         ]
 
         self._run_test_array(data_list)
@@ -348,25 +269,11 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT"
             ),
-            self.URLTest("/api/v0/organisation/2/", {}, 204, "DELETE"),
             self.URLTest("/api/v0/organisation/1/note/", {}, 200, "GET"),
             self.URLTest("/api/v0/organisation/1/note/", {"object_note": "Hello World"}, 201, "POST"),
-            # TODO - Expand the above note tests, we'll need to test;
-            # 1. Deleting/Editing another users note will fail
-            # 2. Can not delete already deleted notes
-            # 3. Incorrect object to delete note from
-            # 4. Once the PUT method has been implemented, having a user create a note
-            # 5. Create notes on Organisations for the users to delete
-            # 6. Create an organisation
-            # 7. Delete an organisation
             # TAGS
             self.URLTest("/api/v0/organisation/1/tag/", {}, 200, "GET"),
             self.URLTest("/api/v0/organisation/1/tag/", {"tag_id": 1}, 201, "POST"),
-            self.URLTest("/api/v0/organisation/1/tag/13/", {}, 204, "DELETE"),
-            # TODO - Expand the above tag tests, we'll need to test;
-            # 1. Deleting/Editing another objects tags - this should fail
-            # 2. PUT method does not exist
-            # 3. Create a tag and then delete said tag
         ]
 
         self._run_test_array(data_list)
@@ -400,7 +307,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "project_status": 2,
                     "project_priority": 2,
                 },
-                200,
+                403,
                 "PUT"
             ),
             self.URLTest(
@@ -416,15 +323,14 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT"
             ),
-            self.URLTest("/api/v0/project/2/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/project/1/group_and_user/", {}, 200, "GET"),
+            self.URLTest("/api/v0/project/1/group_and_user/", {}, 403, "GET"),
             self.URLTest("/api/v0/project/2/group_and_user/", {}, 200, "GET"),
             self.URLTest(
                 "/api/v0/project/1/group_and_user/",
                 {
                     "group_list": 2,
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -440,7 +346,7 @@ class ApiAdminPermissionTests(APITestCase):
                 {
                     "user_list": 2,
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -451,12 +357,11 @@ class ApiAdminPermissionTests(APITestCase):
                 201,
                 "POST",
             ),
-            # TODO - 0.32 - Write the delete functionality for both users and groups. Waiting for the object_assignment_id to pass through into the GET data
             ######################
             # Project - Link tests
             ######################
-            self.URLTest('/api/v0/project/1/link/', {}, 200, "GET"),
-            self.URLTest('/api/v0/project/1/link/', {}, 200, "GET"),
+            self.URLTest('/api/v0/project/1/link/', {}, 403, "GET"),
+            self.URLTest('/api/v0/project/2/link/', {}, 200, "GET"),
             self.URLTest(
                 '/api/v0/project/1/link/',
                 {
@@ -464,7 +369,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "object_type": "task",
                     "object_relation": "blocked_by",
                 },
-                201,"POST"
+                403,"POST"
             ),
             self.URLTest(
                 '/api/v0/project/1/link/',
@@ -473,22 +378,17 @@ class ApiAdminPermissionTests(APITestCase):
                     "object_type": "task",
                     "object_relation": "blocked_by",
                 },
-                201, "POST"
+                403, "POST"
             ),
-            self.URLTest('/api/v0/project/2/link/43/', {}, 400, "DELETE"),
-            self.URLTest('/api/v0/project/1/link/46/', {}, 400, "DELETE"),
-            self.URLTest('/api/v0/project/1/link/43/', {}, 204, "DELETE"),
-            self.URLTest('/api/v0/project/2/link/46/', {}, 204, "DELETE"),
-            # TODO - Create more links against all objects, currently can not test as there is nothing to test but create
             # note tests
-            self.URLTest('/api/v0/project/1/note/', {}, 200, "GET"),
+            self.URLTest('/api/v0/project/1/note/', {}, 403, "GET"),
             self.URLTest('/api/v0/project/2/note/', {}, 200, "GET"),
             self.URLTest(
                 '/api/v0/project/1/note/',
                 {
                     "object_note": "<p>Hello World</p>",
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -504,7 +404,7 @@ class ApiAdminPermissionTests(APITestCase):
                 {
                     "object_note": "<h1>Hello World Updated</h1>",
                 },
-                200,
+                403,
                 "PUT",
             ),
             self.URLTest(
@@ -515,11 +415,6 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT",
             ),
-            self.URLTest('/api/v0/project/1/note/2/', {}, 204, "DELETE"),
-            self.URLTest('/api/v0/project/2/note/3/', {}, 204, "DELETE"),
-            # object_sprint tests
-            # TODO - 0.32 - Add more sprints to objects for Unit Testing
-            # tag tests
         ]
 
         self._run_test_array(data_list)
@@ -551,7 +446,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "requirement_type": 2,
                     "requirement_status": 2,
                 },
-                200,
+                403,
                 "PUT"
             ),
             self.URLTest(
@@ -565,15 +460,14 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT"
             ),
-            self.URLTest("/api/v0/requirement/2/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/requirement/1/group_and_user/", {}, 200, "GET"),
+            self.URLTest("/api/v0/requirement/1/group_and_user/", {}, 403, "GET"),
             self.URLTest("/api/v0/requirement/2/group_and_user/", {}, 200, "GET"),
             self.URLTest(
                 "/api/v0/requirement/1/group_and_user/",
                 {
                     "group_list": 2,
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -589,7 +483,7 @@ class ApiAdminPermissionTests(APITestCase):
                 {
                     "user_list": 2,
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -600,12 +494,11 @@ class ApiAdminPermissionTests(APITestCase):
                 201,
                 "POST",
             ),
-            # TODO - 0.32 - Write the delete functionality for both users and groups. Waiting for the object_assignment_id to pass through into the GET data
             ######################
             # Requirement - Link tests
             ######################
-            self.URLTest('/api/v0/requirement/1/link/', {}, 200, "GET"),
-            self.URLTest('/api/v0/requirement/1/link/', {}, 200, "GET"),
+            self.URLTest('/api/v0/requirement/1/link/', {}, 403, "GET"),
+            self.URLTest('/api/v0/requirement/2/link/', {}, 200, "GET"),
             self.URLTest(
                 '/api/v0/requirement/1/link/',
                 {
@@ -613,7 +506,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "object_type": "task",
                     "object_relation": "blocked_by",
                 },
-                201, "POST"
+                403, "POST"
             ),
             self.URLTest(
                 '/api/v0/requirement/1/link/',
@@ -622,22 +515,17 @@ class ApiAdminPermissionTests(APITestCase):
                     "object_type": "task",
                     "object_relation": "blocked_by",
                 },
-                201, "POST"
+                403, "POST"
             ),
-            self.URLTest('/api/v0/requirement/2/link/40/', {}, 400, "DELETE"),
-            self.URLTest('/api/v0/requirement/1/link/41/', {}, 400, "DELETE"),
-            self.URLTest('/api/v0/requirement/1/link/40/', {}, 204, "DELETE"),
-            self.URLTest('/api/v0/requirement/2/link/41/', {}, 204, "DELETE"),
-            # TODO - Create more links against all objects, currently can not test as there is nothing to test but create
             # note tests
-            self.URLTest('/api/v0/requirement/1/note/', {}, 200, "GET"),
+            self.URLTest('/api/v0/requirement/1/note/', {}, 403, "GET"),
             self.URLTest('/api/v0/requirement/2/note/', {}, 200, "GET"),
             self.URLTest(
                 '/api/v0/requirement/1/note/',
                 {
                     "object_note": "<p>Hello World</p>",
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -653,7 +541,7 @@ class ApiAdminPermissionTests(APITestCase):
                 {
                     "object_note": "<h1>Hello World Updated</h1>",
                 },
-                200,
+                403,
                 "PUT",
             ),
             self.URLTest(
@@ -664,11 +552,6 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT",
             ),
-            self.URLTest('/api/v0/requirement/1/note/4/', {}, 204, "DELETE"),
-            self.URLTest('/api/v0/requirement/2/note/11/', {}, 204, "DELETE"),
-            # object_sprint tests
-            # TODO - 0.32 - Add more sprints to objects for Unit Testing
-            # tag tests
         ]
 
         self._run_test_array(data_list)
@@ -678,7 +561,7 @@ class ApiAdminPermissionTests(APITestCase):
             #########
             # REQUIREMENT ITEM
             #########
-            self.URLTest("/api/v0/requirement/1/requirement_item/", {}, 200, "GET"),
+            self.URLTest("/api/v0/requirement/1/requirement_item/", {}, 403, "GET"),
             self.URLTest(
                 "/api/v0/requirement/1/requirement_item/",
                 {
@@ -688,7 +571,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "requirement_item_status": 2,
                     "requirement_item_story_point": 1,
                 },
-                201,
+                403,
                 "POST"
             ),
             self.URLTest(
@@ -713,7 +596,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "requirement_item_priority": 1,
                     "requirement_item_story_point": 1,
                 },
-                200,
+                403,
                 "PUT"
             ),
             self.URLTest(
@@ -729,15 +612,11 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT"
             ),
-            self.URLTest("/api/v0/requirement/1/requirement_item/2/", {}, 404, "DELETE"),
-            self.URLTest("/api/v0/requirement/2/requirement_item/1/", {}, 404, "DELETE"),
-            self.URLTest("/api/v0/requirement/1/requirement_item/3/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/requirement/2/requirement_item/4/", {}, 204, "DELETE"),
 
             ######################
             # Requirement - Link tests
             ######################
-            self.URLTest('/api/v0/requirement_item/1/link/', {}, 200, "GET"),
+            self.URLTest('/api/v0/requirement_item/1/link/', {}, 403, "GET"),
             self.URLTest('/api/v0/requirement_item/2/link/', {}, 200, "GET"),
             self.URLTest(
                 '/api/v0/requirement_item/1/link/',
@@ -746,7 +625,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "object_type": "task",
                     "object_relation": "blocked_by",
                 },
-                201, "POST"
+                403, "POST"
             ),
             self.URLTest(
                 '/api/v0/requirement_item/2/link/',
@@ -757,21 +636,15 @@ class ApiAdminPermissionTests(APITestCase):
                 },
                 201, "POST"
             ),
-            # TODO - Figure out how we can delete the links - might need a separate fixture for this.
-            # self.URLTest('/api/v0/requirement/2/link/40/', {}, 400, "DELETE"),
-            # self.URLTest('/api/v0/requirement/1/link/41/', {}, 400, "DELETE"),
-            # self.URLTest('/api/v0/requirement/1/link/40/', {}, 204, "DELETE"),
-            # self.URLTest('/api/v0/requirement/2/link/41/', {}, 204, "DELETE"),
-            # TODO - Create more links against all objects, currently can not test as there is nothing to test but create
             # note tests
-            self.URLTest('/api/v0/requirement_item/1/note/', {}, 200, "GET"),
+            self.URLTest('/api/v0/requirement_item/1/note/', {}, 403, "GET"),
             self.URLTest('/api/v0/requirement_item/2/note/', {}, 200, "GET"),
             self.URLTest(
                 '/api/v0/requirement_item/1/note/',
                 {
                     "object_note": "<p>Hello World</p>",
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -787,7 +660,7 @@ class ApiAdminPermissionTests(APITestCase):
                 {
                     "object_note": "<h1>Hello World Updated</h1>",
                 },
-                200,
+                403,
                 "PUT",
             ),
             self.URLTest(
@@ -849,7 +722,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "group_list": [1, 2],
 
                 },
-                200,
+                403,
                 "PUT"
             ),
             self.URLTest(
@@ -874,15 +747,14 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT"
             ),
-            self.URLTest("/api/v0/request_for_change/2/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/request_for_change/1/group_and_user/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/group_and_user/", {}, 403, "GET"),
             self.URLTest("/api/v0/request_for_change/2/group_and_user/", {}, 200, "GET"),
             self.URLTest(
                 "/api/v0/request_for_change/1/group_and_user/",
                 {
                     "group_list": 2,
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -898,7 +770,7 @@ class ApiAdminPermissionTests(APITestCase):
                 {
                     "user_list": 2,
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -915,11 +787,11 @@ class ApiAdminPermissionTests(APITestCase):
 
     def test_api_request_for_change_change_task_data(self):
         data_list = [
-            self.URLTest("/api/v0/request_for_change/1/change_task/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/", {}, 403, "GET"),
             self.URLTest("/api/v0/request_for_change/2/change_task/", {}, 200, "GET"),
-            self.URLTest("/api/v0/request_for_change/1/change_task/1/", {}, 200, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/1/", {}, 403, "GET"),
             self.URLTest("/api/v0/request_for_change/2/change_task/2/", {}, 200, "GET"),
-            self.URLTest("/api/v0/request_for_change/1/change_task/2/", {}, 404, "GET"),
+            self.URLTest("/api/v0/request_for_change/1/change_task/2/", {}, 403, "GET"),
             self.URLTest("/api/v0/request_for_change/2/change_task/1/", {}, 404, "GET"),
             self.URLTest(
                 "/api/v0/request_for_change/1/change_task/",
@@ -931,7 +803,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "change_task_end_date": "2024-12-19T15:49:37Z",
                     "is_downtime": "true",
                 },
-                201,
+                403,
                 "POST"
             ),
             self.URLTest(
@@ -957,11 +829,11 @@ class ApiAdminPermissionTests(APITestCase):
                     "change_task_end_date": "2024-12-19T15:49:37Z",
                     "is_downtime": "true",
                 },
-                200,
+                403,
                 "PUT"
             ),
             self.URLTest(
-                "/api/v0/request_for_change/2/change_task/4/",
+                "/api/v0/request_for_change/2/change_task/2/",
                 {
                     "change_task_assigned_user": 1,
                     "change_task_qa_user": 2,
@@ -973,10 +845,6 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT"
             ),
-            self.URLTest("/api/v0/request_for_change/2/change_task/1/", {}, 404, "DELETE"),
-            self.URLTest("/api/v0/request_for_change/1/change_task/2/", {}, 404, "DELETE"),
-            self.URLTest("/api/v0/request_for_change/1/change_task/1/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/request_for_change/2/change_task/2/", {}, 204, "DELETE"),
         ]
 
         self._run_test_array(data_list)
@@ -987,7 +855,7 @@ class ApiAdminPermissionTests(APITestCase):
             # SPRINT DATA #
             ###############
             self.URLTest("/api/v0/sprint/", {}, 200, "GET"),
-            self.URLTest("/api/v0/sprint/1/", {}, 200, "GET"),
+            self.URLTest("/api/v0/sprint/1/", {}, 403, "GET"),
             self.URLTest("/api/v0/sprint/2/", {}, 200, "GET"),
             self.URLTest("/api/v0/sprint/", {
                 "destination": "project",
@@ -995,7 +863,7 @@ class ApiAdminPermissionTests(APITestCase):
                 "sprint_name": "Hello Sprint World",
                 "sprint_start_date": "2024-12-19T15:49:37Z",
                 "sprint_end_date": "2024-12-19T15:49:37Z",
-            }, 201, "POST"),
+            }, 403, "POST"),
             self.URLTest("/api/v0/sprint/", {
                 "destination": "project",
                 "location_id": 2,
@@ -1009,7 +877,7 @@ class ApiAdminPermissionTests(APITestCase):
                 "sprint_name": "Hello Sprint World",
                 "sprint_start_date": "2024-12-19T15:49:37Z",
                 "sprint_end_date": "2024-12-19T15:49:37Z",
-            }, 201, "POST"),
+            }, 403, "POST"),
             self.URLTest("/api/v0/sprint/", {
                 "destination": "requirement",
                 "location_id": 2,
@@ -1023,7 +891,7 @@ class ApiAdminPermissionTests(APITestCase):
                 "sprint_name": "Hello Sprint World",
                 "sprint_start_date": "2024-12-19T15:49:37Z",
                 "sprint_end_date": "2024-12-19T15:49:37Z",
-            }, 200, "PUT"),
+            }, 403, "PUT"),
             self.URLTest("/api/v0/sprint/2/", {
                 "destination": "project",
                 "location_id": 2,
@@ -1037,7 +905,7 @@ class ApiAdminPermissionTests(APITestCase):
                 "sprint_name": "Hello Sprint World",
                 "sprint_start_date": "2024-12-19T15:49:37Z",
                 "sprint_end_date": "2024-12-19T15:49:37Z",
-            }, 404, "PUT"),
+            }, 403, "PUT"),
             self.URLTest("/api/v0/sprint/2/", {
                 "destination": "project",
                 "location_id": 1,
@@ -1045,22 +913,6 @@ class ApiAdminPermissionTests(APITestCase):
                 "sprint_start_date": "2024-12-19T15:49:37Z",
                 "sprint_end_date": "2024-12-19T15:49:37Z",
             }, 404, "PUT"),
-            self.URLTest("/api/v0/sprint/1/", {
-                "destination": "project",
-                "location_id": 2,
-            }, 404, "DELETE"),
-            self.URLTest("/api/v0/sprint/2/", {
-                "destination": "project",
-                "location_id": 1,
-            }, 404, "DELETE"),
-            self.URLTest("/api/v0/sprint/1/", {
-                "destination": "project",
-                "location_id": 1,
-            }, 204, "DELETE"),
-            self.URLTest("/api/v0/sprint/2/", {
-                "destination": "project",
-                "location_id": 2,
-            }, 204, "DELETE"),
         ]
 
         self._run_test_array(data_list)
@@ -1070,20 +922,20 @@ class ApiAdminPermissionTests(APITestCase):
             #############
             # SPRINT LINK
             #############
-            self.URLTest("/api/v0/sprint/1/link/", {}, 200, "GET"),
+            self.URLTest("/api/v0/sprint/1/link/", {}, 403, "GET"),
             self.URLTest("/api/v0/sprint/2/link/", {}, 200, "GET"),
             self.URLTest("/api/v0/sprint/1/link/", {
                 "object_type": "requirement_item",
                 "object_id": 1,
-            }, 201, "POST"),
+            }, 403, "POST"),
             self.URLTest("/api/v0/sprint/1/link/", {
                 "object_type": "project",
                 "object_id": 1,
-            }, 201, "POST"),
+            }, 403, "POST"),
             self.URLTest("/api/v0/sprint/1/link/", {
                 "object_type": "task",
                 "object_id": 1,
-            }, 201, "POST"),
+            }, 403, "POST"),
             self.URLTest("/api/v0/sprint/2/link/", {
                 "object_type": "requirement_item",
                 "object_id": 1,
@@ -1105,8 +957,8 @@ class ApiAdminPermissionTests(APITestCase):
             ###############
             # OBJECT SPRINT
             ###############
-            self.URLTest("/api/v0/requirement/1/object_sprint/", {}, 200, "GET"),
-            self.URLTest("/api/v0/project/1/object_sprint/", {}, 200, "GET"),
+            self.URLTest("/api/v0/requirement/1/object_sprint/", {}, 403, "GET"),
+            self.URLTest("/api/v0/project/1/object_sprint/", {}, 403, "GET"),
             self.URLTest("/api/v0/requirement/2/object_sprint/", {}, 200, "GET"),
             self.URLTest("/api/v0/project/2/object_sprint/", {}, 200, "GET"),
             self.URLTest("/api/v0/requirement/1/object_sprint/",
@@ -1115,7 +967,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "sprint_end_date": "2024-12-19T15:49:37Z",
                     "sprint_name": "sprint test",
                 },
-                201,
+                403,
                 "POST"
             ),
             self.URLTest("/api/v0/project/1/object_sprint/", {
@@ -1123,7 +975,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "sprint_end_date": "2024-12-19T15:49:37Z",
                     "sprint_name": "sprint test",
                 },
-                201,
+                403,
                 "POST"
             ),
             self.URLTest("/api/v0/requirement/2/object_sprint/",
@@ -1176,7 +1028,7 @@ class ApiAdminPermissionTests(APITestCase):
                     "task_status": 2,
                     "task_priority": 2,
                 },
-                200,
+                403,
                 "PUT"
             ),
             self.URLTest(
@@ -1192,15 +1044,14 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT"
             ),
-            self.URLTest("/api/v0/task/2/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/task/1/group_and_user/", {}, 200, "GET"),
+            self.URLTest("/api/v0/task/1/group_and_user/", {}, 403, "GET"),
             self.URLTest("/api/v0/task/2/group_and_user/", {}, 200, "GET"),
             self.URLTest(
                 "/api/v0/task/1/group_and_user/",
                 {
                     "group_list": 2,
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -1216,7 +1067,7 @@ class ApiAdminPermissionTests(APITestCase):
                 {
                     "user_list": 2,
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -1227,12 +1078,11 @@ class ApiAdminPermissionTests(APITestCase):
                 201,
                 "POST",
             ),
-            # TODO - 0.32 - Write the delete functionality for both users and groups. Waiting for the object_assignment_id to pass through into the GET data
             ######################
             # Task - Link tests
             ######################
-            self.URLTest('/api/v0/task/1/link/', {}, 200, "GET"),
-            self.URLTest('/api/v0/task/1/link/', {}, 200, "GET"),
+            self.URLTest('/api/v0/task/1/link/', {}, 403, "GET"),
+            self.URLTest('/api/v0/task/2/link/', {}, 200, "GET"),
             self.URLTest(
                 '/api/v0/task/1/link/',
                 {
@@ -1240,10 +1090,10 @@ class ApiAdminPermissionTests(APITestCase):
                     "object_type": "requirement",
                     "object_relation": "blocked_by",
                 },
-                201, "POST"
+                403, "POST"
             ),
             self.URLTest(
-                '/api/v0/task/1/link/',
+                '/api/v0/task/2/link/',
                 {
                     "object_id": 2,
                     "object_type": "requirement",
@@ -1251,20 +1101,15 @@ class ApiAdminPermissionTests(APITestCase):
                 },
                 201, "POST"
             ),
-            self.URLTest('/api/v0/task/2/link/43/', {}, 400, "DELETE"),
-            self.URLTest('/api/v0/task/1/link/44/', {}, 400, "DELETE"),
-            self.URLTest('/api/v0/task/1/link/43/', {}, 204, "DELETE"),
-            self.URLTest('/api/v0/task/2/link/44/', {}, 204, "DELETE"),
-            # TODO - Create more links against all objects, currently can not test as there is nothing to test but create
             # note tests
-            self.URLTest('/api/v0/task/1/note/', {}, 200, "GET"),
+            self.URLTest('/api/v0/task/1/note/', {}, 403, "GET"),
             self.URLTest('/api/v0/task/2/note/', {}, 200, "GET"),
             self.URLTest(
                 '/api/v0/task/1/note/',
                 {
                     "object_note": "<p>Hello World</p>",
                 },
-                201,
+                403,
                 "POST",
             ),
             self.URLTest(
@@ -1280,7 +1125,7 @@ class ApiAdminPermissionTests(APITestCase):
                 {
                     "object_note": "<h1>Hello World Updated</h1>",
                 },
-                200,
+                403,
                 "PUT",
             ),
             self.URLTest(
@@ -1291,25 +1136,14 @@ class ApiAdminPermissionTests(APITestCase):
                 200,
                 "PUT",
             ),
-            self.URLTest('/api/v0/task/1/note/5/', {}, 204, "DELETE"),
-            self.URLTest('/api/v0/task/2/note/8/', {}, 204, "DELETE"),
-            # object_sprint tests
-            # TODO - 0.32 - Add more sprints to objects for Unit Testing
-            # tag tests
         ]
 
         self._run_test_array(data_list)
 
     def test_api_user_api_data(self):
         data_list = [
-            self.URLTest("/api/v0/user/1/api_key/", {}, 200, "GET"),
-            self.URLTest("/api/v0/user/1/api_key/", {}, 201, "POST"),
-            self.URLTest(
-                "/api/v0/user/1/api_key/b171178a441ac13f376013aebb2ec9190b5cd47d9e779f51e59cc33d017924ec170226a87fee8a314a840e80a08b84d76edd9587bbda3ee3b1a3936076f9fe98/", 
-                {}, 
-                204,
-                "DELETE"
-            ),
+            self.URLTest("/api/v0/user/1/api_key/", {}, 403, "GET"),
+            self.URLTest("/api/v0/user/1/api_key/", {}, 403, "POST"),
         ]
 
         self._run_test_array(data_list)

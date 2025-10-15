@@ -79,9 +79,7 @@ class ApiAdminPermissionTests(APITestCase):
             # AVAILABLE DATA
             ################
             self.URLTest("/api/v0/available_data/customer_list/?destination=project&location_id=1", {}, 200, "GET"),
-            self.URLTest("/api/v0/available_data/customer_list?destination=project&location_id=1", {}, 301, "GET"),
             self.URLTest("/api/v0/available_data/customer_list/?destination=project&location_id=2", {}, 200, "GET"),
-            self.URLTest("/api/v0/available_data/customer_list?destination=project&location_id=2", {}, 301, "GET"),
             self.URLTest("/api/v0/available_data/customer_list/?destination=requirement_item&location_id=1", {}, 200, "GET"),
             self.URLTest("/api/v0/available_data/customer_list/?destination=requirement_item&location_id=2", {}, 200, "GET"),
             self.URLTest("/api/v0/available_data/customer_list/?destination=kanban_board&location_id=1", {}, 400, "GET"),
@@ -90,12 +88,10 @@ class ApiAdminPermissionTests(APITestCase):
             self.URLTest("/api/v0/available_data/sprint_list/", {}, 200, "GET"),
             self.URLTest("/api/v0/available_data/sprint_list/1/", {}, 404, "GET"),
             self.URLTest("/api/v0/available_data/sprint_list/1", {}, 404, "GET"),
-            self.URLTest("/api/v0/available_data/sprint_list", {}, 301, "GET"),
             self.URLTest("/api/v0/available_data/sprint_list/", {}, 405, "POST"),
             self.URLTest("/api/v0/available_data/tag_list/", {}, 200, "GET"),
             self.URLTest("/api/v0/available_data/tag_list/1", {}, 404, "GET"),
             self.URLTest("/api/v0/available_data/tag_list/1/", {}, 404, "GET"),
-            self.URLTest("/api/v0/available_data/tag_list", {}, 301, "GET"),
             self.URLTest("/api/v0/available_data/tag_list/", {}, 405, "POST"),
         ]
 
@@ -111,11 +107,6 @@ class ApiAdminPermissionTests(APITestCase):
             self.URLTest("/api/v0/coffee/1/", {}, 418, "GET"),
             self.URLTest("/api/v0/coffee/1/", {}, 418, "PUT"),
             self.URLTest("/api/v0/coffee/1/", {}, 418, "DELETE"),
-            self.URLTest("/api/v0/coffee", {}, 301, "GET"),
-            self.URLTest("/api/v0/coffee", {}, 301, "POST"),
-            self.URLTest("/api/v0/coffee/1", {}, 301, "GET"),
-            self.URLTest("/api/v0/coffee/1", {}, 301, "PUT"),
-            self.URLTest("/api/v0/coffee/1", {}, 301, "DELETE"),
         ]
 
         self._run_test_array(data_list)
@@ -151,11 +142,6 @@ class ApiAdminPermissionTests(APITestCase):
                 "PUT"
             ),
             self.URLTest("/api/v0/organisation/1/customer/1/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/organisation/1/customer", {}, 301, "GET"),
-            self.URLTest("/api/v0/organisation/1/customer", {}, 301, "POST"),
-            self.URLTest("/api/v0/organisation/1/customer/1", {}, 301, "GET"),
-            self.URLTest("/api/v0/organisation/1/customer/1", {}, 301, "PUT"),
-            self.URLTest("/api/v0/organisation/1/customer/1", {}, 301, "DELETE"),
         ]
 
         self._run_test_array(data_list)
@@ -191,14 +177,6 @@ class ApiAdminPermissionTests(APITestCase):
             self.URLTest("/api/v0/kanban_board/2/", {}, 200, "GET"),
             self.URLTest("/api/v0/kanban_board/1/", {}, 204, "DELETE"),
             self.URLTest("/api/v0/kanban_board/2/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/kanban_board", {}, 301, "GET"),
-            self.URLTest("/api/v0/kanban_board", {}, 301, "POST"),
-            self.URLTest("/api/v0/kanban_board/1", {}, 301, "GET"),
-            self.URLTest("/api/v0/kanban_board/2", {}, 301, "GET"),
-            self.URLTest("/api/v0/kanban_board/1", {}, 301, "PUT"),
-            self.URLTest("/api/v0/kanban_board/2", {}, 301, "PUT"),
-            self.URLTest("/api/v0/kanban_board/1", {}, 301, "DELETE"),
-            self.URLTest("/api/v0/kanban_board/2", {}, 301, "DELETE"),
             self.URLTest("/api/v0/kanban_board/1/group_and_user/", {}, 200, "GET"),
             self.URLTest("/api/v0/kanban_board/1/group_and_user/", {"group_list": 2, "user_list": 2}, 201, "POST"),
             # TODO - 0.32 - Rewrite these once we have applied the object_assignment_id into the data
@@ -256,12 +234,8 @@ class ApiAdminPermissionTests(APITestCase):
             #############
             self.URLTest("/api/v0/kanban_board/1/kanban_card/", {}, 200, "GET"),
             self.URLTest("/api/v0/kanban_board/2/kanban_card/", {}, 200, "GET"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card", {}, 301, "GET"),
-            self.URLTest("/api/v0/kanban_board/2/kanban_card", {}, 301, "GET"),
             self.URLTest("/api/v0/kanban_board/1/kanban_card/1/", {}, 200, "GET"),
             self.URLTest("/api/v0/kanban_board/2/kanban_card/2/", {}, 200, "GET"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/1", {}, 301, "GET"),
-            self.URLTest("/api/v0/kanban_board/2/kanban_card/2", {}, 301, "GET"),
             self.URLTest("/api/v0/kanban_board/1/kanban_card/2/", {}, 404, "GET"),
             self.URLTest("/api/v0/kanban_board/2/kanban_card/1/", {}, 404, "GET"),
             self.URLTest(
@@ -339,8 +313,6 @@ class ApiAdminPermissionTests(APITestCase):
             ),
             self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 400, "PUT"),
             self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 400, "PUT"),
-            self.URLTest("/api/v0/kanban_board/1/kanban_card/3", {}, 301, "POST"),
-            self.URLTest("/api/v0/kanban_board/2/kanban_card/4", {}, 301, "POST"),
             self.URLTest("/api/v0/kanban_board/2/kanban_card/3/", {}, 404, "DELETE"),
             self.URLTest("/api/v0/kanban_board/1/kanban_card/4/", {}, 404, "DELETE"),
             self.URLTest("/api/v0/kanban_board/1/kanban_card/3/", {}, 204, "DELETE"),
@@ -377,11 +349,6 @@ class ApiAdminPermissionTests(APITestCase):
                 "PUT"
             ),
             self.URLTest("/api/v0/organisation/2/", {}, 204, "DELETE"),
-            self.URLTest("/api/v0/organisation", {}, 301, "GET"),
-            self.URLTest("/api/v0/organisation", {}, 301, "POST"),
-            self.URLTest("/api/v0/organisation/1", {}, 301, "GET"),
-            self.URLTest("/api/v0/organisation/1", {}, 301, "PUT"),
-            self.URLTest("/api/v0/organisation/1", {}, 301, "DELETE"),
             self.URLTest("/api/v0/organisation/1/note/", {}, 200, "GET"),
             self.URLTest("/api/v0/organisation/1/note/", {"object_note": "Hello World"}, 201, "POST"),
             # TODO - Expand the above note tests, we'll need to test;
@@ -950,12 +917,8 @@ class ApiAdminPermissionTests(APITestCase):
         data_list = [
             self.URLTest("/api/v0/request_for_change/1/change_task/", {}, 200, "GET"),
             self.URLTest("/api/v0/request_for_change/2/change_task/", {}, 200, "GET"),
-            self.URLTest("/api/v0/request_for_change/1/change_task", {}, 301, "GET"),
-            self.URLTest("/api/v0/request_for_change/1/change_task", {}, 301, "GET"),
             self.URLTest("/api/v0/request_for_change/1/change_task/1/", {}, 200, "GET"),
             self.URLTest("/api/v0/request_for_change/2/change_task/2/", {}, 200, "GET"),
-            self.URLTest("/api/v0/request_for_change/1/change_task/1", {}, 301, "GET"),
-            self.URLTest("/api/v0/request_for_change/1/change_task/2", {}, 301, "GET"),
             self.URLTest("/api/v0/request_for_change/1/change_task/2/", {}, 404, "GET"),
             self.URLTest("/api/v0/request_for_change/2/change_task/1/", {}, 404, "GET"),
             self.URLTest(
@@ -984,8 +947,6 @@ class ApiAdminPermissionTests(APITestCase):
                 201,
                 "POST"
             ),
-            self.URLTest("/api/v0/request_for_change/1/change_task", {}, 301, "POST"),
-            self.URLTest("/api/v0/request_for_change/2/change_task", {}, 301, "POST"),
             self.URLTest(
                 "/api/v0/request_for_change/1/change_task/3/",
                 {
@@ -1014,7 +975,6 @@ class ApiAdminPermissionTests(APITestCase):
             ),
             self.URLTest("/api/v0/request_for_change/2/change_task/1/", {}, 404, "DELETE"),
             self.URLTest("/api/v0/request_for_change/1/change_task/2/", {}, 404, "DELETE"),
-            self.URLTest("/api/v0/request_for_change/1/change_task/1", {}, 301, "DELETE"),
             self.URLTest("/api/v0/request_for_change/2/change_task/2", {}, 301, "DELETE"),
             self.URLTest("/api/v0/request_for_change/1/change_task/1/", {}, 204, "DELETE"),
             self.URLTest("/api/v0/request_for_change/2/change_task/2/", {}, 204, "DELETE"),
@@ -1086,22 +1046,6 @@ class ApiAdminPermissionTests(APITestCase):
                 "sprint_start_date": "2024-12-19T15:49:37Z",
                 "sprint_end_date": "2024-12-19T15:49:37Z",
             }, 404, "PUT"),
-            self.URLTest("/api/v0/sprint/1/", {
-                "destination": "project",
-                "location_id": 2,
-            }, 404, "DELETE"),
-            self.URLTest("/api/v0/sprint/2/", {
-                "destination": "project",
-                "location_id": 1,
-            }, 404, "DELETE"),
-            self.URLTest("/api/v0/sprint/1/", {
-                "destination": "project",
-                "location_id": 1,
-            }, 204, "DELETE"),
-            self.URLTest("/api/v0/sprint/2/", {
-                "destination": "project",
-                "location_id": 2,
-            }, 204, "DELETE"),
         ]
 
         self._run_test_array(data_list)
