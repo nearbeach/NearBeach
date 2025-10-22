@@ -3,20 +3,20 @@
 		<div class="card">
 			<div class="card-body">
 				<ul
-					class="nav nav-tabs"
 					id="misc_module_tabs"
+					class="nav nav-tabs"
 					role="tablist"
 				>
 					<!-- GROUPS AND USERS -->
 					<!-- Don't need to show to requirement items - as permissions are gained from parent requirement -->
 					<li
+						v-if="destination !== 'requirement_item'"
 						class="nav-item"
 						role="presentation"
-						v-if="destination !== 'requirement_item'"
 					>
 						<button
-							class="nav-link active"
 							id="group-and-user-tab"
+							class="nav-link active"
 							data-bs-toggle="tab"
 							data-bs-target="#group-and-users"
 							type="button"
@@ -30,13 +30,13 @@
 
 					<!-- REQUIREMENT ITEMS -->
 					<li
+						v-if="destination === 'requirement'"
 						class="nav-item"
 						role="presentation"
-						v-if="destination === 'requirement'"
 					>
 						<button
-							class="nav-link"
 							id="requirement-item-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#requirement-items"
 							type="button"
@@ -50,13 +50,13 @@
 
 					<!-- REQUIREMENT LINKS -->
 					<li
+						v-if="destination === 'requirement'"
 						class="nav-item"
 						role="presentation"
-						v-if="destination === 'requirement'"
 					>
 						<button
-							class="nav-link"
 							id="requirement-link-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#requirement-links"
 							type="button"
@@ -70,13 +70,13 @@
 
 					<!-- REQUIREMENT ITEM LINKS -->
 					<li
+						v-if="destination === 'requirement_item'"
 						class="nav-item"
 						role="presentation"
-						v-if="destination === 'requirement_item'"
 					>
 						<button
-							class="nav-link"
 							id="requirement-item-link-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#requirement-item-links"
 							type="button"
@@ -94,8 +94,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="documents-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#documents"
 							type="button"
@@ -109,16 +109,16 @@
 
 					<!-- LINKED OBJECTS -->
 					<li
-						class="nav-item"
-						role="presentation"
 						v-if="
 						destination !== 'requirement' &&
 						destination !== 'requirement_item'
 					"
+						class="nav-item"
+						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="object-link-tabs"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#object-links"
 							type="button"
@@ -133,13 +133,13 @@
 					<!-- CUSTOMERS -->
 					<!-- Customers are not needed by requirement items as the parent requirements take care of this -->
 					<li
+						v-if="destination !== 'requirement_item'"
 						class="nav-item"
 						role="presentation"
-						v-if="destination !== 'requirement_item'"
 					>
 						<button
-							class="nav-link"
 							id="customer-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#customers"
 							type="button"
@@ -157,8 +157,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="sprints-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#sprints"
 							type="button"
@@ -176,8 +176,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="misc-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#misc"
 							type="button"
@@ -195,8 +195,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="notes-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#notes"
 							type="button"
@@ -210,13 +210,13 @@
 
 					<!-- ADMIN -->
 					<li
+						v-if="userLevel === 4"
 						class="nav-item"
 						role="presentation"
-						v-if="userLevel === 4"
 					>
 						<button
-							class="nav-link"
 							id="admin-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#admin"
 							type="button"
@@ -231,49 +231,49 @@
 				<hr/>
 
 				<div
-					class="tab-content"
 					id="misc_module_content"
+					class="tab-content"
 				>
 					<div
 						v-if="destination !== 'requirement_item'"
-						class="tab-pane fade show active"
 						id="group-and-users"
+						class="tab-pane fade show active"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
 					>
 						<groups-and-users-module></groups-and-users-module>
 					</div>
 					<div
-						class="tab-pane fade"
+						v-if="destination === 'requirement'"
 						id="requirement-items"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="home-tab"
-						v-if="destination === 'requirement'"
 					>
 						<requirement-items-module></requirement-items-module>
 					</div>
 					<div
-						class="tab-pane fade"
+						v-if="destination === 'requirement'"
 						id="requirement-links"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="profile-tab"
-						v-if="destination === 'requirement'"
 					>
 						<requirement-links-module></requirement-links-module>
 					</div>
 					<div
-						class="tab-pane fade"
+						v-else-if="destination === 'requirement_item'"
 						id="requirement-item-links"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="profile-tab"
-						v-else-if="destination === 'requirement_item'"
 					>
 						<requirement-item-links-module></requirement-item-links-module>
 					</div>
 
 					<div
-						class="tab-pane fade"
 						id="documents"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
 					>
@@ -282,45 +282,45 @@
 						<upload-document-wizard></upload-document-wizard>
 
 						<add-folder-wizard
-							v-bind:destination="destination"
-							v-bind:location-id="locationId"
+							:destination="destination"
+							:location-id="locationId"
 						></add-folder-wizard>
 
 						<add-link-wizard
-							v-bind:destination="destination"
-							v-bind:location-id="locationId"
+							:destination="destination"
+							:location-id="locationId"
 						></add-link-wizard>
 
 						<confirm-file-delete-vue></confirm-file-delete-vue>
 						<confirm-folder-delete></confirm-folder-delete>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="object-links"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
 					>
 						<object-links></object-links>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="customers"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
 					>
 						<customers-module></customers-module>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="sprints"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="tabpanel"
 					>
 						<list-sprints></list-sprints>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="misc"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
 					>
@@ -328,8 +328,8 @@
 						<confirm-public-link-delete></confirm-public-link-delete>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="notes"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
 					>
@@ -339,18 +339,18 @@
 						<edit-history-note-wizard></edit-history-note-wizard>
 
 						<new-history-note-wizard
-							v-bind:location-id="locationId"
-							v-bind:destination="destination"
+							:location-id="locationId"
+							:destination="destination"
 						></new-history-note-wizard>
 
 						<confirm-note-delete></confirm-note-delete>
 					</div>
 					<div
-						class="tab-pane fade bg-danger"
+						v-if="userLevel === 4"
 						id="admin"
+						class="tab-pane fade bg-danger"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
-						v-if="userLevel === 4"
 					>
 						<delete-object></delete-object>
 					</div>
@@ -450,7 +450,6 @@ export default {
 	data() {
 		return {};
 	},
-	methods: {useNBTheme},
 	async beforeMount() {
 		await this.$store.dispatch("processThemeUpdate", {
 			theme: this.theme,
@@ -491,6 +490,7 @@ export default {
 			});
 		}
 	},
+	methods: {useNBTheme},
 };
 </script>
 

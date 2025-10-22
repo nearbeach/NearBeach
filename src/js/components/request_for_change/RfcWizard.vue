@@ -1,14 +1,16 @@
 <template>
-	<div class="rfc-wizard--loading-bar"
-		 v-bind:style="getStyle()"
+	<div
+class="rfc-wizard--loading-bar"
+		 :style="getStyle()"
 	></div>
 
 	<div class="rfc-wizard">
-		<div v-for="(tab, index) in tabContents"
+		<div
+v-for="(tab, index) in tabContents"
 			 :key="tab"
 			 class="rfc-wizard--tab"
 		>
-			<div v-bind:class="getClasses(index)">
+			<div :class="getClasses(index)">
 				<span>{{ index + 1 }}</span>
 			</div>
 			<div class="rfc-wizard--tab-title">{{ tab }}</div>

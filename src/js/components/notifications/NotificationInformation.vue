@@ -4,7 +4,7 @@
 			<div class="card-body">
 				<h1>Notification Information</h1>
 				<br/>
-				<a v-bind:href="`${rootUrl}search/notification/`">Go back to Notification Search</a>
+				<a :href="`${rootUrl}search/notification/`">Go back to Notification Search</a>
 				<hr/>
 
 				<div class="row">
@@ -23,11 +23,12 @@
 							<label>
 								Notification Name
 								<validation-rendering
-									v-bind:error-list="v$.headerModel.$errors"
+									:error-list="v$.headerModel.$errors"
 								></validation-rendering>
 							</label>
-							<input type="text"
-								   v-model="headerModel"
+							<input
+v-model="headerModel"
+								   type="text"
 								   class="form-control"
 							/>
 						</div>
@@ -36,10 +37,11 @@
 							<label>
 								Notification Message
 								<validation-rendering
-									v-bind:error-list="v$.messageModel.$errors"
+									:error-list="v$.messageModel.$errors"
 								></validation-rendering>
 							</label>
-							<textarea v-model="messageModel"
+							<textarea
+v-model="messageModel"
 									  class="form-control"
 							></textarea>
 						</div>
@@ -49,7 +51,7 @@
 				<hr/>
 				<between-dates
 					destination="notification"
-					v-on:update_dates="updateDates($event)"
+					@update_dates="updateDates($event)"
 				></between-dates>
 
 				<div class="row">
@@ -60,8 +62,9 @@
 						</p>
 					</div>
 					<div class="col-md-8">
-						<n-select :options="locationList"
-								  v-model:value="locationModel"
+						<n-select
+v-model:value="locationModel"
+								  :options="locationList"
 						></n-select>
 					</div>
 				</div>
@@ -70,13 +73,15 @@
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						<button class="btn btn-warning"
-								v-on:click="deleteNotification"
+						<button
+class="btn btn-warning"
+								@click="deleteNotification"
 						>
 							Delete Notification
 						</button>
-						<button class="btn btn-primary save-changes"
-								v-on:click="updateNotification"
+						<button
+class="btn btn-primary save-changes"
+								@click="updateNotification"
 						>
 							Update Notification
 						</button>
@@ -104,9 +109,6 @@ import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "NewNotification",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		BetweenDates,
 		NSelect,
@@ -127,6 +129,9 @@ export default {
 			type: String,
 			default: "",
 		},
+	},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -157,6 +162,13 @@ export default {
 		startDateModel: {
 			required,
 		},
+	},
+	mounted() {
+		//Update user level
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: 4,
+		});
 	},
 	methods: {
 		useNBTheme,
@@ -225,13 +237,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		//Update user level
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: 4,
-		});
 	},
 }
 

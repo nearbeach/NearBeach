@@ -20,13 +20,15 @@
 		</div>
 		<div v-else>
 			<!-- Is Blocked By -->
-			<sub-object-links title="Is Blocked By"
-							  v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Block' && row.parent_link !== destination})"
+			<sub-object-links
+title="Is Blocked By"
+							  :link-results="linkResults.filter(row => {return row.link_relationship === 'Block' && row.parent_link !== destination})"
 			></sub-object-links>
 
 			<!-- Is Currently Blocking -->
-			<sub-object-links title="Is Currently Blocking"
-							  v-bind:link-results="linkResults.filter(row => {return row.link_relationship === 'Block' && row.parent_link === destination})"
+			<sub-object-links
+title="Is Currently Blocking"
+							  :link-results="linkResults.filter(row => {return row.link_relationship === 'Block' && row.parent_link === destination})"
 			></sub-object-links>
 		</div>
 
@@ -34,10 +36,10 @@
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<a
+					v-if="userLevel > 1"
 					href="javascript:void(0)"
 					class="btn btn-primary save-changes"
-					v-on:click="newLink"
-					v-if="userLevel > 1"
+					@click="newLink"
 				>Create new Link</a
 				>
 			</div>
@@ -46,11 +48,12 @@
 
 		<!-- MODAL FOR NEW CHANGE TASK LINKS -->
 		<new-change-task-link-wizard-vue
-			v-on:update_link_results="updateLinkResults"
+			@update_link_results="updateLinkResults"
 		></new-change-task-link-wizard-vue>
 
-		<confirm-link-delete v-bind:show-migrate-button="false"
-							 v-on:update_link_results="updateLinkResults"
+		<confirm-link-delete
+:show-migrate-button="false"
+							 @update_link_results="updateLinkResults"
 		></confirm-link-delete>
 	</div>
 </template>
@@ -97,6 +100,13 @@ export default {
 			userLevel: "getUserLevel",
 		}),
 	},
+	mounted() {
+		this.$nextTick(() => {
+			setTimeout(() => {
+				this.updateLinkResults();
+			}, 200);
+		});
+	},
 	methods: {
 		newLink() {
 			//Open up the modal
@@ -133,13 +143,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		this.$nextTick(() => {
-			setTimeout(() => {
-				this.updateLinkResults();
-			}, 200);
-		});
 	},
 };
 </script>

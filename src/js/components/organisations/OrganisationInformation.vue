@@ -4,7 +4,7 @@
 			<!-- TITLE -->
 			<h1>Organisation Information</h1>
 			<br/>
-			<a v-bind:href="`${rootUrl}search/organisation/`"
+			<a :href="`${rootUrl}search/organisation/`"
 			>Back to organisation search</a
 			>
 			<hr/>
@@ -21,7 +21,7 @@
 				</div>
 				<div class="col-md-3">
 					<img
-						v-bind:src="profilePicture"
+						:src="profilePicture"
 						alt="Profile Picture"
 						class="organisation-profile-image"
 					/>
@@ -34,9 +34,9 @@
 							'X-CSRFTOKEN': useToken('csrftoken'),
 						}"
 						:data="{}"
+						accept=".jpg, .jpeg, .png, *.webp"
 						@finish="updateProfilePicture"
 						@error="showErrorToast"
-						accept=".jpg, .jpeg, .png, *.webp"
 					>
 						<n-button>Update Profile Picture</n-button>
 					</n-upload>
@@ -47,7 +47,7 @@
 						<label for="id_organisation_name">
 							Organisation Name
 							<validation-rendering
-								v-bind:error-list="v$.organisationNameModel.$errors"
+								:error-list="v$.organisationNameModel.$errors"
 							></validation-rendering>
 						</label>
 						<input
@@ -64,7 +64,7 @@
 						<label for="id_organisation_website">
 							Organisation Website
 							<validation-rendering
-								v-bind:error-list="v$.organisationWebsiteModel.$errors"
+								:error-list="v$.organisationWebsiteModel.$errors"
 							></validation-rendering>
 						</label>
 						<input
@@ -81,7 +81,7 @@
 						<label for="id_organisation_email">
 							Organisation Email
 							<validation-rendering
-								v-bind:error-list="v$.organisationEmailModel.$errors"
+								:error-list="v$.organisationEmailModel.$errors"
 							></validation-rendering>
 						</label>
 						<input
@@ -106,7 +106,7 @@
 					<a
 						href="javascript:void(0)"
 						class="btn btn-primary save-changes"
-						v-on:click="updateOrganisation"
+						@click="updateOrganisation"
 					>Update Organisation</a
 					>
 				</div>
@@ -131,9 +131,6 @@ import {useToken} from "Composables/security/useToken";
 
 export default {
 	name: "OrganisationInformation",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		NButton,
 		NUpload,
@@ -147,12 +144,8 @@ export default {
 			},
 		},
 	},
-	computed: {
-		...mapGetters({
-			rootUrl: "getRootUrl",
-			staticUrl: "getStaticUrl",
-			userLevel: "getUserLevel",
-		}),
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -164,6 +157,13 @@ export default {
 			this.organisationResults[0].fields.organisation_website,
 			profilePicture: "",
 		};
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+			userLevel: "getUserLevel",
+		}),
 	},
 	validations: {
 		organisationNameModel: {
@@ -178,6 +178,15 @@ export default {
 			required,
 			email,
 		},
+	},
+	mounted() {
+		//Set profile picture
+		this.setProfilePicture();
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.organisationNameModel,
+		});
 	},
 	methods: {
 		useToken,
@@ -306,15 +315,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		//Set profile picture
-		this.setProfilePicture();
-
-		this.$store.commit({
-			type: "updateTitle",
-			title: this.organisationNameModel,
-		});
 	},
 };
 </script>

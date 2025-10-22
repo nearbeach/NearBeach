@@ -5,8 +5,8 @@
 			<hr/>
 
 			<div
-				class="alert alert-dark"
 				v-if="!isLoaded"
+				class="alert alert-dark"
 			>
 				Still obtaining your assigned jobs.
 			</div>
@@ -14,40 +14,40 @@
 			<!-- Requirements -->
 			<render-object-card
 				v-if="objectResults.requirement.length > 0"
-				v-bind:search-results="objectResults.requirement"
-				v-bind:import-variables="requirementVariables"
+				:search-results="objectResults.requirement"
+				:import-variables="requirementVariables"
 				destination="requirement"
 			></render-object-card>
 
 			<!-- Projects -->
 			<render-object-card
 				v-if="objectResults.project.length > 0"
-				v-bind:search-results="objectResults.project"
-				v-bind:import-variables="projectVariables"
+				:search-results="objectResults.project"
+				:import-variables="projectVariables"
 				destination="project"
 			></render-object-card>
 
 			<!-- Tasks -->
 			<render-object-card
 				v-if="objectResults.task.length > 0"
-				v-bind:search-results="objectResults.task"
-				v-bind:import-variables="taskVariables"
+				:search-results="objectResults.task"
+				:import-variables="taskVariables"
 				destination="task"
 			></render-object-card>
 
 			<!-- Kanban Boards -->
 			<render-object-card
 				v-if="objectResults.kanban_board.length > 0"
-				v-bind:search-results="objectResults.kanban_board"
-				v-bind:import-variables="kanbanBoardVariables"
+				:search-results="objectResults.kanban_board"
+				:import-variables="kanbanBoardVariables"
 				destination="kanban"
 			></render-object-card>
 
 			<!-- Kanban Cards -->
 			<render-object-card
 				v-if="objectResults.card.length > 0"
-				v-bind:search-results="objectResults.card"
-				v-bind:import-variables="cardVariables"
+				:search-results="objectResults.card"
+				:import-variables="cardVariables"
 				destination="card"
 			></render-object-card>
 
@@ -129,6 +129,20 @@ export default {
 			},
 		};
 	},
+	computed: {
+		countObjects() {
+			return (
+				this.objectResults.requirement.length +
+				this.objectResults.project.length +
+				this.objectResults.task.length +
+				this.objectResults.card.length
+			);
+		},
+	},
+	mounted() {
+		//Get the data we want
+		this.getMyObjects();
+	},
 	methods: {
 		getMyObjects() {
 			//Use axios to get the objects assigned to me
@@ -149,20 +163,6 @@ export default {
 					})
 				});
 		},
-	},
-	computed: {
-		countObjects() {
-			return (
-				this.objectResults.requirement.length +
-				this.objectResults.project.length +
-				this.objectResults.task.length +
-				this.objectResults.card.length
-			);
-		},
-	},
-	mounted() {
-		//Get the data we want
-		this.getMyObjects();
 	},
 };
 </script>

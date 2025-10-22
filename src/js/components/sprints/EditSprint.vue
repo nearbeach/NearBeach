@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-body">
 				<h1>{{ sprintNameModel }}</h1>
-				<a v-bind:href="`${rootUrl}sprint_information/${sprintId}/`"
+				<a :href="`${rootUrl}sprint_information/${sprintId}/`"
 				>
 					Go back to the sprint
 				</a>
@@ -20,8 +20,8 @@
 						<div class="form-group">
 							<label>Sprint Name</label>
 							<input
-								class="form-control"
 								v-model="sprintNameModel"
+								class="form-control"
 							/>
 						</div>
 					</div>
@@ -47,10 +47,10 @@
 
 				<between-dates
 					destination="Sprint"
-					v-bind:start-date-model="sprintStartDateModel.getTime()"
-					v-bind:end-date-model="sprintEndDateModel.getTime()"
-					v-bind:no-back-dating="false"
-					v-on:update_dates="updateDates($event)"
+					:start-date-model="sprintStartDateModel.getTime()"
+					:end-date-model="sprintEndDateModel.getTime()"
+					:no-back-dating="false"
+					@update_dates="updateDates($event)"
 				></between-dates>
 
 				<hr/>
@@ -58,7 +58,7 @@
 					<div class="col-md-12">
 						<button
 							class="btn btn-primary save-changes"
-							v-on:click="saveChanges"
+							@click="saveChanges"
 						>
 							Save
 						</button>
@@ -136,6 +136,31 @@ export default {
 			],
 		}
 	},
+	mounted() {
+		//Send the location id and destination
+		this.$store.commit({
+			type: "updateDestination",
+			destination: "sprint",
+			locationId: this.sprintId,
+		});
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.sprintName,
+		});
+
+		//Send the rootURL to the vuex
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
+		});
+	},
 	methods: {
 		useNBTheme,
 		saveChanges() {
@@ -182,31 +207,6 @@ export default {
 			this.sprintEndDateModel = new Date(event.end_date);
 			this.sprintStartDateModel = new Date(event.start_date);
 		},
-	},
-	mounted() {
-		//Send the location id and destination
-		this.$store.commit({
-			type: "updateDestination",
-			destination: "sprint",
-			locationId: this.sprintId,
-		});
-
-		this.$store.commit({
-			type: "updateTitle",
-			title: this.sprintName,
-		});
-
-		//Send the rootURL to the vuex
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: this.userLevel,
-		});
 	}
 }
 </script>

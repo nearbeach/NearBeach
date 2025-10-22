@@ -10,8 +10,8 @@
 		Current
 	</h3>
 	<render-sprint-card
-		v-bind:sprint-results="currentSprints"
-		v-on:confirm_remove_sprint="confirmRemoveSprintFunction($event)"
+		:sprint-results="currentSprints"
+		@confirm_remove_sprint="confirmRemoveSprintFunction($event)"
 	></render-sprint-card>
 
 	<h3
@@ -20,21 +20,23 @@
 		Finished
 	</h3>
 	<render-sprint-card
-		v-bind:sprint-results="finishedSprints"
-		v-on:confirm_remove_sprint="confirmRemoveSprintFunction($event)"
+		:sprint-results="finishedSprints"
+		@confirm_remove_sprint="confirmRemoveSprintFunction($event)"
 	></render-sprint-card>
 
-	<div class="alert alert-info"
-		v-if="currentSprints.length + finishedSprints.length === 0"
+	<div
+v-if="currentSprints.length + finishedSprints.length === 0"
+		class="alert alert-info"
 	>
 		Currently this object has not been assigned to any sprints.
 	</div>
 
 	<div class="row submit-row">
 		<div class="col-md-12">
-			<button class="btn btn-primary save-changes"
-					v-on:click="addToSprint"
-					v-if="userLevel >= 2"
+			<button
+v-if="userLevel >= 2"
+					class="btn btn-primary save-changes"
+					@click="addToSprint"
 			>
 				Add Object To Sprint
 			</button>
@@ -42,12 +44,12 @@
 	</div>
 
 	<add-sprint-wizard
-		v-on:update_sprint_list="updateSprintList($event)"
+		@update_sprint_list="updateSprintList($event)"
 	></add-sprint-wizard>
 
 	<confirm-remove-sprint
-		v-bind:confirm-remove-sprint="confirmRemoveSprint"
-		v-on:update_sprint_list="updateSprintList($event)"
+		:confirm-remove-sprint="confirmRemoveSprint"
+		@update_sprint_list="updateSprintList($event)"
 	></confirm-remove-sprint>
 </template>
 
@@ -107,6 +109,13 @@ export default {
 			userLevel: "getUserLevel",
 		}),
 	},
+	mounted() {
+		this.$nextTick(() => {
+			if (this.allowedObjects.includes(this.destination)) {
+				this.getAssignedSprints();
+			}
+		});
+	},
 	methods: {
 		addToSprint() {
 			const modal = new Modal(document.getElementById("addSprintWizardModal"));
@@ -145,13 +154,6 @@ export default {
 				return row.sprint_status === "Finished";
 			});
 		},
-	},
-	mounted() {
-		this.$nextTick(() => {
-			if (this.allowedObjects.includes(this.destination)) {
-				this.getAssignedSprints();
-			}
-		});
 	},
 }
 </script>

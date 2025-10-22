@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="addUserModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -13,11 +13,11 @@
 						Add User Wizard
 					</h2>
 					<button
+						id="addUserCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="addUserCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -42,8 +42,8 @@
 						</div>
 						<div class="col-md-8">
 							<n-select
-								:options="userFixList"
 								v-model:value="userModel"
+								:options="userFixList"
 								multiple
 							></n-select>
 						</div>
@@ -67,7 +67,7 @@
 						</div>
 						<div class="col-md-6 no-search">
 							<img
-								v-bind:src="`${staticURL}NearBeach/images/placeholder/questions.svg`"
+								:src="`${staticURL}NearBeach/images/placeholder/questions.svg`"
 								alt="Sorry - there are no results"
 							/>
 						</div>
@@ -84,8 +84,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="userModel.length === 0"
-						v-on:click="addUser"
+						:disabled="userModel.length === 0"
+						@click="addUser"
 					>
 						Add User(s)
 					</button>
@@ -107,6 +107,12 @@ export default {
 	components: {
 		NSelect,
 	},
+	data() {
+		return {
+			userFixList: [],
+			userModel: [],
+		};
+	},
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -116,12 +122,6 @@ export default {
 			staticURL: "getStaticUrl",
 			userLevel: "getUserLevel",
 		}),
-	},
-	data() {
-		return {
-			userFixList: [],
-			userModel: [],
-		};
 	},
 	watch: {
 		potentialUserList(new_value) {

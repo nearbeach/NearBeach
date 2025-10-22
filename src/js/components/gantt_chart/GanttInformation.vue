@@ -1,10 +1,11 @@
 <template>
 	<n-config-provider :theme="useNBTheme(theme)">
-		<div class="gantt-chart"
-			 v-bind:style="ganttStyle"
-			 v-on:mouseup="mouseUp"
-			 v-on:mouseleave="mouseLeave"
-			 v-on:mousemove="mouseMove"
+		<div
+class="gantt-chart"
+			 :style="ganttStyle"
+			 @mouseup="mouseUp"
+			 @mouseleave="mouseLeave"
+			 @mousemove="mouseMove"
 		>
 			<render-gantt-monthly-header></render-gantt-monthly-header>
 			<render-gantt-days-header></render-gantt-days-header>
@@ -13,19 +14,19 @@
 			<render-gantt-group
 				v-for="(row, index) in filteredGanttChartData"
 				:key="index"
-				v-bind:description="row.description"
-				v-bind:end-date="row.end_date"
-				v-bind:is-closed="isParentClosed()"
-				v-bind:level-number="0"
-				v-bind:object-id="row.object_id"
-				v-bind:object-type="row.object_type"
-				v-bind:parent-object-id="0"
-				v-bind:parent-object-type="row.parent_object_type"
-				v-bind:higher-order-status="row.higher_order_status"
-				v-bind:sprint-object-assignment-id="row.sprint_object_assignment_id"
-				v-bind:start-date="row.start_date"
-				v-bind:status-id="row.status_id"
-				v-bind:title="row.title"
+				:description="row.description"
+				:end-date="row.end_date"
+				:is-closed="isParentClosed()"
+				:level-number="0"
+				:object-id="row.object_id"
+				:object-type="row.object_type"
+				:parent-object-id="0"
+				:parent-object-type="row.parent_object_type"
+				:higher-order-status="row.higher_order_status"
+				:sprint-object-assignment-id="row.sprint_object_assignment_id"
+				:start-date="row.start_date"
+				:status-id="row.status_id"
+				:title="row.title"
 			></render-gantt-group>
 
 			<render-blank-gantt-row></render-blank-gantt-row>
@@ -33,12 +34,14 @@
 		</div>
 	</n-config-provider>
 
-    <div v-if="startDateIssues.length >= 1"
+    <div
+v-if="startDateIssues.length >= 1"
         class="alert alert-warning"
     >
         The following Objects have start dates BEFORE the gantt chart's start date.
         <ul>
-            <li v-for="(issue, index) in startDateIssues"
+            <li
+v-for="(issue, index) in startDateIssues"
                 :key="index"
             >
                 {{ issue.object_type }}{{ issue.object_id }} - {{issue.title }}
@@ -46,12 +49,14 @@
         </ul>
     </div>
 
-    <div v-if="endDateIssues.length >= 1"
+    <div
+v-if="endDateIssues.length >= 1"
          class="alert alert-warning"
     >
         The following Objects have end dates AFTER the gantt chart's end date.
         <ul>
-            <li v-for="(issue, index) in endDateIssues"
+            <li
+v-for="(issue, index) in endDateIssues"
                 :key="index"
             >
                 {{ issue.object_type }}{{ issue.object_id }} - {{issue.title }}
@@ -123,27 +128,6 @@ export default {
             startDateIssues: [],
 		}
 	},
-    watch: {
-		deltaDays: {
-			handler() {
-				this.updateGanttStyle();
-			}
-		},
-        ganttChartData: {
-            handler() {
-                //Use the method
-                this.checkAllObjectsAreWithinDates();
-            },
-            deep: true,
-            immediate: false,
-        },
-    },
-	created() {
-		window.addEventListener("resize", this.updateGanttStyle);
-	},
-	unmounted() {
-		window.removeEventListener("resize", this.updateGanttStyle);
-	},
 	computed: {
 		...mapGetters({
 			deltaDays: "getDeltaDays",
@@ -169,6 +153,30 @@ export default {
 		filteredGanttChartData() {
 			return this.ganttChartData("", "");
 		},
+	},
+    watch: {
+		deltaDays: {
+			handler() {
+				this.updateGanttStyle();
+			}
+		},
+        ganttChartData: {
+            handler() {
+                //Use the method
+                this.checkAllObjectsAreWithinDates();
+            },
+            deep: true,
+            immediate: false,
+        },
+    },
+	created() {
+		window.addEventListener("resize", this.updateGanttStyle);
+	},
+	unmounted() {
+		window.removeEventListener("resize", this.updateGanttStyle);
+	},
+	mounted() {
+		this.initialiseData();
 	},
 	methods: {
 		useNBTheme,
@@ -469,9 +477,6 @@ export default {
 				title: this.mdTitle,
 			});
 		},
-	},
-	mounted() {
-		this.initialiseData();
 	},
 }
 </script>

@@ -16,21 +16,22 @@
 			<label
 			>Group List
 				<validation-rendering
-					v-bind:error-list="v$.groupModel.$errors"
+					:error-list="v$.groupModel.$errors"
 				></validation-rendering>
 			</label>
 			<n-select
-				:options="groupResults"
-				label-field="group_name"
-      			value-field="group_id"
-				label="group"
 				v-model:value="groupModel"
+				:options="groupResults"
+      			label-field="group_name"
+				value-field="group_id"
+				label="group"
 				multiple
 			></n-select>
 
 			<!-- ALERT FOR WHEN USER GROUPS ARE NOT INCLUDED -->
 			<br/>
-			<div v-if="displayGroupPermissionIssue"
+			<div
+v-if="displayGroupPermissionIssue"
 				class="alert alert-warning"
 			>
 				You currently don't have enough permissions to create this object. Please select groups where you have
@@ -50,14 +51,10 @@ import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "GroupPermissions",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		NSelect,
 		ValidationRendering,
 	},
-	emits: ['update_group_model'],
 	props: {
 		destination: {
 			type: String,
@@ -80,16 +77,20 @@ export default {
 			},
 		},
 	},
-	watch: {
-		groupModel() {
-			//Send the data upstream
-			this.$emit("update_group_model", this.groupModel);
-		},
+	emits: ['update_group_model'],
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
 			groupModel: [],
 		};
+	},
+	watch: {
+		groupModel() {
+			//Send the data upstream
+			this.$emit("update_group_model", this.groupModel);
+		},
 	},
 	validations: {
 		groupModel: {

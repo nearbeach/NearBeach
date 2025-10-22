@@ -13,12 +13,12 @@
 				<label class="text-capitalize">
 					{{ destination }} Start Date:
 					<validation-rendering
-						v-bind:error-list="v$.localStartDateModel.$errors"
+						:error-list="v$.localStartDateModel.$errors"
 					></validation-rendering>
 				</label>
 				<n-date-picker
-					type="datetime"
 					v-model:value="localStartDateModel"
+					type="datetime"
 					:disabled="userLevel<=1 || isReadOnly"
 				></n-date-picker>
 			</div>
@@ -28,12 +28,12 @@
 				<label class="text-capitalize">
 					{{ destination }} End Date:
 					<validation-rendering
-						v-bind:error-list="v$.localEndDateModel.$errors"
+						:error-list="v$.localEndDateModel.$errors"
 					></validation-rendering>
 				</label>
 				<n-date-picker
-					type="datetime"
 					v-model:value="localEndDateModel"
+					type="datetime"
 					:disabled="userLevel<=1 || isReadOnly"
 				></n-date-picker>
 			</div>
@@ -54,14 +54,10 @@ import { mapGetters } from "vuex";
 
 export default {
 	name: "BetweenDates",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		NDatePicker,
 		ValidationRendering,
 	},
-	emits: ['update_dates'],
 	props: {
 		destination: {
 			type: String,
@@ -96,6 +92,16 @@ export default {
 			},
 		},
 	},
+	emits: ['update_dates'],
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	data() {
+		return {
+			localEndDateModel: this.endDateModel,
+			localStartDateModel: this.startDateModel,
+		};
+	},
 	computed: {
 		...mapGetters({
 			userLevel: "getUserLevel",
@@ -107,21 +113,6 @@ export default {
 		},
 		localStartDateModel: {
 			required,
-		},
-	},
-	data() {
-		return {
-			localEndDateModel: this.endDateModel,
-			localStartDateModel: this.startDateModel,
-		};
-	},
-	methods: {
-		emitDates() {
-			//Send this data upstream
-			this.$emit("update_dates", {
-				start_date: this.localStartDateModel,
-				end_date: this.localEndDateModel,
-			});
 		},
 	},
 	watch: {
@@ -149,6 +140,15 @@ export default {
 	mounted() {
 		//In case the dates fall on default - send up stream
 		this.emitDates();
+	},
+	methods: {
+		emitDates() {
+			//Send this data upstream
+			this.$emit("update_dates", {
+				start_date: this.localStartDateModel,
+				end_date: this.localEndDateModel,
+			});
+		},
 	},
 };
 </script>

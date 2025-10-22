@@ -13,7 +13,8 @@
                     </p>
                 </div>
                 <div class="col-md-8">
-                    <div v-if="userApiKeyList.length === 0"
+                    <div
+v-if="userApiKeyList.length === 0"
                          class="alert alert-info"
                     >
                         Currently there are no API keys for this user.
@@ -29,7 +30,8 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr v-for="api in userApiKeyList"
+								<tr
+v-for="api in userApiKeyList"
 									:key="api.pk"
 									:class="getRowClass(api.expiry)"
 								>
@@ -41,7 +43,7 @@
 											class="remove-link"
 										>
 											<carbon-trash-can
-												v-on:click="deleteUserApiKey(api.pk)"
+												@click="deleteUserApiKey(api.pk)"
 											></carbon-trash-can>
 										</span>
 									</td>
@@ -55,8 +57,9 @@
             <hr/>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="btn btn-primary save-changes"
-                            v-on:click="openCreateUserApiKeyModal"
+                    <button
+class="btn btn-primary save-changes"
+                            @click="openCreateUserApiKeyModal"
                     >
                         Create API Key
                     </button>
@@ -66,8 +69,8 @@
     </div>
 
     <div
-		class="modal fade"
 		id="createUserApiKeyModal"
+		class="modal fade"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
 		tabindex="-1"
@@ -81,11 +84,11 @@
 						Create API Key Wizard
 					</h2>
 					<button
+						id="createUserApiKeyModalCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="createUserApiKeyModalCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -107,7 +110,8 @@
                                 <label for="api_description">
                                     API Description
                                 </label>
-                                <input id="api_description"
+                                <input
+id="api_description"
                                        v-model="apiDescription"
                                        type="text"
                                        class="form-control"
@@ -115,7 +119,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="api_expiry">Expiry</label>
-                                <n-select v-model:value="apiExpiryModel"
+                                <n-select
+v-model:value="apiExpiryModel"
                                           :options="expiryOptions"
                                 ></n-select>
 
@@ -134,7 +139,7 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="createUserApiKey"
+						@click="createUserApiKey"
 					>
 						Create API Key
 					</button>
@@ -154,15 +159,15 @@ import {useNiceDatetime} from "Composables/datetime/useNiceDatetime";
 
 export default {
     name: "UserApiList",
+    components: {
+		CarbonTrashCan,
+        NSelect,
+    },
     props: {
         username: {
             type: Number,
             default: 0,
         },
-    },
-    components: {
-		CarbonTrashCan,
-        NSelect,
     },
     data() {
         return {
@@ -183,6 +188,10 @@ export default {
         ...mapGetters({
             rootUrl: "getRootUrl",
         })
+    },
+    mounted() {
+        //Load data
+        this.getUserApiKeys();
     },
     methods: {
 		useNiceDatetime,
@@ -262,10 +271,6 @@ export default {
             const modal = new Modal(document.getElementById("createUserApiKeyModal"));
             modal.show();
         },
-    },
-    mounted() {
-        //Load data
-        this.getUserApiKeys();
     }
 
 }

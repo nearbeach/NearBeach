@@ -1,19 +1,21 @@
 <template>
-	<div class="card"
-		 v-if="todoList.length > 0"
+	<div
+v-if="todoList.length > 0"
+		 class="card"
 	>
 		<div class="card-body todays-todo">
 			<h1 class="mb-4">Today's Todo</h1>
-			<a v-bind:href="`${rootUrl}my_planner`">My Planner</a>
+			<a :href="`${rootUrl}my_planner`">My Planner</a>
 			<hr/>
 
 			<div class="object-card-list">
-				<div v-bind:class="`object-card ${ getExtraClasses(row.higher_order_status) }`"
-					 v-for="row in todoList"
+				<div
+v-for="row in todoList"
 					 :key="row.user_job_id"
+					 :class="`object-card ${ getExtraClasses(row.higher_order_status) }`"
 				>
 					<div class="object-card--detail">
-						<a v-bind:href="getUrl(row)">
+						<a :href="getUrl(row)">
 							<div class="object-card--detail--link">
 								{{ getPrefix(row.object_type) }}{{ row.location_id }}
 							</div>
@@ -23,7 +25,7 @@
 						</a>
 					</div>
 					<div class="object-card--status">
-						<a v-bind:href="getUrl(row)">
+						<a :href="getUrl(row)">
 							<div class="object-card--status--status">
 								{{ row.status }}
 							</div>
@@ -55,6 +57,9 @@ export default {
 		return {
 			todoList: [],
 		}
+	},
+	mounted() {
+		this.getTodoList();
 	},
 	methods: {
 		useNiceDatetime,
@@ -95,9 +100,6 @@ export default {
 		getUrl(data) {
 			return `${this.rootUrl}${data.object_type}_information/${data.location_id}/`;
 		},
-	},
-	mounted() {
-		this.getTodoList();
 	}
 }
 </script>

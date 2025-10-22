@@ -11,9 +11,9 @@
 			<div>
 				<label>Scheduler Object Frequency</label>
 				<n-select
-					v-bind:options="schedulerFrequencyOptions"
 					v-model:value="schedulerFrequencyModel"
-					v-bind:disabled="userLevel <= 1"
+					:options="schedulerFrequencyOptions"
+					:disabled="userLevel <= 1"
 				></n-select>
 			</div>
 
@@ -22,18 +22,19 @@
 				<div class="col-md-6">
 					<label>
 						Start Date
-						<span class="error"
-							  v-if="startDateModel === null || startDateModel === ''"
+						<span
+v-if="startDateModel === null || startDateModel === ''"
+							  class="error"
 						>
 							Please select a date
 						</span>
 					</label>
 					<n-date-picker
-						v-bind:type="calendarType"
 						v-model:value="startDateModel"
-						v-bind:actions="[]"
-						v-bind:format="calendarFormat"
-						v-bind:disabled="userLevel <= 1"
+						:type="calendarType"
+						:actions="[]"
+						:format="calendarFormat"
+						:disabled="userLevel <= 1"
 						:is-date-disabled="startDateDisabled"
 						month-format="MMM"
 					></n-date-picker>
@@ -41,43 +42,47 @@
 				<div class="col-md-6">
 					<label>End Date Condition</label>
 					<n-select
-						v-bind:options="endDateConditionList"
 						v-model:value="endDateConditionModel"
-						v-bind:disabled="userLevel <= 1"
+						:options="endDateConditionList"
+						:disabled="userLevel <= 1"
 					></n-select>
 				</div>
 			</div>
 
-			<div class="row mt-4"
-				 v-if="endDateConditionModel === 'end-date'"
+			<div
+v-if="endDateConditionModel === 'end-date'"
+				 class="row mt-4"
 			>
 				<div class="col-md-6">
 					<label>
 						End Date
-						<span class="error"
-							  v-if="endDateModel === null"
+						<span
+v-if="endDateModel === null"
+							  class="error"
 						>
 							Please select a date
 						</span>
 					</label>
 					<n-date-picker
-						v-bind:type="calendarType"
 						v-model:value="endDateModel"
-						v-bind:actions="[]"
-						v-bind:format="calendarFormat"
-						v-bind:disabled="userLevel <= 1"
+						:type="calendarType"
+						:actions="[]"
+						:format="calendarFormat"
+						:disabled="userLevel <= 1"
 						:is-date-disabled="endDateDisabled"
 					></n-date-picker>
 				</div>
 			</div>
 
-			<div class="row mt-4"
-				 v-if="endDateConditionModel === 'number-of-repeats'"
+			<div
+v-if="endDateConditionModel === 'number-of-repeats'"
+				 class="row mt-4"
 			>
 				<div class="col-md-6">
 					<label>
 						Number of Repeats
-						<span v-if="numberOfRepeatsModel === null"
+						<span
+v-if="numberOfRepeatsModel === null"
 							  class="error"
 						>
 							Please fill out
@@ -85,32 +90,35 @@
 					</label>
 					<n-input-number
 						v-model:value="numberOfRepeatsModel"
-						v-bind:disabled="userLevel <= 1"
+						:disabled="userLevel <= 1"
 						min="0"
 					></n-input-number>
 				</div>
 			</div>
 
 			<!-- Day picker -->
-			<div class="row mt-4"
-				v-if="schedulerFrequencyModel === 'Set Day of the Week'"
+			<div
+v-if="schedulerFrequencyModel === 'Set Day of the Week'"
+				class="row mt-4"
 			>
-				<div class="text-center col-md-1 d-flex flex-column justify-content-between px-0"
-					 v-for="dayLoop in dayOfTheWeekArray"
+				<div
+v-for="dayLoop in dayOfTheWeekArray"
 					 :key="dayLoop.value"
+					 class="text-center col-md-1 d-flex flex-column justify-content-between px-0"
 				>
-					<label v-bind:for="`checkbox_${dayLoop.value}`">{{ dayLoop.shortLabel }}</label>
-					<input type="checkbox"
-						   v-bind:value="dayLoop.value"
-						   v-bind:id="`checkbox_${dayLoop.value}`"
-						   v-bind:disabled="userLevel <= 1"
+					<label :for="`checkbox_${dayLoop.value}`">{{ dayLoop.shortLabel }}</label>
+					<input
+:id="`checkbox_${dayLoop.value}`"
 						   v-model="dayModel"
+						   type="checkbox"
+						   :value="dayLoop.value"
+						   :disabled="userLevel <= 1"
 					/>
 				</div>
 				<div class="col-md-5">
 					<label
-						class="error"
 						v-if="dayModel.length === 0"
+						class="error"
 					>
 						Please select at least one day.
 					</label>
@@ -118,36 +126,39 @@
 			</div>
 
 			<!-- Weekly picker -->
-			<div class="row mt-4"
-				 v-if="['Weekly','Fortnightly'].includes(schedulerFrequencyModel)"
+			<div
+v-if="['Weekly','Fortnightly'].includes(schedulerFrequencyModel)"
+				 class="row mt-4"
 			>
 				<div class="col-md-3">
 					<label>Day of Week</label>
 					<n-select
-						:options="dayOfTheWeekArray"
 						v-model:value="singleDayModel"
-						v-bind:disabled="userLevel <= 1"
+						:options="dayOfTheWeekArray"
+						:disabled="userLevel <= 1"
 						class="form-group"
 					></n-select>
 				</div>
 			</div>
 
 			<!-- X Days before End of the Month -->
-			<div class="row mt-4"
-				 v-if="schedulerFrequencyModel === 'X Days before End of the Month'"
+			<div
+v-if="schedulerFrequencyModel === 'X Days before End of the Month'"
+				 class="row mt-4"
 			>
 				<div class="col-md-3">
 					<label>
 						Days Before
-						<span class="error"
-							  v-if="daysBeforeModel === null"
+						<span
+v-if="daysBeforeModel === null"
+							  class="error"
 						>
 							Please fill
 						</span>
 					</label>
 					<n-input-number
 						v-model:value="daysBeforeModel"
-						v-bind:disabled="userLevel <= 1"
+						:disabled="userLevel <= 1"
 						min="0"
 						max="14"
 					></n-input-number>
@@ -171,9 +182,6 @@ export default {
 		NInputNumber,
 		NSelect,
 	},
-	emits: [
-		'update_scheduler_frequency',
-	],
 	props: {
 		daysBefore: {
 			type: Number,
@@ -210,6 +218,9 @@ export default {
 			default: 0,
 		},
 	},
+	emits: [
+		'update_scheduler_frequency',
+	],
 	data() {
 		return {
 			daysBeforeModel: this.daysBefore,
@@ -291,6 +302,22 @@ export default {
 			this.updateIsValid();
 		},
 	},
+	mounted() {
+		//Update start date
+		const temp_date = new Date();
+		temp_date.setHours(9);
+		temp_date.setMinutes(0);
+		temp_date.setSeconds(0);
+		temp_date.setMilliseconds(0);
+
+		if (this.startDateModel === 0) {
+			this.startDateModel = temp_date.getTime() + (1000 * 60 * 60 * 24);
+		}
+
+		if (this.endDateModel === 0) {
+			this.endDateModel = temp_date.getTime() + (1000 * 60 * 60 * 24 * 7);
+		}
+	},
 	methods: {
 		endDateDisabled(end_date) {
 			return this.startDateModel >= end_date;
@@ -353,22 +380,6 @@ export default {
 			//Send data upstream
 			this.sendDataUpstream();
 		},
-	},
-	mounted() {
-		//Update start date
-		const temp_date = new Date();
-		temp_date.setHours(9);
-		temp_date.setMinutes(0);
-		temp_date.setSeconds(0);
-		temp_date.setMilliseconds(0);
-
-		if (this.startDateModel === 0) {
-			this.startDateModel = temp_date.getTime() + (1000 * 60 * 60 * 24);
-		}
-
-		if (this.endDateModel === 0) {
-			this.endDateModel = temp_date.getTime() + (1000 * 60 * 60 * 24 * 7);
-		}
 	}
 
 }

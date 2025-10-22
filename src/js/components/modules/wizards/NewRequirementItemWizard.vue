@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="newItemModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="requirementItemModal"
 		aria-hidden="true"
@@ -13,11 +13,11 @@
 						New Requirement Item Wizard
 					</h2>
 					<button
+						id="requirementItemCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="requirementItemCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -36,28 +36,29 @@
 							<label for="id_requirement_item_title"
 							>Requirement Item Title:
 								<validation-rendering
-									v-bind:error-list="v$.requirementItemTitleModel.$errors"
+									:error-list="v$.requirementItemTitleModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
 								id="id_requirement_item_title"
+								v-model="requirementItemTitleModel"
 								class="form-control"
 								name="requirement_item_title"
 								type="text"
 								required="true"
 								maxlength="255"
-								v-model="requirementItemTitleModel"
 							/>
 
 							<br/>
 							<label>
 								Requirement Item Scope:
 								<validation-rendering
-									v-bind:error-list="v$.requirementItemTitleModel.$errors"
+									:error-list="v$.requirementItemTitleModel.$errors"
 								></validation-rendering>
 							</label>
 							<br/>
 							<editor
+								v-model="requirementItemScopeModel"
 								license-key="gpl"
 								:init="{
 									license_key: 'gpl',
@@ -66,11 +67,10 @@
 									plugins: ['lists', 'codesample', 'table'],
             						toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 											 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-            						skin: `${this.skin}`,
-						            content_css: `${this.contentCss}`,
+            						skin: `${skin}`,
+						            content_css: `${contentCss}`,
 						            relative_urls: false,
 								}"
-								v-model="requirementItemScopeModel"
 							/>
 						</div>
 					</div>
@@ -89,13 +89,13 @@
 								<label
 								>Requirement Status
 									<validation-rendering
-										v-bind:error-list="v$.requirementItemTitleModel.$errors"
+										:error-list="v$.requirementItemTitleModel.$errors"
 									></validation-rendering>
 								</label>
 								<n-select
+									v-model:value="statusItemModel"
 									:options="statusItemFixList"
 									label="status"
-									v-model:value="statusItemModel"
 								></n-select>
 							</div>
 						</div>
@@ -104,13 +104,13 @@
 								<label
 								>Requirement Type
 									<validation-rendering
-										v-bind:error-list="v$.typeItemModel.$errors"
+										:error-list="v$.typeItemModel.$errors"
 									></validation-rendering>
 								</label>
 								<n-select
+									v-model:value="typeItemModel"
 									:options="typeItemFixList"
 									label="type"
-									v-model:value="typeItemModel"
 								></n-select>
 							</div>
 						</div>
@@ -129,7 +129,7 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="saveItem"
+						@click="saveItem"
 					>
 						Save Requirement Item
 					</button>
@@ -153,9 +153,6 @@ import {mapGetters} from "vuex";
 
 export default {
 	name: "NewRequirementItemWizard",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		editor: Editor,
 		NSelect,
@@ -164,6 +161,9 @@ export default {
 	emits: [
 		'new_item_added',
 	],
+	setup() {
+		return {v$: useVuelidate()};
+	},
 	data() {
 		return {
 			requirementItemScopeModel: "",
@@ -196,6 +196,12 @@ export default {
 		typeItemModel: {
 			required,
 		},
+	},
+	mounted() {
+		this.$nextTick(() => {
+			this.updateStatusList();
+			this.updateTypeList();
+		})
 	},
 	methods: {
 		saveItem() {
@@ -286,12 +292,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		this.$nextTick(() => {
-			this.updateStatusList();
-			this.updateTypeList();
-		})
 	}
 };
 </script>

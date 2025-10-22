@@ -4,8 +4,8 @@
 			<div class="card-body">
 				<!-- The MENU Items -->
 				<ul
-					class="nav nav-tabs"
 					id="misc_module_tabs"
+					class="nav nav-tabs"
 					role="tablist"
 				>
 					<!-- Organisation Contacts -->
@@ -14,8 +14,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="organisation-contacts-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#organisation-contacts"
 							type="button"
@@ -33,8 +33,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="document-uploads-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#document-uploads"
 							type="button"
@@ -52,8 +52,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="associated-objects-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#associated-objects"
 							type="button"
@@ -71,8 +71,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="misc-modules-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#misc-modules"
 							type="button"
@@ -90,8 +90,8 @@
 						role="presentation"
 					>
 						<button
-							class="nav-link"
 							id="notes-modules-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#notes-modules"
 							type="button"
@@ -105,13 +105,13 @@
 
 					<!-- ADMIN -->
 					<li
+						v-if="userLevel === 4"
 						class="nav-item"
 						role="presentation"
-						v-if="userLevel === 4"
 					>
 						<button
-							class="nav-link"
 							id="admin-tab"
+							class="nav-link"
 							data-bs-toggle="tab"
 							data-bs-target="#admin"
 							type="button"
@@ -127,12 +127,12 @@
 
 				<!-- The Modules -->
 				<div
-					class="tab-content"
 					id="misc_module_content"
+					class="tab-content"
 				>
 					<div
-						class="tab-pane fade"
 						id="organisation-contacts"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="profile-tab"
 					>
@@ -144,8 +144,8 @@
 							organisation.
 						</p>
 						<customers-list-module
-							v-bind:customer-results="localCustomerResults"
-							v-on:remove_customer="removeCustomer($event)"
+							:customer-results="localCustomerResults"
+							@remove_customer="removeCustomer($event)"
 						></customers-list-module>
 
 						<!-- ADD CUSTOMER BUTTON -->
@@ -158,7 +158,7 @@
 							<div class="col-md-12">
 								<button
 									class="btn btn-primary save-changes"
-									v-on:click="addNewContact"
+									@click="addNewContact"
 								>
 									Add Contact
 								</button>
@@ -166,33 +166,33 @@
 						</div>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="document-uploads"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="profile-tab"
 					>
 						<documents-module
-							v-bind:destination="destination"
-							v-bind:location-id="locationId"
+							:destination="destination"
+							:location-id="locationId"
 						></documents-module>
 
 						<upload-document-wizard></upload-document-wizard>
 
 						<add-folder-wizard
-							v-bind:destination="destination"
-							v-bind:location-id="locationId"
+							:destination="destination"
+							:location-id="locationId"
 						></add-folder-wizard>
 
 						<add-link-wizard
-							v-bind:destination="destination"
-							v-bind:location-id="locationId"
+							:destination="destination"
+							:location-id="locationId"
 						></add-link-wizard>
 
 						<confirm-file-delete-vue></confirm-file-delete-vue>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="associated-objects"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="profile-tab"
 					>
@@ -200,40 +200,40 @@
 						></associated-objects>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="misc-modules"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="profile-tab"
 					>
 						<list-tags-module></list-tags-module>
 					</div>
 					<div
-						class="tab-pane fade"
 						id="notes-modules"
+						class="tab-pane fade"
 						role="tabpanel"
 						aria-labelledby="profile-tab"
 					>
 						<notes-module
-							v-bind:location-id="locationId"
-							v-bind:destination="destination"
+							:location-id="locationId"
+							:destination="destination"
 						></notes-module>
 
 						<edit-history-note-wizard></edit-history-note-wizard>
 
 						<new-history-note-wizard
-							v-bind:location-id="locationId"
-							v-bind:destination="destination"
+							:location-id="locationId"
+							:destination="destination"
 						></new-history-note-wizard>
 
 						<confirm-note-delete></confirm-note-delete>
 					</div>
 
 					<div
-						class="tab-pane fade bg-danger"
+						v-if="userLevel === 4"
 						id="admin"
+						class="tab-pane fade bg-danger"
 						role="tabpanel"
 						aria-labelledby="contact-tab"
-						v-if="userLevel === 4"
 					>
 						<delete-object></delete-object>
 					</div>
@@ -242,8 +242,8 @@
 
 			<!-- MODALS -->
 			<new-customer-modal
-				v-bind:organisation-id="locationId"
-				v-bind:title-list="titleList"
+				:organisation-id="locationId"
+				:title-list="titleList"
 			></new-customer-modal>
 
 			<add-tag-wizard></add-tag-wizard>
@@ -337,6 +337,7 @@ export default {
 			default: 0,
 		},
 	},
+	emits: ["remove_customer"],
 	data() {
 		return {
 			localCustomerResults: this.customerResults,
@@ -346,21 +347,6 @@ export default {
 		// ...mapGetters({
 		//     userLevel: 'getUserLevel',
 		// }),
-	},
-	emits: ["remove_customer"],
-	methods: {
-		useNBTheme,
-		addNewContact() {
-			const new_customer_modal = new Modal(
-				document.getElementById("addCustomerModal")
-			);
-			new_customer_modal.show();
-		},
-		removeCustomer(customer_id) {
-			this.localCustomerResults = this.localCustomerResults.filter((row) => {
-				return parseInt(row.pk) !== parseInt(customer_id);
-			});
-		},
 	},
 	async beforeMount() {
 		await this.$store.dispatch("processThemeUpdate", {
@@ -392,6 +378,20 @@ export default {
 			type: "updateUserExtraPermissions",
 			userExtraPermissions: this.userExtraPermissions,
 		});
+	},
+	methods: {
+		useNBTheme,
+		addNewContact() {
+			const new_customer_modal = new Modal(
+				document.getElementById("addCustomerModal")
+			);
+			new_customer_modal.show();
+		},
+		removeCustomer(customer_id) {
+			this.localCustomerResults = this.localCustomerResults.filter((row) => {
+				return parseInt(row.pk) !== parseInt(customer_id);
+			});
+		},
 	},
 };
 </script>

@@ -2,14 +2,14 @@
 	<div
 		id="kanban_container"
 		class="kanban-container"
-		v-on:scroll="scrollProcedure"
+		@scroll="scrollProcedure"
 	>
 		<!-- Render out the header -->
 		<div class="kanban-header-row">
 			<div
-				class="kanban-column-header"
 				v-for="column in columnResults"
 				:key="column.pk"
+				class="kanban-column-header"
 			>
 				{{ column.fields.kanban_column_name }} - [{{ getColumnCount(column.pk) }}]
 			</div>
@@ -21,9 +21,9 @@
 			style="display: none"
 		>
 			<div
-				class="kanban-column-header"
 				v-for="column in columnResults"
 				:key="column.pk"
+				class="kanban-column-header"
 			>
 				{{ column.fields.kanban_column_name }} - [{{ getColumnCount(column.pk) }}]
 			</div>
@@ -35,10 +35,11 @@
 			:key="level.pk"
 		>
 			<!-- CREATE THE LEVEL HEADER -->
-			<div class="kanban-level-div"
-				 v-on:click="expandLevel(level.pk)"
+			<div
+class="kanban-level-div"
+				 @click="expandLevel(level.pk)"
 			>
-        		<span v-bind:class="getExpandClass(level.pk)"
+        		<span :class="getExpandClass(level.pk)"
 				></span>
 				<span>
 					{{ level.fields.kanban_level_name }}
@@ -48,9 +49,9 @@
 
 			<!-- RENDER THE CELLS -->
 			<kanban-row
-				v-bind:level-id="level.pk"
-				v-bind:new-card-info="newCardInfo"
-				v-on:double_clicked_card="doubleClickedCard($event)"
+				:level-id="level.pk"
+				:new-card-info="newCardInfo"
+				@double_clicked_card="doubleClickedCard($event)"
 			></kanban-row>
 		</div>
 	</div>
@@ -68,7 +69,6 @@ export default {
 	components: {
 		KanbanRow,
 	},
-	emits: ['double_clicked_card'],
 	props: {
 		kanbanBoardResults: {
 			type: Array,
@@ -83,15 +83,16 @@ export default {
 			},
 		},
 	},
+	emits: ['double_clicked_card'],
+	data() {
+		return {};
+	},
 	computed: {
 		...mapGetters({
 			columnResults: "getColumnResults",
 			levelCardCount: "getLevelCardCount",
 			levelResults: "getLevelResults",
 		}),
-	},
-	data() {
-		return {};
 	},
 	created() {
 		window.addEventListener("resize", this.resizeProcedure);
@@ -100,6 +101,18 @@ export default {
 	unmounted() {
 		window.removeEventListener("resize", this.resizeProcedure);
 		window.removeEventListener("scroll", this.scrollProcedure);
+	},
+	mounted() {
+		//Check the resize procedure
+		this.$nextTick(() => {
+			this.resizeProcedure();
+		});
+
+		this.$store.commit({
+			type: "updateKanbanStatus",
+			kanbanStatus:
+			this.kanbanBoardResults[0].fields.kanban_board_status,
+		});
 	},
 	methods: {
 		doubleClickedCard(data) {
@@ -188,18 +201,6 @@ export default {
 				kanban_sticky.style.display = "";
 			}
 		},
-	},
-	mounted() {
-		//Check the resize procedure
-		this.$nextTick(() => {
-			this.resizeProcedure();
-		});
-
-		this.$store.commit({
-			type: "updateKanbanStatus",
-			kanbanStatus:
-			this.kanbanBoardResults[0].fields.kanban_board_status,
-		});
 	},
 };
 </script>

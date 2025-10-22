@@ -10,11 +10,11 @@
 				v-for="tag in assignedTags"
 				:key="tag.tag_id"
 				class="single-tag"
-				v-bind:style="`background-color: ${tag.tag_colour};color: ${tag.tag_text_colour};`"
+				:style="`background-color: ${tag.tag_colour};color: ${tag.tag_text_colour};`"
 			>
 				{{ tag.tag_name }}
 				<span
-					v-on:click="removeTag(tag.tag_id)"
+					@click="removeTag(tag.tag_id)"
 				>
 					<carbon-close-outline
 						  v-if="userLevel > 1"
@@ -27,10 +27,10 @@
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<a
+					v-if="userLevel > 1"
 					href="javascript:void(0)"
 					class="btn btn-primary save-changes"
-					v-on:click="openNewTagModal"
-					v-if="userLevel > 1"
+					@click="openNewTagModal"
 				>Add Tag to {{ getDestination() }}</a
 				>
 			</div>
@@ -64,11 +64,6 @@ export default {
 			default: 0,
 		},
 	},
-	watch: {
-		overrideLocationId() {
-			this.getAssignedTags();
-		}
-	},
 	computed: {
 		...mapGetters({
 			assignedTags: "getAssignedTags",
@@ -77,6 +72,17 @@ export default {
 			rootUrl: "getRootUrl",
 			userLevel: "getUserLevel",
 		}),
+	},
+	watch: {
+		overrideLocationId() {
+			this.getAssignedTags();
+		}
+	},
+	mounted() {
+		//Wait 200ms before getting the data
+		this.$nextTick(() => {
+			this.getAssignedTags();
+		});
 	},
 	methods: {
 		getAssignedTags() {
@@ -153,12 +159,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		//Wait 200ms before getting the data
-		this.$nextTick(() => {
-			this.getAssignedTags();
-		});
 	},
 };
 </script>

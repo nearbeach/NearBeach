@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from NearBeach.decorators.check_user_permissions.object_permissions import FUNCTION_DICT
+from NearBeach.decorators.check_user_permissions.partials.generic_permissions import generic_permissions
 from NearBeach.serializers.sprint_serializer import SprintSerializer
 
 
@@ -48,4 +49,30 @@ def check_api_sprint_permissions(min_permission_level):
             raise PermissionDenied
 
         return inner
+    return decorator
+
+
+def check_api_sprint_link_permissions(min_permission_level):
+    def decorator(func):
+        @wraps(func)
+        def inner(request, *args, **kwargs):
+            # TODO - fix this terrible code
+            passes, user_level, extra_level = generic_permissions(
+                request,
+                "sprint",
+                {"location_id": kwargs["sprint_id"]}
+            )
+
+            if not passes:
+                raise PermissionDenied
+
+            if user_level >= min_permission_level or extra_level:
+                # Everything is fine - continue on
+                return func(request, *args, **kwargs, user_level=user_level)
+
+            # Does not meet conditions
+            raise PermissionDenied
+
+        return inner
+
     return decorator

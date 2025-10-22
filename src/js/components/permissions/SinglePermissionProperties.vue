@@ -2,8 +2,8 @@
 	<div class="row">
 		<label>{{ propertyLabel }}</label>
 		<n-select
-			:options="fixListOfChoices"
 			v-model:value="propertyModel"
+			:options="fixListOfChoices"
 		></n-select>
 	</div>
 </template>
@@ -16,9 +16,6 @@ export default {
 	components: {
 		NSelect,
 	},
-	emits: [
-		'update_property_value',
-	],
 	props: {
 		property: {
 			type: String,
@@ -39,6 +36,9 @@ export default {
 			},
 		},
 	},
+	emits: [
+		'update_property_value',
+	],
 	data() {
 		return {
 			propertyModel: this.propertyValue,
@@ -60,6 +60,15 @@ export default {
 			});
 		},
 	},
+	mounted() {
+		//We need to fix the list of choices, so the trupal has the value, label fields defined
+		this.fixListOfChoices = this.listOfChoices.map((row) => {
+			return {
+				label: row[1],
+				value: row[0],
+			};
+		});
+	},
 	methods: {
 		getLabel(input_data) {
 			//Use the input data to filter the list of choices, to object the label
@@ -75,15 +84,6 @@ export default {
 			//Return the value at [0][1]
 			return filtered_value[0][1];
 		},
-	},
-	mounted() {
-		//We need to fix the list of choices, so the trupal has the value, label fields defined
-		this.fixListOfChoices = this.listOfChoices.map((row) => {
-			return {
-				label: row[1],
-				value: row[0],
-			};
-		});
 	},
 };
 </script>

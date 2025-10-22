@@ -11,10 +11,10 @@
 		<div class="col-md-8">
 			<label for="cardText">Card Title</label>
 			<input
-				type="text"
 				id="cardText"
+				type="text"
 				class="form-control"
-				v-bind:value="cardText"
+				:value="cardText"
 				disabled
 			/>
 		</div>
@@ -33,10 +33,11 @@
 			>
 				Card Priority
 			</label>
-			<input type="text"
-				   id="cardPriority"
+			<input
+id="cardPriority"
+				   type="text"
 				   class="form-control"
-				   v-bind:value="cardPriority"
+				   :value="cardPriority"
 				   disabled
 			>
 		</div>
@@ -59,10 +60,11 @@
 					>
 						Card Column
 					</label>
-					<input type="text"
-						   id="cardColumn"
+					<input
+id="cardColumn"
+						   type="text"
 						   class="form-control"
-						   v-bind:value="cardColumn"
+						   :value="cardColumn"
 						   disabled
 					>
 				</div>
@@ -72,10 +74,11 @@
 					>
 						Card Level
 					</label>
-					<input type="text"
-						   id="cardLevel"
+					<input
+id="cardLevel"
+						   type="text"
 						   class="form-control"
-						   v-bind:value="cardLevel"
+						   :value="cardLevel"
 						   disabled
 					>
 				</div>
@@ -94,6 +97,7 @@
 		</div>
 		<div class="col-md-8">
 			<editor
+				v-model="localCardDescription"
 				license-key="gpl"
 				:init="{
 					license_key: 'gpl',
@@ -102,12 +106,11 @@
 					plugins: ['lists', 'image', 'codesample', 'table'],
             		toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 							 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-					skin: `${this.skin}`,
-					content_css: `${this.contentCss}`,
+					skin: `${skin}`,
+					content_css: `${contentCss}`,
 					relative_urls: false,
 				}"
-				v-model="localCardDescription"
-				v-bind:disabled="true"
+				:disabled="true"
 			/>
 		</div>
 	</div>
@@ -144,16 +147,16 @@ export default {
 			default: "",
 		},
 	},
+	data() {
+		return {
+			localCardDescription: this.cardDescription,
+		};
+	},
 	computed: {
 		...mapGetters({
 			contentCss: "getContentCss",
 			skin: "getSkin",
 		})
-	},
-	data() {
-		return {
-			localCardDescription: this.cardDescription,
-		};
 	},
 	watch: {
 		cardDescription(new_value) {

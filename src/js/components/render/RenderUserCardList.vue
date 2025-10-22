@@ -1,5 +1,6 @@
 <template>
-	<div v-if="loadingData"
+	<div
+v-if="loadingData"
 		class="alert alert-info"
 	>
 		Currently loading User Data.
@@ -16,11 +17,11 @@
 	>
 		<div
 			v-for="user in objectUserList"
-			v-bind:key="user.username"
+			:key="user.username"
 			class="user-card"
 		>
 			<img
-				v-bind:src="profilePicture(user.profile_picture)"
+				:src="profilePicture(user.profile_picture)"
 				alt="default profile"
 				class="user-card--profile"
 			/>
@@ -33,15 +34,16 @@
 				</div>
 			</div>
 			<div
-				class="user-card--remove"
 				v-if="userLevel >= 2"
+				class="user-card--remove"
 			>
 				<carbon-trash-can
-					v-on:click="removeUser(user.username)"
+					@click="removeUser(user.username)"
 				></carbon-trash-can>
 			</div>
 		</div>
-		<div v-if="addingUserStatus"
+		<div
+v-if="addingUserStatus"
 			 class="user-card"
 		>
 			<div class="user-card--details">++ Adding User(s) ++</div>
@@ -60,9 +62,6 @@ export default {
 	components: {
 		CarbonTrashCan,
 	},
-	emits: [
-		'remove_user',
-	],
 	props: {
 		addingUserStatus: {
 			type: Boolean,
@@ -79,6 +78,9 @@ export default {
 			},
 		},
 	},
+	emits: [
+		'remove_user',
+	],
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",

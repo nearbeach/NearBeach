@@ -2,17 +2,20 @@
 	<n-config-provider :theme="useNBTheme(theme)">
 		<div>
 			<h1 class="kanban-header">
-				<span v-if="kanbanStatus.toLowerCase() === 'closed'"
+				<span
+v-if="kanbanStatus.toLowerCase() === 'closed'"
 					class="kanban-closed"
 				>
 					CLOSED:
 				</span>
 				{{ kanbanBoardResults[0].fields.kanban_board_name }}
 			</h1>
-			<div class="btn-group kanban-menu"
-				v-if="canRenderDropdown"
+			<div
+v-if="canRenderDropdown"
+				class="btn-group kanban-menu"
 			>
-				<button class="btn btn-secondary btn-sm dropdown-toggle"
+				<button
+class="btn btn-secondary btn-sm dropdown-toggle"
 						type="button"
 						data-bs-toggle="dropdown"
 						aria-expanded="false"
@@ -22,9 +25,10 @@
 				<ul class="dropdown-menu">
 					<li v-if="kanbanStatus.toLowerCase() !== 'closed'">
 						<a class="dropdown-item" href="#">
-							<n-switch v-model:value="canDragCards"
+							<n-switch
+v-if="kanbanBoardResults[0].fields.kanban_board_status !== 'Closed' && userLevel >= 2"
+									  v-model:value="canDragCards"
 									  @update:value="updateCanDragCards"
-									  v-if="kanbanBoardResults[0].fields.kanban_board_status !== 'Closed' && userLevel >= 2"
 							>
 								<template #checked>
 									Can Drag Cards
@@ -36,15 +40,16 @@
 						</a>
 					</li>
 					<li v-if="kanbanStatus.toLowerCase() !== 'closed'">
-						<hr class="dropdown-divider"
-							v-if="userLevel >= 3"
+						<hr
+v-if="userLevel >= 3"
+							class="dropdown-divider"
 						>
 					</li>
 					<li v-if="kanbanStatus.toLowerCase() !== 'closed'">
 						<a
 							class="dropdown-item"
 							href="#"
-							v-on:click="addNewKanbanCard()"
+							@click="addNewKanbanCard()"
 						>
 							Add New Card
 						</a>
@@ -53,21 +58,22 @@
 						<a
 							class="dropdown-item"
 							href="#"
-							v-on:click="addNewLink()"
+							@click="addNewLink()"
 						>
 							Add New Link to Object
 						</a>
 					</li>
 					<li v-if="kanbanStatus.toLowerCase() !== 'closed'">
-						<hr class="dropdown-divider"
-							v-if="userLevel >= 3"
+						<hr
+v-if="userLevel >= 3"
+							class="dropdown-divider"
 						>
 					</li>
 					<li>
 						<a
+							v-if="userLevel >= 3"
 							class="dropdown-item"
-							v-bind:href="`${rootUrl}kanban_information/${kanbanBoardResults[0].pk}/edit_board/`"
-						   	v-if="userLevel >= 3"
+						   	:href="`${rootUrl}kanban_information/${kanbanBoardResults[0].pk}/edit_board/`"
 						>
 							Edit Kanban
 						</a>
@@ -75,23 +81,24 @@
 				</ul>
 			</div>
 
-			<div v-else
+			<div
+v-else
 				 style="height: 31px; width: 100%;"
 			></div>
 
 			<!-- Rendering the Kanban Container -->
 			<kanban-board
-				v-bind:kanban-board-results="kanbanBoardResults"
-				v-bind:new-card-info="newCardInfo"
-				v-on:double_clicked_card="doubleClickedCard($event)"
+				:kanban-board-results="kanbanBoardResults"
+				:new-card-info="newCardInfo"
+				@double_clicked_card="doubleClickedCard($event)"
 			></kanban-board>
 
 			<!-- MODALS -->
 			<add-user-to-card
-				v-bind:location-id="cardId"
-				v-bind:refresh-user-list="refreshUserList"
+				:location-id="cardId"
+				:refresh-user-list="refreshUserList"
 				destination="kanban_card"
-				v-on:reset_refresh_user_list="resetRefreshUserList"
+				@reset_refresh_user_list="resetRefreshUserList"
 			></add-user-to-card>
 
 			<archive-cards></archive-cards>
@@ -99,42 +106,42 @@
 			<blocked-notes-modal></blocked-notes-modal>
 
 			<confirm-card-archive
-				v-bind:card-information="cardInformation"
+				:card-information="cardInformation"
 			></confirm-card-archive>
 
 			<new-kanban-card
-				v-bind:column-results="columnResults"
-				v-bind:level-results="levelResults"
-				v-bind:kanban-board-results="kanbanBoardResults"
-				v-on:new_card="newCard($event)"
+				:column-results="columnResults"
+				:level-results="levelResults"
+				:kanban-board-results="kanbanBoardResults"
+				@new_card="newCard($event)"
 			></new-kanban-card>
 
 			<card-information
-				v-bind:card-information="cardInformation"
-				v-on:update_card="updateCard($event)"
+				:card-information="cardInformation"
+				@update_card="updateCard($event)"
 			></card-information>
 
 			<upload-document-wizard
 				override-destination="kanban_card"
-				v-bind:override-location-id="cardId"
+				:override-location-id="cardId"
 			></upload-document-wizard>
 
 			<edit-history-note-wizard></edit-history-note-wizard>
 
 			<new-history-note-wizard
-				v-bind:location-id="cardId"
+				:location-id="cardId"
 				destination="kanban_card"
 			></new-history-note-wizard>
 
 			<confirm-note-delete></confirm-note-delete>
 
 			<add-folder-wizard
-				v-bind:location-id="cardId"
+				:location-id="cardId"
 				destination="kanban_card"
 			></add-folder-wizard>
 
 			<add-link-wizard
-				v-bind:location-id="cardId"
+				:location-id="cardId"
 				destination="kanban_card"
 			></add-link-wizard>
 
@@ -144,20 +151,21 @@
 
 			<!-- CONFIRM PUBLIC LINK DELETE -->
 			<confirm-public-link-delete
-				v-bind:override-location-id="cardId"
+				:override-location-id="cardId"
 				override-destination="kanban_card"
 			></confirm-public-link-delete>
 
 			<new-kanban-link-wizard
-				v-bind:location-id="locationId"
-				v-bind:column-results="columnResults"
-				v-bind:level-results="levelResults"
-				v-on:new_card="newCard($event)"
+				:location-id="locationId"
+				:column-results="columnResults"
+				:level-results="levelResults"
+				@new_card="newCard($event)"
 			></new-kanban-link-wizard>
 
-			<add-tag-wizard override-destination="kanban_card"
+			<add-tag-wizard
+override-destination="kanban_card"
 							reopen-modal="cardInformationModal"
-							v-bind:override-location-id="cardId"
+							:override-location-id="cardId"
 			></add-tag-wizard>
 		</div>
 	</n-config-provider>
@@ -297,6 +305,16 @@ export default {
 			default: 0,
 		},
 	},
+	data() {
+		return {
+			canDragCards: true,
+			cardInformation: {},
+			kanbanStatus: this.kanbanBoardResults[0].fields.kanban_board_status,
+			localKanbanCardResults: this.kanbanCardResults,
+			refreshUserList: false,
+			newCardInfo: [],
+		};
+	},
 	computed: {
 		...mapGetters({
 			cardId: "getCardId",
@@ -317,15 +335,71 @@ export default {
 			this.refreshUserList = true;
 		},
 	},
-	data() {
-		return {
-			canDragCards: true,
-			cardInformation: {},
-			kanbanStatus: this.kanbanBoardResults[0].fields.kanban_board_status,
-			localKanbanCardResults: this.kanbanCardResults,
-			refreshUserList: false,
-			newCardInfo: [],
-		};
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		//Send the settings up stream
+		this.updateKanbanSettings();
+
+		//Map the tags onto "tag_list" field for the kanbanCardResults
+		const kanban_card_results = this.kanbanCardResults.map((row) => {
+			//Add the field
+			row.tag_list = this.tagResults.filter((tag_row) => {
+				return parseInt(tag_row.kanban_card_id) === parseInt(row.kanban_card_id);
+			});
+
+			return row;
+		})
+
+		//Send data to VueX
+		this.$store.commit({
+			type: "initPayload",
+			kanbanCardResults: kanban_card_results,
+			levelResults: this.levelResults,
+			columnResults: this.columnResults,
+			openCardOnLoad: this.openCardOnLoad,
+		});
+
+		//Send the urls upstream
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		this.$store.commit({
+			type: "updateDestination",
+			destination: "kanban_board",
+			locationId: this.locationId,
+		});
+
+		//Send columns and levels into the VueX
+		this.$store.commit({
+			type: "updateLists",
+			columnResults: this.columnResults,
+			levelResults: this.levelResults,
+		});
+
+		//Update the user permissions
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
+		});
+
+		//Send extra permissions upstream
+		this.$store.commit({
+			type: "updateUserExtraPermissions",
+			userExtraPermissions: this.userExtraPermissions,
+		});
+
+		//Update groups and users
+		this.$store.commit({
+			type: "updateGroupsAndUsers",
+			potentialUserList: this.potentialUserList,
+		});
 	},
 	methods: {
 		useNBTheme,
@@ -463,72 +537,6 @@ export default {
 				levels,
 			})
 		}
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		//Send the settings up stream
-		this.updateKanbanSettings();
-
-		//Map the tags onto "tag_list" field for the kanbanCardResults
-		const kanban_card_results = this.kanbanCardResults.map((row) => {
-			//Add the field
-			row.tag_list = this.tagResults.filter((tag_row) => {
-				return parseInt(tag_row.kanban_card_id) === parseInt(row.kanban_card_id);
-			});
-
-			return row;
-		})
-
-		//Send data to VueX
-		this.$store.commit({
-			type: "initPayload",
-			kanbanCardResults: kanban_card_results,
-			levelResults: this.levelResults,
-			columnResults: this.columnResults,
-			openCardOnLoad: this.openCardOnLoad,
-		});
-
-		//Send the urls upstream
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-
-		this.$store.commit({
-			type: "updateDestination",
-			destination: "kanban_board",
-			locationId: this.locationId,
-		});
-
-		//Send columns and levels into the VueX
-		this.$store.commit({
-			type: "updateLists",
-			columnResults: this.columnResults,
-			levelResults: this.levelResults,
-		});
-
-		//Update the user permissions
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: this.userLevel,
-		});
-
-		//Send extra permissions upstream
-		this.$store.commit({
-			type: "updateUserExtraPermissions",
-			userExtraPermissions: this.userExtraPermissions,
-		});
-
-		//Update groups and users
-		this.$store.commit({
-			type: "updateGroupsAndUsers",
-			potentialUserList: this.potentialUserList,
-		});
 	},
 };
 </script>

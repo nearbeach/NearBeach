@@ -18,8 +18,9 @@
 			</div>
 		</div>
 		<div v-else>
-			<render-object-card v-bind:import-variables="requirementItemVariables"
-								v-bind:search-results="itemResults"
+			<render-object-card
+:import-variables="requirementItemVariables"
+								:search-results="itemResults"
 								destination="requirement_item"
 			></render-object-card>
 		</div>
@@ -33,8 +34,8 @@
 		>
 			<div class="col-md-12">
 				<button
-					v-on:click="createNewItem"
 					class="btn btn-primary save-changes"
+					@click="createNewItem"
 				>
 					Create new Requirement Item
 				</button>
@@ -43,10 +44,10 @@
 
 		<!-- NEW REQUIREMENT ITEM MODAL -->
 		<new-requirement-item-wizard
-			v-bind:item-status-list="itemStatusList"
-			v-bind:item-type-list="itemTypeList"
-			v-bind:location-id="locationId"
-			v-on:new_item_added="newItemAdded($event)"
+			:item-status-list="itemStatusList"
+			:item-type-list="itemTypeList"
+			:location-id="locationId"
+			@new_item_added="newItemAdded($event)"
 		></new-requirement-item-wizard>
 	</div>
 </template>
@@ -91,6 +92,9 @@ export default {
 			userLevel: "getUserLevel",
 		}),
 	},
+	mounted() {
+		this.updateItemResults();
+	},
 	methods: {
 		createNewItem() {
 			const new_item_modal = new Modal(
@@ -117,9 +121,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		this.updateItemResults();
 	},
 };
 </script>

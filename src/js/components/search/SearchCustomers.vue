@@ -8,22 +8,22 @@
 			<div class="form-group mt-4">
 				<label>Search:</label>
 				<input
+					v-model="searchModel"
 					type="text"
 					class="form-control search-organisation"
-					v-model="searchModel"
 				/>
 			</div>
 
 			<!-- LIST OUT RESULTS -->
 			<hr/>
 			<list-customers
-				v-bind:customer-results="localCustomerResults"
+				:customer-results="localCustomerResults"
 			></list-customers>
 
 			<!-- SHOW IF NO RESULTS -->
 			<div
-				class="alert alert-warning"
 				v-if="localCustomerResults.length == 0"
+				class="alert alert-warning"
 			>
 				There are no customers with the search parameters used. Please
 				try again.
@@ -33,7 +33,7 @@
 			<div class="row submit-row">
 				<div class="col-md-12">
 					<a
-						v-bind:href="`${rootUrl}new_customer/`"
+						:href="`${rootUrl}new_customer/`"
 						class="btn btn-primary save-changes"
 					>
 						Add new Customer
@@ -76,28 +76,6 @@ export default {
 			searchTimeout: "",
 		};
 	},
-	methods: {
-		getSearchResults() {
-			//Create the data_to_send
-			const data_to_send = new FormData();
-			data_to_send.set("search", this.searchModel);
-
-			//Use axios to obtain the data we require
-			this.axios.post(
-				`${this.rootUrl}search/customer/data/`,
-				data_to_send
-			).then((response) => {
-				this.localCustomerResults = response.data;
-			}).catch(() => {
-				this.$store.dispatch("newToast", {
-					header: "Error getting search results",
-					message: "Sorry, we could not retrieve your search results",
-					extra_classes: "bg-warning text-dark",
-					delay: 0,
-				});
-			});
-		},
-	},
 	watch: {
 		searchModel() {
 			//Clear timer if it already exists
@@ -122,6 +100,28 @@ export default {
 			rootUrl: this.rootUrl,
 			staticUrl: this.staticUrl,
 		});
+	},
+	methods: {
+		getSearchResults() {
+			//Create the data_to_send
+			const data_to_send = new FormData();
+			data_to_send.set("search", this.searchModel);
+
+			//Use axios to obtain the data we require
+			this.axios.post(
+				`${this.rootUrl}search/customer/data/`,
+				data_to_send
+			).then((response) => {
+				this.localCustomerResults = response.data;
+			}).catch(() => {
+				this.$store.dispatch("newToast", {
+					header: "Error getting search results",
+					message: "Sorry, we could not retrieve your search results",
+					extra_classes: "bg-warning text-dark",
+					delay: 0,
+				});
+			});
+		},
 	},
 };
 </script>

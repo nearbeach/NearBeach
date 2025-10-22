@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="addCustomerModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -13,19 +13,19 @@
 						Add Customers Wizard
 					</h2>
 					<button
+						id="addCustomerCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="addCustomerCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
 				</div>
 				<div class="modal-body">
 					<div
-						class="row"
 						v-if="customerFixList.length > 0"
+						class="row"
 					>
 						<div class="col-md-4">
 							<strong>Select Customer</strong>
@@ -39,15 +39,15 @@
 						</div>
 						<div class="col-md-8">
 							<n-select
+								v-model:value="customerModel"
 								:options="customerFixList"
 								label="customerName"
-								v-model:value="customerModel"
 							></n-select>
 						</div>
 					</div>
 					<div
-						class="row"
 						v-else
+						class="row"
 					>
 						<div class="col-md-6">
 							<strong>Sorry - no results</strong>
@@ -63,7 +63,7 @@
 						</div>
 						<div class="col-md-6 no-search">
 							<img
-								v-bind:src="`${staticUrl}NearBeach/images/placeholder/questions.svg`"
+								:src="`${staticUrl}NearBeach/images/placeholder/questions.svg`"
 								alt="Sorry - there are no results"
 							/>
 						</div>
@@ -80,8 +80,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:diabled="customerModel == ''"
-						v-on:click="addCustomer"
+						:diabled="customerModel == ''"
+						@click="addCustomer"
 					>
 						Save changes
 					</button>
@@ -102,9 +102,6 @@ export default {
 	components: {
 		NSelect,
 	},
-	emits: [
-		'update_customer_results',
-	],
 	props: {
 		destination: {
 			type: String,
@@ -121,18 +118,36 @@ export default {
 			},
 		},
 	},
-	computed: {
-		...mapGetters({
-			rootUrl: "getRootUrl",
-			staticUrl: "getStaticUrl",
-		}),
-	},
+	emits: [
+		'update_customer_results',
+	],
 	data() {
 		return {
 			customerModel: "",
 			customerList: [],
 			customerFixList: [],
 		};
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+		}),
+	},
+	watch: {
+		excludeCustomers() {
+			this.updateCustomerFixList();
+		},
+	},
+	mounted() {
+		//If the location is inside the array - don't bother getting the data
+		const escape_array = ["requirement_item"];
+		if (!escape_array.indexOf(this.locationId) < 0) return;
+
+		//Wait 200ms before getting data
+		this.$nextTick(() => {
+			this.getCustomerList();
+		});
 	},
 	methods: {
 		addCustomer() {
@@ -206,21 +221,6 @@ export default {
 						label: `${row.fields.customer_first_name} ${row.fields.customer_last_name}`,
 					};
 				});
-		},
-	},
-	mounted() {
-		//If the location is inside the array - don't bother getting the data
-		const escape_array = ["requirement_item"];
-		if (!escape_array.indexOf(this.locationId) < 0) return;
-
-		//Wait 200ms before getting data
-		this.$nextTick(() => {
-			this.getCustomerList();
-		});
-	},
-	watch: {
-		excludeCustomers() {
-			this.updateCustomerFixList();
 		},
 	},
 };

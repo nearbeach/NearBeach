@@ -1,32 +1,33 @@
 <template>
 	<draggable
+		v-if="!levelCollapseStatus(levelId)"
+		:id="`kanban_cell_${levelId}_${columnId}`"
+		v-model="masterList"
 		class="list-group kanban-cell"
-		v-bind:id="`kanban_cell_${levelId}_${columnId}`"
-		v-bind:data-level="levelId"
-		v-bind:data-column="columnId"
-		v-bind:data-column-property="columnProperty"
-		v-bind:animation="200"
+		:data-level="levelId"
+		:data-column="columnId"
+		:data-column-property="columnProperty"
+		:animation="200"
 		:disabled="kanbanStatus === 'Closed' || !canDragCards"
 		group="tasks"
 		ghost-class="ghost"
-		@end="onEnd($event)"
-		v-model="masterList"
 		item-key="kanban_card_id"
-		v-if="!levelCollapseStatus(levelId)"
+		@end="onEnd($event)"
 	>
 		<template #item="{ element }">
 			<div
-				class="list-group-item"
-				:key="element.kanban_card_id"
 				:id="element.kanban_card_id"
-				v-bind:data-sort-number="element.kanban_card_sort_number"
-				v-bind:data-card-id="element.kanban_card_id"
-				v-bind:data-card-priority="element.kanban_card_priority"
-				v-on:dblclick="doubleClickCard($event)"
+				:key="element.kanban_card_id"
+				class="list-group-item"
+				:data-sort-number="element.kanban_card_sort_number"
+				:data-card-id="element.kanban_card_id"
+				:data-card-priority="element.kanban_card_priority"
+				@dblclick="doubleClickCard($event)"
 			>
-				<div v-bind:class="`card-priority-line priority-${priorityList[element.kanban_card_priority]}`"
+				<div :class="`card-priority-line priority-${priorityList[element.kanban_card_priority]}`"
 				></div>
-				<carbon-link v-if="isLinkedObject(element).length > 0"
+				<carbon-link
+v-if="isLinkedObject(element).length > 0"
 					  class="card-external-link"
 				></carbon-link>
 				<b>#{{ element.kanban_card_id }}</b>
@@ -39,12 +40,14 @@
 						{{useNiceDatetime(element.date_created)}}
 					</span>
 				</div>
-				<div v-if="element.tag_list.length > 0"
+				<div
+v-if="element.tag_list.length > 0"
 					 class="tag-list"
 				>
-					<div v-for="single_tag in element.tag_list"
+					<div
+v-for="single_tag in element.tag_list"
 						 :key="single_tag.tag_assignment_id"
-						 v-bind:style="`background-color:${single_tag.tag_colour};color:${single_tag.tag_text_colour};`"
+						 :style="`background-color:${single_tag.tag_colour};color:${single_tag.tag_text_colour};`"
 						 class="single-tag-thin"
 					>
 						{{ single_tag.tag_name }}
@@ -58,38 +61,39 @@
 					class="kanban-card-info-icon"
 					width="25px"
 					height="25px"
-					v-on:click="singleClickCard(element.kanban_card_id)"
-					v-on:dblclick="singleClickCard(element.kanban_card_id)"
+					@click="singleClickCard(element.kanban_card_id)"
+					@dblclick="singleClickCard(element.kanban_card_id)"
 				></carbon-information>
 			</div>
 		</template>
 
 		<!--         ADD NEW CARDS + LINK OBJECTS -->
-		<template #footer
-			v-if="kanbanStatus !== 'Closed'"
+		<template
+v-if="kanbanStatus !== 'Closed'"
+			#footer
 		>
 			<div class="kanban-add-new-cards">
 				<a
+					v-if="columnProperty !== 'Closed'"
 					class="kanban-link btn btn-primary"
 					href="javascript:void(0)"
-					v-on:click="addNewKanbanCard"
-					v-if="columnProperty !== 'Closed'"
+					@click="addNewKanbanCard"
 				>
 					New Card
 				</a>
 				<a
+					v-if="columnProperty !== 'Closed'"
 					class="kanban-link btn btn-warning"
 					href="javascript:void(0)"
-					v-on:click="addNewLink"
-					v-if="columnProperty !== 'Closed'"
+					@click="addNewLink"
 				>
 					Link Object
 				</a>
 				<a
+					v-if="masterList.length > 0"
 					class="kanban-link btn btn-danger"
 					href="javascript:void(0)"
-					v-on:click="archiveCards"
-					v-if="masterList.length > 0"
+					@click="archiveCards"
 				>
 					Archive Cards
 				</a>
@@ -112,7 +116,7 @@ import {mapGetters} from "vuex";
 import {useNiceDatetime} from "Composables/datetime/useNiceDatetime";
 
 export default {
-	name: "kanbanColumnDraggable",
+	name: "KanbanColumnDraggable",
 	components: {
 		CarbonInformation,
 		CarbonLink,
@@ -171,6 +175,37 @@ export default {
 		masterList() {
 			return this.$store.getters.getCardsOrder(this.columnId, this.levelId);
 		},
+	},
+	watch: {
+		newCardInfo() {
+			//Only add the card if the column and the level match
+			if (
+				this.columnId === this.newCardInfo[0].kanban_column &&
+				this.levelId === this.newCardInfo[0].kanban_level
+			) {
+				//The new card is for this level and column. Add it to the masterList
+				this.masterList.push(this.newCardInfo[0]);
+			}
+		},
+	},
+	mounted() {
+		this.checkCardOrder();
+
+		//Check to see if the "openCardOnLoad" card ID exists on in this section
+		const count = this.masterList.filter((row) => {
+			//Conditions
+			// 1 row primary key is the same as openCardOnLoad value
+			// 2 row is not a linked object, i.e. not value under project, task, or requirement field
+			const condition_1 = row.kanban_card_id === this.openCardOnLoad;
+			const condition_2 = this.isLinkedObject(row).length === 0;
+
+			return condition_1 && condition_2;
+		}).length;
+
+		if (count > 0) {
+			//Card exists here. Run function to open the card
+			this.singleClickCard(this.openCardOnLoad);
+		}
 	},
 	methods: {
 		addNewKanbanCard() {
@@ -438,37 +473,6 @@ export default {
 			this.sendDataUpstream(filtered_data);
 		},
 		useNiceDatetime,
-	},
-	watch: {
-		newCardInfo() {
-			//Only add the card if the column and the level match
-			if (
-				this.columnId === this.newCardInfo[0].kanban_column &&
-				this.levelId === this.newCardInfo[0].kanban_level
-			) {
-				//The new card is for this level and column. Add it to the masterList
-				this.masterList.push(this.newCardInfo[0]);
-			}
-		},
-	},
-	mounted() {
-		this.checkCardOrder();
-
-		//Check to see if the "openCardOnLoad" card ID exists on in this section
-		const count = this.masterList.filter((row) => {
-			//Conditions
-			// 1 row primary key is the same as openCardOnLoad value
-			// 2 row is not a linked object, i.e. not value under project, task, or requirement field
-			const condition_1 = row.kanban_card_id === this.openCardOnLoad;
-			const condition_2 = this.isLinkedObject(row).length === 0;
-
-			return condition_1 && condition_2;
-		}).length;
-
-		if (count > 0) {
-			//Card exists here. Run function to open the card
-			this.singleClickCard(this.openCardOnLoad);
-		}
 	},
 };
 </script>

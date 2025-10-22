@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmStatusDeleteModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -11,11 +11,11 @@
 				<div class="modal-header">
 					<h5 class="modal-title">Confirm Deletion</h5>
 					<button
+						id="confirmStatusDeleteModalClose"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmStatusDeleteModalClose"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -41,8 +41,8 @@
 						<p>Please select an appropriate status to migrate too.</p>
 						<label><strong>New Status for the objects</strong></label>
 						<n-select
-							v-bind:options="newStatusList"
 							v-model:value="migrationStatusIdModel"
+							:options="newStatusList"
 							style="z-index: 9999"
 							class="new-card-destination"
 						></n-select>
@@ -60,8 +60,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="deleteStatus"
-						v-bind:disabled="this.migrationStatusIdModel === null || this.migrationStatusIdModel === ''"
+						:disabled="migrationStatusIdModel === null || migrationStatusIdModel === ''"
+						@click="deleteStatus"
 					>
 						Delete Status
 					</button>
@@ -80,9 +80,6 @@ export default {
 	components: {
 		NSelect,
 	},
-	emits: [
-		'delete_status',
-	],
 	props: {
 		statusData: {
 			type: Object,
@@ -104,11 +101,20 @@ export default {
 			},
 		},
 	},
+	emits: [
+		'delete_status',
+	],
 	data() {
 		return {
 			migrationStatusIdModel: "",
 			newStatusList: [],
 		}
+	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			rootUrl: "getRootUrl",
+		})
 	},
 	watch: {
 		statusId() {
@@ -125,12 +131,6 @@ export default {
 				};
 			});
 		},
-	},
-	computed: {
-		...mapGetters({
-			destination: "getDestination",
-			rootUrl: "getRootUrl",
-		})
 	},
 	methods: {
 		deleteStatus() {

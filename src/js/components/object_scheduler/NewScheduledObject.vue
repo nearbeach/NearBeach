@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card card-body">
 				<h1>New Scheduled Object</h1>
-				<a v-bind:href="`${rootUrl}scheduled_objects/`">Back to Scheduled Object list</a>
+				<a :href="`${rootUrl}scheduled_objects/`">Back to Scheduled Object list</a>
 				<hr>
 
 				<div class="row">
@@ -17,7 +17,7 @@
 						<label>
 							Object Type
 							<validation-rendering
-								v-bind:error-list="v$.objectTypeModel.$errors"
+								:error-list="v$.objectTypeModel.$errors"
 							></validation-rendering>
 						</label>
 						<n-select
@@ -46,12 +46,12 @@
 							<label
 							>Object Title
 								<validation-rendering
-									v-bind:error-list="v$.objectTitleModel.$errors"
+									:error-list="v$.objectTitleModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
-								type="text"
 								v-model="objectTitleModel"
+								type="text"
 								class="form-control"
 							/>
 						</div>
@@ -61,16 +61,17 @@
 						<label>
 							Object Description:
 							<validation-rendering
-								v-bind:error-list="v$.objectDescriptionModel.$errors"
+								:error-list="v$.objectDescriptionModel.$errors"
 							></validation-rendering>
 						</label>
 						<br/>
 						<img
-							v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
+							:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 							class="loader-image"
 							alt="loading image for Tinymce"
 						/>
 						<editor
+							v-model="objectDescriptionModel"
 							license-key="gpl"
 							:init="{
 							file_picker_types: 'image',
@@ -81,11 +82,10 @@
 							plugins: ['lists', 'image', 'codesample', 'table'],
             				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 									 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-							skin: `${this.skin}`,
-							content_css: `${this.contentCss}`,
+							skin: `${skin}`,
+							content_css: `${contentCss}`,
 							relative_urls: false,
 						}"
-							v-model="objectDescriptionModel"
 						/>
 					</div>
 				</div>
@@ -94,45 +94,46 @@
 				<hr/>
 				<get-stakeholders
 					v-if="objectTypeModel !== 2"
-					v-on:update_stakeholder_model="updateStakeholderModel($event)"
-					v-bind:is-dirty="v$.stakeholderModel.$dirty"
+					:is-dirty="v$.stakeholderModel.$dirty"
+					@update_stakeholder_model="updateStakeholderModel($event)"
 				></get-stakeholders>
 
                 <get-kanban-settings
 	                v-if="objectTypeModel === 2"
-	                v-on:update_kanban_settings="updateKanbanSettings($event)"
+	                @update_kanban_settings="updateKanbanSettings($event)"
                 ></get-kanban-settings>
 
 				<!-- START DATE & END DATE -->
 				<hr/>
 				<between-dates
 					destination="object"
-					v-on:update_dates="updateDates($event)"
+					@update_dates="updateDates($event)"
 				></between-dates>
 
 				<!-- Group Permissions -->
 				<hr/>
 				<group-permissions
-					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
-					v-bind:group-results="groupResults"
-					v-bind:user-group-permissions="userGroupPermissions"
-					v-on:update_group_model="updateGroupModel($event)"
-					v-bind:is-dirty="v$.groupModel.$dirty"
+					:display-group-permission-issue="displayGroupPermissionIssue"
+					:group-results="groupResults"
+					:user-group-permissions="userGroupPermissions"
+					:is-dirty="v$.groupModel.$dirty"
 					destination="object"
+					@update_group_model="updateGroupModel($event)"
 				></group-permissions>
 
 				<!-- Scheduler Frequency -->
 				<hr/>
 				<scheduler-frequency
-					v-on:update_scheduler_frequency="updateSchedulerFrequency"
+					@update_scheduler_frequency="updateSchedulerFrequency"
 				></scheduler-frequency>
 
 				<!-- Submit Button -->
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						<button class="btn btn-primary save-changes"
-								v-on:click="submitNewScheduledObject"
+						<button
+class="btn btn-primary save-changes"
+								@click="submitNewScheduledObject"
 						>
 							Create New Scheduled Object
 						</button>
@@ -167,9 +168,6 @@ import GetKanbanSettings from "Components/kanban/GetKanbanSettings.vue";
 
 export default {
 	name: "NewScheduledObject",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
         GetKanbanSettings,
 		BetweenDates,
@@ -210,6 +208,9 @@ export default {
 			type: String,
 			default: "",
 		},
+	},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -301,6 +302,25 @@ export default {
         }
 
         return localRules;
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		//Update user level
+		const user_level = this.calculateUserLevel(this.userGroupPermissions);
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: user_level,
+		});
 	},
 	methods: {
 		useNewObjectUploadImage,
@@ -458,25 +478,6 @@ export default {
 		updateStakeholderModel(data) {
 			this.stakeholderModel = data;
 		},
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-
-		//Update user level
-		const user_level = this.calculateUserLevel(this.userGroupPermissions);
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: user_level,
-		});
 	},
 }
 </script>

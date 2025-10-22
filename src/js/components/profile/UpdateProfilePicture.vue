@@ -11,7 +11,7 @@
 					</div>
 					<div class="col-md-3">
 						<img
-							v-bind:src="profilePicture"
+							:src="profilePicture"
 							alt="Profile Picture"
 							class="organisation-profile-image"
 						/>
@@ -23,9 +23,9 @@
 						}"
 							:data="{}"
 							:max="1"
+							accept=".jpg, .jpeg, .png, *.webp"
 							@error="showErrorToast"
 							@finish="updateProfilePicture"
-							accept=".jpg, .jpeg, .png, *.webp"
 						>
 							<n-button>Update Profile Picture</n-button>
 						</n-upload>
@@ -71,6 +71,10 @@ export default {
 			staticUrl: "getStaticUrl",
 			rootUrl: "getRootUrl",
 		}),
+	},
+	mounted() {
+		//Get the profile picture
+		this.setProfilePicture();
 	},
 	methods: {
 		useToken,
@@ -119,10 +123,6 @@ export default {
 					this.profilePicture = `${this.staticUrl}/NearBeach/images/placeholder/product_tour.svg`;
 				});
 		},
-	},
-	mounted() {
-		//Get the profile picture
-		this.setProfilePicture();
 	},
 };
 </script>

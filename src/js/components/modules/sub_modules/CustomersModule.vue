@@ -19,8 +19,8 @@
 		</div>
 		<div v-else>
 			<customers-list-module
-				v-bind:customer-results="customerResults"
-				v-on:remove_customer="removeCustomer($event)"
+				:customer-results="customerResults"
+				@remove_customer="removeCustomer($event)"
 			></customers-list-module>
 		</div>
 
@@ -29,9 +29,9 @@
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<button
-					class="btn btn-primary save-changes"
-					v-on:click="addNewCustomer"
 					v-if="userLevel > 1"
+					class="btn btn-primary save-changes"
+					@click="addNewCustomer"
 				>
 					Add Customer
 				</button>
@@ -40,10 +40,10 @@
 
 		<!-- MODALS -->
 		<add-customer-wizard
-			v-bind:location-id="locationId"
-			v-bind:destination="destination"
-			v-bind:exclude-customers="customerResults"
-			v-on:update_customer_results="updateCustomerResults($event)"
+			:location-id="locationId"
+			:destination="destination"
+			:exclude-customers="customerResults"
+			@update_customer_results="updateCustomerResults($event)"
 		></add-customer-wizard>
 	</div>
 </template>
@@ -77,6 +77,16 @@ export default {
 			rootUrl: "getRootUrl",
 		}),
 	},
+	mounted() {
+		//If the location is inside the array - don't bother getting the data
+		const escape_array = ["requirement_item"];
+		if (escape_array.indexOf(this.destination) >= 0) return;
+
+		//Wait 200ms before getting data
+		this.$nextTick(() => {
+			this.loadCustomerResults();
+		});
+	},
 	methods: {
 		addNewCustomer() {
 			const addCustomerModal = new Modal(
@@ -109,16 +119,6 @@ export default {
 		updateCustomerResults(data) {
 			this.customerResults = data;
 		},
-	},
-	mounted() {
-		//If the location is inside the array - don't bother getting the data
-		const escape_array = ["requirement_item"];
-		if (escape_array.indexOf(this.destination) >= 0) return;
-
-		//Wait 200ms before getting data
-		this.$nextTick(() => {
-			this.loadCustomerResults();
-		});
 	},
 };
 </script>

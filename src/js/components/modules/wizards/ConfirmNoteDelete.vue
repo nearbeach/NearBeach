@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmNoteDeleteModal"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,17 +12,17 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="confirmNoteDelete"
+						class="modal-title"
 					>
 						Please confirm Note Deletion
 					</h5>
 					<button
+						id="confirmNoteDeleteButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmNoteDeleteButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -32,14 +32,14 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						No
 					</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="deleteNote"
+						@click="deleteNote"
 					>
 						Yes
 					</button>

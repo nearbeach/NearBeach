@@ -9,7 +9,7 @@
 		</p>
 
 		<list-notes
-			v-bind:destination="destination"
+			:destination="destination"
 		></list-notes>
 
 		<!-- ADD NOTE HISTORY -->
@@ -17,9 +17,9 @@
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<button
-					class="btn btn-primary save-changes"
-					v-on:click="createNewNote"
 					v-if="userLevel > 1 || hasNotePermission"
+					class="btn btn-primary save-changes"
+					@click="createNewNote"
 				>
 					Add Note to {{ destination }}
 				</button>
@@ -55,6 +55,11 @@ export default {
 			return this.getUserExtraPermission(`${this.destination}_note`);
 		},
 	},
+	mounted() {
+		this.$nextTick(() => {
+			this.getNoteHistoryResults();
+		});
+	},
 	methods: {
 		createNewNote() {
 			const newNoteModal = new Modal(
@@ -86,11 +91,6 @@ export default {
 				})
 			});
 		},
-	},
-	mounted() {
-		this.$nextTick(() => {
-			this.getNoteHistoryResults();
-		});
 	},
 };
 </script>

@@ -20,51 +20,59 @@
 		</div>
 		<div v-else>
 			<!-- Relates To -->
-			<sub-object-links title="Relates To"
-							  v-bind:link-results="relatesTo"
-							  v-on:update_link_results="updateLinkResults($event)"
+			<sub-object-links
+title="Relates To"
+							  :link-results="relatesTo"
+							  @update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Kanban Cards -->
-			<sub-object-links title="Kanban Cards"
-							  v-bind:link-results="kanbanCard"
-							  v-bind:can-delete="false"
+			<sub-object-links
+title="Kanban Cards"
+							  :link-results="kanbanCard"
+							  :can-delete="false"
 			></sub-object-links>
 
 			<!-- Is Blocked By -->
-			<sub-object-links title="Is Blocked By"
-							  v-bind:link-results="isBlockedBy"
-							  v-on:update_link_results="updateLinkResults($event)"
+			<sub-object-links
+title="Is Blocked By"
+							  :link-results="isBlockedBy"
+							  @update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Currently Blocking -->
-			<sub-object-links title="Is Currently Blocking"
-							  v-bind:link-results="isCurrentlyBlocking"
-							  v-on:update_link_results="updateLinkResults($event)"
+			<sub-object-links
+title="Is Currently Blocking"
+							  :link-results="isCurrentlyBlocking"
+							  @update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Sub Object Of -->
-			<sub-object-links title="Is Subobject Of"
-							  v-bind:link-results="isSubObjectOf"
-							  v-on:update_link_results="updateLinkResults($event)"
+			<sub-object-links
+title="Is Subobject Of"
+							  :link-results="isSubObjectOf"
+							  @update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Parent Object Of -->
-			<sub-object-links title="Is Parent Object Of"
-							  v-bind:link-results="isParentOf"
-							  v-on:update_link_results="updateLinkResults($event)"
+			<sub-object-links
+title="Is Parent Object Of"
+							  :link-results="isParentOf"
+							  @update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Has Duplicate Object Of -->
-			<sub-object-links title="Has Duplicate Object Of"
-							  v-bind:link-results="hasDuplicateObjectOf"
-							  v-on:update_link_results="updateLinkResults($event)"
+			<sub-object-links
+title="Has Duplicate Object Of"
+							  :link-results="hasDuplicateObjectOf"
+							  @update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 
 			<!-- Is Duplicate Object Of -->
-			<sub-object-links title="Is Duplicate Object Of"
-							  v-bind:link-results="isDuplicateObjectOf"
-							  v-on:update_link_results="updateLinkResults($event)"
+			<sub-object-links
+title="Is Duplicate Object Of"
+							  :link-results="isDuplicateObjectOf"
+							  @update_link_results="updateLinkResults($event)"
 			></sub-object-links>
 		</div>
 
@@ -73,10 +81,10 @@
 		<div class="row submit-row">
 			<div class="col-md-12">
 				<a
+					v-if="userLevel > 1"
 					href="javascript:void(0)"
 					class="btn btn-primary save-changes"
-					v-on:click="newLink"
-					v-if="userLevel > 1"
+					@click="newLink"
 				>Create new Link</a
 				>
 			</div>
@@ -84,14 +92,14 @@
 
 		<!-- MODAL FOR NEW OBJECT LINKS -->
 		<new-link-wizard
-			v-bind:destination="destination"
-			v-bind:location-id="locationId"
-			v-on:update_link_results="updateLinkResults"
+			:destination="destination"
+			:location-id="locationId"
+			@update_link_results="updateLinkResults"
 		></new-link-wizard>
 
 		<!-- MODAL FOR CONFIRM DELETE LINK -->
 		<confirm-link-delete
-			v-on:update_link_results="updateLinkResults"
+			@update_link_results="updateLinkResults"
 		></confirm-link-delete>
 	</div>
 </template>
@@ -133,6 +141,11 @@ export default {
 			rootUrl: "getRootUrl",
 			userLevel: "getUserLevel",
 		}),
+	},
+	mounted() {
+		this.$nextTick(() => {
+			this.updateLinkResults();
+		});
 	},
 	methods: {
 		isLinkedObject(object) {
@@ -222,11 +235,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		this.$nextTick(() => {
-			this.updateLinkResults();
-		});
 	},
 };
 </script>

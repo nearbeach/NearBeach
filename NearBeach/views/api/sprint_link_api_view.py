@@ -1,4 +1,6 @@
 from drf_spectacular.utils import extend_schema, OpenApiExample
+
+from NearBeach.decorators.check_user_permissions.api_sprint_permissions_v0 import check_api_sprint_link_permissions
 from NearBeach.views.api.sprint_api_view import SprintViewSet
 from NearBeach.models import SprintObjectAssignment, Sprint
 from NearBeach.serializers.sprint_object_serializer import SprintObjectSerializer
@@ -35,21 +37,12 @@ class SprintLinkViewSet(SprintViewSet):
     - Projects
     - Tasks
 
-
-    # 🌏 Url
-
-    - Destination: The parent object of the sprint:
-        - Project
-        - Requirement
-    - Location ID: The unique ID of the parent object.
-
-
     # 🧾 Parameters
 
     - Object Type: The object we are currently trying to link. These will be;
-        - Requirement Item
-        - Project
-        - Task
+        - requirement_item
+        - project
+        - task
     - Object Id: A list of ID's for the objects (of type) we are currently trying to link
             """,
         examples=[
@@ -63,6 +56,7 @@ class SprintLinkViewSet(SprintViewSet):
             ),
         ],
     )
+    @check_api_sprint_link_permissions(min_permission_level=2)
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
@@ -91,6 +85,14 @@ class SprintLinkViewSet(SprintViewSet):
             status=status.HTTP_201_CREATED,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Destroy a object link to the current sprint. The "sprint object assignment id" can be gathered from the list
+        """
+    )
+    @check_api_sprint_link_permissions(min_permission_level=3)
     def destroy(self, request, pk, *args, **kwargs):
         self._check_sprint(kwargs)
 
@@ -110,6 +112,14 @@ class SprintLinkViewSet(SprintViewSet):
             status=status.HTTP_204_NO_CONTENT,
         )
 
+    @extend_schema(
+        description="""
+# 📌 Description
+
+Gathers a list of all object links associated with the current sprint.
+        """
+    )
+    @check_api_sprint_link_permissions(min_permission_level=1)
     def list(self, request, *args, **kwargs):
         self._check_sprint(kwargs)
         
@@ -123,7 +133,8 @@ class SprintLinkViewSet(SprintViewSet):
         )
 
     @extend_schema(
-        description="""Method not used"""
+        description="""Method not used""",
+        exclude=True,
     )
     def retrieve(self, request, pk, *args, **kwargs):
         return Response(
@@ -131,7 +142,8 @@ class SprintLinkViewSet(SprintViewSet):
         )
 
     @extend_schema(
-        description="""Method not used"""
+        description="""Method not used""",
+        exclude=True,
     )
     def update(self, request, pk, *args, **kwargs):
         return Response(

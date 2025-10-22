@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmCustomerRemoveModal"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,25 +12,25 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="confirmCustomerRemove"
+						class="modal-title"
 					>
 						Please confirm Customer Removal
 					</h5>
 					<!-- TASK INFORMATION -->
 					<button
+						id="confirmCustomerRemoveButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmCustomerRemoveButton"
 					></button>
 				</div>
 				<div class="modal-body">
 					<div class="customer-card--details">
 						<div class="customer-card--name">
 							<a
-								v-bind:href="`${rootUrl}customer_information/${customerObject.customer_id}/`"
+								:href="`${rootUrl}customer_information/${customerObject.customer_id}/`"
 								target="_blank"
 								rel="noopener noreferrer"
 							>
@@ -47,14 +47,14 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						No
 					</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="removeCustomer"
+						@click="removeCustomer"
 					>
 						Yes
 					</button>
@@ -69,7 +69,6 @@ import {mapGetters} from "vuex";
 
 export default {
 	name: "ConfirmCustomerRemoval",
-	emits: ["remove_customer"],
 	props: {
 		customerObject: {
 			type: Object,
@@ -84,6 +83,7 @@ export default {
 			}
 		},
 	},
+	emits: ["remove_customer"],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",

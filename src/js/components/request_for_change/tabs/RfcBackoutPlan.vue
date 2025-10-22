@@ -15,11 +15,12 @@
 			<label>
 				Backout Plan:
 				<validation-rendering
-					v-bind:error-list="v$.rfcBackoutPlanModel.$errors"
+					:error-list="v$.rfcBackoutPlanModel.$errors"
 				></validation-rendering>
 			</label>
 			<br/>
 			<editor
+				v-model="rfcBackoutPlanModel"
 				license-key="gpl"
 				:init="{
 					license_key: 'gpl',
@@ -31,12 +32,11 @@
 					plugins: ['lists', 'image', 'codesample', 'table'],
             		toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 							 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-					skin: `${this.skin}`,
-					content_css: `${this.contentCss}`,
+					skin: `${skin}`,
+					content_css: `${contentCss}`,
 					relative_urls: false,
 				}"
-				v-bind:disabled="isReadOnly"
-				v-model="rfcBackoutPlanModel"
+				:disabled="isReadOnly"
 			/>
 		</div>
 	</div>
@@ -58,17 +58,10 @@ import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 export default {
 	name: "RfcBackoutPlan",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		editor: Editor,
 		ValidationRendering,
 	},
-	emits: [
-		'update_values',
-		'update_validation',
-	],
 	props: {
 		isReadOnly: {
 			type: Boolean,
@@ -85,20 +78,43 @@ export default {
 			default: "",
 		},
 	},
+	emits: [
+		'update_values',
+		'update_validation',
+	],
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	data: () => ({
+		rfcBackoutPlanModel: "",
+	}),
 	computed: {
 		...mapGetters({
 			contentCss: "getContentCss",
 			skin: "getSkin",
 		})
 	},
-	data: () => ({
-		rfcBackoutPlanModel: "",
-	}),
 	validations: {
 		rfcBackoutPlanModel: {
 			required,
 			maxLength: maxLength(630000),
 		},
+	},
+	watch: {
+		rfcBackoutPlanModel() {
+			this.updateValues("rfcBackoutPlan", this.rfcBackoutPlanModel);
+			this.updateValidation();
+		},
+	},
+	mounted() {
+		//If the rfc results import - update the rfcBackout Model
+		if (this.rfcResults.length > 0) {
+			this.rfcBackoutPlanModel =
+				this.rfcResults[0].fields.rfc_backout_plan;
+		}
+
+		//Just run the validations to show the error messages
+		this.v$.$touch();
 	},
 	methods: {
 		handleUploadImage(blobInfo, progress) {
@@ -122,22 +138,6 @@ export default {
 				modelValue,
 			});
 		},
-	},
-	watch: {
-		rfcBackoutPlanModel() {
-			this.updateValues("rfcBackoutPlan", this.rfcBackoutPlanModel);
-			this.updateValidation();
-		},
-	},
-	mounted() {
-		//If the rfc results import - update the rfcBackout Model
-		if (this.rfcResults.length > 0) {
-			this.rfcBackoutPlanModel =
-				this.rfcResults[0].fields.rfc_backout_plan;
-		}
-
-		//Just run the validations to show the error messages
-		this.v$.$touch();
 	},
 };
 </script>

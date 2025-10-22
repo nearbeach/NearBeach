@@ -12,22 +12,26 @@
 					</p>
 				</div>
 				<div class="col-md-8 d-grid gap-2 mx-auto">
-					<a v-bind:href="`${rootUrl}object_status_information/requirement/`"
+					<a
+:href="`${rootUrl}object_status_information/requirement/`"
 					   class="btn btn-outline-primary"
 					>
 						Requirements
 					</a>
-					<a v-bind:href="`${rootUrl}object_status_information/requirement_item/`"
+					<a
+:href="`${rootUrl}object_status_information/requirement_item/`"
 					   class="btn btn-outline-warning"
 					>
 						Requirement Item
 					</a>
-					<a v-bind:href="`${rootUrl}object_status_information/project/`"
+					<a
+:href="`${rootUrl}object_status_information/project/`"
 					   class="btn btn-outline-success"
 					>
 						Projects
 					</a>
-					<a v-bind:href="`${rootUrl}object_status_information/task/`"
+					<a
+:href="`${rootUrl}object_status_information/task/`"
 					   class="btn btn-outline-info"
 					>
 						Tasks

@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="addLinkModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -13,11 +13,11 @@
 						Add Link Wizard
 					</h2>
 					<button
+						id="addLinkCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="addLinkCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -36,11 +36,11 @@
 								<label for="document_description">
 									Document Description
 									<validation-rendering
-										v-bind:error-list="v$.documentDescriptionModel.$errors"
+										:error-list="v$.documentDescriptionModel.$errors"
 									></validation-rendering>
 									<span
-										class="error"
 										v-if="duplicateDescription"
+										class="error"
 									>
 										Sorry - but this is a duplicated
 										description.</span
@@ -58,7 +58,7 @@
 								<label for="document_url_location">
 									Document URL
 									<validation-rendering
-										v-bind:error-list="v$.documentUrlLocationModel.$errors"
+										:error-list="v$.documentUrlLocationModel.$errors"
 									></validation-rendering>
 								</label>
 								<input
@@ -82,8 +82,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="addLink"
-						v-bind:disabled="disableAddButton"
+						:disabled="disableAddButton"
+						@click="addLink"
 					>
 						Add Link
 					</button>
@@ -105,9 +105,6 @@ import {useReopenCardInformation} from "Composables/card_information/useReopenCa
 
 export default {
 	name: "AddLinkWizard",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		ValidationRendering,
 	},
@@ -120,6 +117,9 @@ export default {
 			type: Number,
 			default: 0,
 		},
+	},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -145,6 +145,24 @@ export default {
 			excludeDocuments: "getDocumentFilteredList",
 			rootUrl: "getRootUrl",
 		}),
+	},
+	updated() {
+		//We need to make sure both fields are not blank & to make sure the description is not duplicated
+		const match = this.excludeDocuments.filter((row) => {
+			return (
+				row.document_key__document_description ===
+				this.documentDescriptionModel
+			);
+		});
+
+		//Notify the user of duplicate descriptions (if there is any)
+		this.duplicateDescription = match.length > 0;
+
+		// Check the validation
+		this.v$.$touch();
+
+		//Disable the button (if it does not meet our standards)
+		this.disableAddButton = this.v$.$invalid || match.length > 0;
 	},
 	methods: {
 		useReopenCardInformation,
@@ -191,24 +209,6 @@ export default {
 				});
 			});
 		},
-	},
-	updated() {
-		//We need to make sure both fields are not blank & to make sure the description is not duplicated
-		const match = this.excludeDocuments.filter((row) => {
-			return (
-				row.document_key__document_description ===
-				this.documentDescriptionModel
-			);
-		});
-
-		//Notify the user of duplicate descriptions (if there is any)
-		this.duplicateDescription = match.length > 0;
-
-		// Check the validation
-		this.v$.$touch();
-
-		//Disable the button (if it does not meet our standards)
-		this.disableAddButton = this.v$.$invalid || match.length > 0;
 	},
 };
 </script>

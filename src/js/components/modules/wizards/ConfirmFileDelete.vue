@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmFileDeleteModal"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,18 +12,18 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="confirmFileDelete"
+						class="modal-title"
 					>
 						Please confirm File Deletion
 					</h5>
 					<!-- TASK INFORMATION -->
 					<button
+						id="confirmFileDeleteButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmFileDeleteButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -33,14 +33,14 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						No
 					</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="deleteFile"
+						@click="deleteFile"
 					>
 						Yes
 					</button>

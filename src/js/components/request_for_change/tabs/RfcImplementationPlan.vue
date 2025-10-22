@@ -14,11 +14,12 @@
 			<label>
 				Implementation Plan:
 				<validation-rendering
-					v-bind:error-list="v$.rfcImplementationPlanModel.$errors"
+					:error-list="v$.rfcImplementationPlanModel.$errors"
 				></validation-rendering>
 			</label>
 			<br/>
 			<editor
+				v-model="rfcImplementationPlanModel"
 				license-key="gpl"
 				:init="{
 					license_key: 'gpl',
@@ -30,12 +31,11 @@
 					plugins: ['lists', 'image', 'codesample', 'table'],
             		toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 		 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-					skin: `${this.skin}`,
-					content_css: `${this.contentCss}`,
+					skin: `${skin}`,
+					content_css: `${contentCss}`,
 					relative_urls: false,
 				}"
-				v-bind:disabled="isReadOnly"
-				v-model="rfcImplementationPlanModel"
+				:disabled="isReadOnly"
 			/>
 		</div>
 	</div>
@@ -57,17 +57,10 @@ import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 export default {
 	name: "RfcImplementationPlan",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		editor: Editor,
 		ValidationRendering,
 	},
-	emits: [
-		'update_values',
-		'update_validation',
-	],
 	props: {
 		isReadOnly: {
 			type: Boolean,
@@ -84,20 +77,46 @@ export default {
 			default: "",
 		},
 	},
+	emits: [
+		'update_values',
+		'update_validation',
+	],
+	setup() {
+		return {v$: useVuelidate()};
+	},
+	data: () => ({
+		rfcImplementationPlanModel: "",
+	}),
 	computed: {
 		...mapGetters({
 			contentCss: "getContentCss",
 			skin: "getSkin",
 		})
 	},
-	data: () => ({
-		rfcImplementationPlanModel: "",
-	}),
 	validations: {
 		rfcImplementationPlanModel: {
 			required,
 			maxLength: maxLength(630000),
 		},
+	},
+	watch: {
+		rfcImplementationPlanModel() {
+			this.updateValues(
+				"rfcImplementationPlanModel",
+				this.rfcImplementationPlanModel
+			);
+			this.updateValidation();
+		},
+	},
+	mounted() {
+		//If the rfcResults are imported, update the rfcImplementationPlan
+		if (this.rfcResults.length > 0) {
+			this.rfcImplementationPlanModel =
+				this.rfcResults[0].fields.rfc_implementation_plan;
+		}
+
+		//Just run the validations to show the error messages
+		this.v$.$touch();
 	},
 	methods: {
 		handleUploadImage(blobInfo, progress) {
@@ -121,25 +140,6 @@ export default {
 				modelValue,
 			});
 		},
-	},
-	watch: {
-		rfcImplementationPlanModel() {
-			this.updateValues(
-				"rfcImplementationPlanModel",
-				this.rfcImplementationPlanModel
-			);
-			this.updateValidation();
-		},
-	},
-	mounted() {
-		//If the rfcResults are imported, update the rfcImplementationPlan
-		if (this.rfcResults.length > 0) {
-			this.rfcImplementationPlanModel =
-				this.rfcResults[0].fields.rfc_implementation_plan;
-		}
-
-		//Just run the validations to show the error messages
-		this.v$.$touch();
 	},
 };
 </script>

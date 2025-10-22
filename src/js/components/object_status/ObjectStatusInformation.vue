@@ -4,7 +4,7 @@
 			<div class="card-body">
 				<h1>{{ nearbeachTitle }}</h1>
 				<br/>
-				<a v-bind:href="`${this.rootUrl}object_status_list/`">
+				<a :href="`${rootUrl}object_status_list/`">
 					Go back to object status list
 				</a>
 				<hr>
@@ -19,8 +19,8 @@
 					<div class="col-md-8">
 						<strong>Status List</strong>
 						<span
-							class="error"
 							v-if="localStatusList.length === 0"
+							class="error"
 						>
 							Please create at least one status
 						</span>
@@ -37,25 +37,27 @@
 								name="flip-list"
 							>
 								<div
+									:key="element.status_id"
 									class="sortable"
-									v-bind:key="element.status_id"
-									v-bind:data-id="element.status_id"
-									v-on:dblclick="editStatus($event)"
+									:data-id="element.status_id"
+									@dblclick="editStatus($event)"
 								>
-									<div class="content"
-										 v-bind:key="element.status_id"
-										 v-bind:data-id="element.status_id"
+									<div
+:key="element.status_id"
+										 class="content"
+										 :data-id="element.status_id"
 									>
 										<strong
-											v-bind:key="element.status_id"
-											v-bind:data-id="element.status_id"
+											:key="element.status_id"
+											:data-id="element.status_id"
 										>
 											{{ element.status }}
 										</strong>
 									</div>
-									<div class="icon"
-										 v-on:click="removeStatus(element.status_id)"
-										 v-if="localStatusList.length > 1"
+									<div
+v-if="localStatusList.length > 1"
+										 class="icon"
+										 @click="removeStatus(element.status_id)"
 									>
 										<carbon-close-outline></carbon-close-outline>
 									</div>
@@ -65,8 +67,9 @@
 
 						<div class="spacer"></div>
 
-						<button v-on:click="newStatus"
-								class="btn btn-primary"
+						<button
+class="btn btn-primary"
+								@click="newStatus"
 						>
 							New Status
 						</button>
@@ -76,18 +79,18 @@
 		</div>
 
 		<object-status-modal
-			v-bind:status-data="statusData"
-			v-bind:status-id="statusId"
-			v-bind:status-list="localStatusList"
-			v-on:add_status="addStatus($event)"
-			v-on:update_status="updateStatus($event)"
+			:status-data="statusData"
+			:status-id="statusId"
+			:status-list="localStatusList"
+			@add_status="addStatus($event)"
+			@update_status="updateStatus($event)"
 		></object-status-modal>
 
 		<object-status-confirm-delete
-			v-bind:status-data="statusData"
-			v-bind:status-id="statusId"
-			v-bind:status-list="localStatusList"
-			v-on:delete_status="delete_status"
+			:status-data="statusData"
+			:status-id="statusId"
+			:status-list="localStatusList"
+			@delete_status="delete_status"
 		></object-status-confirm-delete>
 	</n-config-provider>
 </template>
@@ -107,6 +110,12 @@ import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "ObjectStatusInformation",
+	components: {
+		CarbonCloseOutline,
+		draggable,
+		ObjectStatusConfirmDelete,
+		ObjectStatusModal,
+	},
 	props: {
 		destination: {
 			type: String,
@@ -131,12 +140,6 @@ export default {
 			default: "",
 		},
 	},
-	components: {
-		CarbonCloseOutline,
-		draggable,
-		ObjectStatusConfirmDelete,
-		ObjectStatusModal,
-	},
 	data() {
 		return {
 			localStatusList: this.objectStatusResults,
@@ -146,6 +149,17 @@ export default {
 			},
 			statusId: 0,
 		}
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		this.$store.commit({
+			type: "updateDestination",
+			destination: this.destination,
+		});
 	},
 	methods: {
 		useNBTheme,
@@ -275,17 +289,6 @@ export default {
 			this.localStatusList[index].higher_order_status = data.higherOrderStatus;
 			this.localStatusList[index].status = data.status;
 		}
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		this.$store.commit({
-			type: "updateDestination",
-			destination: this.destination,
-		});
 	}
 }
 </script>

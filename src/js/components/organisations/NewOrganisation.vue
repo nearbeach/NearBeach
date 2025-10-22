@@ -21,15 +21,15 @@
 						<label for="id_organisation_name">
 							Organisation Name:
 							<validation-rendering
-								v-bind:error-list="v$.organisationNameModel.$errors"
+								:error-list="v$.organisationNameModel.$errors"
 							></validation-rendering>
 						</label>
 						<input
 							id="id_organisation_name"
+							v-model="organisationNameModel"
 							name="organisation_name"
 							type="text"
 							class="form-control"
-							v-model="organisationNameModel"
 						/>
 					</div>
 					<br/>
@@ -40,15 +40,15 @@
 							<label for="id_organisation_website">
 								Organisation Website:
 								<validation-rendering
-									v-bind:error-list="v$.organisationWebsiteModel.$errors"
+									:error-list="v$.organisationWebsiteModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
 								id="id_organisation_website"
+								v-model="organisationWebsiteModel"
 								name="organisation_website"
 								type="url"
 								class="form-control"
-								v-model="organisationWebsiteModel"
 							/>
 						</div>
 
@@ -57,15 +57,15 @@
 							<label for="id_organisation_email">
 								Organisation Email:
 								<validation-rendering
-									v-bind:error-list="v$.organisationEmailModel.$errors"
+									:error-list="v$.organisationEmailModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
 								id="id_organisation_email"
+								v-model="organisationEmailModel"
 								name="organisation_email"
 								type="email"
 								class="form-control"
-								v-model="organisationEmailModel"
 							/>
 						</div>
 					</div>
@@ -75,13 +75,13 @@
 
 			<!-- SUBMIT ORGANISATION BUTTON -->
 			<div
-				class="row submit-row"
 				v-if="duplicateOrganisations.length == 0"
+				class="row submit-row"
 			>
 				<div class="col-md-12">
 					<button
 						class="btn btn-primary save-changes"
-						v-on:click="addOrganisation"
+						@click="addOrganisation"
 					>
 						Add Organisation
 					</button>
@@ -92,8 +92,8 @@
 				Potential Duplication
 			</h2>
 			<div
-				class="row"
 				v-if="duplicateOrganisations.length > 0"
+				class="row"
 			>
 				<!-- PLEASE READ -->
 				<div class="col-md-4">
@@ -115,22 +115,22 @@
 				<!-- DUPLICATE ORGANISATION LIST -->
 				<div class="col-md-8">
 					<list-organisations
-						v-bind:organisation-results="duplicateOrganisations"
-						v-bind:root-url="rootUrl"
+						:organisation-results="duplicateOrganisations"
+						:root-url="rootUrl"
 					></list-organisations>
 				</div>
 			</div>
 
 			<!-- STILL SUBMIT ORGANISATION -->
 			<div
-				class="row submit-row"
 				v-if="duplicateOrganisations.length > 0"
+				class="row submit-row"
 			>
 				<div class="col-md-12">
 					<button
 						class="btn btn-primary save-changes"
-						v-on:click="uploadOrganisationData"
-						v-bind:disabled="disableSubmitButton"
+						:disabled="disableSubmitButton"
+						@click="uploadOrganisationData"
 					>
 						Submit Organisation
 					</button>
@@ -151,9 +151,6 @@ import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "NewOrganisation",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		ListOrganisations,
 		ValidationRendering,
@@ -163,6 +160,9 @@ export default {
 			type: String,
 			default: "/",
 		},
+	},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {

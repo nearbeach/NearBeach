@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmPermissionDeleteModal"
+		class="modal fade"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
 		tabindex="-1"
@@ -12,13 +12,14 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h1
-						class="modal-title fs-5"
 						id="confirmPermissionDeleteLabel"
+						class="modal-title fs-5"
 					>
 						Are you sure?
 					</h1>
-					<button type="button"
-							id="confirmPermissionDeleteClose"
+					<button
+id="confirmPermissionDeleteClose"
+							type="button"
 							class="btn-close"
 							data-bs-dismiss="modal"
 							aria-label="Close"
@@ -28,15 +29,17 @@
 					Are you sure you want to delete that permission?
 				</div>
 				<div class="modal-footer">
-					<button type="button"
+					<button
+type="button"
 							class="btn btn-secondary"
 							data-bs-dismiss="modal"
 					>
 						No
 					</button>
-					<button type="button"
+					<button
+type="button"
 							class="btn btn-primary"
-							v-on:click="removePermission"
+							@click="removePermission"
 					>
 						Yes
 					</button>
@@ -50,15 +53,15 @@
 
 export default {
 	name: "ConfirmPermissionDelete",
-	emits: [
-		'remove_permission',
-	],
 	props: {
 		permissionDeleteId: {
 			type: Number,
 			default: 0,
 		},
 	},
+	emits: [
+		'remove_permission',
+	],
 	methods: {
 		removePermission() {
 			//Create data to send

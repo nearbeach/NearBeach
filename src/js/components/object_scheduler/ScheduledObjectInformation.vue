@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card card-body">
 				<h1>Scheduled Object Information</h1>
-				<a v-bind:href="`${rootUrl}scheduled_objects/`">Back to Scheduled Object list</a>
+				<a :href="`${rootUrl}scheduled_objects/`">Back to Scheduled Object list</a>
 				<hr>
 
 				<div class="row">
@@ -17,12 +17,12 @@
 						<label>
 							Object Type
 							<validation-rendering
-								v-bind:error-list="v$.objectTypeModel.$errors"
+								:error-list="v$.objectTypeModel.$errors"
 							></validation-rendering>
 						</label>
 						<n-select
 							v-model:value="objectTypeModel"
-							v-bind:disabled="userLevel <= 1"
+							:disabled="userLevel <= 1"
 							:options="objectTypeOptions"
 						/>
 					</div>
@@ -47,14 +47,14 @@
 							<label
 							>Object Title
 								<validation-rendering
-									v-bind:error-list="v$.objectTitleModel.$errors"
+									:error-list="v$.objectTitleModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
-								type="text"
 								v-model="objectTitleModel"
+								type="text"
 								class="form-control"
-								v-bind:disabled="userLevel <= 1"
+								:disabled="userLevel <= 1"
 							/>
 						</div>
 						<br/>
@@ -63,18 +63,19 @@
 						<label>
 							Object Description:
 							<validation-rendering
-								v-bind:error-list="v$.objectDescriptionModel.$errors"
+								:error-list="v$.objectDescriptionModel.$errors"
 							></validation-rendering>
 						</label>
 						<br/>
 						<img
-							v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
+							:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 							class="loader-image"
 							alt="loading image for Tinymce"
 						/>
 						<editor
+							v-model="objectDescriptionModel"
 							license-key="gpl"
-							v-bind:disabled="userLevel <= 1"
+							:disabled="userLevel <= 1"
 							:init="{
 							file_picker_types: 'image',
 							height: 500,
@@ -84,11 +85,10 @@
 							plugins: ['lists', 'image', 'codesample', 'table'],
             				toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 									 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-							skin: `${this.skin}`,
-							content_css: `${this.contentCss}`,
+							skin: `${skin}`,
+							content_css: `${contentCss}`,
 							relative_urls: false,
 						}"
-							v-model="objectDescriptionModel"
 						/>
 					</div>
 				</div>
@@ -97,25 +97,25 @@
 				<hr/>
 				<stakeholder-information
 					v-if="objectTypeModel !== 2"
-					v-bind:organisation-results="organisationResults"
-					v-bind:default-stakeholder-image="defaultStakeholderImage"
+					:organisation-results="organisationResults"
+					:default-stakeholder-image="defaultStakeholderImage"
 				></stakeholder-information>
 
 				<get-kanban-settings
 					v-if="objectTypeModel === 2"
-					v-bind:init-kanban-board-id="kanbanBoardModel"
-					v-bind:init-kanban-column-id="kanbanColumnModel"
-					v-bind:init-kanban-level-id="kanbanLevelModel"
-					v-on:update_kanban_settings="updateKanbanSettings($event)"
+					:init-kanban-board-id="kanbanBoardModel"
+					:init-kanban-column-id="kanbanColumnModel"
+					:init-kanban-level-id="kanbanLevelModel"
+					@update_kanban_settings="updateKanbanSettings($event)"
 				></get-kanban-settings>
 
 				<!-- START DATE & END DATE -->
 				<hr/>
 				<between-dates
 					destination="object"
-					v-bind:end-date-model="objectEndDateModel.getTime()"
-					v-bind:start-date-model="objectStartDateModel.getTime()"
-					v-on:update_dates="updateDates($event)"
+					:end-date-model="objectEndDateModel.getTime()"
+					:start-date-model="objectStartDateModel.getTime()"
+					@update_dates="updateDates($event)"
 				></between-dates>
 
 				<!-- Group Permissions -->
@@ -135,20 +135,21 @@
 					<div class="col-md-8">
 						<label>
 							Group List
-							<validation-rendering v-bind:error-list="v$.objectGroupModel.$errors"
+							<validation-rendering :error-list="v$.objectGroupModel.$errors"
 							></validation-rendering>
 						</label>
 						<n-select
-							v-bind:disabled="userLevel <= 1"
+							v-model:value="objectGroupModel"
+							:disabled="userLevel <= 1"
 							:options="groupResults"
 							label="group"
-							v-model:value="objectGroupModel"
 							multiple
 						></n-select>
 
 <!--						 ALERT FOR WHEN USER GROUPS ARE NOT INCLUDED -->
 						<br/>
-						<div v-if="displayGroupPermissionIssue"
+						<div
+v-if="displayGroupPermissionIssue"
 							 class="alert alert-warning"
 						>
 							None of your user groups were included. You will not have permissions to create this object. Please
@@ -160,15 +161,15 @@
 				<!-- Scheduler Frequency -->
 				<hr/>
 				<scheduler-frequency
-					v-bind:days-before="daysBeforeModel"
-					v-bind:day="dayModel"
-					v-bind:end-date-condition="endDateConditionModel"
-					v-bind:end-date="endDateModel"
-					v-bind:number-of-repeats="numberOfRepeats"
-					v-bind:scheduler-frequency="schedulerFrequencyModel"
-					v-bind:single-day="singleDayModel"
-					v-bind:start-date="startDateModel"
-					v-on:update_scheduler_frequency="updateSchedulerFrequency"
+					:days-before="daysBeforeModel"
+					:day="dayModel"
+					:end-date-condition="endDateConditionModel"
+					:end-date="endDateModel"
+					:number-of-repeats="numberOfRepeats"
+					:scheduler-frequency="schedulerFrequencyModel"
+					:single-day="singleDayModel"
+					:start-date="startDateModel"
+					@update_scheduler_frequency="updateSchedulerFrequency"
 				></scheduler-frequency>
 
 				<!-- Is Active -->
@@ -181,8 +182,9 @@
 						</p>
 					</div>
 					<div class="col-md-8">
-						<n-switch v-model:value="isActiveModel"
-									v-bind:disabled="userLevel <= 1"
+						<n-switch
+v-model:value="isActiveModel"
+									:disabled="userLevel <= 1"
 						>
 							<template #checked>
 								Currently Active
@@ -198,9 +200,10 @@
 				<hr/>
 				<div class="row submit-row">
 					<div class="col-md-12">
-						<button class="btn btn-primary save-changes"
-								v-on:click="updateSchedulerObject"
-								v-if="userLevel > 1"
+						<button
+v-if="userLevel > 1"
+								class="btn btn-primary save-changes"
+								@click="updateSchedulerObject"
 						>
 							Update Scheduled Object
 						</button>
@@ -234,9 +237,6 @@ import GetKanbanSettings from "Components/kanban/GetKanbanSettings.vue";
 
 export default {
 	name: "ScheduledObjectInformation",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		GetKanbanSettings,
 		StakeholderInformation,
@@ -314,6 +314,9 @@ export default {
 			default: 0,
 		},
 	},
+	setup() {
+		return {v$: useVuelidate()};
+	},
 	data() {
 		return {
 			displayGroupPermissionIssue: false,
@@ -390,6 +393,24 @@ export default {
 				return new_value.includes(row.group_id);
 			}).length === 0;
 		},
+	},
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		//Update user level
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
+		});
 	},
 	methods: {
 		useNewObjectUploadImage,
@@ -533,24 +554,6 @@ export default {
 				});
 			});
 		},
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-
-		//Update user level
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: this.userLevel,
-		});
 	},
 }
 </script>

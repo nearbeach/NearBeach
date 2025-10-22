@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-body">
 				<h1 class="mb-4">Group Information</h1>
-				<a v-bind:href="`${this.rootUrl}search/group/`"
+				<a :href="`${rootUrl}search/group/`"
 				>Back to group list</a
 				>
 				<hr/>
@@ -20,8 +20,8 @@
 						<div class="form-group">
 							<label>Group Name</label>
 							<input
-								type="text"
 								v-model="groupNameModel"
+								type="text"
 								class="form-control"
 							/>
 						</div>
@@ -42,15 +42,15 @@
 				<div class="row submit-row">
 					<div class="col-md-12">
 						<button
-							class="btn btn-danger"
-							v-on:click="confirmDelete"
 							v-if="parseInt(groupResults[0].pk) !== 1"
+							class="btn btn-danger"
+							@click="confirmDelete"
 						>
 							Delete Group
 						</button>
 						<button
 							class="btn btn-primary save-changes"
-							v-on:click="updateGroup"
+							@click="updateGroup"
 						>
 							Update Group
 						</button>
@@ -60,7 +60,7 @@
 		</div>
 
 		<confirm-group-delete
-			v-bind:group-id="groupResults[0].pk"
+			:group-id="groupResults[0].pk"
 		></confirm-group-delete>
 	</n-config-provider>
 </template>
@@ -111,6 +111,29 @@ export default {
 			parentGroupModel: this.groupResults[0].fields.parent_group,
 		}
 	},
+	mounted() {
+		// Create the parent group fix list
+		const parent_group_fix_list = this.parentGroupResults.map((row) => {
+			return {
+				group_name: row.fields.group_name,
+				label: row.fields.group_name,
+				value: row.pk,
+			};
+		});
+
+		//Set the variables
+		this.parentGroupFixList = parent_group_fix_list;
+
+		//Send the rootUrl to VueX
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+		});
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.groupNameModel,
+		});
+	},
 	methods: {
 		useNBTheme,
 		confirmDelete() {
@@ -158,29 +181,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		// Create the parent group fix list
-		const parent_group_fix_list = this.parentGroupResults.map((row) => {
-			return {
-				group_name: row.fields.group_name,
-				label: row.fields.group_name,
-				value: row.pk,
-			};
-		});
-
-		//Set the variables
-		this.parentGroupFixList = parent_group_fix_list;
-
-		//Send the rootUrl to VueX
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-		});
-		this.$store.commit({
-			type: "updateTitle",
-			title: this.groupNameModel,
-		});
 	},
 };
 </script>

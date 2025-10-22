@@ -11,10 +11,10 @@
 			<div class="form-group">
 				<label>Required By/Stakeholder:</label>
 				<input
+					v-model="requiredByModel"
 					type="text"
 					class="form-control"
-					v-bind:disabled="isReadOnly"
-					v-model="requiredByModel"
+					:disabled="isReadOnly"
 				/>
 			</div>
 		</div>
@@ -25,6 +25,11 @@
 import { mapGetters } from "vuex";
 export default {
 	name: "RequiredBy",
+	data() {
+		return {
+			updateTimer: "",
+		}
+	},
 	computed: {
 		...mapGetters({
 			isReadOnly: "getIsChangeTaskReadOnly",
@@ -51,11 +56,6 @@ export default {
 				}, 1200)
 			},
 		},
-	},
-	data() {
-		return {
-			updateTimer: "",
-		}
 	},
 	methods: {
 		updateRequiredBy(requiredBy) {

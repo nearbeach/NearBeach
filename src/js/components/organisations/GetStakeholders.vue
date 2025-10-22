@@ -8,7 +8,7 @@
 			</p>
 			<p class="text-instructions">
 				If you can not find your organisation, please
-				<a v-bind:href="`${rootUrl}new_organisation/`" target="_blank" rel="noopener noreferrer" >
+				<a :href="`${rootUrl}new_organisation/`" target="_blank" rel="noopener noreferrer" >
 					click here to create it.
 				</a>
 				Then search for it again
@@ -19,17 +19,17 @@
 				<label
 				>Stakeholder Organisation
 					<validation-rendering
-						v-bind:error-list="v$.stakeholderModel.$errors"
+						:error-list="v$.stakeholderModel.$errors"
 					></validation-rendering>
 				</label>
 				<n-select
+					v-model:value="stakeholderModel"
 					:options="stakeholderFixList"
 					filterable
 					placeholder="Search Stakeholders"
-					@search="fetchOptions"
-					v-model:value="stakeholderModel"
 					label="organisation_name"
 					class="get-stakeholders"
+					@search="fetchOptions"
 				/>
 			</div>
 		</div>
@@ -50,15 +50,15 @@ import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "GetStakeholders",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		NSelect,
 		ValidationRendering,
 	},
-	emits: ['update_stakeholder_model'],
 	props: {
+	},
+	emits: ['update_stakeholder_model'],
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -76,6 +76,18 @@ export default {
 		...mapGetters({
 			rootUrl: "getRootUrl",
 		}),
+	},
+	watch: {
+		stakeholderModel() {
+			//Send the changes upstream
+			this.$emit("update_stakeholder_model", this.stakeholderModel);
+		},
+	},
+	mounted() {
+		this.$nextTick(() => {
+			//Get a default list when mounted
+			this.getOrganisationData("", "");
+		});
 	},
 	methods: {
 		fetchOptions(search, loading) {
@@ -123,18 +135,6 @@ export default {
 				})
 			});
 		},
-	},
-	watch: {
-		stakeholderModel() {
-			//Send the changes upstream
-			this.$emit("update_stakeholder_model", this.stakeholderModel);
-		},
-	},
-	mounted() {
-		this.$nextTick(() => {
-			//Get a default list when mounted
-			this.getOrganisationData("", "");
-		});
 	},
 };
 </script>

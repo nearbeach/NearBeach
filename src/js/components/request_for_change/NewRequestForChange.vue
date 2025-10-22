@@ -5,57 +5,57 @@
 				<h1>New Request for Change</h1>
 				<hr/>
 
-				<rfc-wizard v-bind:current-tab="currentTab"></rfc-wizard>
+				<rfc-wizard :current-tab="currentTab"></rfc-wizard>
 
 				<!-- DESCRIPTION -->
 				<rfc-description
-					v-bind:uuid="uuid"
-					v-on:update_values="updateValues($event)"
-					v-on:update_validation="updateValidation($event)"
-					v-bind:static-url="staticUrl"
-					v-bind:style="displayTab(0)"
+					:uuid="uuid"
+					:static-url="staticUrl"
+					:style="displayTab(0)"
+					@update_values="updateValues($event)"
+					@update_validation="updateValidation($event)"
 				></rfc-description>
 
 				<!-- Details -->
 				<rfc-details
-					v-bind:uuid="uuid"
-					v-bind:group-results="groupResults"
-					v-bind:user-group-permissions="userGroupPermissions"
-					v-on:update_validation="updateValidation($event)"
-					v-on:update_values="updateValues($event)"
-					v-bind:style="displayTab(1)"
+					:uuid="uuid"
+					:group-results="groupResults"
+					:user-group-permissions="userGroupPermissions"
+					:style="displayTab(1)"
+					@update_validation="updateValidation($event)"
+					@update_values="updateValues($event)"
 				></rfc-details>
 
 				<!-- Risk -->
 				<rfc-risk
-					v-bind:uuid="uuid"
-					v-on:update_values="updateValues($event)"
-					v-on:update_validation="updateValidation($event)"
-					v-bind:style="displayTab(2)"
+					:uuid="uuid"
+					:style="displayTab(2)"
+					@update_values="updateValues($event)"
+					@update_validation="updateValidation($event)"
 				></rfc-risk>
 
 				<!-- Implementation Plan -->
 				<rfc-implementation-plan
-					v-bind:uuid="uuid"
-					v-on:update_values="updateValues($event)"
-					v-on:update_validation="updateValidation($event)"
-					v-bind:style="displayTab(3)"
+					:uuid="uuid"
+					:style="displayTab(3)"
+					@update_values="updateValues($event)"
+					@update_validation="updateValidation($event)"
 				></rfc-implementation-plan>
 
 				<!-- Backout Plan -->
 				<rfc-backout-plan
-					v-bind:uuid="uuid"
-					v-on:update_values="updateValues($event)"
-					v-on:update_validation="updateValidation($event)"
-					v-bind:style="displayTab(4)"
+					:uuid="uuid"
+					:style="displayTab(4)"
+					@update_values="updateValues($event)"
+					@update_validation="updateValidation($event)"
 				></rfc-backout-plan>
 
 				<!-- Test Plan -->
 				<rfc-test-plan
-					v-bind:uuid="uuid"
-					v-on:update_values="updateValues($event)"
-					v-on:update_validation="updateValidation($event)"
-					v-bind:style="displayTab(5)"
+					:uuid="uuid"
+					:style="displayTab(5)"
+					@update_values="updateValues($event)"
+					@update_validation="updateValidation($event)"
 				></rfc-test-plan>
 
 				<!-- NAVIGATIONS-->
@@ -63,26 +63,29 @@
 				<div class="row submit-row">
 					<div class="col-md-12">
 						<!-- PREVIOUS -->
-						<button class="btn btn-primary"
-								v-on:click="previousTab"
-								v-if="currentTab!==0"
+						<button
+v-if="currentTab!==0"
+								class="btn btn-primary"
+								@click="previousTab"
 						>
 							Previous
 						</button>
 
 						<!-- NEXT -->
-						<button class="btn btn-primary save-changes"
-								v-on:click="nextTab"
-								v-if="currentTab!==5"
+						<button
+v-if="currentTab!==5"
+								class="btn btn-primary save-changes"
+								@click="nextTab"
 						>
 							Next
 						</button>
 
 						<!-- SUMBIT-->
-						<button class="btn btn-primary save-changes"
-								v-on:click="submitRfc"
-								v-if="currentTab===5"
-								v-bind:disabled="disableSubmitButton"
+						<button
+v-if="currentTab===5"
+								class="btn btn-primary save-changes"
+								:disabled="disableSubmitButton"
+								@click="submitRfc"
 						>
 							Create new Request for Change
 						</button>
@@ -175,6 +178,19 @@ export default {
 			tab_5: false,
 		},
 	}),
+	async beforeMount() {
+		await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		//Send the Root and Static URL to VueX
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+	},
 	methods: {
 		useNBTheme,
 		displayTab(tab_id) {
@@ -294,19 +310,6 @@ export default {
 			//Update the value
 			this.rfcData[data.modelName] = data.modelValue;
 		},
-	},
-	async beforeMount() {
-		await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		//Send the Root and Static URL to VueX
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
 	},
 };
 </script>

@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="addBugModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -13,11 +13,11 @@
 						Add Bugs Wizard
 					</h2>
 					<button
+						id="addBugsCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="addBugsCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -39,10 +39,10 @@
 							<div class="form-group">
 								<label>Bug Client</label>
 								<n-select
+									v-model:value="bugClientModel"
 									:options="bugClientList"
 									label="bug_client_name"
 									option="bug_client_id"
-									v-model:value="bugClientModel"
 								></n-select>
 							</div>
 
@@ -50,12 +50,12 @@
 							<div class="form-group mt-4">
 								<label>Search Keywords</label>
 								<input
-									type="text"
 									v-model="searchModel"
+									type="text"
 									class="form-control"
-									v-bind:disabled="bugClientModel == ''"
-									v-on:keydown="startSearchTimer"
+									:disabled="bugClientModel == ''"
 									maxlength="50"
+									@keydown="startSearchTimer"
 								/>
 							</div>
 
@@ -99,10 +99,10 @@
 										v-for="bug in bugResults"
 										:key="bug.id"
 									>
-										<td v-bind:id="`bug_no_${bug.id}`">
+										<td :id="`bug_no_${bug.id}`">
 											<a
 												href="javascript:void(0)"
-												v-on:click="
+												@click="
 														submitBug(bug.id)
 													"
 											>
@@ -155,9 +155,6 @@ export default {
 	components: {
 		NSelect,
 	},
-	emits: [
-		'append_bug_list',
-	],
 	props: {
 		destination: {
 			type: String,
@@ -168,12 +165,9 @@ export default {
 			default: 0,
 		},
 	},
-	computed: {
-		...mapGetters({
-			rootUrl: "getRootUrl",
-			staticUrl: "getStaticUrl",
-		}),
-	},
+	emits: [
+		'append_bug_list',
+	],
 	data() {
 		return {
 			bugClientModel: "",
@@ -183,6 +177,22 @@ export default {
 			searchOn: false,
 			searchTimer: "",
 		};
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+		}),
+	},
+	mounted() {
+		//If the location is inside the array - don't bother getting the data
+		const escape_array = ["requirement_item"];
+		if (escape_array.indexOf(this.destination) >= 0) return;
+
+		//Wait 200ms before getting data
+		this.$nextTick(() => {
+			this.loadBugClientList();
+		});
 	},
 	methods: {
 		loadBugClientList() {
@@ -291,16 +301,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		//If the location is inside the array - don't bother getting the data
-		const escape_array = ["requirement_item"];
-		if (escape_array.indexOf(this.destination) >= 0) return;
-
-		//Wait 200ms before getting data
-		this.$nextTick(() => {
-			this.loadBugClientList();
-		});
 	},
 };
 </script>

@@ -11,18 +11,18 @@
                 <label for="kanban_board">
                     Kanban Board
                     <validation-rendering
-                        v-bind:error-list="v$.kanbanBoardModel.$errors"
+                        :error-list="v$.kanbanBoardModel.$errors"
                     ></validation-rendering>
                 </label>
                 <n-select
+					v-model:value="kanbanBoardModel"
 					:options="kanbanBoardOptions"
 					filterable
 					placeholder="Search Kanban Boards"
-					@search="fetchKanbanBoardOptions"
-					v-model:value="kanbanBoardModel"
 					label-field="kanban_board_name"
-                    value-field="kanban_board_id"
-					class="get-stakeholders"
+					value-field="kanban_board_id"
+                    class="get-stakeholders"
+					@search="fetchKanbanBoardOptions"
 				/>
             </div>
         </div>
@@ -40,14 +40,14 @@
 				<label for="kanban_column">
 					Kanban Column
 					<validation-rendering
-						v-bind:error-list="v$.kanbanBoardModel.$errors"
+						:error-list="v$.kanbanBoardModel.$errors"
 					></validation-rendering>
 				</label>
 				<n-select
+					v-model:value="kanbanColumnModel"
 					:options="kanbanColumnOptions"
 					filterable
 					placeholder="Search Columns"
-					v-model:value="kanbanColumnModel"
 					label-field="kanban_column_name"
 					value-field="kanban_column_id"
 				/>
@@ -58,14 +58,14 @@
 				<label for="kanban_board">
 					Kanban Level
 					<validation-rendering
-						v-bind:error-list="v$.kanbanBoardModel.$errors"
+						:error-list="v$.kanbanBoardModel.$errors"
 					></validation-rendering>
 				</label>
 				<n-select
+					v-model:value="kanbanLevelModel"
 					:options="kanbanLevelOptions"
 					filterable
 					placeholder="Search Levels"
-					v-model:value="kanbanLevelModel"
 					label-field="kanban_level_name"
 					value-field="kanban_level_id"
 					class="get-stakeholders"
@@ -88,12 +88,6 @@ export default {
         NSelect,
         ValidationRendering
     },
-	setup() {
-		return {v$: useVuelidate()};
-	},
-	emits: [
-		"update_kanban_settings",
-	],
 	props: {
 		initKanbanBoardId: {
 			type: Number,
@@ -107,6 +101,12 @@ export default {
 			type: Number,
 			default: undefined,
 		},
+	},
+	emits: [
+		"update_kanban_settings",
+	],
+	setup() {
+		return {v$: useVuelidate()};
 	},
     data() {
         return {
@@ -150,6 +150,9 @@ export default {
 			this.updateDetails();
 		},
     },
+    mounted() {
+        this.fetchKanbanBoardOptions();
+    },
     methods: {
         fetchKanbanBoardOptions() {
             this.axios.get(
@@ -192,9 +195,6 @@ export default {
 				"kanbanLevelModel": parseInt(this.kanbanLevelModel),
 			});
         },
-    },
-    mounted() {
-        this.fetchKanbanBoardOptions();
     }
 }
 </script>

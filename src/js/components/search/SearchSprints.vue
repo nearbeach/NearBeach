@@ -11,17 +11,17 @@
 					<div class="form-group">
 						<label>Search:</label>
 						<input
+							v-model="searchModel"
 							type="text"
 							class="form-control search-organisation"
-							v-model="searchModel"
 							maxlength="250"
 						/>
 					</div>
 					<div class="form-group">
 						<input
-							type="checkbox"
 							id="inlcudeClosedObjects"
 							v-model="includeClosedObjectsModel"
+							type="checkbox"
 						/>
 						<label for="inlcudeClosedObjects">
 							Include Closed Objects</label
@@ -35,12 +35,12 @@
 		<!-- SPRINTS -->
 		<list-search-results
 			v-if="searchResults.length > 0"
-			v-bind:search-results="searchResults"
-			v-bind:import-variables="sprintVariables"
-			v-bind:number-of-pages="numberOfPages"
-			v-bind:current-page="currentPage"
-			v-on:get_search_results="changePage"
+			:search-results="searchResults"
+			:import-variables="sprintVariables"
+			:number-of-pages="numberOfPages"
+			:current-page="currentPage"
 			destination="sprint"
+			@get_search_results="changePage"
 		></list-search-results>
 
 		<!-- WHEN THERE ARE NO RESULTS -->
@@ -85,6 +85,43 @@ export default {
 			searchTimeout: "",
 		};
 	},
+	watch: {
+		includeClosedObjectsModel() {
+			//Stop the clock
+			if (this.searchTimeout !== "") {
+				//Stop the clock!
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Get the search results - we don't need to wait for this case
+			this.getSearchResults();
+		},
+		searchModel() {
+			//Reset the timer if it exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock!
+				clearTimeout(this.searchTimeout);
+			}
+
+			this.searchTimeout = setTimeout(
+				this.getSearchResults,
+				500
+			);
+		},
+	},
+	mounted() {
+		//Send RootURL upstream
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		//If the include closed is undefined - then we want to define it
+		if (this.includeClosed === undefined) {
+			this.includeClosedObjectsModel = false;
+		}
+	},
 	methods: {
 		changePage(data) {
 			this.currentPage = data.destination_page;
@@ -125,43 +162,6 @@ export default {
 				});
 			});
 		},
-	},
-	watch: {
-		includeClosedObjectsModel() {
-			//Stop the clock
-			if (this.searchTimeout !== "") {
-				//Stop the clock!
-				clearTimeout(this.searchTimeout);
-			}
-
-			//Get the search results - we don't need to wait for this case
-			this.getSearchResults();
-		},
-		searchModel() {
-			//Reset the timer if it exists
-			if (this.searchTimeout !== "") {
-				//Stop the clock!
-				clearTimeout(this.searchTimeout);
-			}
-
-			this.searchTimeout = setTimeout(
-				this.getSearchResults,
-				500
-			);
-		},
-	},
-	mounted() {
-		//Send RootURL upstream
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-
-		//If the include closed is undefined - then we want to define it
-		if (this.includeClosed === undefined) {
-			this.includeClosedObjectsModel = false;
-		}
 	},
 };
 </script>

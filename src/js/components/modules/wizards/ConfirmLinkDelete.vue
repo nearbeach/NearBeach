@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmLinkDeleteModal"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,18 +12,18 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="confirmLinkDelete"
+						class="modal-title"
 					>
 						Please confirm Link Deletion
 					</h5>
 					<!-- TASK INFORMATION -->
 					<button
+						id="confirmLinkDeleteButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmLinkDeleteButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -36,8 +36,9 @@
 							<strong>Title: </strong>{{objectLink.object_title}}
 						</p>
 					</div>
-					<div class="row mt-2"
-						 v-if="objectLink.link_relationship.toLowerCase() === 'block'"
+					<div
+v-if="objectLink.link_relationship.toLowerCase() === 'block'"
+						 class="row mt-2"
 					>
 						<p class="mb-0">
 							Alternatively, for any Blocked links we can migrate them to the "Related" status.
@@ -48,7 +49,7 @@
 					<button
 						type="button"
 						class="btn btn-secondary me-auto"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						Cancel
 					</button>
@@ -56,12 +57,12 @@
 						v-if="objectLink.link_relationship.toLowerCase() === 'block' && showMigrateButton"
 						type="button"
 						class="btn btn-info"
-						v-on:click="processLink('migrate')"
+						@click="processLink('migrate')"
 					>Migrate Link</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="processLink('remove')"
+						@click="processLink('remove')"
 					>
 						Delete Link
 					</button>
@@ -76,15 +77,15 @@ import {mapGetters} from "vuex";
 
 export default {
 	name: "ConfirmLinkDelete",
-	emits: [
-		'update_link_results',
-	],
 	props: {
 		showMigrateButton: {
 			type: Boolean,
 			default: true,
 		},
 	},
+	emits: [
+		'update_link_results',
+	],
 	computed: {
 		...mapGetters({
 			destination: "getDestination",

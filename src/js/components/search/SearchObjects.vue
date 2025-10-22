@@ -11,29 +11,30 @@
 					<div class="form-group">
 						<label>Search:</label>
 						<input
+							v-model="searchModel"
 							type="text"
 							class="form-control search-organisation"
-							v-model="searchModel"
 							maxlength="250"
 						/>
 					</div>
 					<div class="form-group">
 						<input
-							type="checkbox"
 							id="inlcudeClosedObjects"
 							v-model="includeClosedObjectsModel"
+							type="checkbox"
 						/>
 						<label for="inlcudeClosedObjects">
 							Include Closed Objects</label
 						>
 					</div>
-					<div class="form-group"
-						 v-if="isSuperuser"
+					<div
+v-if="isSuperuser"
+						 class="form-group"
 					>
 						<input
-							type="checkbox"
 							id="includeAllGroups"
 							v-model="includeAllGroupsModel"
+							type="checkbox"
 						/>
 						<label for="includeAllGroups">
 							Include All Groups</label
@@ -47,56 +48,56 @@
 		<!-- REQUEST FOR CHANGE RESULTS -->
 		<list-search-results
 			v-if="searchResults.request_for_change.length > 0"
-			v-bind:currentPage="searchResults.request_for_change_current_page"
-			v-bind:search-results="searchResults.request_for_change"
-			v-bind:import-variables="requestForChangeVariables"
-			v-bind:number-of-pages="searchResults.request_for_change_number_of_pages"
-			v-on:get_search_results="getSearchResults($event)"
+			:current-page="searchResults.request_for_change_current_page"
+			:search-results="searchResults.request_for_change"
+			:import-variables="requestForChangeVariables"
+			:number-of-pages="searchResults.request_for_change_number_of_pages"
 			destination="rfc"
+			@get_search_results="getSearchResults($event)"
 		></list-search-results>
 
 		<!-- REQUIREMENTS RESULTS -->
 		<list-search-results
 			v-if="searchResults.requirement.length > 0"
-			v-bind:currentPage="searchResults.requirement_current_page"
-			v-bind:search-results="searchResults.requirement"
-			v-bind:import-variables="requirementVariables"
-			v-bind:number-of-pages="searchResults.requirement_number_of_pages"
-			v-on:get_search_results="getSearchResults($event)"
+			:current-page="searchResults.requirement_current_page"
+			:search-results="searchResults.requirement"
+			:import-variables="requirementVariables"
+			:number-of-pages="searchResults.requirement_number_of_pages"
 			destination="requirement"
+			@get_search_results="getSearchResults($event)"
 		></list-search-results>
 
 		<!-- PROJECT RESULTS -->
 		<list-search-results
 			v-if="searchResults.project.length > 0"
-			v-bind:currentPage="searchResults.project_current_page"
-			v-bind:search-results="searchResults.project"
-			v-bind:import-variables="projectVariables"
-			v-bind:number-of-pages="searchResults.project_number_of_pages"
-			v-on:get_search_results="getSearchResults($event)"
+			:current-page="searchResults.project_current_page"
+			:search-results="searchResults.project"
+			:import-variables="projectVariables"
+			:number-of-pages="searchResults.project_number_of_pages"
 			destination="project"
+			@get_search_results="getSearchResults($event)"
 		></list-search-results>
 
 		<!-- TASK RESULTS -->
 		<list-search-results
 			v-if="searchResults.task.length > 0"
-			v-bind:currentPage="searchResults.task_current_page"
-			v-bind:search-results="searchResults.task"
-			v-bind:import-variables="taskVariables"
-			v-bind:number-of-pages="searchResults.task_number_of_pages"
-			v-on:get_search_results="getSearchResults($event)"
+			:current-page="searchResults.task_current_page"
+			:search-results="searchResults.task"
+			:import-variables="taskVariables"
+			:number-of-pages="searchResults.task_number_of_pages"
 			destination="task"
+			@get_search_results="getSearchResults($event)"
 		></list-search-results>
 
 		<!-- KANBAN RESULTS -->
 		<list-search-results
 			v-if="searchResults.kanban_board.length > 0"
-			v-bind:currentPage="searchResults.kanban_board_current_page"
-			v-bind:search-results="searchResults.kanban_board"
-			v-bind:import-variables="kanbanVariables"
-			v-bind:number-of-pages="searchResults.kanban_board_number_of_pages"
-			v-on:get_search_results="getSearchResults($event)"
+			:current-page="searchResults.kanban_board_current_page"
+			:search-results="searchResults.kanban_board"
+			:import-variables="kanbanVariables"
+			:number-of-pages="searchResults.kanban_board_number_of_pages"
 			destination="kanban_board"
+			@get_search_results="getSearchResults($event)"
 		></list-search-results>
 
 		<!-- WHEN THERE ARE NO RESULTS -->
@@ -192,6 +193,61 @@ export default {
 			},
 		};
 	},
+	watch: {
+		includeAllGroupsModel() {
+			//Stop the clock
+			if (this.searchTimeout !== "") {
+				//Stop the clock!
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Get the search results - we don't need to wait for this case
+			this.getSearchResults({
+				"array_of_objects": this.allObjects,
+				"destination_page": 1,
+			});
+		},
+		includeClosedObjectsModel() {
+			//Stop the clock
+			if (this.searchTimeout !== "") {
+				//Stop the clock!
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Get the search results - we don't need to wait for this case
+			this.getSearchResults({
+				"array_of_objects": this.allObjects,
+				"destination_page": 1,
+			});
+		},
+		searchModel() {
+			//Reset the timer if it exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock!
+				clearTimeout(this.searchTimeout);
+			}
+
+			this.searchTimeout = setTimeout(() => {
+				this.getSearchResults({
+					"array_of_objects": this.allObjects,
+					"destination_page": 1,
+				});
+			}, 500);
+		},
+	},
+	mounted() {
+		//Send RootURL upstream
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+
+		this.getSearchResults({
+			"array_of_objects": this.allObjects,
+			"destination_page": 1,
+		});
+	},
 	methods: {
 		getSearchResults(search_args) {
 			this.isCurrentlySearching = true;
@@ -252,61 +308,6 @@ export default {
 
 			return condition_1 && condition_2;
 		}
-	},
-	watch: {
-		includeAllGroupsModel() {
-			//Stop the clock
-			if (this.searchTimeout !== "") {
-				//Stop the clock!
-				clearTimeout(this.searchTimeout);
-			}
-
-			//Get the search results - we don't need to wait for this case
-			this.getSearchResults({
-				"array_of_objects": this.allObjects,
-				"destination_page": 1,
-			});
-		},
-		includeClosedObjectsModel() {
-			//Stop the clock
-			if (this.searchTimeout !== "") {
-				//Stop the clock!
-				clearTimeout(this.searchTimeout);
-			}
-
-			//Get the search results - we don't need to wait for this case
-			this.getSearchResults({
-				"array_of_objects": this.allObjects,
-				"destination_page": 1,
-			});
-		},
-		searchModel() {
-			//Reset the timer if it exists
-			if (this.searchTimeout !== "") {
-				//Stop the clock!
-				clearTimeout(this.searchTimeout);
-			}
-
-			this.searchTimeout = setTimeout(() => {
-				this.getSearchResults({
-					"array_of_objects": this.allObjects,
-					"destination_page": 1,
-				});
-			}, 500);
-		},
-	},
-	mounted() {
-		//Send RootURL upstream
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-
-		this.getSearchResults({
-			"array_of_objects": this.allObjects,
-			"destination_page": 1,
-		});
 	},
 };
 </script>

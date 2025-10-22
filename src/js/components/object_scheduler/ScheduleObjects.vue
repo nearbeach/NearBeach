@@ -9,37 +9,41 @@
 				<div class="form-group">
 					<label>Search:</label>
 					<input
+						v-model="searchModel"
 						type="text"
 						class="form-control search-organisation"
-						v-model="searchModel"
 						maxlength="250"
 					/>
 				</div>
 			</div>
 			<hr/>
 
-			<div class="scheduled-object-loader"
-				 v-if="isLoadingData"
+			<div
+v-if="isLoadingData"
+				 class="scheduled-object-loader"
 			>
 				<img
-					v-bind:src="`${staticUrl}NearBeach/images/placeholder/loading_re.svg`"
+					:src="`${staticUrl}NearBeach/images/placeholder/loading_re.svg`"
 					alt="Please wait whilst we load in the scheduled objects"
 				/>
 			</div>
-			<div class="alert alert-info"
-				 v-else-if="scheduleObjectResults.length === 0"
+			<div
+v-else-if="scheduleObjectResults.length === 0"
+				 class="alert alert-info"
 			>
 				Currently there are no scheduled objects.
 			</div>
-			<div v-else
+			<div
+v-else
  				class="object-card-list"
 			>
-				<div class="object-card"
-					 v-for="result in scheduleObjectResults"
+				<div
+v-for="result in scheduleObjectResults"
 					 :key="result.schedule_object_id"
+					 class="object-card"
 				>
 					<div class="object-card--detail">
-						<a v-bind:href="`${rootUrl}scheduled_object_information/${result.schedule_object_id}/`">
+						<a :href="`${rootUrl}scheduled_object_information/${result.schedule_object_id}/`">
 							<div class="object-card--detail--link">
 								Sch{{ result.schedule_object_id }}<br/>
 								<strong>Frequency: </strong> {{ result.frequency }}<br/>
@@ -51,7 +55,7 @@
 						</a>
 					</div>
 					<div class="object-card--status">
-						<a v-bind:href="`${rootUrl}scheduled_object_information/${result.schedule_object_id}/`">
+						<a :href="`${rootUrl}scheduled_object_information/${result.schedule_object_id}/`">
 							<div class="object-card--status--status">
 								<span v-if="result.is_active">Active Schedule</span>
 								<span v-else>Deactivated</span>
@@ -62,11 +66,13 @@
 			</div>
 
 			<hr v-if="canUserAddScheduledObject">
-			<div class="row submit-row"
-				v-if="canUserAddScheduledObject"
+			<div
+v-if="canUserAddScheduledObject"
+				class="row submit-row"
 			>
 				<div class="col-md-12">
-					<a href="/new_scheduled_object/"
+					<a
+href="/new_scheduled_object/"
 					   class="btn btn-primary save-changes"
 					>
 						New Scheduled Object
@@ -133,6 +139,9 @@ export default {
 			}
 		},
 	},
+	mounted() {
+		this.getScheduleObjectResults();
+	},
 	methods: {
 		getScheduleObjectResults() {
 			const data_to_send = new FormData();
@@ -164,9 +173,6 @@ export default {
 
 			return "Kanban Card";
 		},
-	},
-	mounted() {
-		this.getScheduleObjectResults();
 	}
 }
 </script>

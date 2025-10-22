@@ -1,14 +1,16 @@
 <template>
 	<div class="object-card-list">
 		<h2 v-if="importVariables.header !== ''">{{ importVariables.header }}</h2>
-		<div class="object-card"
+		<div
+v-for="result in searchResults"
 			 v-if="searchResults.length > 0"
-			 v-for="result in searchResults"
 			 :key="result.pk"
+			 class="object-card"
 		>
 			<div class="object-card--detail">
-				<a v-bind:href="`${rootUrl}${tempTranslate(destination)}_information/${result[importVariables.id]}/`"
-					v-bind:target="target"
+				<a
+:href="`${rootUrl}${tempTranslate(destination)}_information/${result[importVariables.id]}/`"
+					:target="target"
 				>
 					<div class="object-card--detail--link">
 						{{ importVariables.prefix }}{{ result[importVariables.id] }}
@@ -19,8 +21,9 @@
 				</a>
 			</div>
 			<div class="object-card--status">
-				<a v-bind:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`"
-					v-bind:target="target"
+				<a
+:href="`${rootUrl}${destination}_information/${result[importVariables.id]}/`"
+					:target="target"
 				>
 					<div class="object-card--status--status">
 						{{ result[importVariables.status] }}
@@ -33,8 +36,9 @@
 		</div>
 
 		<!-- Loading state -->
-		<div class="object-card"
-			 v-if="searchResults.length === 0"
+		<div
+v-if="searchResults.length === 0"
+			 class="object-card"
 		>
 			<div class="object-card--detail">
 				<p class="card-text placeholder-glow">
@@ -57,16 +61,6 @@ import {useNiceDatetime} from "Composables/datetime/useNiceDatetime";
 
 export default {
 	name: "RenderObjectCard",
-	methods: {
-		useNiceDatetime,
-		tempTranslate(destination) {
-			if (destination === "kanban_board") {
-				return "kanban";
-			}
-
-			return destination;
-		}
-	},
 	props: {
 		destination: {
 			type: String,
@@ -99,6 +93,16 @@ export default {
 		...mapGetters({
 			rootUrl: "getRootUrl",
 		}),
+	},
+	methods: {
+		useNiceDatetime,
+		tempTranslate(destination) {
+			if (destination === "kanban_board") {
+				return "kanban";
+			}
+
+			return destination;
+		}
 	},
 }
 </script>

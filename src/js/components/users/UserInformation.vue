@@ -2,7 +2,7 @@
 	<div class="card">
 		<div class="card-body">
 			<h1 class="mb-4">User Information</h1>
-			<a v-bind:href="`${this.rootUrl}search/user/`">
+			<a :href="`${rootUrl}search/user/`">
 				Go back to user list
 			</a>
 			<hr/>
@@ -43,13 +43,13 @@
 							<label for="first-name">
 								First Name:
 								<validation-rendering
-									v-bind:error-list="v$.firstNameModel.$errors"
+									:error-list="v$.firstNameModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
 								id="first-name"
-								type="text"
 								v-model="firstNameModel"
+								type="text"
 								class="form-control"
 							/>
 						</div>
@@ -57,13 +57,13 @@
 							<label for="last-name">
 								Last Name:
 								<validation-rendering
-									v-bind:error-list="v$.lastNameModel.$errors"
+									:error-list="v$.lastNameModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
 								id="last-name"
-								type="text"
 								v-model="lastNameModel"
+								type="text"
 								class="form-control"
 							/>
 						</div>
@@ -71,13 +71,13 @@
 							<label for="email">
 								Email:
 								<validation-rendering
-									v-bind:error-list="v$.emailModel.$errors"
+									:error-list="v$.emailModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
 								id="email"
-								type="email"
 								v-model="emailModel"
+								type="email"
 								class="form-control"
 							/>
 						</div>
@@ -97,8 +97,8 @@
 				<div class="col-md-8">
 					<label>Is User Active? </label>
 					<input
-						type="checkbox"
 						v-model="isActiveModel"
+						type="checkbox"
 					/>
 				</div>
 			</div>
@@ -117,8 +117,8 @@
 				<div class="col-md-8">
 					<label>Is User a Superuser? </label>
 					<input
-						type="checkbox"
 						v-model="isSuperuserModel"
+						type="checkbox"
 					/>
 				</div>
 			</div>
@@ -130,7 +130,7 @@
 					<a
 						href="javascript:void(0)"
 						class="btn btn-primary save-changes"
-						v-on:click="updateUser"
+						@click="updateUser"
 					>
 						Update User Details
 					</a>
@@ -150,8 +150,8 @@ import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "UserInformation",
-	setup() {
-		return {v$: useVuelidate()};
+	components: {
+		ValidationRendering,
 	},
 	props: {
 		userResults: {
@@ -165,8 +165,8 @@ export default {
 			default: "/",
 		},
 	},
-	components: {
-		ValidationRendering,
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -191,6 +191,17 @@ export default {
 			email,
 			maxLength: maxLength(255),
 		},
+	},
+	mounted() {
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+		});
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: `${this.firstNameModel} ${this.lastNameModel}`,
+		});
 	},
 	methods: {
 		updateUser() {
@@ -248,17 +259,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-		});
-
-		this.$store.commit({
-			type: "updateTitle",
-			title: `${this.firstNameModel} ${this.lastNameModel}`,
-		});
 	},
 };
 </script>

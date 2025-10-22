@@ -16,12 +16,12 @@
 				<div class="col-md-8">
 					<label
 					>Username:
-						<validation-rendering v-bind:error-list="v$.usernameModel.$errors"
+						<validation-rendering :error-list="v$.usernameModel.$errors"
 						></validation-rendering>
 					</label>
 					<input
-						type="text"
 						v-model="usernameModel"
+						type="text"
 						class="form-control"
 					/>
 				</div>
@@ -41,36 +41,36 @@
 						<div class="col-md-6">
 							<label
 							>First Name:
-								<validation-rendering v-bind:error-list="v$.firstNameModel.$errors"
+								<validation-rendering :error-list="v$.firstNameModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
-								type="text"
 								v-model="firstNameModel"
+								type="text"
 								class="form-control"
 							/>
 						</div>
 						<div class="col-md-6">
 							<label
 							>Last Name:
-								<validation-rendering v-bind:error-list="v$.lastNameModel.$errors"
+								<validation-rendering :error-list="v$.lastNameModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
-								type="text"
 								v-model="lastNameModel"
+								type="text"
 								class="form-control"
 							/>
 						</div>
 						<div class="col-md-6">
 							<label
 							>Email:
-								<validation-rendering v-bind:error-list="v$.emailModel.$errors"
+								<validation-rendering :error-list="v$.emailModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
-								type="email"
 								v-model="emailModel"
+								type="email"
 								class="form-control"
 							/>
 						</div>
@@ -93,24 +93,24 @@
 						<div class="col-md-6">
 							<label>
 								Password
-								<validation-rendering v-bind:error-list="v$.password1Model.$errors"
+								<validation-rendering :error-list="v$.password1Model.$errors"
 								></validation-rendering>
 							</label>
 							<input
-								type="password"
 								v-model="password1Model"
+								type="password"
 								class="form-control"
 							/>
 						</div>
 						<div class="col-md-6">
 							<label>
 								Retype Password
-								<validation-rendering v-bind:error-list="v$.password2Model.$errors"
+								<validation-rendering :error-list="v$.password2Model.$errors"
 								></validation-rendering>
 							</label>
 							<input
-								type="password"
 								v-model="password2Model"
+								type="password"
 								class="form-control"
 							/>
 						</div>
@@ -124,7 +124,7 @@
 					<a
 						href="javascript:void(0)"
 						class="btn btn-primary save-changes"
-						v-on:click="addUser"
+						@click="addUser"
 					>
 						Add new User
 					</a>
@@ -143,9 +143,6 @@ const usernameRegex = helpers.regex(/^[0-9a-zA-Z,_@+.-]{1,150}$/);
 
 export default {
 	name: "NewUser",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		ValidationRendering,
 	},
@@ -154,6 +151,9 @@ export default {
 			type: String,
 			default: "/",
 		},
+	},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {

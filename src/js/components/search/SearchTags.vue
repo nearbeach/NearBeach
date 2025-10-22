@@ -26,13 +26,13 @@
 				<div class="col-md-8 tag-list">
 					<div
 						v-for="tag in localTagResults"
-						v-bind:key="tag.pk"
-						v-bind:style="`background-color: ${tag.fields.tag_colour};color: ${tag.fields.tag_text_colour}`"
-						v-on:dblclick="editTag(tag.pk)"
+						:key="tag.pk"
+						:style="`background-color: ${tag.fields.tag_colour};color: ${tag.fields.tag_text_colour}`"
 						class="single-tag"
+						@dblclick="editTag(tag.pk)"
 					>
 						{{ tag.fields.tag_name }}
-						<span v-on:click="editTag(tag.pk)">
+						<span @click="editTag(tag.pk)">
 							<carbon-information></carbon-information>
 						</span>
 					</div>
@@ -43,10 +43,10 @@
 				<div class="row submit-row">
 					<div class="col-md-12">
 						<a
+							v-if="userLevel >= 3"
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
-							v-on:click="addTag"
-							v-if="userLevel >= 3"
+							@click="addTag"
 						>Add Tag</a
 						>
 					</div>
@@ -55,14 +55,14 @@
 
 			<!-- MODALS -->
 			<edit-tag-modal
-				v-bind:existing-tags="localTagResults"
-				v-bind:tag-colour="singleTagColour"
-				v-bind:tag-id="singleTagId"
-				v-bind:tag-name="singleTagName"
-				v-bind:tag-text-colour="singleTagTextColour"
-				v-on:new_tag="newTag"
-				v-on:delete_tag="deleteTag($event)"
-				v-on:update_tags="updateTags"
+				:existing-tags="localTagResults"
+				:tag-colour="singleTagColour"
+				:tag-id="singleTagId"
+				:tag-name="singleTagName"
+				:tag-text-colour="singleTagTextColour"
+				@new_tag="newTag"
+				@delete_tag="deleteTag($event)"
+				@update_tags="updateTags"
 			></edit-tag-modal>
 		</div>
 	</div>
@@ -110,6 +110,17 @@ export default {
 			singleTagTextColour: "#ffffff",
 			localTagResults: this.tagResults,
 		};
+	},
+	mounted() {
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+		});
+
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
+		});
 	},
 	methods: {
 		addTag() {
@@ -163,17 +174,6 @@ export default {
 			this.localTagResults[index].fields.tag_colour = data.tag_colour;
 			this.localTagResults[index].fields.tag_text_colour = data.tag_text_colour;
 		},
-	},
-	mounted() {
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-		});
-
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: this.userLevel,
-		});
 	},
 };
 </script>

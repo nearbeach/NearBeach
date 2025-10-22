@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="newRunItemModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="newRunItemModalLabel"
 		aria-hidden="true"
@@ -10,22 +10,23 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2
-						class="modal-title"
 						id="newRunItemModalLabel"
+						class="modal-title"
 					>
 						New Change Task
 					</h2>
 					<button
+						id="newRunItemCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="newRunItemCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
 				</div>
-				<div v-if="currentStatus === 'uploading'"
+				<div
+v-if="currentStatus === 'uploading'"
 					 class="modal-body"
 				>
 					<div class="row">
@@ -50,13 +51,13 @@
 								<label>
 									Change Title:
 									<validation-rendering
-										v-bind:error-list="v$.changeTitleModel.$errors"
+										:error-list="v$.changeTitleModel.$errors"
 									></validation-rendering>
 								</label>
 								<input
+									v-model="changeTitleModel"
 									type="text"
 									class="form-control"
-									v-model="changeTitleModel"
 								/>
 							</div>
 						</div>
@@ -81,12 +82,12 @@
 										<label>
 											Start Date:
 											<validation-rendering
-												v-bind:error-list="v$.changeStartDateModel.$errors"
+												:error-list="v$.changeStartDateModel.$errors"
 											></validation-rendering>
 										</label>
 										<n-date-picker
-											type="datetime"
 											v-model:value="changeStartDateModel"
+											type="datetime"
 										></n-date-picker>
 									</div>
 								</div>
@@ -95,17 +96,18 @@
 										<label>
 											End Date:
 											<validation-rendering
-												v-bind:error-list="v$.changeEndDateModel.$errors"
+												:error-list="v$.changeEndDateModel.$errors"
 											></validation-rendering>
 										</label>
 										<n-date-picker
-											type="datetime"
 											v-model:value="changeEndDateModel"
+											type="datetime"
 										></n-date-picker>
 									</div>
 								</div>
 							</div>
-							<div v-if="changeStartDateModel < rfcStartDate"
+							<div
+v-if="changeStartDateModel < rfcStartDate"
 								 class="row"
 							>
 								<div class="spacer"></div>
@@ -114,7 +116,8 @@
 									RFC's new date will reflect this current date time.
 								</div>
 							</div>
-							<div v-if="changeEndDateModel > rfcEndDate"
+							<div
+v-if="changeEndDateModel > rfcEndDate"
 								 class="row"
 							>
 								<div class="spacer"></div>
@@ -143,12 +146,12 @@
 										<label>
 											Implementation User
 											<validation-rendering
-												v-bind:error-list="v$.assignedUserModel.$errors"
+												:error-list="v$.assignedUserModel.$errors"
 											></validation-rendering>
 										</label>
 										<n-select
-											v-bind:options="userList"
 											v-model:value="assignedUserModel"
+											:options="userList"
 										></n-select>
 									</div>
 								</div>
@@ -157,12 +160,12 @@
 										<label>
 											QA User
 											<validation-rendering
-												v-bind:error-list="v$.qaUserModel.$errors"
+												:error-list="v$.qaUserModel.$errors"
 											></validation-rendering>
 										</label>
 										<n-select
 											v-model:value="qaUserModel"
-											v-bind:options="userList"
+											:options="userList"
 										/>
 									</div>
 								</div>
@@ -181,14 +184,14 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="submitAndClose($event)"
+						@click="submitAndClose($event)"
 					>
 						Add & Close Modal
 					</button>
 					<button
 						type="button"
 						class="btn btn-success"
-						v-on:click="submitChangeTask($event)"
+						@click="submitChangeTask($event)"
 					>
 						Add & Create another
 					</button>
@@ -212,20 +215,20 @@ import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "NewChangeTask",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		NDatePicker,
 		NSelect,
 		ValidationRendering,
 	},
-	emits: ['update_change_task_list'],
 	props: {
 		locationId: {
 			type: Number,
 			default: 0,
 		},
+	},
+	emits: ['update_change_task_list'],
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data: () => ({
 		assignedUserModel: null,
@@ -281,6 +284,16 @@ export default {
 		potentialUserList() {
 			this.updateUserList();
 		},
+	},
+	mounted() {
+		//Update the user fixed list
+		this.$nextTick(() => {
+			this.updateUserList();
+		});
+
+		//Update Times
+		this.changeEndDateModel = this.rfcEndDate + (15 * 1000 * 60);
+		this.changeStartDateModel = this.rfcEndDate;
 	},
 	methods: {
 		formatDate(date) {
@@ -400,16 +413,6 @@ export default {
 			//Concatenate the lists
 			this.userList = formatted_user_list.concat(formatted_potential_list);
 		},
-	},
-	mounted() {
-		//Update the user fixed list
-		this.$nextTick(() => {
-			this.updateUserList();
-		});
-
-		//Update Times
-		this.changeEndDateModel = this.rfcEndDate + (15 * 1000 * 60);
-		this.changeStartDateModel = this.rfcEndDate;
 	},
 };
 </script>

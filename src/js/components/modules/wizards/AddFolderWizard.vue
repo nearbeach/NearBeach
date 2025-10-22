@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="addFolderModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -13,11 +13,11 @@
 						Add Folder Wizard
 					</h2>
 					<button
+						id="addFolderCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="addFolderCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -38,10 +38,10 @@
 								>Folder Name</label
 								>
 								<input
-									type="text"
-									v-model="folderDescriptionModel"
-									class="form-control"
 									id="folder_description"
+									v-model="folderDescriptionModel"
+									type="text"
+									class="form-control"
 									maxlength="50"
 								/>
 							</div>
@@ -59,8 +59,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="disableAddFolderButton"
-						v-on:click="addFolder"
+						:disabled="disableAddFolderButton"
+						@click="addFolder"
 					>
 						Add Folder
 					</button>
@@ -101,6 +101,18 @@ export default {
 			currentFolder: "getCurrentFolder",
 			rootUrl: "getRootUrl",
 		}),
+	},
+	updated() {
+		/*If there is no folder description OR the folder description already exists - we want to disable the add
+		button.*/
+		const match = this.existingFolders.filter((row) => {
+			return (
+				row.fields.folder_description === this.folderDescriptionModel
+			);
+		});
+
+		this.disableAddFolderButton =
+			match.length > 0 || this.folderDescriptionModel === "" || this.folderDescriptionModel === null;
 	},
 	methods: {
 		useReopenCardInformation,
@@ -146,18 +158,6 @@ export default {
 					});
 				});
 		},
-	},
-	updated() {
-		/*If there is no folder description OR the folder description already exists - we want to disable the add
-		button.*/
-		const match = this.existingFolders.filter((row) => {
-			return (
-				row.fields.folder_description === this.folderDescriptionModel
-			);
-		});
-
-		this.disableAddFolderButton =
-			match.length > 0 || this.folderDescriptionModel === "" || this.folderDescriptionModel === null;
 	},
 };
 </script>

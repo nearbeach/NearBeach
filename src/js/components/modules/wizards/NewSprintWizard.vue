@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="createNewSprintModal"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -17,11 +17,11 @@
 						Please confirm Link Deletion
 					</h5>
 					<button
+						id="createNewSprintButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="createNewSprintButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -36,9 +36,9 @@
 							<div class="form-group">
 								<label>Sprint Name</label>
 								<input
+									v-model="sprintNameModel"
 									class="form-control"
 									type="text"
-									v-model="sprintNameModel"
 								/>
 							</div>
 
@@ -65,14 +65,14 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						Cancel
 					</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="createNewSprint"
+						@click="createNewSprint"
 					>
 						Create New Sprint
 					</button>
@@ -98,13 +98,6 @@ export default {
 			default: 0,
 		},
 	},
-	computed: {
-		...mapGetters({
-			destination: "getDestination",
-			locationId: "getLocationId",
-			rootUrl: "getRootUrl",
-		})
-	},
 	data() {
 		return {
 			sprintEndDate: 0,
@@ -112,10 +105,26 @@ export default {
 			sprintStartDate: 0,
 		}
 	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			rootUrl: "getRootUrl",
+		})
+	},
 	watch: {
 		sprintResultsLength() {
 			this.updateSprintNameModel();
 		}
+	},
+	mounted() {
+		//Set the sprint start date as today, the end date in 7 days.
+		this.sprintStartDate = new Date().getTime();
+		this.sprintEndDate = this.sprintStartDate + 7 * 1000 * 60 * 60 * 24;
+
+		this.$nextTick(() => {
+			this.updateSprintNameModel();
+		});
 	},
 	methods: {
 		closeModal() {
@@ -176,15 +185,6 @@ export default {
 			//Update the sprint name model
 			this.sprintNameModel = `${this.destination}-${this.locationId} - Sprint ${new_value} - ${date}`;
 		},
-	},
-	mounted() {
-		//Set the sprint start date as today, the end date in 7 days.
-		this.sprintStartDate = new Date().getTime();
-		this.sprintEndDate = this.sprintStartDate + 7 * 1000 * 60 * 60 * 24;
-
-		this.$nextTick(() => {
-			this.updateSprintNameModel();
-		});
 	}
 }
 </script>

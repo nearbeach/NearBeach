@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="newPlannerObjectWizardModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="newPlannerObjectModel"
 		aria-hidden="true"
@@ -13,11 +13,11 @@
 						New Planner Object Wizard
 					</h2>
 					<button
+						id="newPlannerObjectButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="newPlannerObjectButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -34,8 +34,8 @@
 						</div>
 						<div class="col-md-8">
 							<n-select
-								:options="objectSelection"
 								v-model:value="objectModel"
+								:options="objectSelection"
 								class="object-selection"
 							></n-select>
 						</div>
@@ -57,9 +57,9 @@
 								<div class="col-md-6 mt-4">
 									<label>Day</label>
 									<n-select
-										v-bind:options="listOfDays"
-										label="column"
 										v-model:value="dayModel"
+										:options="listOfDays"
+										label="column"
 									></n-select>
 								</div>
 							</div>
@@ -77,31 +77,32 @@
 								connect to this requirement.
 							</p>
 						</div>
-						<div class="col-md-8"
-							 ref="wizard"
-							 v-bind:style="styleHeight"
+						<div
+ref="wizard"
+							 class="col-md-8"
+							 :style="styleHeight"
 						>
 							<!-- SEARCH RESULTS -->
 							<div
-								class="form-group mb-4"
 								v-if="
 									objectModel !== null &&
 									dayModel !== null
 								"
+								class="form-group mb-4"
 							>
 								<label>Search Terms</label>
 								<input
 									id="search_terms"
-									class="form-control"
 									v-model="searchTermModel"
+									class="form-control"
 									type="text"
 								/>
 							</div>
 
 							<!-- LOADING PLACEHOLDER -->
 							<div
-								class="alert alert-info"
 								v-if="objectModel == null || dayModel == null"
+								class="alert alert-info"
 							>
 								Please make sure you have populated the Object Type, and the Day.
 							</div>
@@ -129,27 +130,29 @@
 								"
 								class="alert alert-warning"
 							>
-                                Sorry. It currently looks like there are no {{ this.objectModel }}s assigned to you.
-                                Only assigned {{ this.objectModel }}s will show up here.
+                                Sorry. It currently looks like there are no {{ objectModel }}s assigned to you.
+                                Only assigned {{ objectModel }}s will show up here.
 							</div>
 
-							<div class="wizard-results"
-								 v-if="!isSearching &&
+							<div
+v-if="!isSearching &&
 										objectResults.length > 0 &&
 										objectModel != null"
+								 class="wizard-results"
 							>
-								<div class="wizard-results--card"
-									 v-for="result in objectResults"
+								<div
+v-for="result in objectResults"
 									 :key="result.location_id"
+									 class="wizard-results--card"
 								>
 									<div class="wizard-results--card--tick">
 										<input
+											:id="`checkbox_${result.location_id}`"
+											v-model="linkModel"
 											class="form-check-input"
 											type="checkbox"
 											name="link-option"
-											v-bind:value="result.location_id"
-											v-bind:id="`checkbox_${result.location_id}`"
-											v-model="linkModel"
+											:value="result.location_id"
 										/>
 									</div>
 									<div class="wizard-results--card--content">
@@ -171,23 +174,27 @@
 					<div class="row">
 						<div class="col-md-4"></div>
 						<div class="col-md-8">
-							<nav aria-label="Pagination for New Link Sprint Wizard"
-								 v-if="setOfPages.length > 1"
+							<nav
+v-if="setOfPages.length > 1"
+								 aria-label="Pagination for New Link Sprint Wizard"
 							>
 								<ul class="pagination justify-content-center"
 								>
-									<li v-for="index in setOfPages"
-										v-bind:key="index.destinationPage"
-										v-bind:class="getClasses(index.destinationPage)"
+									<li
+v-for="index in setOfPages"
+										:key="index.destinationPage"
+										:class="getClasses(index.destinationPage)"
 									>
-										<a v-if="parseInt(index.destinationPage) !== parseInt(currentPage)"
+										<a
+v-if="parseInt(index.destinationPage) !== parseInt(currentPage)"
 										   class="page-link"
 										   href="javascript:void(0)"
-										   v-on:click="changePage(index.destinationPage)"
+										   @click="changePage(index.destinationPage)"
 										>
 											{{ index.text }}
 										</a>
-										<span v-else
+										<span
+v-else
 											  class="page-link"
 										>
 											{{ index.text }}
@@ -209,8 +216,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="linkModel.length === 0"
-						v-on:click="saveLinks"
+						:disabled="linkModel.length === 0"
+						@click="saveLinks"
 					>
 						Save changes
 					</button>
@@ -233,14 +240,8 @@ export default {
 	components: {
 		NSelect,
 	},
-	emits: ['update_date_array'],
 	props: {},
-	computed: {
-		...mapGetters({
-			rootUrl: "getRootUrl",
-			staticUrl: "getStaticUrl",
-		}),
-	},
+	emits: ['update_date_array'],
 	data() {
 		return {
 			currentPage: 1,
@@ -269,6 +270,70 @@ export default {
 			setOfPages: [],
 			styleHeight: "",
 		};
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+			staticUrl: "getStaticUrl",
+		}),
+	},
+	watch: {
+		dayModel(new_value) {
+			// If nothing - do nothing
+			if (new_value === null || this.objectModel === null)
+			{
+				this.isSearching = false;
+				return;
+			}
+
+			this.getObjectResults(new_value, 1);
+		},
+		objectModel(new_value) {
+			if (new_value === null)
+			{
+				this.isSearching = false;
+				return;
+			}
+
+			this.linkModel = [];
+
+			if (this.dayModel !== null)
+			{
+				//We could actually search
+				this.getObjectResults(this.dayModel, 1);
+			}
+		},
+		searchTermModel(new_value) {
+			if (this.searchTimeout !== "")
+			{
+				// Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup the time so there are either more than 3 characters, or blank results
+			if (new_value.length >= 3 || new_value.length === 0)
+			{
+				this.searchTimeout = setTimeout(() => {
+					this.getObjectResults(this.dayModel, 1);
+				}, 500);
+			}
+		},
+	},
+	mounted() {
+		//We are setting up the list of days. The first option will always be today's date, followed by the next 7 days.
+		const today = DateTime.now();
+
+		//For loop
+		for (let i = 0; i < 7; i++) {
+			const new_day = today.plus({days: i});
+			const new_day_date = new_day.toFormat("yyyy-LL-dd");
+			const new_day_day = new_day.toFormat("cccc");
+
+			this.listOfDays.push({
+				label: `${new_day_day} - ${new_day_date}`,
+				value: new_day_date,
+			});
+		}
 	},
 	methods: {
 		changePage(destination_page) {
@@ -400,64 +465,6 @@ export default {
 				})
 			});
 		},
-	},
-	watch: {
-		dayModel(new_value) {
-			// If nothing - do nothing
-			if (new_value === null || this.objectModel === null)
-			{
-				this.isSearching = false;
-				return;
-			}
-
-			this.getObjectResults(new_value, 1);
-		},
-		objectModel(new_value) {
-			if (new_value === null)
-			{
-				this.isSearching = false;
-				return;
-			}
-
-			this.linkModel = [];
-
-			if (this.dayModel !== null)
-			{
-				//We could actually search
-				this.getObjectResults(this.dayModel, 1);
-			}
-		},
-		searchTermModel(new_value) {
-			if (this.searchTimeout !== "")
-			{
-				// Stop the clock
-				clearTimeout(this.searchTimeout);
-			}
-
-			//Setup the time so there are either more than 3 characters, or blank results
-			if (new_value.length >= 3 || new_value.length === 0)
-			{
-				this.searchTimeout = setTimeout(() => {
-					this.getObjectResults(this.dayModel, 1);
-				}, 500);
-			}
-		},
-	},
-	mounted() {
-		//We are setting up the list of days. The first option will always be today's date, followed by the next 7 days.
-		const today = DateTime.now();
-
-		//For loop
-		for (let i = 0; i < 7; i++) {
-			const new_day = today.plus({days: i});
-			const new_day_date = new_day.toFormat("yyyy-LL-dd");
-			const new_day_day = new_day.toFormat("cccc");
-
-			this.listOfDays.push({
-				label: `${new_day_day} - ${new_day_date}`,
-				value: new_day_date,
-			});
-		}
 	}
 };
 </script>

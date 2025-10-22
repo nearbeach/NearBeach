@@ -6,22 +6,22 @@
 			<div class="form-group mt-4">
 				<label>Search:</label>
 				<input
-					class="form-control search-groups"
 					v-model="searchModel"
+					class="form-control search-groups"
 				/>
 			</div>
 			<hr/>
 
 			<!-- Search Results -->
 			<div
-				class="list-group"
 				v-if="permissionSetList.length > 0"
+				class="list-group"
 			>
 				<a
-					class="list-group-item list-group-item-action"
 					v-for="permissionSet in permissionSetList"
-					v-bind:key="permissionSet.pk"
-					v-bind:href="`/permission_set_information/${permissionSet.pk}/`"
+					:key="permissionSet.pk"
+					class="list-group-item list-group-item-action"
+					:href="`/permission_set_information/${permissionSet.pk}/`"
 				>
 					<strong>{{
 							permissionSet.fields.permission_set_name
@@ -31,8 +31,8 @@
 			</div>
 
 			<div
-				class="alert alert-warning"
 				v-else
+				class="alert alert-warning"
 			>
 				Sorry, there are no permission sets.
 			</div>
@@ -41,7 +41,7 @@
 			<div class="row submit-row">
 				<div class="col-md-12">
 					<a
-						v-bind:href="`${rootUrl}new_permission_set/`"
+						:href="`${rootUrl}new_permission_set/`"
 						class="btn btn-primary save-changes"
 					>
 						Add new Permission Set
@@ -75,6 +75,23 @@ export default {
 			searchTimeout: "",
 		};
 	},
+	watch: {
+		searchModel() {
+			// Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getSearchResults();
+				}, 500);
+			}
+		},
+	},
 	methods: {
 		getSearchResults() {
 			//Setup data_to_send
@@ -98,23 +115,6 @@ export default {
 						delay: 0,
 					});
 				});
-		},
-	},
-	watch: {
-		searchModel() {
-			// Clear timer if it already exists
-			if (this.searchTimeout !== "") {
-				//Stop the clock
-				clearTimeout(this.searchTimeout);
-			}
-
-			//Setup timer if there are 3 characters or more
-			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
-				//Start the potential search
-				this.searchTimeout = setTimeout(() => {
-					this.getSearchResults();
-				}, 500);
-			}
 		},
 	},
 };

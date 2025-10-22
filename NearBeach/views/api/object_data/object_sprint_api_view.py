@@ -39,26 +39,19 @@ class ObjectSprintViewSet(viewsets.ViewSet):
         description="""
 # 📌 Description
 
-Create Kanban Card against the kanban board.
+Create Sprint against the current destination.
 
 # 🧾 Parameters
 
-- **Destination**: The type of object you are querying. Must be one of:
-  - Kanban Card  
+- **Destination**: The parent object type that you want to connect to the sprint:
   - Project  
-  - Request for Change  
   - Requirement  
-  - Requirement Item  
-  - Task  
 
-- **Location ID**: The unique ID of the specific object instance.
+- **Location ID**: The id of the parent object.
 - **Sprint End Date**: End date of the sprint
 - **Sprint Start Date**: Start date of the sprint
 - **Sprint Name**: Sprint Name
 
-# ✅ Notes
-
-Both the Column/Level id's will need to exist under the current kanban board. Or an error will occur.
         """,
     )
     @api_object_data_permissions(min_permission_level=2)
@@ -92,6 +85,15 @@ Both the Column/Level id's will need to exist under the current kanban board. Or
         )
 
     @extend_schema(
+        description="""Method not implement""",
+        exclude=True,
+    )
+    def destroy(self, request, *args, **kwargs):
+        return Response(
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    @extend_schema(
         description="""
 # 📌 Description
 
@@ -120,4 +122,22 @@ List all the sprints currently connected to the object
         return Response(
             data=serializer.data,
             status=status.HTTP_200_OK,
+        )
+
+    @extend_schema(
+        description="""Method not used""",
+        exclude=True,
+    )
+    def retrieve(self, request, pk, *args, **kwargs):
+        return Response(
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    @extend_schema(
+        description="""Method not used""",
+        exclude=True,
+    )
+    def update(self, request, pk, *args, **kwargs):
+        return Response(
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
         )

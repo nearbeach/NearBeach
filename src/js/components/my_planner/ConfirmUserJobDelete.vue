@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmUserJobDeleteModal"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,17 +12,17 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="confirmUserJobDelete"
+						class="modal-title"
 					>
 						Please confirm User Job Deletion
 					</h5>
 					<button
+						id="confirmUserJobDeleteButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmUserJobDeleteButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -32,14 +32,14 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						No
 					</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="deleteUserJob"
+						@click="deleteUserJob"
 					>
 						Yes
 					</button>
@@ -53,16 +53,16 @@
 import {mapGetters} from "vuex";
 
 export default {
-	name: "confirmUserJobDelete",
-	emits: [
-		'remove_user_job'
-	],
+	name: "ConfirmUserJobDelete",
 	props: {
 		userJobId: {
 			type: Number,
 			default: 0,
 		},
 	},
+	emits: [
+		'remove_user_job'
+	],
 	computed: {
 		...mapGetters({
 			rootUrl: "getRootUrl",

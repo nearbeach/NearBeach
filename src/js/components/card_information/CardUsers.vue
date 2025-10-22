@@ -1,17 +1,17 @@
 <template>
 	<render-user-card-list
-		v-bind:object-user-list="objectUserList"
-		v-on:remove_user="removeUser"
+		:object-user-list="objectUserList"
+		@remove_user="removeUser"
 	></render-user-card-list>
 
 	<div
-		class="row mt-3"
 		v-if="userLevel > 1 && kanbanBoardStatus !== 'Closed'"
+		class="row mt-3"
 	>
 		<div class="col-md-12">
 			<button
 				class="btn btn-primary"
-				v-on:click="addUser"
+				@click="addUser"
 			>
 				Add User
 			</button>

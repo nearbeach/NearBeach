@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="addUserModal"
+		class="modal fade"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
 		tabindex="-1"
@@ -12,8 +12,8 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="addUserModalLabel"
+						class="modal-title"
 					>
 						Add User
 					</h5>
@@ -27,8 +27,8 @@
 				<div class="modal-body">
 					<!-- Search Users -->
 					<div
-						class="row"
 						v-if="destination !== 'user'"
+						class="row"
 					>
 						<div class="col-md-4">
 							<strong>Search Users</strong>
@@ -40,8 +40,8 @@
 						<div class="col-md-8">
 							<label>Search User</label>
 							<n-select
-								:options="userResults"
 								v-model:value="userModel"
+								:options="userResults"
 								filterable
 							/>
 						</div>
@@ -50,8 +50,8 @@
 
 					<!-- Search Groups -->
 					<div
-						class="row"
 						v-if="destination !== 'group'"
+						class="row"
 					>
 						<div class="col-md-4">
 							<strong>Search Groups</strong>
@@ -63,8 +63,8 @@
 						<div class="col-md-8">
 							<label>Search Groups</label>
 							<n-select
-								:options="groupResults"
 								v-model:value="groupModel"
+								:options="groupResults"
 								class="form-control"
 								multiple
 								filterable
@@ -75,8 +75,8 @@
 
 					<!-- Search Permission Sets -->
 					<div
-						class="row"
 						v-if="destination !== 'permission_set'"
+						class="row"
 					>
 						<div class="col-md-4">
 							<strong>Search Permission Sets</strong>
@@ -88,8 +88,8 @@
 						<div class="col-md-8">
 							<label>Search Permission Sets</label>
 							<n-select
-								:options="permissionSetResults"
 								v-model:value="permissionSetModel"
+								:options="permissionSetResults"
 								class="form-control"
 								multiple
 								filterable
@@ -108,8 +108,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="disableAddButton"
-						v-on:click="addUser"
+						:disabled="disableAddButton"
+						@click="addUser"
 					>
 						{{ addButtonText() }}
 					</button>
@@ -164,6 +164,10 @@ export default {
 			//If we add all 3 conditions together, we should get 3
 			return condition_1 + condition_2 + condition_3 !== 3;
 		},
+	},
+	mounted() {
+		//Form loads - obtain data.
+		this.getData();
 	},
 	methods: {
 		addButtonText() {
@@ -265,10 +269,6 @@ export default {
 				});
 			});
 		},
-	},
-	mounted() {
-		//Form loads - obtain data.
-		this.getData();
 	},
 };
 </script>

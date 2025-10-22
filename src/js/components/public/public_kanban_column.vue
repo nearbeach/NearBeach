@@ -1,29 +1,32 @@
 <template>
 	<div class="list-group kanban-cell">
-		<div class="list-group-item"
-			 v-for="element in masterList"
-			 :key="element.pk"
+		<div
+v-for="element in masterList"
 			 :id="element.pk"
-			 v-on:dblclick="doubleClickCard($event)"
+			 :key="element.pk"
+			 class="list-group-item"
+			 @dblclick="doubleClickCard($event)"
 		>
 			<div
-				v-bind:class="`card-priority-line priority-${priorityList[element.fields.kanban_card_priority]}`">
+				:class="`card-priority-line priority-${priorityList[element.fields.kanban_card_priority]}`">
 			</div>
 			<carbon-link
 				v-if="isLinkedObject(element)"
-				v-bind:data-sort-number="element.fields.kanban_card_sort_number"
-				v-bind:data-card-id="element.pk"
+				:data-sort-number="element.fields.kanban_card_sort_number"
+				:data-card-id="element.pk"
 				class="card-external-link"
 			></carbon-link>
 			<b>#{{ element.pk }}</b
 			><br/>
 			{{ element.fields.kanban_card_text }}
-			<div v-if="element.tag_list.length > 0"
+			<div
+v-if="element.tag_list.length > 0"
 				 class="tag-list"
 			>
-				<div v-for="single_tag in element.tag_list"
+				<div
+v-for="single_tag in element.tag_list"
 					 :key="single_tag.tag_assignment_id"
-					 v-bind:style="`background-color:${single_tag.tag_colour};color:${single_tag.tag_text_colour};`"
+					 :style="`background-color:${single_tag.tag_colour};color:${single_tag.tag_text_colour};`"
 					 class="single-tag-thin"
 				>
 					{{ single_tag.tag_name }}
@@ -33,8 +36,8 @@
 				class="kanban-card-info-icon"
 				width="25px"
 				height="25px"
-				v-on:click="singleClickCard(element.pk)"
-				v-on:dblclick="singleClickCard(element.pk)"
+				@click="singleClickCard(element.pk)"
+				@dblclick="singleClickCard(element.pk)"
 			></carbon-information>
 		</div>
 	</div>
@@ -51,9 +54,6 @@ export default {
 		CarbonInformation,
 		CarbonLink,
 	},
-	emits: [
-		'card_clicked',
-	],
 	props: {
 		masterList: {
 			type: Array,
@@ -62,6 +62,9 @@ export default {
 			},
 		},
 	},
+	emits: [
+		'card_clicked',
+	],
 	data: () => ({
 		priorityList: [
 			'highest',

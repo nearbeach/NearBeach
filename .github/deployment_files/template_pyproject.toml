@@ -21,7 +21,7 @@ dependencies = [
   "drf_spectacular",
   "drf_spectacular[sidecar]"
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [
   {name = "Luke Christopher Clarke", email = "luke@nearbeach.org"},
 ]

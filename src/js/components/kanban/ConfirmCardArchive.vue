@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmCardArchiveModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="confirmCardArchiveModalLabel"
 		aria-hidden="true"
@@ -11,11 +11,11 @@
 				<div class="modal-header">
 					<h2>Card Information</h2>
 					<button
+						id="confirmCardArchiveModalCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmCardArchiveModalCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -39,14 +39,14 @@
 					<button
 						type="button"
 						class="btn btn-danger"
-						v-on:click="archiveCard"
+						@click="archiveCard"
 					>
 						Yes Archive Card
 					</button>
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="goBack"
+						@click="goBack"
 					>
 						No go back
 					</button>

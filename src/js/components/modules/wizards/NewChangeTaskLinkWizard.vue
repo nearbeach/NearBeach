@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="newChangeTaskLinkModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="linkModal"
 		aria-hidden="true"
@@ -13,11 +13,11 @@
 						New Change Task Link Wizard
 					</h2>
 					<button
+						id="linkCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="linkCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -36,8 +36,8 @@
 							<label for="change-task-relation">Current change task</label>
 							<n-select
 								id="change-task-relation"
-								:options="changeTaskRelation"
 								v-model:value="changeTaskRelationModel"
+								:options="changeTaskRelation"
 								class="object-selection"
 							></n-select>
 						</div>
@@ -61,21 +61,22 @@
 								Sorry - there are no results.
 							</div>
 
-							<div v-for="changeTask in filteredChangeTaskResults"
+							<div
+v-for="changeTask in filteredChangeTaskResults"
 								 :key="changeTask.pk"
-								 v-bind:class="checkSelected(changeTask.pk)"
+								 :class="checkSelected(changeTask.pk)"
 							>
 								<div class="form-check">
 									<input
+										:id="`checkbox_change_task_${changeTask.pk}`"
+										v-model="linkModel"
 										class="form-check-input"
 										type="checkbox"
-										v-bind:value="changeTask.pk"
-										v-bind:id="`checkbox_change_task_${changeTask.pk}`"
-										v-model="linkModel"
+										:value="changeTask.pk"
 									/>
 									<label
 										class="form-check-label"
-										v-bind:for="`checkbox_change_task_${changeTask.pk}`"
+										:for="`checkbox_change_task_${changeTask.pk}`"
 									>
 										Change Task {{ changeTask.pk }} - {{ changeTask.fields.change_task_title }}
 									</label>
@@ -95,8 +96,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="linkModel.length == 0"
-						v-on:click="saveLinks"
+						:disabled="linkModel.length == 0"
+						@click="saveLinks"
 					>
 						Save changes
 					</button>
@@ -150,6 +151,13 @@ export default {
 				this.filterBlockedBy();
 			}
 		},
+	},
+	mounted() {
+		//Get the required data
+		//Have to wait a little extra - tick does not work :'(
+		setTimeout(() => {
+			this.getAllChangeTasks();
+		}, 500);
 	},
 	methods: {
 		checkSelected(pk) {
@@ -227,13 +235,6 @@ export default {
 				});
 			});
 		}
-	},
-	mounted() {
-		//Get the required data
-		//Have to wait a little extra - tick does not work :'(
-		setTimeout(() => {
-			this.getAllChangeTasks();
-		}, 500);
 	}
 }
 </script>

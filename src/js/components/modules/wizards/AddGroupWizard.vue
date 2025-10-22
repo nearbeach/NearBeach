@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="addGroupModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -13,11 +13,11 @@
 						Add Group Wizard
 					</h2>
 					<button
+						id="addGroupCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="addGroupCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -42,8 +42,8 @@
 						</div>
 						<div class="col-md-8">
 							<n-select
-								:options="groupFixList"
 								v-model:value="groupModel"
+								:options="groupFixList"
 								multiple
 							></n-select>
 						</div>
@@ -63,7 +63,7 @@
 						</div>
 						<div class="col-md-6 no-search">
 							<img
-								v-bind:src="`${staticUrl}NearBeach/images/placeholder/questions.svg`"
+								:src="`${staticUrl}NearBeach/images/placeholder/questions.svg`"
 								alt="Sorry - there are no results"
 							/>
 						</div>
@@ -80,8 +80,8 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-bind:disabled="groupModel.length == 0"
-						v-on:click="addGroup"
+						:disabled="groupModel.length == 0"
+						@click="addGroup"
 					>
 						Add Group(s)
 					</button>
@@ -111,6 +111,12 @@ export default {
 			staticUrl: "getStaticUrl",
 		}),
 	},
+	data() {
+		return {
+			groupFixList: [],
+			groupModel: [],
+		};
+	},
 	watch: {
 		potentialGroupList(new_value) {
 			if (new_value === undefined) return;
@@ -122,12 +128,6 @@ export default {
 				}
 			})
 		}
-	},
-	data() {
-		return {
-			groupFixList: [],
-			groupModel: [],
-		};
 	},
 	methods: {
 		addGroup() {

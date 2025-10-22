@@ -52,12 +52,12 @@ body {
             border: 1.5px solid lightgrey;
             outline: none;
             transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-            box-shadow: 0px 0px 20px -18px;
+            box-shadow: 0 0 20px -18px;
         }
 
         input:hover {
             border: 2px solid skyblue;
-            box-shadow: 0px 0px 20px -17px;
+            box-shadow: 0 0 20px -17px;
         }
 
         input:active {

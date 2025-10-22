@@ -7,7 +7,7 @@
 				RFC Status: {{ rfcStatus }}
 				<br/>
 				<a
-					v-bind:href="`${this.rootUrl}rfc_information/${changeTaskResults[0].fields.request_for_change}`"
+					:href="`${rootUrl}rfc_information/${changeTaskResults[0].fields.request_for_change}`"
 				>Go back</a
 				>
 				<hr/>
@@ -25,10 +25,10 @@
 						<div class="form-group">
 							<label>Change Title:</label>
 							<input
+								v-model="changeTitleModel"
 								type="text"
 								class="form-control"
-								v-bind:disabled="isReadOnly"
-								v-model="changeTitleModel"
+								:disabled="isReadOnly"
 							/>
 						</div>
 					</div>
@@ -55,11 +55,11 @@
 				<hr/>
 				<between-dates
 					destination="Change Task"
-					v-bind:start-date-model="changeStartDateModel"
-					v-bind:end-date-model="changeEndDateModel"
-					v-bind:no-back-dating="false"
-					v-bind:is-read-only="isReadOnly"
-					v-on:update_dates="updateDates($event)"
+					:start-date-model="changeStartDateModel"
+					:end-date-model="changeEndDateModel"
+					:no-back-dating="false"
+					:is-read-only="isReadOnly"
+					@update_dates="updateDates($event)"
 				></between-dates>
 
 				<!-- IMPLEMENTATION USER & QA USER -->
@@ -78,9 +78,9 @@
 								<div class="form-group">
 									<label>Implementation User</label>
 									<n-select
-										v-bind:options="userListFixed"
-										v-bind:disabled="isReadOnly"
 										v-model:value="assignedUserModel"
+										:options="userListFixed"
+										:disabled="isReadOnly"
 									></n-select>
 								</div>
 							</div>
@@ -89,8 +89,8 @@
 									<label>QA User</label>
 									<n-select
 										v-model:value="qaUserModel"
-										v-bind:options="userListFixed"
-										v-bind:disabled="isReadOnly"
+										:options="userListFixed"
+										:disabled="isReadOnly"
 									/>
 								</div>
 							</div>
@@ -103,76 +103,76 @@
 				<!-- CANCEL -->
 				<a
 					v-if="userLevel > 1"
-					v-bind:href="`${rootUrl}rfc_information/${changeTaskResults[0].fields.request_for_change}/`"
+					:href="`${rootUrl}rfc_information/${changeTaskResults[0].fields.request_for_change}/`"
 					class="btn btn-secondary cancel-changes"
 				>Cancel</a
 				>
 
 				<!-- DELETE -->
 				<a
-					href="javascript:void(0)"
-					class="btn btn-warning"
 					v-if="
 					changeTaskResults[0].fields.change_task_status == 1 &&
 					userLevel == 4
 				"
-					v-on:click="confirmDeleteChangeTask"
+					href="javascript:void(0)"
+					class="btn btn-warning"
+					@click="confirmDeleteChangeTask"
 				>Delete</a
 				>
 
 				<!-- SAVE -->
 				<a
-					href="javascript:void(0)"
-					class="btn btn-primary save-changes"
 					v-if="
 					changeTaskResults[0].fields.change_task_status == 1 &&
 					userLevel >= 2
 				"
-					v-on:click="saveChangeTask"
+					href="javascript:void(0)"
+					class="btn btn-primary save-changes"
+					@click="saveChangeTask"
 				>Save</a
 				>
 
 				<!-- START CHANGE TASK -->
 				<a
-					href="javascript:void(0)"
-					class="btn btn-danger save-changes"
 					v-if="
 					changeTaskResults[0].fields.change_task_status == 3 &&
 					userLevel >= 2 &&
 					rfcStatus === 'Started'
 				"
-					v-on:click="updateStatus(4)"
+					href="javascript:void(0)"
+					class="btn btn-danger save-changes"
+					@click="updateStatus(4)"
 				>Start Task</a
 				>
 
 				<!-- FINISH CHANGE TASK -->
 				<a
-					href="javascript:void(0)"
-					class="btn btn-success save-changes"
 					v-if="
 					changeTaskResults[0].fields.change_task_status == 4 &&
 					userLevel >= 2
 				"
-					v-on:click="updateStatus(5)"
+					href="javascript:void(0)"
+					class="btn btn-success save-changes"
+					@click="updateStatus(5)"
 				>Finish Task</a
 				>
 
 				<!-- REJECT CHANGE TASK -->
 				<a
-					href="javascript:void(0)"
-					class="btn btn-danger save-changes"
 					v-if="
 					changeTaskResults[0].fields.change_task_status == 4 &&
 					userLevel >= 2
 				"
-					v-on:click="updateStatus(6)"
+					href="javascript:void(0)"
+					class="btn btn-danger save-changes"
+					@click="updateStatus(6)"
 				>REJECT Task</a
 				>
 			</div>
 		</div>
 
 		<confirm-change-task-delete
-			v-bind:change-task-results="changeTaskResults"
+			:change-task-results="changeTaskResults"
 		></confirm-change-task-delete>
 	</n-config-provider>
 </template>
@@ -264,6 +264,39 @@ export default {
 			rfcEndDate: "getEndDate",
 			rfcStartDate: "getStartDate",
 		}),
+	},
+	mounted() {
+		//Send data to required VueX states
+		this.$store.commit({
+			type: "updateDestination",
+			destination: this.destination,
+			locationId: this.locationId,
+		});
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.changeTitleModel,
+		});
+		this.$store.commit({
+			type: "updateUrl",
+			rootUrl: this.rootUrl,
+			staticUrl: this.staticUrl,
+		});
+		this.$store.commit({
+			type: "updateUserLevel",
+			userLevel: this.userLevel,
+		});
+		this.$store.commit({
+			type: "updateChangeTask",
+			description: this.changeTaskResults[0].fields.change_task_description,
+			endDate: this.changeTaskResults[0].fields.change_task_end_date,
+			isDowntime: this.changeTaskResults[0].fields.is_downtime,
+			requiredBy: this.changeTaskResults[0].fields.change_task_required_by,
+			startDate: this.changeTaskResults[0].fields.change_task_start_date,
+
+		});
+
+		//Set read only
+		this.setReadOnly();
 	},
 	methods: {
 		useNBTheme,
@@ -390,39 +423,6 @@ export default {
 			this.changeStartDateModel = data.start_date;
 			this.changeEndDateModel = data.end_date;
 		},
-	},
-	mounted() {
-		//Send data to required VueX states
-		this.$store.commit({
-			type: "updateDestination",
-			destination: this.destination,
-			locationId: this.locationId,
-		});
-		this.$store.commit({
-			type: "updateTitle",
-			title: this.changeTitleModel,
-		});
-		this.$store.commit({
-			type: "updateUrl",
-			rootUrl: this.rootUrl,
-			staticUrl: this.staticUrl,
-		});
-		this.$store.commit({
-			type: "updateUserLevel",
-			userLevel: this.userLevel,
-		});
-		this.$store.commit({
-			type: "updateChangeTask",
-			description: this.changeTaskResults[0].fields.change_task_description,
-			endDate: this.changeTaskResults[0].fields.change_task_end_date,
-			isDowntime: this.changeTaskResults[0].fields.is_downtime,
-			requiredBy: this.changeTaskResults[0].fields.change_task_required_by,
-			startDate: this.changeTaskResults[0].fields.change_task_start_date,
-
-		});
-
-		//Set read only
-		this.setReadOnly();
 	},
 };
 </script>

@@ -131,7 +131,8 @@
 							<tr>
 								<td>ALLOWED_HOSTS</td>
 								<td>
-									<p v-for="single in allowedHosts"
+									<p
+v-for="single in allowedHosts"
 									   :key="single"
 									>- {{ single }}</p>
 								</td>
@@ -139,7 +140,8 @@
 							<tr>
 								<td>CSRF_TRUSTED_URLS</td>
 								<td>
-									<p v-for="single in allowedHosts"
+									<p
+v-for="single in allowedHosts"
 									   :key="single"
 									>- {{ single }}</p>
 								</td>
@@ -221,12 +223,12 @@ export default {
 			default: "light",
 		},
 	},
-	methods: {useNBTheme},
 	mounted() {
 		this.$store.commit({
 			type: "updateUrl",
 			rootUrl: this.rootUrl,
 		});
-	}
+	},
+	methods: {useNBTheme}
 }
 </script>

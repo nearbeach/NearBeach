@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="addCustomerModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="exampleModalLabel"
 		aria-hidden="true"
@@ -13,27 +13,27 @@
 						Add Customer Wizard
 					</h2>
 					<button
+						id="addCustomerCloseButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="addCustomerCloseButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
 				</div>
 				<div class="modal-body">
 					<new-customer-form
-						v-bind:title-list="titleList"
-						v-bind:flag-validation-check="flagValidationCheck"
-						v-on:update_customer_data="updateCustomerData($event)"
+						:title-list="titleList"
+						:flag-validation-check="flagValidationCheck"
+						@update_customer_data="updateCustomerData($event)"
 					></new-customer-form>
 				</div>
 				<div class="modal-footer">
 					<a
 						href="javascript:void(0)"
 						class="btn btn-primary"
-						v-on:click="submitNewCustomer"
+						@click="submitNewCustomer"
 					>Add Contact</a
 					>
 
@@ -62,9 +62,6 @@ import {required, email} from "@vuelidate/validators";
 
 export default {
 	name: "NewCustomerModal",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		NewCustomerForm,
 	},
@@ -79,6 +76,9 @@ export default {
 				return [];
 			},
 		},
+	},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {

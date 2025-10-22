@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="blockedNotesModal"
+		class="modal fade"
 		tabindex="-1"
 		aria-labelledby="blockedNotesModal"
 		aria-hidden="true"
@@ -11,11 +11,11 @@
 				<div class="modal-header">
 					<h2>Blocked Card Notes</h2>
 					<button
+						id="blockedNotesModalButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="blockedNotesModalButton"
 					>
 						<span aria-hidden="true"></span>
 					</button>
@@ -31,6 +31,7 @@
 						</div>
 						<div class="col-md-8">
 							<editor
+								v-model="noteModal"
 								license-key="gpl"
 								:init="{
 									license_key: 'gpl',
@@ -40,11 +41,10 @@
 									plugins: ['lists', 'image', 'codesample', 'table'],
             						toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 					 						 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-            						skin: `${this.skin}`,
-						            content_css: `${this.contentCss}`,
+            						skin: `${skin}`,
+						            content_css: `${contentCss}`,
 						            relative_urls: false,
 								}"
-								v-model="noteModal"
 							/>
 						</div>
 					</div>
@@ -52,14 +52,14 @@
 				<div class="modal-footer">
 					<button
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						Close
 					</button>
 					<button
 						class="btn btn-primary save-changes"
-						v-on:click="addNote"
-						v-bind:disabled="noteModal === ''"
+						:disabled="noteModal === ''"
+						@click="addNote"
 					>
 						Add Note
 					</button>

@@ -5,13 +5,14 @@
 				<h1>Requirement Item Information</h1>
 				<br/>
 				<a
-					v-bind:href="`${rootUrl}requirement_information/${requirementItemResults[0].fields.requirement}/`"
+					:href="`${rootUrl}requirement_information/${requirementItemResults[0].fields.requirement}/`"
 				>
 					Go Back to requirement
 				</a>
 				<hr/>
 
-				<div v-if="requirementItemIsClosed"
+				<div
+v-if="requirementItemIsClosed"
 					 class="alert alert-info"
 				>
 					Requirement Item is currently closed.
@@ -36,33 +37,34 @@
 							<label for="requirement_item_title">
 								Requirement Item Title:
 								<validation-rendering
-									v-bind:error-list="v$.requirementItemTitleModel.$errors"
+									:error-list="v$.requirementItemTitleModel.$errors"
 								></validation-rendering>
 							</label>
 							<input
 								id="requirement_item_title"
+								v-model="requirementItemTitleModel"
 								class="form-control"
 								type="text"
 								required="true"
 								maxlength="255"
-								v-model="requirementItemTitleModel"
-								v-bind:disabled="isReadOnly"
+								:disabled="isReadOnly"
 							/>
 						</div>
 						<div class="form-group">
 							<label>
 								Requirement Item Scope:
 								<validation-rendering
-									v-bind:error-list="v$.requirementItemScopeModel.$errors"
+									:error-list="v$.requirementItemScopeModel.$errors"
 								></validation-rendering>
 							</label>
 							<br/>
 							<img
-								v-bind:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
+								:src="`${staticUrl}NearBeach/images/placeholder/body_text.svg`"
 								class="loader-image"
 								alt="loading image for Tinymce"
 							/>
 							<editor
+								v-model="requirementItemScopeModel"
 								license-key="gpl"
 								:init="{
 								license_key: 'gpl',
@@ -74,12 +76,11 @@
 								plugins: ['lists', 'image', 'codesample', 'table'],
             					toolbar: 'undo redo | blocks | bold italic strikethrough underline backcolor | alignleft aligncenter ' +
 										 'alignright alignjustify | bullist numlist outdent indent | removeformat | table image codesample',
-								skin: `${this.skin}`,
-								content_css: `${this.contentCss}`,
+								skin: `${skin}`,
+								content_css: `${contentCss}`,
 								relative_urls: false,
 							}"
-								v-model="requirementItemScopeModel"
-								v-bind:disabled="isReadOnly"
+								:disabled="isReadOnly"
 							/>
 						</div>
 					</div>
@@ -94,7 +95,7 @@
 					</div>
 					<div class="col-md-8 organisation-details">
 						<img
-							v-bind:src="getStakeholderImage"
+							:src="getStakeholderImage"
 							alt="Stakeholder Logo"
 							class="organisation-image"
 						/>
@@ -105,7 +106,7 @@
 							<carbon-link></carbon-link>
 							Website:
 							<a
-								v-bind:href="stakeholderModel.organisation_website"
+								:href="stakeholderModel.organisation_website"
 								target="_blank"
 								rel="noopener noreferrer"
 							>
@@ -116,7 +117,7 @@
 							<carbon-email></carbon-email>
 							Email:
 							<a
-								v-bind:href="`mailto:${stakeholderModel.organisation_email}`"
+								:href="`mailto:${stakeholderModel.organisation_email}`"
 							>
 								{{ stakeholderModel.organisation_email }}
 							</a>
@@ -138,14 +139,14 @@
 							<label
 							>Requirement Status
 								<validation-rendering
-									v-bind:error-list="v$.statusOptions.$errors"
+									:error-list="v$.statusOptions.$errors"
 								></validation-rendering>
 							</label>
 							<n-select
+								v-model:value="statusModel"
 								:options="statusOptions"
 								label="status"
-								v-model:value="statusModel"
-								v-bind:disabled="userLevel <= 1"
+								:disabled="userLevel <= 1"
 							></n-select>
 						</div>
 					</div>
@@ -154,14 +155,14 @@
 							<label
 							>Requirement Type
 								<validation-rendering
-									v-bind:error-list="v$.typeModel.$errors"
+									:error-list="v$.typeModel.$errors"
 								></validation-rendering>
 							</label>
 							<n-select
+								v-model:value="typeModel"
 								:options="typeOptions"
 								label="type"
-								v-model:value="typeModel"
-								v-bind:disabled="isReadOnly"
+								:disabled="isReadOnly"
 							></n-select>
 						</div>
 					</div>
@@ -179,9 +180,9 @@
 					<div class="col-md-4">
 						<label>Requirement Item Priority</label>
 						<n-select
-							v-bind:options="priorityOptions"
-							v-bind:disabled="userLevel <= 1"
 							v-model:value="requirementItemPriorityModel"
+							:options="priorityOptions"
+							:disabled="userLevel <= 1"
 						></n-select>
 					</div>
 				</div>
@@ -203,10 +204,11 @@
 							placeholder="Min"
 							:min="1"
 							:max="10"
-							v-bind:disabled="userLevel <= 1"
+							:disabled="userLevel <= 1"
 							style="max-width: 150px;"
 						/>
-						<div v-if="requirementItemStoryPointModel > 5"
+						<div
+v-if="requirementItemStoryPointModel > 5"
 							 class="alert alert-info mt-3"
 							 role="alert"
 						>
@@ -223,8 +225,9 @@
 					class="row submit-row"
 				>
 					<div class="col-md-12">
-						<button class="btn btn-primary"
-								v-on:click="updateRequirementItem"
+						<button
+class="btn btn-primary"
+								@click="updateRequirementItem"
 						>
 							Update Requirement
 						</button>
@@ -255,10 +258,7 @@ import {useUploadImage} from "Composables/uploads/useUploadImage";
 
 
 export default {
-	name: "RequirementItemInformation.vue",
-	setup() {
-		return {v$: useVuelidate()};
-	},
+	name: "RequirementItemInformation",
 	components: {
 		CarbonEmail,
 		CarbonLink,
@@ -309,22 +309,8 @@ export default {
 			default: 0,
 		},
 	},
-	computed: {
-		...mapGetters({
-			contentCss: "getContentCss",
-			rootUrl: "getRootUrl",
-			skin: "getSkin",
-			staticUrl: "getStaticUrl",
-		}),
-		getStakeholderImage() {
-			const image =
-				this.stakeholderModel.organisation_profile_picture;
-			if (image === "" || image === null) {
-				//There is no image - return the default image
-				return this.defaultStakeholderImage;
-			}
-			return `${this.rootUrl}private/${this.stakeholderModel.organisation_profile_picture}`;
-		},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -345,6 +331,23 @@ export default {
 			statusModel: this.requirementItemResults[0].fields.requirement_item_status,
 			typeModel: this.requirementItemResults[0].fields.requirement_item_type,
 		};
+	},
+	computed: {
+		...mapGetters({
+			contentCss: "getContentCss",
+			rootUrl: "getRootUrl",
+			skin: "getSkin",
+			staticUrl: "getStaticUrl",
+		}),
+		getStakeholderImage() {
+			const image =
+				this.stakeholderModel.organisation_profile_picture;
+			if (image === "" || image === null) {
+				//There is no image - return the default image
+				return this.defaultStakeholderImage;
+			}
+			return `${this.rootUrl}private/${this.stakeholderModel.organisation_profile_picture}`;
+		},
 	},
 	watch: {
 		async statusModel() {
@@ -376,6 +379,20 @@ export default {
 		typeModel: {
 			required,
 		},
+	},
+  	async beforeMount() {
+    	await this.$store.dispatch("processThemeUpdate", {
+			theme: this.theme,
+		});
+	},
+	mounted() {
+		//Set the read only status
+		this.setReadOnly();
+
+		this.$store.commit({
+			type: "updateTitle",
+			title: this.requirementItemTitleModel,
+		});
 	},
 	methods: {
 		useUploadImage,
@@ -479,20 +496,6 @@ export default {
 				});
 			});
 		},
-	},
-  	async beforeMount() {
-    	await this.$store.dispatch("processThemeUpdate", {
-			theme: this.theme,
-		});
-	},
-	mounted() {
-		//Set the read only status
-		this.setReadOnly();
-
-		this.$store.commit({
-			type: "updateTitle",
-			title: this.requirementItemTitleModel,
-		});
 	},
 };
 </script>

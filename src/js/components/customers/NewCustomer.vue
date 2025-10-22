@@ -8,10 +8,10 @@
 
 				New Customer Form
 				<new-customer-form
-					v-bind:organisation-name="organisationName"
-					v-bind:title-list="titleList"
-					v-bind:flag-validation-check="flagValidationCheck"
-					v-on:update_customer_data="updateCustomerData($event)"
+					:organisation-name="organisationName"
+					:title-list="titleList"
+					:flag-validation-check="flagValidationCheck"
+					@update_customer_data="updateCustomerData($event)"
 				></new-customer-form>
 
 				<!-- CUSTOMER ORGANISATION -->
@@ -30,17 +30,17 @@
 							<label>
 								Organisation:
 								<validation-rendering
-									v-bind:error-list="v$.organisationModel.$errors"
+									:error-list="v$.organisationModel.$errors"
 								></validation-rendering>
 							</label>
 							<n-select
+								v-model:value="organisationModel"
 								:options="organisationFixList"
 								filterable
 								placeholder="Search Organisations"
-								@search="fetchOptions"
-								v-model:value="organisationModel"
 								label="organisation_name"
 								class="get-stakeholders"
+								@search="fetchOptions"
 							/>
 						</div>
 					</div>
@@ -54,8 +54,8 @@
 						<button
 							href="javascript:void(0)"
 							class="btn btn-primary save-changes"
-							v-on:click="submitNewCustomer"
-							v-bind:disabled="disableSubmitButton"
+							:disabled="disableSubmitButton"
+							@click="submitNewCustomer"
 						>Submit Customer</button
 						>
 					</div>
@@ -80,9 +80,6 @@ import ValidationRendering from "Components/validation/ValidationRendering.vue";
 
 export default {
 	name: "NewCustomer",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		ValidationRendering,
 		NewCustomerForm,
@@ -107,6 +104,9 @@ export default {
 				return [];
 			},
 		},
+	},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {
@@ -140,6 +140,12 @@ export default {
 				required,
 			},
 		};
+	},
+	mounted() {
+		//Get a default list when mounted
+		this.$nextTick(() => {
+			this.getOrganisationData("", "");
+		});
 	},
 	methods: {
 		useNBTheme,
@@ -265,12 +271,6 @@ export default {
 			//Update the modal field with the value data
 			this[data.field] = data.value;
 		},
-	},
-	mounted() {
-		//Get a default list when mounted
-		this.$nextTick(() => {
-			this.getOrganisationData("", "");
-		});
 	},
 };
 </script>

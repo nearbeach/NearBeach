@@ -18,25 +18,25 @@
 							<label
 							>Kanban Board Name
 								<validation-rendering
-									v-bind:error-list="v$.kanbanBoardNameModel.$errors"
+									:error-list="v$.kanbanBoardNameModel.$errors"
 								></validation-rendering>
 								<span
-									class="error"
 									v-if="!uniqueKanbanBoardName"
+									class="error"
 								>
 								Please supply a unique name</span
 								>
 								<span
-									class="error"
 									v-if="checkingKanbanBoardName"
+									class="error"
 								>
 								Checking kanban name...</span
 								>
 							</label>
 							<input
+								v-model="kanbanBoardNameModel"
 								type="text"
 								class="form-control"
-								v-model="kanbanBoardNameModel"
 							/>
 						</div>
 					</div>
@@ -54,11 +54,11 @@
 					</div>
 					<div class="col-md-4">
 						<kanban-property-order
-							v-bind:property-list="columnModel"
-							v-bind:is-dirty="v$.columnModel.$dirty"
+							:property-list="columnModel"
+							:is-dirty="v$.columnModel.$dirty"
 							property-name="Column"
 							source="columnModel"
-							v-on:update_property_list="updatePropertyList($event)"
+							@update_property_list="updatePropertyList($event)"
 						></kanban-property-order>
 					</div>
 					<div class="d-block d-md-none d-lg-none d-xl-none d-xxl-none mt-3">
@@ -66,11 +66,11 @@
 					</div>
 					<div class="col-md-4">
 						<kanban-property-order
-							v-bind:property-list="levelModel"
-							v-bind:is-dirty="v$.columnModel.$dirty"
+							:property-list="levelModel"
+							:is-dirty="v$.columnModel.$dirty"
 							property-name="Level"
 							source="levelModel"
-							v-on:update_property_list="updatePropertyList($event)"
+							@update_property_list="updatePropertyList($event)"
 						></kanban-property-order>
 					</div>
 				</div>
@@ -78,12 +78,12 @@
 				<!-- Group Permissions -->
 				<hr/>
 				<group-permissions
-					v-bind:display-group-permission-issue="displayGroupPermissionIssue"
-					v-bind:group-results="groupResults"
-					v-bind:user-group-permissions="userGroupPermissions"
-					v-on:update_group_model="updateGroupModel($event)"
-					v-bind:is-dirty="v$.groupModel.$dirty"
+					:display-group-permission-issue="displayGroupPermissionIssue"
+					:group-results="groupResults"
+					:user-group-permissions="userGroupPermissions"
+					:is-dirty="v$.groupModel.$dirty"
 					destination="kanban_board"
+					@update_group_model="updateGroupModel($event)"
 				></group-permissions>
 
 				<!-- SAVE -->
@@ -92,8 +92,8 @@
 					<div class="col-md-12">
 						<button
 							class="btn btn-primary save-changes"
-							v-on:click="addNewKanban"
-							v-bind:disabled="disableSubmitButton"
+							:disabled="disableSubmitButton"
+							@click="addNewKanban"
 						>
 							Add Kanban
 						</button>
@@ -118,9 +118,6 @@ import {useNBTheme} from "Composables/theme/useNBTheme";
 
 export default {
 	name: "NewKanban",
-	setup() {
-		return {v$: useVuelidate()};
-	},
 	components: {
 		GroupPermissions,
 		KanbanPropertyOrder,
@@ -147,6 +144,9 @@ export default {
 				return [];
 			},
 		},
+	},
+	setup() {
+		return {v$: useVuelidate()};
 	},
 	data() {
 		return {

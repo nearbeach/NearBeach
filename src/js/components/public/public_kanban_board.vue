@@ -5,16 +5,17 @@
 			</h1>
 			<br/>
 
-			<div id="kanban_container"
+			<div
+id="kanban_container"
 				 class="kanban-container"
-				 v-on:scroll="scrollProcedure"
+				 @scroll="scrollProcedure"
 			>
 				<!-- Render out the header -->
 				<div class="kanban-header-row">
 					<div
-						class="kanban-column-header"
 						v-for="column in columnResults"
 						:key="column.pk"
+						class="kanban-column-header"
 					>
 						{{ column.fields.kanban_column_name }}
 					</div>
@@ -26,9 +27,9 @@
 					style="display: none"
 				>
 					<div
-						class="kanban-column-header"
 						v-for="column in columnResults"
 						:key="column.pk"
+						class="kanban-column-header"
 					>
 						{{ column.fields.kanban_column_name }}
 					</div>
@@ -48,8 +49,8 @@
 						<public-kanban-column
 							v-for="column in columnResults"
 							:key="column.pk"
-							v-bind:master-list="filterCards(column.pk, level.pk)"
-							v-on:card_clicked="cardClicked($event)"
+							:master-list="filterCards(column.pk, level.pk)"
+							@card_clicked="cardClicked($event)"
 						></public-kanban-column>
 					</div>
 				</div>
@@ -57,13 +58,13 @@
 	</n-config-provider>
 
 	<!-- Modal -->
-	<div class="modal fade modal-xl" id="kanbanCardModal" tabindex="-1" role="dialog" aria-labelledby="kanbanCardModalTitle" aria-hidden="true">
+	<div id="kanbanCardModal" class="modal fade modal-xl" tabindex="-1" role="dialog" aria-labelledby="kanbanCardModalTitle" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="kanbanCardModalHeader"
+						class="modal-title"
 					>
 						Kanban Card {{cardId}}
 					</h5>
@@ -76,14 +77,14 @@
 				</div>
 				<div class="modal-body">
 					<public-card-information
-						v-bind:card-column="cardColumn"
-						v-bind:card-id="cardId"
-						v-bind:card-description="cardDescription"
-						v-bind:card-level="cardLevel"
-						v-bind:card-priority="cardPriority"
-						v-bind:card-text="cardText"
+						:card-column="cardColumn"
+						:card-id="cardId"
+						:card-description="cardDescription"
+						:card-level="cardLevel"
+						:card-priority="cardPriority"
+						:card-text="cardText"
 						theme="light"
-						v-bind:user-level="1"
+						:user-level="1"
 					></public-card-information>
 				</div>
 				<div class="modal-footer">
@@ -184,6 +185,22 @@ export default {
 	unmounted() {
 		window.removeEventListener("resize", this.resizeProcedure);
 		window.removeEventListener("scroll", this.scrollProcedure);
+	},
+	mounted() {
+		//NOTE - we are moving all of this to the API functionality
+		//Map the tags onto "tag_list" field for the kanbanCardResults
+		this.localKanbanCardResults = this.kanbanCardResults.map((row) => {
+			//Add the field
+			row.tag_list = this.tagResults.filter((tag_row) => {
+				return parseInt(tag_row.kanban_card_id) === parseInt(row.pk);
+			});
+
+			return row;
+		});
+
+		this.$nextTick(() => {
+			this.resizeProcedure();
+		});
 	},
 	methods: {
 		useNBTheme,
@@ -315,22 +332,6 @@ export default {
 				kanban_sticky.style.display = "";
 			}
 		},
-	},
-	mounted() {
-		//NOTE - we are moving all of this to the API functionality
-		//Map the tags onto "tag_list" field for the kanbanCardResults
-		this.localKanbanCardResults = this.kanbanCardResults.map((row) => {
-			//Add the field
-			row.tag_list = this.tagResults.filter((tag_row) => {
-				return parseInt(tag_row.kanban_card_id) === parseInt(row.pk);
-			});
-
-			return row;
-		});
-
-		this.$nextTick(() => {
-			this.resizeProcedure();
-		});
 	},
 }
 </script>

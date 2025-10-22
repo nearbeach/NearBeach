@@ -5,15 +5,18 @@
 		current object. i.e. it's status and description. Becareful who you send the links too!
 	</p>
 
-	<div v-if="isFetchingData"
+	<div
+v-if="isFetchingData"
 		 class="alert alert-info"
 	>Currently loading data...</div>
-	<div v-if="isFetchingData === false && publicLinkResults.length === 0"
+	<div
+v-if="isFetchingData === false && publicLinkResults.length === 0"
 		 class="alert alert-info"
 	>
 		Sorry. There are no public links setup for this object.
 	</div>
-	<table v-else
+	<table
+v-else
 		   class="table table-striped"
 	>
 		<thead>
@@ -24,13 +27,15 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr v-for="link in publicLinkResults"
+			<tr
+v-for="link in publicLinkResults"
 				:key="link.public_link_id"
 			>
 				<td>
-					<button type="button"
+					<button
+type="button"
 							class="btn btn-link"
-							v-on:click="copyPublicLink(link.public_link_id)"
+							@click="copyPublicLink(link.public_link_id)"
 					>
 						{{formatUrl(link.public_link_id)}}
 					</button>
@@ -39,28 +44,30 @@
 					<input
 						class="form-check-input"
 						type="checkbox"
-						v-bind:checked="link.public_link_is_active"
-						v-bind:data-public-link-id="link.public_link_id"
-						v-bind:disabled="userLevel<=1"
-						v-on:change="updateIsActive"
+						:checked="link.public_link_is_active"
+						:data-public-link-id="link.public_link_id"
+						:disabled="userLevel<=1"
+						@change="updateIsActive"
 					/>
 				</td>
 				<td v-if="userLevel > 1">
 					<span class="remove-link">
 						<carbon-trash-can
-							v-on:click="confirmDeletePublicLink(link.public_link_id)"
+							@click="confirmDeletePublicLink(link.public_link_id)"
 						></carbon-trash-can>
 					</span>
 				</td>
 			</tr>
 		</tbody>
 	</table>
-	<div class="row submit-row"
-		 v-if="isReadOnly===false && userLevel > 1"
+	<div
+v-if="isReadOnly===false && userLevel > 1"
+		 class="row submit-row"
 	>
 		<div class="col-md-12">
-			<button class="btn btn-primary save-changes"
-					v-on:click="createPublicLink"
+			<button
+class="btn btn-primary save-changes"
+					@click="createPublicLink"
 			>
 				Create Public Link
 			</button>
@@ -80,6 +87,9 @@ import {Modal} from "bootstrap";
 
 export default {
 	name: "ListPublicLinks",
+	components: {
+		CarbonTrashCan,
+	},
 	props: {
 		isReadOnly: {
 			type: Boolean,
@@ -100,14 +110,6 @@ export default {
 			// publicLinkResults: [],
 		};
 	},
-	watch: {
-		overrideLocationId() {
-			this.getPublicLinks();
-		},
-	},
-	components: {
-		CarbonTrashCan,
-	},
 	computed: {
 		...mapGetters({
 			destination: "getDestination",
@@ -115,6 +117,16 @@ export default {
 			publicLinkResults: "getPublicLinkResults",
 			rootUrl: "getRootUrl",
 			userLevel: "getUserLevel",
+		})
+	},
+	watch: {
+		overrideLocationId() {
+			this.getPublicLinks();
+		},
+	},
+	mounted() {
+		this.$nextTick(() => {
+			this.getPublicLinks();
 		})
 	},
 	methods: {
@@ -155,7 +167,7 @@ export default {
 			} catch(error) {
 				this.$store.dispatch("newToast", {
 					header: "Can not copy public link",
-					message: "Sorry, we failed to copy the public link",
+					message: `Sorry, we failed to copy the public link: ${error}`,
 					extra_classes: "bg-danger",
 					delay: 0,
 				});
@@ -285,11 +297,6 @@ export default {
 				});
 			})
 		},
-	},
-	mounted() {
-		this.$nextTick(() => {
-			this.getPublicLinks();
-		})
 	},
 }
 </script>

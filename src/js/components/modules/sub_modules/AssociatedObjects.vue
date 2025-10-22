@@ -9,37 +9,40 @@
 		<hr v-if="projectResults.length + taskResults.length + requirementResults.length > 0"/>
 
 		<!-- Project Results -->
-		<render-object-card v-bind:search-results="projectResults"
-							v-bind:import-variables="projectVariables"
+		<render-object-card
+v-if="projectResults.length > 0"
+							:search-results="projectResults"
+							:import-variables="projectVariables"
 							destination="project"
-							v-if="projectResults.length > 0"
 		></render-object-card>
 
 
 		<!-- Requirement Results -->
-		<render-object-card v-bind:search-results="requirementResults"
-							v-bind:import-variables="requirementVariables"
+		<render-object-card
+v-if="requirementResults.length > 0"
+							:search-results="requirementResults"
+							:import-variables="requirementVariables"
 							destination="requirement"
-							v-if="requirementResults.length > 0"
 		></render-object-card>
 
 
 		<!-- Task Results -->
-		<render-object-card v-bind:search-results="taskResults"
-							v-bind:import-variables="taskVariables"
+		<render-object-card
+v-if="taskResults.length > 0"
+							:search-results="taskResults"
+							:import-variables="taskVariables"
 							destination="task"
-							v-if="taskResults.length > 0"
 		></render-object-card>
 
 		<!-- Only show when there are no associated tasks -->
 		<div
-			class="spacer"
 			v-if="projectResults.length + taskResults.length + requirementResults.length === 0"
+			class="spacer"
 		></div>
 
 		<div
-			class="alert alert-info"
 			v-if="projectResults.length + taskResults.length + requirementResults.length === 0"
+			class="alert alert-info"
 		>
 			There are currently no Objects associated with this Organisation.
 			You can create some new objects by click on the "New Objects" menu
@@ -94,6 +97,11 @@ export default {
 			rootUrl: "getRootUrl",
 		}),
 	},
+	mounted() {
+		this.$nextTick(() => {
+			this.getAssociatedObjectResults();
+		});
+	},
 	methods: {
 		getAssociatedObjectResults() {
 			if (this.locationId === 0) {
@@ -131,11 +139,6 @@ export default {
 
 			return local_date.toLocaleString("en-US", options);
 		},
-	},
-	mounted() {
-		this.$nextTick(() => {
-			this.getAssociatedObjectResults();
-		});
 	},
 };
 </script>

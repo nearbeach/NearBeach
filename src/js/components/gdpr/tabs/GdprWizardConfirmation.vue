@@ -8,7 +8,8 @@
 			</p>
 		</div>
 		<div class="col-md-8">
-			<div v-if="gdprObjectType === 'user'"
+			<div
+v-if="gdprObjectType === 'user'"
 				class="alert alert-info"
 			>
 				Due to the CASCADE effect within the NearBeach's database. Many objects will be deleted if we just remove
@@ -24,15 +25,17 @@
 			<div class="form-group">
 				<label>
 					Confirm Deletion of {{ gdprObjectType }}
-					<span v-if="!isValidated"
+					<span
+v-if="!isValidated"
 						  class="error"
 					>
 						Please confirm what you are deleting. Write "Deleting {{ gdprObjectType }}"
 					</span>
 				</label>
-				<input type="text"
+				<input
+v-model="confirmationModel"
+					   type="text"
 					   class="form-control"
-					   v-model="confirmationModel"
 				/>
 			</div>
 		</div>
@@ -43,6 +46,12 @@
 import { mapGetters } from "vuex";
 export default {
 	name: "GdprWizardConfirmation",
+	data() {
+		return {
+			confirmationModel: "",
+			isValidated: false,
+		}
+	},
 	computed: {
 		...mapGetters({
 			gdprObjectType: "getGdprObjectType",
@@ -57,12 +66,6 @@ export default {
 				tab_id: "tab_3",
 				value: this.isValidated
 			});
-		}
-	},
-	data() {
-		return {
-			confirmationModel: "",
-			isValidated: false,
 		}
 	},
 }

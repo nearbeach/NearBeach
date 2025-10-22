@@ -4,7 +4,8 @@
 			<div class="card-body">
 				<h1>DANGER ZONE</h1>
 				<hr>
-				<div v-if="kanbanBoardStatus === 'Closed'"
+				<div
+v-if="kanbanBoardStatus === 'Closed'"
 					class="row"
 				>
 					<div class="col-md-4">
@@ -16,13 +17,14 @@
 					<div class="col-md-8">
 						<button
 							class="btn btn-success"
-							v-on:click="reopenKanban"
+							@click="reopenKanban"
 						>
 							Reopen Kanban Board
 						</button>
 					</div>
 				</div>
-				<div v-else
+				<div
+v-else
 					class="row"
 				>
 					<div class="col-md-4">
@@ -34,7 +36,7 @@
 					<div class="col-md-8">
 						<button
 							class="btn btn-danger"
-							v-on:click="closeKanban"
+							@click="closeKanban"
 						>
 							Close Kanban Board
 						</button>
@@ -53,7 +55,7 @@
 					<div class="col-md-8">
 						<button
 							class="btn btn-danger"
-							v-on:click="deleteKanban"
+							@click="deleteKanban"
 						>
 							Delete Kanban Board!
 						</button>

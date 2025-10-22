@@ -1,7 +1,7 @@
 <template>
 	<div
-		class="modal fade"
 		id="confirmPermissionSetDeleteModal"
+		class="modal fade"
 		tabindex="-1"
 		data-bs-backdrop="static"
 		data-bs-keyboard="false"
@@ -12,18 +12,18 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5
-						class="modal-title"
 						id="confirmPermissionSetDelete"
+						class="modal-title"
 					>
 						Please confirm Permission Set Deletion
 					</h5>
 					<!-- TASK INFORMATION -->
 					<button
+						id="confirmPermissionSetDeleteButton"
 						type="button"
 						class="btn-close"
 						data-bs-dismiss="modal"
 						aria-label="Close"
-						id="confirmPermissionSetDeleteButton"
 					></button>
 				</div>
 				<div class="modal-body">
@@ -33,14 +33,14 @@
 					<button
 						type="button"
 						class="btn btn-secondary"
-						v-on:click="closeModal"
+						@click="closeModal"
 					>
 						No
 					</button>
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="deletePermissionSet"
+						@click="deletePermissionSet"
 					>
 						Yes
 					</button>
@@ -55,16 +55,16 @@ import {mapGetters} from "vuex";
 
 export default {
 	name: "ConfirmPermissionSetDelete",
-	computed: {
-		...mapGetters({
-			rootUrl: "getRootUrl",
-		})
-	},
 	props: {
 		permissionSetId: {
 			type: Number,
 			default: 0,
 		},
+	},
+	computed: {
+		...mapGetters({
+			rootUrl: "getRootUrl",
+		})
 	},
 	methods: {
 		closeModal() {

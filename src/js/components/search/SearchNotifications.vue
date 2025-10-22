@@ -9,9 +9,9 @@
 				<div class="form-group">
 					<label>Search:</label>
 					<input
+						v-model="searchModel"
 						type="text"
 						class="form-control search-organisation"
-						v-model="searchModel"
 						maxlength="250"
 					/>
 				</div>
@@ -19,14 +19,15 @@
 			<hr/>
 
 			<!-- Search Results -->
-			<div class="list-group"
-				 v-if="localNotificationResults.length > 0"
+			<div
+v-if="localNotificationResults.length > 0"
+				 class="list-group"
 			>
 				<a
-					class="list-group-item list-group-item-action"
 					v-for="notification in localNotificationResults"
 					:key="notification.pk"
-					v-bind:href="`/notification_information/${notification.pk}/`"
+					class="list-group-item list-group-item-action"
+					:href="`/notification_information/${notification.pk}/`"
 				>
 					<strong>{{ notification.fields.notification_header }}</strong>
 					<br/>
@@ -36,8 +37,9 @@
 				</a>
 			</div>
 
-			<div class="alert alert-warning"
-				 v-else
+			<div
+v-else
+				 class="alert alert-warning"
 			>
 				Sorry, there are no notifications
 			</div>
@@ -46,7 +48,7 @@
 			<div class="row submit-row">
 				<div class="col-md-12">
 					<a
-						v-bind:href="`${rootUrl}new_notification/`"
+						:href="`${rootUrl}new_notification/`"
 						class="btn btn-primary save-changes"
 					>
 						Add new Notification
@@ -81,6 +83,23 @@ export default {
 			searchTimeout: "",
 		}
 	},
+	watch: {
+		searchModel() {
+			//Clear timer if it already exists
+			if (this.searchTimeout !== "") {
+				//Stop the clock
+				clearTimeout(this.searchTimeout);
+			}
+
+			//Setup timer if there are 3 characters or more
+			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
+				//Start the potential search
+				this.searchTimeout = setTimeout(() => {
+					this.getSearchResults();
+				}, 500);
+			}
+		},
+	},
 	methods: {
 		getSearchResults() {
 			//Setup data_to_send
@@ -102,23 +121,6 @@ export default {
 				});
 			});
 		}
-	},
-	watch: {
-		searchModel() {
-			//Clear timer if it already exists
-			if (this.searchTimeout !== "") {
-				//Stop the clock
-				clearTimeout(this.searchTimeout);
-			}
-
-			//Setup timer if there are 3 characters or more
-			if (this.searchModel.length >= 3 || this.searchModel.length === 0) {
-				//Start the potential search
-				this.searchTimeout = setTimeout(() => {
-					this.getSearchResults();
-				}, 500);
-			}
-		},
 	}
 }
 </script>

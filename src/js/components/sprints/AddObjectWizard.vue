@@ -1,6 +1,7 @@
 <template>
-	<div class="modal fade"
-		 id="addObjectWizardModal"
+	<div
+id="addObjectWizardModal"
+		 class="modal fade"
 		 tabindex="-1"
 		 aria-labelledby="addObjectWizardLabel"
 		 aria-hidden="true"
@@ -8,8 +9,9 @@
 		<div class="modal-dialog modal-lg modal-fullscreen-lg-down">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title"
-						id="addObjectWizardLabel"
+					<h5
+id="addObjectWizardLabel"
+						class="modal-title"
 					>
 						Add Objects to Sprint Wizard
 					</h5>
@@ -32,11 +34,11 @@
 						</div>
 						<div class="col-md-8">
 							<n-select
+								v-model:value="objectModel"
 								filterable
 								placeholder="Please select an object"
-								v-model:value="objectModel"
-								v-bind:options="objectOptions"
-								v-bind:disabled="searchStatus==='currently_searching'"
+								:options="objectOptions"
+								:disabled="searchStatus==='currently_searching'"
 							></n-select>
 						</div>
 					</div>
@@ -50,9 +52,10 @@
 								Please select which of the objects you want to connect to this sprint.
 							</p>
 						</div>
-						<div class="col-md-8"
-							 v-bind:style="styleHeight"
-							 ref="wizardResults"
+						<div
+ref="wizardResults"
+							 class="col-md-8"
+							 :style="styleHeight"
 						>
 							<div
 								v-if="objectModel === ''"
@@ -61,15 +64,16 @@
 								Please select an object.
 							</div>
 
-							<div class="row"
-								 v-if="objectModel !== ''"
+							<div
+v-if="objectModel !== ''"
+								 class="row"
 							>
 								<div class="col-12">
 									<label class="form-label">Search Terms</label>
 									<input
 										id="search_terms"
-										class="form-control"
 										v-model="searchModel"
+										class="form-control"
 										type="text"
 									/>
 								</div>
@@ -89,21 +93,23 @@
 								</div>
 							</div>
 
-							<div class="wizard-results"
-								 v-if="objectResults.length > 0 && objectModel != null"
+							<div
+v-if="objectResults.length > 0 && objectModel != null"
+								 class="wizard-results"
 							>
-								<div class="wizard-results--card"
-									 v-for="result in objectResults"
+								<div
+v-for="result in objectResults"
 									 :key="result.id"
+									 class="wizard-results--card"
 								>
 									<div class="wizard-results--card--tick">
 										<input
+											:id="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
+											v-model="linkModel"
 											class="form-check-input"
 											type="checkbox"
 											name="link-option"
-											v-bind:value="result.id"
-											v-bind:id="`checkbox_${objectModel.toLowerCase()}_${result.pk}`"
-											v-model="linkModel"
+											:value="result.id"
 										/>
 									</div>
 									<div class="wizard-results--card--content">
@@ -125,23 +131,27 @@
 					<div class="row">
 						<div class="col-md-4"></div>
 						<div class="col-md-8">
-							<nav aria-label="Pagination for New Link Sprint Wizard"
-								 v-if="setOfPages.length >= 1"
+							<nav
+v-if="setOfPages.length >= 1"
+								 aria-label="Pagination for New Link Sprint Wizard"
 							>
 								<ul class="pagination justify-content-center"
 								>
-									<li v-for="index in setOfPages"
-										v-bind:key="index.destinationPage"
-										v-bind:class="getClasses(index.destinationPage)"
+									<li
+v-for="index in setOfPages"
+										:key="index.destinationPage"
+										:class="getClasses(index.destinationPage)"
 									>
-										<a v-if="parseInt(index.destinationPage) !== parseInt(currentPage)"
+										<a
+v-if="parseInt(index.destinationPage) !== parseInt(currentPage)"
 										   class="page-link"
 										   href="javascript:void(0)"
-										   v-on:click="changePage(index.destinationPage)"
+										   @click="changePage(index.destinationPage)"
 										>
 											{{ index.text }}
 										</a>
-										<span v-else
+										<span
+v-else
 											  class="page-link"
 										>
 											{{ index.text }}
@@ -163,7 +173,7 @@
 					<button
 						type="button"
 						class="btn btn-primary"
-						v-on:click="addObjects"
+						@click="addObjects"
 					>
 						Add Objects
 					</button>
@@ -215,6 +225,13 @@ export default {
 			styleHeight: "",
 		};
 	},
+	computed: {
+		...mapGetters({
+			destination: "getDestination",
+			locationId: "getLocationId",
+			rootUrl: "getRootUrl",
+		}),
+	},
 	watch: {
 		objectModel(new_value) {
 			//Blank out the previous link model
@@ -242,13 +259,6 @@ export default {
 				}, 500);
 			}
 		},
-	},
-	computed: {
-		...mapGetters({
-			destination: "getDestination",
-			locationId: "getLocationId",
-			rootUrl: "getRootUrl",
-		}),
 	},
 	methods: {
 		addObjects() {
