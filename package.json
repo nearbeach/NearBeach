@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/robotichead/NearBeach#readme",
   "devDependencies": {
-    "@playwright/test": "^1.37.1",
+    "@playwright/test": "^1.56.1",
     "@popperjs/core": "^2.11.0",
     "@tinymce/tinymce-vue": "^6.1.0",
     "@vitejs/plugin-vue": "^5.2.1",
