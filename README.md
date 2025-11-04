@@ -31,7 +31,16 @@ We welcome all contributions to NearBeach. Read our [Contributing Guide](https:/
 
 ## Features
 
-NearBeach is currently going through a massive rewrite - we have stripped out a lot of the features temporarily. We are however writting them back in. Our focus of the rewrite is to improve UI/UX, and the speed of page rendering.
+Currently NearBeach has the ability to;
+
+* Setup Customer/Organisation information 
+* Requirements/Requirement Items 
+* Kanban Boards 
+* Project/Tasks 
+* Sprint Functionality 
+* Request for Changes (RFC)
+
+[For more information, please read our documentation](https://nearbeach.readthedocs.io/en/latest/)
 
 ## Sponsors
 
@@ -54,43 +63,3 @@ Thank you to [Browser Stack](http://browserstack.com/) for giving us the ability
 Python Modules - [![Known Vulnerabilities](https://snyk.io/test/github/robotichead/NearBeach/badge.svg?targetFile=NearBeach/requirements.txt)](https://snyk.io/test/github/robotichead/NearBeach?targetFile=NearBeach/requirements.txt)
 
 JavaScript Modules - [![Known Vulnerabilities](https://snyk.io/test/github/robotichead/NearBeach/badge.svg?targetFile=package.json)](https://snyk.io/test/github/robotichead/NearBeach?targetFile=package.json)
-
-### VueJS
-
-Creator(s): Evan You
-
-Github: https://github.com/vuejs/vue
-
-License: The MIT License (MIT)
-
-Note: VueJS is used to render all front-end UI.
-
-### TinyMCE
-
-Creator(s): Tiny Technologies Inc.
-
-Github: https://github.com/tinymce/tinymce
-
-License: GNU Lesser General Public License v2.1
-
-Note: TinyMCE is used for rich text within NearBeach
-
-### Bootstrap
-
-Creator(s): Mark Otto, Jacob Thornton
-
-Github: https://github.com/twbs/bootstrap
-
-License: MIT
-
-Note: NearBeach's CSS is currently being migrated to Bootstrap. For easy development.
-
-### Vuelidate
-
-Creator(s): Damian Dulisz, Natalia Tepluhina, Dobromir Hristov, Marina Mosti
-
-Github: https://github.com/vuelidate/vuelidate
-
-License: MIT
-
-Note: We use Vuelidate for validating the form fields before submitting.
