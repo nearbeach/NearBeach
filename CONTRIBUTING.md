@@ -1,32 +1,57 @@
 # Contributing to NearBeach
 
-If you would like to join our community, please join our [fun and exciting discord](https://discord.gg/64uhRztS6n).
+Before you are able to contribute to NearBeach, you will need to the following two items;
 
-## Contributing to NearBeach
+* [Join our community on discord](https://discord.gg/64uhRztS6n)
+* [Download and install NearBeach](https://nearbeach.readthedocs.io/en/latest/002-local-development-environment-setup/index.html)
 
-We are always looking for new contributors. There are many different ways to contribute to NearBeach, for example;
+From here we recommend using NearBeach, and feel free to ask questions on our discord. It will be extremely hard to contribute to NearBeach if you don't use it.
 
--   Donating via [github sponsorships](https://github.com/sponsors/NearBeach) or [our patreon](https://www.patreon.com/NearBeach)
--   Bug testing
--   Bug fixing
--   Writing Documentation
--   Writing new components or functionality for NearBeach
--   Refactoring Code, i.e. making it more efficient
--   Updating Code, i.e. updating libraries
--   Marketing NearBeach
--   Supplying feedback on NearBeach, i.e. improvements and feature requests
+## Start of your contributing journey
 
-and many many more. Join our [community on discord to see what you can do](https://discord.gg/64uhRztS6n)
+We are always looking for new contributors. There are many different ways for you to contribute to NearBeach. As a beginner we are only expecting the following;
 
-## Code of Conduct
+* Find and report bugs
+* Send constructive feedback (especially on the UI/UX front)
+* Helping others on the community use NearBeach
+* Replicate issues other users are experiencing
+* Discuss new feature requests
+
+## Intermediate contributor
+
+We do not expect everyone to submit pull requests within their first week. NearBeach is large, complicated, and made of many different moving parts. Just remember, the community is here to help you, and soon you will be;
+
+* Submitting bug fixes
+* Constructing both Unit Tests, and End-to-end tests
+* Writing documentation
+* Refactoring small sections of the code
+
+## The NearBeach coder
+
+Once you are familiar with the inner workings of NearBeach, you will be able to do the following tasks;
+
+* Writing new components or functionality for NearBeach
+* Refactoring large amounts of code
+* Extending NearBeach's functionalities and implementing new functionality
+
+and much much more. Join our [community on discord to see what you can do](https://discord.gg/64uhRztS6n)
+
+## Misc contributions
+
+If you like what we are archiving with NearBeach, please help us by; 
+
+* Donating via [github sponsorships](https://github.com/sponsors/NearBeach) or [our patreon](https://www.patreon.com/NearBeach)
+* Marketing NearBeach
+
+# Code of Conduct
 
 Please read our [code of conduct here](https://github.com/NearBeach/NearBeach/blob/main/CODE_OF_CONDUCT.md).
 
-## NearBeach Overview
+# NearBeach Overview
 
 NearBeach is an open source project management system, that has been built using both the frameworks; Django and VueJS.
 
-### Objects in NearBeach
+## Objects in NearBeach
 
 Each different module/componet in NearBeach are called Objects. The following objects currently exist;
 
