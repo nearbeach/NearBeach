@@ -74,3 +74,11 @@ The following objects are excluded from the rules;
 #. Notes
 #. Requirement items
 #. Any sub object
+
+
+Creating Fixture Command
+------------------------
+
+Use the following command to help create the fixtures.
+
+`python3 manage.py dumpdata --exclude contenttypes --exclude auth.permission --exclude admin.logentry --indent 2 > ./NearBeach/fixtures/NearBeach_****_setup.json`
