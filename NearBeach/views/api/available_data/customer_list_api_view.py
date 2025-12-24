@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from NearBeach.decorators.check_user_permissions.customer_permissions import check_user_customer_permissions
 from NearBeach.serializers.destination_serializer import DestinationSerializer
 from NearBeach.serializers.available_data.customer_list_serializer import CustomerListSerializer
-from NearBeach.models import (
+from NearBeach.models.models import (
     Customer,
     Requirement,
     RequirementItem,

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from django.db.models import Q, F, Value
 from NearBeach.decorators.check_user_permissions.api_object_data_permissions_v0 import api_object_data_permissions
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer, RELATION_DICT
-from NearBeach.models import (
+from NearBeach.models.models import (
     ChangeTask,
     KanbanCard,
     ObjectAssignment,

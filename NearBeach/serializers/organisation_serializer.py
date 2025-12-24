@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import (
+from NearBeach.models.models import (
     Organisation,
 )
 from NearBeach.serializers.customer_serializer import CustomerSerializer

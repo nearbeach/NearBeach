@@ -10,7 +10,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from NearBeach.views.search.search_objects import SearchObjects
 from NearBeach.forms import SearchObjectsForm, SearchForm
-from NearBeach.models import (
+from NearBeach.models.models import (
     Notification,
     ObjectAssignment,
     Customer,

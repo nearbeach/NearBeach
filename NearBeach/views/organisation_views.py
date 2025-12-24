@@ -6,7 +6,7 @@ from django.template import loader
 from django.views.decorators.http import require_http_methods
 from NearBeach.decorators.check_user_permissions.organisation_permissions import check_user_organisation_permissions
 from NearBeach.forms import OrganisationForm, ProfilePictureForm
-from NearBeach.models import Organisation, Customer, ListOfTitle
+from NearBeach.models.models import Organisation, Customer, ListOfTitle
 from NearBeach.views.document_views import handle_document_permissions
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.tools.internal_functions import get_user_group_permission

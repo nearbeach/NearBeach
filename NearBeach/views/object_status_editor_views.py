@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from NearBeach.forms import ObjectStatusReorderForm, ObjectStatusCreateForm, ObjectStatusUpdateForm, \
     ObjectStatusDeleteForm
 from NearBeach.views.theme_views import get_theme
-from NearBeach.models import (
+from NearBeach.models.models import (
     ListOfRequirementItemStatus,
     ListOfRequirementStatus,
     ListOfProjectStatus,

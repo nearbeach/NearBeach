@@ -10,7 +10,7 @@ from django.db.models import F
 
 from NearBeach.decorators.check_destination import check_destination, check_public_destination
 from NearBeach.views.object_data_views import set_object_from_destination, get_object_from_destination
-from NearBeach.models import KanbanCard, \
+from NearBeach.models.models import KanbanCard, \
     PublicLink, \
     RequirementItem, \
     ListOfProjectStatus, \

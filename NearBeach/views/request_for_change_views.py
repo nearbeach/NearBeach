@@ -15,7 +15,7 @@ from NearBeach.forms import (
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions
 from NearBeach.utils.enums.request_for_change_enums import RequestForChangeStatus
 from NearBeach.views.tools.internal_functions import get_all_groups, get_user_group_permission
-from NearBeach.models import (
+from NearBeach.models.models import (
     RequestForChange,
     User,
     UserGroup,

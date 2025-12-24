@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import ListOfRequirementItemType
+from NearBeach.models.models import ListOfRequirementItemType
 
 
 class RequirementItemTypeSerializer(serializers.ModelSerializer):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import KanbanColumn
+from NearBeach.models.models import KanbanColumn
 
 
 class KanbanColumnSerializer(serializers.ModelSerializer):

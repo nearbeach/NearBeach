@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 
 from NearBeach.views.theme_views import get_theme
 from NearBeach.forms import GdprObjectTypeForm, GdprDataRequestForm, GdprObjectSubmitForm
-from NearBeach.models import (
+from NearBeach.models.models import (
     ChangeTask,
     Customer,
     Project,

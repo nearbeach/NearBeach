@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import Group
+from NearBeach.models.models import Group
 
 
 class GroupSerializer(serializers.ModelSerializer):

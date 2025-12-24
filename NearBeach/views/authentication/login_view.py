@@ -4,7 +4,7 @@ from django.urls import reverse
 from two_factor.views import LoginView
 from .authentication_views import check_first_time_login
 from django.contrib import auth
-from NearBeach.models import UserGroup
+from NearBeach.models.models import UserGroup
 
 # TODO: Add in the recaptcha - investigate costs first
 

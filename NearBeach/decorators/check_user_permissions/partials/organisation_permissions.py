@@ -1,5 +1,5 @@
 from django.db.models import Max
-from NearBeach.models import UserGroup
+from NearBeach.models.models import UserGroup
 
 
 def organisation_permissions(request, kwargs):

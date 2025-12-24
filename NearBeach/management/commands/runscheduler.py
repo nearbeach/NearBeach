@@ -4,7 +4,7 @@ from django.db.models import Q, F, Max
 from NearBeach import event_hooks
 from django.utils import timezone
 
-from NearBeach.models import (
+from NearBeach.models.models import (
     ObjectAssignment,
     ObjectTemplate,
     Project,

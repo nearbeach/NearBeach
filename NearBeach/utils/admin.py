@@ -1,4 +1,4 @@
-from NearBeach.models import (
+from NearBeach.models.models import (
     Group,
     UserGroup,
     Organisation,

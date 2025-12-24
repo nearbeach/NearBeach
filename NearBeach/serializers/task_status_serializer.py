@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import ListOfTaskStatus
+from NearBeach.models.models import ListOfTaskStatus
 
 
 class TaskStatusSerializer(serializers.ModelSerializer):

@@ -31,7 +31,7 @@ from ..forms import (
     DocumentUploadForm,
     RequirementItem, FolderRemoveForm, DocumentUpdateForm, FolderUpdateForm,
 )
-from ..models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
+from NearBeach.models.models import DocumentPermission, UserGroup, ObjectAssignment, UserProfilePicture
 from azure.storage.blob import BlobServiceClient
 from django.utils import timezone
 

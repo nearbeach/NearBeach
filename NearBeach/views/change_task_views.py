@@ -7,7 +7,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import get_object_or_404
 
 from NearBeach.forms import ChangeTaskIsDowntimeForm, ChangeTaskStatusForm, ChangeTaskForm, ChangeTaskDescriptionForm, ChangeTaskRequiredByForm
-from NearBeach.models import ChangeTask, RequestForChange, User
+from NearBeach.models.models import ChangeTask, RequestForChange, User
 from NearBeach.views.request_for_change_views import update_rfc_dates
 from NearBeach.views.theme_views import get_theme
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions

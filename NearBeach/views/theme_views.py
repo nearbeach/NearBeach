@@ -1,4 +1,4 @@
-from NearBeach.models import UserSetting
+from NearBeach.models.models import UserSetting
 
 
 # Internal function

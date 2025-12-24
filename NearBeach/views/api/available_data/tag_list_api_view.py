@@ -2,7 +2,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from NearBeach.models import (
+from NearBeach.models.models import (
     Tag,
 )
 from NearBeach.serializers.available_data.tag_list_serializer import TagListSerializer

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import ListOfProjectStatus
+from NearBeach.models.models import ListOfProjectStatus
 
 
 class ProjectStatusSerializer(serializers.ModelSerializer):

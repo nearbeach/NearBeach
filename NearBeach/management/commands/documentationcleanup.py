@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from NearBeach.views.document_views import FILE_HANDLER
 from django.conf import settings
-from NearBeach.models import (
+from NearBeach.models.models import (
     Document,
     DocumentPermission,
 )

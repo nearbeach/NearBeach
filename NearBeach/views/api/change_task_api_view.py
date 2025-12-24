@@ -2,7 +2,7 @@ from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework import viewsets, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from NearBeach.models import ChangeTask
+from NearBeach.models.models import ChangeTask
 from NearBeach.serializers.change_task_serializer import ChangeTaskSerializer
 from NearBeach.decorators.check_user_permissions.api_permissions_v0 import check_user_api_permissions
 from NearBeach.views.request_for_change_views import update_rfc_dates

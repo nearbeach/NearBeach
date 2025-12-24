@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from NearBeach.forms import UserSettingsForm
-from NearBeach.models import UserSetting
+from NearBeach.models.models import UserSetting
 
 
 # Internal function

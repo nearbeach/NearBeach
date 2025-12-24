@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from NearBeach.models import Project, Requirement, RequirementItem, Task
+from NearBeach.models.models import Project, Requirement, RequirementItem, Task
 
 # Declaration of Username and Password
 username = 'admin'

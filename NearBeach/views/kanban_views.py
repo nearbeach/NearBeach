@@ -4,7 +4,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 
-from NearBeach.models import (
+from NearBeach.models.models import (
     KanbanColumn,
     KanbanLevel,
     ObjectAssignment,

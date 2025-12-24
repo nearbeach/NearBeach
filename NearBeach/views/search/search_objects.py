@@ -2,7 +2,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q, F
 from django.conf import settings
 from NearBeach.forms import SearchObjectsForm
-from NearBeach.models import (
+from NearBeach.models.models import (
     KanbanBoard,
     ObjectAssignment,
     Project,

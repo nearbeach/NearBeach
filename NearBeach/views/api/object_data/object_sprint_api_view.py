@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from NearBeach.decorators.check_user_permissions.api_object_data_permissions_v0 import api_object_data_permissions
 from NearBeach.serializers.object_data.object_sprint_serializer import ObjectSprintSerializer
-from NearBeach.models import Sprint
+from NearBeach.models.models import Sprint
 
 
 @extend_schema(

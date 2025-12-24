@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import ChangeTask
+from NearBeach.models.models import ChangeTask
 from django.contrib.auth.models import User
 from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.serializers.user_django_serializer import UserDjangoSerializer

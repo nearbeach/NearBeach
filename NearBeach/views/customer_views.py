@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 
 from NearBeach.decorators.check_user_permissions.customer_permissions import check_user_customer_permissions
 from NearBeach.forms import CustomerForm, NewCustomerForm, ProfilePictureForm
-from NearBeach.models import Customer, ListOfTitle, Organisation, ObjectAssignment
+from NearBeach.models.models import Customer, ListOfTitle, Organisation, ObjectAssignment
 from NearBeach.views.document_views import handle_document_permissions
 from NearBeach.views.theme_views import get_theme
 

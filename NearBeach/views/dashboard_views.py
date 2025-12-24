@@ -1,4 +1,3 @@
-from ..forms import *
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
@@ -13,7 +12,7 @@ from django.utils import timezone
 import json
 
 # Import NearBeach Models
-from NearBeach.models import (
+from NearBeach.models.models import (
     Bug,
     KanbanBoard,
     KanbanCard,

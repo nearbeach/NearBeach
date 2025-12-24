@@ -7,7 +7,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
 from NearBeach.forms import NewPermissionSetForm, PermissionSetForm, SearchForm
-from NearBeach.models import (
+from NearBeach.models.models import (
     PermissionSet,
     PERMISSION_BOOLEAN,
     PERMISSION_LEVEL,

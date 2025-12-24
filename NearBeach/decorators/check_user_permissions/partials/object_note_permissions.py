@@ -1,4 +1,4 @@
-from NearBeach.models import ObjectNote
+from NearBeach.models.models import ObjectNote
 
 
 def object_note_permissions(request, kwargs):

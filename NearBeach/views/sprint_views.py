@@ -16,7 +16,7 @@ from NearBeach.forms import (
     RemoveSprintForm,
     UpdateSprintForm, SprintPotentialObjectListForm,
 )
-from NearBeach.models import (
+from NearBeach.models.models import (
     ObjectAssignment,
     Project,
     RequirementItem,

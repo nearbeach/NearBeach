@@ -3,7 +3,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from NearBeach.models import (
+from NearBeach.models.models import (
     KanbanBoard,
     KanbanCard,
     KanbanColumn,

@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from NearBeach.models import (
+from NearBeach.models.models import (
     ChangeTask,
     Customer,
     Project,

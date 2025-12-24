@@ -5,7 +5,7 @@ from django.db.models import F
 
 from NearBeach.decorators.check_user_permissions.api_object_data_permissions_v0 import api_object_data_permissions
 from NearBeach.serializers.object_data.tag_serializer import TagSerializer
-from NearBeach.models import Tag, TagAssignment
+from NearBeach.models.models import Tag, TagAssignment
 
 
 @extend_schema(

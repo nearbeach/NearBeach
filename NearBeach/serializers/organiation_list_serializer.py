@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import Organisation
+from NearBeach.models.models import Organisation
 from django.conf import settings
 
 

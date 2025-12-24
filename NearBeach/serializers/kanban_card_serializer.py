@@ -1,12 +1,12 @@
 from django.db.models import Max
 from rest_framework import serializers
-from NearBeach.models import KanbanCard, KanbanColumn, KanbanLevel
+from NearBeach.models.models import KanbanCard, KanbanColumn, KanbanLevel
 from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.serializers.kanban_column_serializer import KanbanColumnSerializer
 from NearBeach.serializers.kanban_level_serializer import KanbanLevelSerializer
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.serializers.tag_serializer import TagSerializer
-from NearBeach.models import Tag, TagAssignment
+from NearBeach.models.models import Tag, TagAssignment
 
 
 class KanbanCardSerializer(serializers.ModelSerializer):

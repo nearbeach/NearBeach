@@ -3,7 +3,7 @@ from collections import namedtuple
 from django.test import TestCase
 
 from NearBeach.management.commands.runscheduler import Command
-from NearBeach.models import ScheduledObject
+from NearBeach.models.models import ScheduledObject
 from unittest import mock
 
 import datetime

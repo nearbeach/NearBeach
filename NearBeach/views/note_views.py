@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 
 from NearBeach.decorators.check_destination import check_destination
 from NearBeach.forms import EditNoteForm, AddNoteForm
-from NearBeach.models import ObjectNote, KanbanCard
+from NearBeach.models.models import ObjectNote, KanbanCard
 from NearBeach.decorators.check_user_permissions.object_permissions import check_specific_object_permissions, \
     check_user_generic_permissions
 from NearBeach.decorators.check_user_permissions.organisation_permissions import check_user_organisation_note_permissions

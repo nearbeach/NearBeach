@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 
 from NearBeach.forms import MyPlannerAddObjectForm, MyPlannerUpdateObjectListForm, MyPlannerDeleteUserJobForm, \
     MyPlannerGetObjectListForm
-from NearBeach.models import KanbanCard, ObjectAssignment, Project, Task, UserJob
+from NearBeach.models.models import KanbanCard, ObjectAssignment, Project, Task, UserJob
 from django.utils import timezone
 import datetime
 import json

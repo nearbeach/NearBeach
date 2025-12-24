@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import (
+from NearBeach.models.models import (
     Sprint, Project, Requirement,
 )
 from NearBeach.serializers.project_serializer import ProjectSerializer

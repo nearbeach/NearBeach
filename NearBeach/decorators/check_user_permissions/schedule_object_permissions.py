@@ -1,7 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from functools import wraps
 from django.db.models import Max
-from NearBeach.models import UserGroup, ObjectTemplateGroup, ScheduledObject
+from NearBeach.models.models import UserGroup, ObjectTemplateGroup, ScheduledObject
 
 
 def check_schedule_object_permissions(min_permission_level):

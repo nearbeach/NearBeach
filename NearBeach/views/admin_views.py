@@ -8,7 +8,7 @@ from NearBeach.forms import (
     PasswordResetForm,
     UpdateGroupLeaderStatusForm,
 )
-from NearBeach.models import UserGroup
+from NearBeach.models.models import UserGroup
 from NearBeach.views.tools.internal_functions import get_user_permissions
 from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions
 

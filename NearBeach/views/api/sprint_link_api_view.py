@@ -2,7 +2,7 @@ from drf_spectacular.utils import extend_schema, OpenApiExample
 
 from NearBeach.decorators.check_user_permissions.api_sprint_permissions_v0 import check_api_sprint_link_permissions
 from NearBeach.views.api.sprint_api_view import SprintViewSet
-from NearBeach.models import SprintObjectAssignment, Sprint
+from NearBeach.models.models import SprintObjectAssignment, Sprint
 from NearBeach.serializers.sprint_object_serializer import SprintObjectSerializer
 from rest_framework.response import Response
 from rest_framework import status

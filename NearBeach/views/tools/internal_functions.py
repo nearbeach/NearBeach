@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import F, Value as V, Max
 from django.core.serializers.json import DjangoJSONEncoder
 
-from NearBeach.models import (
+from NearBeach.models.models import (
     ChangeTask,
     Customer,
     Group,

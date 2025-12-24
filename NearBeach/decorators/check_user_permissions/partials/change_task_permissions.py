@@ -1,4 +1,4 @@
-from NearBeach.models import ChangeTask, Group, ObjectAssignment, UserGroup
+from NearBeach.models.models import ChangeTask, Group, ObjectAssignment, UserGroup
 from django.db.models import Max, Q
 
 

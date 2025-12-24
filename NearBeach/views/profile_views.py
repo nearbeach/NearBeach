@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import ProfilePictureForm, UpdateUserForm
-from NearBeach.models import UserProfilePicture
+from NearBeach.models.models import UserProfilePicture
 from NearBeach.views.theme_views import get_theme, update_theme
 
 User = get_user_model()

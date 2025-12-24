@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.conf import settings
-from NearBeach.models import ObjectAssignment
+from NearBeach.models.models import ObjectAssignment
 
 
 class ObjectAssignmentUserSerializer(serializers.ModelSerializer):

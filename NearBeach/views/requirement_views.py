@@ -18,7 +18,7 @@ from NearBeach.forms import (
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.views.tools.internal_functions import get_all_groups, get_user_group_permission
 from NearBeach.views.kanban_views import update_linked_card_information
-from NearBeach.models import (
+from NearBeach.models.models import (
     Requirement,
     ObjectAssignment,
     Project,

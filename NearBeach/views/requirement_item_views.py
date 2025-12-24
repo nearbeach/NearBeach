@@ -16,7 +16,7 @@ from NearBeach.forms import (
 )
 from NearBeach.views.requirement_views import get_requirement_items
 from NearBeach.views.kanban_views import update_linked_card_information
-from NearBeach.models import (
+from NearBeach.models.models import (
     RequirementItem,
     ObjectAssignment,
     Project,

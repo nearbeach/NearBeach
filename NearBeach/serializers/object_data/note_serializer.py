@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import ObjectNote
+from NearBeach.models.models import ObjectNote
 
 
 class NoteSerializer(serializers.ModelSerializer):

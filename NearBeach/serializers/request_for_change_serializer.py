@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from NearBeach.serializers.enum_serializer import EnumField
-from NearBeach.models import (
+from NearBeach.models.models import (
     Group,
     RequestForChange, ObjectAssignment,
 )

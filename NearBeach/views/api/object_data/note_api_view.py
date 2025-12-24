@@ -6,7 +6,7 @@ from django.db.models import F, Case, When, Value
 
 from NearBeach.decorators.check_user_permissions.api_object_data_permissions_v0 import api_object_data_permissions
 from NearBeach.serializers.object_data.note_serializer import NoteSerializer
-from NearBeach.models import (
+from NearBeach.models.models import (
     KanbanCard,
     ObjectNote,
 )

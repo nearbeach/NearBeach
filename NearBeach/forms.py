@@ -7,7 +7,7 @@ from django.db.models import Case, When
 
 # Import from NearBeach
 # from .decorators.check_destination import OBJECT_ARRAY
-from .models import (
+from NearBeach.models.models import (
     Bug,
     Folder,
     Group,

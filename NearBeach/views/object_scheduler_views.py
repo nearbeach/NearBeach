@@ -5,7 +5,7 @@ from django.db.models import F, Max
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
-from NearBeach.models import (
+from NearBeach.models.models import (
     Group,
     ObjectTemplate,
     ObjectTemplateGroup,
@@ -16,7 +16,7 @@ from NearBeach.models import (
 from NearBeach.views.theme_views import get_theme
 from NearBeach.views.tools.internal_functions import lookup_choice_from_key, get_all_groups, get_user_group_permission
 from NearBeach.forms import NewScheduledObjectForm, ScheduledObjectForm
-from NearBeach.models import OBJECT_TEMPLATE_TYPE
+from NearBeach.models.models import OBJECT_TEMPLATE_TYPE
 from NearBeach.decorators.check_user_permissions.schedule_object_permissions import check_schedule_object_permissions
 
 import json

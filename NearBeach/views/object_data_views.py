@@ -17,7 +17,7 @@ from NearBeach.decorators.check_user_permissions.object_permissions import (
     check_specific_object_permissions,
     check_user_generic_permissions
 )
-from NearBeach.models import (
+from NearBeach.models.models import (
     Bug,
     BugClient,
     ChangeTask,

@@ -7,7 +7,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 
 from NearBeach.forms import SearchForm, NewGroupForm
-from NearBeach.models import Group, ObjectAssignment, UserGroup
+from NearBeach.models.models import Group, ObjectAssignment, UserGroup
 from NearBeach.views.tools.internal_functions import get_user_permissions
 from NearBeach.views.theme_views import get_theme
 from NearBeach.decorators.check_user_permissions.admin_permissions import check_user_admin_permissions

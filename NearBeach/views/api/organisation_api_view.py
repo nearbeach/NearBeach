@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.organisation_permissions import check_user_organisation_permissions
-from NearBeach.models import (
+from NearBeach.models.models import (
     Customer,
     Organisation,
 )

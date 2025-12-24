@@ -3,7 +3,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from django.db.models import Q
 
-from NearBeach.models import (
+from NearBeach.models.models import (
     ObjectAssignment,
     Sprint,
     UserGroup,

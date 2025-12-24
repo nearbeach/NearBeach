@@ -3,7 +3,7 @@ from rest_framework.generics import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiExample
 from NearBeach.decorators.check_user_permissions.api_sprint_permissions_v0 import check_api_sprint_permissions
 from NearBeach.decorators.check_user_permissions.sprint_permissions import check_sprint_permission_with_sprint
-from NearBeach.models import (
+from NearBeach.models.models import (
     ObjectAssignment,
     Sprint,
     SprintObjectAssignment,

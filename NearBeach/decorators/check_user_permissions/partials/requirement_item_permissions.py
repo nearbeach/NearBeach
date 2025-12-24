@@ -1,4 +1,4 @@
-from NearBeach.models import ObjectAssignment, Requirement, RequirementItem, UserGroup
+from NearBeach.models.models import ObjectAssignment, Requirement, RequirementItem, UserGroup
 from django.db.models import Max, Q
 
 

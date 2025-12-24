@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import Group, User
+from NearBeach.models.models import Group, User
 from NearBeach.serializers.group_serializer import GroupSerializer
 from NearBeach.serializers.user_serializer import UserSerializer
 from NearBeach.serializers.object_data.object_assignment_group_serializer import ObjectAssignmentGroupSerializer

@@ -2,7 +2,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Max
 from functools import wraps
 
-from NearBeach.models import UserGroup
+from NearBeach.models.models import UserGroup
 
 
 def check_user_organisation_permissions(min_permission_level):

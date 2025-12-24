@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core import serializers
 from django.template import loader
 from NearBeach.views.theme_views import get_theme
-from NearBeach.models import Notification
+from NearBeach.models.models import Notification
 from NearBeach.forms import NotificationForm, NotificationDeleteForm
 from django.contrib.auth.decorators import user_passes_test
 

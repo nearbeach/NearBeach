@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import Tag
+from NearBeach.models.models import Tag
 
 
 class TagSerializer(serializers.ModelSerializer):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import KanbanLevel
+from NearBeach.models.models import KanbanLevel
 
 
 class KanbanLevelSerializer(serializers.ModelSerializer):

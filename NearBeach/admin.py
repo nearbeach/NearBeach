@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import (
+from NearBeach.models.models import (
     Bug,
     BugClient,
     ChangeTask,

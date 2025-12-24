@@ -1,7 +1,7 @@
 from django.db.models import Max, Q
 from django.http import HttpResponseBadRequest
 
-from NearBeach.models import (
+from NearBeach.models.models import (
     ChangeTask,
     Group,
     KanbanBoard,

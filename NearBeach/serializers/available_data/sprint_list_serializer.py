@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import Sprint
+from NearBeach.models.models import Sprint
 
 
 class SprintListSerializer(serializers.ModelSerializer):

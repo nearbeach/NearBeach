@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.generics import get_object_or_404
 from NearBeach.decorators.check_user_permissions.customer_permissions import check_user_customer_permissions
-from NearBeach.models import (
+from NearBeach.models.models import (
     Customer,
     )
 from NearBeach.serializers.customer_serializer import CustomerSerializer

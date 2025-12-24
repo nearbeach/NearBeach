@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import ObjectAssignment
+from NearBeach.models.models import ObjectAssignment
 
 
 class ObjectAssignmentGroupSerializer(serializers.ModelSerializer):

@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from NearBeach.models import (
+from NearBeach.models.models import (
     Group,
-    KANBAN_BOARD_STATUS_CHOICE,
     KanbanBoard,
     KanbanColumn,
     KanbanLevel,
@@ -10,6 +9,7 @@ from NearBeach.models import (
 from NearBeach.serializers.kanban_column_serializer import KanbanColumnSerializer
 from NearBeach.serializers.kanban_level_serializer import KanbanLevelSerializer
 from NearBeach.serializers.kanban_card_serializer import KanbanCardSerializer
+from NearBeach.utils.enums.kanban_board_enums import KanbanBoardStatusChoice
 
 
 class KanbanBoardSerializer(serializers.Serializer):
@@ -30,7 +30,7 @@ class KanbanBoardSerializer(serializers.Serializer):
     )
     kanban_board_status = serializers.ChoiceField(
         default="Open",
-        choices=KANBAN_BOARD_STATUS_CHOICE,
+        choices=KanbanBoardStatusChoice,
         read_only=True,
     )
     kanban_column = serializers.ListSerializer(

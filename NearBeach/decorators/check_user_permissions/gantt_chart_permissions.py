@@ -1,7 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from functools import wraps
 
-from NearBeach.models import Sprint
+from NearBeach.models.models import Sprint
 
 from NearBeach.decorators.check_user_permissions.object_permissions import FUNCTION_DICT
 

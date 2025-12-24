@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.db.models import F
 
 from NearBeach.forms import GanttDataUpdateDataForm
-from NearBeach.models import (
+from NearBeach.models.models import (
     ListOfRequirementItemStatus,
     ListOfProjectStatus,
     ListOfTaskStatus,

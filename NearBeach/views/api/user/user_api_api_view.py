@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 from NearBeach.utils.api.permissions import IsSuperUser
 from NearBeach.serializers.user.user_api_serializer import UserApiSerializer
-from NearBeach.models import ExtendsAuthToken
+from NearBeach.models.models import ExtendsAuthToken
 from django.db.models import F
 
 
