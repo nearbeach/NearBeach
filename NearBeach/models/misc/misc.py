@@ -1,14 +1,25 @@
 """Module providing tables for misc functionality in NearBeach."""
+import uuid
+
 from django.db import models
 from django.conf import settings
 from knox.models import AuthToken
 
-from NearBeach.models.field.common_info import CommonInfo
+from NearBeach.models import KanbanBoard, KanbanCard
+from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.permission.group import Group
+from NearBeach.models.project import Project
+from NearBeach.models.request_for_change.request_for_change import RequestForChange
+from NearBeach.models.requirement.requirement import Requirement
+from NearBeach.models.requirement.requirement_item import RequirementItem
+from NearBeach.models.task import Task
+from NearBeach.utils.enums.notification_enums import NotificationLocation
+from NearBeach.utils.enums.object_enums import ObjectTemplateType
+from NearBeach.utils.enums.scheduled_object_enums import ScheduledObjectEnum
 
 
 class ExtendsAuthToken(AuthToken):
     """Class Extends AuthToken."""
-
     description = models.CharField(max_length=255, blank=True)
     change_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -26,131 +37,123 @@ class Notification(CommonInfo):
     - Login screen
     - Dashboard
     """
-
-    notification_id = models.BigAutoField(primary_key=True)
-    notification_header = models.CharField(
+    id = models.BigAutoField(primary_key=True)
+    header = models.CharField(
         blank=False,
         null=False,
         max_length=255,
     )
-    notification_message = models.TextField(
+    message = models.TextField(
         blank=True,
         default="",
     )
-    notification_start_date = models.DateTimeField()
-    notification_end_date = models.DateTimeField()
-    notification_location = models.CharField(
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    location = models.CharField(
         max_length=20,
-        choices=NOTIFICATION_LOCATION,
-        default="All",
+        choices=NotificationLocation,
+        default=NotificationLocation.ALL_OPTIONS,
     )
+
+    class Meta:
+        """Meta definition for Notification table."""
+        verbose_name_plural = "Notifications"
 
 
 class ObjectTemplate(CommonInfo):
-    object_template_id = models.BigAutoField(primary_key=True)
-    object_template_type = models.IntegerField(
-        choices=OBJECT_TEMPLATE_TYPE,
+    """Class contains fields for ObjectTemplate table"""
+    id = models.BigAutoField(primary_key=True)
+    type = models.IntegerField(
+        choices=ObjectTemplateType,
     )
-    object_template_json = models.JSONField()
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
+    json = models.JSONField()
+
+    class Meta:
+        """Meta definition for ObjectTemplate table."""
+        verbose_name_plural = "Object Templates"
 
 
 class ObjectTemplateGroup(CommonInfo):
-    object_template_group_id = models.BigAutoField(primary_key=True)
+    """Class contains fields for ObjectTemplateGroup table"""
+    id = models.BigAutoField(primary_key=True)
     object_template = models.ForeignKey(
-        "ObjectTemplate",
+        ObjectTemplate,
         on_delete=models.CASCADE,
     )
     group = models.ForeignKey(
-        "Group",
+        Group,
         on_delete=models.CASCADE,
     )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
+
+    class Meta:
+        """Meta definition for ObjectTemplateGroup table."""
+        verbose_name_plural = "Object Template Groups"
 
 
 class PublicLink(CommonInfo):
-    public_link_id = models.UUIDField(
+    """Class contains fields for PublicLink table"""
+    id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
     )
-    public_link_is_active = models.BooleanField(
+    is_active = models.BooleanField(
         default=True,
     )
     requirement = models.ForeignKey(
-        "Requirement",
+        Requirement,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     requirement_item = models.ForeignKey(
-        "RequirementItem",
+        RequirementItem,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     project = models.ForeignKey(
-        "Project",
+        Project,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     task = models.ForeignKey(
-        "Task",
+        Task,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     kanban_board = models.ForeignKey(
-        "KanbanBoard",
+        KanbanBoard,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     kanban_card = models.ForeignKey(
-        "KanbanCard",
+        KanbanCard,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     request_for_change = models.ForeignKey(
-        "RequestForChange",
+        RequestForChange,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    creation_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_creation_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
 
     def __str__(self):
-        return str(self.public_link_id)
+        return str(self.id)
+
+    class Meta:
+        """Meta definition for PublicLink table."""
+        verbose_name_plural = "Public Links"
 
 
 class ScheduledObject(CommonInfo):
-    schedule_object_id = models.BigAutoField(primary_key=True)
-    schedule_object_title = models.CharField(max_length=255)
+    """Class contains fields for ScheduledObject table"""
+    id = models.BigAutoField(primary_key=True)
+    title = models.CharField(max_length=255)
     last_run = models.DateField(
         blank=True,
         null=True,
@@ -168,7 +171,7 @@ class ScheduledObject(CommonInfo):
     run_count = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
     frequency = models.CharField(
-        choices=SCHEDULED_OBJECT_FREQUENCY,
+        choices=ScheduledObjectEnum,
         max_length=50,
     )
     frequency_attribute = models.JSONField(
@@ -176,14 +179,10 @@ class ScheduledObject(CommonInfo):
         blank=True,
     )
     object_template = models.ForeignKey(
-        "ObjectTemplate",
+        ObjectTemplate,
         on_delete=models.CASCADE,
     )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
+
+    class Meta:
+        """Meta definition for ScheduledObject table."""
+        verbose_name_plural = "Scheduled Objects"

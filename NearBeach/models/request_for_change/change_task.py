@@ -4,7 +4,7 @@ from django.db import models
 from django.conf import settings
 
 from NearBeach.utils.enums.request_for_change_enums import RequestForChangeStatus
-from NearBeach.models.field.common_info import CommonInfo
+from NearBeach.models.common_info import CommonInfo
 from NearBeach.models.request_for_change.request_for_change import RequestForChange
 
 

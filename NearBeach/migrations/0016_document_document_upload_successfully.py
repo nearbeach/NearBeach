@@ -4,9 +4,9 @@ from django.db import migrations, models
 
 
 def set_successfully_status(apps, schema_editor):
-    Document = apps.get_model("NearBeach", "Document")
+    document = apps.get_model("NearBeach", "Document")
 
-    Document.objects.all().update(
+    document.objects.all().update(
         document_upload_successfully=True,
     )
 

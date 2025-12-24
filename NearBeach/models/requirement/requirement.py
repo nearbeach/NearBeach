@@ -2,8 +2,8 @@
 
 from django.db import models
 
-from NearBeach.models.field.common_info import CommonInfo
-from NearBeach.models.organisation.organisation import Organisation
+from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.organisation import Organisation
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 
@@ -57,7 +57,7 @@ class Requirement(CommonInfo):
     title = models.CharField(
         max_length=255,
     )
-    scope = models.TextField(
+    description = models.TextField(
         blank=True,
         default="",
     )

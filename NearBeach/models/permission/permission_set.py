@@ -2,7 +2,7 @@
 
 from django.db import models
 
-from NearBeach.models.field.common_info import CommonInfo
+from NearBeach.models.common_info import CommonInfo
 from NearBeach.utils.enums.permission_enums import PermissionLevel, PermissionBoolean
 
 

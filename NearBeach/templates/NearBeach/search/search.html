@@ -1,8 +1,0 @@
-{% extends "NearBeach/partials/template.html" %}
-{% load static %}
-{% block content %}
-    <search-objects v-bind:search-input="'{{search_input}}'"
-                    v-bind:is-superuser="{{ is_superuser }}"
-                    v-bind:root-url="`{% url 'dashboard' %}`"
-    ></search-objects>
-{% endblock %}

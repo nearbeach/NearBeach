@@ -3,7 +3,7 @@
 from django.db import models
 from django.conf import settings
 
-from NearBeach.models.field.common_info import CommonInfo
+from NearBeach.models.common_info import CommonInfo
 from NearBeach.utils.enums.request_for_change_enums import (
     RequestForChangeApproval,
     RequestForChangeStatus,
@@ -59,8 +59,8 @@ class RequestForChange(CommonInfo):
     implementation_plan = models.TextField(
         "implementation_plan",
     )
-    backout_plan = models.TextField(
-        "backout_plan",
+    back_out_plan = models.TextField(
+        "back_out_plan",
     )
     test_plan = models.TextField(
         "test_plan",

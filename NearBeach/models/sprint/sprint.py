@@ -1,18 +1,28 @@
-class Sprint(models.Model):
-    sprint_id = models.BigAutoField(primary_key=True)
-    sprint_name = models.CharField(
+"""Module provides Sprint tables for NearBeach"""
+from django.db import models
+
+from NearBeach.models.project import Project
+from NearBeach.models.requirement.requirement import Requirement
+from NearBeach.models.common_info import CommonInfo
+from NearBeach.utils.enums.status_enums import SprintStatus
+
+
+class Sprint(CommonInfo):
+    """Class contains fields for Sprint table"""
+    id = models.BigAutoField(primary_key=True)
+    title = models.CharField(
         max_length=100,
         null=False,
         default="empty sprint",
     )
     requirement = models.ForeignKey(
-        "Requirement",
+        Requirement,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
     project = models.ForeignKey(
-        "Project",
+        Project,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -25,100 +35,17 @@ class Sprint(models.Model):
     )
     sprint_status = models.CharField(
         max_length=10,
-        choices=SPRINT_STATUS,
+        choices=SprintStatus,
         blank=True,
-        default="Draft",
+        default=SprintStatus.DRAFT,
     )
     sprint_start_date = models.DateTimeField()
     sprint_end_date = models.DateTimeField()
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
 
     def __str__(self):
-        return str(self.sprint_name)
+        return str(self.title)
 
     class Meta:
+        """Meta definition for Sprint"""
         verbose_name_plural = "Sprints"
-        ordering = ["-sprint_id"]
-
-
-class SprintAuditTable(models.Model):
-    sprint_audit_table_id = models.BigAutoField(primary_key=True)
-    sprint_id = models.ForeignKey(
-        "Sprint",
-        on_delete=models.CASCADE,
-    )
-    story_point_cost = models.IntegerField(
-        default=0,
-    )
-    higher_order_status = models.CharField(
-        max_length=10,
-        choices=OBJECT_HIGHER_ORDER_STATUS,
-        default="Normal",
-    )
-    requirement_item = models.ForeignKey(
-        "RequirementItem",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    project = models.ForeignKey(
-        "Project",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    task = models.ForeignKey(
-        "Task",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
-
-
-class SprintObjectAssignment(models.Model):
-    sprint_object_assignment_id = models.BigAutoField(primary_key=True)
-    sprint_id = models.ForeignKey(
-        "Sprint",
-        on_delete=models.CASCADE,
-    )
-    requirement_item = models.ForeignKey(
-        "RequirementItem",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    project = models.ForeignKey(
-        "Project",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    task = models.ForeignKey(
-        "Task",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
+        ordering = ["-id"]

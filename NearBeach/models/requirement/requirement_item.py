@@ -3,7 +3,7 @@
 from django.db import models
 
 from NearBeach.models.requirement.requirement import Requirement
-from NearBeach.models.field.common_info import CommonInfo
+from NearBeach.models.common_info import CommonInfo
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
@@ -74,7 +74,7 @@ class RequirementItem(CommonInfo):
     )
     story_point = models.IntegerField(default=1)
     priority = models.IntegerField(
-        choices=ObjectPriority.choices,
+        choices=ObjectPriority,
         default=ObjectPriority.NORMAL,
     )
 

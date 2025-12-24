@@ -3,20 +3,16 @@
 from django.db import models
 from django.conf import settings
 
-from NearBeach.models import (
-    ChangeTask,
-    Customer,
-    Group,
-    KanbanBoard,
-    KanbanCard,
-    Organisation,
-    Project,
-    RequestForChange,
-    Requirement,
-    RequirementItem,
-    Task,
-)
-from NearBeach.models.field.common_info import CommonInfo
+from NearBeach.models import KanbanBoard, KanbanCard, Customer
+from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.organisation import Organisation
+from NearBeach.models.permission.group import Group
+from NearBeach.models.project import Project
+from NearBeach.models.request_for_change.change_task import ChangeTask
+from NearBeach.models.request_for_change.request_for_change import RequestForChange
+from NearBeach.models.requirement.requirement import Requirement
+from NearBeach.models.requirement.requirement_item import RequirementItem
+from NearBeach.models.task import Task
 from NearBeach.utils.enums.object_enums import ObjectLinkRelationship
 
 
@@ -33,7 +29,7 @@ class ObjectAssignment(CommonInfo):
     - Card
 
     These permission are only "ACCESS" permissions.
-    The user/group's over riding permissions determine if
+    The user/group's over-riding permissions determine if
     the user can add, edit etc.
     """
 
@@ -139,5 +135,4 @@ class ObjectAssignment(CommonInfo):
 
     class Meta:
         """Meta definitions for the object assignment table"""
-
         verbose_name_plural = "Object Assignment Tables"

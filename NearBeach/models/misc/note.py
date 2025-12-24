@@ -1,6 +1,13 @@
-class ObjectNote(models.Model):
-    object_note_id = models.BigAutoField(primary_key=True)
-    object_note = models.TextField(
+"""Module proves Object Note tables for NearBeach"""
+from django.db import models
+
+from NearBeach.models.common_info import CommonInfo
+
+
+class ObjectNote(CommonInfo):
+    """Class contains fields for Object Note table"""
+    id = models.BigAutoField(primary_key=True)
+    note = models.TextField(
         blank=False,
         default="",
     )
@@ -46,13 +53,7 @@ class ObjectNote(models.Model):
         blank=True,
         null=True,
     )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
+
+    class Meta:
+        """Meta definition for ObjectNote"""
+        verbose_name_plural = "Object Notes"

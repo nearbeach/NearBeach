@@ -1,8 +1,7 @@
 """Module providing Kanban Board tables for NearBeach"""
-
 from django.db import models
 
-from NearBeach.models.field.common_info import CommonInfo
+from NearBeach.models.common_info import CommonInfo
 from NearBeach.models.requirement.requirement import Requirement
 from NearBeach.utils.enums.kanban_board_enums import KanbanBoardStatusChoice
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
@@ -10,9 +9,8 @@ from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 class KanbanBoard(CommonInfo):
     """Class containing Kanban Board status choices."""
-
     id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
     requirement = models.ForeignKey(
         Requirement,
         null=True,
@@ -26,7 +24,7 @@ class KanbanBoard(CommonInfo):
     )
 
     def __str__(self):
-        return str(self.name)
+        return str(self.title)
 
     class Meta:
         """Meta for Kanban Board model."""

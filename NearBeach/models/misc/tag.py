@@ -1,4 +1,12 @@
-class Tag(models.Model):
+"""Module provides Tag tables for NearBeach"""
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+from NearBeach.models.common_info import CommonInfo
+
+
+class Tag(CommonInfo):
+    """Class contains fields for Tag table"""
     tag_id = models.BigAutoField(primary_key=True)
     tag_name = models.CharField(
         max_length=50,
@@ -11,21 +19,19 @@ class Tag(models.Model):
         max_length=7,
         default="#ffffff",
     )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
 
     def __str__(self):
         return str(self.tag_name)
 
+    class Meta:
+        """Meta definition for Tag table."""
+        verbose_name_plural = "Tags"
+
 
 class TagAssignment(models.Model):
+    """Class contains fields for Tag Assignment table"""
     class ObjectEnum(models.TextChoices):
+        """Class contains enum choices for object enum."""
         REQUIREMENT = "requirement", _("Requirement")
         REQUIREMENT_ITEM = "requirement_item", _("Requirement Item")
         PROJECT = "project", _("Project")
@@ -36,24 +42,20 @@ class TagAssignment(models.Model):
         CUSTOMER = "customer", _("Customer")
         ORGANISATION = "organisation", _("Organisation")
 
-    tag_assignment_id = models.BigAutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     tag = models.ForeignKey(
         Tag,
         on_delete=models.CASCADE,
     )
     object_enum = models.CharField(
         max_length=40,
-        choices=ObjectEnum.choices,
+        choices=ObjectEnum,
         default=ObjectEnum.REQUIREMENT,
     )
     object_id = models.IntegerField(
         default=0,
     )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    change_user = models.ForeignKey(
-        USER_MODEL, on_delete=models.CASCADE, related_name="%(class)s_change_user"
-    )
-    is_deleted = models.BooleanField(
-        default=False,
-    )
+
+    class Meta:
+        """Meta definition for TagAssignment table."""
+        verbose_name_plural = "Tag Assignments"
