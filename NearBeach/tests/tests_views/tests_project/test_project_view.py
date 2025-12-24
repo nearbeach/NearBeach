@@ -23,7 +23,7 @@ class ProjectViewTests(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": username,
-            "auth-password": password
+            "auth-password": password,
         }
 
         # Setup the client
@@ -60,7 +60,7 @@ class ProjectViewTests(TestCase):
             "project_start_date": "",
             "project_end_date": "",
             "organisation": 1,
-            "group_list": [1, 2]
+            "group_list": [1, 2],
         }
 
         # Use POST to submit the new project
@@ -86,10 +86,7 @@ class ProjectViewTests(TestCase):
 
         # Use POST to submit the new project
         response = self.client.post(
-            reverse(
-                "project_information_save",
-                args=[2]
-            ),
+            reverse("project_information_save", args=[2]),
             form_data,
             follow=True,
         )
@@ -108,10 +105,7 @@ class ProjectViewTests(TestCase):
 
         # Use POST to submit the new project
         response = self.client.post(
-            reverse(
-                "project_information_save",
-                args=[2]
-            ),
+            reverse("project_information_save", args=[2]),
             form_data,
             follow=True,
         )

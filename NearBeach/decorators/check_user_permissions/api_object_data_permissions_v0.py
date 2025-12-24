@@ -13,13 +13,12 @@ def api_object_data_permissions(min_permission_level):
     be checking against. The result from the partial will determine
     if the user is granted permission or denied.
     """
+
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
             passes, user_level, extra_level = generic_permissions(
-                request,
-                kwargs["destination"],
-                kwargs
+                request, kwargs["destination"], kwargs
             )
 
             if not passes:

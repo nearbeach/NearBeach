@@ -32,9 +32,8 @@ def kanban_level_permissions(request, kwargs):
             return False, 0, False
 
     # Get the max permission value from user_group_results
-    user_level = user_group_results.aggregate(
-        Max("permission_set__kanban_board")
-    )["permission_set__kanban_board__max"]
+    user_level = user_group_results.aggregate(Max("permission_set__kanban_board"))[
+        "permission_set__kanban_board__max"
+    ]
 
     return True, user_level, False
-

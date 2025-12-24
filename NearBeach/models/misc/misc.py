@@ -1,4 +1,5 @@
 """Module providing tables for misc functionality in NearBeach."""
+
 import uuid
 
 from django.db import models
@@ -20,6 +21,7 @@ from NearBeach.utils.enums.scheduled_object_enums import ScheduledObjectEnum
 
 class ExtendsAuthToken(AuthToken):
     """Class Extends AuthToken."""
+
     description = models.CharField(max_length=255, blank=True)
     change_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -37,6 +39,7 @@ class Notification(CommonInfo):
     - Login screen
     - Dashboard
     """
+
     id = models.BigAutoField(primary_key=True)
     header = models.CharField(
         blank=False,
@@ -57,11 +60,13 @@ class Notification(CommonInfo):
 
     class Meta:
         """Meta definition for Notification table."""
+
         verbose_name_plural = "Notifications"
 
 
 class ObjectTemplate(CommonInfo):
     """Class contains fields for ObjectTemplate table"""
+
     id = models.BigAutoField(primary_key=True)
     type = models.IntegerField(
         choices=ObjectTemplateType,
@@ -70,11 +75,13 @@ class ObjectTemplate(CommonInfo):
 
     class Meta:
         """Meta definition for ObjectTemplate table."""
+
         verbose_name_plural = "Object Templates"
 
 
 class ObjectTemplateGroup(CommonInfo):
     """Class contains fields for ObjectTemplateGroup table"""
+
     id = models.BigAutoField(primary_key=True)
     object_template = models.ForeignKey(
         ObjectTemplate,
@@ -87,11 +94,13 @@ class ObjectTemplateGroup(CommonInfo):
 
     class Meta:
         """Meta definition for ObjectTemplateGroup table."""
+
         verbose_name_plural = "Object Template Groups"
 
 
 class PublicLink(CommonInfo):
     """Class contains fields for PublicLink table"""
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -147,11 +156,13 @@ class PublicLink(CommonInfo):
 
     class Meta:
         """Meta definition for PublicLink table."""
+
         verbose_name_plural = "Public Links"
 
 
 class ScheduledObject(CommonInfo):
     """Class contains fields for ScheduledObject table"""
+
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=255)
     last_run = models.DateField(
@@ -185,4 +196,5 @@ class ScheduledObject(CommonInfo):
 
     class Meta:
         """Meta definition for ScheduledObject table."""
+
         verbose_name_plural = "Scheduled Objects"

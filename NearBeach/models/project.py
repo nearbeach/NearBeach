@@ -10,6 +10,7 @@ from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 class ListOfProjectStatus(CommonInfo):
     """Class containing fields for List of Project Status."""
+
     id = models.BigAutoField(primary_key=True)
     status = models.CharField(
         max_length=100,
@@ -28,12 +29,14 @@ class ListOfProjectStatus(CommonInfo):
 
     class Meta:
         """Meta definition for ListOfProjectStatus."""
+
         verbose_name_plural = "List of Project Status"
         ordering = ["sort_order"]
 
 
 class Project(CommonInfo):
     """Class containing fields for Project model."""
+
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField()

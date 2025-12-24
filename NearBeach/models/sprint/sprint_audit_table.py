@@ -1,4 +1,5 @@
 """Module provides Sprint audit tables for NearBeach"""
+
 from django.db import models
 
 from NearBeach.models import RequirementItem, Project, Task
@@ -9,6 +10,7 @@ from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 class SprintAuditTable(CommonInfo):
     """Class contains fields for Sprint Audit table"""
+
     id = models.BigAutoField(primary_key=True)
     sprint_id = models.ForeignKey(
         Sprint,
@@ -43,4 +45,5 @@ class SprintAuditTable(CommonInfo):
 
     class Meta:
         """Meta definition for SprintAuditTable"""
+
         verbose_name_plural = "Sprint Audit Tables"

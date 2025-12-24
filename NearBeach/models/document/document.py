@@ -1,4 +1,5 @@
 """Module providing Document tables for NearBeach"""
+
 import uuid
 
 from django.db import models
@@ -9,6 +10,7 @@ from NearBeach.private_media import FileStorage
 
 class Document(CommonInfo):
     """Class containing Document fields."""
+
     key = models.UUIDField(
         default=uuid.uuid4,
         editable=False,

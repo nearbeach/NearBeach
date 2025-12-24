@@ -22,6 +22,5 @@ class Migration(migrations.Migration):
             name="document_upload_successfully",
             field=models.BooleanField(default=False),
         ),
-        migrations.RunPython(set_successfully_status, migrations.RunPython.noop)
+        migrations.RunPython(set_successfully_status, migrations.RunPython.noop),
     ]
-

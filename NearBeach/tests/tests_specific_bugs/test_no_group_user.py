@@ -32,7 +32,7 @@ class NewInstanceLoginTest(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": username,
-            "auth-password": password
+            "auth-password": password,
         }
 
     def test_admin_login(self):

@@ -1,4 +1,5 @@
 """Module provides scheduled object enums for NearBeach"""
+
 from django.db import models
 
 # DEFINE GLOBALS
@@ -15,6 +16,7 @@ SCH_LAST_BUSINESS_DAY_OF_THE_MONTH = "Last Business Day of the Month"
 
 class ScheduledObjectEnum(models.TextChoices):
     """Class of enum values for Scheduled Objects"""
+
     SCH_SET_DAY_OF_THE_WEEK = SCH_SET_DAY_OF_THE_WEEK
     SCH_WEEKLY = SCH_WEEKLY
     SCH_FORTNIGHTLY = SCH_FORTNIGHTLY

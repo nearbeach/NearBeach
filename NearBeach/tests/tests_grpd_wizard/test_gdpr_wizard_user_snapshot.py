@@ -3,16 +3,17 @@ from django.urls import reverse
 from NearBeach.models.models import Project
 
 # Declaration of Username and Password
-username = 'admin'
-password = 'Test1234$'
+username = "admin"
+password = "Test1234$"
+
 
 def login_user(c: object, self: object) -> object:
     response = c.post(
-        reverse('login'),
+        reverse("login"),
         self.credentials,
         follow=True,
     )
-    self.assertTrue(response.context['user'].is_active)
+    self.assertTrue(response.context["user"].is_active)
 
 
 """
@@ -39,15 +40,17 @@ Check all projects in both lists;
 1. Still exist
 2. And the fields have been updated to the admin user
 """
+
+
 class GdprWizardSnapshotTest(TestCase):
-    fixtures = ['NearBeach_gdpr_setup.json']
+    fixtures = ["NearBeach_gdpr_setup.json"]
 
     def setUp(self):
         # Login
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": username,
-            "auth-password": password
+            "auth-password": password,
         }
 
         # Setup the client
@@ -67,15 +70,12 @@ class GdprWizardSnapshotTest(TestCase):
 
         # Run the GDPR wizard
         response = self.client.post(
-            reverse(
-                "gdpr_submit",
-                args={}
-            ),
+            reverse("gdpr_submit", args={}),
             {
                 "gdpr_object_id": 6,
                 "gdpr_object_type": "user",
             },
-            follow=True
+            follow=True,
         )
 
         # Assert response is true
@@ -92,5 +92,7 @@ class GdprWizardSnapshotTest(TestCase):
         )
 
         # Assert that both sets contain the same elements
-        self.assertEqual(after_update_creation_user.count(), project_creation_user.count())
+        self.assertEqual(
+            after_update_creation_user.count(), project_creation_user.count()
+        )
         self.assertEqual(after_update_change_user.count(), project_change_user.count())

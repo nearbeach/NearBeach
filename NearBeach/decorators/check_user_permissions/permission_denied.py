@@ -14,4 +14,3 @@ def check_permission_denied():
         return inner
 
     return decorator
-

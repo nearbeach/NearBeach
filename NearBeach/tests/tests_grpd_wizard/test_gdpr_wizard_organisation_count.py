@@ -6,21 +6,22 @@ from NearBeach.models.models import (
     Requirement,
     RequirementItem,
     Project,
-    Task, Sprint,
+    Task,
+    Sprint,
 )
 
 # Declaration of Username and Password
-username = 'admin'
-password = 'Test1234$'
+username = "admin"
+password = "Test1234$"
 
 
 def login_user(c: object, self: object) -> object:
     response = c.post(
-        reverse('login'),
+        reverse("login"),
         self.credentials,
         follow=True,
     )
-    self.assertTrue(response.context['user'].is_active)
+    self.assertTrue(response.context["user"].is_active)
 
 
 """
@@ -45,7 +46,7 @@ We can loop through each table to create the counts.
 
 
 class GdprWizardOrganisationCount(TestCase):
-    fixtures = ['NearBeach_gdpr_setup.json']
+    fixtures = ["NearBeach_gdpr_setup.json"]
     data_dict = {}
     requirements_exclude = []
     requirement_items_exclude = []
@@ -58,20 +59,22 @@ class GdprWizardOrganisationCount(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": username,
-            "auth-password": password
+            "auth-password": password,
         }
 
         # Setup the client
         self.client = Client()
 
         login_user(self.client, self)
-        
+
     def after_update_checking(self):
         nearbeach_tables = apps.get_app_config("NearBeach").get_models()
         for single_table in nearbeach_tables:
             results = single_table.objects.all()
 
-            with self.subTest(F"GDPR wizard organisation count: {single_table.__name__}"):
+            with self.subTest(
+                f"GDPR wizard organisation count: {single_table.__name__}"
+            ):
                 self.assertEqual(
                     len(results),
                     self.data_dict[single_table.__name__],
@@ -120,7 +123,7 @@ class GdprWizardOrganisationCount(TestCase):
                 )
 
             self.data_dict[single_table.__name__] = results.count()
-    
+
     def setup_exclusion_objects(self):
         self.requirements_exclude = Requirement.objects.filter(
             organisation_id=10,
@@ -135,8 +138,8 @@ class GdprWizardOrganisationCount(TestCase):
             organisation_id=10,
         ).values("task_id")
         self.sprint_exclude = Sprint.objects.filter(
-            Q(project_id__in=self.projects_exclude) |
-            Q(requirement_id__in=self.requirements_exclude)
+            Q(project_id__in=self.projects_exclude)
+            | Q(requirement_id__in=self.requirements_exclude)
         )
 
     def test_gdpr_wizard_organisation_count_test(self):
@@ -144,22 +147,19 @@ class GdprWizardOrganisationCount(TestCase):
 
         # User will be logged in
         login_user(c, self)
-        
+
         # Setup the baseline
         self.setup_exclusion_objects()
         self.setup_baseline_count()
-        
+
         # Run the GDPR wizard
         response = self.client.post(
-            reverse(
-                "gdpr_submit",
-                args={}
-            ),
+            reverse("gdpr_submit", args={}),
             {
                 "gdpr_object_id": 10,
                 "gdpr_object_type": "organisation",
             },
-            follow=True
+            follow=True,
         )
 
         self.assertTrue(response.status_code, 200)

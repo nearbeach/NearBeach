@@ -9,7 +9,7 @@ class PublicViewNoLoginTests(TestCase):
     def test_public_links_as_open_to_public(self):
         kwargsTest = namedtuple(
             "kwargsTest",
-            ["destination","location_id", "public_link_id"],
+            ["destination", "location_id", "public_link_id"],
         )
 
         data_list = [
@@ -31,11 +31,14 @@ class PublicViewNoLoginTests(TestCase):
         for data in data_list:
             with self.subTest(data):
                 response = self.client.get(
-                    reverse("public_link", kwargs={
-                        "destination": data.destination,
-                        "location_id": data.location_id,
-                        "public_link_id": data.public_link_id
-                    }),
+                    reverse(
+                        "public_link",
+                        kwargs={
+                            "destination": data.destination,
+                            "location_id": data.location_id,
+                            "public_link_id": data.public_link_id,
+                        },
+                    ),
                     follow=True,
                 )
 

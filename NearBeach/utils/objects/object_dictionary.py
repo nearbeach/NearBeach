@@ -135,7 +135,7 @@ class ObjectDictionary:
                 "start_date": None,
             },
             "object": get_user_model().objects,
-        }
+        },
     }
     objects = None
     id = None

@@ -3,17 +3,17 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 # Declaration of Username and Password
-username = 'admin'
-password = 'Test1234$'
+username = "admin"
+password = "Test1234$"
 
 
 def login_user(c: object, self: object) -> object:
     response = c.post(
-        reverse('login'),
+        reverse("login"),
         self.credentials,
         follow=True,
     )
-    self.assertTrue(response.context['user'].is_active)
+    self.assertTrue(response.context["user"].is_active)
 
 
 """
@@ -38,7 +38,7 @@ We can loop through each table to create the counts.
 
 
 class GdprWizardCustomerCount(TestCase):
-    fixtures = ['NearBeach_gdpr_setup.json']
+    fixtures = ["NearBeach_gdpr_setup.json"]
     data_dict = {}
 
     def setUp(self):
@@ -46,7 +46,7 @@ class GdprWizardCustomerCount(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": username,
-            "auth-password": password
+            "auth-password": password,
         }
 
         # Setup the client
@@ -59,7 +59,7 @@ class GdprWizardCustomerCount(TestCase):
         for single_table in nearbeach_tables:
             results = single_table.objects.all()
 
-            with self.subTest(F"GDPR wizard customer count: {single_table.__name__}"):
+            with self.subTest(f"GDPR wizard customer count: {single_table.__name__}"):
                 self.assertEqual(
                     len(results),
                     self.data_dict[single_table.__name__],
@@ -84,21 +84,18 @@ class GdprWizardCustomerCount(TestCase):
 
         # User will be logged in
         login_user(c, self)
-        
+
         # Setup the baseline
         self.setup_baseline_count()
-        
+
         # Run the GDPR wizard
         response = self.client.post(
-            reverse(
-                "gdpr_submit",
-                args={}
-            ),
+            reverse("gdpr_submit", args={}),
             {
                 "gdpr_object_id": 23,
                 "gdpr_object_type": "customer",
             },
-            follow=True
+            follow=True,
         )
 
         self.assertTrue(response.status_code, 200)

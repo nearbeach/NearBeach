@@ -14,6 +14,7 @@ def check_user_admin_permissions(min_permission_level, permission_lookup=""):
 
     Permission Lookup is the field we are looking up in the PermissionSet table
     """
+
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):

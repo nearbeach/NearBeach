@@ -23,7 +23,7 @@ class AdminUserPermissionTest(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": "admin",
-            "auth-password": "Test1234$"
+            "auth-password": "Test1234$",
         }
 
     def test_project_permissions(self):
@@ -105,7 +105,7 @@ class TeamLeaderPermissionTest(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": "team_leader",
-            "auth-password": "Test1234$"
+            "auth-password": "Test1234$",
         }
 
     def test_project_permissions(self):
@@ -184,7 +184,7 @@ class TeamMemberPermissionTest(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": "team_member",
-            "auth-password": "Test1234$"
+            "auth-password": "Test1234$",
         }
 
     def test_project_permissions(self):
@@ -229,7 +229,7 @@ class TeamInternPermissionTest(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": "team_intern",
-            "auth-password": "Test1234$"
+            "auth-password": "Test1234$",
         }
 
     def test_project_permissions_ti(self):

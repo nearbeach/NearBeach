@@ -8,6 +8,7 @@ from NearBeach.models.common_info import CommonInfo
 
 class Organisation(CommonInfo):
     """Class containing fields for Organisation model."""
+
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255)
     website = models.CharField(max_length=50)

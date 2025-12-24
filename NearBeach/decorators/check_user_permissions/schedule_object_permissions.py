@@ -8,6 +8,7 @@ def check_schedule_object_permissions(min_permission_level):
     """
     Checks the user's permissions for the schedule object functionality in NearBeach.
     """
+
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -23,7 +24,7 @@ def check_schedule_object_permissions(min_permission_level):
             )
 
             # Get the scheduled object id if it exists
-            scheduled_object_id = kwargs.get('schedule_object_id')
+            scheduled_object_id = kwargs.get("schedule_object_id")
             if scheduled_object_id is not None:
                 user_group_results = user_group_results.filter(
                     group_id__in=ObjectTemplateGroup.objects.filter(
@@ -31,7 +32,7 @@ def check_schedule_object_permissions(min_permission_level):
                         object_template_id__in=ScheduledObject.objects.filter(
                             is_deleted=False,
                             schedule_object_id=scheduled_object_id,
-                        ).values("object_template_id")
+                        ).values("object_template_id"),
                     ).values("group_id")
                 )
 
@@ -46,5 +47,7 @@ def check_schedule_object_permissions(min_permission_level):
                     return func(request, *args, **kwargs, user_level=user_level)
 
             raise PermissionDenied
+
         return inner
+
     return decorator

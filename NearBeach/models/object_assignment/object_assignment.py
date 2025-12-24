@@ -135,4 +135,5 @@ class ObjectAssignment(CommonInfo):
 
     class Meta:
         """Meta definitions for the object assignment table"""
+
         verbose_name_plural = "Object Assignment Tables"

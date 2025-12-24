@@ -46,6 +46,7 @@ def check_user_generic_permissions(min_permission_level, extra_permissions=""):
     be checking against. The result from the partial will determine
     if the user is granted permission or denied.
     """
+
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -60,7 +61,7 @@ def check_user_generic_permissions(min_permission_level, extra_permissions=""):
             # Obtain destination from args
             # Due to weird issue - we check the args length
             if len(args) == 0:
-                destination = kwargs['destination']
+                destination = kwargs["destination"]
             else:
                 destination = args[0]
 
@@ -71,21 +72,31 @@ def check_user_generic_permissions(min_permission_level, extra_permissions=""):
             if destination == "kanban_card":
                 # Setup kwargs to have kanban_card_id
                 kwargs["kanban_card_id"] = kwargs["location_id"]
-                passes, user_level, extra_level = kanban_card_permissions(request, kwargs)
+                passes, user_level, extra_level = kanban_card_permissions(
+                    request, kwargs
+                )
             elif destination == "requirement_item":
                 # Setup kwargs to have requirement item id
                 kwargs["requirement_item_id"] = kwargs["location_id"]
-                passes, user_level, extra_level = requirement_item_permissions(request, kwargs)
+                passes, user_level, extra_level = requirement_item_permissions(
+                    request, kwargs
+                )
             elif destination == "change_task":
                 # Setup kwargs to have change task id
                 kwargs["change_task_id"] = kwargs["location_id"]
-                passes, user_level, extra_level = change_task_permissions(request, kwargs)
+                passes, user_level, extra_level = change_task_permissions(
+                    request, kwargs
+                )
             elif destination == "organisation":
-                passes, user_level, extra_level = organisation_permissions(request, kwargs)
+                passes, user_level, extra_level = organisation_permissions(
+                    request, kwargs
+                )
             elif destination == "customer":
                 passes, user_level, extra_level = customer_permissions(request, kwargs)
             else:
-                passes, user_level, extra_level = generic_permissions(request, destination, kwargs)
+                passes, user_level, extra_level = generic_permissions(
+                    request, destination, kwargs
+                )
 
             if not passes:
                 raise PermissionDenied
@@ -109,6 +120,7 @@ def check_specific_object_permissions(min_permission_level, object_lookup):
     be checking against. The result from the partial will determine
     if the user is granted permission or denied.
     """
+
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -125,7 +137,9 @@ def check_specific_object_permissions(min_permission_level, object_lookup):
 
             # Use the FUNCTION_DICT to determine which partial permissions we need to
             # reference
-            passes, user_level, extra_level = FUNCTION_DICT[object_lookup](request, kwargs)
+            passes, user_level, extra_level = FUNCTION_DICT[object_lookup](
+                request, kwargs
+            )
 
             if not passes:
                 raise PermissionDenied

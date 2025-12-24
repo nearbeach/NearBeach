@@ -23,7 +23,7 @@ class PublicViewTests(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": username,
-            "auth-password": password
+            "auth-password": password,
         }
 
         # Setup the client
@@ -69,25 +69,28 @@ class PublicViewTests(TestCase):
         # Get data of wrong location - gets a 403
         response = c.post(
             reverse("update_public_link", args=["project", 1]),
-            data={"public_link_id": "3d7346c4-05b6-41df-816a-eff814d9bbd0", "public_link_is_active": "False"}
+            data={
+                "public_link_id": "3d7346c4-05b6-41df-816a-eff814d9bbd0",
+                "public_link_is_active": "False",
+            },
         )
         self.assertEqual(response.status_code, 403)
 
     def test_delete_public_link_fail(self):
-            """
-            We are creating a public link against an object we do not have access too
-            """
-            c = Client()
+        """
+        We are creating a public link against an object we do not have access too
+        """
+        c = Client()
 
-            # User wil be logged in
-            login_user(c, self)
+        # User wil be logged in
+        login_user(c, self)
 
-            # Get data of wrong location - gets a 403
-            response = c.post(
-                reverse("delete_public_link", args=["project", 1]),
-                data={"public_link_id": "3d7346c4-05b6-41df-816a-eff814d9bbd0"}
-            )
-            self.assertEqual(response.status_code, 403)
+        # Get data of wrong location - gets a 403
+        response = c.post(
+            reverse("delete_public_link", args=["project", 1]),
+            data={"public_link_id": "3d7346c4-05b6-41df-816a-eff814d9bbd0"},
+        )
+        self.assertEqual(response.status_code, 403)
 
     def test_create_public_link_pass(self):
         """
@@ -116,20 +119,20 @@ class PublicViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_delete_public_link_success(self):
-            """
-            We are creating a public link against an object we do not have access too
-            """
-            c = Client()
+        """
+        We are creating a public link against an object we do not have access too
+        """
+        c = Client()
 
-            # User wil be logged in
-            login_user(c, self)
+        # User wil be logged in
+        login_user(c, self)
 
-            # Get data of wrong location - gets a 403
-            response = c.post(
-                reverse("delete_public_link", args=["project", 2]),
-                data={"public_link_id": "5f369dc9-a0bb-416d-9779-92576d0500bb"}
-            )
-            self.assertEqual(response.status_code, 200)
+        # Get data of wrong location - gets a 403
+        response = c.post(
+            reverse("delete_public_link", args=["project", 2]),
+            data={"public_link_id": "5f369dc9-a0bb-416d-9779-92576d0500bb"},
+        )
+        self.assertEqual(response.status_code, 200)
 
     def test_update_public_links_list_success(self):
         """
@@ -142,6 +145,9 @@ class PublicViewTests(TestCase):
 
         response = c.post(
             reverse("update_public_link", args=["project", 2]),
-            data={"public_link_id": "5f369dc9-a0bb-416d-9779-92576d0500bb", "public_link_is_active": "False"}
+            data={
+                "public_link_id": "5f369dc9-a0bb-416d-9779-92576d0500bb",
+                "public_link_is_active": "False",
+            },
         )
         self.assertEqual(response.status_code, 200)

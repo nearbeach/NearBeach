@@ -57,14 +57,20 @@ def generic_permissions(request, object_lookup, kwargs):
 
     extra_level = False
     if extra_permissions == "document":
-        extra_level = user_group_results.filter(
-            permission_set__document=1,
-        ).count() > 0
+        extra_level = (
+            user_group_results.filter(
+                permission_set__document=1,
+            ).count()
+            > 0
+        )
 
     if extra_permissions == "note":
-        extra_level = user_group_results.filter(
-            **{F"permission_set__{object_lookup}_note": 1}
-        ).count() > 0
+        extra_level = (
+            user_group_results.filter(
+                **{f"permission_set__{object_lookup}_note": 1}
+            ).count()
+            > 0
+        )
 
     return True, user_level, extra_level
 
@@ -92,8 +98,14 @@ def _fetch_parent_details(kwargs, object_lookup):
             location_id = object_results.requirement_id
         case "sprint":
             object_results = Sprint.objects.get(pk=location_id)
-            object_lookup = "requirement" if object_results.project is None else "project"
-            location_id = object_results.requirement_id if object_results.project is None else object_results.project_id
+            object_lookup = (
+                "requirement" if object_results.project is None else "project"
+            )
+            location_id = (
+                object_results.requirement_id
+                if object_results.project is None
+                else object_results.project_id
+            )
         case _:
             raise HttpResponseBadRequest("Invalid child object")
 

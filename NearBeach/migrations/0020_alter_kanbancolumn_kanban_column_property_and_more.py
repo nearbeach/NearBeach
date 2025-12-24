@@ -19,37 +19,37 @@ def initialise_data(apps, schema_editor):
                 project_status_id=1,
                 project_status="New",
                 project_higher_order_status="Backlog",
-                project_status_order=1
+                project_status_order=1,
             ),
             list_of_project_status(
                 project_status_id=2,
                 project_status="Backlog",
                 project_higher_order_status="Backlog",
-                project_status_order=2
+                project_status_order=2,
             ),
             list_of_project_status(
                 project_status_id=3,
                 project_status="Blocked",
                 project_higher_order_status="Blocked",
-                project_status_order=3
+                project_status_order=3,
             ),
             list_of_project_status(
                 project_status_id=4,
                 project_status="In Progress",
                 project_higher_order_status="Normal",
-                project_status_order=4
+                project_status_order=4,
             ),
             list_of_project_status(
                 project_status_id=5,
                 project_status="Test/Review",
                 project_higher_order_status="Normal",
-                project_status_order=5
+                project_status_order=5,
             ),
             list_of_project_status(
                 project_status_id=6,
                 project_status="Closed",
                 project_higher_order_status="Closed",
-                project_status_order=6
+                project_status_order=6,
             ),
         ]
     )

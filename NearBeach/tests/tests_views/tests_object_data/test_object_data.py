@@ -27,7 +27,7 @@ class TestObjectData(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": username,
-            "auth-password": password
+            "auth-password": password,
         }
 
     def test_incorrect_destination_data(self):
@@ -73,7 +73,6 @@ class TestObjectData(TestCase):
                 # Get data of wrong location - gets a 403
                 response = c.post(reverse(url, args=["task", 1]))
                 self.assertEqual(response.status_code, 403)
-
 
     def test_correct_object_data__without_forms(self):
         """
@@ -157,8 +156,8 @@ class TestObjectData(TestCase):
                     "bug_client": 1,
                     "bug_id": 1,
                     "bug_description": "Test",
-                    "bug_status": "In Progress"
-                }
+                    "bug_status": "In Progress",
+                },
             },
             {"url": "add_tags", "formData": {"tag_id": 1}},
             {"url": "add_customer", "formData": {"customer": 1}},

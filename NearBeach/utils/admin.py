@@ -5,6 +5,7 @@ from NearBeach.models.models import (
     PermissionSet,
 )
 
+
 def initalize_permission_sets(user):
     admin_set = PermissionSet(
         permission_set_name="Administration Permission Set",
@@ -115,8 +116,9 @@ def initalize_permission_sets(user):
         "read_only": read_only_set,
     }
 
+
 def initalize_admin_user(user, permission_set):
-    if not getattr(user, 'is_superuser', False):
+    if not getattr(user, "is_superuser", False):
         return
 
     # Create admin group
@@ -134,6 +136,7 @@ def initalize_admin_user(user, permission_set):
         change_user=user,
     )
     admin_user_group.save()
+
 
 def initalize_org(user):
     # Create no organisation

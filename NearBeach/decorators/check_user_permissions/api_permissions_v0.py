@@ -13,6 +13,7 @@ def check_user_api_permissions(min_permission_level):
     be checking against. The result from the partial will determine
     if the user is granted permission or denied.
     """
+
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -27,7 +28,9 @@ def check_user_api_permissions(min_permission_level):
                 destination = url_list[0]
                 kwargs["location_id"] = url_list[1]
 
-            passes, user_level, extra_level = generic_permissions(request, destination, kwargs)
+            passes, user_level, extra_level = generic_permissions(
+                request, destination, kwargs
+            )
 
             if not passes:
                 raise PermissionDenied

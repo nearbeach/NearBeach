@@ -31,43 +31,43 @@ def update_foreign_key_status(app, schema_editor):
     requirement_item = app.get_model("NearBeach", "ListOfRequirementItemStatus")
     requirement_item.objects.filter(pk=1).update(
         requirement_item_higher_order_status="Backlog",
-        requirement_item_status_sort_order=1
+        requirement_item_status_sort_order=1,
     )
     requirement_item.objects.filter(pk=2).update(
         requirement_item_higher_order_status="Backlog",
-        requirement_item_status_sort_order=2
+        requirement_item_status_sort_order=2,
     )
     requirement_item.objects.filter(pk=3).update(
         requirement_item_higher_order_status="Normal",
-        requirement_item_status_sort_order=3
+        requirement_item_status_sort_order=3,
     )
     requirement_item.objects.filter(pk=4).update(
         requirement_item_higher_order_status="Normal",
-        requirement_item_status_sort_order=4
+        requirement_item_status_sort_order=4,
     )
     requirement_item.objects.filter(pk=5).update(
         requirement_item_higher_order_status="Normal",
-        requirement_item_status_sort_order=5
+        requirement_item_status_sort_order=5,
     )
     requirement_item.objects.filter(pk=6).update(
         requirement_item_higher_order_status="Normal",
-        requirement_item_status_sort_order=6
+        requirement_item_status_sort_order=6,
     )
     requirement_item.objects.filter(pk=7).update(
         requirement_item_higher_order_status="Closed",
-        requirement_item_status_sort_order=7
+        requirement_item_status_sort_order=7,
     )
     requirement_item.objects.filter(pk=8).update(
         requirement_item_higher_order_status="Closed",
-        requirement_item_status_sort_order=8
+        requirement_item_status_sort_order=8,
     )
     requirement_item.objects.filter(pk=9).update(
         requirement_item_higher_order_status="Normal",
-        requirement_item_status_sort_order=9
+        requirement_item_status_sort_order=9,
     )
     requirement_item.objects.filter(pk=10).update(
         requirement_item_higher_order_status="Closed",
-        requirement_item_status_sort_order=10
+        requirement_item_status_sort_order=10,
     )
 
     # Requirement Item - User edited data
@@ -168,5 +168,7 @@ class Migration(migrations.Migration):
             name="requirement_status_sort_order",
             field=models.PositiveIntegerField(default=0),
         ),
-        migrations.RunPython(update_foreign_key_status, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            update_foreign_key_status, reverse_code=migrations.RunPython.noop
+        ),
     ]

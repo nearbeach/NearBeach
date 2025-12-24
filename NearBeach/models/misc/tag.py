@@ -1,4 +1,5 @@
 """Module provides Tag tables for NearBeach"""
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -7,6 +8,7 @@ from NearBeach.models.common_info import CommonInfo
 
 class Tag(CommonInfo):
     """Class contains fields for Tag table"""
+
     tag_id = models.BigAutoField(primary_key=True)
     tag_name = models.CharField(
         max_length=50,
@@ -25,13 +27,16 @@ class Tag(CommonInfo):
 
     class Meta:
         """Meta definition for Tag table."""
+
         verbose_name_plural = "Tags"
 
 
 class TagAssignment(models.Model):
     """Class contains fields for Tag Assignment table"""
+
     class ObjectEnum(models.TextChoices):
         """Class contains enum choices for object enum."""
+
         REQUIREMENT = "requirement", _("Requirement")
         REQUIREMENT_ITEM = "requirement_item", _("Requirement Item")
         PROJECT = "project", _("Project")
@@ -58,4 +63,5 @@ class TagAssignment(models.Model):
 
     class Meta:
         """Meta definition for TagAssignment table."""
+
         verbose_name_plural = "Tag Assignments"

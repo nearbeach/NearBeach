@@ -11,6 +11,7 @@ def check_user_customer_permissions(min_permission_level):
     Min Permission Level determines the user permission and if they can
     progress
     """
+
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):

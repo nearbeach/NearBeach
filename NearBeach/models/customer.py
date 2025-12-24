@@ -18,12 +18,14 @@ class ListOfTitle(CommonInfo):
 
     class Meta:
         """Meta definition for ListOfTitle."""
+
         verbose_name_plural = "List Of Titles"
         ordering = ["title"]
 
 
 class Customer(CommonInfo):
     """Class containing Customer fields"""
+
     id = models.BigAutoField(primary_key=True)
     title = models.ForeignKey(
         ListOfTitle,
@@ -46,15 +48,10 @@ class Customer(CommonInfo):
     )
 
     def __str__(self):
-        return str(
-            str(self.id)
-            + " - "
-            + self.first_name
-            + " "
-            + self.last_name
-        )
+        return str(str(self.id) + " - " + self.first_name + " " + self.last_name)
 
     class Meta:
         """Meta information for Customers model"""
+
         verbose_name_plural = "Customers"
         ordering = ["last_name", "first_name"]

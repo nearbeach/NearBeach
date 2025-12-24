@@ -23,7 +23,7 @@ class TaskViewTests(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": username,
-            "auth-password": password
+            "auth-password": password,
         }
 
         # Setup the client
@@ -39,7 +39,7 @@ class TaskViewTests(TestCase):
             "task_start_date": "2023-08-10T23:00:00.000Z",
             "task_end_date": "2023-08-10T23:00:00.000Z",
             "organisation": 1,
-            "group_list": [1, 2]
+            "group_list": [1, 2],
         }
 
         # Use POST to submit the new task
@@ -59,7 +59,7 @@ class TaskViewTests(TestCase):
             "task_start_date": "",
             "task_end_date": "2023-08-10T23:00:00.000Z",
             "organisation": 1,
-            "group_list": [1, 2]
+            "group_list": [1, 2],
         }
 
         # Use POST to submit the new task
@@ -70,7 +70,6 @@ class TaskViewTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 400)
-
 
     def test_save_task_as_team_leader(self):
         # Form Data
@@ -86,10 +85,7 @@ class TaskViewTests(TestCase):
 
         # Use POST to submit the new task
         response = self.client.post(
-            reverse(
-                "task_information_save",
-                args=[2]
-            ),
+            reverse("task_information_save", args=[2]),
             form_data,
             follow=True,
         )
@@ -108,10 +104,7 @@ class TaskViewTests(TestCase):
 
         # Use POST to submit the new task
         response = self.client.post(
-            reverse(
-                "task_information_save",
-                args=[2]
-            ),
+            reverse("task_information_save", args=[2]),
             form_data,
             follow=True,
         )

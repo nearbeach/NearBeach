@@ -1,4 +1,5 @@
 """Module provides User tables for NearBeach"""
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
@@ -13,6 +14,7 @@ from NearBeach.models.permission.permission_set import PermissionSet
 
 class UserGroup(CommonInfo):
     """Class contains fields for User Group table"""
+
     id = models.BigAutoField(primary_key=True)
     username = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -39,11 +41,13 @@ class UserGroup(CommonInfo):
 
     class Meta:
         """Meta definition for UserGroup."""
-        verbose_name_plural = 'User Groups'
+
+        verbose_name_plural = "User Groups"
 
 
 class UserJob(CommonInfo):
     """Class contains fields for User Job table"""
+
     id = models.BigAutoField(primary_key=True)
     username = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -72,11 +76,13 @@ class UserJob(CommonInfo):
 
     class Meta:
         """Meta definition for UserJob."""
-        verbose_name_plural = 'User Jobs'
+
+        verbose_name_plural = "User Jobs"
 
 
 class UserProfilePicture(CommonInfo):
     """Class contains fields for User Profile Picture table"""
+
     username = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -93,7 +99,8 @@ class UserProfilePicture(CommonInfo):
 
     class Meta:
         """Meta definition for UserProfilePicture."""
-        verbose_name_plural = 'User Profile Pictures'
+
+        verbose_name_plural = "User Profile Pictures"
 
 
 class UserSetting(CommonInfo):
@@ -118,4 +125,5 @@ class UserSetting(CommonInfo):
 
     class Meta:
         """Meta definition for UserSetting."""
-        verbose_name_plural = 'User Settings'
+
+        verbose_name_plural = "User Settings"

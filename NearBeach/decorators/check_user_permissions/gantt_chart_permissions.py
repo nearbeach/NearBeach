@@ -14,6 +14,7 @@ def check_gantt_chart_permissions_with_destination(min_permission_level):
     We will then utilise the correct permission partials to determine if the
     user should have access.
     """
+
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
@@ -40,7 +41,7 @@ def check_gantt_chart_permissions_with_destination(min_permission_level):
                 return func(request, *args, **kwargs, user_level=4)
 
             # Fold the location id into the {destination}_id. This will be used in the partials
-            kwargs[F"{destination}_id"] = location_id
+            kwargs[f"{destination}_id"] = location_id
 
             # User the FUNCTION_DICT to determine which partial permissions we need
             # to reference
@@ -55,7 +56,9 @@ def check_gantt_chart_permissions_with_destination(min_permission_level):
 
             # Does not meet conditions
             raise PermissionDenied
+
         return inner
+
     return decorator
 
 

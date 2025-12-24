@@ -1,4 +1,5 @@
 """Module provides Sprint object assignment tables for NearBeach"""
+
 from django.db import models
 
 from NearBeach.models import RequirementItem, Project, Task
@@ -8,6 +9,7 @@ from NearBeach.models.common_info import CommonInfo
 
 class SprintObjectAssignment(CommonInfo):
     """Class contains fields for Sprint Object Assignment table"""
+
     id = models.BigAutoField(primary_key=True)
     sprint_id = models.ForeignKey(
         Sprint,
@@ -34,4 +36,5 @@ class SprintObjectAssignment(CommonInfo):
 
     class Meta:
         """Meta definition for SprintObjectAssignment table"""
+
         verbose_name_plural = "Sprint Object Assignments"

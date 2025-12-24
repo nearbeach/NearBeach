@@ -1,4 +1,9 @@
-from NearBeach.models.models import ObjectAssignment, Requirement, RequirementItem, UserGroup
+from NearBeach.models.models import (
+    ObjectAssignment,
+    Requirement,
+    RequirementItem,
+    UserGroup,
+)
 from django.db.models import Max, Q
 
 
@@ -46,20 +51,24 @@ def requirement_item_permissions(request, kwargs):
             return False, 0, False
 
     # Get the max permission value from user_group_results
-    user_level = user_group_results.aggregate(
-        Max("permission_set__requirement")
-    )["permission_set__requirement__max"]
+    user_level = user_group_results.aggregate(Max("permission_set__requirement"))[
+        "permission_set__requirement__max"
+    ]
 
     # Check all variation of the extra permissions
     extra_level = False
     if extra_permissions == "document":
-        extra_level = user_group_results.filter(
-            permission_set__document=1,
-        ).count() > 0
+        extra_level = (
+            user_group_results.filter(
+                permission_set__document=1,
+            ).count()
+            > 0
+        )
 
     if extra_permissions == "note":
-        extra_level = user_group_results.filter(
-            permission_set__requirement_item_note=1
-        ).count() > 0
+        extra_level = (
+            user_group_results.filter(permission_set__requirement_item_note=1).count()
+            > 0
+        )
 
     return True, user_level, extra_level

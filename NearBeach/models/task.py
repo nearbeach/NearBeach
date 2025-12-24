@@ -11,6 +11,7 @@ from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 class ListOfTaskStatus(CommonInfo):
     """Class containing fields for List of Task Status."""
+
     id = models.BigAutoField(primary_key=True)
     status = models.CharField(
         max_length=100,
@@ -29,12 +30,14 @@ class ListOfTaskStatus(CommonInfo):
 
     class Meta:
         """Meta definition for ListOfTaskStatus."""
+
         verbose_name_plural = "List Of Task Status"
         ordering = ["sort_order"]
 
 
 class Task(CommonInfo):
     """Class containing fields for Task."""
+
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField()

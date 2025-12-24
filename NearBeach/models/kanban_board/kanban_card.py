@@ -17,6 +17,7 @@ from NearBeach.utils.enums.object_enums import ObjectPriority
 
 class KanbanCard(CommonInfo):
     """Class containing Kanban Card fields."""
+
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField(

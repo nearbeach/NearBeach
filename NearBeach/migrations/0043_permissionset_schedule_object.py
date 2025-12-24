@@ -2,6 +2,7 @@
 
 from django.db import migrations, models
 
+
 def initialise_data(apps, schema_editor):
     """
     The administration permission set should have the "Scheduled Object" permissions set at 4

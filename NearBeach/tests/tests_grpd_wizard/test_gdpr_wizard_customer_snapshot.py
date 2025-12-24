@@ -3,16 +3,17 @@ from django.urls import reverse
 from NearBeach.models.models import Project, Requirement, RequirementItem, Task
 
 # Declaration of Username and Password
-username = 'admin'
-password = 'Test1234$'
+username = "admin"
+password = "Test1234$"
+
 
 def login_user(c: object, self: object) -> object:
     response = c.post(
-        reverse('login'),
+        reverse("login"),
         self.credentials,
         follow=True,
     )
-    self.assertTrue(response.context['user'].is_active)
+    self.assertTrue(response.context["user"].is_active)
 
 
 """
@@ -39,15 +40,17 @@ We have the following objects that are NOT assigned to the organistion, and will
 - task -> 6
 
 """
+
+
 class GdprWizardSnapshotTest(TestCase):
-    fixtures = ['NearBeach_gdpr_setup.json']
+    fixtures = ["NearBeach_gdpr_setup.json"]
 
     def setUp(self):
         # Login
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": username,
-            "auth-password": password
+            "auth-password": password,
         }
 
         # Setup the client
@@ -140,10 +143,7 @@ class GdprWizardSnapshotTest(TestCase):
 
         # Run the GDPR wizard
         response = self.client.post(
-            reverse(
-                "gdpr_submit",
-                args={}
-            ),
+            reverse("gdpr_submit", args={}),
             {
                 "gdpr_object_id": 32,
                 "gdpr_object_type": "customer",
@@ -152,9 +152,9 @@ class GdprWizardSnapshotTest(TestCase):
                 "project": [37],
                 "task": [99],
             },
-            follow=True
+            follow=True,
         )
-        
+
         # Assert response is true
         self.assertTrue(response.status_code == 200)
 

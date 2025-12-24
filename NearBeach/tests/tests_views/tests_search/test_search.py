@@ -27,7 +27,7 @@ class TeamLeaderSearchTest(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": username,
-            "auth-password": password
+            "auth-password": password,
         }
 
     def test_team_leader_searches(self):
@@ -44,7 +44,13 @@ class TeamLeaderSearchTest(TestCase):
         response = c.post(
             reverse("search"),
             {
-                "array_of_objects": ["request_for_change", "requirement", "project", "task", "kanban_board"],
+                "array_of_objects": [
+                    "request_for_change",
+                    "requirement",
+                    "project",
+                    "task",
+                    "kanban_board",
+                ],
                 "destination_page": 1,
                 "search": "RFC",
             },
@@ -64,7 +70,13 @@ class TeamLeaderSearchTest(TestCase):
         response = c.post(
             reverse("search"),
             {
-                "array_of_objects": ["request_for_change", "requirement", "project", "task", "kanban_board"],
+                "array_of_objects": [
+                    "request_for_change",
+                    "requirement",
+                    "project",
+                    "task",
+                    "kanban_board",
+                ],
                 "destination_page": 1,
                 "search": "RFC",
                 "include_closed": True,
@@ -96,7 +108,13 @@ class TeamLeaderSearchTest(TestCase):
         response = c.post(
             reverse("search"),
             {
-                "array_of_objects": ["request_for_change", "requirement", "project", "task", "kanban_board"],
+                "array_of_objects": [
+                    "request_for_change",
+                    "requirement",
+                    "project",
+                    "task",
+                    "kanban_board",
+                ],
                 "destination_page": 1,
                 "search": "RFC",
             },
@@ -107,7 +125,13 @@ class TeamLeaderSearchTest(TestCase):
         response = c.post(
             reverse("search_data"),
             {
-                "array_of_objects": ["request_for_change", "requirement", "project", "task", "kanban_board"],
+                "array_of_objects": [
+                    "request_for_change",
+                    "requirement",
+                    "project",
+                    "task",
+                    "kanban_board",
+                ],
                 "destination_page": 1,
                 "search": 2,
             },
@@ -118,7 +142,13 @@ class TeamLeaderSearchTest(TestCase):
         response = c.post(
             reverse("search_data"),
             {
-                "array_of_objects": ["request_for_change", "requirement", "project", "task", "kanban_board"],
+                "array_of_objects": [
+                    "request_for_change",
+                    "requirement",
+                    "project",
+                    "task",
+                    "kanban_board",
+                ],
                 "destination_page": 1,
                 "search": "RFC",
                 "include_closed": True,
@@ -150,7 +180,13 @@ class TeamLeaderSearchTest(TestCase):
         response = c.post(
             reverse("search_customer_data"),
             {
-                "array_of_objects": ["request_for_change", "requirement", "project", "task", "kanban_board"],
+                "array_of_objects": [
+                    "request_for_change",
+                    "requirement",
+                    "project",
+                    "task",
+                    "kanban_board",
+                ],
                 "destination_page": 1,
                 "search": "NearBeach",
             },
@@ -173,7 +209,13 @@ class TeamLeaderSearchTest(TestCase):
         response = c.post(
             reverse("search_organisation_data"),
             {
-                "array_of_objects": ["request_for_change", "requirement", "project", "task", "kanban_board"],
+                "array_of_objects": [
+                    "request_for_change",
+                    "requirement",
+                    "project",
+                    "task",
+                    "kanban_board",
+                ],
                 "destination_page": 1,
                 "search": "NearBeach",
             },

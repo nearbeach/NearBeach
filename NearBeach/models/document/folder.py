@@ -1,4 +1,5 @@
 """Module providing Folder tables for NearBeach"""
+
 from django.db import models
 
 from NearBeach.models.common_info import CommonInfo
@@ -14,6 +15,7 @@ from NearBeach.models.task import Task
 
 class Folder(CommonInfo):
     """Class containing Folder fields"""
+
     id = models.BigAutoField(primary_key=True)
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, blank=True, null=True

@@ -1,4 +1,5 @@
 """Module proves Object Note tables for NearBeach"""
+
 from django.db import models
 
 from NearBeach.models.common_info import CommonInfo
@@ -6,6 +7,7 @@ from NearBeach.models.common_info import CommonInfo
 
 class ObjectNote(CommonInfo):
     """Class contains fields for Object Note table"""
+
     id = models.BigAutoField(primary_key=True)
     note = models.TextField(
         blank=False,
@@ -56,4 +58,5 @@ class ObjectNote(CommonInfo):
 
     class Meta:
         """Meta definition for ObjectNote"""
+
         verbose_name_plural = "Object Notes"

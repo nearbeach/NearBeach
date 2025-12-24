@@ -1,4 +1,5 @@
 """Module providing Document tables for NearBeach"""
+
 from django.db import models
 from django.conf import settings
 
@@ -16,6 +17,7 @@ from NearBeach.models.task import Task
 
 class DocumentPermission(CommonInfo):
     """Class containing Document Permission fields"""
+
     id = models.BigAutoField(primary_key=True)
     document = models.ForeignKey(
         Document,

@@ -48,9 +48,12 @@ def change_task_permissions(request, kwargs):
     # Check all variations of the extra permissions
     extra_level = False
     if extra_permissions == "document":
-        extra_level = user_group_results.filter(
-            permission_set__document=1,
-        ).count() > 0
+        extra_level = (
+            user_group_results.filter(
+                permission_set__document=1,
+            ).count()
+            > 0
+        )
 
     # Return
     return True, user_level, extra_level

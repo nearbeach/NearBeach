@@ -23,7 +23,7 @@ class TestPermissionDenied(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": "admin",
-            "auth-password": "Test1234$"
+            "auth-password": "Test1234$",
         }
 
     def test_permission_denied(self):

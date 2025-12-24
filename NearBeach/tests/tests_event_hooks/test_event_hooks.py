@@ -3,7 +3,6 @@ from django.test import TestCase
 from unittest import mock
 
 
-
 class EventHooksEmitTest(TestCase):
     def setUp(self):
         self._registry = event_hooks.Registry(list)
@@ -11,7 +10,6 @@ class EventHooksEmitTest(TestCase):
         self._mock = mock.MagicMock()
         self._registry.register_func("test")(self._mock)
         self._patch_print = mock.patch("builtins.print")
-
 
     def test_emit_with_valid(self):
         self._registry.emit("test", "test_value")

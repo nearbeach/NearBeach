@@ -1,4 +1,5 @@
 """Module providing Kanban Board tables for NearBeach"""
+
 from django.db import models
 
 from NearBeach.models.common_info import CommonInfo
@@ -9,6 +10,7 @@ from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 class KanbanBoard(CommonInfo):
     """Class containing Kanban Board status choices."""
+
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=255)
     requirement = models.ForeignKey(

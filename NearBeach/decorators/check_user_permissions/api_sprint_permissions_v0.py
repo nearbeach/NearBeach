@@ -4,7 +4,9 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from NearBeach.decorators.check_user_permissions.object_permissions import FUNCTION_DICT
-from NearBeach.decorators.check_user_permissions.partials.generic_permissions import generic_permissions
+from NearBeach.decorators.check_user_permissions.partials.generic_permissions import (
+    generic_permissions,
+)
 from NearBeach.serializers.sprint_serializer import SprintSerializer
 
 
@@ -14,7 +16,9 @@ def check_api_sprint_permissions(min_permission_level):
         def inner(request, *args, **kwargs):
             _request = request.request if hasattr(request, "request") else request
 
-            serializer = SprintSerializer(data=_request.data, context={'request': _request})
+            serializer = SprintSerializer(
+                data=_request.data, context={"request": _request}
+            )
             if not serializer.is_valid():
                 return Response(
                     data=serializer.errors,
@@ -31,8 +35,7 @@ def check_api_sprint_permissions(min_permission_level):
             location_id = serializer.data.get("location_id")
 
             # Fold the location id into the {destination}_id.
-            kwargs[F"{destination}_id"] = location_id
-
+            kwargs[f"{destination}_id"] = location_id
 
             # User the FUNCTION_DICT to determine which partial permissions we need
             # to reference
@@ -49,6 +52,7 @@ def check_api_sprint_permissions(min_permission_level):
             raise PermissionDenied
 
         return inner
+
     return decorator
 
 
@@ -58,9 +62,7 @@ def check_api_sprint_link_permissions(min_permission_level):
         def inner(request, *args, **kwargs):
             # TODO - fix this terrible code
             passes, user_level, extra_level = generic_permissions(
-                request,
-                "sprint",
-                {"location_id": kwargs["sprint_id"]}
+                request, "sprint", {"location_id": kwargs["sprint_id"]}
             )
 
             if not passes:

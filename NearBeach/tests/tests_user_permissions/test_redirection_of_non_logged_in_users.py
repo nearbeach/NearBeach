@@ -99,7 +99,8 @@ class CheckDocumentation(TestCase):
 
         # Check the array
         assert_redirects_to_login(response_post_array, self)
-        
+
+
 class CheckObjectScheduler(TestCase):
     def test_object_scheduler(self):
         # Make sure the user gets redirected to the login page
@@ -246,7 +247,10 @@ class CheckObjects(TestCase):
             c.post(reverse("note_list", args=["project", 1])),
             c.post(reverse("object_link_list", args=["project", 1])),
             c.post(reverse("query_bug_client", args=["project", 1])),
-            c.get(reverse("update_note", args=[1]), data={"object_note_id": 1, "object_note": ""}),
+            c.get(
+                reverse("update_note", args=[1]),
+                data={"object_note_id": 1, "object_note": ""},
+            ),
             c.post(reverse("user_list", args=["project", 1])),
             c.post(reverse("lead_user_list")),
             c.post(reverse("my_planner_add_object")),

@@ -1,4 +1,5 @@
 """Module provides Sprint tables for NearBeach"""
+
 from django.db import models
 
 from NearBeach.models.project import Project
@@ -9,6 +10,7 @@ from NearBeach.utils.enums.status_enums import SprintStatus
 
 class Sprint(CommonInfo):
     """Class contains fields for Sprint table"""
+
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(
         max_length=100,
@@ -47,5 +49,6 @@ class Sprint(CommonInfo):
 
     class Meta:
         """Meta definition for Sprint"""
+
         verbose_name_plural = "Sprints"
         ordering = ["-id"]

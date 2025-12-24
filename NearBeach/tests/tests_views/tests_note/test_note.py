@@ -27,7 +27,7 @@ class TestNote(TestCase):
         self.credentials = {
             "two_factor_login_view-current_step": "auth",
             "auth-username": username,
-            "auth-password": password
+            "auth-password": password,
         }
 
     def test_note_delete_fail(self):
@@ -55,7 +55,7 @@ class TestNote(TestCase):
         # Get data of wrong location - gets a 403
         response = c.post(
             reverse("update_note", args=["2"]),
-            data={'object_note_id': 2, 'object_note': 'Hello World'}
+            data={"object_note_id": 2, "object_note": "Hello World"},
         )
         self.assertEqual(response.status_code, 403)
 
@@ -84,6 +84,6 @@ class TestNote(TestCase):
         # Get data of wrong location - gets a 403
         response = c.post(
             reverse("update_note", args=["3"]),
-            data={'object_note_id': 3, 'object_note': 'Hello World'}
+            data={"object_note_id": 3, "object_note": "Hello World"},
         )
         self.assertEqual(response.status_code, 200)

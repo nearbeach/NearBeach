@@ -31,8 +31,8 @@ def project_permissions(request, kwargs):
             return False, 0, False
 
     # Get the max permission value from user_group_results
-    user_level = user_group_results.aggregate(
-        Max("permission_set__project")
-    )["permission_set__project__max"]
+    user_level = user_group_results.aggregate(Max("permission_set__project"))[
+        "permission_set__project__max"
+    ]
 
     return True, user_level, False
