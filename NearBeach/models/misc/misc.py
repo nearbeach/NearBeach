@@ -23,7 +23,11 @@ from NearBeach.utils.enums.scheduled_object_enums import ScheduledObjectEnum
 class ExtendsAuthToken(AuthToken):
     """Class Extends AuthToken."""
 
-    description = models.CharField(max_length=255, blank=True)
+    description = models.CharField(
+        max_length=255,
+        blank=True,
+        default=""
+    )
     change_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

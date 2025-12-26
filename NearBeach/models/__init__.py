@@ -2,6 +2,7 @@
 
 from .customer import Customer, ListOfTitle
 from .document.document import Document
+from .document.document_permission import DocumentPermission
 from .document.folder import Folder
 from .kanban_board.kanban_card import KanbanCard, KanbanColumn, KanbanLevel, KanbanBoard
 from .misc.misc import (
@@ -34,5 +35,7 @@ from .requirement.requirement_item import (
     RequirementItem,
 )
 from .sprint.sprint import Sprint
+from .sprint.sprint_audit_table import SprintAuditTable
+from .sprint.sprint_object_assignment import SprintObjectAssignment
 from .task import ListOfTaskStatus, Task
 from .user import UserGroup, UserJob, UserProfilePicture, UserSetting

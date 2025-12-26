@@ -21,7 +21,10 @@ class RequestForChange(CommonInfo):
     title = models.CharField(
         max_length=255,
     )
-    description = models.TextField()
+    description = models.TextField(
+        blank=True,
+        default="",
+    )
     type = models.IntegerField(
         choices=RequestForChangeType,
     )
@@ -54,16 +57,20 @@ class RequestForChange(CommonInfo):
         default=1,
     )
     risk_and_impact_analysis = models.TextField(
-        "risk_and_impact_analysis",
+        blank=True,
+        default="",
     )
     implementation_plan = models.TextField(
-        "implementation_plan",
+        blank=True,
+        default="",
     )
     back_out_plan = models.TextField(
-        "back_out_plan",
+        blank=True,
+        default="",
     )
     test_plan = models.TextField(
-        "test_plan",
+        blank=True,
+        default="",
     )
 
     def __str__(self):

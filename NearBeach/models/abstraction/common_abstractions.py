@@ -14,11 +14,13 @@ class CommonInfo(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
+        default=1,
     )
     creation_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_creation_user",
+        default=1,
     )
     is_deleted = models.BooleanField(
         default=False,

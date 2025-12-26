@@ -3,7 +3,7 @@
 from django.db import models
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
-from NearBeach.models.requirement.requirement import Requirement, RequirementForeignKey
+from NearBeach.models.requirement.requirement import RequirementForeignKey
 from NearBeach.utils.enums.kanban_board_enums import KanbanBoardStatusChoice
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 

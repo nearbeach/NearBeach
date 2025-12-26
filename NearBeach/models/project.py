@@ -39,7 +39,10 @@ class Project(CommonInfo):
 
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(
+        blank=True,
+        default="",
+    )
     organisation = models.ForeignKey(
         Organisation,
         on_delete=models.CASCADE,

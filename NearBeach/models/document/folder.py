@@ -27,7 +27,7 @@ class Folder(
     """Class containing Folder fields"""
 
     id = models.BigAutoField(primary_key=True)
-    folder_description = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
     parent_folder = models.ForeignKey(
         "self",
         blank=True,
@@ -36,7 +36,7 @@ class Folder(
     )
 
     def __str__(self):
-        return str(self.folder_description)
+        return str(self.description)
 
     class Meta:
         """Meta definition for Folder model."""
