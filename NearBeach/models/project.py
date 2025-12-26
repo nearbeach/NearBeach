@@ -2,7 +2,7 @@
 
 from django.db import models
 
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.models.organisation import Organisation
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
@@ -66,3 +66,20 @@ class Project(CommonInfo):
 
         verbose_name_plural = "Projects"
         ordering = ["-id"]
+
+
+# ABSTRACTION
+class ProjectForeignKey(models.Model):
+    """Class containing abstraction for Project"""
+
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        """Meta information for Project model"""
+
+        abstract = True

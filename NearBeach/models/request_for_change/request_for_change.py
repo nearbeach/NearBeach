@@ -3,7 +3,7 @@
 from django.db import models
 from django.conf import settings
 
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.utils.enums.request_for_change_enums import (
     RequestForChangeApproval,
     RequestForChangeStatus,
@@ -74,6 +74,23 @@ class RequestForChange(CommonInfo):
 
         verbose_name_plural = "Request for changes"
         ordering = ["-id"]
+
+
+# ABSTRACTION
+class RequestForChangeForeignKey(models.Model):
+    """Class containing abstraction for RequestForChange"""
+
+    request_for_change = models.ForeignKey(
+        RequestForChange,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        """Meta information for RequestForChange model"""
+
+        abstract = True
 
 
 class RequestForChangeGroupApproval(CommonInfo):

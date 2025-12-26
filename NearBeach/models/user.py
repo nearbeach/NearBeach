@@ -4,12 +4,13 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-from NearBeach.models import Project, Task
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.models.document.document import Document
-from NearBeach.models.kanban_board.kanban_card import KanbanCard
+from NearBeach.models.kanban_board.kanban_card import KanbanCardForeignKey
 from NearBeach.models.permission.group import Group
 from NearBeach.models.permission.permission_set import PermissionSet
+from NearBeach.models.project import ProjectForeignKey
+from NearBeach.models.task import TaskForeignKey
 
 
 class UserGroup(CommonInfo):
@@ -45,7 +46,13 @@ class UserGroup(CommonInfo):
         verbose_name_plural = "User Groups"
 
 
-class UserJob(CommonInfo):
+class UserJob(
+    CommonInfo,
+    KanbanCardForeignKey,
+    ProjectForeignKey,
+    TaskForeignKey,
+
+):
     """Class contains fields for User Job table"""
 
     id = models.BigAutoField(primary_key=True)
@@ -55,24 +62,6 @@ class UserJob(CommonInfo):
     )
     date = models.DateField()
     sort_number = models.IntegerField()
-    kanban_card = models.ForeignKey(
-        KanbanCard,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    project = models.ForeignKey(
-        Project,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    task = models.ForeignKey(
-        Task,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
 
     class Meta:
         """Meta definition for UserJob."""
@@ -104,7 +93,11 @@ class UserProfilePicture(CommonInfo):
 
 
 class UserSetting(CommonInfo):
+    """Class contains fields for User Setting table"""
+
     class SettingType(models.TextChoices):
+        """Class containing the setting types for User Settings."""
+
         DASHBOARD = "DASHBOARD", _("Dashboard")
         EDIT_KANBAN_BOARD = "EDIT_KANBAN_BOARD", _("Edit Kanban Board")
         KANBAN_BOARD = "KANBAN_BOARD", _("Kanban Board")

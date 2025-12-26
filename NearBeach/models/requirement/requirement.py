@@ -2,7 +2,7 @@
 
 from django.db import models
 
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.models.organisation import Organisation
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
@@ -86,3 +86,20 @@ class Requirement(CommonInfo):
 
         verbose_name_plural = "Requirements"
         ordering = ["-id"]
+
+
+# ABSTRACTION
+class RequirementForeignKey(models.Model):
+    """Class containing abstraction for Requirement"""
+
+    requirement = models.ForeignKey(
+        Requirement,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        """Meta information for Requirement model"""
+
+        abstract = True

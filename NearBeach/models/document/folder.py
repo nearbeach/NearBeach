@@ -2,66 +2,31 @@
 
 from django.db import models
 
-from NearBeach.models.common_info import CommonInfo
-from NearBeach.models.customer import Customer
-from NearBeach.models.kanban_board.kanban_card import KanbanCard
-from NearBeach.models.organisation import Organisation
-from NearBeach.models.request_for_change.request_for_change import RequestForChange
-from NearBeach.models.requirement.requirement import Requirement
-from NearBeach.models.requirement.requirement_item import RequirementItem
-from NearBeach.models.project import Project
-from NearBeach.models.task import Task
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.customer import CustomerForeignKey
+from NearBeach.models.kanban_board.kanban_card import KanbanCardForeignKey
+from NearBeach.models.organisation import OrganisationForeignKey
+from NearBeach.models.project import ProjectForeignKey
+from NearBeach.models.request_for_change.request_for_change import RequestForChangeForeignKey
+from NearBeach.models.requirement.requirement import RequirementForeignKey
+from NearBeach.models.requirement.requirement_item import RequirementItemForeignKey
+from NearBeach.models.task import TaskForeignKey
 
 
-class Folder(CommonInfo):
+class Folder(
+    CommonInfo,
+    ProjectForeignKey,
+    TaskForeignKey,
+    CustomerForeignKey,
+    OrganisationForeignKey,
+    RequirementForeignKey,
+    RequirementItemForeignKey,
+    RequestForChangeForeignKey,
+    KanbanCardForeignKey,
+):
     """Class containing Folder fields"""
 
     id = models.BigAutoField(primary_key=True)
-    project = models.ForeignKey(
-        Project, on_delete=models.CASCADE, blank=True, null=True
-    )
-    task = models.ForeignKey(
-        Task,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    customer = models.ForeignKey(
-        Customer,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    organisation = models.ForeignKey(
-        Organisation,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    requirement = models.ForeignKey(
-        Requirement,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    requirement_item = models.ForeignKey(
-        RequirementItem,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    request_for_change = models.ForeignKey(
-        RequestForChange,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    kanban_card = models.ForeignKey(
-        KanbanCard,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
     folder_description = models.CharField(max_length=255)
     parent_folder = models.ForeignKey(
         "self",

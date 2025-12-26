@@ -2,23 +2,20 @@
 
 from django.db import models
 
-from NearBeach.models.common_info import CommonInfo
-from NearBeach.models.requirement.requirement import Requirement
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.requirement.requirement import Requirement, RequirementForeignKey
 from NearBeach.utils.enums.kanban_board_enums import KanbanBoardStatusChoice
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 
-class KanbanBoard(CommonInfo):
+class KanbanBoard(
+    CommonInfo,
+    RequirementForeignKey
+):
     """Class containing Kanban Board status choices."""
 
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=255)
-    requirement = models.ForeignKey(
-        Requirement,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-    )
     status = models.CharField(
         max_length=10,
         choices=KanbanBoardStatusChoice,
@@ -33,6 +30,23 @@ class KanbanBoard(CommonInfo):
 
         verbose_name_plural = "Kanban Boards"
         ordering = ["-id"]
+
+
+# ABSTRACTION CLASS
+class KanbanBoardForeignKey(models.Model):
+    """Class containing abstraction for KanbanBoard Foreign Key"""
+
+    kanban_board = models.ForeignKey(
+        KanbanBoard,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        """Meta information for KanbanBoard model"""
+
+        abstract = True
 
 
 class KanbanColumn(CommonInfo):

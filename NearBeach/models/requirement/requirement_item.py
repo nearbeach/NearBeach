@@ -3,7 +3,7 @@
 from django.db import models
 
 from NearBeach.models.requirement.requirement import Requirement
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
@@ -84,3 +84,20 @@ class RequirementItem(CommonInfo):
     class Meta:
         verbose_name_plural = "Requirement Items"
         ordering = ["-id"]
+
+
+# ABSTRACTION
+class RequirementItemForeignKey(models.Model):
+    """Class containing abstraction for RequirementItem"""
+
+    requirement_item = models.ForeignKey(
+        RequirementItem,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        """Meta information for RequirementItem model"""
+
+        abstract = True

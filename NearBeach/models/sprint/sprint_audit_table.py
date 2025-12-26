@@ -2,9 +2,11 @@
 
 from django.db import models
 
-from NearBeach.models import RequirementItem, Project, Task
+from NearBeach.models.requirement.requirement_item import RequirementItem
+from NearBeach.models.project import Project
+from NearBeach.models.task import Task
 from NearBeach.models.sprint.sprint import Sprint
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 

@@ -4,4 +4,6 @@ bandit
 python-dotenv
 django-storages
 pip-tools
+pylint
+pylint-django
 -r ./requirements.txt

@@ -3,7 +3,7 @@
 from django.db import models
 
 from NearBeach.models.document.document import Document
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.models.organisation import Organisation
 
 
@@ -55,3 +55,20 @@ class Customer(CommonInfo):
 
         verbose_name_plural = "Customers"
         ordering = ["last_name", "first_name"]
+
+
+# ABSTRACTION
+class CustomerForeignKey(models.Model):
+    """Class containing fields for CustomerForeignKey table"""
+
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        """Meta information for CustomerForeignKey model"""
+
+        abstract = True

@@ -6,14 +6,15 @@ from django.db import models
 from django.conf import settings
 from knox.models import AuthToken
 
-from NearBeach.models import KanbanBoard, KanbanCard
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.kanban_board.kanban_board import KanbanBoardForeignKey
+from NearBeach.models.kanban_board.kanban_card import KanbanCardForeignKey
 from NearBeach.models.permission.group import Group
-from NearBeach.models.project import Project
-from NearBeach.models.request_for_change.request_for_change import RequestForChange
-from NearBeach.models.requirement.requirement import Requirement
-from NearBeach.models.requirement.requirement_item import RequirementItem
-from NearBeach.models.task import Task
+from NearBeach.models.project import ProjectForeignKey
+from NearBeach.models.request_for_change.request_for_change import RequestForChangeForeignKey
+from NearBeach.models.requirement.requirement import RequirementForeignKey
+from NearBeach.models.requirement.requirement_item import RequirementItemForeignKey
+from NearBeach.models.task import TaskForeignKey
 from NearBeach.utils.enums.notification_enums import NotificationLocation
 from NearBeach.utils.enums.object_enums import ObjectTemplateType
 from NearBeach.utils.enums.scheduled_object_enums import ScheduledObjectEnum
@@ -98,7 +99,16 @@ class ObjectTemplateGroup(CommonInfo):
         verbose_name_plural = "Object Template Groups"
 
 
-class PublicLink(CommonInfo):
+class PublicLink(
+    CommonInfo,
+    KanbanBoardForeignKey,
+    KanbanCardForeignKey,
+    ProjectForeignKey,
+    RequestForChangeForeignKey,
+    RequirementForeignKey,
+    RequirementItemForeignKey,
+    TaskForeignKey,
+):
     """Class contains fields for PublicLink table"""
 
     id = models.UUIDField(
@@ -107,48 +117,6 @@ class PublicLink(CommonInfo):
     )
     is_active = models.BooleanField(
         default=True,
-    )
-    requirement = models.ForeignKey(
-        Requirement,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    requirement_item = models.ForeignKey(
-        RequirementItem,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    project = models.ForeignKey(
-        Project,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    task = models.ForeignKey(
-        Task,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    kanban_board = models.ForeignKey(
-        KanbanBoard,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    kanban_card = models.ForeignKey(
-        KanbanCard,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-    request_for_change = models.ForeignKey(
-        RequestForChange,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
     )
 
     def __str__(self):

@@ -3,8 +3,10 @@
 from django.db import models
 from django.conf import settings
 
-from NearBeach.models import KanbanBoard, KanbanCard, Customer
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.kanban_board.kanban_board import KanbanBoard
+from NearBeach.models.kanban_board.kanban_card import KanbanCard
+from NearBeach.models.customer import Customer
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.models.organisation import Organisation
 from NearBeach.models.permission.group import Group
 from NearBeach.models.project import Project

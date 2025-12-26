@@ -28,3 +28,15 @@ class CommonInfo(models.Model):
         """Meta information for CommonInfo model"""
 
         abstract = True
+
+
+
+
+
+
+
+
+
+
+
+

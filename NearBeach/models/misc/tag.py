@@ -3,7 +3,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 
 
 class Tag(CommonInfo):
@@ -31,7 +31,7 @@ class Tag(CommonInfo):
         verbose_name_plural = "Tags"
 
 
-class TagAssignment(models.Model):
+class TagAssignment(CommonInfo):
     """Class contains fields for Tag Assignment table"""
 
     class ObjectEnum(models.TextChoices):

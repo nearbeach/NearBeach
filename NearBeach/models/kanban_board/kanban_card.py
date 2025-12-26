@@ -2,7 +2,7 @@
 
 from django.db import models
 
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.models.kanban_board.kanban_board import (
     KanbanBoard,
     KanbanColumn,
@@ -77,3 +77,19 @@ class KanbanCard(CommonInfo):
 
         verbose_name_plural = "Kanban Cards"
         ordering = ["-id"]
+
+
+class KanbanCardForeignKey(models.Model):
+    """Class containing abstraction for KanbanCard"""
+
+    kanban_card = models.ForeignKey(
+        KanbanCard,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        """Meta information for KanbanCard model"""
+
+        abstract = True

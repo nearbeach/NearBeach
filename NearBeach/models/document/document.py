@@ -4,7 +4,7 @@ import uuid
 
 from django.db import models
 
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.private_media import FileStorage
 
 

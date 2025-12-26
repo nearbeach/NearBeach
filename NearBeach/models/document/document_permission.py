@@ -3,72 +3,35 @@
 from django.db import models
 from django.conf import settings
 
-from NearBeach.models import Folder, Document
-from NearBeach.models.common_info import CommonInfo
-from NearBeach.models.customer import Customer
-from NearBeach.models.kanban_board.kanban_card import KanbanCard
-from NearBeach.models.organisation import Organisation
-from NearBeach.models.request_for_change.request_for_change import RequestForChange
-from NearBeach.models.requirement.requirement import Requirement
-from NearBeach.models.requirement.requirement_item import RequirementItem
-from NearBeach.models.project import Project
-from NearBeach.models.task import Task
+from NearBeach.models.customer import CustomerForeignKey
+from NearBeach.models.document.document import Document
+from NearBeach.models.document.folder import Folder
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.kanban_board.kanban_card import KanbanCardForeignKey
+from NearBeach.models.organisation import OrganisationForeignKey
+from NearBeach.models.project import ProjectForeignKey
+from NearBeach.models.request_for_change.request_for_change import RequestForChangeForeignKey
+from NearBeach.models.requirement.requirement import RequirementForeignKey
+from NearBeach.models.requirement.requirement_item import RequirementItemForeignKey
+from NearBeach.models.task import TaskForeignKey
 
 
-class DocumentPermission(CommonInfo):
+class DocumentPermission(
+    CommonInfo,
+    CustomerForeignKey,
+    KanbanCardForeignKey,
+    ProjectForeignKey,
+    OrganisationForeignKey,
+    RequestForChangeForeignKey,
+    RequirementForeignKey,
+    RequirementItemForeignKey,
+    TaskForeignKey,
+):
     """Class containing Document Permission fields"""
 
     id = models.BigAutoField(primary_key=True)
     document = models.ForeignKey(
         Document,
-        on_delete=models.CASCADE,
-    )
-    project = models.ForeignKey(
-        Project,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    task = models.ForeignKey(
-        Task,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    organisation = models.ForeignKey(
-        Organisation,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    customer = models.ForeignKey(
-        Customer,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    requirement = models.ForeignKey(
-        Requirement,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    requirement_item = models.ForeignKey(
-        RequirementItem,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    request_for_change = models.ForeignKey(
-        RequestForChange,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    kanban_card = models.ForeignKey(
-        KanbanCard,
-        blank=True,
-        null=True,
         on_delete=models.CASCADE,
     )
     user = models.ForeignKey(

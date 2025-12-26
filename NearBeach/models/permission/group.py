@@ -2,7 +2,7 @@
 
 from django.db import models
 
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 
 
 class Group(CommonInfo):
@@ -20,6 +20,7 @@ class Group(CommonInfo):
     )
 
     def natural_key(self):
+        """Method returns natural key for group"""
         return self.id, self.name
 
     def __str__(self):

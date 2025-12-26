@@ -3,7 +3,7 @@
 from django.db import models
 
 from NearBeach.models.document.document import Document
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 
 
 class Organisation(CommonInfo):
@@ -28,3 +28,20 @@ class Organisation(CommonInfo):
 
         verbose_name_plural = "Organisations"
         ordering = ["name"]
+
+
+# ABSTRACTION
+class OrganisationForeignKey(models.Model):
+    """Class containing abstraction for Organisation"""
+
+    organisation = models.ForeignKey(
+        Organisation,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        """Meta information for Organisation model"""
+
+        abstract = True

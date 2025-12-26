@@ -4,7 +4,7 @@ from django.db import models
 
 from NearBeach.models.project import Project
 from NearBeach.models.requirement.requirement import Requirement
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.utils.enums.status_enums import SprintStatus
 
 

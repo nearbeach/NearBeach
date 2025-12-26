@@ -3,7 +3,7 @@
 from django.db import models
 from django.conf import settings
 
-from NearBeach.models.common_info import CommonInfo
+from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.models.organisation import Organisation
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
@@ -71,3 +71,20 @@ class Task(CommonInfo):
     class Meta:
         verbose_name_plural = "Tasks"
         ordering = ["-id"]
+
+
+# ABSTRACTION
+class TaskForeignKey(models.Model):
+    """Class containing abstraction for Task Foreign Key"""
+
+    task = models.ForeignKey(
+        Task,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        """Meta information for Task model"""
+
+        abstract = True

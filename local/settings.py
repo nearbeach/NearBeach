@@ -8,8 +8,8 @@ This file is only for the automatic testing and is not build for server use.
 """
 
 import os
-from NearBeach import __version__ as VERSION
-from rest_framework.settings import api_settings
+from NearBeach import __version__ as VERSION, templates
+# from rest_framework.settings import api_settings
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -38,22 +38,22 @@ KNOX_TOKEN_MODEL = 'knox.AuthToken'
 
 INSTALLED_APPS = [
     'NearBeach.apps.NearBeachConfig',
-    'rest_framework',
+    # 'rest_framework',
     'knox',
-    'drf_spectacular',
-    'drf_spectacular_sidecar',
+    # 'drf_spectacular',
+    # 'drf_spectacular_sidecar',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_otp',
-    'django_otp.plugins.otp_static',
-    'django_otp.plugins.otp_totp',
-    'django_otp.plugins.otp_email',
-    'two_factor',
-    'two_factor.plugins.email',
+    # 'django_otp',
+    # 'django_otp.plugins.otp_static',
+    # 'django_otp.plugins.otp_totp',
+    # 'django_otp.plugins.otp_email',
+    # 'two_factor',
+    # 'two_factor.plugins.email',
 ]
 
 MIDDLEWARE = [
@@ -63,7 +63,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django_otp.middleware.OTPMiddleware',
+    # 'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -118,22 +118,22 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'knox.auth.TokenAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-    ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100,
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.SessionAuthentication',
+#         'rest_framework.authentication.BasicAuthentication',
+#         'knox.auth.TokenAuthentication',
+#     ],
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.IsAuthenticated',
+#     ],
+#     'DEFAULT_RENDERER_CLASSES': [
+#         'rest_framework.renderers.JSONRenderer',
+#     ],
+#     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE': 100,
+# }
 
 REST_KNOX = {
     'SECURE_HASH_ALGORITHM': 'hashlib.sha512',
@@ -145,7 +145,7 @@ REST_KNOX = {
     'AUTO_REFRESH_MAX_TTL': None,
     'MIN_REFRESH_INTERVAL': 60,
     'AUTH_HEADER_PREFIX': 'Token',
-    'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
+    # 'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
     'TOKEN_MODEL': 'NearBeach.ExtendsAuthToken',
 }
 
@@ -235,8 +235,8 @@ EMAIL_HOST_PASSWORD = os.getenv('SMTP_EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # TWO FACTOR AUTHENTICATION
-LOGIN_URL = 'two_factor:login'
-LOGIN_REDIRECT_URL = 'dashboard'
+# LOGIN_URL = 'two_factor:login'
+# LOGIN_REDIRECT_URL = 'dashboard'
 
 # DRF - drf-spectacular
 SPECTACULAR_SETTINGS = {
@@ -281,5 +281,5 @@ The following documentation covers all API endpoints for NearBeach. You can use 
 
 
 # One time passwords
-OTP_EMAIL_SUBJECT = 'NearBeach 2FA'
-OTP_EMAIL_BODY_HTML_TEMPLATE_PATH = 'NearBeach/authentication/two_factor_authentication_email.html'
+# OTP_EMAIL_SUBJECT = 'NearBeach 2FA'
+# OTP_EMAIL_BODY_HTML_TEMPLATE_PATH = 'NearBeach/authentication/two_factor_authentication_email.html'
