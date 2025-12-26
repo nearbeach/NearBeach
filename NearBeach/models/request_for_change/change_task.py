@@ -62,7 +62,7 @@ class ChangeTaskBlock(CommonInfo):
     """Class containing ChangeTaskBlock fields"""
 
     block_id = models.BigAutoField(primary_key=True)
-    blocks = models.ForeignKey(
+    change_task_blocks = models.ForeignKey(
         ChangeTask,
         on_delete=models.CASCADE,
         related_name="blocks",
