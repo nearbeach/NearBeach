@@ -1,6 +1,7 @@
 """Module providing Requirement tables for NearBeach."""
 
 from django.db import models
+from django.conf import settings
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.models.organisation import Organisation
@@ -22,6 +23,20 @@ class ListOfRequirementStatus(CommonInfo):
     sort_order = models.PositiveIntegerField(
         default=0,
     )
+    change_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+        blank=True,
+        null=True,
+    )
+    creation_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_creation_user",
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return str(self.status)
@@ -39,6 +54,20 @@ class ListOfRequirementType(CommonInfo):
     id = models.BigAutoField(primary_key=True)
     type = models.CharField(
         max_length=100,
+    )
+    change_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+        blank=True,
+        null=True,
+    )
+    creation_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_creation_user",
+        blank=True,
+        null=True,
     )
 
     def __str__(self):

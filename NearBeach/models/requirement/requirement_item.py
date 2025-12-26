@@ -1,31 +1,16 @@
 """Module providing Requirement Item tables for NearBeach."""
 
 from django.db import models
+from django.conf import settings
 
-from NearBeach.models.requirement.requirement import Requirement
+from NearBeach.models.requirement.requirement import Requirement, ListOfRequirementStatus, ListOfRequirementType
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 
-class ListOfRequirementItemStatus(CommonInfo):
+class ListOfRequirementItemStatus(ListOfRequirementStatus):
     """Class containing fields for the List of requirement item status table."""
-
-    id = models.BigAutoField(primary_key=True)
-    status = models.CharField(
-        max_length=99,
-    )
-    higher_order_status = models.CharField(
-        max_length=9,
-        choices=ObjectHigherOrderStatus,
-        default=ObjectHigherOrderStatus.NORMAL,
-    )
-    sort_order = models.PositiveIntegerField(
-        default=-1,
-    )
-
-    def __str__(self):
-        return str(self.status)
 
     class Meta:
         """Meta definition for ListOfRequirementItemStatus table."""
@@ -34,16 +19,8 @@ class ListOfRequirementItemStatus(CommonInfo):
         ordering = ["sort_order"]
 
 
-class ListOfRequirementItemType(CommonInfo):
+class ListOfRequirementItemType(ListOfRequirementType):
     """Class containing fields for the List of requirement item type table."""
-
-    id = models.BigAutoField(primary_key=True)
-    type = models.CharField(
-        max_length=99,
-    )
-
-    def __str__(self):
-        return str(self.type)
 
     class Meta:
         """Meta definition for ListOfRequirementItemType table."""

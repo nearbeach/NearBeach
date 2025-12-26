@@ -1,6 +1,7 @@
 """Module providing Customer tables for NearBeach"""
 
 from django.db import models
+from django.conf import settings
 
 from NearBeach.models.document.document import Document
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
@@ -12,6 +13,20 @@ class ListOfTitle(CommonInfo):
 
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=10)
+    change_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+        blank=True,
+        null=True,
+    )
+    creation_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_creation_user",
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return str(self.title)

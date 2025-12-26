@@ -1039,7 +1039,8 @@ class Migration(migrations.Migration):
             model_name="listofprojectstatus",
             name="creation_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_creation_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1049,7 +1050,8 @@ class Migration(migrations.Migration):
             model_name="listofrequirementitemstatus",
             name="creation_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_creation_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1059,7 +1061,8 @@ class Migration(migrations.Migration):
             model_name="listofrequirementitemtype",
             name="creation_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_creation_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1069,7 +1072,8 @@ class Migration(migrations.Migration):
             model_name="listofrequirementstatus",
             name="creation_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_creation_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1079,7 +1083,8 @@ class Migration(migrations.Migration):
             model_name="listofrequirementtype",
             name="creation_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_creation_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1089,7 +1094,8 @@ class Migration(migrations.Migration):
             model_name="listoftaskstatus",
             name="creation_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_creation_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1099,7 +1105,8 @@ class Migration(migrations.Migration):
             model_name="listoftitle",
             name="creation_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_creation_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1472,7 +1479,8 @@ class Migration(migrations.Migration):
             model_name="listofprojectstatus",
             name="change_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_change_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1482,7 +1490,8 @@ class Migration(migrations.Migration):
             model_name="listofrequirementitemstatus",
             name="change_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_change_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1492,7 +1501,8 @@ class Migration(migrations.Migration):
             model_name="listofrequirementitemtype",
             name="change_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_change_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1502,7 +1512,8 @@ class Migration(migrations.Migration):
             model_name="listofrequirementstatus",
             name="change_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_change_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1512,7 +1523,8 @@ class Migration(migrations.Migration):
             model_name="listofrequirementtype",
             name="change_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_change_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1522,7 +1534,8 @@ class Migration(migrations.Migration):
             model_name="listoftaskstatus",
             name="change_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_change_user",
                 to=settings.AUTH_USER_MODEL,
@@ -1532,7 +1545,8 @@ class Migration(migrations.Migration):
             model_name="listoftitle",
             name="change_user",
             field=models.ForeignKey(
-                default=1,
+                blank=True,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_change_user",
                 to=settings.AUTH_USER_MODEL,
