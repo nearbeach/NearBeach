@@ -1,0 +1,1 @@
+import{C as t,a as o}from"./CardComponent-BGpqmvpJ.js";import{d as a,g as n,c as r,w as s,a as c,b as d,t as u,o as p}from"./index-CBymsJ2l.js";const C=a({__name:"NotFoundPage",setup(l){const e=n(()=>"unknown");return(i,m)=>(p(),r(o,null,{default:s(()=>[c(t,{title:"404 Not Found"}),d("p",null,"Sorry, we could not find the object "+u(e.value),1)]),_:1}))}});export{C as default};

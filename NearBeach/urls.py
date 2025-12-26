@@ -1,7 +1,11 @@
+"""URL patterns for NearBeach - root level"""
 from django.urls import path
 
-from .views.placeholder_view import PlaceholderView
+from .views.application.application_views import ApplicationView
 
 urlpatterns = [
-    path("", PlaceholderView.as_view(), name="dashboard"),
+
+    # Fallback urls to the frontend
+    path("<path:_>", ApplicationView.as_view(), name="application"),
+    path("", ApplicationView.as_view(), name="application"),
 ]
