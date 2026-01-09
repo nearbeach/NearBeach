@@ -6,51 +6,50 @@ build-backend = "hatchling.build"
 name = "NearBeach"
 version = "$version"
 dependencies = [
-  "Django>=4.2.17",
-  "simplejson",
-  "pillow>=10.0.1",
-  "urllib3",
-  "boto3==1.35.99",
-  "azure-storage-blob",
-  "azure-identity",
-  "pip>=19.2",
-  "djangorestframework",
-  "django-two-factor-auth",
-  "django-two-factor-auth[phonenumberslite]",
-  "django_otp",
-  "drf_spectacular",
-  "drf_spectacular[sidecar]"
+    "Django>=4.2.17",
+    "simplejson",
+    "pillow>=10.0.1",
+    "urllib3",
+    "boto3==1.35.99",
+    "azure-storage-blob",
+    "azure-identity",
+    "pip>=19.2",
+    "djangorestframework",
+    "django_otp",
+    "drf_spectacular",
+    "drf_spectacular[sidecar]",
+    "django-vite",
 ]
 requires-python = ">=3.10"
 authors = [
-  {name = "Luke Christopher Clarke", email = "luke@nearbeach.org"},
+    { name = "Luke Christopher Clarke", email = "luke@nearbeach.org" },
 ]
 maintainers = [
-  {name = "Luke Christopher Clarke", email = "luke@nearbeach.org"},
+    { name = "Luke Christopher Clarke", email = "luke@nearbeach.org" },
 ]
 description = "NearBeach - an open source project management tool"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = { file = "LICENSE" }
 keywords = [
-  "project",
-  "task",
-  "project management",
-  "request for change",
-  "open source"
+    "project",
+    "task",
+    "project management",
+    "request for change",
+    "open source"
 ]
 classifiers = [
-  "Development Status :: 3 - Alpha",
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "black",
-  "bandit",
-  "python-dotenv",
-  "django-storages",
+    "black",
+    "bandit",
+    "python-dotenv",
+    "django-storages",
 ]
 
 [project.urls]

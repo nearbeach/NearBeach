@@ -1,7 +1,7 @@
 {
-	"tabWidth": 4,
-	"useTabs": true,
-	"semi": true,
-	"vueIndentScriptAndStyle": true,
-	"singleAttributePerLine": true
+  "trailingComma": "es5",
+  "tabWidth": 4,
+  "semi": true,
+  "singleQuote": true,
+  "parser": "vue"
 }

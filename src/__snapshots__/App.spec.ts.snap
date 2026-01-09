@@ -1,0 +1,71 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html exports[`App >
+mount component 1`] = ` "
+<span data-v-30494e7c="" tabindex="-1"></span>
+<ul data-v-30494e7c="" class="skip-links">
+  <li data-v-30494e7c=""><a data-v-30494e7c="" href="#main" class="skip-link">Skip to main content</a></li>
+</ul>
+<header data-v-ad5eacfe="" data-v-7a7a37b1="" role="banner">
+  <div data-v-ad5eacfe="" class="header--show-menu"><svg data-v-ad5eacfe="" xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="lucide lucide-menu-icon lucide-menu">
+      <path d="M4 5h16"></path>
+      <path d="M4 12h16"></path>
+      <path d="M4 19h16"></path>
+    </svg><span data-v-ad5eacfe="" class="hidden-visually">Close Navigation Menu</span></div>
+  <div data-v-ad5eacfe="" class="nearbeach-logo" aria-hidden="true"></div>
+  <div data-v-ad5eacfe="" class="header--profile"><img data-v-ad5eacfe="" src="/src/assets/Morgana.jpeg" alt="Morgana"></div>
+</header>
+<nav data-v-fa118b65="" data-v-7a7a37b1="" class="nav-open" role="navigation">
+  <div data-v-fa118b65="" class="nav-bar--menu">
+    <ul data-v-fa118b65="" class="nav-bar--menu--list">
+      <div data-v-f367b6d1="" class="skeleton">
+        <div data-v-f367b6d1="" class="skeleton--loader-circle"><svg data-v-f367b6d1="" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-icon lucide-ellipsis">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="19" cy="12" r="1"></circle>
+            <circle cx="5" cy="12" r="1"></circle>
+          </svg></div>
+      </div>
+      <div data-v-f367b6d1="" class="skeleton">
+        <div data-v-f367b6d1="" class="skeleton--loader-circle"><svg data-v-f367b6d1="" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-icon lucide-ellipsis">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="19" cy="12" r="1"></circle>
+            <circle cx="5" cy="12" r="1"></circle>
+          </svg></div>
+      </div>
+      <div data-v-f367b6d1="" class="skeleton">
+        <div data-v-f367b6d1="" class="skeleton--loader-circle"><svg data-v-f367b6d1="" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-icon lucide-ellipsis">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="19" cy="12" r="1"></circle>
+            <circle cx="5" cy="12" r="1"></circle>
+          </svg></div>
+      </div>
+      <div data-v-f367b6d1="" class="skeleton">
+        <div data-v-f367b6d1="" class="skeleton--loader-circle"><svg data-v-f367b6d1="" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-icon lucide-ellipsis">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="19" cy="12" r="1"></circle>
+            <circle cx="5" cy="12" r="1"></circle>
+          </svg></div>
+      </div>
+    </ul>
+  </div>
+  <div data-v-fa118b65="" class="nav-bar--settings">
+    <ul data-v-fa118b65="" class="nav-bar--settings--list">
+      <div data-v-f367b6d1="" class="skeleton">
+        <div data-v-f367b6d1="" class="skeleton--loader-circle"><svg data-v-f367b6d1="" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-icon lucide-ellipsis">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="19" cy="12" r="1"></circle>
+            <circle cx="5" cy="12" r="1"></circle>
+          </svg></div>
+      </div>
+    </ul>
+  </div>
+</nav>
+<main
+    data-v-7a7a37b1=""
+    id="main"
+    class="main nav-open"
+    aria-labelledby="main-title"
+    role="main"
+>
+  <h1>Dashboard</h1>
+  <p> We would love some feedback. <a href="https://discord.gg/64uhRztS6n" target="_blank">Please give us feedback on our discord server</a></p>
+</main>
+" `;

@@ -1,0 +1,84 @@
+@import "_accessibility.css";
+@import "@/styles/variables/_general_variables.css";
+
+@font-face {
+    font-family: "Roboto";
+    src: url("@/assets/fonts/Roboto-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url("@/assets/fonts/Roboto-Thin.ttf") format("truetype");
+    font-weight: 100;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "CalSans";
+    src: url("@/assets/fonts/CalSans-Regular.ttf") format("truetype");
+    font-style: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-family: "CalSans",
+    sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    color: var(--text-red);
+}
+
+h1 {
+    font-size: 2rem;
+    line-height: 2.125rem;
+    font-weight: bold;
+    @media (--large-screen) {
+        font-size: 3rem;
+        line-height: 3.25rem;
+    }
+}
+
+h2 {
+    font-size: 1.5rem;
+    line-height: 1.625rem;
+    font-weight: bold;
+    @media (--large-screen) {
+        font-size: 2rem;
+        line-height: 2.25rem;
+    }
+}
+
+p, label, button {
+    font-size: 1.25rem;
+    font-family: "Roboto", sans-serif;
+    line-height: 1.5rem;
+    color: var(--text);
+    margin-bottom: 0;
+    @meida (--large-screen) {
+        font-size: 1rem;
+        line-height: 1.25rem;
+    }
+}
+
+input, textarea {
+    font-family: "Roboto", sans-serif;
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+    padding: 0.5rem;
+}
+
+.sub-text {
+    font-family: "Roboto", sans-serif;
+    font-weight: 100;
+    margin: 0.5rem 0 3rem 0;
+}
+
+.mt-0 {
+    margin-top: 0 !important;
+}
+
+.mb-0 {
+    margin-bottom: 0 !important;
+}

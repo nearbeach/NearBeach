@@ -1,0 +1,84 @@
+:root { /* Set all the grid size here */
+    --xx-small-grid-width: 320px;
+    --x-small-grid-width: 400px;
+    --small-grid-width: 640px;
+    --medium-grid-width: 768px;
+    --large-grid-width: 1024px;
+    --x-large-grid-width: 1280px;
+    --xx-large-grid-width: 1536px; /* Set all variables in here for globals */
+    /*--xx-small-card-width: 320px;*/ /*--x-small-card-width: 400px;*/
+    /*--small-card-width: 640px;*/ /*--medium-card-width: 768px;*/
+    /*--large-card-width: 1024px;*/ /*--x-large-card-width: 1280px;*/
+    /*--xx-large-card-width: 1536px;*/ /* Set all the border variables here */
+    --border-radius: 5px;
+    --border-style: solid;
+    --border-width: 1px;
+    /* Set all the
+   colour variables here */
+    --bg-dark: hsl(26 53% 89%);
+    --bg: hsl(26 100% 94%);
+    --bg-light: hsl(26 100% 100%);
+    --text: hsl(16 100% 4%);
+    --text-red: hsl(8, 93%, 43%);
+    --text-muted: hsl(26 35% 27%);
+    --highlight: hsl(26 100% 99%);
+    --border: hsl(26 21% 49%);
+    --border-muted: hsl(26 27% 61%);
+    --primary: hsl(27 65% 66%);
+    --primary-hover: hsl(27 65% 76%);
+    --secondary: hsl(204 74% 68%);
+    --secondary-hover: hsl(204 74% 78%);
+    --danger: hsl(9 26% 64%);
+    --danger-hover: hsl(9 26% 74%);
+    --warning: hsl(52 19% 57%);
+    --warning-hover: hsl(52 19% 67%);
+    --success: hsl(146 17% 59%);
+    --success-hover: hsl(146 17% 69%);
+    --info: hsl(217 28% 65%);
+    --info-hover: hsl(217 28% 75%); /* Set all the object colours here */
+    --document-links: hsl(203.53, 40.8%, 24.51%);
+    --document-links-hover: hsl(203.53, 40.8%, 75.51%);
+    --customer-background: hsl(203.53, 40.8%, 75.49%);
+    --customer-text: hsl(203.53, 40.8%, 24.51%);
+    --kanban-board-background: hsl(78.26, 88.46%, 89.8%);
+    --kanban-board-text: hsl(78.26, 88.46%, 10.2%);
+    --kanban-card-background: hsl(74.12, 35.56%, 53.14%);
+    --kanban-card-text: hsl(74.12, 35.56%, 10.86%);
+    --organisation-background: hsl(52.05, 85.57%, 61.96%);
+    --organisation-text: hsl(52.05, 85.57%, 8.04%);
+    --request-for-change-background: hsl(67.61, 100%, 72.16%);
+    --request-for-change-text: hsl(67.61, 100%, 7.84%);
+    --requirement-background: hsl(200.31, 94.2%, 86.47%);
+    --requirement-text: hsl(200.31, 94.2%, 10.53%);
+    --requirement-item-background: hsl(322.8, 29.76%, 67.06%);
+    --requirement-item-text: hsl(322.8, 29.76%, 8.94%);
+    --project-background: hsl(333.62, 49.57%, 45.88%);
+    --project-text: hsl(333.62, 49.57%, 8.12%);
+    --task-background: hsl(224, 10.2%, 71.82%);
+    --task-text: hsl(224, 10.2%, 7.18%);
+}
+
+.dark {
+    --bg-dark: hsl(16 100% 2%);
+    --bg: hsl(22 76% 4%);
+    --bg-light: hsl(26 50% 8%);
+    --text: hsl(26 100% 94%);
+    --text-red: hsl(8,
+    93%, 23%);
+    --text-muted: hsl(26 34% 68%);
+    --highlight: hsl(26 26% 38%);
+    --border: hsl(26 35% 27%);
+    --border-muted: hsl(27 56% 16%);
+    --primary: hsl(32 100% 20%);
+    --primary-hover: hsl(32 100% 10%);
+    --secondary: hsl(198 100% 20%);
+    --secondary-hover: hsl(198 100% 10%);
+    --danger: hsl(9 21% 41%);
+    --danger-hover: hsl(9 21% 31%);
+    --warning: hsl(52 23% 34%);
+    --warning-hover: hsl(52 23% 24%);
+    --success: hsl(147 19% 36%);
+    --success-hover: hsl(147 19% 26%);
+    --info: hsl(217 22% 41%);
+    --info-hover: hsl(217 22% 31%);
+}

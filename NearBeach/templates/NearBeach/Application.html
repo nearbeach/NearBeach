@@ -1,4 +1,4 @@
-{% load static %}
+{% load django_vite %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,10 +7,11 @@
     <link rel="icon" href="https://cdn.nearbeach.org/0.31.102/NearBeach/NearBeach_Small.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NearBeach Application</title>
-    <script type="module" crossorigin src="{% static 'NearBeach/index-CBymsJ2l.js' %}"></script>
-    <link rel="stylesheet" crossorigin href="{% static 'index-mddKf4xN.css' %}">
+    {% vite_hmr_client %}
+    <link rel="stylesheet" href="{% vite_asset_url 'NearBeach/style.css' %}">
 </head>
-<body style="background-color:hotpink;margin:0;padding:0;">
+<body>
     <div id="app"></div>
+    {% vite_asset 'NearBeach/main.js' %}
 </body>
 </html>

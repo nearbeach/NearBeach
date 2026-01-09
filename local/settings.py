@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'NearBeach.apps.NearBeachConfig',
     # 'rest_framework',
     'knox',
+    'django_vite',
     # 'drf_spectacular',
     # 'drf_spectacular_sidecar',
     'django.contrib.admin',
@@ -199,6 +200,11 @@ if "CLOUDFLARE_ACCOUNT_ID" in os.environ:
 else:
     STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+    
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "NearBeach/static/NearBeach")
+]
+
 
 
 # Check to see if we are importing AWS credentials
@@ -283,3 +289,9 @@ The following documentation covers all API endpoints for NearBeach. You can use 
 # One time passwords
 # OTP_EMAIL_SUBJECT = 'NearBeach 2FA'
 # OTP_EMAIL_BODY_HTML_TEMPLATE_PATH = 'NearBeach/authentication/two_factor_authentication_email.html'
+
+DJANGO_VITE = {
+  "default": {
+    "dev_mode": True
+  }
+}

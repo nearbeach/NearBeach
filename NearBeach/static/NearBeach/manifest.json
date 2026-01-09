@@ -1,0 +1,126 @@
+{
+  "_CardComponent-DQ6QkTAp.js": {
+    "file": "assets/CardComponent-DQ6QkTAp.js",
+    "name": "CardComponent",
+    "imports": [
+      "src/main.ts"
+    ],
+    "css": [
+      "css/CardComponent.css"
+    ]
+  },
+  "_CardComponent.css": {
+    "file": "css/CardComponent.css",
+    "src": "_CardComponent.css"
+  },
+  "_TextInput-BQhRtwRH.js": {
+    "file": "assets/TextInput-BQhRtwRH.js",
+    "name": "TextInput",
+    "imports": [
+      "src/main.ts"
+    ],
+    "css": [
+      "css/TextInput.css"
+    ]
+  },
+  "_TextInput.css": {
+    "file": "css/TextInput.css",
+    "src": "_TextInput.css"
+  },
+  "src/components/dashboard/dashboard_page/DashboardPage.vue": {
+    "file": "assets/DashboardPage-dFQ39mEa.js",
+    "name": "DashboardPage",
+    "src": "src/components/dashboard/dashboard_page/DashboardPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_CardComponent-DQ6QkTAp.js",
+      "src/main.ts"
+    ],
+    "css": [
+      "css/DashboardPage.css"
+    ]
+  },
+  "src/components/error/NotFoundPage/NotFoundPage.vue": {
+    "file": "assets/NotFoundPage-BvQWnqkL.js",
+    "name": "NotFoundPage",
+    "src": "src/components/error/NotFoundPage/NotFoundPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_CardComponent-DQ6QkTAp.js",
+      "src/main.ts"
+    ],
+    "css": [
+      "css/NotFoundPage.css"
+    ]
+  },
+  "src/components/playground/PlaygroundPage.vue": {
+    "file": "assets/PlaygroundPage-CFkjisS6.js",
+    "name": "PlaygroundPage",
+    "src": "src/components/playground/PlaygroundPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/main.ts"
+    ],
+    "css": [
+      "css/PlaygroundPage.css"
+    ]
+  },
+  "src/components/project/new_project/NewProject.vue": {
+    "file": "assets/NewProject-OSWKu2Ti.js",
+    "name": "NewProject",
+    "src": "src/components/project/new_project/NewProject.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_TextInput-BQhRtwRH.js",
+      "_CardComponent-DQ6QkTAp.js",
+      "src/main.ts"
+    ],
+    "css": [
+      "css/NewProject.css"
+    ]
+  },
+  "src/components/project/project_page/ProjectPage.vue": {
+    "file": "assets/ProjectPage-C2ddee2H.js",
+    "name": "ProjectPage",
+    "src": "src/components/project/project_page/ProjectPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_TextInput-BQhRtwRH.js",
+      "src/main.ts",
+      "_CardComponent-DQ6QkTAp.js"
+    ],
+    "css": [
+      "css/ProjectPage.css"
+    ]
+  },
+  "src/components/search/SearchPage.vue": {
+    "file": "assets/SearchPage-Bm0Samas.js",
+    "name": "SearchPage",
+    "src": "src/components/search/SearchPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_CardComponent-DQ6QkTAp.js",
+      "src/main.ts"
+    ],
+    "css": [
+      "css/SearchPage.css"
+    ]
+  },
+  "src/main.ts": {
+    "file": "js/main-bundle.js",
+    "name": "main",
+    "src": "src/main.ts",
+    "isEntry": true,
+    "dynamicImports": [
+      "src/components/dashboard/dashboard_page/DashboardPage.vue",
+      "src/components/project/new_project/NewProject.vue",
+      "src/components/error/NotFoundPage/NotFoundPage.vue",
+      "src/components/playground/PlaygroundPage.vue",
+      "src/components/project/project_page/ProjectPage.vue",
+      "src/components/search/SearchPage.vue"
+    ],
+    "css": [
+      "css/main.css"
+    ]
+  }
+}
