@@ -13,10 +13,11 @@ export default defineConfig({
     base: "/static/",
     build: {
         manifest: "manifest.json",
-        outDir: path.resolve(__dirname, './NearBeach/static/NearBeach'),
+        outDir: path.resolve(__dirname, './NearBeach/static/NearBeach/'),
         rollupOptions: {
             input: {
                 'main': path.resolve(__dirname, './src/main.ts'),
+                'style': path.resolve(__dirname, './src/styles/style.css')
                 // 'style': path.resolve(__dirname, './src/style/style.css'),
             },
             output: {

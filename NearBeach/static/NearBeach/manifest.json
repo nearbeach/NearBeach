@@ -27,6 +27,18 @@
     "file": "css/TextInput.css",
     "src": "_TextInput.css"
   },
+  "src/assets/fonts/CalSans-Regular.ttf": {
+    "file": "css/CalSans-Regular.css",
+    "src": "src/assets/fonts/CalSans-Regular.ttf"
+  },
+  "src/assets/fonts/Roboto-Regular.ttf": {
+    "file": "css/Roboto-Regular.css",
+    "src": "src/assets/fonts/Roboto-Regular.ttf"
+  },
+  "src/assets/fonts/Roboto-Thin.ttf": {
+    "file": "css/Roboto-Thin.css",
+    "src": "src/assets/fonts/Roboto-Thin.ttf"
+  },
   "src/components/dashboard/dashboard_page/DashboardPage.vue": {
     "file": "assets/DashboardPage-dFQ39mEa.js",
     "name": "DashboardPage",
@@ -121,6 +133,15 @@
     ],
     "css": [
       "css/main.css"
+    ]
+  },
+  "src/styles/style.css": {
+    "file": "css/style.css",
+    "src": "src/styles/style.css",
+    "isEntry": true,
+    "name": "style",
+    "names": [
+      "style.css"
     ]
   }
 }

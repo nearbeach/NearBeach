@@ -196,10 +196,10 @@ if "CLOUDFLARE_ACCOUNT_ID" in os.environ:
     STORAGES = {"staticfiles": {"BACKEND": "storages.backends.s3boto3.S3StaticStorage"}}
 
     STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'NearBeach/static/')
 else:
     STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'NearBeach/static/')
     
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "NearBeach/static/NearBeach")
@@ -292,6 +292,8 @@ The following documentation covers all API endpoints for NearBeach. You can use 
 
 DJANGO_VITE = {
   "default": {
-    "dev_mode": True
+    "dev_mode": True,
   }
 }
+
+DJANGO_VITE_STATIC_URL_PREFIX = 'bundler'
