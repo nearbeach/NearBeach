@@ -1,3 +1,4 @@
+from NearBeach.models import ListOfProjectStatus
 from NearBeach.serializers.abstraction.base_object_serializer import BaseObjectSerializer
 from NearBeach.serializers.abstraction.date_fields_serializer import DateFieldsSerializer
 from NearBeach.serializers.enum_serializer import EnumField

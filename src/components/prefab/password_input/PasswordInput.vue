@@ -23,12 +23,6 @@ const props = defineProps({
 		required: false,
 		validator: (val) => !Number.isNaN(val),
 	},
-	maxLength: {
-		type: Number,
-		default: 0,
-		required: false,
-		validator: (val) => !Number.isNaN(val),
-	},
 	placeholderText: {
 		type: String,
 		required: false,
@@ -47,7 +41,7 @@ const props = defineProps({
 });
 
 // Define Models
-const model = defineModel({ required: true });
+const model = defineModel();
 
 // Define ref
 const hasError = ref(false);
@@ -80,12 +74,6 @@ function checkValidation() {
 		errorMessage.value = `This field has a minimum length ${modelLength} / ${props.minLength}`;
 	}
 
-	// Check the maximum "required" condition
-	if (props.maxLength > 0 && modelLength > props.maxLength) {
-		hasError.value = true;
-		errorMessage.value = `This field has a maximum length ${modelLength} / ${props.maxLength}`;
-	}
-
 	// Set the defined ref and tell parent
 	emit('isValid', !hasError.value);
 }
@@ -108,7 +96,7 @@ function checkValidation() {
 		</label>
 		<input
 			:id="getId"
-			type="text"
+			type="password"
 			:name="props.label"
 			:placeholder="props.placeholderText"
 			v-model="model"

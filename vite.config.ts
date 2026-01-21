@@ -17,8 +17,9 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 'main': path.resolve(__dirname, './src/main.ts'),
+                'login': path.resolve(__dirname, './src/login.ts'),
+                'login_style': path.resolve(__dirname, './src/styles/login_style.css'),
                 'style': path.resolve(__dirname, './src/styles/style.css')
-                // 'style': path.resolve(__dirname, './src/style/style.css'),
             },
             output: {
                 // Output JS bundles to js/ directory with -bundle suffix

@@ -1,9 +1,7 @@
-from NearBeach.models.models import (
-    Group,
-    UserGroup,
-    Organisation,
-    PermissionSet,
-)
+from NearBeach.models.permission.group import Group
+from NearBeach.models.permission.permission_set import PermissionSet
+from NearBeach.models.organisation import Organisation
+from NearBeach.models.user import UserGroup
 
 
 def initalize_permission_sets(user):

@@ -1,0 +1,17 @@
+{% load django_vite %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://cdn.nearbeach.org/0.31.102/NearBeach/NearBeach_Small.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NearBeach Login</title>
+    {% vite_hmr_client %}
+    <link rel="stylesheet" href="{% vite_asset_url 'src/styles/login_style.css' %}">
+</head>
+<body>
+    <div id="loginApp"></div>
+    {% vite_asset 'src/login.ts' %}
+</body>
+</html>

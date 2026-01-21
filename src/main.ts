@@ -1,8 +1,7 @@
 import 'vite/modulepreload-polyfill';
 import { createPinia } from "pinia";
 import { createApp } from "vue";
-import App from "./App.vue";
-// import "./styles/style.css";
+import App from "./pages/app/App.vue";
 import i18n from "./i18n";
 import router from "./router/router.ts";
 
