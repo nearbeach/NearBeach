@@ -1,39 +1,45 @@
 <script setup lang="ts">
-import {inject, ref} from 'vue'
+import {defineModel} from "vue";
 import TextInput from "@/components/prefab/text_input/TextInput.vue";
 import ButtonComponent from "@/components/prefab/button/ButtonComponent.vue";
-import {ObjectStateEnum} from '@/utils/enums/ObjectStateEnum.ts';
 import PasswordInput from "@/components/prefab/password_input/PasswordInput.vue";
+import {ObjectStateEnum} from "@/utils/enums/ObjectStateEnum.ts";
+import {ButtonVariantEnum} from "@/utils/enums/ButtonVariantEnum.ts";
 
-// Injection
-const apiClient = inject('apiClient');
+// Define emits
+const emit = defineEmits(['signIn']);
 
-// Define ref
-const buttonState = ref(ObjectStateEnum.NoAction);
-const username = ref('');
-const password = ref('');
+// Define props
+defineProps({
+    buttonState: {
+        required: true,
+        validator: function (value: string): boolean {
+            const enumValues: string[] = Object.values(ObjectStateEnum);
+            return enumValues.includes(value);
+        },
+    },
+	errorMessage: {
+		required: false,
+		type: String,
+	}
+});
 
-// Methods
-function signIn() {
-	// Set the data we want to send
-	const data_to_send = new FormData();
-	data_to_send.set("username", username.value);
-	data_to_send.set("password", password.value);
+// Define models
+const username = defineModel("username", {
+	type: String,
+	required: true,
+})
+const password = defineModel("password", {
+	type: String,
+	required: true,
+})
 
-	apiClient.post(
-		"/api/v1/authentication/",
-		data_to_send
-	).then(() => {
-		window.location.href = "/";
-	})
-
-	return;
-}
 </script>
 
 <template>
 	<div class="login-panel">
 		<h1 id="main-title">NearBeach Login</h1>
+		<p class="error-message">{{errorMessage}}</p>
 		<TextInput class="compact"
 				   label="Email"
 				   placeholderText="Your email address"
@@ -51,10 +57,10 @@ function signIn() {
 
 		<ButtonComponent :object-state="buttonState"
 						 label="Sign In"
-						 @click="signIn"
+						 @click="emit('signIn')"
 		/>
 
-	    <RouterLink to="/login/forgotten-password">Forgotten Password</RouterLink>
+		<RouterLink to="/login/forgotten-password">Forgotten Password</RouterLink>
 	</div>
 </template>
 
@@ -84,6 +90,18 @@ function signIn() {
 	@media (--large-screen) {
 		max-width: var(--x-small-grid-width);
 		margin: auto;
+	}
+
+	> .error-message {
+		font-size: 0.75rem;
+		line-height: 1rem;
+		color: var(--text-red);
+		font-weight: bold;
+		margin: 0 0 0.25rem 0;
+
+		&:before {
+			content: "";
+		}
 	}
 }
 

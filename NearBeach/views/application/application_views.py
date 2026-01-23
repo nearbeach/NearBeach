@@ -10,4 +10,4 @@ class ApplicationView(LoginRequiredMixin, View):
 
     @staticmethod
     def get(request, _ = None):
-        return render(request, "NearBeach/Application.html")
+        return render(request, "NearBeach/application.html")

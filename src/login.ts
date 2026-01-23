@@ -15,7 +15,7 @@ const axiosInstance = axios.create({
 const loginApp = createApp(LoginApp);
 
 // Configure app
-loginApp.provide('apiClient', axios);
+loginApp.provide('apiClient', axiosInstance);
 
 // Setup app
 loginApp.use(loginRouter);

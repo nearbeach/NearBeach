@@ -1,0 +1,91 @@
+{% load static %}
+<html>
+  <head>
+    <title>NearBeach Password Reset</title>
+    <meta name="viewport" content="width = 375, initial-scale = -1">
+    <style>
+        body {
+          background-color: #dcf5ff;
+          font-size: 16px;
+        }
+
+        h1, h2 {
+          font-family: 'Nunito Sans', sans-serif;
+          font-weight: lighter;
+          text-align: center;
+          z-index: 2;
+          text-shadow: 2px 2px 5px #555;
+        }
+
+        p, br {
+          margin-bottom: 25px;
+        }
+        
+        img {
+          position: absolute;
+          top: 115;
+          width: 25%;
+          opacity: 0.5;
+          max-width: 225px;
+          min-width: 140px;
+        }
+
+        table {
+          max-width: 600px;
+          width: 100%;
+          height: 725px;
+          background-color: white;
+          padding: 25px;
+          margin-top: 100px;
+        }
+        
+        .reset-password-button {
+          text-decoration:none; 
+          background-color: #82e3b7; 
+          border: black 1px solid #82e3b7; 
+          padding:10px 10px; 
+          display:block;
+          text-align: center;
+        }
+    </style>
+  </head>
+
+  <body>
+    <center>
+      <table align="center" 
+             border="0" 
+             cellpadding="0" 
+             cellspacing="0" 
+      >
+          <tbody>
+              <!-- EMAIL HERO -->
+              <tr>
+                  <td>
+                      <h1>NearBeach</h1>
+                      <h2>Two Factor Password</h2>
+                      <img src="https://cdn.nearbeach.org/nearbeach_logo.svg">
+                  </td>
+              </tr>
+          <tr>
+              <td>
+                  <p>
+                      Hello {{ user.first_name }},<br/>
+                      Please see your Two Factor Password below. Do NOT give this to anyone else.
+                  </p>
+                  <p>
+                      If you did not make this request, please contact your system administrator right away!
+                  </p>
+                  <p>
+                      Token: <b>{{ token }}</b>
+                  </p>
+                  <p>
+                      Sincerely,<br/>
+                      NearBeach Team
+                  </p>
+              </td>
+          </tr>
+        </tbody>
+      </table>
+    </center>
+  </body>
+</html>

@@ -1,4 +1,6 @@
+from django_otp.plugins.otp_email.models import EmailDevice
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login
@@ -10,26 +12,71 @@ from NearBeach.utils.enums.login_status_enum import LoginStatusEnum
 
 
 class AuthenticationView(APIView):
-    def post(self, request):
-        serializer = AuthenticationSerializer(data=request.data)
-        if not serializer.is_valid():
-            # Place the error into the message field
-            serializer.message = serializer.errors
+    permission_classes = [AllowAny]
+    serializer: AuthenticationSerializer = None
+
+    def _handle_two_factor(self, request, user):
+        # Email the user their code
+        device, created = EmailDevice.objects.get_or_create(
+            user=user,
+            name=user.username,
+            confirmed=True
+        )
+
+        # Get the otp token from the serializer
+        otp_token = self.serializer.validated_data['otp_token']
+
+        # If user has not supplied the OTP - send them a request for it
+        if otp_token is None or otp_token == "":
+            # Generate code
+            device.generate_challenge()
 
             return Response(
-                serializer.data,
+                data={'status': LoginStatusEnum.TWO_FACTOR_REQUIRED},
+                status=status.HTTP_200_OK,
+            )
+
+        # Verify 2fa
+        if not device.verify_token(otp_token):
+            return Response(
+                data={'status': LoginStatusEnum.FAILURE},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # User passed all tests
+        return self._login(request, user)
+
+    def _login(self, request, user):
+        login(request, user)
+
+        return Response(
+            data={'status': LoginStatusEnum.SUCCESS},
+            status=status.HTTP_200_OK,
+        )
+
+    def post(self, request):
+        self.serializer = AuthenticationSerializer(data=request.data)
+        if not self.serializer.is_valid():
+            # Place the error into the message field
+            self.serializer.message = self.serializer.errors
+
+            return Response(
+                self.serializer.data,
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Authenticate the user
-        user = authenticate(username=serializer.username, password=serializer.password)
+        user = authenticate(
+            username=self.serializer.validated_data['username'],
+            password=self.serializer.validated_data['password']
+        )
 
         # Check user is authenticated
         if user is None:
-            serializer.status = LoginStatusEnum.INCORRECT_LOGIN
+            self.serializer.status = LoginStatusEnum.INCORRECT_LOGIN
 
             return Response(
-                serializer.data,
+                self.serializer.data,
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
@@ -38,20 +85,7 @@ class AuthenticationView(APIView):
 
         # User is logged in - check to make sure they don't have any 2FA
         if user_has_device(user, confirmed=True):
-            serializer.status = LoginStatusEnum.TWO_FACTOR_REQUIRED
+            return self._handle_two_factor(request, user)
 
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK,
-            )
-
-        # Log in the user
-        login(request, user)
-
-        # Notify front end we have successfully logged in
-        serializer.status = LoginStatusEnum.SUCCESS
-
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK,
-        )
+        # Log user in
+        return self._login(request, user)

@@ -1,7 +1,9 @@
 export enum ObjectStateEnum {
-  Loading = "LOADING",
-  Saving = "SAVING",
-  NoAction = "NO_ACTION",
-  Disable = "DISABLE",
-  Error = "ERROR",
+    Disable = "DISABLE",
+    Error = "ERROR",
+    Loading = "LOADING",
+    LoggingIn = "LOGGING_IN",
+    LoggingOut = "LOGGING_OUT",
+    NoAction = "NO_ACTION",
+    Saving = "SAVING",
 }

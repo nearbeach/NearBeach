@@ -7,4 +7,4 @@ class AuthenticationView(View):
     """Class handling authentication"""
     @staticmethod
     def get(request, *args, **kwargs):
-        return render(request, "NearBeach/Authentication.html")
+        return render(request, "NearBeach/authentication/authentication.html")
