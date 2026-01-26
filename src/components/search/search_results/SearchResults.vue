@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import CardComponent from '@/components/prefab/card/CardComponent.vue';
 import SearchCard from '@/components/search/search_results/search_card/SearchCard.vue';
 import SearchHeader from '@/components/search/search_results/search_header/SearchHeader.vue';
+import {CardComponent} from "whelk-ui";
 </script>
 
 <template>

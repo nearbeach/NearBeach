@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import {Folder, Link2, UploadCloudIcon} from "lucide-vue-next";
-import type {DropDownItemsInterface} from "@/utils/interfaces/DropDownItemsInterface.ts";
-import DropDown from "@/components/prefab/drop_down/DropDown.vue";
+import { DropDown } from "whelk-ui"
+import type { DropDownItemsInterface } from "whelk-ui";
 
 // Define refs
 const dropDownItems = ref<DropDownItemsInterface[]>([

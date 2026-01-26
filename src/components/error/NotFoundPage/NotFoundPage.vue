@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import CardComponent from '@/components/prefab/card/CardComponent.vue';
-import CardHeader from '@/components/prefab/card/card_header/CardHeader.vue';
+import {CardComponent, CardHeader} from "whelk-ui";
 import { computed } from 'vue';
 
 const objectType = computed(() => {

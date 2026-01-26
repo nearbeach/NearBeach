@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import {ref} from 'vue'
-import ButtonComponent from "@/components/prefab/button/ButtonComponent.vue";
-import {ButtonVariantEnum} from '@/utils/enums/ButtonVariantEnum.ts';
-import {ObjectStateEnum} from '@/utils/enums/ObjectStateEnum.ts';
+import { ButtonComponent, ObjectStateEnum} from "whelk-ui";
 
 // DEFINE EMITS
 const emit = defineEmits(['removeOrganisation']);
@@ -37,9 +35,8 @@ function removeOrganisation() {
 			</RouterLink>
 		</p>
 		<ButtonComponent
-			class="tiny"
+			class="compact danger"
 			label="Remove Organisation"
-			:variant="ButtonVariantEnum.Danger"
 			:objectState="removeOrganisationState"
 			v-on:click="removeOrganisation"
 		/>

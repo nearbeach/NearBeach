@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import ButtonComponent from '@/components/prefab/button/ButtonComponent.vue';
-import CardComponent from '@/components/prefab/card/CardComponent.vue';
-import CardFooter from '@/components/prefab/card/card_footer/CardFooter.vue';
-import CardHeader from '@/components/prefab/card/card_header/CardHeader.vue';
-import TextInput from '@/components/prefab/text_input/TextInput.vue';
-import { ButtonVariantEnum } from '@/utils/enums/ButtonVariantEnum.ts';
-import { ObjectStateEnum } from '@/utils/enums/ObjectStateEnum.ts';
-import { nextTick, ref } from 'vue';
+import { ButtonComponent, CardComponent, CardHeader, CardFooter, TextInput, ObjectStateEnum } from 'whelk-ui';
+import {nextTick, type Ref, ref} from 'vue';
 import router from '@/router/router.ts';
 
 // Define Models
@@ -26,7 +20,7 @@ const fieldValidation: Record<string, boolean> = {
 
 // Define Refs
 const isFormValid = ref(true);
-const objectState = ref(ObjectStateEnum.NoAction);
+const objectState : Ref<string> = ref(ObjectStateEnum.NoAction);
 
 // Define Methods
 async function createProject(): Promise<void> {
@@ -83,8 +77,8 @@ async function checkValidation(): Promise<boolean> {
 
         <CardFooter>
             <ButtonComponent
+				class="primary"
                 label="Create Project"
-                :variant="ButtonVariantEnum.Primary"
                 :objectState="objectState"
                 v-on:click="createProject"
             />

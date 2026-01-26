@@ -1,4 +1,5 @@
 import 'vite/modulepreload-polyfill';
+import 'whelk-ui/dist/whelk-ui.css'
 import { createPinia } from "pinia";
 import { createApp } from "vue";
 import App from "./pages/app/App.vue";

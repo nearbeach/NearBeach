@@ -1,23 +1,20 @@
 <script setup lang="ts">
 import {defineModel} from "vue";
-import TextInput from "@/components/prefab/text_input/TextInput.vue";
-import ButtonComponent from "@/components/prefab/button/ButtonComponent.vue";
-import PasswordInput from "@/components/prefab/password_input/PasswordInput.vue";
-import {ObjectStateEnum} from "@/utils/enums/ObjectStateEnum.ts";
-import {ButtonVariantEnum} from "@/utils/enums/ButtonVariantEnum.ts";
+import {ButtonComponent, PasswordInput, TextInput, ObjectStateEnum} from "whelk-ui"
 
 // Define emits
 const emit = defineEmits(['signIn']);
 
 // Define props
 defineProps({
-    buttonState: {
-        required: true,
-        validator: function (value: string): boolean {
-            const enumValues: string[] = Object.values(ObjectStateEnum);
-            return enumValues.includes(value);
-        },
-    },
+	buttonState: {
+		required: true,
+		type: String,
+		validator: function (value: string): boolean {
+			const enumValues: string[] = Object.values(ObjectStateEnum);
+			return enumValues.includes(value);
+		},
+	},
 	errorMessage: {
 		required: false,
 		type: String,
@@ -39,7 +36,7 @@ const password = defineModel("password", {
 <template>
 	<div class="login-panel">
 		<h1 id="main-title">NearBeach Login</h1>
-		<p class="error-message">{{errorMessage}}</p>
+		<p class="error-message">{{ errorMessage }}</p>
 		<TextInput class="compact"
 				   label="Email"
 				   placeholderText="Your email address"
@@ -55,10 +52,13 @@ const password = defineModel("password", {
 					   v-model="password"
 		/>
 
-		<ButtonComponent :object-state="buttonState"
-						 label="Sign In"
-						 @click="emit('signIn')"
-		/>
+		<ButtonComponent
+			class="primary"
+			:object-state="buttonState"
+			@click="emit('signIn')"
+		>
+			Sign In
+		</ButtonComponent>
 
 		<RouterLink to="/login/forgotten-password">Forgotten Password</RouterLink>
 	</div>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {ref} from 'vue'
-import type {DocumentItemInterface} from "@/utils/interfaces/DocumentItemInterface.ts";
-import type {FolderItemInterface} from "@/utils/interfaces/FolderItemInterface.ts";
+import type {DocumentItemInterface, FolderItemInterface} from "whelk-ui";
 import DocumentList from './document_list/DocumentList.vue';
 import FolderList from "@/components/project/project_page/document/document_list_render/folder_list/FolderList.vue";
 

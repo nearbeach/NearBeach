@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import CardComponent from "@/components/prefab/card/CardComponent.vue";
-import CardHeader from "@/components/prefab/card/card_header/CardHeader.vue";
 import StakeholderOrganisation
 	from "@/components/project/project_page/stakeholder/stakeholder_organisation/StakeholderOrganisation.vue";
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
-import {ObjectTitleCaseEnums} from "@/utils/enums/ObjectTitleCaseEnums.ts";
 import StakeholderCustomer
 	from "@/components/project/project_page/stakeholder/stakeholder_customer/StakeholderCustomer.vue";
+import { CardComponent, CardHeader, ObjectTitleCaseEnums} from "whelk-ui";
 
 // DEFINE REFS
 const organisationName = ref<string>("Muenchener Rueckversicherungs Gesellschaft");

@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import CardComponent from '@/components/prefab/card/CardComponent.vue';
-import TextInput from '@/components/prefab/text_input/TextInput.vue';
-import DatetimeComponent from '@/components/prefab/datetime_component/DatetimeComponent.vue';
-import NumberInput from '@/components/prefab/number_input/NumberInput.vue';
+import { CardComponent, DatetimeComponent, TextInput, NumberInput } from 'whelk-ui'
 
 // Define Modals
 const endDateModel = defineModel('endDateModel', {

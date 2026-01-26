@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
-import {ObjectTitleCaseEnums} from "@/utils/enums/ObjectTitleCaseEnums.ts";
+import {ObjectTitleCaseEnums} from "whelk-ui"
 </script>
 
 <template>

@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import {defineModel, defineEmits} from "vue";
-import TextInput from "@/components/prefab/text_input/TextInput.vue";
-import ButtonComponent from "@/components/prefab/button/ButtonComponent.vue";
-import {ObjectStateEnum} from "@/utils/enums/ObjectStateEnum.ts";
+import {defineModel, defineEmits, ref} from "vue";
+import {TextInput, ButtonComponent, ObjectStateEnum} from "whelk-ui"
 
 // Define emits
 const emit = defineEmits(['signIn']);
@@ -11,6 +9,7 @@ const emit = defineEmits(['signIn']);
 defineProps({
 	buttonState: {
 		required: true,
+		type: String,
 		validator: function (value: string): boolean {
 			const enumValues: string[] = Object.values(ObjectStateEnum);
 			return enumValues.includes(value);
@@ -32,7 +31,7 @@ const otpToken = defineModel("otpToken", {
 <template>
 	<div class="two-factor-panel">
 		<h1 id="main-title">NearBeach Login</h1>
-		<p class="error-message">{{errorMessage}}</p>
+		<p class="error-message">{{ errorMessage }}</p>
 		<TextInput class="compact"
 				   label="Two Factor Password"
 				   placeholderText="Please insert the two factor password"
@@ -40,10 +39,13 @@ const otpToken = defineModel("otpToken", {
 				   v-model="otpToken"
 		/>
 
-		<ButtonComponent :object-state="buttonState"
-						 label="Sign In"
-						 @click="emit('signIn')"
-		/>
+		<ButtonComponent
+			class="primary"
+			:object-state="buttonState"
+			@click="emit('signIn')"
+		>
+			Submit 2FA
+		</ButtonComponent>
 	</div>
 </template>
 

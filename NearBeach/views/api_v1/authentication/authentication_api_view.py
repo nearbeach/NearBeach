@@ -1,4 +1,5 @@
 from django_otp.plugins.otp_email.models import EmailDevice
+from django_otp.plugins.otp_totp.models import TOTPDevice
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -17,11 +18,19 @@ class AuthenticationView(APIView):
 
     def _handle_two_factor(self, request, user):
         # Email the user their code
-        device, created = EmailDevice.objects.get_or_create(
+        # device, created = EmailDevice.objects.get_or_create(
+        #     user=user,
+        #     name=user.username,
+        #     confirmed=True
+        # )
+
+        # TEMP CODE
+        device_totp, created_totp = TOTPDevice.objects.get_or_create(
             user=user,
             name=user.username,
             confirmed=True
         )
+        # END TEMP CODE
 
         # Get the otp token from the serializer
         otp_token = self.serializer.validated_data['otp_token']
@@ -29,7 +38,8 @@ class AuthenticationView(APIView):
         # If user has not supplied the OTP - send them a request for it
         if otp_token is None or otp_token == "":
             # Generate code
-            device.generate_challenge()
+            # device.generate_challenge()
+            # device_totp.generate_challenge()
 
             return Response(
                 data={'status': LoginStatusEnum.TWO_FACTOR_REQUIRED},
@@ -37,7 +47,7 @@ class AuthenticationView(APIView):
             )
 
         # Verify 2fa
-        if not device.verify_token(otp_token):
+        if not device_totp.verify_token(otp_token):
             return Response(
                 data={'status': LoginStatusEnum.FAILURE},
                 status=status.HTTP_403_FORBIDDEN,

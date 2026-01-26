@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import ButtonComponent from "@/components/prefab/button/ButtonComponent.vue";
-import TextInput from "@/components/prefab/text_input/TextInput.vue";
-import {ObjectStateEnum} from '@/utils/enums/ObjectStateEnum.ts';
+import { ButtonComponent, TextInput, ObjectStateEnum } from "whelk-ui";
 
 // Define ref
 const buttonState = ref(ObjectStateEnum.NoAction);

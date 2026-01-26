@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import CardComponent from '@/components/prefab/card/CardComponent.vue';
-import CardHeader from '@/components/prefab/card/card_header/CardHeader.vue';
 import SearchInput from '@/components/search/search_filter/search_input/SearchInput.vue';
-import CheckboxComponent from '@/components/prefab/checkbox_component/CheckboxComponent.vue';
+
+import { CardComponent, CardHeader, CheckBox } from 'whelk-ui';}
 
 // Ref
 const filterOutClosedObjects = ref(true);

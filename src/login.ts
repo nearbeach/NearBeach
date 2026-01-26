@@ -1,4 +1,5 @@
 import 'vite/modulepreload-polyfill';
+import 'whelk-ui/dist/whelk-ui.css';
 import axios from "axios";
 import {createApp} from "vue";
 import LoginApp from "@/pages/login_app/LoginApp.vue";

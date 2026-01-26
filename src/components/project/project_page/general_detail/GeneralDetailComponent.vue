@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import TextInput from '@/components/prefab/text_input/TextInput.vue';
-import TextareaComponent from '@/components/prefab/textarea/TextareaComponent.vue';
-import CardComponent from '@/components/prefab/card/CardComponent.vue';
-import CardHeader from '@/components/prefab/card/card_header/CardHeader.vue';
-import SwitchComponent from "@/components/prefab/switch/SwitchComponent.vue";
+import {CardComponent, CardHeader, TextArea, TextInput} from 'whelk-ui';
 
 // Define data
 const fieldValidation: Record<string, boolean> = {
@@ -39,7 +35,7 @@ const descriptionModel = defineModel('descriptionModel', {
             tooltip-message="Create a short title describing the project you wish to create. Minimum length of 10 characters and Maximum length of 20"
             @isValid="(value) => (fieldValidation['titleModel'] = value)"
         />
-        <TextareaComponent
+        <TextArea
             v-model="descriptionModel"
             placeholderText="Description of your project"
             label="Description"
