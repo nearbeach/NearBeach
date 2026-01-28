@@ -9,9 +9,36 @@ from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 
-class ListOfRequirementItemStatus(ListOfRequirementStatus):
+class ListOfRequirementItemStatus(CommonInfo):
     """Class containing fields for the List of requirement item status table."""
 
+    id = models.BigAutoField(primary_key=True)
+    status = models.CharField(
+        max_length=50,
+    )
+    higher_order_status = models.CharField(
+        max_length=10,
+        choices=ObjectHigherOrderStatus,
+        default=ObjectHigherOrderStatus.NORMAL,
+    )
+    sort_order = models.PositiveIntegerField(
+        default=0,
+    )
+    change_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+        blank=True,
+        null=True,
+    )
+    creation_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_creation_user",
+        blank=True,
+        null=True,
+    )
+    
     class Meta:
         """Meta definition for ListOfRequirementItemStatus table."""
 
@@ -19,8 +46,27 @@ class ListOfRequirementItemStatus(ListOfRequirementStatus):
         ordering = ["sort_order"]
 
 
-class ListOfRequirementItemType(ListOfRequirementType):
+class ListOfRequirementItemType(CommonInfo):
     """Class containing fields for the List of requirement item type table."""
+
+    id = models.BigAutoField(primary_key=True)
+    type = models.CharField(
+        max_length=100,
+    )
+    change_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_change_user",
+        blank=True,
+        null=True,
+    )
+    creation_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_creation_user",
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         """Meta definition for ListOfRequirementItemType table."""

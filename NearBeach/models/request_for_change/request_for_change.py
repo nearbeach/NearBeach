@@ -64,7 +64,7 @@ class RequestForChange(CommonInfo):
         blank=True,
         default="",
     )
-    back_out_plan = models.TextField(
+    backout_plan = models.TextField(
         blank=True,
         default="",
     )

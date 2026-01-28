@@ -708,7 +708,7 @@ class Migration(migrations.Migration):
         migrations.RenameField(
             model_name="requestforchange",
             old_name="rfc_summary",
-            new_name="summary",
+            new_name="description",
         ),
         migrations.RenameField(
             model_name="requestforchange",
@@ -1352,6 +1352,15 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name="changetaskblock",
+            name="change_task_blocks",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="blocks",
+                to="NearBeach.changetask",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="changetaskblock",
             name="change_user",
             field=models.ForeignKey(
                 default=1,
@@ -1477,6 +1486,20 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name="listofprojectstatus",
+            name="higher_order_status",
+            field=models.CharField(
+                choices=[
+                    ("Backlog", "Backlog"),
+                    ("Normal", "Normal"),
+                    ("Blocked", "Blocked"),
+                    ("Closed", "Closed"),
+                ],
+                default="Normal",
+                max_length=10,
+            ),
+        ),
+        migrations.AlterField(
+            model_name="listofprojectstatus",
             name="change_user",
             field=models.ForeignKey(
                 blank=True,
@@ -1485,6 +1508,11 @@ class Migration(migrations.Migration):
                 related_name="%(class)s_change_user",
                 to=settings.AUTH_USER_MODEL,
             ),
+        ),
+        migrations.AlterField(
+            model_name="listofrequirementitemstatus",
+            name="status",
+            field=models.CharField(max_length=50),
         ),
         migrations.AlterField(
             model_name="listofrequirementitemstatus",
@@ -1532,6 +1560,20 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name="listoftaskstatus",
+            name="higher_order_status",
+            field=models.CharField(
+                choices=[
+                    ("Backlog", "Backlog"),
+                    ("Normal", "Normal"),
+                    ("Blocked", "Blocked"),
+                    ("Closed", "Closed"),
+                ],
+                default="Normal",
+                max_length=10,
+            ),
+        ),
+        migrations.AlterField(
+            model_name="listoftaskstatus",
             name="change_user",
             field=models.ForeignKey(
                 blank=True,
@@ -1550,6 +1592,19 @@ class Migration(migrations.Migration):
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(class)s_change_user",
                 to=settings.AUTH_USER_MODEL,
+            ),
+        ),
+        migrations.AlterField(
+            model_name="notification",
+            name="location",
+            field=models.CharField(
+                choices=[
+                    ("all", "All Options"),
+                    ("dashboard", "Dashboard Screen"),
+                    ("login", "Login Screen"),
+                ],
+                default="all",
+                max_length=20,
             ),
         ),
         migrations.AlterField(
@@ -1634,6 +1689,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name="project",
+            name="description",
+            field=models.TextField(blank=True, default=""),
+        ),
+        migrations.AlterField(
+            model_name="project",
             name="creation_user",
             field=models.ForeignKey(
                 default=1,
@@ -1671,6 +1731,31 @@ class Migration(migrations.Migration):
                 related_name="%(class)s_change_user",
                 to=settings.AUTH_USER_MODEL,
             ),
+        ),
+        migrations.AlterField(
+            model_name="requestforchange",
+            name="backout_plan",
+            field=models.TextField(blank=True, default=""),
+        ),
+        migrations.AlterField(
+            model_name="requestforchange",
+            name="description",
+            field=models.TextField(blank=True, default=""),
+        ),
+        migrations.AlterField(
+            model_name="requestforchange",
+            name="implementation_plan",
+            field=models.TextField(blank=True, default=""),
+        ),
+        migrations.AlterField(
+            model_name="requestforchange",
+            name="risk_and_impact_analysis",
+            field=models.TextField(blank=True, default=""),
+        ),
+        migrations.AlterField(
+            model_name="requestforchange",
+            name="test_plan",
+            field=models.TextField(blank=True, default=""),
         ),
         migrations.AlterField(
             model_name="requestforchange",
@@ -1820,6 +1905,11 @@ class Migration(migrations.Migration):
                 related_name="%(class)s_creation_user",
                 to=settings.AUTH_USER_MODEL,
             ),
+        ),
+        migrations.AlterField(
+            model_name="task",
+            name="description",
+            field=models.TextField(blank=True, default=""),
         ),
         migrations.AlterField(
             model_name="usergroup",
