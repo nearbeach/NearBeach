@@ -1,14 +1,30 @@
 <script setup lang="ts">
+import {ref} from "vue";
+import LoginImage from "../login_image/LoginImage.vue"
+import ForgottenPasswordPanel from "./forgotten_password_panel/ForgottenPasswordPanel.vue"
+import PasswordResetDone from "./password_reset_done/PasswordResetDone.vue";
 
-import LoginImage from "@/components/login/login_image/LoginImage.vue";
-import ForgottenPasswordPanel
-	from "@/components/login/forgotten_password/forgotten_password_panel/ForgottenPasswordPanel.vue";
+// Define ref
+const isDone = ref(false);
+
+// Define functions
+function submitPasswordReset(): void {
+	isDone.value = true;
+
+	// DEAL WITh AXIOS
+}
 </script>
 
 <template>
 	<div class="forgotten-password">
 		<LoginImage/>
-		<ForgottenPasswordPanel/>
+		<PasswordResetDone
+			v-if="isDone"
+		/>
+		<ForgottenPasswordPanel
+			v-else
+			@passwordReset="submitPasswordReset"
+		/>
 	</div>
 </template>
 

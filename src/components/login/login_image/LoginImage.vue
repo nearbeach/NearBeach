@@ -31,7 +31,7 @@ onMounted(() => {
 
 	> img {
 		margin: 1rem 0 1rem 1rem;
-		width: calc(100% - 1rem);
+		width: calc(50vw - 1rem);
 		height: calc(100% - 2rem);
 		border-radius: var(--border-radius);
 		object-fit: cover;

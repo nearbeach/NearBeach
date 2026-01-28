@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineModel, defineEmits, ref} from "vue";
+import {defineModel, defineEmits, onMounted} from "vue";
 import {TextInput, ButtonComponent, ObjectStateEnum} from "whelk-ui"
 
 // Define emits
@@ -25,6 +25,11 @@ defineProps({
 const otpToken = defineModel("otpToken", {
 	type: String,
 	required: true,
+})
+
+// On Mounted
+onMounted(() => {
+	document.getElementById("input-two-factor-password")
 })
 </script>
 

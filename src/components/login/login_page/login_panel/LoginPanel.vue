@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineModel} from "vue";
+import {defineModel, onMounted } from "vue";
 import {ButtonComponent, PasswordInput, TextInput, ObjectStateEnum} from "whelk-ui"
 
 // Define emits
@@ -29,19 +29,32 @@ const username = defineModel("username", {
 const password = defineModel("password", {
 	type: String,
 	required: true,
-})
+});
 
+// Customer directives
+const vFocus = {
+  mounted: (el : HTMLElement) => el.focus()
+}
+
+// On Mount
+onMounted(() => {
+	// Username should be in focus
+	document.getElementById("input-username")?.focus();
+})
 </script>
 
 <template>
-	<div class="login-panel">
+	<form class="login-panel"
+		@submit="emit('signIn')"
+	>
 		<h1 id="main-title">NearBeach Login</h1>
 		<p class="error-message">{{ errorMessage }}</p>
 		<TextInput class="compact"
-				   label="Email"
-				   placeholderText="Your email address"
+				   label="Username"
+				   placeholderText="Your username or email address"
 				   :isRequired="true"
 				   v-model="username"
+				   v-focus
 		/>
 		<PasswordInput class="compact"
 					   label="Password"
@@ -61,7 +74,7 @@ const password = defineModel("password", {
 		</ButtonComponent>
 
 		<RouterLink to="/login/forgotten-password">Forgotten Password</RouterLink>
-	</div>
+	</form>
 </template>
 
 <style scoped>
@@ -93,8 +106,8 @@ const password = defineModel("password", {
 	}
 
 	> .error-message {
-		font-size: 0.75rem;
-		line-height: 1rem;
+		font-size: 1rem;
+		line-height: 1.25rem;
 		color: var(--text-red);
 		font-weight: bold;
 		margin: 0 0 0.25rem 0;

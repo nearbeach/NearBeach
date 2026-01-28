@@ -10,6 +10,7 @@ import TwoFactorPanel from "@/components/login/login_page/two_factor_panel/TwoFa
 const apiClient: AxiosInstance | undefined = inject("apiClient");
 
 // Define ref
+let fail_count = 0;
 const username = ref('');
 const password = ref('');
 const otp_token = ref('');
@@ -18,7 +19,15 @@ const buttonState = ref(ObjectStateEnum.NoAction);
 const isLoginPage = ref(true);
 
 // Methods
-function ActivateTwoFactorPanel() {
+function ActivateLoginPanel() {
+	// Go back to login
+	isLoginPage.value = true;
+
+	// Tell user they can use the button again
+	buttonState.value = ObjectStateEnum.NoAction;
+}
+
+function ActiveTwoFactorPanel() {
 	// Backend requires a 2FA key
 	isLoginPage.value = false;
 
@@ -45,11 +54,25 @@ function signIn() {
 				UserLoggedIn();
 				break;
 			default:
-				ActivateTwoFactorPanel();
+				ActiveTwoFactorPanel();
 				break;
 		}
 	}).catch((error) => {
-		// TODO - Add code to handle errors
+		// Increase the fail count
+		fail_count += 1;
+
+		switch (error.status) {
+			case 401:
+				error_message.value = fail_count <= 5 ? "Credentials have failed" : "Impostor detected, initiating self-destruction";
+				username.value = "";
+				password.value = "";
+				otp_token.value = "";
+				ActivateLoginPanel();
+				break;
+			default:
+				error_message.value = error.message;
+				break;
+		}
 	})
 }
 

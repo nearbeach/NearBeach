@@ -1,19 +1,20 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import authentication, permissions
-from django.contrib.auth.models import User
+from rest_framework import status
+
+from NearBeach.serializers.authentication.password_reset_serializer import PasswordResetSerializer
+
 
 class ForgottenPasswordView(APIView):
-    """
-    View to list all users in the system.
+    """Class dealing with forgotten password"""
+    serializer_class = PasswordResetSerializer
 
-    * Requires token authentication.
-    * Only admin users are able to access this view.
-    """
+    def post(self, request):
+        serializer = PasswordResetSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-    def get(self, request, format=None):
-        """
-        Return a list of all users.
-        """
-        usernames = [user.username for user in User.objects.all()]
-        return Response(usernames)
+        

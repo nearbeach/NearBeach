@@ -1,26 +1,37 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { defineEmits, ref } from 'vue'
 import { ButtonComponent, TextInput, ObjectStateEnum } from "whelk-ui";
+
+// Define emit
+const emit = defineEmits(['passwordReset']);
 
 // Define ref
 const buttonState = ref(ObjectStateEnum.NoAction);
+const emailAddress = ref("");
 </script>
 
 <template>
-	<div class="forgotten-password-panel">
+	<form class="forgotten-password-panel"
+		  @submit="emit('passwordReset')"
+	>
 		<h1 id="main-title">Forgotten Password</h1>
 		<TextInput class="compact"
 				   label="Email"
 				   placeholderText="Your email address"
 				   :isRequired="true"
+				   v-model="emailAddress"
 		/>
 
-		<ButtonComponent :object-state="buttonState"
-						 label="Reset Password"
-		/>
+		<ButtonComponent
+			class="primary"
+			:object-state="buttonState"
+			@click="emit('passwordReset')"
+		>
+			Submit
+		</ButtonComponent>
 
 		<RouterLink to="/login">Go back to login</RouterLink>
-	</div>
+	</form>
 </template>
 
 <style scoped>
