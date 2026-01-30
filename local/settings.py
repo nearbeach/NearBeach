@@ -275,6 +275,7 @@ The following documentation covers all API endpoints for NearBeach. You can use 
     # OTHER SETTINGS
 }
 
+# NEW SETTINGS TO PORT OVER TO DJANGO
 
 # One time passwords
 OTP_EMAIL_SUBJECT = 'NearBeach 2FA'
@@ -287,3 +288,6 @@ DJANGO_VITE = {
 }
 
 DJANGO_VITE_STATIC_URL_PREFIX = 'bundler'
+
+PASSWORD_RESET_TIMEOUT=300
+APPEND_SLASH = True

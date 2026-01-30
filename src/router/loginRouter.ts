@@ -18,7 +18,7 @@ const loginRoutes = [
         name: "forgotten-password",
     },
     {
-        path: "/login/password-reset",
+        path: "/login/reset-password",
         component: PasswordReset,
         name: "password-reset",
     },

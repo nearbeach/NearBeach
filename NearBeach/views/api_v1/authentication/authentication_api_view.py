@@ -1,12 +1,11 @@
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django_otp.plugins.otp_email.models import EmailDevice
-from django_otp.plugins.otp_static.models import StaticDevice
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login
-from django_otp import user_has_device, match_token
+from django_otp import match_token
 
 from NearBeach.serializers.authentication.authentication_serializer import AuthenticationSerializer
 from NearBeach.utils.admin import initalize_base_values
@@ -14,6 +13,7 @@ from NearBeach.utils.enums.login_status_enum import LoginStatusEnum
 
 
 class AuthenticationView(APIView):
+    """Class dealing with user authentication"""
     permission_classes = [AllowAny]
     serializer: AuthenticationSerializer = None
 

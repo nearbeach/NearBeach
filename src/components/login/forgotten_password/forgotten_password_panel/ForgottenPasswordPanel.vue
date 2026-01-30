@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { defineEmits, ref } from 'vue'
+import { defineEmits, ref, defineModel } from 'vue'
 import { ButtonComponent, TextInput, ObjectStateEnum } from "whelk-ui";
 
 // Define emit
 const emit = defineEmits(['passwordReset']);
 
+// Define model
+const emailAddress = defineModel('emailAddress', {
+	type: String,
+	required: true,
+})
+
 // Define ref
 const buttonState = ref(ObjectStateEnum.NoAction);
-const emailAddress = ref("");
 </script>
 
 <template>
