@@ -110,6 +110,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+#####################################################################################################
+### REST FRAMEWORK
+#####################################################################################################
+THROTTLE_AUTH_MINUTE = '10/minute'
+THROTTLE_AUTH_HOUR = '100/hour'
+if "THROTTLE_AUTH_MINUTE" in os.environ:
+    THROTTLE_AUTH_MINUTE = os.getenv("THROTTLE_AUTH_MINUTE")
+
+if "THROTTLE_AUTH_HOUR" in os.environ:
+    THROTTLE_AUTH_HOUR = os.getenv("THROTTLE_AUTH_HOUR")
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
@@ -126,8 +138,8 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'auth_minute': '10/minute',
-        'auth_hour': '100/hour',
+        'auth_minute': THROTTLE_AUTH_MINUTE,
+        'auth_hour': THROTTLE_AUTH_HOUR,
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
