@@ -12,6 +12,7 @@ from NearBeach import __version__ as VERSION, templates
 from rest_framework.settings import api_settings
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -30,9 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '0.0.0.0', '192.168.1.105']
 
-
 KNOX_TOKEN_MODEL = 'knox.AuthToken'
-
 
 # Application definition
 
@@ -83,7 +82,6 @@ TEMPLATES = [
     },
 ]
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -93,7 +91,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -125,6 +122,13 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'auth_minute': '10/minute',
+        'auth_hour': '100/hour',
+    },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
@@ -143,7 +147,6 @@ REST_KNOX = {
     'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
     'TOKEN_MODEL': 'NearBeach.ExtendsAuthToken',
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -185,7 +188,6 @@ if "CLOUDFLARE_ACCOUNT_ID" in os.environ:
     # AWS_CONFIG can be used to set configure the botocore config
     # see https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html
 
-
     # Defining STORAGES
     STORAGES = {"staticfiles": {"BACKEND": "storages.backends.s3boto3.S3StaticStorage"}}
 
@@ -194,12 +196,10 @@ if "CLOUDFLARE_ACCOUNT_ID" in os.environ:
 else:
     STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'NearBeach/static/')
-    
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "NearBeach/static/NearBeach")
 ]
-
-
 
 # Check to see if we are importing AWS credentials
 if "AWS_ACCESS_KEY_ID" in os.environ and "CLOUDFLARE_ACCOUNT_ID" not in os.environ:
@@ -212,7 +212,6 @@ if "AWS_ACCESS_KEY_ID" in os.environ and "CLOUDFLARE_ACCOUNT_ID" not in os.envir
 if "AZURE_STORAGE_CONNECTION_STRING" in os.environ:
     AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
     AZURE_STORAGE_CONTAINER_NAME = os.getenv("AZURE_STORAGE_CONTAINER_NAME")
-
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
@@ -282,12 +281,12 @@ OTP_EMAIL_SUBJECT = 'NearBeach 2FA'
 OTP_EMAIL_BODY_HTML_TEMPLATE_PATH = 'NearBeach/authentication/two_factor_authentication_email.html'
 
 DJANGO_VITE = {
-  "default": {
-    "dev_mode": True,
-  }
+    "default": {
+        "dev_mode": True,
+    }
 }
 
 DJANGO_VITE_STATIC_URL_PREFIX = 'bundler'
 
-PASSWORD_RESET_TIMEOUT=300
+PASSWORD_RESET_TIMEOUT = 300
 APPEND_SLASH = True

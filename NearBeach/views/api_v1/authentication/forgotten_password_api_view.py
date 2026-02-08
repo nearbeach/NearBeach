@@ -9,12 +9,16 @@ from django.utils.encoding import force_bytes
 
 from NearBeach.serializers.authentication.forgotten_password_serializer import ForgottenPasswordSerializer
 from NearBeach.services.AsyncEmailService import AsyncEmailService
+from NearBeach.utils.throttle.AuthMinuteThrottle import AuthMinuteThrottle
+from NearBeach.utils.throttle.AuthHourThrottle import AuthHourThrottle
 
 
 class ForgottenPasswordView(APIView):
     """Class dealing with forgotten password"""
+    authentication_classes = []
     permission_classes = [AllowAny]
     serializer_class = ForgottenPasswordSerializer
+    throttle_classes = [AuthMinuteThrottle, AuthHourThrottle]
 
     @staticmethod
     def _handle_email(request, user):

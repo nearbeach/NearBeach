@@ -8,13 +8,17 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from NearBeach.serializers.authentication.password_reset_serializer import PasswordResetSerializer
+from NearBeach.utils.throttle.AuthMinuteThrottle import AuthMinuteThrottle
+from NearBeach.utils.throttle.AuthHourThrottle import AuthHourThrottle
 
 
 class PasswordResetView(APIView):
     """Class dealing with forgotten password"""
+    authentication_classes = []  # important for login
     permission_classes = [AllowAny]
     serializer_class = PasswordResetSerializer
-    
+    throttle_classes = [AuthMinuteThrottle, AuthHourThrottle]
+
     @staticmethod
     def _get_user(uid):
         """Method for retrieving a user by uid"""

@@ -10,12 +10,16 @@ from django_otp import match_token
 from NearBeach.serializers.authentication.authentication_serializer import AuthenticationSerializer
 from NearBeach.utils.admin import initalize_base_values
 from NearBeach.utils.enums.login_status_enum import LoginStatusEnum
+from NearBeach.utils.throttle.AuthMinuteThrottle import AuthMinuteThrottle
+from NearBeach.utils.throttle.AuthHourThrottle import AuthHourThrottle
 
 
 class AuthenticationView(APIView):
     """Class dealing with user authentication"""
+    authentication_classes = []  # important for login
     permission_classes = [AllowAny]
     serializer: AuthenticationSerializer = None
+    throttle_classes = [AuthMinuteThrottle, AuthHourThrottle]
 
     def _check_user_two_factor_devices(self, user) -> list[str]:
         """Function to get a list of user's two-factor devices."""
