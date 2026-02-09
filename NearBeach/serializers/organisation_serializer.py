@@ -60,4 +60,3 @@ class OrganisationSerializer(serializers.ModelSerializer):
             "profile_picture_path",
             "customers",
         ]
-

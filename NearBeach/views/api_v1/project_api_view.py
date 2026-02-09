@@ -2,14 +2,21 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
+from NearBeach.models import Project
+from NearBeach.serializers.project_serializer import ProjectSerializer
+
 
 @extend_schema(
-    exclude=True,
+    tags=["Projects"],
+    methods=["GET", "POST", "PUT", "DELETE"],
 )
-class CoffeeViewSet(viewsets.ViewSet):
-    serializer_class = None
+class ProjectViewSet(viewsets.ViewSet):
+    queryset = Project.objects.filter(is_deleted=False)
+    serializer_class = ProjectSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     @staticmethod
+    # TODO - PERMISSIONS
     def create(_, *args, **kwargs):
         return Response(
             data={"Teapot": "Why did you put coffee in me?"},
@@ -43,10 +50,3 @@ class CoffeeViewSet(viewsets.ViewSet):
             data={"Teapot": "Sorry, I'm a teapot"},
             status=status.HTTP_418_IM_A_TEAPOT,
         )
-
-    # @staticmethod
-    # def update(_, *args, **kwargs):
-    #     return Response(
-    #         data={"Teapot": "Sorry, teapot can not be upgraded to coffee pot"},
-    #         status=status.HTTP_418_IM_A_TEAPOT,
-    #     )

@@ -6,6 +6,8 @@ from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 from NearBeach.serializers.project_status_serializer import ProjectStatusSerializer
 
 from NearBeach.utils.enums.object_enums import ObjectPriority
+from NearBeach.models.project import Project
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 
 
 class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
@@ -23,7 +25,7 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
     )
 
     def create(self, validated_data):
-        # Pop out the fields we dont need
+        """Method for creating a project"""
         group_list = validated_data.pop("group_list", [])
 
         # Extract data we need
@@ -51,60 +53,42 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
     def get_fields(self):
         fields = super().get_fields()
 
-        # Check to see if request exists in context
-        if "request" not in self.context:
-            return fields
-
-        # Creating a new project
-        if self.context["request"].method == "POST":
-            fields.pop("project_status", None)
-            fields.pop("project_priority", None)
-            fields["organisation"] = serializers.PrimaryKeyRelatedField(
-                queryset=Organisation.objects.filter(is_deleted=False)
-            )
-
-        # Updating a new project
-        if self.context['request'].method == "PUT":
+        # PATCH
+        if self.context['request'].method == "PATCH":
             fields.pop("group_list", None)
             fields.pop("organisation", None)
-            fields["project_status"] = serializers.PrimaryKeyRelatedField(
-                queryset=ListOfProjectStatus.objects.filter(
-                    is_deleted=False,
-                )
-            )
 
         return fields
 
-    def update(self, instance, validated_data):
-        # Project Status
-        project_status_id = validated_data.pop("project_status", 0)
-        instance.project_status_id = project_status_id
-
-        # Priority
-        project_priority = validated_data.pop("project_priority", 2)
-        instance.project_priority = project_priority["value"]
-
-        # Update instance
-        instance = super().update(instance, validated_data)
-        return instance
+    # def update(self, instance, validated_data):
+    #     # Project Status
+    #     project_status_id = validated_data.pop("project_status", 0)
+    #     instance.project_status_id = project_status_id
+    #
+    #     # Priority
+    #     project_priority = validated_data.pop("project_priority", 2)
+    #     instance.project_priority = project_priority["value"]
+    #
+    #     # Update instance
+    #     instance = super().update(instance, validated_data)
+    #     return instance
 
     class Meta:
         model = Project
         fields = [
-            "project_id",
-            "project_name",
-            "project_description",
+            "id",
+            "title",
+            "description",
             "organisation",
-            "project_status",
-            "project_higher_order_status",
-            "project_priority",
-            "project_story_point",
-            "project_start_date",
-            "project_end_date",
+            "status",
+            "higher_order_status",
+            "priority",
+            "story_point",
+            "start_date",
+            "end_date",
             "group_list",
             "date_created",
             "date_modified",
-            "uuid",
         ]
 
 
