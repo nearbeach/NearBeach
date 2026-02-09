@@ -116,11 +116,15 @@ AUTH_PASSWORD_VALIDATORS = [
 #####################################################################################################
 THROTTLE_AUTH_MINUTE = '10/minute'
 THROTTLE_AUTH_HOUR = '100/hour'
+THROTTLE_USER_MINUTE = '100/minute'
 if "THROTTLE_AUTH_MINUTE" in os.environ:
     THROTTLE_AUTH_MINUTE = os.getenv("THROTTLE_AUTH_MINUTE")
 
 if "THROTTLE_AUTH_HOUR" in os.environ:
     THROTTLE_AUTH_HOUR = os.getenv("THROTTLE_AUTH_HOUR")
+
+if "THROTTLE_USER_MINUTE" in os.environ:
+    THROTTLE_USER_MINUTE = os.getenv("THROTTLE_USER_MINUTE")
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -140,6 +144,8 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'auth_minute': THROTTLE_AUTH_MINUTE,
         'auth_hour': THROTTLE_AUTH_HOUR,
+        'user': THROTTLE_USER_MINUTE,
+        'anon': '1/min',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',

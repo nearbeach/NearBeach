@@ -4,21 +4,22 @@ from NearBeach.serializers.abstraction.date_fields_serializer import DateFieldsS
 from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 from NearBeach.serializers.project_status_serializer import ProjectStatusSerializer
-
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.models.project import Project
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
+from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 
 class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
     """Class containing serializer base for all objects"""
 
+    higher_order_status = EnumField(enum=ObjectHigherOrderStatus)
     organisation = OrganisationSerializer(
         many=False,
         read_only=True,
     )
-    project_priority = EnumField(enum=ObjectPriority)
-    project_status = ProjectStatusSerializer(
+    priority = EnumField(enum=ObjectPriority)
+    status = ProjectStatusSerializer(
         many=False,
         read_only=False,
         allow_null=False,

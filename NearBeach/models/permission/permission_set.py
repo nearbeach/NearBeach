@@ -30,19 +30,11 @@ class PermissionSet(CommonInfo):
         choices=PermissionLevel,
         default=0,
     )
-    bug_client = models.IntegerField(
-        choices=PermissionLevel,
-        default=0,
-    )
     customer = models.IntegerField(
         choices=PermissionLevel,
         default=0,
     )
     kanban_board = models.IntegerField(
-        choices=PermissionLevel,
-        default=0,
-    )
-    kanban_card = models.IntegerField(
         choices=PermissionLevel,
         default=0,
     )
@@ -60,6 +52,10 @@ class PermissionSet(CommonInfo):
     )
     requirement = models.IntegerField(choices=PermissionLevel, default=0)
     schedule_object = models.IntegerField(
+        choices=PermissionLevel,
+        default=0,
+    )
+    sprint = models.IntegerField(
         choices=PermissionLevel,
         default=0,
     )
