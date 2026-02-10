@@ -7,6 +7,7 @@ from NearBeach.decorators.check_user_permissions.destination_permission import d
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.models import Project, ObjectAssignment, UserGroup
 from NearBeach.serializers.project_serializer import ProjectSerializer
+from NearBeach.utils.api.check_group_list import check_group_list
 
 
 @extend_schema(
@@ -32,10 +33,8 @@ class ProjectViewSet(viewsets.ViewSet):
             )
 
         # Check that there exists groups
-        # TODO - create a util function that checks ALL groups submitted by the user, the user has access too.
-        # TODO - Apply reddis cache to this check
         group_list = request.data.getlist('group_list', [])
-        if group_list is None or len(group_list) == 0:
+        if not check_group_list(request.user, group_list):
             return Response(
                 "Groups are missing",
                 status=status.HTTP_400_BAD_REQUEST,
