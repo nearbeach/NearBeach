@@ -14,9 +14,14 @@ def check_group_list(username: str, group_list: List[str] | None) -> bool:
     2. Count to make sure the group_list length equals the len of the query
     """
     try:
+        # Deduplicate group_list
+        group_list = list(set(group_list))
+
+        # Filter for these groups
         user_group_results = UserGroup.objects.filter(
             is_deleted=False,
             username=username,
+            group_id__in=group_list,
         ).values(
             'username',
             'group_name',
