@@ -1677,6 +1677,28 @@ class Migration(migrations.Migration):
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
+        migrations.RemoveField(
+            model_name="permissionset",
+            name="bug_client",
+        ),
+        migrations.RemoveField(
+            model_name="permissionset",
+            name="kanban_card",
+        ),
+        migrations.AddField(
+            model_name="permissionset",
+            name="sprint",
+            field=models.IntegerField(
+                choices=[
+                    (0, "No Permission"),
+                    (1, "Read Only"),
+                    (2, "Edit Only"),
+                    (3, "Add and Edit"),
+                    (4, "Full Permission"),
+                ],
+                default=0,
+            ),
+        ),
         migrations.AlterField(
             model_name="project",
             name="change_user",

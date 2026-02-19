@@ -50,7 +50,7 @@ jobs:
             - ./node_modules
       - run:
           name: Run Vitest Unit Tests for VueJS
-          command: "npm run unit-test"
+          command: "npm run test:unit"
       - store_artifacts:
           path: ~/project/coverage
           destination: tr2

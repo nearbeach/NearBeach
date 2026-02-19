@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { CardComponent, CardHeader } from "whelk-ui";}
+import { CardComponent, CardHeader } from "whelk-ui";
 </script>
 
 <template>

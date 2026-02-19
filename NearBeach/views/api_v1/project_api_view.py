@@ -14,7 +14,7 @@ from NearBeach.utils.api.check_group_list import check_group_list
     tags=["Projects"],
     methods=["GET", "POST", "PATCH", "DELETE"],
 )
-class ProjectViewSet(viewsets.ViewSet):
+class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.filter(is_deleted=False)
     serializer_class = ProjectSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
@@ -69,9 +69,8 @@ class ProjectViewSet(viewsets.ViewSet):
             status=status.HTTP_204_NO_CONTENT,
         )
 
-    @staticmethod
     @destination_permission(min_permission_level=1)
-    def list(request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):
         object_assignment_results = ObjectAssignment.objects.filter(
             project_id__isnull=False,
             is_deleted=False,
@@ -89,17 +88,11 @@ class ProjectViewSet(viewsets.ViewSet):
         )
 
         # Handle pagination
-        # page = self.paginate_queryset(project_results)
-        # if page is not None:
-        #     serializer = ProjectSerializer(page, many=True)
-        #     return self.get_paginated_response(serializer.data)
+        page = self.paginate_queryset(project_results)
+        if page is not None:
+            serializer = ProjectSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
-        serializer = ProjectSerializer(
-            data=project_results,
-            many=True
-        )
-
-        serializer.is_valid(raise_exception=True)
         return Response(
             data=serializer.data,
             status=status.HTTP_200_OK,

@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import SearchInput from '@/components/search/search_filter/search_input/SearchInput.vue';
 
-import { CardComponent, CardHeader, CheckBox } from 'whelk-ui';}
+import { CardComponent, CardHeader, CheckBox } from 'whelk-ui';
 
 // Ref
 const filterOutClosedObjects = ref(true);

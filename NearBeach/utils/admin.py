@@ -6,15 +6,13 @@ from NearBeach.models.user import UserGroup
 
 def initalize_permission_sets(user):
     admin_set = PermissionSet(
-        permission_set_name="Administration Permission Set",
+        name="Administration Permission Set",
         administration_assign_user_to_group=4,
         administration_create_group=4,
         administration_create_permission_set=4,
         administration_create_user=4,
-        bug_client=4,
         customer=4,
         kanban_board=4,
-        kanban_card=4,
         organisation=4,
         project=4,
         request_for_change=4,
@@ -33,14 +31,12 @@ def initalize_permission_sets(user):
     admin_set.save()
 
     power_user_set = PermissionSet(
-        permission_set_name="Power Permission Set",
+        name="Power Permission Set",
         administration_assign_user_to_group=0,
         administration_create_group=0,
         administration_create_permission_set=0,
         administration_create_user=0,
-        bug_client=4,
         customer=4,
-        kanban_card=4,
         organisation=4,
         project=4,
         requirement=4,
@@ -58,14 +54,12 @@ def initalize_permission_sets(user):
     power_user_set.save()
 
     normal_set = PermissionSet(
-        permission_set_name="Normal Permission Set",
+        name="Normal Permission Set",
         administration_assign_user_to_group=0,
         administration_create_group=0,
         administration_create_permission_set=0,
         administration_create_user=0,
-        bug_client=3,
         customer=3,
-        kanban_card=3,
         organisation=3,
         project=3,
         requirement=3,
@@ -83,14 +77,12 @@ def initalize_permission_sets(user):
     normal_set.save()
 
     read_only_set = PermissionSet(
-        permission_set_name="Read Only Permission Set",
+        name="Read Only Permission Set",
         administration_assign_user_to_group=0,
         administration_create_group=0,
         administration_create_permission_set=0,
         administration_create_user=0,
-        bug_client=1,
         customer=1,
-        kanban_card=1,
         organisation=1,
         project=1,
         requirement=1,
@@ -121,7 +113,7 @@ def initalize_admin_user(user, permission_set):
 
     # Create admin group
     admin_group = Group(
-        group_name="Administration",
+        name="Administration",
         change_user=user,
     )
     admin_group.save()
@@ -139,9 +131,9 @@ def initalize_admin_user(user, permission_set):
 def initalize_org(user):
     # Create no organisation
     submit_organisation = Organisation(
-        organisation_name="No Organisation",
-        organisation_website="https://nearbeach.org",
-        organisation_email="noreply@nearbeach.org",
+        name="No Organisation",
+        website="https://nearbeach.org",
+        email="noreply@nearbeach.org",
         change_user=user,
     )
     submit_organisation.save()

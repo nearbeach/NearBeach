@@ -23,7 +23,7 @@ def destination_permission(min_permission_level):
         @wraps(func)
         def inner(request, *args, **kwargs):
             # Get the destination
-            destination = get_destination_from_url(request.path)
+            destination = get_destination_from_url(request.request.path)
             if destination is None:
                 raise PermissionDenied
 
@@ -34,7 +34,7 @@ def destination_permission(min_permission_level):
 
             user_group_results = UserGroup.objects.filter(
                 is_deleted=False,
-                username=request.user,
+                username=request.request.user,
             ).aggregate(
                 Max(f"permission_set__{destination}")
             )[f"permission_set__{destination}__max"]
