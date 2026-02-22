@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.date_abstractions import DateTimeAbstraction
 from NearBeach.models.organisation import Organisation
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
@@ -49,7 +50,7 @@ class ListOfProjectStatus(CommonInfo):
         ordering = ["sort_order"]
 
 
-class Project(CommonInfo):
+class Project(CommonInfo, DateTimeAbstraction):
     """Class containing fields for Project model."""
 
     id = models.BigAutoField(primary_key=True)
@@ -64,8 +65,6 @@ class Project(CommonInfo):
         blank=True,
         null=True,
     )
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
     status = models.ForeignKey(
         ListOfProjectStatus,
         on_delete=models.CASCADE,

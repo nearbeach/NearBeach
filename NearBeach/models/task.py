@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.date_abstractions import DateTimeAbstraction
 from NearBeach.models.organisation import Organisation
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
@@ -49,7 +50,7 @@ class ListOfTaskStatus(CommonInfo):
         ordering = ["sort_order"]
 
 
-class Task(CommonInfo):
+class Task(CommonInfo, DateTimeAbstraction):
     """Class containing fields for Task."""
 
     id = models.BigAutoField(primary_key=True)
@@ -64,8 +65,6 @@ class Task(CommonInfo):
         null=True,
         blank=True,
     )
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
     assigned_to = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,

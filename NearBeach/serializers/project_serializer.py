@@ -45,7 +45,7 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
         for single_group in group_list:
             # Save the group against the new project
             submit_object_assignment = ObjectAssignment(
-                group_id=single_group,
+                group=single_group,
                 project=project,
                 change_user=validated_data["change_user"],
             )

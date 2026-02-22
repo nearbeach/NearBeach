@@ -18,7 +18,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             # UPDATE
             #########
-
+            
             #########
             # CREATE
             #########
