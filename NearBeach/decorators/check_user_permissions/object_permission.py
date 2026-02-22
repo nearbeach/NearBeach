@@ -64,7 +64,7 @@ def object_permission(min_permission_level):
             )[f"permission_set__{destination}__max"]
 
             # Check the user permissions
-            if user_group_results < min_permission_level:
+            if user_group_results is None or user_group_results < min_permission_level:
                 raise PermissionDenied
 
             return func(request, *args, **kwargs, user_level=user_group_results)

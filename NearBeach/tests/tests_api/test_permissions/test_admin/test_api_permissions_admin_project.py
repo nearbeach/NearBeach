@@ -5,7 +5,7 @@ class ApiAdminPermissionTests(BaseApiClass):
     username = "admin"
     password = "Test1234$"
 
-    def test_api_project_data(self):
+    def test_api_permissions_admin_project(self):
         """Test - API Admin Permissions for Project (exclude delete)"""
         data_list = [
             #########
@@ -18,7 +18,22 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             # UPDATE
             #########
-            
+            self.URLTest(
+                "/api/v1/project/1/",
+                {
+                    "title": "New API Project Title",
+                },
+                200,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/",
+                {
+                    "title": "New API Project Title",
+                },
+                200,
+                "PATCH",
+            ),
             #########
             # CREATE
             #########
@@ -31,6 +46,11 @@ class ApiAdminPermissionTests(BaseApiClass):
                 201,
                 "POST"
             ),
+            #########
+            # DELETE
+            #########
+            self.URLTest("/api/v1/project/1/", {}, 204, "DELETE"),
+            self.URLTest("/api/v1/project/2/", {}, 204, "DELETE"),
         ]
 
         self._run_test_array(data_list)

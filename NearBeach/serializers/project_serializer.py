@@ -64,18 +64,9 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
 
         return fields
 
-    # def update(self, instance, validated_data):
-    #     # Project Status
-    #     project_status_id = validated_data.pop("project_status", 0)
-    #     instance.project_status_id = project_status_id
-    #
-    #     # Priority
-    #     project_priority = validated_data.pop("project_priority", 2)
-    #     instance.project_priority = project_priority["value"]
-    #
-    #     # Update instance
-    #     instance = super().update(instance, validated_data)
-    #     return instance
+    def update(self, instance, validated_data):
+        instance.save()
+        return instance
 
     class Meta:
         model = Project
@@ -94,5 +85,4 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
             "date_created",
             "date_modified",
         ]
-
 

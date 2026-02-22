@@ -100,10 +100,30 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     @object_permission(min_permission_level=2)
-    def partial_update(_, *args, **kwargs):
+    def partial_update(request, pk, *args, **kwargs):
+        project = get_object_or_404(
+            Project.objects.filter(is_deleted=False),
+            pk=pk
+        )
+        serializer = ProjectSerializer(
+            project,
+            data=request.data,
+            context={'request': request},
+            partial=True,
+        )
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Make sure we update the change user
+        serializer.change_user = request.user
+        serializer.save()
+
         return Response(
-            data={"Teapot": "Sorry, teapot can not be upgraded to coffee pot"},
-            status=status.HTTP_418_IM_A_TEAPOT,
+            serializer.data,
+            status=status.HTTP_200_OK,
         )
 
     @staticmethod

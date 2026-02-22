@@ -24,6 +24,10 @@ class BaseApiClass(APITestCase):
     
     def _login_user(self):
         """Private Method for logging user in"""
+        if self.username == "":
+            # No username to log in with
+            return
+
         response = self.client.post(
             "/api/v1/authentication/",
             {
@@ -48,8 +52,15 @@ class BaseApiClass(APITestCase):
                         data.url,
                         data.data,
                     )
+                    print(F"Response code: {response.content}")
                 elif data.method == "PUT":
                     response = self.client.put(
+                        data.url,
+                        data.data,
+                        format="json"
+                    )
+                elif data.method == "PATCH":
+                    response = self.client.patch(
                         data.url,
                         data.data,
                         format="json"
