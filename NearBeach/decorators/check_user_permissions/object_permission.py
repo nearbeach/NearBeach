@@ -44,7 +44,7 @@ def object_permission(min_permission_level):
             )
 
             # Exclude organisation
-            if destination is not "organisation":
+            if destination != "organisation":
                 # Apply the location_id grouping
                 user_group_results = user_group_results.filter(
                     group_id__in=ObjectAssignment.objects.filter(

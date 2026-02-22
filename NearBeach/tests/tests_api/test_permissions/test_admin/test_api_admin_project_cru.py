@@ -25,7 +25,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest(
                 "/api/v1/project/",
                 {
-                    "name": "API Project",
+                    "title": "API Project",
                     "group_list": [1, 2],
                 },
                 201,

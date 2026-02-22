@@ -24,7 +24,7 @@ def check_group_list(username: str, group_list: List[str] | None) -> bool:
             group_id__in=group_list,
         ).values(
             'username',
-            'group_name',
+            'group',
         ).distinct().count()
 
         # Return results

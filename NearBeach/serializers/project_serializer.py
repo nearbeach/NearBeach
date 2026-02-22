@@ -7,7 +7,6 @@ from NearBeach.serializers.project_status_serializer import ProjectStatusSeriali
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.models.project import Project
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
-from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 
 class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
@@ -17,11 +16,15 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
         many=False,
         read_only=True,
     )
-    priority = EnumField(enum=ObjectPriority)
+    priority = EnumField(
+        enum=ObjectPriority,
+        required=False,
+    )
     status = ProjectStatusSerializer(
         many=False,
         read_only=False,
         allow_null=False,
+        required=False,
     )
 
     def create(self, validated_data):
@@ -29,10 +32,10 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
         group_list = validated_data.pop("group_list", [])
 
         # Extract data we need
-        validated_data["project_status"] = ListOfProjectStatus.objects.filter(
+        validated_data["status"] = ListOfProjectStatus.objects.filter(
             is_deleted=False
         ).order_by(
-            "project_status_sort_order",
+            "sort_order",
         ).first()
 
         # Create the project
