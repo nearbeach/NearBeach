@@ -108,8 +108,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     @object_permission(min_permission_level=1)
-    def retrieve(_, *args, **kwargs):
-        return Response(
-            data={"Teapot": "Sorry, I'm a teapot"},
-            status=status.HTTP_418_IM_A_TEAPOT,
+    def retrieve(_, pk, *args, **kwargs):
+        project_results = Project.objects.get(
+            pk=pk,
+            is_deleted=False,
         )
+        serializer = ProjectSerializer(project_results)
+        return Response(serializer.data)

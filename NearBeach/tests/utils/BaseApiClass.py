@@ -17,24 +17,23 @@ class BaseApiClass(APITestCase):
 
     def setUp(self):
         """Method run on test start up - sets up the test by logging in and providing the client and factory"""
-        self.credentials = {
-            "auth-username": self.username,
-            "auth-password": self.password
-        }
-
         self.client = APIClient()
         self.factory = APIRequestFactory()
 
-        self.login_user(self.client, self)
+        self._login_user()
     
-    def _login_user(c, self):
+    def _login_user(self):
         """Private Method for logging user in"""
-        response = c.post(
-            reverse("login"),
-            self.credentials,
+        response = self.client.post(
+            "/api/v1/authentication/",
+            {
+                "username": self.username,
+                "password": self.password,
+                "otp_token": ""
+            },
             follow=True,
         )
-        self.assertTrue(response.context["user"].is_active)
+        self.assertEqual(response.status_code, 200)
 
     def _run_test_array(self, data_list):
         """Private method to run all the tests"""

@@ -22,8 +22,16 @@ def destination_permission(min_permission_level):
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
+            # Get the path
+            path = getattr(request, "path", None)
+            path = request.request.path if path == None else path
+
+            # Get the username
+            username = getattr(request, "user", None)
+            username = request.request.user if username == None else username
+
             # Get the destination
-            destination = get_destination_from_url(request.request.path)
+            destination = get_destination_from_url(path)
             if destination is None:
                 raise PermissionDenied
 
@@ -34,7 +42,7 @@ def destination_permission(min_permission_level):
 
             user_group_results = UserGroup.objects.filter(
                 is_deleted=False,
-                username=request.request.user,
+                username=username,
             ).aggregate(
                 Max(f"permission_set__{destination}")
             )[f"permission_set__{destination}__max"]

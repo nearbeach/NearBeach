@@ -1,10 +1,11 @@
 from functools import wraps
 
 from django.db.models import Max
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, NotFound
 
 from NearBeach.models import UserGroup, ObjectAssignment
-from NearBeach.utils.api.get_destination import get_destination_from_url, get_object_from_url
+from NearBeach.utils.api.check_object_exists import check_object_exists
+from NearBeach.utils.api.get_destination import get_object_from_url
 from NearBeach.utils.api.get_parent_object import get_parent_object
 
 
@@ -30,6 +31,11 @@ def object_permission(min_permission_level):
             # Check the destination and location id
             if destination is None or location_id is None:
                 raise PermissionDenied
+
+            # Check to see if the object exists
+            object_exists = check_object_exists(destination, location_id)
+            if not object_exists:
+                raise NotFound
 
             # All user group results
             user_group_results = UserGroup.objects.filter(

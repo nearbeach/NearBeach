@@ -9,6 +9,17 @@ class ApiAdminPermissionTests(BaseApiClass):
         """Test - API Admin Permissions for Project (exclude delete)"""
         data_list = [
             #########
+            # READ
+            #########
+            self.URLTest("/api/v1/project/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/1/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/2/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/3/", {}, 404, "GET"),
+            #########
+            # UPDATE
+            #########
+
+            #########
             # CREATE
             #########
             self.URLTest(
@@ -20,12 +31,6 @@ class ApiAdminPermissionTests(BaseApiClass):
                 201,
                 "POST"
             ),
-            #########
-            # READ
-            #########
-            self.URLTest("/api/v1/project/", {}, 200, "GET"),
-            self.URLTest("/api/v1/project/1/", {}, 200, "GET"),
-            #########
-            # UPDATE
-            #########
         ]
+
+        self._run_test_array(data_list)

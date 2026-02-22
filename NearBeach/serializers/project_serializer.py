@@ -13,7 +13,6 @@ from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
     """Class containing serializer base for all objects"""
 
-    higher_order_status = EnumField(enum=ObjectHigherOrderStatus)
     organisation = OrganisationSerializer(
         many=False,
         read_only=True,
@@ -55,7 +54,8 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
         fields = super().get_fields()
 
         # PATCH
-        if self.context['request'].method == "PATCH":
+        method = getattr(self.context, "method", None)
+        if method == "PATCH":
             fields.pop("group_list", None)
             fields.pop("organisation", None)
 
