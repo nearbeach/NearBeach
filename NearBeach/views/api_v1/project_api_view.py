@@ -93,6 +93,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             serializer = ProjectSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
+        # Fallback method
+        serializer = ProjectSerializer(project_results, many=True)
         return Response(
             data=serializer.data,
             status=status.HTTP_200_OK,

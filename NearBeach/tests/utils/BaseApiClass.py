@@ -52,7 +52,6 @@ class BaseApiClass(APITestCase):
                         data.url,
                         data.data,
                     )
-                    print(F"Response code: {response.content}")
                 elif data.method == "PUT":
                     response = self.client.put(
                         data.url,
