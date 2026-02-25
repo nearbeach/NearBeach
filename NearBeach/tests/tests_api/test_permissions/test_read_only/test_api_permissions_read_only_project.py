@@ -46,6 +46,15 @@ class ApiReadOnlyPermissionTests(BaseApiClass):
                 403,
                 "POST"
             ),
+            self.URLTest(
+                "/api/v1/project/",
+                {
+                    "title": "API Project",
+                    "group_list": [3],
+                },
+                403,
+                "POST"
+            ),
             #########
             # DELETE
             #########

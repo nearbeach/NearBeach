@@ -11,7 +11,7 @@ def check_group_list(username: str, group_list: List[str] | None) -> bool:
     Method
     ~~~~~~
     1. Run query on UserGroup and select distinct by username & group name
-    2. Count to make sure the group_list length equals the len of the query
+    2. If the results are greater than 0, then user has permission
     """
     try:
         # Deduplicate group_list
@@ -28,7 +28,7 @@ def check_group_list(username: str, group_list: List[str] | None) -> bool:
         ).distinct().count()
 
         # Return results
-        return user_group_results == len(group_list)
+        return user_group_results > 0
     except ValueError:
         _logger.error(F"check_group_list - username: {username} | group_list: {group_list} | ValueError: {ValueError}")
         return False

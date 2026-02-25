@@ -41,9 +41,36 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
                 "/api/v1/project/",
                 {
                     "title": "API Project",
+                    "group_list": [1, 2],
+                },
+                201,
+                "POST"
+            ),
+            self.URLTest(
+                "/api/v1/project/",
+                {
+                    "title": "API Project",
+                    "group_list": [1],
+                },
+                403,
+                "POST"
+            ),
+            self.URLTest(
+                "/api/v1/project/",
+                {
+                    "title": "API Project",
                     "group_list": [2],
                 },
                 201,
+                "POST"
+            ),
+            self.URLTest(
+                "/api/v1/project/",
+                {
+                    "title": "API Project",
+                    "group_list": [3],
+                },
+                403,
                 "POST"
             ),
             #########

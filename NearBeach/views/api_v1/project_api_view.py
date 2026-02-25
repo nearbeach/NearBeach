@@ -36,8 +36,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         group_list = request.data.getlist('group_list', [])
         if not check_group_list(request.user, group_list):
             return Response(
-                "Groups are missing",
-                status=status.HTTP_400_BAD_REQUEST,
+                "No Access to groups provided",
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         # Create the project
