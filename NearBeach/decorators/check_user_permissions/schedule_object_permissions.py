@@ -23,7 +23,7 @@ def check_schedule_object_permissions(min_permission_level):
             )
 
             # Get the scheduled object id if it exists
-            scheduled_object_id = kwargs.get('schedule_object_id', None)
+            scheduled_object_id = kwargs.get('schedule_object_id')
             if scheduled_object_id is not None:
                 user_group_results = user_group_results.filter(
                     group_id__in=ObjectTemplateGroup.objects.filter(
