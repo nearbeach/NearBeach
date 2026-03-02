@@ -1,3 +1,4 @@
+from django.db.models import Q
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.generics import get_object_or_404
@@ -8,6 +9,8 @@ from NearBeach.decorators.check_user_permissions.object_permission import object
 from NearBeach.models import Project, ObjectAssignment, UserGroup
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.utils.api.check_group_list import check_group_list
+
+import string
 
 
 @extend_schema(
@@ -86,6 +89,25 @@ class ProjectViewSet(viewsets.ModelViewSet):
             is_deleted=False,
             id__in=object_assignment_results.values("project_id"),
         )
+
+        # Filter by search parameter in the query string
+        search = request.query_params.get("search", None)
+        if search is not None:
+            # Translate search to id
+            search_id = int(search) if str.isdigit(search) else None
+
+            # Apply search filter
+            project_results = project_results.filter(
+                Q(title__icontains=search) |
+                Q(id=search_id)
+            )
+
+        show_closed = request.query_params.get("show_closed", None)
+        if show_closed is not "true":
+            # Hide all the closed
+            project_results = project_results.exclude(
+                status__higher_order_status="Closed",
+            )
 
         # Handle pagination
         page = self.paginate_queryset(project_results)

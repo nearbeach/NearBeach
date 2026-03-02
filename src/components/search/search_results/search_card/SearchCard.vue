@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ObjectIdTag from '@/components/prefab/object_id_tag/ObjectIdTag.vue';
 import ObjectStatusTag from '@/components/prefab/object_status_tag/ObjectStatusTag.vue';
-import shortObjectType from '@/utils/dictionary/ShortObjectDictionary.ts';
 
 // PROPS
 const props = defineProps({
@@ -21,9 +20,6 @@ const props = defineProps({
     objectType: {
         required: true,
         type: String,
-        validator: function (value: string): boolean {
-            return shortObjectType[value] !== undefined;
-        },
     },
     status: {
         type: String,
