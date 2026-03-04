@@ -1,4 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Async components
 const DashboardPage = () =>
@@ -76,6 +77,23 @@ const routes = [
             {path: ":id", component: DashboardPage, name: "RequestForChange"},
         ],
     },
+    // Errors
+    {
+        path: "/forbidden",
+        name: "forbidden",
+        meta: {
+            destination: "forbidden",
+        },
+        component: DashboardPage,
+    },
+    {
+        path: "/not-found",
+        name: "not-found",
+        meta: {
+            destination: "not-found",
+        },
+        component: NotFoundPage,
+    },
     // Fall back page
     {
         path: "/:catchAll(.*)*",
@@ -87,6 +105,26 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes: routes,
+});
+
+router.beforeEach(async (to, _, next) => {
+    // Setup store
+    const permissionStore = usePermissionStore();
+    const destination: string | undefined = to.meta.destination as string | undefined;
+
+    // Check user permissions has been loaded - other load
+    if (!permissionStore.isLoaded) {
+        await permissionStore.fetchPermissionData();
+    }
+
+    // Validated the permissions
+    if (destination === undefined || destination === "not-found" || destination === "forbidden") {
+        next();
+    } else if (permissionStore.hasPermission(destination)) {
+        next();
+    } else {
+        next({ name: "forbidden" })
+    }
 });
 
 export {routes};
