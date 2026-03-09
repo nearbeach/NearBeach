@@ -4,6 +4,7 @@ from django.urls import path, include
 from NearBeach.views.application.application_views import ApplicationView
 from NearBeach.views.authentication.authentication_views import AuthenticationView
 from NearBeach.views.authentication.reset_password_view import ResetPasswordView
+from NearBeach.views.authentication.logout_views import LogoutView
 
 urlpatterns = [
     # API
@@ -14,6 +15,8 @@ urlpatterns = [
     path('login/reset-password/', ResetPasswordView.as_view(), name='reset_password'),
     path("login/<path:_>/", AuthenticationView.as_view(), name="login"),
     path('login/', AuthenticationView.as_view(), name='login'),
+    path('logout', LogoutView.as_view(), name='logout'),
+    path('logout/', LogoutView.as_view(), name='logout'),
 
     # Fallback urls to the frontend
     path("<path:_>", ApplicationView.as_view(), name="application"),

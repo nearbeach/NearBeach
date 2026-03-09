@@ -1,55 +1,54 @@
 <script setup lang="ts">
-import type { MenuItemInterface } from '@/utils/interfaces/MenuItemInterface.ts';
-// Icons
-import { Cog, LogOut } from 'lucide-vue-next';
-import { ref } from 'vue';
+import {Cog, LogOut} from 'lucide-vue-next';
 import NavMenuItem from '../nav_menu/nav_menu_item/NavMenuItem.vue';
+import { usePermissionStore} from "@/stores/permissions/permission.ts";
+import {useI18n} from "petite-vue-i18n";
 
-// Data
-const navSettingMenu = ref<MenuItemInterface[]>([]);
+// Define i18y
+const { t}  = useI18n({
+	messages: {
+		en: {
+			logout_title: "Logout",
+			logout_aria_label: "Logout of NearBeach",
+			setting_title: "Settings",
+			setting_aria_label: "Go to NearBeach Settings",
+		},
+		ja: {
+			logout_title: "ログアウト",
+			logout_aria_label: "NearBeachからログアウト",
+			setting_title: "設定",
+			setting_aria_label: "NearBeachの設定に移動",
+		}
+	}
+})
 
-// Computed
-const fetchNavSettingMenuItems = async () => {
-    return new Promise<MenuItemInterface[]>((resolve) => {
-        setTimeout(() => {
-            resolve([
-                {
-                    ariaLabel: 'Go to NearBeach Settings',
-                    destination: 'settings',
-                    icon: Cog,
-                    route: '/settings',
-                    routeNew: '',
-                    title: 'Settings',
-                },
-                {
-                    ariaLabel: 'Logout of NearBeach',
-                    destination: 'logout',
-                    icon: LogOut,
-                    route: '/logout',
-                    routeNew: '',
-                    title: 'Logout',
-                },
-            ]);
-        });
-    });
-};
+// Define Store
+const permissionStore = usePermissionStore();
 
-// Async
-navSettingMenu.value = await fetchNavSettingMenuItems();
 </script>
 
 <template>
-    <NavMenuItem
-        v-for="menuItem in navSettingMenu"
-        :key="menuItem.destination"
-        :destination="menuItem.destination"
-        :override-aria-label="menuItem.ariaLabel"
-        :routeAddress="menuItem.route"
-        :routeAddressNew="menuItem.routeNew"
-        :title="menuItem.title"
-    >
-        <component :is="menuItem.icon" :size="14" />
-    </NavMenuItem>
+	<NavMenuItem
+		v-if="permissionStore.hasAdministrationPermission"
+		destination="settings"
+		route-address="/settings"
+		route-address-new=""
+		:title="t('setting_title')"
+		:override-aria-label="t('setting_aria_label')"
+	>
+		<component :is="Cog" :size="14"/>
+	</NavMenuItem>
+
+		<NavMenuItem
+		destination="logout"
+		route-address="/logout"
+		route-address-new=""
+		:override-aria-label="t('logout_aria_label')"
+		:title="t('logout_title')"
+	>
+		<component :is="LogOut" :size="14"/>
+	</NavMenuItem>
+
 </template>
 
 <style scoped></style>

@@ -25,13 +25,18 @@ export const usePermissionStore = defineStore('permissions', {
                 task_note: 0,
             },
             errorInformation: "",
+            hasAdministrationPermission: false,
             hasError: false,
             isLoaded: false,
             permissionData: [] as PermissionDataInterface[] | null,
             maximumPermissions: {
-                kanbanBoard: 0,
+                administration_assign_user_to_group: 0,
+                administration_create_group: 0,
+                administration_create_permission_set: 0,
+                administration_create_user: 0,
+                kanban_board: 0,
                 project: 0,
-                requestForChange: 0,
+                request_for_change: 0,
                 requirement: 0,
                 settings: 0,
                 task: 0,
@@ -46,11 +51,11 @@ export const usePermissionStore = defineStore('permissions', {
             }
 
             // TODO - Look at implementing this as a reduce functionality
-            let permission_result : number = 0;
+            let permission_result: number = 0;
             this.permissionData.forEach((item: PermissionDataInterface) => {
                 //field as keyof typeof someObj
-                let item_results : number | string = item[field as keyof typeof item];
-                if (typeof(item_results) !== "number") {
+                let item_results: number | string = item[field as keyof typeof item];
+                if (typeof (item_results) !== "number") {
                     // Early return
                     return permission_result;
                 }
@@ -62,10 +67,21 @@ export const usePermissionStore = defineStore('permissions', {
             // Fallback
             return permission_result;
         },
+        _setHasAdministrationPermission(): void {
+            this.hasAdministrationPermission = this.maximumPermissions.administration_assign_user_to_group
+                + this.maximumPermissions.administration_create_group
+                + this.maximumPermissions.administration_create_permission_set
+                + this.maximumPermissions.administration_create_user
+                > 0;
+        },
         _setMaximumPermissions(): void {
-            this.maximumPermissions.kanbanBoard = this._getMaximumFieldValue("kanbanBoard");
+            this.maximumPermissions.administration_assign_user_to_group = this._getMaximumFieldValue("administration_assign_user_to_group");
+            this.maximumPermissions.administration_create_group = this._getMaximumFieldValue("administration_create_group");
+            this.maximumPermissions.administration_create_permission_set = this._getMaximumFieldValue("administration_create_permission_set");
+            this.maximumPermissions.administration_create_user = this._getMaximumFieldValue("administration_create_user");
+            this.maximumPermissions.kanban_board = this._getMaximumFieldValue("kanban_board");
             this.maximumPermissions.project = this._getMaximumFieldValue("project");
-            this.maximumPermissions.requestForChange = this._getMaximumFieldValue("requestForChange");
+            this.maximumPermissions.request_for_change = this._getMaximumFieldValue("request_for_change");
             this.maximumPermissions.requirement = this._getMaximumFieldValue("requirement");
             this.maximumPermissions.settings = this._getMaximumFieldValue("settings");
             this.maximumPermissions.task = this._getMaximumFieldValue("task");
@@ -80,6 +96,7 @@ export const usePermissionStore = defineStore('permissions', {
 
                     // Process the permission data
                     this._setMaximumPermissions();
+                    this._setHasAdministrationPermission();
 
                     // Last step - tell the system it has loaded
                     this.isLoaded = true;
