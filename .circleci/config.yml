@@ -43,7 +43,7 @@ jobs:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install npm Dependencies
-          command: "npm install"
+          command: "npm install && npx playwright install"
       - save_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
