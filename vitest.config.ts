@@ -20,6 +20,9 @@ export default mergeConfig(viteConfig, defineConfig({
             ],
         },
         environment: 'jsdom',
+        env: {
+            VUE_DEVTOOLS_ENABLED: 'false',
+        },
         exclude: [
             ...configDefaults.exclude,
             'e2e/**'

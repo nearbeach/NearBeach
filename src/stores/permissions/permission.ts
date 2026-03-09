@@ -1,7 +1,8 @@
 import {defineStore} from 'pinia'
 import axios from 'axios'
-import type {maximumPermissionInterface} from "@/utils/interfaces/stores/MaximumPermissionInterface.ts";
-import type {permissionDataInterface} from "@/utils/interfaces/stores/PermissionDataInterface.ts";
+import type {MaximumPermissionInterface} from "@/utils/interfaces/stores/MaximumPermissionInterface.ts";
+import type {PermissionDataInterface} from "@/utils/interfaces/stores/PermissionDataInterface.ts";
+
 
 // Setup Axios Instance
 const axiosInstance = axios.create({
@@ -26,7 +27,7 @@ export const usePermissionStore = defineStore('permissions', {
             errorInformation: "",
             hasError: false,
             isLoaded: false,
-            permissionData: [] as permissionDataInterface[] | null,
+            permissionData: [] as PermissionDataInterface[] | null,
             maximumPermissions: {
                 kanbanBoard: 0,
                 project: 0,
@@ -34,7 +35,7 @@ export const usePermissionStore = defineStore('permissions', {
                 requirement: 0,
                 settings: 0,
                 task: 0,
-            } as maximumPermissionInterface,
+            } as MaximumPermissionInterface,
         }
     },
     actions: {
@@ -46,9 +47,9 @@ export const usePermissionStore = defineStore('permissions', {
 
             // TODO - Look at implementing this as a reduce functionality
             let permission_result : number = 0;
-            this.permissionData.forEach((item: permissionDataInterface) => {
+            this.permissionData.forEach((item: PermissionDataInterface) => {
                 //field as keyof typeof someObj
-                let item_results = item[field as keyof typeof item];
+                let item_results : number | string = item[field as keyof typeof item];
                 if (typeof(item_results) !== "number") {
                     // Early return
                     return permission_result;
@@ -113,8 +114,8 @@ export const usePermissionStore = defineStore('permissions', {
         },
         hasPermission: (state) => {
             return (object: string) => {
-                if (object as keyof maximumPermissionInterface && object in state.maximumPermissions) {
-                    const max_permission: number = state.maximumPermissions[object as keyof maximumPermissionInterface]
+                if (object as keyof MaximumPermissionInterface && object in state.maximumPermissions) {
+                    const max_permission: number = state.maximumPermissions[object as keyof MaximumPermissionInterface]
                     return max_permission > 0;
                 }
 
