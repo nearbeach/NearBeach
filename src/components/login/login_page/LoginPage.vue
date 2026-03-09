@@ -13,10 +13,12 @@ const {t} = useI18n({
 		en: {
 			error_message: "Credentials have failed",
 			error_final_message: "Impostor detected, initiating self-destruction",
+			validation_error_message: "Please fill out all fields",
 		},
 		ja: {
 			error_message: "資格情報が失敗しました",
 			error_final_message: "詐欺師が検出され、自己破壊を開始します",
+			validation_error_message: "すべての項目にご記入ください",
 		}
 	}
 });
@@ -51,6 +53,13 @@ function ActiveTwoFactorPanel() {
 }
 
 function signIn(event: any) {
+	// Check field validation
+	if (username.value === "" || username.value === null || password.value === "" || password.value === null)
+	{
+		error_message.value = t("validation_error_message");
+		return;
+	}
+
 	// Set the data we want to send
 	const data_to_send = new FormData();
 	data_to_send.set("username", username.value);
