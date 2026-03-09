@@ -41,24 +41,20 @@ export const usePermissionStore = defineStore('permissions', {
         _getMaximumFieldValue(field: string): number {
             // If there is no data - no permissions
             if (this.permissionData === null || this.permissionData.length === 0) {
-                console.log("Escape Condition 1");
                 return 0;
             }
 
             // TODO - Look at implementing this as a reduce functionality
             let permission_result : number = 0;
-            this.permissionData.forEach((item) => {
+            this.permissionData.forEach((item: permissionDataInterface) => {
                 //field as keyof typeof someObj
                 let item_results = item[field as keyof typeof item];
-                console.log("TYPE OF: ", typeof(item_results));
                 if (typeof(item_results) !== "number") {
                     // Early return
                     return permission_result;
                 }
 
                 // Check the value
-                console.log("Permission Result: ", permission_result, " | Item Result: ", item_results);
-                console.log("CONDITION: ",permission_result < item_results);
                 permission_result = permission_result < item_results ? item_results : permission_result;
             });
 
