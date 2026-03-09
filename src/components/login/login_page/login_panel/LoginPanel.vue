@@ -1,6 +1,31 @@
 <script setup lang="ts">
-import {defineModel, onMounted } from "vue";
+import {defineModel, onMounted} from "vue";
 import {ButtonComponent, PasswordInput, TextInput, ObjectStateEnum} from "whelk-ui"
+import {useI18n} from "petite-vue-i18n";
+
+// Define i18y
+const {t} = useI18n({
+	messages: {
+		en: {
+			forgotten_password: "Forgotten Password",
+			login_message: "NearBeach Login",
+			password: "Password",
+			password_placeholder: "Your password",
+			sign_in: "Sign in",
+			username: "Username",
+			username_placeholder: "Your username or email address",
+		},
+		ja: {
+			forgotten_password: "パスワードを忘れた場合",
+			login_message: "ニアビーチログイン",
+			password: "パスワード",
+			password_placeholder: "パスワード",
+			sign_in: "サインイン",
+			username: "ユーザー名",
+			username_placeholder: "ユーザー名またはメールアドレス",
+		}
+	},
+})
 
 // Define emits
 const emit = defineEmits(['signIn']);
@@ -33,33 +58,42 @@ const password = defineModel("password", {
 
 // Customer directives
 const vFocus = {
-  mounted: (el : HTMLElement) => el.focus()
+	mounted: (el: HTMLElement) => el.focus()
 }
 
 // On Mount
 onMounted(() => {
 	// Username should be in focus
 	document.getElementById("input-username")?.focus();
-})
+});
+
+// Declare functions
+function signIn(event: any) {
+	// Prevent form from submitting
+	event.preventDefault();
+
+	// Sign in
+	emit("signIn");
+}
 </script>
 
 <template>
 	<form class="login-panel"
-		@submit="emit('signIn')"
+		  @submit="signIn"
 	>
-		<h1 id="main-title">NearBeach Login</h1>
+		<h1 id="main-title">{{ t("login_message") }}</h1>
 		<p class="error-message">{{ errorMessage }}</p>
 		<TextInput class="compact"
-				   label="Username"
-				   placeholderText="Your username or email address"
+				   :label="t('username')"
+				   :placeholderText="t('username_placeholder')"
 				   :isRequired="true"
 				   v-model="username"
 				   v-focus
 		/>
 		<PasswordInput class="compact"
-					   label="Password"
+					   :label="t('password')"
 					   type="password"
-					   placeholderText="Your password"
+					   :placeholderText="t('password_placeholder')"
 					   :isRequired="true"
 					   :minLength="8"
 					   v-model="password"
@@ -68,12 +102,12 @@ onMounted(() => {
 		<ButtonComponent
 			class="primary"
 			:object-state="buttonState"
-			@click="emit('signIn')"
+			@click="signIn"
 		>
-			Sign In
+			{{ t("sign_in") }}
 		</ButtonComponent>
 
-		<RouterLink to="/login/forgotten-password">Forgotten Password</RouterLink>
+		<RouterLink to="/login/forgotten-password">{{ t("forgotten_password") }}</RouterLink>
 	</form>
 </template>
 

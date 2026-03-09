@@ -1,7 +1,9 @@
 {% load django_vite %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="https://cdn.nearbeach.org/0.31.102/NearBeach/NearBeach_Small.png">

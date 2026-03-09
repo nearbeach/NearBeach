@@ -3,6 +3,27 @@ import {inject, ref} from 'vue'
 import {ButtonComponent, PasswordInput} from "whelk-ui";
 import type {AxiosInstance} from "axios";
 import router from '@/router/loginRouter.ts';
+import {useI18n} from "petite-vue-i18n";
+
+// Define i18y
+const {t} = useI18n({
+	messages: {
+		en: {
+			reset_password: "Reset Password",
+			confirm_password: "Confirm password",
+			new_password: "New password",
+			non_matching_password: "Passwords don't match",
+			query_string_missing: "Query string missing",
+		},
+		ja: {
+			reset_password: "パスワードをリセットする",
+			confirm_password: "パスワードを認証する",
+			new_password: "新しいパスワード",
+			non_matching_password: "パスワードが一致しません",
+			query_string_missing: "クエリ文字列がありません",
+		}
+	}
+});
 
 // Injection
 const apiClient: AxiosInstance | undefined = inject("apiClient");
@@ -16,7 +37,7 @@ const errorMessage = ref('');
 function submitPasswordReset(): void {
 	// Check both password math
 	if (password1.value !== password2.value) {
-		errorMessage.value = "Passwords don't match";
+		errorMessage.value = t("non_matching_password");
 		return;
 	}
 
@@ -26,7 +47,7 @@ function submitPasswordReset(): void {
 	const token : string | null = urlParams.get('token');
 
 	if (uid === '' || uid === null || token === '' || token === null) {
-		errorMessage.value = "Query string missing";
+		errorMessage.value = t('query_string_missing');
 		return;
 	}
 
@@ -50,20 +71,20 @@ function submitPasswordReset(): void {
 
 <template>
 	<div class="password-reset-panel">
-		<h1 id="main-title">Reset Password</h1>
+		<h1 id="main-title">{{t("reset_password")}}</h1>
 		<p class="error-message">
 			{{ errorMessage }}
 		</p>
 		<PasswordInput
 			class="compact"
-			label="New Password"
+			:label="t('new_password')"
 			:isRequired="true"
 			v-model="password1"
 		/>
 
 		<PasswordInput
 			class="compact"
-			label="Confirm Password"
+			:label="t('confirm_password')"
 			:isRequired="true"
 			v-model="password2"
 		/>
@@ -72,7 +93,7 @@ function submitPasswordReset(): void {
 			class="primary"
 			@click="submitPasswordReset"
 		>
-			Reset Password
+			{{t('reset_password')}}
 		</ButtonComponent>
 
 

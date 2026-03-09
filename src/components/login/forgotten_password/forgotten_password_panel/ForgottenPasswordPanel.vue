@@ -1,6 +1,27 @@
 <script setup lang="ts">
 import { defineEmits, ref, defineModel } from 'vue'
 import { ButtonComponent, TextInput, ObjectStateEnum } from "whelk-ui";
+import {useI18n} from "petite-vue-i18n";
+
+// Define i18y
+const {t} = useI18n({
+	messages: {
+		en: {
+			forgotten_password: "Forgotten password",
+			email: "Email",
+			email_placeholder: "Email",
+			go_back: "Go back to login",
+			submit: "Submit",
+		},
+		ja: {
+			forgotten_password: "パスワードを忘れた場合",
+			email: "メール",
+			email_placeholder: "あなたのメールアドレス",
+			go_back: "ログインに戻る",
+			submit: "提出する",
+		},
+	}
+});
 
 // Define emit
 const emit = defineEmits(['passwordReset']);
@@ -19,10 +40,10 @@ const buttonState = ref(ObjectStateEnum.NoAction);
 	<form class="forgotten-password-panel"
 		  @submit="emit('passwordReset')"
 	>
-		<h1 id="main-title">Forgotten Password</h1>
+		<h1 id="main-title">{{ t("forgotten_password")}}</h1>
 		<TextInput class="compact"
-				   label="Email"
-				   placeholderText="Your email address"
+				   :label="t('email')"
+				   :placeholderText="t('email_placeholder')"
 				   :isRequired="true"
 				   v-model="emailAddress"
 		/>
@@ -32,10 +53,10 @@ const buttonState = ref(ObjectStateEnum.NoAction);
 			:object-state="buttonState"
 			@click="emit('passwordReset')"
 		>
-			Submit
+			{{ t("submit") }}
 		</ButtonComponent>
 
-		<RouterLink to="/login">Go back to login</RouterLink>
+		<RouterLink to="/login">{{ t('go_back')}}</RouterLink>
 	</form>
 </template>
 

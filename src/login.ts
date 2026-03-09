@@ -3,8 +3,8 @@ import 'whelk-ui/dist/whelk-ui.css';
 import axios from "axios";
 import {createApp} from "vue";
 import LoginApp from "@/pages/login_app/LoginApp.vue";
-import i18n from "./i18n";
 import loginRouter from "./router/loginRouter.ts";
+import i18n from "@/i18n.ts";
 
 // Setup Axios Instance
 const axiosInstance = axios.create({
@@ -19,6 +19,6 @@ const loginApp = createApp(LoginApp);
 loginApp.provide('apiClient', axiosInstance);
 
 // Setup app
-loginApp.use(loginRouter);
 loginApp.use(i18n);
+loginApp.use(loginRouter);
 loginApp.mount("#loginApp");
