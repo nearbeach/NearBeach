@@ -18,6 +18,10 @@
     --bg-dark: hsl(26 53% 89%);
     --bg: hsl(26 100% 94%);
     --bg-light: hsl(26 100% 100%);
+    --loading-red-1: hsl(8 93% 90%);
+    --loading-red-2: hsl(8 93% 75%);
+    --loading-dark-1: hsl(16 100% 75%);
+    --loading-dark-2: hsl(16 100% 88%);
     --text: hsl(16 100% 4%);
     --text-red: hsl(8, 93%, 43%);
     --text-muted: hsl(26 35% 27%);

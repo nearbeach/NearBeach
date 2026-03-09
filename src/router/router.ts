@@ -1,4 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Async components
 const DashboardPage = () =>
@@ -7,8 +8,6 @@ const NewProject = () =>
     import("@/components/project/new_project/NewProject.vue");
 const NotFoundPage = () =>
     import("@/components/error/NotFoundPage/NotFoundPage.vue");
-const PlaygroundPage = () =>
-    import("@/components/playground/PlaygroundPage.vue");
 const ProjectPage = () =>
     import("@/components/project/project_page/ProjectPage.vue");
 const SearchPage = () => import("@/components/search/SearchPage.vue");
@@ -40,7 +39,7 @@ const routes = [
             destination: "kanban_board",
         },
         children: [
-            {path: "", component: DashboardPage, name: "SearchKanbanBoard"},
+            {path: "", component: SearchPage, name: "SearchKanbanBoard"},
             {path: "new", component: DashboardPage, name: "NewKanbanBoard"},
             {path: ":id", component: DashboardPage, name: "KanbanBoard"},
         ],
@@ -51,7 +50,7 @@ const routes = [
             destination: "requirement",
         },
         children: [
-            {path: "", component: DashboardPage, name: "SearchRequirement"},
+            {path: "", component: SearchPage, name: "SearchRequirement"},
             {path: "new", component: DashboardPage, name: "NewRequirement"},
             {path: ":id", component: DashboardPage, name: "Requirement"},
         ],
@@ -62,7 +61,7 @@ const routes = [
             destination: "task",
         },
         children: [
-            {path: "", component: DashboardPage, name: "SearchTask"},
+            {path: "", component: SearchPage, name: "SearchTask"},
             {path: "new", component: DashboardPage, name: "NewTask"},
             {path: ":id", component: DashboardPage, name: "Task"},
         ],
@@ -73,17 +72,27 @@ const routes = [
             destination: "request_for_change",
         },
         children: [
-            {path: "", component: DashboardPage, name: "SearchRequestForChange"},
+            {path: "", component: SearchPage, name: "SearchRequestForChange"},
             {path: "new", component: DashboardPage, name: "NewRequestForChange"},
             {path: ":id", component: DashboardPage, name: "RequestForChange"},
         ],
     },
+    // Errors
     {
-        path: "/logout",
+        path: "/forbidden",
+        name: "forbidden",
         meta: {
-            destination: "logout",
+            destination: "forbidden",
         },
-        component: PlaygroundPage,
+        component: DashboardPage,
+    },
+    {
+        path: "/not-found",
+        name: "not-found",
+        meta: {
+            destination: "not-found",
+        },
+        component: NotFoundPage,
     },
     // Fall back page
     {
@@ -96,6 +105,26 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes: routes,
+});
+
+router.beforeEach(async (to, _, next) => {
+    // Setup store
+    const permissionStore = usePermissionStore();
+    const destination: string | undefined = to.meta.destination as string | undefined;
+
+    // Check user permissions has been loaded - other load
+    if (!permissionStore.isLoaded) {
+        await permissionStore.fetchPermissionData();
+    }
+
+    // Validated the permissions
+    if (destination === undefined) {
+        next();
+    } else if (permissionStore.hasPermission(destination)) {
+        next();
+    } else {
+        next({ name: "forbidden" })
+    }
 });
 
 export {routes};

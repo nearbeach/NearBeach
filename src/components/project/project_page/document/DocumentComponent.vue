@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import CardComponent from "@/components/prefab/card/CardComponent.vue";
-import CardHeader from "@/components/prefab/card/card_header/CardHeader.vue";
+import { CardComponent, CardHeader } from "whelk-ui"
 import CreateAndFilter from "@/components/project/project_page/document/create_and_filter/CreateAndFilter.vue";
 import DocumentListRender from "@/components/project/project_page/document/document_list_render/DocumentListRender.vue";
 import BreadCrumbs from "@/components/project/project_page/document/document_list_render/bread_crumbs/BreadCrumbs.vue";

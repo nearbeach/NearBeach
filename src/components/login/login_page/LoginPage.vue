@@ -1,10 +1,27 @@
 <script setup lang="ts">
-import {inject, ref} from 'vue'
+import {computed, inject, ref} from 'vue'
 import LoginImage from "@/components/login/login_image/LoginImage.vue";
 import LoginPanel from "@/components/login/login_page/login_panel/LoginPanel.vue";
 import {ObjectStateEnum} from "@/utils/enums/ObjectStateEnum.ts";
 import type {AxiosInstance} from "axios";
 import TwoFactorPanel from "@/components/login/login_page/two_factor_panel/TwoFactorPanel.vue";
+import {useI18n} from 'petite-vue-i18n'
+
+// Define i18y
+const {t} = useI18n({
+	messages: {
+		en: {
+			error_message: "Credentials have failed",
+			error_final_message: "Impostor detected, initiating self-destruction",
+			validation_error_message: "Please fill out all fields",
+		},
+		ja: {
+			error_message: "資格情報が失敗しました",
+			error_final_message: "詐欺師が検出され、自己破壊を開始します",
+			validation_error_message: "すべての項目にご記入ください",
+		}
+	}
+});
 
 // Injection
 const apiClient: AxiosInstance | undefined = inject("apiClient");
@@ -35,7 +52,14 @@ function ActiveTwoFactorPanel() {
 	buttonState.value = ObjectStateEnum.NoAction;
 }
 
-function signIn() {
+function signIn(event: any) {
+	// Check field validation
+	if (username.value === "" || username.value === null || password.value === "" || password.value === null)
+	{
+		error_message.value = t("validation_error_message");
+		return;
+	}
+
 	// Set the data we want to send
 	const data_to_send = new FormData();
 	data_to_send.set("username", username.value);
@@ -63,7 +87,10 @@ function signIn() {
 
 		switch (error.status) {
 			case 401:
-				error_message.value = fail_count <= 5 ? "Credentials have failed" : "Impostor detected, initiating self-destruction";
+				// error_message.value = fail_count <= 5 ? "Credentials have failed" : "Impostor detected, initiating self-destruction";
+				error_message.value = fail_count <= 5
+					? t("error_message")
+					: t("error_final_message");
 				username.value = "";
 				password.value = "";
 				otp_token.value = "";

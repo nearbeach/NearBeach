@@ -1,11 +1,31 @@
 <script setup lang="ts">
+import { defineModel } from 'vue'
 import { Search } from 'lucide-vue-next';
+
+// Define props
+defineProps({
+	placeholder: {
+		type: String,
+		required: false,
+		default: "",
+	},
+});
+
+// Define Model
+const model = defineModel({
+	type: String,
+	required: true,
+})
 </script>
 
 <template>
     <div class="search-input">
         <Search />
-        <input type="search" placeholder="Search Projects" />
+        <input
+			type="search"
+			:placeholder="placeholder"
+			v-model="model"
+		/>
     </div>
 </template>
 

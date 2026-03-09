@@ -1,65 +1,33 @@
 <script setup lang="ts">
-import HeaderComponent from '@/components/header/HeaderComponent.vue';
-import NavComponent from '@/components/nav/NavComponent.vue';
-import SkipLinks from '@/components/skip_links/SkipLinks.vue';
-import { useNavStore } from '@/stores/nav/nav.ts';
-import { onMounted, computed } from 'vue';
+import { computed } from "vue";
+import AppStructure from "@/components/structure/AppStructure.vue";
+import StructureSkeleton from "@/components/structure/structure_skeleton/StructureSkeleton.vue";
+import { usePermissionStore} from "@/stores/permissions/permission.ts";
+import ErrorComponent from "@/components/error/ErrorComponent/ErrorComponent.vue";
 
-// Stores
-const navStore = useNavStore();
+// Store
+const permissionStore = usePermissionStore();
 
-// Computed
-const mainClass = computed(() =>
-    navStore.isNavOpen ? 'main nav-open' : 'main'
-);
-
-// On Mounted
-onMounted(() => {
-    // If user is on mobile, the menu will not appear by default
-    if (window.innerWidth > 1280) {
-        navStore.toggleNav();
-    }
+// Define computed
+const showStructureSkeleton = computed<boolean>(() => {
+	return !permissionStore.isLoaded && !permissionStore.hasError;
 });
+
+const showErrorComponent = computed(() => {
+	return !permissionStore.isLoaded && permissionStore.hasError;
+})
 </script>
 
 <template>
-    <SkipLinks />
-    <HeaderComponent />
-    <NavComponent />
-    <main id="main" :class="mainClass" aria-labelledby="main-title" role="main">
-        <RouterView v-slot="{ Component }">
-            <transition name="fade" mode="out-in">
-                <component :is="Component" />
-            </transition>
-        </RouterView>
-    </main>
+	<AppStructure v-if="permissionStore.isLoaded" />
+	<StructureSkeleton v-if="showStructureSkeleton"/>
+	<ErrorComponent
+		v-if="showErrorComponent"
+		title="Error Fetching Permission Data"
+		:message="permissionStore.getErrorInformation"
+	/>
 </template>
 
 <style scoped>
-main {
-    min-height: calc(100dvh - 60px);
-    background-color: var(--bg-dark);
-    transition: margin-left 0.5s ease;
 
-    @media (--medium-screen) {
-        min-height: calc(100dvh - 65px);
-        padding-top: 20px;
-    }
-}
-
-main.nav-open {
-    @media (--x-large-screen) {
-        margin-left: 263px;
-    }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.1s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
 </style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { CardComponent } from "whelk-ui";}
+import { CardComponent } from "whelk-ui";
 import GroupAccess from "@/components/project/project_page/access/group_access/GroupAccess.vue";
 import UserAccess from "@/components/project/project_page/access/user_access/UserAccess.vue";
 
