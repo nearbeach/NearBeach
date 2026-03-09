@@ -5,6 +5,41 @@ import {useRoute} from 'vue-router';
 import {useSearchStore} from '@/stores/search/search.ts';
 import SearchInput from '@/components/search/search_filter/search_input/SearchInput.vue';
 import {CardComponent, CardHeader, CheckBox} from 'whelk-ui';
+import { useI18n } from "petite-vue-i18n";
+
+// Define i18n
+const { t} = useI18n({
+	messages: {
+		en: {
+			closed: "Show closed objects",
+			instructions: "User the filters below to refine your results.",
+			search_kanban_board: "Search Kanban Board",
+			search_placeholder_kanban_board: "Search for a kanban board",
+			search_request_for_change: "Search Request For Change",
+			search_placeholder_request_for_change: "Search for a request for change",
+			search_requirement: "Search Requirement",
+			search_placeholder_requirement: "Search for a requirement",
+			search_project: "Search Project",
+			search_placeholder_project: "Search for a project",
+			search_task: "Search Task",
+			search_placeholder_task: "Search for a task",
+		},
+		ja: {
+			closed: "閉じたオブジェクトを表示",
+			instructions: "以下のフィルターを使用して結果を絞り込みます",
+			search_kanban_board: "カンバンボードを検索",
+			search_placeholder_kanban_board: "カンバンボードを検索",
+			search_request_for_change: "検索変更リクエスト",
+			search_placeholder_request_for_change: "変更要求を検索する",
+			search_requirement: "要件を検索する",
+			search_placeholder_requirement: "要件を検索する",
+			search_project: "プロジェクトを検索",
+			search_placeholder_project: "プロジェクトを検索",
+			search_task: "タスクを検索する",
+			search_placeholder_task: "タスクを検索する",
+		},
+	}
+})
 
 // Define route
 const route = useRoute();
@@ -98,18 +133,16 @@ function stopTimer() {
 <template>
 	<CardComponent class="search-filter">
 		<CardHeader>
-			<h1 id="main-title">Search {{ route.meta.destination }}s</h1>
+			<h1 id="main-title">{{ t(`search_${ route.meta.destination }`)}}</h1>
 		</CardHeader>
-		<p class="instructions">
-			User the filters below to refine your results.
-		</p>
+		<p class="instructions">{{t("instructions")}}</p>
 		<SearchInput
-			:placeholder="`Search for ${route.meta.destination}s`"
+			:placeholder="t(`search_placeholder_${ route.meta.destination }`)"
 			v-model="search"
 			v-on:keydown="startTimer"
 		/>
 		<CheckBox
-			:label="`Show closed ${ route.meta.destination }s`"
+			:label="t('closed')"
 			id="show-closed-objects"
 			v-model="showClosed"
 		/>
