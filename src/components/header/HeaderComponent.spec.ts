@@ -44,7 +44,7 @@ describe("HeaderComponent - toggle Menu", () => {
 
   test("toggle menu closes the menu", async () => {
     // Mount the wrapper
-    const wrapper = mount(App, {
+    const wrapper = mount(HeaderComponent, {
       global: {
         plugins: [router],
       },
@@ -56,6 +56,7 @@ describe("HeaderComponent - toggle Menu", () => {
 
     // Default the menu will be open on desktops
     const nav = useNavStore();
+    nav.isNavOpen = true;
     expect(nav.isNavOpen).toBe(true);
 
     // Click on the menu button
@@ -72,7 +73,7 @@ describe("HeaderComponent - toggle Menu", () => {
     const nav = useNavStore();
 
     // Mount the wrapper
-    const wrapper = mount(App, {
+    const wrapper = mount(HeaderComponent, {
       global: {
         plugins: [router],
       },
@@ -96,10 +97,10 @@ describe("HeaderComponent - toggle Menu", () => {
   });
 });
 
-describe("HeaderComponent - A12Y", () => {
+describe("HeaderComponent - A11Y", () => {
   test("Hidden Visually to be in the document", async () => {
     // Mount the wrapper
-    const wrapper = mount(App, {
+    const wrapper = mount(HeaderComponent, {
       global: {
         plugins: [router],
       },
@@ -118,7 +119,7 @@ describe("HeaderComponent - A12Y", () => {
     const nav = useNavStore();
 
     // Mount the wrapper
-    const wrapper = mount(App, {
+    const wrapper = mount(HeaderComponent, {
       global: {
         plugins: [router],
       },
@@ -145,7 +146,7 @@ describe("HeaderComponent - A12Y", () => {
     const nav = useNavStore();
 
     // Mount the wrapper
-    const wrapper = mount(App, {
+    const wrapper = mount(HeaderComponent, {
       global: {
         plugins: [router],
       },

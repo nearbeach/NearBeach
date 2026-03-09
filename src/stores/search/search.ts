@@ -1,12 +1,13 @@
 // stores/search.ts
 import { defineStore } from 'pinia'
+import type {SearchResultsInterface} from "@/utils/interfaces/stores/SearchResultsInterface.ts";
 
 export const useSearchStore = defineStore("search", {
     state: () => {
         return {
             previous: null as null | number,
             next: null as null | number,
-            searchResults: [],
+            searchResults: [] as SearchResultsInterface[],
         }
     },
     getters: {

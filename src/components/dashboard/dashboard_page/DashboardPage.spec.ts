@@ -10,7 +10,7 @@ describe("DashboardPage", async () => {
   });
 });
 
-describe("DashboardPage - A12Y checks", async () => {
+describe("DashboardPage - A11Y checks", async () => {
   test("main title exists on page", async () => {
     // Mount the component
     const wrapper = mount(DashboardPage, {});

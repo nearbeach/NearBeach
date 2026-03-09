@@ -1,5 +1,7 @@
 import {defineStore} from 'pinia'
 import axios from 'axios'
+import type {maximumPermissionInterface} from "@/utils/interfaces/stores/MaximumPermissionInterface.ts";
+import type {permissionDataInterface} from "@/utils/interfaces/stores/PermissionDataInterface.ts";
 
 // Setup Axios Instance
 const axiosInstance = axios.create({
@@ -7,42 +9,6 @@ const axiosInstance = axios.create({
     xsrfCookieName: "csrftoken",
     xsrfHeaderName: "X-CSRFTOKEN",
 });
-
-// Interface
-interface maximumPermissionInterface {
-    kanbanBoard: number,
-    project: number,
-    requestForChange: number,
-    requirement: number,
-    settings: number,
-    task: number,
-}
-
-interface permissionDataInterface {
-    administration_assign_user_to_group: number,
-    administration_create_group: number,
-    administration_create_permission_set: number,
-    administration_create_user: number,
-    customer: number,
-    document: number,
-    group_id: number,
-    group_name: string,
-    kanban_board: number,
-    organisation: number,
-    organisation_note: number,
-    project: number,
-    project_note: number,
-    request_for_change: number,
-    requirement: number,
-    requirement_item_note: number,
-    requirement_note: number,
-    schedule_object: number,
-    sprint: number,
-    task: number,
-    tag: number,
-    kanban_note: number,
-    task_note: number,
-}
 
 export const usePermissionStore = defineStore('permissions', {
     state: () => {
