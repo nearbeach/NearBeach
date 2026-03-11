@@ -7,6 +7,8 @@ import {describe, test, expect, beforeEach} from "vitest";
 import {createRouter, createWebHistory} from "vue-router";
 import App from "./App.vue";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
+import {createI18n} from "petite-vue-i18n";
+import i18n from "@/i18n.ts";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -14,14 +16,20 @@ const router = createRouter({
 });
 
 describe("App", () => {
+    const i18n = createI18n({});
+
     beforeEach(() => {
         setActivePinia(createPinia());
         const permissions = usePermissionStore();
         permissions.isLoaded = true;
         permissions.maximumPermissions = {
-            kanbanBoard: 4,
+            administration_create_permission_set: 0,
+            administration_create_user: 0,
+            administration_create_group: 0,
+            administration_assign_user_to_group: 0,
+            kanban_board: 4,
             project: 4,
-            requestForChange: 4,
+            request_for_change: 4,
             requirement: 4,
             settings: 4,
             task: 4,
@@ -39,7 +47,10 @@ describe("App", () => {
         // Mount the wrapper
         const wrapper = mount(App, {
             global: {
-                plugins: [router],
+                plugins: [
+                    router,
+                    i18n
+                ],
             },
         });
 
@@ -124,9 +135,13 @@ describe("App - desktop view", () => {
         const permissions = usePermissionStore();
         permissions.isLoaded = true;
         permissions.maximumPermissions = {
-            kanbanBoard: 4,
+            administration_assign_user_to_group: 0,
+            administration_create_group: 0,
+            administration_create_permission_set: 0,
+            administration_create_user: 0,
+            kanban_board: 4,
             project: 4,
-            requestForChange: 4,
+            request_for_change: 4,
             requirement: 4,
             settings: 4,
             task: 4,
@@ -134,11 +149,14 @@ describe("App - desktop view", () => {
     });
 
     test("desktop viewport - navbar should open automatically", async () => {
-        // Mount wrapper
+        // Mount the wrapper
         const wrapper = mount(App, {
             global: {
-                plugins: [router],
-            }
+                plugins: [
+                    router,
+                    i18n
+                ],
+            },
         });
 
         // Load the basic dashboard page

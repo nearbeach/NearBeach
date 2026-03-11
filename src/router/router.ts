@@ -5,7 +5,7 @@ import {usePermissionStore} from "@/stores/permissions/permission.ts";
 const DashboardPage = () =>
     import("@/components/dashboard/dashboard_page/DashboardPage.vue");
 const NewProject = () =>
-    import("@/components/project/new_project/NewProject.vue");
+    import("@/components/new_object/NewObject.vue");
 const NotFoundPage = () =>
     import("@/components/error/NotFoundPage/NotFoundPage.vue");
 const ProjectPage = () =>

@@ -2,7 +2,7 @@ import {defineStore} from 'pinia'
 import axios from 'axios'
 import type {MaximumPermissionInterface} from "@/utils/interfaces/stores/MaximumPermissionInterface.ts";
 import type {PermissionDataInterface} from "@/utils/interfaces/stores/PermissionDataInterface.ts";
-
+import type {SelectOptionInterface} from "whelk-ui";
 
 // Setup Axios Instance
 const axiosInstance = axios.create({
@@ -41,6 +41,7 @@ export const usePermissionStore = defineStore('permissions', {
                 settings: 0,
                 task: 0,
             } as MaximumPermissionInterface,
+            userGroups: [] as SelectOptionInterface[],
         }
     },
     actions: {
@@ -86,6 +87,18 @@ export const usePermissionStore = defineStore('permissions', {
             this.maximumPermissions.settings = this._getMaximumFieldValue("settings");
             this.maximumPermissions.task = this._getMaximumFieldValue("task");
         },
+        _setUserGroups(): void {
+            const user_groups = this.permissionData?.map((item: PermissionDataInterface) => {
+                return {
+                    value: item.group_id.toString(),
+                    label: item.group_name,
+                    optGroup: "",
+                } as SelectOptionInterface;
+            });
+
+            // Set the user groups
+            this.userGroups = user_groups === undefined ? [] : user_groups;
+        },
         async fetchPermissionData() {
             try {
                 await axiosInstance.get(
@@ -97,6 +110,7 @@ export const usePermissionStore = defineStore('permissions', {
                     // Process the permission data
                     this._setMaximumPermissions();
                     this._setHasAdministrationPermission();
+                    this._setUserGroups();
 
                     // Last step - tell the system it has loaded
                     this.isLoaded = true;
@@ -128,6 +142,9 @@ export const usePermissionStore = defineStore('permissions', {
         },
         getPermissionData: state => {
             state.permissionData
+        },
+        getUserGroups: state => {
+            return state.userGroups;
         },
         hasPermission: (state) => {
             return (object: string) => {
