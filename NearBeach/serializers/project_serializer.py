@@ -82,6 +82,7 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
             "start_date",
             "end_date",
             "group_list",
+            "user_list",
             "date_created",
             "date_modified",
         ]

@@ -1,4 +1,6 @@
-from django.db.models import Q
+from django.contrib.auth.models import User
+from django.db.models import Q, F
+from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.generics import get_object_or_404
@@ -6,7 +8,7 @@ from rest_framework.response import Response
 
 from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
-from NearBeach.models import Project, ObjectAssignment, UserGroup
+from NearBeach.models import Project, ObjectAssignment, UserGroup, Group
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.utils.api.check_group_list import check_group_list
 
@@ -26,7 +28,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @destination_permission(min_permission_level=3)
     def create(request, *args, **kwargs):
         serializer = ProjectSerializer(
-            context={'request': request},
+            context={
+                'request': request,
+                'method': 'POST',
+            },
             data=request.data,
         )
         if not serializer.is_valid():
@@ -116,7 +121,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
 
         # Fallback method
-        serializer = ProjectSerializer(project_results, many=True)
+        serializer = ProjectSerializer(
+            project_results,
+            many=True,
+        )
         return Response(
             data=serializer.data,
             status=status.HTTP_200_OK,
@@ -132,7 +140,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer = ProjectSerializer(
             project,
             data=request.data,
-            context={'request': request},
+            context={
+                'request': request,
+                'method': 'PATCH'
+            },
             partial=True,
         )
         if not serializer.is_valid():
@@ -152,10 +163,46 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     @object_permission(min_permission_level=1)
-    def retrieve(_, pk, *args, **kwargs):
-        project_results = Project.objects.get(
+    def retrieve(request, pk, *args, **kwargs):
+        project_results = get_object_or_404(
+            queryset=Project.objects.filter(is_deleted=False),
             pk=pk,
-            is_deleted=False,
         )
-        serializer = ProjectSerializer(project_results)
+
+        # Get assigned object
+        object_assignments = ObjectAssignment.objects.filter(
+            is_deleted=False,
+            project_id=pk,
+        )
+
+        # Define groups list
+        project_results.group_list = Group.objects.filter(
+            is_deleted=False,
+            id__in=object_assignments.filter(
+                group_id__isnull=False,
+            ).values(
+                "group_id"
+            ),
+        )
+
+        # Define user list
+        project_results.user_list = User.objects.filter(
+            username__in=object_assignments.filter(
+                assigned_user__isnull=False,
+            ).values("assigned_user"),
+        ).annotate(
+            profile_picture=F('userprofilepicture__document_id__key')
+        )
+
+        # Create the serializer
+        serializer = ProjectSerializer(
+            project_results,
+            context={
+                'request': request,
+                'method': 'GET',
+            },
+        )
+
+        # Append extra data
+
         return Response(serializer.data)
