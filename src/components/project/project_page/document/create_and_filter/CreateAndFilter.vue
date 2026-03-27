@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import {Folder, Link2, UploadCloudIcon} from "lucide-vue-next";
-import { DropDown } from "whelk-ui"
+import { WlkDropDown } from "whelk-ui"
 import type { DropDownItemsInterface } from "whelk-ui";
 
 // Define refs
@@ -15,7 +15,7 @@ const dropDownItems = ref<DropDownItemsInterface[]>([
 
 <template>
 	<div class="document-create-and-filter">
-		<DropDown
+		<WlkDropDown
 			:drop-down-items="dropDownItems"
 			label="Create"
 		/>

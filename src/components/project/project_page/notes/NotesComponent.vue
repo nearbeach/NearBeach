@@ -1,18 +1,18 @@
 <script setup lang="ts">
 
-import { CardComponent, CardHeader } from "whelk-ui";
+import { WlkCard, WlkCardHeader } from "whelk-ui";
 </script>
 
 <template>
-	<CardComponent class="notes-component">
-		<CardHeader>
+	<WlkCard class="notes-component">
+		<WlkCardHeader>
 			<h2>Notes & Comments</h2>
 			<p class="sub-text">
 				Write notes and comments against this task.
 			</p>
-		</CardHeader>
+		</WlkCardHeader>
 		<p>ADD CODE</p>
-	</CardComponent>
+	</WlkCard>
 </template>
 
 <style scoped>

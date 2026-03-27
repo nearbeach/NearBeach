@@ -1,16 +1,16 @@
 <script setup lang="ts">
 
-import { CardComponent, CardHeader} from "whelk-ui";
+import { WlkCard, WlkCardHeader} from "whelk-ui";
 </script>
 
 <template>
-	<CardComponent class="sprint-planning">
-		<CardHeader>
+	<WlkCard class="sprint-planning">
+		<WlkCardHeader>
 			<h3>Sprint Planning</h3>
 			<p class="sub-text">Manage the linked sprints for this project</p>
-		</CardHeader>
+		</WlkCardHeader>
 		<p>ADD CODE</p>
-	</CardComponent>
+	</WlkCard>
 </template>
 
 <style scoped>

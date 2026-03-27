@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CardComponent, CardHeader } from "whelk-ui"
+import { WlkCard, WlkCardHeader } from "whelk-ui"
 import CreateAndFilter from "@/components/project/project_page/document/create_and_filter/CreateAndFilter.vue";
 import DocumentListRender from "@/components/project/project_page/document/document_list_render/DocumentListRender.vue";
 import BreadCrumbs from "@/components/project/project_page/document/document_list_render/bread_crumbs/BreadCrumbs.vue";
@@ -7,14 +7,14 @@ import BreadCrumbs from "@/components/project/project_page/document/document_lis
 </script>
 
 <template>
-	<CardComponent class="document-component">
-		<CardHeader>
+	<WlkCard class="document-component">
+		<WlkCardHeader>
 			<h2>Project Documentation</h2>
-		</CardHeader>
+		</WlkCardHeader>
 		<CreateAndFilter />
 		<BreadCrumbs />
 		<DocumentListRender />
-	</CardComponent>
+	</WlkCard>
 </template>
 
 <style scoped>

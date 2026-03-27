@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SearchCard from '@/components/search/search_results/search_card/SearchCard.vue';
 import SearchHeader from '@/components/search/search_results/search_header/SearchHeader.vue';
-import {CardComponent} from "whelk-ui";
+import {WlkCard} from "whelk-ui";
 import {useSearchStore} from "@/stores/search/search.ts";
 import {useRoute} from "vue-router";
 import {computed} from "vue";
@@ -19,7 +19,7 @@ const destination = computed(() => {
 </script>
 
 <template>
-    <CardComponent class="search-results">
+    <WlkCard class="search-results">
         <SearchHeader />
         <SearchCard
 			v-for="item in store.searchResults"
@@ -30,7 +30,7 @@ const destination = computed(() => {
 			:status="item.status.status"
 			:title="item.title"
 		/>
-    </CardComponent>
+    </WlkCard>
 </template>
 
 <style scoped>

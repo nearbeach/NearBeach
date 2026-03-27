@@ -5,7 +5,7 @@ import StakeholderOrganisation
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import StakeholderCustomer
 	from "@/components/project/project_page/stakeholder/stakeholder_customer/StakeholderCustomer.vue";
-import { CardComponent, CardHeader, ObjectTitleCaseEnums} from "whelk-ui";
+import { WlkCard, WlkCardHeader, ObjectTitleCaseEnums} from "whelk-ui";
 
 // DEFINE REFS
 const organisationName = ref<string>("Muenchener Rueckversicherungs Gesellschaft");
@@ -20,10 +20,10 @@ function removeOrganisation() {
 </script>
 
 <template>
-	<CardComponent class="stakeholder-component">
-		<CardHeader>
+	<WlkCard class="stakeholder-component">
+		<WlkCardHeader>
 			<h3>Stakeholders</h3>
-		</CardHeader>
+		</WlkCardHeader>
 
 		<StakeholderOrganisation
 			v-if="organisationId !== 0"
@@ -37,7 +37,7 @@ function removeOrganisation() {
 		/>
 
 		<StakeholderCustomer v-if="organisationId !== 0" />
-	</CardComponent>
+	</WlkCard>
 </template>
 
 <style scoped>

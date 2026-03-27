@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineEmits, ref, defineModel } from 'vue'
-import { ButtonComponent, TextInput, ObjectStateEnum } from "whelk-ui";
+import { WlkButton, WlkTextInput, ObjectStateEnum } from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 
 // Define i18y
@@ -41,20 +41,20 @@ const buttonState = ref(ObjectStateEnum.NoAction);
 		  @submit="emit('passwordReset')"
 	>
 		<h1 id="main-title">{{ t("forgotten_password")}}</h1>
-		<TextInput class="compact"
+		<WlkTextInput class="compact"
 				   :label="t('email')"
 				   :placeholderText="t('email_placeholder')"
 				   :isRequired="true"
 				   v-model="emailAddress"
 		/>
 
-		<ButtonComponent
+		<WlkButton
 			class="primary"
 			:object-state="buttonState"
 			@click="emit('passwordReset')"
 		>
 			{{ t("submit") }}
-		</ButtonComponent>
+		</WlkButton>
 
 		<RouterLink to="/login">{{ t('go_back')}}</RouterLink>
 	</form>

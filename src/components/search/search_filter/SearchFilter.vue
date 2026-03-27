@@ -4,7 +4,7 @@ import type {AxiosInstance} from 'axios';
 import {useRoute} from 'vue-router';
 import {useSearchStore} from '@/stores/search/search.ts';
 import SearchInput from '@/components/search/search_filter/search_input/SearchInput.vue';
-import {CardComponent, CardHeader, CheckBox} from 'whelk-ui';
+import {WlkCard, WlkCardHeader, WlkCheckBox} from 'whelk-ui';
 import { useI18n } from "petite-vue-i18n";
 
 // Define i18n
@@ -131,22 +131,22 @@ function stopTimer() {
 </script>
 
 <template>
-	<CardComponent class="search-filter">
-		<CardHeader>
+	<WlkCard class="search-filter">
+		<WlkCardHeader>
 			<h1 id="main-title">{{ t(`search_${ route.meta.destination }`)}}</h1>
-		</CardHeader>
+		</WlkCardHeader>
 		<p class="instructions">{{t("instructions")}}</p>
 		<SearchInput
 			:placeholder="t(`search_placeholder_${ route.meta.destination }`)"
 			v-model="search"
 			v-on:keydown="startTimer"
 		/>
-		<CheckBox
+		<WlkCheckBox
 			:label="t('closed')"
 			id="show-closed-objects"
 			v-model="showClosed"
 		/>
-	</CardComponent>
+	</WlkCard>
 </template>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ButtonComponent, CardComponent, CardHeader, CardFooter, TextInput, SelectComponent } from 'whelk-ui';
+import { WlkButton, WlkCard, WlkCardHeader, CardFooter, WlkTextInput, WlkSelect } from 'whelk-ui';
 import {inject, ref} from 'vue';
 import type {AxiosInstance} from "axios";
 import {useI18n} from "petite-vue-i18n";
@@ -94,13 +94,13 @@ function updateValidation(field: string, value: boolean): void {
 </script>
 
 <template>
-    <CardComponent class="new-object">
-		<CardHeader>
+    <WlkCard class="new-object">
+		<WlkCardHeader>
 			<h1 id="main-title">{{t(`title_${route.meta.destination}`)}}</h1>
 			<p class="sub-text">{{t("sub_title")}}</p>
-		</CardHeader>
+		</WlkCardHeader>
 
-        <TextInput
+        <WlkTextInput
             v-model="titleModel"
             :isRequired="true"
 			:label="t('input_label')"
@@ -110,7 +110,7 @@ function updateValidation(field: string, value: boolean): void {
             @isValid="(value) => (updateValidation('titleModel', value))"
         />
 
-		<SelectComponent
+		<WlkSelect
 			:is-required="true"
 			:label="t('select_label')"
 			:options="permissionStore.getUserGroups"
@@ -119,16 +119,16 @@ function updateValidation(field: string, value: boolean): void {
 		/>
 
         <CardFooter>
-            <ButtonComponent
+            <WlkButton
 				class="primary"
 				:is-action-running="isFormSubmitting"
 				:is-disabled="isButtonDisabled"
                 v-on:click="createObject"
 			>
 				{{t("button_create")}}
-			</ButtonComponent>
+			</WlkButton>
         </CardFooter>
-    </CardComponent>
+    </WlkCard>
 </template>
 
 <style scoped>

@@ -1,18 +1,18 @@
 <script setup lang="ts">
 
-import { CardComponent, CardHeader} from "whelk-ui";
+import { WlkCard, WlkCardHeader} from "whelk-ui";
 </script>
 
 <template>
-	<CardComponent class="link-objects">
-		<CardHeader>
+	<WlkCard class="link-objects">
+		<WlkCardHeader>
 			<h2>Linked Objects</h2>
 			<p class="sub-text">
 				Connect project to other objects within NearBeach.
 			</p>
-		</CardHeader>
+		</WlkCardHeader>
 		<p>ADD CODE</p>
-	</CardComponent>
+	</WlkCard>
 </template>
 
 <style scoped>

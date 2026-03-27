@@ -41,7 +41,7 @@ const permissionStore = usePermissionStore();
 
 		<NavMenuItem
 		destination="logout"
-		route-address="/logout"
+		route-address="/logout/"
 		route-address-new=""
 		:override-aria-label="t('logout_aria_label')"
 		:title="t('logout_title')"

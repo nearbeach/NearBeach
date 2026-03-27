@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {CardComponent, CardHeader} from "whelk-ui";
+import {WlkCard, WlkCardHeader} from "whelk-ui";
 import { computed } from 'vue';
 
 const objectType = computed(() => {
@@ -10,12 +10,12 @@ const objectType = computed(() => {
 </script>
 
 <template>
-    <CardComponent class="not-found-page">
-        <CardHeader>
+    <WlkCard class="not-found-page">
+        <WlkCardHeader>
             <h1 id="main-title">404 Not Found</h1>
-        </CardHeader>
+        </WlkCardHeader>
         <p>Sorry, we could not find the object {{ objectType }}</p>
-    </CardComponent>
+    </WlkCard>
 </template>
 
 <style scoped>

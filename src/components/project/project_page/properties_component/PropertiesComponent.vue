@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CardComponent, DatetimeComponent, TextInput, NumberInput } from 'whelk-ui'
+import { WlkCard, WlkDatetime, WlkTextInput, WlkNumberInput } from 'whelk-ui'
 
 // Define Modals
 const endDateModel = defineModel('endDateModel', {
@@ -31,23 +31,23 @@ const fieldValidation: Record<string, boolean> = {
 </script>
 
 <template>
-    <CardComponent class="properties-component">
+    <WlkCard class="properties-component">
         <h3>Properties</h3>
 
-        <TextInput
+        <WlkTextInput
             class="status compact"
             v-model="statusModel"
             label="Status"
             @isValid="(value) => (fieldValidation['statusModel'] = value)"
         />
-        <TextInput
+        <WlkTextInput
             class="priority compact"
             v-model="priorityModel"
             label="Priority"
             @isValid="(value) => (fieldValidation['priorityModel'] = value)"
         />
 
-        <NumberInput
+        <WlkNumberInput
             class="story-points compact"
             v-model="storyPointsModel"
             label="Story Points"
@@ -55,19 +55,19 @@ const fieldValidation: Record<string, boolean> = {
             :max-value="10"
         />
 
-        <DatetimeComponent
-            class="start-date compact"
-            v-model="startDateModel"
-            label="Start Date"
-            @isValid="(value) => (fieldValidation['startDateModel'] = value)"
-        />
-        <DatetimeComponent
-            class="end-date compact"
-            v-model="endDateModel"
-            label="End Date"
-            @isValid="(value) => (fieldValidation['endDateModel'] = value)"
-        />
-    </CardComponent>
+<!--        <WlkDatetime-->
+<!--            class="start-date compact"-->
+<!--            v-model="startDateModel"-->
+<!--            label="Start Date"-->
+<!--            @isValid="(value) => (fieldValidation['startDateModel'] = value)"-->
+<!--        />-->
+<!--        <WlkDatetime-->
+<!--            class="end-date compact"-->
+<!--            v-model="endDateModel"-->
+<!--            label="End Date"-->
+<!--            @isValid="(value) => (fieldValidation['endDateModel'] = value)"-->
+<!--        />-->
+    </WlkCard>
 </template>
 
 <style scoped>

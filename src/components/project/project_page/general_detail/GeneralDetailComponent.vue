@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {onMounted, inject} from 'vue';
-import {CardComponent, CardHeader, TextArea, TextInput} from 'whelk-ui';
+import {WlkCard, WlkCardHeader, WlkTextArea, WlkTextInput} from 'whelk-ui';
 import type {AxiosInstance} from "axios";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {useRoute} from "vue-router";
@@ -49,12 +49,12 @@ onMounted(async () => {
 </script>
 
 <template>
-	<CardComponent class="general-details">
-		<CardHeader>
+	<WlkCard class="general-details">
+		<WlkCardHeader>
 			<h1 id="main-title">Project Details</h1>
 			<p class="sub-text">Update and modify your project details</p>
-		</CardHeader>
-		<TextInput
+		</WlkCardHeader>
+		<WlkTextInput
 			v-model="objectStore.title"
 			:isRequired="true"
 			:maxLength="255"
@@ -63,13 +63,13 @@ onMounted(async () => {
 			placeholderText="Your project title"
 			@isValid="(value) => (fieldValidation['titleModel'] = value)"
 		/>
-		<TextArea
+		<WlkTextArea
 			v-model="objectStore.description"
 			placeholderText="Description of your project"
 			label="Description"
 			@isValid="(value) => (fieldValidation['descriptionModel'] = value)"
 		/>
-	</CardComponent>
+	</WlkCard>
 </template>
 
 <style scoped>

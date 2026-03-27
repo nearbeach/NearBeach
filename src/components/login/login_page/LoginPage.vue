@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, inject, ref} from 'vue'
+import {inject, ref} from 'vue'
 import LoginImage from "@/components/login/login_image/LoginImage.vue";
 import LoginPanel from "@/components/login/login_page/login_panel/LoginPanel.vue";
 import {ObjectStateEnum} from "@/utils/enums/ObjectStateEnum.ts";

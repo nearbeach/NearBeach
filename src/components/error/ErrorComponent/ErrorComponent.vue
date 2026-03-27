@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CardComponent, CardHeader } from "whelk-ui";
+import { WlkCard, WlkCardHeader } from "whelk-ui";
 
 // Declare props
 defineProps({
@@ -15,12 +15,12 @@ defineProps({
 </script>
 
 <template>
-	<CardComponent class="error-component">
-		<CardHeader>
+	<WlkCard class="error-component">
+		<WlkCardHeader>
 			<h1 id="main-title">{{ title }}</h1>
-		</CardHeader>
+		</WlkCardHeader>
 		<p>{{ message }}</p>
-	</CardComponent>
+	</WlkCard>
 </template>
 
 <style scoped>

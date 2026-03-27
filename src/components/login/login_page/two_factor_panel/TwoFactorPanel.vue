@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {defineModel, defineEmits, onMounted} from "vue";
-import {TextInput, ButtonComponent, ObjectStateEnum} from "whelk-ui"
+import {defineModel, defineEmits, onMounted, useTemplateRef} from "vue";
+import {WlkTextInput, WlkButton, ObjectStateEnum, required} from "whelk-ui"
 import {useI18n} from "petite-vue-i18n";
 
 // Implement i18y
@@ -40,6 +40,9 @@ defineProps({
 	}
 });
 
+// Define template refs
+const otpTokenRef = useTemplateRef("otp-token-ref");
+
 // Define models
 const otpToken = defineModel("otpToken", {
 	type: String,
@@ -50,26 +53,39 @@ const otpToken = defineModel("otpToken", {
 onMounted(() => {
 	document.getElementById("input-two-factor-password")
 })
+
+// Define functions
+function signIn(event: any) {
+	// Prevent default
+	event.preventDefault();
+
+	// Validate
+	otpTokenRef?.value?.checkValidation();
+
+	// Emit data upstream
+	emit('signIn');
+}
 </script>
 
 <template>
 	<div class="two-factor-panel">
 		<h1 id="main-title">{{ t("login_message") }}</h1>
 		<p class="error-message">{{ errorMessage }}</p>
-		<TextInput class="compact"
-				   :label="t('tfa')"
-				   :placeholderText="t('tfa_placeholder')"
-				   :isRequired="false"
-				   v-model="otpToken"
+		<WlkTextInput class="compact"
+		              :label="t('tfa')"
+		              :placeholderText="t('tfa_placeholder')"
+		              :validationRules="[required()]"
+		              v-model="otpToken"
+		              ref="otp-token-ref"
 		/>
 
-		<ButtonComponent
+		<WlkButton
 			class="primary"
 			:object-state="buttonState"
-			@click="emit('signIn')"
+			@click="signIn"
 		>
-			{{t('signIn')}}
-		</ButtonComponent>
+			{{ t('signIn') }}
+		</WlkButton>
 	</div>
 </template>
 
@@ -99,6 +115,19 @@ onMounted(() => {
 	@media (--large-screen) {
 		max-width: var(--x-small-grid-width);
 		margin: auto;
+	}
+
+	> .error-message {
+		font-size: 1rem;
+		line-height: 1.25rem;
+		color: var(--text-red);
+		font-weight: bold;
+		margin: 0 0 0.25rem 0;
+
+		&:before {
+			content: ".";
+			visibility: hidden;
+		}
 	}
 }
 

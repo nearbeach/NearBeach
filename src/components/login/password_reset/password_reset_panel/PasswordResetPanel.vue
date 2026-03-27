@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {inject, ref} from 'vue'
-import {ButtonComponent, PasswordInput} from "whelk-ui";
+import {WlkButton, WlkPasswordInput} from "whelk-ui";
 import type {AxiosInstance} from "axios";
 import router from '@/router/loginRouter.ts';
 import {useI18n} from "petite-vue-i18n";
@@ -75,26 +75,26 @@ function submitPasswordReset(): void {
 		<p class="error-message">
 			{{ errorMessage }}
 		</p>
-		<PasswordInput
+		<WlkPasswordInput
 			class="compact"
 			:label="t('new_password')"
 			:isRequired="true"
 			v-model="password1"
 		/>
 
-		<PasswordInput
+		<WlkPasswordInput
 			class="compact"
 			:label="t('confirm_password')"
 			:isRequired="true"
 			v-model="password2"
 		/>
 
-		<ButtonComponent
+		<WlkButton
 			class="primary"
 			@click="submitPasswordReset"
 		>
 			{{t('reset_password')}}
-		</ButtonComponent>
+		</WlkButton>
 
 
 	</div>

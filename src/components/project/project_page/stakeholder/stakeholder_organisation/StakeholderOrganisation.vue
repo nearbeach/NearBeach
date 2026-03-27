@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref} from 'vue'
-import { ButtonComponent, ObjectStateEnum} from "whelk-ui";
+import { WlkButton, ObjectStateEnum} from "whelk-ui";
 
 // DEFINE EMITS
 const emit = defineEmits(['removeOrganisation']);
@@ -34,7 +34,7 @@ function removeOrganisation() {
 				{{ props.organisationName }}
 			</RouterLink>
 		</p>
-		<ButtonComponent
+		<WlkButton
 			class="compact danger"
 			label="Remove Organisation"
 			:objectState="removeOrganisationState"
