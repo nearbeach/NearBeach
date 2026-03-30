@@ -1,11 +1,22 @@
 <script setup lang="ts">
-import { WlkButton, WlkCard, WlkCardHeader, CardFooter, WlkTextInput, WlkSelect } from 'whelk-ui';
-import {inject, ref} from 'vue';
+import {
+	WlkButton,
+	WlkCard,
+	WlkCardHeader,
+	CardFooter,
+	WlkTextInput,
+	WlkSelect,
+	required,
+	maxLength,
+	minLength
+} from 'whelk-ui';
+import {inject, ref, useTemplateRef} from 'vue';
 import type {AxiosInstance} from "axios";
 import {useI18n} from "petite-vue-i18n";
 import {useRoute} from "vue-router";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
 import router from "@/router/router.ts";
+import {failedValidation} from "@/composables/failedValidation.ts";
 
 // Injection
 const apiClient = inject<AxiosInstance | undefined>("apiClient");
@@ -60,8 +71,20 @@ const isFormSubmitting = ref<boolean>(false);
 const groupModel = ref<string>("");
 const titleModel = ref<string>("");
 
+// Define Template Refs
+const groupTemplateRef = useTemplateRef("group-ref");
+const titleTemplateRef = useTemplateRef("title-ref");
+
 // Define Methods
 async function createObject(): Promise<void> {
+	// Validate all the fields first
+	groupTemplateRef.value?.checkValidation();
+	titleTemplateRef.value?.checkValidation();
+	if (failedValidation(fieldValidation)) {
+		// Nothing to do
+		return;
+	}
+
 	// Notify the user of the action
 	isFormSubmitting.value = true;
 
@@ -82,7 +105,6 @@ async function createObject(): Promise<void> {
 }
 
 function updateValidation(field: string, value: boolean): void {
-	console.log(field, value);
 	// Updated the field
 	fieldValidation[field] = value
 
@@ -102,18 +124,18 @@ function updateValidation(field: string, value: boolean): void {
 
         <WlkTextInput
             v-model="titleModel"
-            :isRequired="true"
 			:label="t('input_label')"
 			:placeholderText="t(`placeholder_${route.meta.destination}`)"
-            :maxLength="255"
-            :minLength="5"
+			:validationRules="[required(), maxLength(255), minLength(5)]"
+			ref="title-ref"
             @isValid="(value) => (updateValidation('titleModel', value))"
         />
 
 		<WlkSelect
-			:is-required="true"
 			:label="t('select_label')"
 			:options="permissionStore.getUserGroups"
+			:validationRules="[required()]"
+			ref="group-ref"
 			v-model="groupModel"
 			@isValid="(value) => (updateValidation('groupModel', value))"
 		/>
