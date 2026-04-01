@@ -2632,9 +2632,9 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
-    "tag_name": "default tag",
-    "tag_colour": "#37cbd2",
-    "tag_text_colour": "#ffffff"
+    "name": "default tag",
+    "colour": "#37cbd2",
+    "text_colour": "#ffffff"
   }
 },
 {
@@ -2646,9 +2646,9 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
-    "tag_name": "Project Planning",
-    "tag_colour": "#E46661",
-    "tag_text_colour": "#ffffff"
+    "name": "Project Planning",
+    "colour": "#E46661",
+    "text_colour": "#ffffff"
   }
 },
 {
@@ -2660,9 +2660,9 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
-    "tag_name": "Team Collaboration",
-    "tag_colour": "#189A32",
-    "tag_text_colour": "#ffffff"
+    "name": "Team Collaboration",
+    "colour": "#189A32",
+    "text_colour": "#ffffff"
   }
 },
 {
@@ -2674,9 +2674,9 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
-    "tag_name": "Budgeting",
-    "tag_colour": "#3757C1",
-    "tag_text_colour": "#ffffff"
+    "name": "Budgeting",
+    "colour": "#3757C1",
+    "text_colour": "#ffffff"
   }
 },
 {
@@ -2688,9 +2688,9 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
-    "tag_name": "Performance Metrics",
-    "tag_colour": "#EF1C97",
-    "tag_text_colour": "#ffffff"
+    "name": "Performance Metrics",
+    "colour": "#EF1C97",
+    "text_colour": "#ffffff"
   }
 },
 {
@@ -2702,9 +2702,9 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
-    "tag_name": "Documentation",
-    "tag_colour": "#57BBA9",
-    "tag_text_colour": "#ffffff"
+    "name": "Documentation",
+    "colour": "#57BBA9",
+    "text_colour": "#ffffff"
   }
 },
 {

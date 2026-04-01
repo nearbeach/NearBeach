@@ -3,7 +3,7 @@ from NearBeach.serializers.abstraction.base_object_serializer import BaseObjectS
 from NearBeach.serializers.abstraction.date_fields_serializer import DateFieldsSerializer
 from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
-from NearBeach.serializers.project_status_serializer import ProjectStatusSerializer
+from NearBeach.serializers.object_data.status.project_status_serializer import ProjectStatusSerializer
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.models.project import Project
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment

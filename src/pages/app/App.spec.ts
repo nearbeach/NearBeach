@@ -21,7 +21,7 @@ describe("App", () => {
     beforeEach(() => {
         setActivePinia(createPinia());
         const permissions = usePermissionStore();
-        permissions.isLoaded = true;
+        permissions.is_loaded = true;
         permissions.maximumPermissions = {
             administration_create_permission_set: 0,
             administration_create_user: 0,
@@ -133,7 +133,7 @@ describe("App - desktop view", () => {
             value: 1440, // Set your desired mock width
         });
         const permissions = usePermissionStore();
-        permissions.isLoaded = true;
+        permissions.is_loaded = true;
         permissions.maximumPermissions = {
             administration_assign_user_to_group: 0,
             administration_create_group: 0,

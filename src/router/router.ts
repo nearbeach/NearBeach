@@ -1,5 +1,7 @@
 import {createRouter, createWebHistory} from "vue-router";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
+import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
+import {useUserStore} from "@/stores/user/user.ts";
 
 // Async components
 const DashboardPage = () =>
@@ -11,6 +13,51 @@ const NotFoundPage = () =>
 const ProjectPage = () =>
     import("@/components/project/project_page/ProjectPage.vue");
 const SearchPage = () => import("@/components/search/SearchPage.vue");
+
+// Define functions
+async function fetchObjectMetaData() {
+    const permissionStore = usePermissionStore();
+    const objectMetaDataStore = useObjectMetaDataStore();
+    const userStore = useUserStore();
+
+    // Use fetch to get data
+    try {
+        const response = await fetch("/api/v1/user/initial_data/");
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        
+        // Fetch data
+        const result = await response.json();
+
+        // Update and process permission store
+        permissionStore.$patch({
+            permissionData: result.permissions,
+        });
+        permissionStore.processPermissionData();
+
+        // Update object meta data
+        objectMetaDataStore.$patch({
+            object_status: result.object_status,
+            object_types: result.object_types,
+            tags: result.tags,
+        });
+
+        // Update user
+        userStore.$patch({
+            id: result.id,
+            username: result.username,
+            first_name: result.first_name,
+            last_name: result.last_name,
+            email: result.email,
+            profile_picture: result.profile_picture,
+            profile_picture_path: result.profile_picture_path,
+        });
+    } catch (error) {
+        // TODO - Apply correct error handling
+        console.error(error);
+    }
+}
 
 // Define the routes
 const routes = [
@@ -113,8 +160,8 @@ router.beforeEach(async (to, _, next) => {
     const destination: string | undefined = to.meta.destination as string | undefined;
 
     // Check user permissions has been loaded - other load
-    if (!permissionStore.isLoaded) {
-        await permissionStore.fetchPermissionData();
+    if (!permissionStore.is_loaded) {
+        await fetchObjectMetaData();
     }
 
     // Validated the permissions
@@ -123,7 +170,7 @@ router.beforeEach(async (to, _, next) => {
     } else if (permissionStore.hasPermission(destination)) {
         next();
     } else {
-        next({ name: "forbidden" })
+        next({name: "forbidden"})
     }
 });
 

@@ -2,16 +2,16 @@
 import { WlkCard, WlkDatetime, WlkTextInput, WlkNumberInput } from 'whelk-ui'
 
 // Define Modals
-const endDateModel = defineModel('endDateModel', {
-    type: Date,
-});
+// const endDateModel = defineModel('endDateModel', {
+//     type: String,
+// });
 const priorityModel = defineModel('priorityModel', {
     type: String,
     default: 'Normal',
 });
-const startDateModel = defineModel('startDateModel', {
-    type: Date,
-});
+// const startDateModel = defineModel('startDateModel', {
+//     type: String,
+// });
 const statusModel = defineModel('statusModel', {
     type: String,
     default: 'In Progress',
@@ -23,9 +23,9 @@ const storyPointsModel = defineModel('storyPointModel', {
 
 // Define Data
 const fieldValidation: Record<string, boolean> = {
-    endDateModel: true,
+    // endDateModel: true,
     priorityModel: true,
-    startDateModel: true,
+    // startDateModel: true,
     statusModel: true,
 };
 </script>

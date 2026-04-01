@@ -10,16 +10,16 @@ const permissionStore = usePermissionStore();
 
 // Define computed
 const showStructureSkeleton = computed<boolean>(() => {
-	return !permissionStore.isLoaded && !permissionStore.hasError;
+	return !permissionStore.is_loaded && !permissionStore.hasError;
 });
 
 const showErrorComponent = computed(() => {
-	return !permissionStore.isLoaded && permissionStore.hasError;
+	return !permissionStore.is_loaded && permissionStore.hasError;
 })
 </script>
 
 <template>
-	<AppStructure v-if="permissionStore.isLoaded" />
+	<AppStructure v-if="permissionStore.is_loaded" />
 	<StructureSkeleton v-if="showStructureSkeleton"/>
 	<ErrorComponent
 		v-if="showErrorComponent"

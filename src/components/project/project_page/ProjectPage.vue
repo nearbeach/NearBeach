@@ -8,31 +8,52 @@ import DocumentComponent from "@/components/project/project_page/document/Docume
 import NotesComponent from "@/components/project/project_page/notes/NotesComponent.vue";
 import LinkObjects from "@/components/project/project_page/LinkObjects/LinkObjects.vue";
 import SprintPlanning from "@/components/project/project_page/sprint/SprintPlanning.vue";
+import type {TabHeaderInterface} from "whelk-ui";
+import {WlkCard, WlkTabs} from "whelk-ui";
+
+const tabList: TabHeaderInterface[] = [
+	{label: "Linked Objects", for: "link_objects"},
+	{label: "Documentation", for: "documentation"},
+	{label: "Notes & Comments", for: "notes"},
+	{label: "Misc", for: "misc"},
+]
 </script>
 
 <template>
-    <div class="project-information">
+	<div class="project-information">
 		<div class="container">
-			<GeneralDetailComponent />
-			<PropertiesComponent />
-			<LinkObjects />
-			<DocumentComponent />
-			<NotesComponent />
+			<GeneralDetailComponent/>
+			<PropertiesComponent/>
+			<WlkCard class="extra-information">
+				<WlkTabs :tabList="tabList">
+					<template #link_objects>
+						<LinkObjects/>
+					</template>
+					<template #documentation>
+						<DocumentComponent/>
+					</template>
+					<template #notes>
+						<NotesComponent/>
+					</template>
+					<template #misc>
+						<PublicLinks/>
+						<SprintPlanning/>
+					</template>
+				</WlkTabs>
+			</WlkCard>
 		</div>
 		<div class="properties">
-			<PropertiesComponent />
-			<AccessComponent />
-			<StakeholderComponent />
-			<PublicLinks />
-			<SprintPlanning />
+			<PropertiesComponent/>
+			<AccessComponent/>
+			<StakeholderComponent/>
 		</div>
-    </div>
+	</div>
 </template>
 
 <style scoped>
 .project-information {
-    max-width: calc(var(--x-large-card-width));
-    display: flex;
+	max-width: calc(var(--x-large-card-width));
+	display: flex;
 	justify-content: center;
 	flex-direction: column;
 
@@ -40,9 +61,9 @@ import SprintPlanning from "@/components/project/project_page/sprint/SprintPlann
 		margin: 0 0.5rem;
 	}
 
-    @media (--large-screen) {
+	@media (--large-screen) {
 		flex-direction: row;
-    }
+	}
 
 	> .container {
 		@media (--large-screen) {
@@ -57,7 +78,21 @@ import SprintPlanning from "@/components/project/project_page/sprint/SprintPlann
 			}
 		}
 
-		> .card {
+		> .extra-information {
+			> div {
+				padding: 0 0.5rem;
+
+				@media (--medium-screen) {
+					padding: 0.5rem 1rem;
+				}
+
+				@media (--large-screen) {
+					padding: 0.5rem 1rem;
+				}
+			}
+		}
+
+		> .wlk-card, .wlk-card-component {
 			margin-bottom: 1rem;
 		}
 	}

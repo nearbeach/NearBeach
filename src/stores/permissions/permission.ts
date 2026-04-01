@@ -1,15 +1,7 @@
 import {defineStore} from 'pinia'
-import axios from 'axios'
 import type {MaximumPermissionInterface} from "@/utils/interfaces/stores/MaximumPermissionInterface.ts";
 import type {PermissionDataInterface} from "@/utils/interfaces/stores/PermissionDataInterface.ts";
 import type {SelectOptionInterface} from "whelk-ui";
-
-// Setup Axios Instance
-const axiosInstance = axios.create({
-    withCredentials: true,
-    xsrfCookieName: "csrftoken",
-    xsrfHeaderName: "X-CSRFTOKEN",
-});
 
 export const usePermissionStore = defineStore('permissions', {
     state: () => {
@@ -27,7 +19,7 @@ export const usePermissionStore = defineStore('permissions', {
             errorInformation: "",
             hasAdministrationPermission: false,
             hasError: false,
-            isLoaded: false,
+            is_loaded: false,
             permissionData: [] as PermissionDataInterface[] | null,
             maximumPermissions: {
                 administration_assign_user_to_group: 0,
@@ -99,36 +91,14 @@ export const usePermissionStore = defineStore('permissions', {
             // Set the user groups
             this.userGroups = user_groups === undefined ? [] : user_groups;
         },
-        async fetchPermissionData() {
-            try {
-                await axiosInstance.get(
-                    "/api/v1/user/permissions/",
-                ).then(async (response) => {
-                    // Update the permission data
-                    this.permissionData = response.data;
+        processPermissionData() {
+            this._setMaximumPermissions();
+            this._setHasAdministrationPermission();
+            this._setUserGroups();
 
-                    // Process the permission data
-                    this._setMaximumPermissions();
-                    this._setHasAdministrationPermission();
-                    this._setUserGroups();
-
-                    // Last step - tell the system it has loaded
-                    this.isLoaded = true;
-                }).catch(async (error) => {
-                    // Tell frontend we have an error
-                    this.hasError = true;
-
-                    // Write error into message
-                    this.errorInformation = `Fetching permission details failed: ${error}`;
-                });
-            } catch (error) {
-                // Tell frontend we have an error
-                this.hasError = true;
-
-                // Write error into message
-                this.errorInformation = `Fetching permission details failed: ${error}`;
-            }
-        }
+            // State is loaded
+            this.is_loaded = true;
+        },
     },
     getters: {
         getCurrentObjectPermissions: state => {

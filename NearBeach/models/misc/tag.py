@@ -9,21 +9,21 @@ from NearBeach.models.abstraction.common_abstractions import CommonInfo
 class Tag(CommonInfo):
     """Class contains fields for Tag table"""
 
-    tag_id = models.BigAutoField(primary_key=True)
-    tag_name = models.CharField(
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(
         max_length=50,
     )
-    tag_colour = models.CharField(
+    colour = models.CharField(
         max_length=7,
         default="#651794",
     )
-    tag_text_colour = models.CharField(
+    text_colour = models.CharField(
         max_length=7,
         default="#ffffff",
     )
 
     def __str__(self):
-        return str(self.tag_name)
+        return str(self.name)
 
     class Meta:
         """Meta definition for Tag table."""
