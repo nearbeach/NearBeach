@@ -26,6 +26,9 @@ export const useObjectMetaDataStore = defineStore('object_meta_data', {
         }
     },
     actions: {
+        fetchStatus(id: number) {
+            return this.status.filter(row => row.id === id);
+        },
         updateObjectStatus(destination: string) {
             this.status = this.object_status[destination as keyof ObjectStatusInterface] ?? [];
         },

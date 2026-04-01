@@ -1,22 +1,32 @@
 <script setup lang="ts">
-import GeneralDetailComponent from '@/components/project/project_page/general_detail/GeneralDetailComponent.vue';
-import PropertiesComponent from '@/components/project/project_page/properties_component/PropertiesComponent.vue';
-import AccessComponent from "@/components/project/project_page/access/AccessComponent.vue";
-import PublicLinks from "@/components/project/project_page/public_links/PublicLinks.vue";
-import StakeholderComponent from "@/components/project/project_page/stakeholder/StakeholderComponent.vue";
-import DocumentComponent from "@/components/project/project_page/document/DocumentComponent.vue";
-import NotesComponent from "@/components/project/project_page/notes/NotesComponent.vue";
-import LinkObjects from "@/components/project/project_page/LinkObjects/LinkObjects.vue";
-import SprintPlanning from "@/components/project/project_page/sprint/SprintPlanning.vue";
+import GeneralDetailComponent from '@/components/object_components/general_detail/GeneralDetailComponent.vue';
+import PropertiesComponent from '@/components/object_components/properties_component/PropertiesComponent.vue';
+import AccessComponent from "@/components/object_components/access/AccessComponent.vue";
+import PublicLinks from "@/components/object_components/public_links/PublicLinks.vue";
+import StakeholderComponent from "@/components/object_components/stakeholder/StakeholderComponent.vue";
+import DocumentComponent from "@/components/object_components/document/DocumentComponent.vue";
+import NotesComponent from "@/components/object_components/notes/NotesComponent.vue";
+import LinkObjects from "@/components/object_components/link_objects/LinkObjects.vue";
+import SprintPlanning from "@/components/object_components/sprint/SprintPlanning.vue";
 import type {TabHeaderInterface} from "whelk-ui";
 import {WlkCard, WlkTabs} from "whelk-ui";
+import {onMounted} from "vue";
+import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 
+// Define variables
 const tabList: TabHeaderInterface[] = [
 	{label: "Linked Objects", for: "link_objects"},
 	{label: "Documentation", for: "documentation"},
 	{label: "Notes & Comments", for: "notes"},
 	{label: "Misc", for: "misc"},
 ]
+
+// Define stores
+const objectMetaDataStore = useObjectMetaDataStore();
+
+onMounted(() => {
+	objectMetaDataStore.updateObjectStatus("project");
+});
 </script>
 
 <template>

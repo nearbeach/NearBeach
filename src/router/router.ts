@@ -11,7 +11,7 @@ const NewProject = () =>
 const NotFoundPage = () =>
     import("@/components/error/NotFoundPage/NotFoundPage.vue");
 const ProjectPage = () =>
-    import("@/components/project/project_page/ProjectPage.vue");
+    import("@/components/project/ProjectPage.vue");
 const SearchPage = () => import("@/components/search/SearchPage.vue");
 
 // Define functions

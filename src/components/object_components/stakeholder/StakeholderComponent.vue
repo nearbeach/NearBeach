@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import StakeholderOrganisation
-	from "@/components/project/project_page/stakeholder/stakeholder_organisation/StakeholderOrganisation.vue";
+	from "@/components/object_components/stakeholder/stakeholder_organisation/StakeholderOrganisation.vue";
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import StakeholderCustomer
-	from "@/components/project/project_page/stakeholder/stakeholder_customer/StakeholderCustomer.vue";
+	from "@/components/object_components/stakeholder/stakeholder_customer/StakeholderCustomer.vue";
 import { WlkCard, WlkCardHeader, ObjectTitleCaseEnums} from "whelk-ui";
 
 // DEFINE REFS

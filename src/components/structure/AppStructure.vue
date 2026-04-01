@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {computed, onMounted} from 'vue';
-import {usePermissionStore} from "@/stores/permissions/permission.ts";
 import {useNavStore} from "@/stores/nav/nav.ts";
 import SkipLinks from "@/components/skip_links/SkipLinks.vue";
 import NavComponent from "@/components/nav/NavComponent.vue";

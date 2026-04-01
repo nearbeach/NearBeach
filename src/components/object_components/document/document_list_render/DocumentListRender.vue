@@ -2,7 +2,7 @@
 import {ref} from 'vue'
 import type {DocumentItemInterface, FolderItemInterface} from "whelk-ui";
 import DocumentList from './document_list/DocumentList.vue';
-import FolderList from "@/components/project/project_page/document/document_list_render/folder_list/FolderList.vue";
+import FolderList from "@/components/object_components/document/document_list_render/folder_list/FolderList.vue";
 
 // Define ref
 const documentList = ref<DocumentItemInterface[]>([
