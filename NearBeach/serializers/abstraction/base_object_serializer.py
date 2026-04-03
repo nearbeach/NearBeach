@@ -11,6 +11,7 @@ class BaseObjectSerializer(serializers.Serializer):
 
     description = serializers.CharField(
         required=False,
+        allow_blank=True,
     )
 
     group_list = serializers.PrimaryKeyRelatedField(

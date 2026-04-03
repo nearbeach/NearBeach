@@ -5,6 +5,7 @@ export const useObjectStore = defineStore('object', {
     state: () => {
         return {
             description: "",
+            destination: "",
             end_date: null,
             group_list: [],
             id: 0,

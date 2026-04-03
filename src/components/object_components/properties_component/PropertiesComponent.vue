@@ -12,40 +12,43 @@ import {
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import ObjectStatus from "@/components/object_components/object_status/ObjectStatus.vue";
+import ObjectPriority from "@/components/object_components/object_priority/ObjectPriority.vue";
+import {useI18n} from "petite-vue-i18n";
+
+// Define i18n
+const {t} = useI18n({
+	messages: {
+		en: {
+			end_date: "End Date",
+			properties: "Properties",
+			start_date: "Start Date",
+			story_points: "Story Points",
+		},
+		ja: {
+			end_date: "終了日",
+			properties: "プロパティ",
+			start_date: "開始日",
+			story_points: "ストーリーポイント",
+		},
+	}
+
+})
 
 // Define Stores
 const objectStore = useObjectStore();
-
-const priorityModel = ref("HIGH PRIORITY")
-
-
-// Define Data
-// TODO - Move fieldValidation: Record<string, boolean> into Object store
-// const fieldValidation: Record<string, boolean> = {
-// 	// endDateModel: true,
-// 	priorityModel: true,
-// 	// startDateModel: true,
-// 	statusModel: true,
-// };
 </script>
 
 <template>
 	<WlkCard class="properties-component">
-		<h3>Properties</h3>
+		<h3>{{t("properties")}}</h3>
 
-		<WlkTextInput
-			class="priority compact"
-			v-model="priorityModel"
-			label="Priority"
-			@isValid="(value) => (fieldValidation['priorityModel'] = value)"
-		/>
-
-		<ObjectStatus class="status compact" />
+		<ObjectPriority />
+		<ObjectStatus />
 
 		<WlkNumberInput
 			class="story-points compact"
 			v-model="objectStore.story_points"
-			label="Story Points"
+			:label="t('story_points')"
 			:min-value="0"
 			:max-value="10"
 		/>
@@ -53,13 +56,13 @@ const priorityModel = ref("HIGH PRIORITY")
 		<!--        <WlkDatetime-->
 		<!--            class="start-date compact"-->
 		<!--            v-model="startDateModel"-->
-		<!--            label="Start Date"-->
+		<!--            :label="t('start_date')"-->
 		<!--            @isValid="(value) => (fieldValidation['startDateModel'] = value)"-->
 		<!--        />-->
 		<!--        <WlkDatetime-->
 		<!--            class="end-date compact"-->
 		<!--            v-model="endDateModel"-->
-		<!--            label="End Date"-->
+		<!--            :label="t('end_date')"-->
 		<!--            @isValid="(value) => (fieldValidation['endDateModel'] = value)"-->
 		<!--        />-->
 	</WlkCard>

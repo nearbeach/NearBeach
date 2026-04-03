@@ -12,13 +12,32 @@ import type {TabHeaderInterface} from "whelk-ui";
 import {WlkCard, WlkTabs} from "whelk-ui";
 import {onMounted} from "vue";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
+import {useI18n} from "petite-vue-i18n";
+
+// Define i18n
+const {t} = useI18n({
+	messages: {
+		en: {
+			linked_objects: "Linked Objects",
+			documentation: "Documentation",
+			notes: "Notes & Comments",
+			misc: "Misc",
+		},
+		ja: {
+			linked_objects: "リンクされたオブジェクト",
+			documentation: "文書",
+			notes: "注釈とコメント",
+			misc: "その他",
+		},
+	}
+})
 
 // Define variables
 const tabList: TabHeaderInterface[] = [
-	{label: "Linked Objects", for: "link_objects"},
-	{label: "Documentation", for: "documentation"},
-	{label: "Notes & Comments", for: "notes"},
-	{label: "Misc", for: "misc"},
+	{label: t("linked_objects"), for: "link_objects"},
+	{label: t("documentation"), for: "documentation"},
+	{label: t("notes"), for: "notes"},
+	{label: t("misc"), for: "misc"},
 ]
 
 // Define stores
