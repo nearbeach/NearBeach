@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from NearBeach.models import ListOfProjectStatus
 from NearBeach.serializers.abstraction.base_object_serializer import BaseObjectSerializer
 from NearBeach.serializers.abstraction.date_fields_serializer import DateFieldsSerializer
@@ -9,7 +10,7 @@ from NearBeach.models.project import Project
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 
 
-class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
+class ProjectSerializer(serializers.ModelSerializer, BaseObjectSerializer, DateFieldsSerializer):
     """Class containing serializer base for all objects"""
 
     organisation = OrganisationSerializer(
@@ -64,10 +65,6 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
 
         return fields
 
-    def update(self, instance, validated_data):
-        instance.save()
-        return instance
-
     class Meta:
         model = Project
         fields = [
@@ -76,7 +73,6 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
             "description",
             "organisation",
             "status",
-            "higher_order_status",
             "priority",
             "story_point",
             "start_date",
@@ -86,4 +82,3 @@ class ProjectSerializer(BaseObjectSerializer, DateFieldsSerializer):
             "date_created",
             "date_modified",
         ]
-
