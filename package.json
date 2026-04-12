@@ -44,7 +44,7 @@
     "@vue/test-utils": "^2.4.0",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
-    "axios": "^1.8.2",
+    "axios": "^1.15.0",
     "bootstrap": "^5.3.3",
     "compression-webpack-plugin": "^12.0.0",
     "copy-webpack-plugin": "^14.0.0",
