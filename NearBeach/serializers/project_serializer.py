@@ -58,10 +58,15 @@ class ProjectSerializer(serializers.ModelSerializer, BaseObjectSerializer, DateF
         fields = super().get_fields()
 
         # PATCH
-        method = getattr(self.context, "method", None)
+        method = self.context.get("method", None)
         if method == "PATCH":
             fields.pop("group_list", None)
             fields.pop("organisation", None)
+            fields["status"] = serializers.PrimaryKeyRelatedField(
+                queryset=ListOfProjectStatus.objects.filter(
+                    is_deleted=False,
+                ),
+            )
 
         return fields
 

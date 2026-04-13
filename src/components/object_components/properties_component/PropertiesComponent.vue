@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import {computed, ref} from "vue";
 import {
+	minValue,
+	maxValue,
 	WlkCard,
 	WlkDatetime,
 	WlkTextInput,
@@ -49,22 +50,19 @@ const objectStore = useObjectStore();
 			class="story-points compact"
 			v-model="objectStore.story_points"
 			:label="t('story_points')"
-			:min-value="0"
-			:max-value="10"
+			:validation="[minValue(0), maxValue(5)]"
 		/>
 
-		<!--        <WlkDatetime-->
-		<!--            class="start-date compact"-->
-		<!--            v-model="startDateModel"-->
-		<!--            :label="t('start_date')"-->
-		<!--            @isValid="(value) => (fieldValidation['startDateModel'] = value)"-->
-		<!--        />-->
-		<!--        <WlkDatetime-->
-		<!--            class="end-date compact"-->
-		<!--            v-model="endDateModel"-->
-		<!--            :label="t('end_date')"-->
-		<!--            @isValid="(value) => (fieldValidation['endDateModel'] = value)"-->
-		<!--        />-->
+		<WlkDatetime
+			class="start-date compact"
+			v-model="objectStore.start_date"
+			:label="t('start_date')"
+		/>
+		<WlkDatetime
+			class="end-date compact"
+			v-model="objectStore.end_date"
+			:label="t('end_date')"
+		/>
 	</WlkCard>
 </template>
 

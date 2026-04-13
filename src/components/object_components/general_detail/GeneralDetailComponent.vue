@@ -5,6 +5,7 @@ import type {AxiosInstance} from "axios";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {useRoute} from "vue-router";
 import {useI18n} from "petite-vue-i18n";
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -142,12 +143,6 @@ function updateData() {
 	// Notify the user of the state change
 	updateState.value = "updating"
 
-	const CSRF_TOKEN : RegExpMatchArray | null = document.cookie.match(new RegExp(`csrftoken=([^;]+)`));
-	// const csrfToken = document.head.querySelector('meta[name="csrf-token"]')?.content;
-	 // || document.cookie.match(/csrftoken=([^;]+)/)?.[1];
-	// console.log("csrfToken", csrfToken);
-	const token = CSRF_TOKEN === null ? "" : CSRF_TOKEN[0].replace("csrftoken=", "");
-
 	fetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
 		{
@@ -158,7 +153,7 @@ function updateData() {
 			}),
 			headers: {
 				"Content-Type": "application/json",
-				"X-CSRFTOKEN": token,
+				"X-CSRFTOKEN": getCsrfToken(),
 			}
 		}
 	).then(() => {

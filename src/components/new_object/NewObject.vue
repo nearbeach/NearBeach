@@ -3,7 +3,7 @@ import {
 	WlkButton,
 	WlkCard,
 	WlkCardHeader,
-	CardFooter,
+	WlkCardFooter,
 	WlkTextInput,
 	WlkSelect,
 	required,
@@ -140,7 +140,7 @@ function updateValidation(field: string, value: boolean): void {
 			@isValid="(value) => (updateValidation('groupModel', value))"
 		/>
 
-        <CardFooter>
+        <WlkCardFooter>
             <WlkButton
 				class="primary"
 				:is-action-running="isFormSubmitting"
@@ -149,7 +149,7 @@ function updateValidation(field: string, value: boolean): void {
 			>
 				{{t("button_create")}}
 			</WlkButton>
-        </CardFooter>
+        </WlkCardFooter>
     </WlkCard>
 </template>
 

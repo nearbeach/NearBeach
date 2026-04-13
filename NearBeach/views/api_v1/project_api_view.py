@@ -142,7 +142,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             data=request.data,
             context={
                 'request': request,
-                'method': 'PATCH'
+                'method': 'PATCH',
             },
             partial=True,
         )
