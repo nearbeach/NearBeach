@@ -10,6 +10,7 @@ from NearBeach.views.api_v1 import (
 router = SimpleRouter()
 router.register(r'coffee', coffee_api_view.CoffeeViewSet, basename='coffee')
 router.register(r'project', project_api_view.ProjectViewSet, basename='project')
+# router.register(r'object_data/link_list/<str:destination>/<int:location-id>', project_api_view.ProjectViewSet, basename='project')
 
 urlpatterns = [
     path('', include(router.urls)),

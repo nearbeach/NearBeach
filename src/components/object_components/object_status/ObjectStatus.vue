@@ -47,7 +47,6 @@ watch(statusModel, (new_value) => {
 		// Nothing to do
 		return;
 	}
-	console.log("NEW VALUE: ", new_value);
 
 	// If new value is the same as the state - do nothing
 	if (new_value === objectStore.status.id.toString()) {

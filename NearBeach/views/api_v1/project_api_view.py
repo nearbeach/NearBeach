@@ -3,6 +3,7 @@ from django.db.models import Q, F
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
@@ -10,6 +11,7 @@ from NearBeach.decorators.check_user_permissions.destination_permission import d
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.models import Project, ObjectAssignment, UserGroup, Group
 from NearBeach.serializers.project_serializer import ProjectSerializer
+from NearBeach.services.LinkListService import LinkListService
 from NearBeach.utils.api.check_group_list import check_group_list
 
 import string
@@ -75,6 +77,64 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(
             data='project deleted',
             status=status.HTTP_204_NO_CONTENT,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['GET'],
+        detail=True,
+        url_path='link_list'
+    )
+    def link_list(self, request, pk, *args, **kwargs):
+        link_list_service = LinkListService(destination="project", location_id=pk)
+        data, success = link_list_service.get_link_list()
+
+        if success:
+            return Response(
+                data=data,
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            data=data,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['POST'],
+        detail=True,
+        url_path='link_list'
+    )
+    def link_list_create(self, request, pk, *args, **kwargs):
+        link_list_service = LinkListService(destination="project", location_id=pk)
+        data, success = link_list_service.create_link(request.POST)
+
+        if success:
+            return Response(
+                data=data,
+                status=status.HTTP_201_CREATED,
+            )
+
+        return Response(
+            data=data,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['DELETE'],
+        detail=True,
+        url_path=r'list_item/(?P<link_pk>[^/.]+)'
+    )
+    def link_list_delete(self, request, pk, link_pk, *args, **kwargs):
+        link_list_service = LinkListService(destination="project", location_id=pk)
+
+        if link_list_service.delete_link(link_pk):
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST
         )
 
     @destination_permission(min_permission_level=1)
