@@ -106,11 +106,13 @@ onMounted(async () => {
 		return;
 	}
 
+	// TODO - move to fetch
 	await apiClient?.get(
 		`/api/v1/${destination}/${id}/`
 	).then(response => {
 		// Specify the destination
 		response.data.destination = destination;
+		response.data.is_loaded = true;
 
 		// Patch the data from API
 		objectStore.$patch(response.data);

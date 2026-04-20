@@ -9,6 +9,7 @@ export const useObjectStore = defineStore('object', {
             end_date: null,
             group_list: [],
             id: 0,
+            is_loaded: false,
             organisation: {},
             priority: {
                 value: 0,

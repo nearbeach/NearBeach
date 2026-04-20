@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {required, WlkSelect} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
-import {ref, watch} from "vue";
+import {ref, watch, onMounted} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
@@ -41,24 +41,28 @@ const props = defineProps({
 		required: true,
 	},
 	relationship: {
-		type: Number,
+		type: String,
+		required: true,
+	},
+	reverseRelationship: {
+		type: Boolean,
 		required: true,
 	},
 });
 
 // Define ref
-const relationshipModel = ref<number>(props.relationship);
+const relationshipModel = ref<string>("");
 const state = ref<string>("");
 
 // Define constants
 const relationshipList = [
-	{value: 0, label: t("relates_to")},
-	{value: 1, label: t("is_blocked_by")},
-	{value: 2, label: t("is_currently_blocking")},
-	{value: 3, label: t("is_sub_object_of")},
-	{value: 4, label: t("is_parent_object_of")},
-	{value: 5, label: t("has_duplicate_object_of")},
-	{value: 6, label: t("is_duplicate_object_of")},
+	{value: "relates_to", label: t("relates_to")},
+	{value: "is_blocked_by", label: t("is_blocked_by")},
+	{value: "is_currently_blocking", label: t("is_currently_blocking")},
+	{value: "is_sub_object_of", label: t("is_sub_object_of")},
+	{value: "is_parent_object_of", label: t("is_parent_object_of")},
+	{value: "has_duplicate_object_of", label: t("has_duplicate_object_of")},
+	{value: "is_duplicate_object_of", label: t("is_duplicate_object_of")},
 ]
 
 // Define store
@@ -108,6 +112,29 @@ watch(relationshipModel, (new_value, old_value) => {
 		console.error(error);
 	});
 	*/
+});
+
+onMounted(() => {
+	switch (props.relationship?.toLowerCase()) {
+		case "block":
+			relationshipModel.value = props.reverseRelationship
+				? "is_blocked_by"
+				: "is_currently_blocking";
+			break;
+		case "duplicate":
+			relationshipModel.value = props.reverseRelationship
+				? "has_duplicate_object_of"
+				: "is_duplicate_object_of";
+			break;
+		case "subobject":
+			relationshipModel.value = props.reverseRelationship
+				? "is_sub_object_of"
+				: "is_parent_object_of";
+			break;
+		default:
+			relationshipModel.value = "relates_to";
+			break;
+	}
 });
 </script>
 

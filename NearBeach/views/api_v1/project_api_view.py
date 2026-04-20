@@ -87,17 +87,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     )
     def link_list(self, request, pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
-        data, success = link_list_service.get_link_list()
-
-        if success:
-            return Response(
-                data=data,
-                status=status.HTTP_200_OK,
-            )
+        serializer = link_list_service.get_link_list()
 
         return Response(
-            data=data,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=serializer.data,
+            status=status.HTTP_200_OK,
         )
 
     @destination_permission(min_permission_level=1)
@@ -108,16 +102,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
     )
     def link_list_create(self, request, pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
-        data, success = link_list_service.create_link(request.POST)
+        serializer, success = link_list_service.create_link(request.POST)
 
         if success:
             return Response(
-                data=data,
+                data=serializer.data,
                 status=status.HTTP_201_CREATED,
             )
 
         return Response(
-            data=data,
+            data=serializer.errors,
             status=status.HTTP_400_BAD_REQUEST,
         )
 

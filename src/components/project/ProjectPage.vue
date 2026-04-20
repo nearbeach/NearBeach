@@ -19,12 +19,18 @@ const {t} = useI18n({
 	messages: {
 		en: {
 			linked_objects: "Linked Objects",
+			loading_documents: "Loading Documents",
+			loading_misc: "Loading Misc",
+			loading_notes: "Loading Notes",
 			documentation: "Documentation",
 			notes: "Notes & Comments",
 			misc: "Misc",
 		},
 		ja: {
 			linked_objects: "リンクされたオブジェクト",
+			loading_documents: "ドキュメントの読み込み",
+			loading_misc: "その他を読み込んでいます",
+			loading_notes: "注記",
 			documentation: "文書",
 			notes: "注釈とコメント",
 			misc: "その他",
@@ -66,7 +72,6 @@ onMounted(() => {
 					</template>
 					<template #misc>
 						<PublicLinks/>
-						<SprintPlanning/>
 					</template>
 				</WlkTabs>
 			</WlkCard>

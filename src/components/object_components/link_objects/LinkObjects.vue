@@ -1,50 +1,99 @@
 <script setup lang="ts">
-import ObjectStatus from "@/components/object_components/object_status/ObjectStatus.vue";
 import {TrashIcon} from "lucide-vue-next";
 import {useI18n} from "petite-vue-i18n";
-import {ref} from "vue";
+import {watch, nextTick, onMounted, ref} from "vue";
 import RelationshipLink from "@/components/object_components/link_objects/RelationshipLink/RelationshipLink.vue";
+import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
+import {useObjectStore} from "@/stores/object/object.ts";
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import SmallLoadingSkeleton from "@/components/object_components/skeletons/SmallLoadingSkeleton.vue";
 
 // Define i18n
 const {t} = useI18n({
 	messages: {
 		en: {
+			loading: "Loading Object Links",
 			text: "Connect current object to other objects within NearBeach.",
 		},
 		ja: {
+			loading: "オブジェクトリンク",
 			text: "ニアビーチ内の現在のオブジェクトを他のオブジェクトに接続する.",
 		},
 	},
 });
 
-const testData = ref([1, 3])
+// Define stores
+const objectStore = useObjectStore();
+
+// Define ref
+const objectLinkList = ref<ObjectLinkInterface[]>([]);
+const isLoaded = ref<boolean>(false);
+
+// Watch a specific state property
+watch(
+	() => objectStore.is_loaded,
+	async (new_value) => {
+		// If new_value is false - nothing is loaded
+		if (!new_value) {
+			return;
+		}
+
+		// State we are loading
+		isLoaded.value = false;
+
+		console.log("LOADING STUFF");
+
+		// Fetch the required data
+		await fetch(
+			`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				},
+			},
+		).then(async (response) => {
+			objectLinkList.value = await response.json();
+			isLoaded.value = true;
+		}).catch((error) => {
+			// TODO - handle error's correctly
+			console.error(error);
+		});
+	}
+)
+
 </script>
 
 <template>
 	<div class="link-objects">
-		<p class="sub-text">{{t('text')}}</p>
-		<div class="link-objects-table">
-
+		<p class="sub-text">{{ t('text') }}</p>
+		<div v-if="isLoaded"
+			class="link-objects-table"
+		>
 			<div
-				v-for="(relationship, index) of testData"
+				v-for="(relationship, index) of objectLinkList"
 				class="link-object"
 			>
 				<div class="link-object-info">
-					<p>Pro-1 - In progress</p>
-					<h4>My super secret project</h4>
+					<p>{{relationship.object_status}}</p>
+					<h4>{{relationship.object_title}}</h4>
 				</div>
 				<div class="link-object-status">
 					<RelationshipLink
 						:index="index"
-						:relationship="relationship"
+						:relationship="relationship.link_relationship"
+						:reverse-relationship="relationship.reverse_relation"
 					/>
 				</div>
 				<div class="link-object-delete">
-					<TrashIcon width="20" height="20" />
+					<TrashIcon width="20" height="20"/>
 				</div>
 			</div>
-
 		</div>
+		<SmallLoadingSkeleton v-else>
+			{{t("loading")}}
+		</SmallLoadingSkeleton>
 	</div>
 </template>
 
@@ -127,7 +176,7 @@ const testData = ref([1, 3])
 
 				@media (--large-screen) {
 					position: inherit;
-					transform: translate(0.5rem,-1rem);
+					transform: translate(0.5rem, -1rem);
 					padding: 0.5rem;
 				}
 
