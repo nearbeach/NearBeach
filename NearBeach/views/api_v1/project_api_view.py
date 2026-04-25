@@ -111,7 +111,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
         return Response(
-            data=serializer.errors,
+            data=serializer,
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -129,6 +129,28 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         return Response(
             status=status.HTTP_400_BAD_REQUEST
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        method=['PATCH'],
+        detail=True,
+        url_path=r'list_item/(?P<link_pk>[^/]+)'
+    )
+    def link_list_update(self, request, pk, link_pk, *args, **kwargs):
+        link_list_service = LinkListService(destination="project", location_id=pk)
+
+        # Update the data
+        serializer, success = link_list_service.update_link(request, link_pk)
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            data=serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @destination_permission(min_permission_level=1)

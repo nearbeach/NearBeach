@@ -129,7 +129,7 @@ def initalize_admin_user(user, permission_set):
 
 
 def initalize_org(user):
-    # Create no organisation
+    # Create no organization
     submit_organisation = Organisation(
         name="No Organisation",
         website="https://nearbeach.org",

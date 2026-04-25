@@ -26,7 +26,7 @@ OBJECT_STRUCTURE = namedtuple(
 )
 
 
-class LinkListService():
+class LinkListService:
     """Service to help list/add/delete object links"""
     object_dict = {
         "change_task": ChangeTask.objects,
@@ -37,9 +37,43 @@ class LinkListService():
     }
 
     def __init__(self, destination: str, location_id: int):
-        """Initialise the class"""
+        """Initialize the class"""
         self.destination = destination
         self.location_id = location_id
+
+    def _get_parent_link(self, serializer: LinkSerializer):
+        """Uses data to determine the parent object"""
+        object_type = serializer.data["object_type"]
+
+        # If object_type == destination, we'll change this to meta
+        object_type = "meta_object" if object_type == self.destination else object_type
+
+        # Fetch relationship
+        relationship = serializer.data["relationship"]
+
+        # If relationship in array - then object type will be parent object
+        return object_type if relationship in ["blocked_by", "sub_object_of", "has_duplicate"] else self.destination
+
+    def _set_meta_object(self, object_assignment: ObjectAssignment, single_object, object_type: str):
+        # If object destination is the same as the object type, add the meta_object value
+        if self.destination == object_type:
+            # We need to set the metaobject
+            setattr(object_assignment, "meta_object", object_type)
+
+            # Update the status and the title with the correct data
+            setattr(
+                object_assignment,
+                "meta_object_title",
+                getattr(single_object, "title"),
+            )
+
+            setattr(
+                object_assignment,
+                "meta_object_status",
+                getattr(single_object, "status"),
+            )
+
+        return object_assignment
 
     def create_link(self, request):
         serializer = LinkSerializer(
@@ -65,41 +99,21 @@ class LinkListService():
             change_user=request.user,
             **{object_type: single_object},
             **{F"{self.destination}_id": self.location_id},
+            parent_link=self._get_parent_link(serializer),
+            link_relationship=RELATION_DICT[object_relation],
         )
 
-        if object_relation in ['relates', 'blocking', 'parent_object_of', 'has_duplicate']:
-            submit_object_assignment.parent_link = self.destination
-        else:
-            if self.destination == object_type:
-                submit_object_assignment.parent_link = "meta_object"
-            else:
-                submit_object_assignment.parent_link = object_type
+        # Set meta object
+        submit_object_assignment = self._set_meta_object(submit_object_assignment, single_object, object_type)
 
-        # Add the link relationship from the dictionary
-        submit_object_assignment.link_relationship = RELATION_DICT[object_relation]
-
-        # If object destination is the same as the object type, add the meta_object value
-        if self.destination == object_type:
-            # We need to set the meta object
-            setattr(submit_object_assignment, "meta_object", object_type)
-
-            # Update the status and the title with the correct data
-            setattr(
-                submit_object_assignment,
-                "meta_object_title",
-                getattr(single_object, "title"),
-            )
-
-            setattr(
-                submit_object_assignment,
-                "meta_object_status",
-                getattr(single_object, "status"),
-            )
-
+        # Save
         submit_object_assignment.save()
 
+        # Serializer
+        serializer = LinkSerializer(submit_object_assignment, many=False)
+
         # Now get the new data
-        return self.get_link_list(), True
+        return serializer, True
 
     def delete_link(self, link_pk):
         object_assignment_results = ObjectAssignment.objects.filter(
@@ -134,7 +148,7 @@ class LinkListService():
             )
         )
 
-        # Setup the data point list to loop through. Have to add the generic meta
+        # Set up the data point list to loop through. Have to add the generic meta
         data_point_list: list[OBJECT_STRUCTURE] = [
             OBJECT_STRUCTURE(
                 "project_id",
@@ -257,3 +271,61 @@ class LinkListService():
             data_results,
             many=True,
         )
+
+    def update_link(self, request, link_id):
+        """Method to update a link"""
+        serializer = LinkSerializer(
+            data=request.data,
+            # context={'request': request}
+        )
+        if not serializer.is_valid():
+            return serializer.errors, False
+
+        # Fetch object assignment row
+        object_assignment = ObjectAssignment.objects.get(
+            Q(
+                is_deleted=False,
+                pk=link_id,
+            ) &
+            Q(
+                # The object could be in its natural field, or the meta field
+                Q(
+                    **{self.destination + "_id": self.location_id},
+                ) |
+                Q(
+                    meta_object=self.location_id,
+                )
+            )
+        )
+        if object_assignment is None:
+            return {"Object Assignment does not exist"}, False
+
+        # Get the parent object of
+        object_type = serializer.data["object_type"]
+        object_relation = serializer.data["object_relation"]
+
+        # Check to make sure the object_id exists
+        if not object_type in list(self.object_dict):
+            return {"Object Type not in system"}, False
+
+        # Get single object
+        single_object = self.object_dict[object_type].get(pk=serializer.validated_data["object_id"])
+
+        # Update the data
+        setattr(object_assignment, object_type, single_object)
+        setattr(object_assignment, self.destination, self.location_id)
+        object_assignment.change_user = request.user
+        object_assignment.parent_link=self._get_parent_link(serializer),
+        object_assignment.link_relationship=RELATION_DICT[object_relation],
+
+        # Handle meta
+        object_assignment = self._set_meta_object(object_assignment, single_object, object_type)
+
+        # Save
+        object_assignment.save()
+
+        # Serialize and send back results
+        serializer = LinkSerializer(object_assignment, many=False)
+
+        # Now get the new data
+        return serializer, True
