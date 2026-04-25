@@ -3,7 +3,7 @@
 from django.db import models
 from django.conf import settings
 
-from NearBeach.models.requirement.requirement import Requirement, ListOfRequirementStatus, ListOfRequirementType
+from NearBeach.models.requirement.requirement import Requirement
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
 from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus

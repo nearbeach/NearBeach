@@ -1,7 +1,6 @@
 """Module providing abstracted class containing start and end date"""
 
 from django.db import models
-from django.conf import settings
 
 # ABSTRACTED CLASS
 class DateTimeAbstraction(models.Model):

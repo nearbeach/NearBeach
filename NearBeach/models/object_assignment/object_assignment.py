@@ -22,7 +22,7 @@ class ObjectAssignment(CommonInfo):
     """
     Class containing fields for the Object Assignment table.
 
-    Object permissions is the centralised permissions for all objects
+    Object permissions is the centralized permissions for all objects
     - Requirement
     - Project
     - Task

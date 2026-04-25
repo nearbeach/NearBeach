@@ -39,7 +39,7 @@ class Notification(CommonInfo):
     """
     Class contains fields for Notification tables
 
-    Administrator can utilise this field to store notifications to tell users.
+    Administrator can utilize this field to store notifications to tell users.
     Notifications can appear on;
     - Login screen
     - Dashboard
