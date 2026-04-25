@@ -133,9 +133,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @destination_permission(min_permission_level=1)
     @action(
-        method=['PATCH'],
+        methods=['PATCH'],
         detail=True,
-        url_path=r'list_item/(?P<link_pk>[^/]+)'
+        url_path = r'list_item/(?P<link_pk>[^/.]+)'
     )
     def link_list_update(self, request, pk, link_pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
@@ -184,7 +184,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
         show_closed = request.query_params.get("show_closed", None)
-        if show_closed is not "true":
+        if not show_closed == "true":
             # Hide all the closed
             project_results = project_results.exclude(
                 status__higher_order_status="Closed",
