@@ -12,6 +12,7 @@ from NearBeach.decorators.check_user_permissions.object_permission import object
 from NearBeach.models import Project, ObjectAssignment, UserGroup, Group
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.services.LinkListService import LinkListService
+from NearBeach.services.NoteService import NoteService
 from NearBeach.utils.api.check_group_list import check_group_list
 
 import string
@@ -85,7 +86,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path='link_list'
     )
-    def link_list(self, request, pk, *args, **kwargs):
+    def link_list(self, _, pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
         serializer = link_list_service.get_link_list()
 
@@ -204,6 +205,89 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(
             data=serializer.data,
             status=status.HTTP_200_OK,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['GET'],
+        detail=True,
+        url_path='notes',
+    )
+    def notes(self, _, pk, *args, **kwargs):
+        note_service = NoteService(destination="project", location_id=pk)
+
+        # Get data
+        serialize = note_service.get_all_notes()
+
+        # Return data
+        return Response(
+            data=serialize.data,
+            status=status.HTTP_200_OK,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['POST'],
+        detail=True,
+        url_path='notes',
+    )
+    def notes_create(self, request, pk):
+        note_service = NoteService(destination="project", location_id=pk)
+
+        # Create note
+        serializer, success = note_service.create_note(request)
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_201_CREATED,
+            )
+
+        return Response(
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=2)
+    @action(
+        methods=['DELETE'],
+        detail=True,
+        url_path=r'notes/(?P<note_pk>[^/.]+)'
+    )
+    def notes_delete(self, request, pk, note_pk):
+        note_service = NoteService(destination="project", location_id=pk)
+
+        # Delete notes
+        success = note_service.delete_note(note_pk)
+        if success:
+            return Response(
+                status=status.HTTP_204_NO_CONTENT,
+            )
+
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=2)
+    @action(
+        methods=['DELETE'],
+        detail=True,
+        url_path=r'notes/(?P<note_pk>[^/.]+)'
+    )
+    def notes_update(self, request, pk, note_pk):
+        note_service = NoteService(destination="project", location_id=pk)
+
+        # Update notes
+        serializer, success = note_service.update_note(request, note_pk)
+
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @staticmethod
