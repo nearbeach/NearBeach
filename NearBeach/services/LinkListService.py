@@ -1,46 +1,16 @@
-from collections import namedtuple
 from NearBeach.models import (
     ObjectAssignment,
     KanbanCard,
-    ChangeTask,
-    Project,
-    Task,
-    Requirement,
-    RequirementItem,
 )
 from django.db.models import Q, F, Value
 
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer
+from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction, OBJECT_STRUCTURE
 from NearBeach.utils.dicts.relation_dict import RELATION_DICT
 
-# OBJECT STRUCTURE TYPE
-OBJECT_STRUCTURE = namedtuple(
-    "ObjectStructure",
-    [
-        "object_id",
-        "object_title",
-        "object_status",
-        "object_type",
-        "non_null_field"
-    ]
-)
 
-
-class LinkListService:
+class LinkListService(ObjectServiceAbstraction):
     """Service to help list/add/delete object links"""
-    object_dict = {
-        "change_task": ChangeTask.objects,
-        "project": Project.objects,
-        "task": Task.objects,
-        "requirement": Requirement.objects,
-        "requirement_item": RequirementItem.objects,
-    }
-
-    def __init__(self, destination: str, location_id: int):
-        """Initialize the class"""
-        self.destination = destination
-        self.location_id = location_id
-
     def _get_parent_link(self, serializer: LinkSerializer):
         """Uses data to determine the parent object"""
         object_type = serializer.data["object_type"]
@@ -75,10 +45,9 @@ class LinkListService:
 
         return object_assignment
 
-    def create_link(self, request):
+    def create(self, request):
         serializer = LinkSerializer(
             data=request.data,
-            # context={'request': request}
         )
         if not serializer.is_valid():
             return serializer, False
@@ -115,10 +84,10 @@ class LinkListService:
         # Now get the new data
         return serializer, True
 
-    def delete_link(self, link_pk):
+    def delete(self, object_id):
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
-            pk=link_pk,
+            pk=object_id,
             **{self.destination: self.location_id},
         )
 
@@ -131,7 +100,7 @@ class LinkListService:
 
         return True
 
-    def get_link_list(self):
+    def get_list(self, _):
         object_assignment_results = ObjectAssignment.objects.filter(
             Q(
                 is_deleted=False,
@@ -272,7 +241,7 @@ class LinkListService:
             many=True,
         )
 
-    def update_link(self, request, link_id):
+    def update(self, request, object_id):
         """Method to update a link"""
         serializer = LinkSerializer(
             data=request.data,
@@ -285,7 +254,7 @@ class LinkListService:
         object_assignment = ObjectAssignment.objects.get(
             Q(
                 is_deleted=False,
-                pk=link_id,
+                pk=object_id,
             ) &
             Q(
                 # The object could be in its natural field, or the meta field

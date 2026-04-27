@@ -1,33 +1,16 @@
 from NearBeach.models import (
     ObjectNote,
     KanbanCard,
-    ChangeTask,
-    Project,
-    Task,
-    Requirement,
-    RequirementItem,
 )
 from django.db.models import F, Value, Case, When
 
 from NearBeach.serializers.object_data.note_serializer import NoteSerializer
+from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 
 
-class NoteService:
+class NoteService(ObjectServiceAbstraction):
     """Service to help create, read, update and delete note objects"""
-    object_dict = {
-        "change_task": ChangeTask.objects,
-        "project": Project.objects,
-        "task": Task.objects,
-        "requirement": Requirement.objects,
-        "requirement_item": RequirementItem.objects,
-    }
-
-    def __init__(self, destination: str, location_id: int):
-        """Initialize the class"""
-        self.destination = destination
-        self.location_id = location_id
-
-    def create_note(self, request):
+    def create(self, request):
         serializer = NoteSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, False
@@ -58,7 +41,7 @@ class NoteService:
 
         return serializer, True
 
-    def delete_note(self, note_pk: int):
+    def delete(self, note_pk: int):
         """Method to delete a note"""
         object_note = ObjectNote.objects.filter(
             is_deleted=False,
@@ -75,7 +58,7 @@ class NoteService:
 
         return True
 
-    def get_all_notes(self, request):
+    def get_list(self, request):
         """Method to retrieve all notes for an object"""
         note_results = ObjectNote.objects.filter(
             is_deleted=False,
@@ -103,7 +86,7 @@ class NoteService:
         # Serialise
         return NoteSerializer(note_results, many=True)
 
-    def update_note(self, request, pk):
+    def update(self, request, pk):
         """Method to update a note"""
         serializer = NoteSerializer(data=request.data)
         if not serializer.is_valid():
