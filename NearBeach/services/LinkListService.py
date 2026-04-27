@@ -13,16 +13,16 @@ class LinkListService(ObjectServiceAbstraction):
     """Service to help list/add/delete object links"""
     def _get_parent_link(self, serializer: LinkSerializer):
         """Uses data to determine the parent object"""
-        object_type = serializer.data["object_type"]
+        object_type = serializer.validated_data["object_type"]
 
         # If object_type == destination, we'll change this to meta
         object_type = "meta_object" if object_type == self.destination else object_type
 
         # Fetch relationship
-        relationship = serializer.data["relationship"]
+        relationship = serializer.validated_data["object_relation"]
 
         # If relationship in array - then object type will be parent object
-        return object_type if relationship in ["blocked_by", "sub_object_of", "has_duplicate"] else self.destination
+        return str(object_type) if relationship in ["blocked_by", "sub_object_of", "has_duplicate"] else str(self.destination)
 
     def _set_meta_object(self, object_assignment: ObjectAssignment, single_object, object_type: str):
         # If object destination is the same as the object type, add the meta_object value
@@ -241,11 +241,10 @@ class LinkListService(ObjectServiceAbstraction):
             many=True,
         )
 
-    def update(self, request, object_id):
+    def update(self, request, object_assignment_id):
         """Method to update a link"""
         serializer = LinkSerializer(
             data=request.data,
-            # context={'request': request}
         )
         if not serializer.is_valid():
             return serializer.errors, False
@@ -254,7 +253,7 @@ class LinkListService(ObjectServiceAbstraction):
         object_assignment = ObjectAssignment.objects.get(
             Q(
                 is_deleted=False,
-                pk=object_id,
+                pk=object_assignment_id,
             ) &
             Q(
                 # The object could be in its natural field, or the meta field
@@ -270,22 +269,25 @@ class LinkListService(ObjectServiceAbstraction):
             return {"Object Assignment does not exist"}, False
 
         # Get the parent object of
-        object_type = serializer.data["object_type"]
-        object_relation = serializer.data["object_relation"]
+        object_id = serializer.validated_data["object_id"]
+        object_type = serializer.validated_data["object_type"]
+        object_relation = serializer.validated_data["object_relation"]
 
         # Check to make sure the object_id exists
         if not object_type in list(self.object_dict):
             return {"Object Type not in system"}, False
 
         # Get single object
-        single_object = self.object_dict[object_type].get(pk=serializer.validated_data["object_id"])
+        single_object = self.object_dict[object_type].get(pk=object_id)
+        link_relationship = RELATION_DICT[object_relation]
+        parent_link=self._get_parent_link(serializer)
 
         # Update the data
         setattr(object_assignment, object_type, single_object)
-        setattr(object_assignment, self.destination, self.location_id)
+        setattr(object_assignment, F"{self.destination}_id", int(self.location_id))
         object_assignment.change_user = request.user
-        object_assignment.parent_link=self._get_parent_link(serializer),
-        object_assignment.link_relationship=RELATION_DICT[object_relation],
+        object_assignment.parent_link=str(parent_link)
+        object_assignment.link_relationship=str(link_relationship)
 
         # Handle meta
         object_assignment = self._set_meta_object(object_assignment, single_object, object_type)
@@ -293,8 +295,5 @@ class LinkListService(ObjectServiceAbstraction):
         # Save
         object_assignment.save()
 
-        # Serialize and send back results
-        serializer = LinkSerializer(object_assignment, many=False)
-
         # Now get the new data
-        return serializer, True
+        return None, True

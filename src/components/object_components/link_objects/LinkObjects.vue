@@ -33,55 +33,66 @@ const isLoaded = ref<boolean>(false);
 watch(
 	() => objectStore.is_loaded,
 	async (new_value) => {
-		// If new_value is false - nothing is loaded
-		if (!new_value) {
-			return;
+		// If object data is now loaded - fetch data
+		if (new_value) {
+			await loadData();
 		}
-
-		// State we are loading
-		isLoaded.value = false;
-
-		console.log("LOADING STUFF");
-
-		// Fetch the required data
-		await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/`,
-			{
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-			},
-		).then(async (response) => {
-			objectLinkList.value = await response.json();
-			isLoaded.value = true;
-		}).catch((error) => {
-			// TODO - handle error's correctly
-			console.error(error);
-		});
 	}
 )
 
+// Define onMount
+onMounted(async () => {
+	// Only load data if object has loaded in
+	if (objectStore.is_loaded) {
+		await loadData();
+	}
+});
+
+// Define functions
+async function loadData() {
+	// State we are loading
+	isLoaded.value = false;
+
+	// Fetch the required data
+	await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/`,
+		{
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+		},
+	).then(async (response) => {
+		objectLinkList.value = await response.json();
+		isLoaded.value = true;
+	}).catch((error) => {
+		// TODO - handle error's correctly
+		console.error(error);
+	});
+}
 </script>
 
 <template>
 	<div class="link-objects">
 		<p class="sub-text">{{ t('text') }}</p>
 		<div v-if="isLoaded"
-			class="link-objects-table"
+		     class="link-objects-table"
 		>
 			<div
 				v-for="(relationship, index) of objectLinkList"
 				class="link-object"
 			>
 				<div class="link-object-info">
-					<p>{{relationship.object_status}}</p>
-					<h4>{{relationship.object_title}}</h4>
+					<p>{{ relationship.object_status }}</p>
+					<h4>{{ relationship.object_title }}</h4>
 				</div>
 				<div class="link-object-status">
 					<RelationshipLink
 						:index="index"
+						:object-assignment-id="relationship.object_assignment_id"
+						:object-id="relationship.object_id"
+						:object-type="relationship.object_type"
 						:relationship="relationship.link_relationship"
 						:reverse-relationship="relationship.reverse_relation"
 					/>
@@ -92,7 +103,7 @@ watch(
 			</div>
 		</div>
 		<SmallLoadingSkeleton v-else>
-			{{t("loading")}}
+			{{ t("loading") }}
 		</SmallLoadingSkeleton>
 	</div>
 </template>

@@ -88,7 +88,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     )
     def link_list(self, _, pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
-        serializer = link_list_service.get_link_list()
+        serializer = link_list_service.get_list(_)
 
         return Response(
             data=serializer.data,
@@ -103,7 +103,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     )
     def link_list_create(self, request, pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
-        serializer, success = link_list_service.create_link(request.POST)
+        serializer, success = link_list_service.create(request.POST)
 
         if success:
             return Response(
@@ -120,12 +120,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(
         methods=['DELETE'],
         detail=True,
-        url_path=r'list_item/(?P<link_pk>[^/.]+)'
+        url_path=r'link_list/(?P<link_pk>[^/.]+)'
     )
     def link_list_delete(self, request, pk, link_pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
 
-        if link_list_service.delete_link(link_pk):
+        if link_list_service.delete(link_pk):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(
@@ -133,24 +133,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @destination_permission(min_permission_level=1)
-    @action(
-        methods=['PATCH'],
-        detail=True,
-        url_path = r'list_item/(?P<link_pk>[^/.]+)'
-    )
+    @link_list_delete.mapping.patch
     def link_list_update(self, request, pk, link_pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
 
         # Update the data
-        serializer, success = link_list_service.update_link(request, link_pk)
+        serializer, success = link_list_service.update(request, link_pk)
         if success:
             return Response(
-                data=serializer.data,
                 status=status.HTTP_200_OK,
             )
 
         return Response(
-            data=serializer.errors,
+            data=serializer,
             status=status.HTTP_400_BAD_REQUEST,
         )
 
