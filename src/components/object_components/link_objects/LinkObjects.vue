@@ -1,22 +1,27 @@
 <script setup lang="ts">
+import {Plus} from "lucide-vue-next";
 import {TrashIcon} from "lucide-vue-next";
+import {WlkSelect, WlkButton, required} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import {watch, nextTick, onMounted, ref} from "vue";
-import RelationshipLink from "@/components/object_components/link_objects/RelationshipLink/RelationshipLink.vue";
+import RelationshipLink from "@/components/object_components/link_objects/relationship_link/RelationshipLink.vue";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import SmallLoadingSkeleton from "@/components/object_components/skeletons/SmallLoadingSkeleton.vue";
+import AddRelationship from "@/components/object_components/link_objects/add_relationship/AddRelationship.vue";
 
 // Define i18n
 const {t} = useI18n({
 	messages: {
 		en: {
 			loading: "Loading Object Links",
+			select_object: "Select object",
 			text: "Connect current object to other objects within NearBeach.",
 		},
 		ja: {
 			loading: "オブジェクトリンク",
+			select_object: "オブジェクトを選択",
 			text: "ニアビーチ内の現在のオブジェクトを他のオブジェクトに接続する.",
 		},
 	},
@@ -26,6 +31,7 @@ const {t} = useI18n({
 const objectStore = useObjectStore();
 
 // Define ref
+const addObjectLinkModel = ref<string>("");
 const objectLinkList = ref<ObjectLinkInterface[]>([]);
 const isLoaded = ref<boolean>(false);
 
@@ -49,6 +55,10 @@ onMounted(async () => {
 });
 
 // Define functions
+async function addObjectLink() {
+	// ADD CODE
+}
+
 async function loadData() {
 	// State we are loading
 	isLoaded.value = false;
@@ -70,6 +80,43 @@ async function loadData() {
 		// TODO - handle error's correctly
 		console.error(error);
 	});
+}
+
+async function deleteObjectLink(object_assignment_id: number, index: number) {
+	// Remove the link object from the objectLinkList
+	objectLinkList.value = objectLinkList.value.filter((_, i: number) => {
+		return i !== index;
+	});
+
+	// Update backend
+	await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/${object_assignment_id}/`,
+		{
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+		},
+	).catch((error) => {
+		// TODO - handle error's correctly
+		console.error(error);
+	});
+}
+
+function updateRelationship(data: { index: number, link_relationship: string }) {
+	let mutated_row = objectLinkList.value[data.index];
+
+	// Check mutated_row exists
+	if (mutated_row === undefined) {
+		return;
+	}
+
+	// Mutate the row
+	mutated_row.link_relationship = data.link_relationship;
+
+	// Put the row back in
+	objectLinkList.value[data.index] = mutated_row;
 }
 </script>
 
@@ -95,16 +142,22 @@ async function loadData() {
 						:object-type="relationship.object_type"
 						:relationship="relationship.link_relationship"
 						:reverse-relationship="relationship.reverse_relation"
+						v-on:update-relationship="updateRelationship"
 					/>
 				</div>
 				<div class="link-object-delete">
-					<TrashIcon width="20" height="20"/>
+					<TrashIcon
+						width="20"
+						height="20"
+						v-on:click="deleteObjectLink(relationship.object_assignment_id, index)"
+					/>
 				</div>
 			</div>
 		</div>
 		<SmallLoadingSkeleton v-else>
 			{{ t("loading") }}
 		</SmallLoadingSkeleton>
+		<AddRelationship />
 	</div>
 </template>
 
@@ -198,8 +251,5 @@ async function loadData() {
 			}
 		}
 	}
-
-
 }
-
 </style>

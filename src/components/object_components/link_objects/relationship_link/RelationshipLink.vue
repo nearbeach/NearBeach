@@ -35,6 +35,9 @@ const {t} = useI18n({
 	}
 });
 
+// Define the emits
+const emit = defineEmits(["updateRelationship"]);
+
 // Define object store
 const objectStore = useObjectStore();
 
@@ -109,8 +112,13 @@ onMounted(() => {
 async function updateRelationship() {
 	// Escape conditions
 	if (relationshipModel.value === "") {
-		return ;
+		return;
 	}
+
+	if (props.index < 0) {
+		return;
+	}
+
 
 	// Update the state
 	state.value = t("relationship_updating");
@@ -132,10 +140,12 @@ async function updateRelationship() {
 		},
 	).then(() => {
 		state.value = t("relationship_success");
+		emit("updateRelationship", { index: props.index, link_relationship: relationshipModel.value});
 
 		setTimeout(() => {
 			state.value = "";
 		}, 5000);
+
 	}).catch((error) => {
 		// TODO - handle errors properly
 		state.value = "Error Updating";
