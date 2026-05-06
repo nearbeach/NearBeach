@@ -28,7 +28,7 @@ class LinkListService(ObjectServiceAbstraction):
         # If object destination is the same as the object type, add the meta_object value
         if self.destination == object_type:
             # We need to set the metaobject
-            setattr(object_assignment, "meta_object", object_type)
+            setattr(object_assignment, "meta_object", single_object.pk)
 
             # Update the status and the title with the correct data
             setattr(
@@ -46,15 +46,13 @@ class LinkListService(ObjectServiceAbstraction):
         return object_assignment
 
     def create(self, request):
-        serializer = LinkSerializer(
-            data=request.data,
-        )
+        serializer = LinkSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer, False
 
         # Get the parent object of
-        object_type = serializer.data["object_type"]
-        object_relation = serializer.data["object_relation"]
+        object_type = serializer.validated_data["object_type"]
+        object_relation = serializer.validated_data["object_relation"]
 
         # Check to make sure the object_id exists
         if not object_type in list(self.object_dict):

@@ -96,18 +96,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @destination_permission(min_permission_level=1)
-    @action(
-        methods=['POST'],
-        detail=True,
-        url_path='link_list'
-    )
+    @link_list.mapping.post
     def link_list_create(self, request, pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
-        serializer, success = link_list_service.create(request.POST)
+        serializer, success = link_list_service.create(request)
 
         if success:
             return Response(
-                data=serializer.data,
+                data={"SUCCESS"},
                 status=status.HTTP_201_CREATED,
             )
 

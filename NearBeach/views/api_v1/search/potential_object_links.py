@@ -107,7 +107,7 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
         ).annotate(
             object_id=F("id"),
             object_title=F("title"),
-            object_type=Value("task_id"),
+            object_type=Value("task"),
         ).values(
             "object_id",
             "object_title",

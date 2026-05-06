@@ -157,7 +157,7 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 		<SmallLoadingSkeleton v-else>
 			{{ t("loading") }}
 		</SmallLoadingSkeleton>
-		<AddRelationship />
+		<AddRelationship v-if="isLoaded" />
 	</div>
 </template>
 
