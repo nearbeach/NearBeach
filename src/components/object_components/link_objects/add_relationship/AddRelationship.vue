@@ -10,6 +10,7 @@ import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 const {t} = useI18n({
 	messages: {
 		en: {
+			error_text: "Error fetching potential object links",
 			has_duplicate: "Is Duplicate Object Of",
 			blocked_by: "Is Blocked By",
 			blocking: "Is Currently Blocking",
@@ -20,6 +21,7 @@ const {t} = useI18n({
 			relates: "Relates To",
 		},
 		ja: {
+			error_text: "潜在的なオブジェクトリンクの取得中にエラーが発生しました",
 			has_duplicate: "重複オブジェクトです",
 			blocked_by: "ブロックされています",
 			blocking: "現在ブロック中です",
@@ -32,10 +34,14 @@ const {t} = useI18n({
 	}
 });
 
+// Define emit
+const emit = defineEmits(["createObjectLink"])
+
 // Define store
 const objectStore = useObjectStore();
 
 // Define models
+const errorText = ref<string>("");
 const relationshipModel = ref<string>("relates");
 const objectSelectorModel = ref<string>("");
 const objectOptions = ref<ObjectLinkInterface[]>([]);
@@ -51,37 +57,18 @@ onMounted(() => {
 });
 
 // Define functions
-async function addObjectLink() {
+async function createObjectLink() {
+	// Escape conditions
 	if (objectSelectorModel.value === null || objectSelectorModel.value === "") {
 		// Nothing to do
 		return;
 	}
 
-	const object_barcode = objectSelectorModel.value.split("-");
-	const body = {
-		object_type: object_barcode[0],
-		object_id: object_barcode[1],
-		object_relation: relationshipModel.value,
-	};
-
-	console.log("BARCODE: ", body);
-
-	await fetch(
-		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/`,
-		{
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"X-CSRFTOKEN": getCsrfToken(),
-			},
-			body: JSON.stringify(body),
-		}
-	).then((response) => {
-		console.log("GOT DATA");
-	}).catch((error) => {
-		// TODO - handle error's correctly
-		console.error(error);
-	})
+	// Emit upstream
+	emit("createObjectLink", {
+		"objectSelectorModel": objectSelectorModel.value,
+		"relationshipModel": relationshipModel.value
+	});
 }
 
 async function loadData() {
@@ -105,18 +92,23 @@ async function loadData() {
 			return condition_1 || condition_2;
 		});
 	}).catch((error) => {
-		// TODO - handle error's correctly
-		console.error(error);
+		errorText.value = t("error_text") + ": " + error;
 	});
 }
 </script>
 
 <template>
 	<div class="add-relationship">
-		<div class="add-relationship-label">
+		<div
+			v-if="errorText === ''"
+			class="add-relationship-label"
+		>
 			<label for="object-selector">{{ t("label") }}</label>
 		</div>
-		<div class="add-relationship-object">
+		<div
+			v-if="errorText === ''"
+			class="add-relationship-object"
+		>
 			<select
 				id="relationship-type"
 				v-model="relationshipModel"
@@ -143,11 +135,16 @@ async function loadData() {
 			</select>
 			<button
 				:disabled="isDisabled"
-				v-on:click="addObjectLink"
+				v-on:click="createObjectLink"
 			>
 				<Plus/>
 			</button>
 		</div>
+
+		<div
+			v-if="errorText !== ''"
+			class="error"
+		>{{ errorText }}</div>
 	</div>
 </template>
 
@@ -204,6 +201,10 @@ async function loadData() {
 				background-color: var(--border-muted);
 			}
 		}
+	}
+
+	> .error {
+		color: var(--danger);
 	}
 }
 

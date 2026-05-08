@@ -103,7 +103,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         if success:
             return Response(
-                data={"SUCCESS"},
+                data=serializer.data,
                 status=status.HTTP_201_CREATED,
             )
 

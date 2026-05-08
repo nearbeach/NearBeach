@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import {Plus} from "lucide-vue-next";
-import {TrashIcon} from "lucide-vue-next";
-import {WlkSelect, WlkButton, required} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import {watch, nextTick, onMounted, ref} from "vue";
-import RelationshipLink from "@/components/object_components/link_objects/relationship_link/RelationshipLink.vue";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import SmallLoadingSkeleton from "@/components/object_components/skeletons/SmallLoadingSkeleton.vue";
 import AddRelationship from "@/components/object_components/link_objects/add_relationship/AddRelationship.vue";
+import LinkObjectsTable from "@/components/object_components/link_objects/link_objects_table/LinkObjectsTable.vue";
 
 // Define i18n
 const {t} = useI18n({
@@ -31,9 +28,10 @@ const {t} = useI18n({
 const objectStore = useObjectStore();
 
 // Define ref
-const addObjectLinkModel = ref<string>("");
-const objectLinkList = ref<ObjectLinkInterface[]>([]);
+const errorText = ref<string>("");
 const isLoaded = ref<boolean>(false);
+const objectLinkList = ref<ObjectLinkInterface[]>([]);
+const showCreate = ref<boolean>(false);
 
 // Watch a specific state property
 watch(
@@ -55,8 +53,60 @@ onMounted(async () => {
 });
 
 // Define functions
-async function addObjectLink() {
-	// ADD CODE
+async function createObjectLink(event: {relationshipModel: string, objectSelectorModel: string}) {
+	// Show create
+	showCreate.value = true;
+	errorText.value = "";
+
+	// Split object selector to get the type and id
+	const object_barcode = event.objectSelectorModel.split("-");
+	const body = {
+		object_type: object_barcode[0],
+		object_id: object_barcode[1],
+		object_relation: event.relationshipModel,
+	};
+
+	await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/`,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+			body: JSON.stringify(body),
+		}
+	).then(async (response) => {
+		// Notify the user of the change
+		showCreate.value = false;
+
+		// Append the value
+		const data = await response.json();
+		objectLinkList.value.push(data)
+	}).catch((error) => {
+		errorText.value = error;
+	});
+}
+
+async function deleteObjectLink(event: {object_assignment_id: number, index: number}) {
+	// Remove the link object from the objectLinkList
+	objectLinkList.value = objectLinkList.value.filter((_, i: number) => {
+		return i !== event.index;
+	});
+
+	// Update backend
+	await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/${event.object_assignment_id}/`,
+		{
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+		},
+	).catch((error) => {
+		errorText.value = error;
+	});
 }
 
 async function loadData() {
@@ -77,30 +127,7 @@ async function loadData() {
 		objectLinkList.value = await response.json();
 		isLoaded.value = true;
 	}).catch((error) => {
-		// TODO - handle error's correctly
-		console.error(error);
-	});
-}
-
-async function deleteObjectLink(object_assignment_id: number, index: number) {
-	// Remove the link object from the objectLinkList
-	objectLinkList.value = objectLinkList.value.filter((_, i: number) => {
-		return i !== index;
-	});
-
-	// Update backend
-	await fetch(
-		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/${object_assignment_id}/`,
-		{
-			method: "DELETE",
-			headers: {
-				"Content-Type": "application/json",
-				"X-CSRFTOKEN": getCsrfToken(),
-			},
-		},
-	).catch((error) => {
-		// TODO - handle error's correctly
-		console.error(error);
+		errorText.value = error;
 	});
 }
 
@@ -123,41 +150,20 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 <template>
 	<div class="link-objects">
 		<p class="sub-text">{{ t('text') }}</p>
-		<div v-if="isLoaded"
-		     class="link-objects-table"
-		>
-			<div
-				v-for="(relationship, index) of objectLinkList"
-				class="link-object"
-			>
-				<div class="link-object-info">
-					<p>{{ relationship.object_status }}</p>
-					<h4>{{ relationship.object_title }}</h4>
-				</div>
-				<div class="link-object-status">
-					<RelationshipLink
-						:index="index"
-						:object-assignment-id="relationship.object_assignment_id"
-						:object-id="relationship.object_id"
-						:object-type="relationship.object_type"
-						:relationship="relationship.link_relationship"
-						:reverse-relationship="relationship.reverse_relation"
-						v-on:update-relationship="updateRelationship"
-					/>
-				</div>
-				<div class="link-object-delete">
-					<TrashIcon
-						width="20"
-						height="20"
-						v-on:click="deleteObjectLink(relationship.object_assignment_id, index)"
-					/>
-				</div>
-			</div>
-		</div>
+		<LinkObjectsTable
+			v-if="isLoaded"
+			ref="link-objects-table"
+			:objectLinkList="objectLinkList"
+			v-on:delete-object-link="deleteObjectLink"
+			v-on:update-relationship="updateRelationship"
+		/>
 		<SmallLoadingSkeleton v-else>
 			{{ t("loading") }}
 		</SmallLoadingSkeleton>
-		<AddRelationship v-if="isLoaded" />
+		<AddRelationship
+			v-if="isLoaded"
+			v-on:create-object-link="createObjectLink"
+		/>
 	</div>
 </template>
 
@@ -165,91 +171,5 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 .link-objects {
 	display: flex;
 	flex-direction: column;
-
-	> .link-objects-table {
-		display: flex;
-		flex-direction: column;
-
-		> .link-object {
-			display: flex;
-			flex-direction: column;
-			border: 1px black dashed;
-			padding: 1rem 0.5rem 0 0.5rem;
-			margin-bottom: 2rem;
-
-			@media (--medium-screen) {
-				flex-direction: row;
-				padding-right: 3rem;
-			}
-
-			@media (--large-screen) {
-				padding-right: 0.5rem;
-				margin-bottom: 0;
-				border-top: none;
-
-				&:first-child {
-					border: 1px black dashed;
-				}
-
-				&:last-child {
-					margin-bottom: 2rem;
-				}
-			}
-
-			> .link-object-info {
-				width: 100%;
-
-				h4 {
-					font-size: 1.2rem;
-					font-weight: bold;
-					margin-bottom: 0.5rem;
-				}
-
-				> p {
-					margin: 0;
-					font-size: 0.875rem;
-					font-weight: lighter;
-				}
-			}
-
-			> .link-object-status {
-				width: 100%;
-
-				@media (--medium-screen) {
-					width: 30%;
-					max-width: 12rem;
-				}
-
-				> .wlk-select {
-					margin-bottom: 0;
-				}
-			}
-
-			> .link-object-delete {
-				position: absolute;
-				left: 100%;
-				transform: translate(-2.5rem, -0.25rem);
-
-				& :hover {
-					background-color: var(--secondary-hover);
-				}
-
-				@media (--medium-screen) {
-					transform: translate(-3.75rem, -0.25rem);
-				}
-
-				@media (--large-screen) {
-					position: inherit;
-					transform: translate(0.5rem, -1rem);
-					padding: 0.5rem;
-				}
-
-				> svg {
-					width: 18px;
-					height: 18px;
-				}
-			}
-		}
-	}
 }
 </style>

@@ -11,6 +11,7 @@ from NearBeach.utils.dicts.relation_dict import RELATION_DICT
 
 class LinkListService(ObjectServiceAbstraction):
     """Service to help list/add/delete object links"""
+
     def _get_parent_link(self, serializer: LinkSerializer):
         """Uses data to determine the parent object"""
         object_type = serializer.validated_data["object_type"]
@@ -22,7 +23,8 @@ class LinkListService(ObjectServiceAbstraction):
         relationship = serializer.validated_data["object_relation"]
 
         # If relationship in array - then object type will be parent object
-        return str(object_type) if relationship in ["blocked_by", "sub_object_of", "has_duplicate"] else str(self.destination)
+        return str(object_type) if relationship in ["blocked_by", "sub_object_of", "has_duplicate"] else str(
+            self.destination)
 
     def _set_meta_object(self, object_assignment: ObjectAssignment, single_object, object_type: str):
         # If object destination is the same as the object type, add the meta_object value
@@ -77,7 +79,16 @@ class LinkListService(ObjectServiceAbstraction):
         submit_object_assignment.save()
 
         # Serializer
-        serializer = LinkSerializer(submit_object_assignment, many=False)
+        serializer = LinkSerializer({
+           "object_assignment_id": submit_object_assignment.id,
+           "object_id": single_object.id,
+           "object_title": single_object.title,
+           "object_status": single_object.status,
+           "object_type": object_type,
+           "parent_link": self._get_parent_link(serializer),
+           "link_relationship": RELATION_DICT[object_relation],
+           "reverse_relation": False,
+        })
 
         # Now get the new data
         return serializer, True
@@ -278,14 +289,14 @@ class LinkListService(ObjectServiceAbstraction):
         # Get single object
         single_object = self.object_dict[object_type].get(pk=object_id)
         link_relationship = RELATION_DICT[object_relation]
-        parent_link=self._get_parent_link(serializer)
+        parent_link = self._get_parent_link(serializer)
 
         # Update the data
         setattr(object_assignment, object_type, single_object)
         setattr(object_assignment, F"{self.destination}_id", int(self.location_id))
         object_assignment.change_user = request.user
-        object_assignment.parent_link=str(parent_link)
-        object_assignment.link_relationship=str(link_relationship)
+        object_assignment.parent_link = str(parent_link)
+        object_assignment.link_relationship = str(link_relationship)
 
         # Handle meta
         object_assignment = self._set_meta_object(object_assignment, single_object, object_type)
