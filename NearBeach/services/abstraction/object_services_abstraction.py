@@ -42,7 +42,7 @@ class ObjectServiceAbstraction(ABC):
         pass
 
     @abstractmethod
-    def delete(self, object_id):
+    def delete(self, request, object_id):
         pass
 
     @abstractmethod

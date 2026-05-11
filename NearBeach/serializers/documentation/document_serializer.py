@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from NearBeach.models import Document
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 
 
@@ -15,3 +14,6 @@ class DocumentSerializer(serializers.Serializer):
         read_only=True,
     )
     folder = FolderSerializer()
+    document = serializers.FileField(
+        required=False,
+    )

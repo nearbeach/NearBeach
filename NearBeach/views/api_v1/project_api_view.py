@@ -5,6 +5,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
+from rest_framework.parsers import MultiPartParser, JSONParser, FormParser
 from rest_framework.response import Response
 
 from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
@@ -13,6 +14,7 @@ from NearBeach.models import Project, ObjectAssignment, UserGroup, Group
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.services.LinkListService import LinkListService
 from NearBeach.services.NoteService import NoteService
+from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.utils.api.check_group_list import check_group_list
 
 import string
@@ -26,6 +28,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.filter(is_deleted=False)
     serializer_class = ProjectSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
+    parser_classes = (MultiPartParser, JSONParser, FormParser)
 
     @staticmethod
     @destination_permission(min_permission_level=3)
@@ -84,6 +87,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(
         methods=['GET'],
         detail=True,
+        url_path='documents',
+    )
+    def documents(self, _, pk, *args, **kwargs):
+        document_service = DocumentService(destination="project", location_id=pk)
+        serializer = document_service.get_list(_)
+
+        return Response(
+            data=serializer.data,
+            status=status.HTTP_200_OK,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['GET'],
+        detail=True,
         url_path='link_list'
     )
     def link_list(self, _, pk, *args, **kwargs):
@@ -121,7 +139,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def link_list_delete(self, request, pk, link_pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
 
-        if link_list_service.delete(link_pk):
+        if link_list_service.delete(request, link_pk):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(
@@ -248,7 +266,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         note_service = NoteService(destination="project", location_id=pk)
 
         # Delete notes
-        success = note_service.delete_note(note_pk)
+        success = note_service.delete(request, note_pk)
         if success:
             return Response(
                 status=status.HTTP_204_NO_CONTENT,

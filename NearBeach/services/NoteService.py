@@ -41,7 +41,7 @@ class NoteService(ObjectServiceAbstraction):
 
         return serializer, True
 
-    def delete(self, note_pk: int):
+    def delete(self, request, note_pk: int):
         """Method to delete a note"""
         object_note = ObjectNote.objects.filter(
             is_deleted=False,
@@ -54,7 +54,10 @@ class NoteService(ObjectServiceAbstraction):
             return False
 
         # Soft delete the data
-        object_note.update(is_deleted=True)
+        object_note.update(
+            is_deleted=True,
+            change_user=request.user,
+        )
 
         return True
 

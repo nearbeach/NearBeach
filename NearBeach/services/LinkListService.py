@@ -93,7 +93,7 @@ class LinkListService(ObjectServiceAbstraction):
         # Now get the new data
         return serializer, True
 
-    def delete(self, object_id):
+    def delete(self, request, object_id):
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             pk=object_id,
@@ -105,7 +105,10 @@ class LinkListService(ObjectServiceAbstraction):
             return False
 
         # Soft delete the data
-        object_assignment_results.update(is_deleted=True)
+        object_assignment_results.update(
+            is_deleted=True,
+            change_user=request.user,
+        )
 
         return True
 
