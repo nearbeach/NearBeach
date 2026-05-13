@@ -3,7 +3,7 @@ import {Folder, Trash} from "lucide-vue-next";
 import type {PropType} from "vue";
 
 // Define props
-import type {FolderItemInterface} from "@/utils/interfaces/FolderItemInterface.ts";
+import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
 
 defineProps({
 	folderList: {

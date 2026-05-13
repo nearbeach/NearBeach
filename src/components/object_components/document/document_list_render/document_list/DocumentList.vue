@@ -3,7 +3,7 @@ import {Image, File, FileText, Link, Presentation, Trash} from "lucide-vue-next"
 import type {PropType} from "vue";
 
 // Define props
-import type {DocumentItemInterface} from "@/utils/interfaces/DocumentItemInterface.ts";
+import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
 
 defineProps({
 	documentList: {

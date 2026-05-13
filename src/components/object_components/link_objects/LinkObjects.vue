@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "petite-vue-i18n";
-import {watch, nextTick, onMounted, ref} from "vue";
+import {watch, onMounted, ref} from "vue";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";

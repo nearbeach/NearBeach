@@ -1,3 +1,6 @@
+import boto3
+from botocore.config import Config
+
 from NearBeach.services.document.file_handler.FileHandler import FileHandler
 from django.http import FileResponse
 
@@ -23,10 +26,29 @@ class S3FileHandler(FileHandler):
                 **getattr(local_settings, "AWS_INIT_VALUES", {})
             )
             # Log any issues for the user
-            connect_check_client_s3(boto_init_values)
+            self._connect_check_client_s3(boto_init_values=boto_init_values)
 
         self._s3 = boto3.client("s3",   **boto_init_values)
         self._bucket = local_settings.AWS_STORAGE_BUCKET_NAME
+
+    @staticmethod
+    def _connect_check_client_s3(boto_init_values):
+        config = Config(
+            connect_timeout=4,
+            retries=dict(
+                max_attempts=1,
+            )
+        )
+        boto_init_values.update(
+            config=config
+        )
+        client = boto3.client("s3", **boto_init_values)
+
+        # Check to see if the connection works
+        try:
+            client.list_buckets()
+        except Exception as e:
+            print(F"An issue has occurred trying to connect to the S3 bucket. Please see the following errors - {e}")
 
     def delete(self, document_key_id):
         # Use boto3 to delete
