@@ -13,7 +13,20 @@ defineProps({
 });
 
 // Define computed
-function getIcon(type: string) {
+function getIcon(description: string | null, urlLocation: string | null) {
+	if (urlLocation !== null && urlLocation !== undefined && urlLocation !== "") {
+		// Links do not have a urlLocation
+		return Link;
+	}
+
+	// Make sure we have a file type at end of description
+	const splitDescription : string[] | undefined = description?.split(".");
+	if (splitDescription === undefined || splitDescription?.length === 0) {
+		return File;
+	}
+
+	// Get the type and return the appropriate logo
+	const type = splitDescription[splitDescription?.length -1];
 	switch (type) {
 		case "image":
 			return Image;
@@ -35,16 +48,19 @@ function getIcon(type: string) {
 		<div
 			class="document-item"
 			v-for="item in documentList"
-			:key="item.documentKey"
+			:key="item.key"
 		>
 			<div class="document-icon">
-				<component :is="getIcon(item.type)" />
+				<component :is="getIcon(item.description, item.url_location)" />
 			</div>
 			<div class="document-details">
 				<p>
-					<a href="javascript:void">{{ item.filename }}</a>
+					<a
+						:href="`/private/${item.key}/`"
+					>
+						{{ item.description }}
+					</a>
 				</p>
-				<p>Uploader: Socks Fluffybutt - on Jan 14th 2020</p>
 			</div>
 			<div class="document-delete">
 				<Trash />
@@ -60,7 +76,7 @@ function getIcon(type: string) {
 
 	> .document-item {
 		display: grid;
-		grid-template-columns: [icon] 2rem [details] minmax(0, 1fr) [delete] 1rem;
+		grid-template-columns: [icon] 1.5rem [details] minmax(0, 1fr) [delete] 1rem;
 		margin: 0 0 0.375rem 0;
 
 		> .document-icon {
@@ -68,8 +84,8 @@ function getIcon(type: string) {
 
 			> svg {
 				flex: 1;
-				width: 2rem;
-				height: 2rem;
+				width: 1.5rem;
+				height: 1.5rem;
 				stroke-width: 1px;
 				color: var(--document-links);
 
@@ -82,12 +98,14 @@ function getIcon(type: string) {
 		> .document-details {
 			padding-left: 0.25rem;
 			grid-column: details;
+			display: flex;
+			align-items: center;
 
 			> p {
 				margin: 0;
 				font-size: 0.75rem;
 				padding: 0;
-				line-height: 1rem;
+				line-height: 1.5rem;
 				font-family: "Roboto", sans-serif;
 				text-overflow: ellipsis;
 				overflow: hidden;
@@ -113,10 +131,10 @@ function getIcon(type: string) {
 				width: 1rem;
 				height: 1rem;
 				stroke-width: 1px;
-				color: var(--danger);
+				color: hotpink;
 
 				&:hover {
-					color: var(--danger-hover);
+					color: cornflowerblue;
 				}
 			}
 		}

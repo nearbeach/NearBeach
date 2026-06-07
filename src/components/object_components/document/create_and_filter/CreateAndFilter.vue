@@ -1,8 +1,40 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import {ref} from "vue";
 import {Folder, Link2, UploadCloudIcon, Upload} from "lucide-vue-next";
-import { WlkDropDown } from "whelk-ui"
-import type { DropDownItemsInterface } from "whelk-ui";
+import {WlkDropDown, WlkModal, WlkModalHeader} from "whelk-ui"
+import type {DropDownItemsInterface} from "whelk-ui";
+import NewFolder from "@/components/object_components/document/create_and_filter/new_folder/NewFolder.vue";
+import NewLink from "@/components/object_components/document/create_and_filter/new_link/NewLink.vue";
+import UploadDocument
+	from "@/components/object_components/document/create_and_filter/upload_document/UploadDocument.vue";
+import {useI18n} from "petite-vue-i18n";
+import { X } from "lucide-vue-next";
+
+//currentFolderId Define i18n
+const {t} = useI18n({
+	messages: {
+		en: {
+			"close_modal": "Click to close current modal",
+			"new_folder": "Create a new folder",
+			"new_link": "Create a new hyperlink",
+			"upload_document": "Upload a document",
+		},
+		ja: {
+			"close_modal": "現在のモーダルを閉じるにはクリックしてください",
+			"new_folder": "新しいフォルダーを作成する",
+			"new_link": "新しいハイパーリンクを作成する",
+			"upload_document": "ドキュメントをアップロードする",
+		},
+	}
+});
+
+// Define props
+defineProps({
+	currentFolderId: {
+		type: Number,
+		required: true,
+	},
+});
 
 // Define refs
 const dropDownItems = ref<DropDownItemsInterface[]>([
@@ -10,20 +42,69 @@ const dropDownItems = ref<DropDownItemsInterface[]>([
 	{ariaLabel: "Create a new hyperlink", icon: Link2, label: "New Link", trigger: "new_link"},
 	{ariaLabel: "Upload a document", icon: UploadCloudIcon, label: "Upload Document", trigger: "upload_document"},
 ]);
+const headerString = ref<string>("");
+const modalClass = ref<string>("");
+const updateType = ref<string>("new_folder");
 
+// Define functions
+function closeModal() {
+	modalClass.value = "";
+}
+
+function dropDownItemClicked(event: { trigger: string }) {
+	// Change the upload type
+	updateType.value = event.trigger;
+
+	// Header string
+	headerString.value = t(event.trigger);
+
+	// Show the modal
+	modalClass.value = " open";
+}
 </script>
 
 <template>
 	<div class="document-create-and-filter">
 		<WlkDropDown
 			:drop-down-items="dropDownItems"
+			v-on:dropDownItemClicked="dropDownItemClicked"
 		>
-			<Upload/> Upload
+			<Upload :size="12"/>
+			Upload
 		</WlkDropDown>
 		<div class="filter">
 			<input type="text" aria-label="Filter documents" placeholder="Filter documents..."/>
 		</div>
 	</div>
+
+	<teleport to="body">
+		<WlkModal :class="modalClass">
+			<WlkModalHeader>
+				<div class="modal-header-row">
+					<h3>{{ headerString }}</h3>
+					<X :size="20"
+					   :aria-label="t('close_modal')"
+					   v-on:click="closeModal"
+					/>
+				</div>
+			</WlkModalHeader>
+			<NewFolder
+				v-if="updateType==='new_folder'"
+				:currentFolderId="currentFolderId"
+				v-on:closeModal="closeModal"
+			/>
+			<NewLink
+				v-if="updateType==='new_link'"
+				:currentFolderId="currentFolderId"
+				v-on:closeModal="closeModal"
+			/>
+			<UploadDocument
+				v-if="updateType==='upload_document'"
+				:currentFolderId="currentFolderId"
+				v-on:closeModal="closeModal"
+			/>
+		</WlkModal>
+	</teleport>
 </template>
 
 <style scoped>
@@ -53,5 +134,11 @@ const dropDownItems = ref<DropDownItemsInterface[]>([
 			}
 		}
 	}
+}
+
+.modal-header-row {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
 }
 </style>

@@ -19,16 +19,15 @@ defineProps({
 		<div
 			class="folder-item"
 			v-for="item in folderList"
-			:key="item.folderId"
+			:key="item.id"
 		>
 			<div class="folder-icon">
 				<Folder/>
 			</div>
 			<div class="folder-details">
 				<p>
-					<a href="javascript:void">{{ item.folderName }}</a>
+					<a href="javascript:void">{{ item.description }}</a>
 				</p>
-				<p>Uploader: Socks Fluffybutt - on Jan 14th 2020</p>
 			</div>
 			<div class="folder-delete">
 				<Trash />

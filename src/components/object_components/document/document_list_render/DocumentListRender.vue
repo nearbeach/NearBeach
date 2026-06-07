@@ -1,39 +1,38 @@
 <script setup lang="ts">
-import {ref} from 'vue'
-import type {DocumentItemInterface, FolderItemInterface} from "whelk-ui";
 import DocumentList from './document_list/DocumentList.vue';
 import FolderList from "@/components/object_components/document/document_list_render/folder_list/FolderList.vue";
+import type {PropType} from "vue";
+import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
+import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
 
-// Define ref
-const documentList = ref<DocumentItemInterface[]>([
-	{ documentKey: "0000-0000-0000-0000", filename: "Book this hotel", type: "link"},
-	{ documentKey: "0000-0000-0000-0001", filename: "Pictures of Socks in a kimono.jpg", type: "image"},
-	{ documentKey: "0000-0000-0000-0002", filename: "Planning trip to Japan.docx", type: "text"},
-	{ documentKey: "0000-0000-0000-0003", filename: "Power point presentation of Socks in Japan", type: "powerpoint"},
-]);
-const folderList = ref<FolderItemInterface[]>([
-	{ folderId: 13, folderName: "Cat photos"},
-	{ folderId: 10, folderName: "Design specs"},
-	{ folderId: 11, folderName: "User Flow Diagrams"},
-	{ folderId: 12, folderName: "User Stories"},
-]);
+// Define props
+const props = defineProps({
+	documents: {
+		type: Array as PropType<DocumentItemInterface[]>,
+		required: true,
+	},
+	folders: {
+		type: Array as PropType<FolderItemInterface[]>,
+		required: true,
+	},
+})
 </script>
 
 <template>
 	<div class="document-list-render">
 		<div
-			v-show="documentList.length + folderList.length === 0"
+			v-show="documents.length + folders.length === 0"
 			class="empty-folder"
 		>
 			No Items in folder
 		</div>
 		<FolderList
-			v-if="folderList.length > 0"
-			:folder-list="folderList"
+			v-if="folders.length > 0"
+			:folder-list="folders"
 		/>
 		<DocumentList
-			v-if="documentList.length > 0"
-			:document-list="documentList"
+			v-if="documents.length > 0"
+			:document-list="documents"
 		/>
 	</div>
 </template>

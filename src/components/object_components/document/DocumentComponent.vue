@@ -87,13 +87,18 @@ function updateFolderLocation(data: { index: number }) {
 
 <template>
 	<div class="document">
-		<CreateAndFilter/>
+		<CreateAndFilter
+			:currentFolderId="currentFolderId"
+		/>
 		<BreadCrumbs
 			:bread-crumbs-array="breadCrumbsArray"
 			v-on:goToRootFolder="goToRootFolder"
 			v-on:updateFolderLocation="updateFolderLocation"
 		/>
-		<DocumentListRender/>
+		<DocumentListRender
+			:documents="documents"
+			:folders="folders"
+		/>
 	</div>
 </template>
 

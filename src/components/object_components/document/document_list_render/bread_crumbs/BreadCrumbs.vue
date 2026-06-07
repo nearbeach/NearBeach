@@ -1,11 +1,25 @@
 <script setup lang="ts">
-import type {FolderArrayInterface} from "@/utils/interfaces/documents/BreadCrumbsArrayInterface.ts";
 import {computed, type PropType} from "vue";
+import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
+import {useI18n} from "petite-vue-i18n";
+import type {BreadCrumbsArrayInterface} from "@/utils/interfaces/documents/BreadCrumbsArrayInterface.ts";
+
+// Define i18n
+const {t} = useI18n({
+	messages: {
+		en: {
+			rootLabel: "Root",
+		},
+		ja: {
+			rootLabel: "ルートディレクトリ",
+		},
+	}
+})
 
 // Define props
 const props = defineProps({
 	breadCrumbsArray: {
-		type: Array as PropType<FolderArrayInterface[]>,
+		type: Array as PropType<BreadCrumbsArrayInterface[]>,
 		required: true,
 	},
 });
@@ -17,11 +31,11 @@ const emits = defineEmits(["goToRootFolder","updateFolderLocation"]);
 const currentFolderLabel = computed(() => {
 	// If folderArray length is 0 - return null string
 	if (props.breadCrumbsArray?.length === 0) {
-		return "";
+		return t("rootLabel");
 	}
 
 	// Get last array object and return the label
-	return props.breadCrumbsArray[props.breadCrumbsArray.length - 1]?.label;
+	return props.breadCrumbsArray[props.breadCrumbsArray.length - 1]?.description;
 });
 
 const getInbetweenFolders = computed(() => {
@@ -37,20 +51,21 @@ const getInbetweenFolders = computed(() => {
 <template>
 	<div class="bread-crumbs">
 		<a
+			v-if="breadCrumbsArray.length > 0"
 			type="button"
 			class="root-button"
 			v-on:click="emits('goToRootFolder')"
 		>
-			Root
+			{{t("rootLabel")}}
 		</a>
 		<span class="middle-span">
 			<a v-for="(folder, index) in getInbetweenFolders"
 			   class="navigation-button"
 			   type="button"
-			   :key="folder.folderId"
+			   :key="folder.id"
 			   v-on:click="emits('updateFolderLocation', { index })"
 			>
-				{{folder.label}}
+				{{folder.description}}
 			</a>
 		</span>
 		<span class="end-span">{{currentFolderLabel}}</span>
