@@ -98,6 +98,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
+    # TODO - Write documentation post where users can; create folders, insert hyperlinks, upload documentation
+
     @destination_permission(min_permission_level=1)
     @action(
         methods=['GET'],

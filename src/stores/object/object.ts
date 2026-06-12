@@ -1,35 +1,58 @@
 // store/object.ts
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
 
 export const useObjectStore = defineStore('object', {
-    state: () => {
-        return {
-            description: "",
-            destination: "",
-            end_date: null,
-            group_list: [],
+    state: () => ({
+        description: "",
+        destination: "",
+        end_date: null,
+        group_list: [],
+        id: 0,
+        is_loaded: false,
+        organisation: {},
+        priority: {
+            value: 0,
+            label: "",
+        },
+        start_date: null,
+        status: {
             id: 0,
-            is_loaded: false,
-            organisation: {},
-            priority: {
+            status: "",
+            higher_order_status: {
+                value: "",
+                label: "",
+            }
+        },
+        story_points: 0,
+        title: "",
+        user_list: [],
+    }),
+    actions: {
+        resetObject() {
+            this.description = "";
+            this.destination = "";
+            this.end_date = null;
+            this.group_list = [];
+            this.id = 0;
+            this.is_loaded = false;
+            this.organisation = {};
+            this.priority = {
                 value: 0,
                 label: "",
-            },
-            start_date: null,
-            // TODO - do we really need all this extra data for the status?
-            // It'll be easier for everyone if we add the status as a model directly
-            // However we lose key information like "higher order status"
-            status: {
+            };
+            this.start_date = null;
+            this.status = {
                 id: 0,
                 status: "",
                 higher_order_status: {
                     value: "",
                     label: "",
                 }
-            },
-            story_points: 0,
-            title: "",
-            user_list: [],
+            };
+            this.story_points = 0;
+            this.title = "";
+            this.user_list = [];
         }
-    },
+    }
+
 });

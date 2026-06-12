@@ -1,39 +1,28 @@
 <script setup lang="ts">
 import DocumentList from './document_list/DocumentList.vue';
 import FolderList from "@/components/object_components/document/document_list_render/folder_list/FolderList.vue";
-import type {PropType} from "vue";
-import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
-import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
+import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
+import {computed} from "vue";
 
-// Define props
-const props = defineProps({
-	documents: {
-		type: Array as PropType<DocumentItemInterface[]>,
-		required: true,
-	},
-	folders: {
-		type: Array as PropType<FolderItemInterface[]>,
-		required: true,
-	},
+// Define stores
+const documentationStore = useDocumentationStore();
+
+// Define computed
+const hasNoResults = computed(() => {
+	return documentationStore.documents.length + documentationStore.folders.length === 0;
 })
 </script>
 
 <template>
 	<div class="document-list-render">
 		<div
-			v-show="documents.length + folders.length === 0"
+			v-show="hasNoResults"
 			class="empty-folder"
 		>
 			No Items in folder
 		</div>
-		<FolderList
-			v-if="folders.length > 0"
-			:folder-list="folders"
-		/>
-		<DocumentList
-			v-if="documents.length > 0"
-			:document-list="documents"
-		/>
+		<FolderList/>
+		<DocumentList/>
 	</div>
 </template>
 

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import {computed, type PropType} from "vue";
-import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
 import {useI18n} from "petite-vue-i18n";
-import type {BreadCrumbsArrayInterface} from "@/utils/interfaces/documents/BreadCrumbsArrayInterface.ts";
+import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -14,47 +13,39 @@ const {t} = useI18n({
 			rootLabel: "ルートディレクトリ",
 		},
 	}
-})
-
-// Define props
-const props = defineProps({
-	breadCrumbsArray: {
-		type: Array as PropType<BreadCrumbsArrayInterface[]>,
-		required: true,
-	},
 });
 
-// Define emits
-const emits = defineEmits(["goToRootFolder","updateFolderLocation"]);
+// Define stores
+const documentationStore = useDocumentationStore();
 
 // Define computed
 const currentFolderLabel = computed(() => {
 	// If folderArray length is 0 - return null string
-	if (props.breadCrumbsArray?.length === 0) {
+	if (documentationStore.breadCrumbsArray?.length === 0) {
 		return t("rootLabel");
 	}
 
 	// Get last array object and return the label
-	return props.breadCrumbsArray[props.breadCrumbsArray.length - 1]?.description;
+	return documentationStore.breadCrumbsArray[documentationStore.breadCrumbsArray.length - 1]?.description;
 });
 
 const getInbetweenFolders = computed(() => {
-	if (props.breadCrumbsArray?.length <= 1) {
+	if (documentationStore.breadCrumbsArray?.length <= 1) {
 		// Nothing to return
 		return [];
 	}
 
-	return props.breadCrumbsArray.slice(0, props.breadCrumbsArray?.length - 1);
+	return documentationStore.breadCrumbsArray.slice(0, documentationStore.breadCrumbsArray?.length - 1);
 });
 </script>
 
 <template>
 	<div class="bread-crumbs">
 		<a
-			v-if="breadCrumbsArray.length > 0"
+			v-if="documentationStore.breadCrumbsArray.length > 0"
 			type="button"
 			class="root-button"
-			v-on:click="emits('goToRootFolder')"
+			v-on:click="documentationStore.goToRootFolder()"
 		>
 			{{t("rootLabel")}}
 		</a>
@@ -63,7 +54,7 @@ const getInbetweenFolders = computed(() => {
 			   class="navigation-button"
 			   type="button"
 			   :key="folder.id"
-			   v-on:click="emits('updateFolderLocation', { index })"
+			   v-on:click="documentationStore.updateFolderLocation(index)"
 			>
 				{{folder.description}}
 			</a>

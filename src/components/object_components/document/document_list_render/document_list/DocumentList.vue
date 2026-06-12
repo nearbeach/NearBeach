@@ -1,16 +1,9 @@
 <script setup lang="ts">
 import {Image, File, FileText, Link, Presentation, Trash} from "lucide-vue-next";
-import type {PropType} from "vue";
+import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 
-// Define props
-import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
-
-defineProps({
-	documentList: {
-		type: Array as PropType<DocumentItemInterface[]>,
-		required: true,
-	},
-});
+// Define store
+const documentationStore = useDocumentationStore();
 
 // Define computed
 function getIcon(description: string | null, urlLocation: string | null) {
@@ -47,7 +40,7 @@ function getIcon(description: string | null, urlLocation: string | null) {
 	<div class="document-list">
 		<div
 			class="document-item"
-			v-for="item in documentList"
+			v-for="item in documentationStore.getDocuments"
 			:key="item.key"
 		>
 			<div class="document-icon">
@@ -56,6 +49,7 @@ function getIcon(description: string | null, urlLocation: string | null) {
 			<div class="document-details">
 				<p>
 					<a
+						target="_blank"
 						:href="`/private/${item.key}/`"
 					>
 						{{ item.description }}
@@ -142,7 +136,7 @@ function getIcon(description: string | null, urlLocation: string | null) {
 		&:hover {
 			> .document-delete {
 				> svg {
-					transition: opacity 1s;
+					tradocumentListnsition: opacity 1s;
 					opacity: 1;
 				}
 			}

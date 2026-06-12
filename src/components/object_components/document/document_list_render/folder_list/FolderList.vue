@@ -1,24 +1,16 @@
 <script setup lang="ts">
 import {Folder, Trash} from "lucide-vue-next";
-import type {PropType} from "vue";
+import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 
-// Define props
-import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
-
-defineProps({
-	folderList: {
-		type: Array as PropType<FolderItemInterface[]>,
-		required: true,
-	},
-})
-
+// Define store
+const documentationStore = useDocumentationStore();
 </script>
 
 <template>
 	<div class="folder-list">
 		<div
 			class="folder-item"
-			v-for="item in folderList"
+			v-for="item in documentationStore.getFolders"
 			:key="item.id"
 		>
 			<div class="folder-icon">

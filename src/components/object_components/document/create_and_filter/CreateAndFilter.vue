@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {Folder, Link2, UploadCloudIcon, Upload} from "lucide-vue-next";
-import {WlkDropDown, WlkModal, WlkModalHeader} from "whelk-ui"
-import type {DropDownItemsInterface} from "whelk-ui";
+import {WlkDropDown, WlkModal, WlkModalHeader, WlkDropDownItem} from "whelk-ui"
 import NewFolder from "@/components/object_components/document/create_and_filter/new_folder/NewFolder.vue";
 import NewLink from "@/components/object_components/document/create_and_filter/new_link/NewLink.vue";
 import UploadDocument
@@ -17,31 +16,21 @@ const {t} = useI18n({
 			"close_modal": "Click to close current modal",
 			"new_folder": "Create a new folder",
 			"new_link": "Create a new hyperlink",
+			"upload": "Upload",
 			"upload_document": "Upload a document",
 		},
 		ja: {
 			"close_modal": "現在のモーダルを閉じるにはクリックしてください",
 			"new_folder": "新しいフォルダーを作成する",
 			"new_link": "新しいハイパーリンクを作成する",
+			"upload": "アップロード",
 			"upload_document": "ドキュメントをアップロードする",
 		},
 	}
 });
 
-// Define props
-defineProps({
-	currentFolderId: {
-		type: Number,
-		required: true,
-	},
-});
-
 // Define refs
-const dropDownItems = ref<DropDownItemsInterface[]>([
-	{ariaLabel: "Create a new folder", icon: Folder, label: "New Folder", trigger: "new_folder"},
-	{ariaLabel: "Create a new hyperlink", icon: Link2, label: "New Link", trigger: "new_link"},
-	{ariaLabel: "Upload a document", icon: UploadCloudIcon, label: "Upload Document", trigger: "upload_document"},
-]);
+const dropdownModel = ref<boolean>(false);
 const headerString = ref<string>("");
 const modalClass = ref<string>("");
 const updateType = ref<string>("new_folder");
@@ -51,12 +40,15 @@ function closeModal() {
 	modalClass.value = "";
 }
 
-function dropDownItemClicked(event: { trigger: string }) {
+function dropDownItemClicked(event: string) {
+	// Close the dropdown
+	dropdownModel.value = false;
+
 	// Change the upload type
-	updateType.value = event.trigger;
+	updateType.value = event;
 
 	// Header string
-	headerString.value = t(event.trigger);
+	headerString.value = t(event);
 
 	// Show the modal
 	modalClass.value = " open";
@@ -65,12 +57,23 @@ function dropDownItemClicked(event: { trigger: string }) {
 
 <template>
 	<div class="document-create-and-filter">
-		<WlkDropDown
-			:drop-down-items="dropDownItems"
-			v-on:dropDownItemClicked="dropDownItemClicked"
-		>
-			<Upload :size="12"/>
-			Upload
+		<WlkDropDown v-model="dropdownModel">
+			<template v-slot:button>
+				<Upload :size="12"/> {{t("upload")}}
+			</template>
+			<template v-slot:drop-down-items>
+				<WlkDropDownItem v-on:click="dropDownItemClicked('new_folder')">
+					<Folder :size="12" /> {{t("new_folder")}}
+				</WlkDropDownItem>
+
+				<WlkDropDownItem v-on:click="dropDownItemClicked('new_link')">
+					<Link2 :size="12" /> {{t("new_link")}}
+				</WlkDropDownItem>
+
+				<WlkDropDownItem v-on:click="dropDownItemClicked('upload_document')">
+					<UploadCloudIcon :size="12" /> {{t("upload_document")}}
+				</WlkDropDownItem>
+			</template>
 		</WlkDropDown>
 		<div class="filter">
 			<input type="text" aria-label="Filter documents" placeholder="Filter documents..."/>

@@ -2,6 +2,8 @@ import {createRouter, createWebHistory} from "vue-router";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {useUserStore} from "@/stores/user/user.ts";
+import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
+import {useObjectStore} from "@/stores/object/object.ts";
 
 // Async components
 const DashboardPage = () =>
@@ -158,11 +160,17 @@ router.beforeEach(async (to, _, next) => {
     // Setup store
     const permissionStore = usePermissionStore();
     const destination: string | undefined = to.meta.destination as string | undefined;
+    const documentationStore = useDocumentationStore();
+    const objectStore = useObjectStore();
 
     // Check user permissions has been loaded - other load
     if (!permissionStore.is_loaded) {
         await fetchObjectMetaData();
     }
+
+    // Clean up store data on route change
+    documentationStore.resetDocumentation();
+    objectStore.resetObject();
 
     // Validated the permissions
     if (destination === undefined) {

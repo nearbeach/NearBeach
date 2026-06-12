@@ -2,6 +2,8 @@
 import {WlkButton, required, WlkTextInput, WlkModalFooter} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import {computed, ref} from "vue";
+import {useObjectStore} from "@/stores/object/object.ts";
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -23,6 +25,9 @@ const {t} = useI18n({
 
 // Define emits
 const emit = defineEmits(["closeModal"]);
+
+// Define object store
+const objectStore = useObjectStore();
 
 // Define props
 defineProps({
@@ -46,9 +51,28 @@ const isCreateDisabled = computed(() => {
 
 // Define functions
 async function createNewFolder() {
-	// TODO - connect up to the backend
-	// Send the data to the backend :)
-	// Update the folders in DocumentComponent
+	// TODO - add to optimistic list
+	// TODO - close modal
+
+	const data_to_send = new FormData()
+	data_to_send.set("description", newFolderModel.value);
+	data_to_send.set("task", "create_folder");
+
+	const response = await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			}
+		},
+	).then((response) => {
+		// Update the folders in DocumentComponent
+	}).catch((error) => {
+		// TODO - Handle errors
+		// TODO - Remove from optimistic list
+	})
 }
 
 </script>
@@ -65,14 +89,14 @@ async function createNewFolder() {
 			class="compact"
 			v-on:click="emit('closeModal')"
 		>
-			{{t("cancel")}}
+			{{ t("cancel") }}
 		</WlkButton>
 		<WlkButton
 			class="compact primary"
 			:disabled="isCreateDisabled"
 			v-on:click="createNewFolder"
 		>
-			{{t("create_new_folder")}}
+			{{ t("create_new_folder") }}
 		</WlkButton>
 	</WlkModalFooter>
 </template>

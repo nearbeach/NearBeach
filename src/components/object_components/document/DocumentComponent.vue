@@ -2,23 +2,14 @@
 import CreateAndFilter from "@/components/object_components/document/create_and_filter/CreateAndFilter.vue";
 import DocumentListRender from "@/components/object_components/document/document_list_render/DocumentListRender.vue";
 import BreadCrumbs from "@/components/object_components/document/document_list_render/bread_crumbs/BreadCrumbs.vue";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, watch} from "vue";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
-import type {BreadCrumbsArrayInterface} from "@/utils/interfaces/documents/BreadCrumbsArrayInterface.ts";
-import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
-import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
 import type {FileSystemInterface} from "@/utils/interfaces/documents/FileSystemInterface.ts";
-
-// Define refs
-const breadCrumbsArray = ref<BreadCrumbsArrayInterface[]>([]);
-const currentFolderId = ref(0);
-const documents = ref<DocumentItemInterface[]>([]);
-const folders = ref<FolderItemInterface[]>([]);
-const isLoaded = ref<boolean>(false);
-const maxUploadSize = ref<number>(0);
+import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 
 // Define state
+const documentationStore = useDocumentationStore();
 const objectStore = useObjectStore();
 
 // Watch a specific state property
@@ -41,17 +32,13 @@ onMounted(async () => {
 });
 
 // Define functions
-function goToRootFolder() {
-	// Set default values
-	breadCrumbsArray.value = [];
-	currentFolderId.value = 0;
-}
-
 async function loadData() {
-	try {
-		// Tell user we are loading
-		isLoaded.value = false;
+	// If documentation is loaded - don't load again
+	if (documentationStore.isDocumentationLoaded) {
+		return;
+	}
 
+	try {
 		const response = await fetch(
 			`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
 			{
@@ -67,38 +54,21 @@ async function loadData() {
 		const data: FileSystemInterface = await response.json();
 
 		// Divie the data out
-		documents.value = data.documents;
-		folders.value = data.folders;
-		maxUploadSize.value = data.max_upload_size;
+		documentationStore.documents = data.documents;
+		documentationStore.folders = data.folders;
+		documentationStore.maxUploadSize = data.max_upload_size;
+		documentationStore.isDocumentationLoaded = true;
 	} catch (e) {
-		isLoaded.value = true;
 		// TODO - handle the errors
 	}
-}
-
-function updateFolderLocation(data: { index: number }) {
-	// Remove the unwanted folders
-	breadCrumbsArray.value = breadCrumbsArray.value.slice(0, data.index + 1);
-
-	// Update folder id
-	currentFolderId.value = breadCrumbsArray.value[data.index]?.folderId ?? 0;
 }
 </script>
 
 <template>
 	<div class="document">
-		<CreateAndFilter
-			:currentFolderId="currentFolderId"
-		/>
-		<BreadCrumbs
-			:bread-crumbs-array="breadCrumbsArray"
-			v-on:goToRootFolder="goToRootFolder"
-			v-on:updateFolderLocation="updateFolderLocation"
-		/>
-		<DocumentListRender
-			:documents="documents"
-			:folders="folders"
-		/>
+		<CreateAndFilter/>
+		<BreadCrumbs/>
+		<DocumentListRender/>
 	</div>
 </template>
 
