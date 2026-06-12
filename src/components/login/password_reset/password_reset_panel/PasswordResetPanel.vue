@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {inject, ref} from 'vue'
 import {WlkButton, WlkPasswordInput} from "whelk-ui";
-import type {AxiosInstance} from "axios";
 import router from '@/router/loginRouter.ts';
 import {useI18n} from "petite-vue-i18n";
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18y
 const {t} = useI18n({
@@ -25,16 +25,13 @@ const {t} = useI18n({
 	}
 });
 
-// Injection
-const apiClient: AxiosInstance | undefined = inject("apiClient");
-
 // Define refs
 const password1 = ref('');
 const password2 = ref('');
 const errorMessage = ref('');
 
 // Define functions
-function submitPasswordReset(): void {
+async function submitPasswordReset(): Promise<void> {
 	// Check both password math
 	if (password1.value !== password2.value) {
 		errorMessage.value = t("non_matching_password");
@@ -43,8 +40,8 @@ function submitPasswordReset(): void {
 
 	// Check the query string
 	const urlParams = new URLSearchParams(window.location.search);
-	const uid : string | null = urlParams.get('uid');
-	const token : string | null = urlParams.get('token');
+	const uid: string | null = urlParams.get('uid');
+	const token: string | null = urlParams.get('token');
 
 	if (uid === '' || uid === null || token === '' || token === null) {
 		errorMessage.value = t('query_string_missing');
@@ -52,26 +49,41 @@ function submitPasswordReset(): void {
 	}
 
 	// Send data to the backend
-	const data_to_send = new FormData();
-	data_to_send.set('password', password1.value);
-	data_to_send.set('uid', `${uid}`);
-	data_to_send.set('token', `${token}`);
+	const body = {
+		password: password1.value,
+		udi: `${uid}`,
+		token: `${token}`,
+	}
 
-	apiClient?.post(
-		`/api/v1/authentication/reset-password/`,
-		data_to_send,
-	).then(() => {
+	try {
+		await fetch(
+			`/api/v1/authentication/reset-password/`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				},
+				body: JSON.stringify(body),
+			},
+		)
+
 		// Navigate to the login screen
-		router.push('/login');
-	}).catch(error => {
-		errorMessage.value = error;
-	});
+		await router.push('/login');
+	} catch (error) {
+		// Handling the error
+		if (error instanceof Error) {
+			errorMessage.value = error.message;
+		} else {
+			errorMessage.value = String(error);
+		}
+	}
 }
 </script>
 
 <template>
 	<div class="password-reset-panel">
-		<h1 id="main-title">{{t("reset_password")}}</h1>
+		<h1 id="main-title">{{ t("reset_password") }}</h1>
 		<p class="error-message">
 			{{ errorMessage }}
 		</p>
@@ -93,7 +105,7 @@ function submitPasswordReset(): void {
 			class="primary"
 			@click="submitPasswordReset"
 		>
-			{{t('reset_password')}}
+			{{ t('reset_password') }}
 		</WlkButton>
 
 

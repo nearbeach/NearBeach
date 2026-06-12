@@ -11,15 +11,12 @@ import {
 	minLength
 } from 'whelk-ui';
 import {inject, ref, useTemplateRef} from 'vue';
-import type {AxiosInstance} from "axios";
 import {useI18n} from "petite-vue-i18n";
 import {useRoute} from "vue-router";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
 import router from "@/router/router.ts";
 import {failedValidation} from "@/composables/failedValidation.ts";
-
-// Injection
-const apiClient = inject<AxiosInstance | undefined>("apiClient");
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -89,19 +86,38 @@ async function createObject(): Promise<void> {
 	isFormSubmitting.value = true;
 
 	// Setup the form for the ajax
-	const data_to_send = new FormData();
-	data_to_send.set("title", titleModel.value);
-	data_to_send.set("group_list", groupModel.value);
+	const body = {
+		title: titleModel.value,
+		group_list: groupModel.value,
+	}
 
-	apiClient?.post(
-		`/api/v1/${route.meta.destination}/`,
-		data_to_send
-	).then((response) => {
+	try {
+		const response = await fetch(
+			`/api/v1/${route.meta.destination}/`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				},
+				body: JSON.stringify(body),
+			}
+		);
+
+		// Get the data
+		const data: { id: string } = await response.json();
+
 		// Get the ID of the response and redirect the user to the new object
-		router.push(`/${route.meta.destination}/${response.data.id}`);
-	}).catch((error) => {
+		router.push(`/${route.meta.destination}/${data.id}`);
+
+	} catch (error) {
 		// TODO - Add in the error handling
-	})
+		// if (error instanceof Error) {
+		// 	// error.message
+		// } else {
+		// 	// String(error)
+		// }
+	}
 }
 
 function updateValidation(field: string, value: boolean): void {
@@ -109,27 +125,27 @@ function updateValidation(field: string, value: boolean): void {
 	fieldValidation[field] = value
 
 	// Define if everything is filled out
-	isButtonDisabled.value = Object.entries(fieldValidation).some(([_ , value]) => {
+	isButtonDisabled.value = Object.entries(fieldValidation).some(([_, value]) => {
 		return !value;
 	});
 }
 </script>
 
 <template>
-    <WlkCard class="new-object">
+	<WlkCard class="new-object">
 		<WlkCardHeader>
-			<h1 id="main-title">{{t(`title_${route.meta.destination}`)}}</h1>
-			<p class="sub-text">{{t("sub_title")}}</p>
+			<h1 id="main-title">{{ t(`title_${route.meta.destination}`) }}</h1>
+			<p class="sub-text">{{ t("sub_title") }}</p>
 		</WlkCardHeader>
 
-        <WlkTextInput
-            v-model="titleModel"
+		<WlkTextInput
+			v-model="titleModel"
 			:label="t('input_label')"
 			:placeholderText="t(`placeholder_${route.meta.destination}`)"
 			:validationRules="[required(), maxLength(255), minLength(5)]"
 			ref="title-ref"
-            @isValid="(value) => (updateValidation('titleModel', value))"
-        />
+			@isValid="(value) => (updateValidation('titleModel', value))"
+		/>
 
 		<WlkSelect
 			:label="t('select_label')"
@@ -140,17 +156,17 @@ function updateValidation(field: string, value: boolean): void {
 			@isValid="(value) => (updateValidation('groupModel', value))"
 		/>
 
-        <WlkCardFooter>
-            <WlkButton
+		<WlkCardFooter>
+			<WlkButton
 				class="primary"
 				:is-action-running="isFormSubmitting"
 				:is-disabled="isButtonDisabled"
-                v-on:click="createObject"
+				v-on:click="createObject"
 			>
-				{{t("button_create")}}
+				{{ t("button_create") }}
 			</WlkButton>
-        </WlkCardFooter>
-    </WlkCard>
+		</WlkCardFooter>
+	</WlkCard>
 </template>
 
 <style scoped>

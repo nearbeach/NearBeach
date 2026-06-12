@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import {inject, ref, onMounted, watch} from 'vue';
-import type {AxiosInstance} from 'axios';
 import {useRoute} from 'vue-router';
 import {useSearchStore} from '@/stores/search/search.ts';
 import SearchInput from '@/components/search/search_filter/search_input/SearchInput.vue';
 import {WlkCard, WlkCardHeader, WlkCheckBox} from 'whelk-ui';
-import { useI18n } from "petite-vue-i18n";
+import {useI18n} from "petite-vue-i18n";
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
-const { t} = useI18n({
+const {t} = useI18n({
 	messages: {
 		en: {
 			closed: "Show closed objects",
@@ -47,9 +47,6 @@ const route = useRoute();
 // Define store
 const store = useSearchStore();
 
-// Injection
-const apiClient: AxiosInstance | undefined = inject("apiClient");
-
 // Ref
 const showClosed = ref(false);
 const search = ref('');
@@ -57,18 +54,18 @@ const timer = ref(0);
 
 // Define Watche
 watch(
-  () => route.meta.destination,
-  () => {
-	  // Stop Timer
-	  stopTimer();
+	() => route.meta.destination,
+	() => {
+		// Stop Timer
+		stopTimer();
 
-	  // Clear search and results
-	  search.value = "";
-	  store.searchResults = [];
+		// Clear search and results
+		search.value = "";
+		store.searchResults = [];
 
-	  // Re-search
-	  getSearchResults();
-  }
+		// Re-search
+		getSearchResults();
+	}
 );
 
 // Define onMounted
@@ -85,7 +82,7 @@ function checkboxClicked() {
 	getSearchResults();
 }
 
-function getSearchResults() {
+async function getSearchResults() {
 	// FAIL CONDITION - we just escape
 	const fail_con_1 = search.value.length <= 3 && search.value.length > 0;
 	const fail_con_2 = isNaN(parseInt(search.value))
@@ -98,18 +95,35 @@ function getSearchResults() {
 	const queryString = `?search=${search.value}&show_closed=${showClosed.value ? 'true' : 'false'}`;
 
 	// Fetch data
-	apiClient?.get(
-		`/api/v1/${route.meta.destination}/${queryString}`,
-	).then((response) => {
+	try {
+		const response = await fetch(
+			`/api/v1/${route.meta.destination}/${queryString}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				},
+			}
+		)
+
+		// Get data
+		const data = await response.json();
+
+		// Patch data
 		store.$patch({
-			previous: response.data.previous,
-			next: response.data.next,
-			searchResults: response.data.results,
+			previous: data.previous,
+			next: data.next,
+			searchResults: data.results,
 		});
-	}).catch((error) => {
-		// TODO - put in method to handle the errors
-		console.error(error);
-	})
+	} catch (error) {
+		if (error instanceof Error) {
+			// TODO - put in method to handle the errors
+			console.log(error.message);
+		} else {
+			console.log(String(error));
+		}
+	}
 }
 
 function startTimer() {
@@ -133,9 +147,9 @@ function stopTimer() {
 <template>
 	<WlkCard class="search-filter">
 		<WlkCardHeader>
-			<h1 id="main-title">{{ t(`search_${ route.meta.destination }`)}}</h1>
+			<h1 id="main-title">{{ t(`search_${route.meta.destination}`) }}</h1>
 		</WlkCardHeader>
-		<p class="instructions">{{t("instructions")}}</p>
+		<p class="instructions">{{ t("instructions") }}</p>
 		<SearchInput
 			:placeholder="t(`search_placeholder_${ route.meta.destination }`)"
 			v-model="search"

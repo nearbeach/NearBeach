@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {onMounted, inject, ref, computed} from 'vue';
 import {maxLength, minLength, required, WlkButton, WlkCard, WlkCardHeader, WlkTextArea, WlkTextInput} from 'whelk-ui';
-import type {AxiosInstance} from "axios";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {useRoute} from "vue-router";
 import {useI18n} from "petite-vue-i18n";
@@ -66,9 +65,6 @@ const {t} = useI18n({
 
 })
 
-// Injection
-const apiClient: AxiosInstance | undefined = inject("apiClient");
-
 // Define router
 const route = useRoute();
 
@@ -92,7 +88,7 @@ onMounted(async () => {
 	// Get the object id
 	const id: string | string[] | undefined = route.params.id;
 	const destination: unknown = route.meta.destination;
-	if (typeof(id) !== 'string' || isNaN(parseInt(id))) {
+	if (typeof (id) !== 'string' || isNaN(parseInt(id))) {
 		// TODO - ADD ERROR HANDLING -> 400 error page
 		return;
 	}
@@ -101,25 +97,35 @@ onMounted(async () => {
 		// id is not an int
 		return;
 	}
-	if (typeof(destination) !== 'string') {
+	if (typeof (destination) !== 'string') {
 		// TODO - ADD ERROR HANDLING -> 400 error page
 		return;
 	}
 
-	// TODO - move to fetch
-	await apiClient?.get(
-		`/api/v1/${destination}/${id}/`
-	).then(response => {
-		// Specify the destination
-		response.data.destination = destination;
-		response.data.is_loaded = true;
+	try {
 
-		// Patch the data from API
-		objectStore.$patch(response.data);
-	}).catch((error) => {
-		// TODO - Handle errors -> match the error
-	});
+		const response = await fetch(
+			`/api/v1/${destination}/${id}/`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				}
+			}
+		);
 
+		// Get the data
+		// TODO - structure the data type
+		const data = await response.json();
+		data.destination = destination;
+		data.is_loaded = true;
+
+		objectStore.$patch(data);
+	} catch (error) {
+		// TODO - Handle error correctly
+		console.log("Error: ", error);
+	}
 });
 
 // Define computed
@@ -178,8 +184,8 @@ function updateData() {
 <template>
 	<WlkCard class="general-details">
 		<WlkCardHeader>
-			<h1 id="main-title">{{t(`${objectStore.destination}_details`)}}</h1>
-			<p class="sub-text">{{t(`${objectStore.destination}_sub_text`)}}</p>
+			<h1 id="main-title">{{ t(`${objectStore.destination}_details`) }}</h1>
+			<p class="sub-text">{{ t(`${objectStore.destination}_sub_text`) }}</p>
 		</WlkCardHeader>
 		<WlkTextInput
 			v-model="objectStore.title"
@@ -199,7 +205,7 @@ function updateData() {
 			:isDisabled="isUpdateButtonDisabled"
 			v-on:click="updateData"
 		>
-			{{renderUpdateButton}}
+			{{ renderUpdateButton }}
 		</WlkButton>
 	</WlkCard>
 

@@ -3,9 +3,9 @@ import {inject, ref} from 'vue'
 import LoginImage from "@/components/login/login_image/LoginImage.vue";
 import LoginPanel from "@/components/login/login_page/login_panel/LoginPanel.vue";
 import {ObjectStateEnum} from "@/utils/enums/ObjectStateEnum.ts";
-import type {AxiosInstance} from "axios";
 import TwoFactorPanel from "@/components/login/login_page/two_factor_panel/TwoFactorPanel.vue";
 import {useI18n} from 'petite-vue-i18n'
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18y
 const {t} = useI18n({
@@ -22,9 +22,6 @@ const {t} = useI18n({
 		}
 	}
 });
-
-// Injection
-const apiClient: AxiosInstance | undefined = inject("apiClient");
 
 // Define ref
 let fail_count = 0;
@@ -52,7 +49,7 @@ function ActiveTwoFactorPanel() {
 	buttonState.value = ObjectStateEnum.NoAction;
 }
 
-function signIn(event: any) {
+async function signIn(event: any) {
 	// Check field validation
 	if (username.value === "" || username.value === null || password.value === "" || password.value === null)
 	{
@@ -61,19 +58,31 @@ function signIn(event: any) {
 	}
 
 	// Set the data we want to send
-	const data_to_send = new FormData();
-	data_to_send.set("username", username.value);
-	data_to_send.set("password", password.value);
-	data_to_send.set("otp_token", otp_token.value);
+	const body = {
+		username: username.value,
+		password: password.value,
+		otp_token: otp_token.value,
+	}
 
 	// Tell the user we are logging in
 	buttonState.value = ObjectStateEnum.LoggingIn;
 
-	apiClient?.post(
+	await fetch(
 		"/api/v1/authentication/",
-		data_to_send
-	).then((response) => {
-		switch (response.data.status) {
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+			body: JSON.stringify(body),
+		}
+	).then(async (response: Response) => {
+		// Get data
+		const data : { status: string } = await response.json();
+
+		// Handle the next stage
+		switch (data.status) {
 			case "success":
 				UserLoggedIn();
 				break;
@@ -100,7 +109,7 @@ function signIn(event: any) {
 				error_message.value = error.message;
 				break;
 		}
-	})
+	});
 }
 
 function UserLoggedIn() {
