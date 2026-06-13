@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, inject, ref, computed} from 'vue';
+import {onMounted, ref, computed} from 'vue';
 import {maxLength, minLength, required, WlkButton, WlkCard, WlkCardHeader, WlkTextArea, WlkTextInput} from 'whelk-ui';
 import {useObjectStore} from "@/stores/object/object.ts";
 import {useRoute} from "vue-router";

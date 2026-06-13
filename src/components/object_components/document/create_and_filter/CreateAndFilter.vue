@@ -8,8 +8,9 @@ import UploadDocument
 	from "@/components/object_components/document/create_and_filter/upload_document/UploadDocument.vue";
 import {useI18n} from "petite-vue-i18n";
 import { X } from "lucide-vue-next";
+import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 
-//currentFolderId Define i18n
+// Define i18n
 const {t} = useI18n({
 	messages: {
 		en: {
@@ -93,17 +94,14 @@ function dropDownItemClicked(event: string) {
 			</WlkModalHeader>
 			<NewFolder
 				v-if="updateType==='new_folder'"
-				:currentFolderId="currentFolderId"
 				v-on:closeModal="closeModal"
 			/>
 			<NewLink
 				v-if="updateType==='new_link'"
-				:currentFolderId="currentFolderId"
 				v-on:closeModal="closeModal"
 			/>
 			<UploadDocument
 				v-if="updateType==='upload_document'"
-				:currentFolderId="currentFolderId"
 				v-on:closeModal="closeModal"
 			/>
 		</WlkModal>

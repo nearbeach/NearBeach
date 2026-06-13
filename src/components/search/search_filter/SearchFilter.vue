@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {inject, ref, onMounted, watch} from 'vue';
+import {ref, onMounted, watch} from 'vue';
 import {useRoute} from 'vue-router';
 import {useSearchStore} from '@/stores/search/search.ts';
 import SearchInput from '@/components/search/search_filter/search_input/SearchInput.vue';

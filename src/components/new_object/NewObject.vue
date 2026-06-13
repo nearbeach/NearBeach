@@ -10,7 +10,7 @@ import {
 	maxLength,
 	minLength
 } from 'whelk-ui';
-import {inject, ref, useTemplateRef} from 'vue';
+import {ref, useTemplateRef} from 'vue';
 import {useI18n} from "petite-vue-i18n";
 import {useRoute} from "vue-router";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
@@ -108,7 +108,7 @@ async function createObject(): Promise<void> {
 		const data: { id: string } = await response.json();
 
 		// Get the ID of the response and redirect the user to the new object
-		router.push(`/${route.meta.destination}/${data.id}`);
+		await router.push(`/${route.meta.destination}/${data.id}`);
 
 	} catch (error) {
 		// TODO - Add in the error handling

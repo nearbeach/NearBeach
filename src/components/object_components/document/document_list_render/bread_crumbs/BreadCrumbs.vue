@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, type PropType} from "vue";
+import {computed} from "vue";
 import {useI18n} from "petite-vue-i18n";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 

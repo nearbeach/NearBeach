@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {required, WlkSelect} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
-import {ref, watch, onMounted, nextTick} from "vue";
+import {ref, onMounted} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 

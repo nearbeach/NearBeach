@@ -94,6 +94,7 @@ function closeMenu(): void {
     </li>
 </template>
 
+<!--suppress CssUnusedSymbol -->
 <style scoped>
 .nav-bar--menu--item {
     display: flex;

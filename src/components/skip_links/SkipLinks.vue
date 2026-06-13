@@ -17,7 +17,8 @@ watch(
     <span ref="backToTop" tabindex="-1" />
     <ul class="skip-links">
         <li>
-            <a href="#main" ref="skipLink" class="skip-link"
+            <!--suppress HtmlUnknownAnchorTarget -->
+	        <a href="#main" ref="skipLink" class="skip-link"
                 >Skip to main content</a
             >
         </li>
@@ -31,11 +32,10 @@ watch(
 }
 .skip-link {
     white-space: nowrap;
-    margin: 1em auto;
+    margin: 1em auto 1em -72px;
     top: 0;
     position: fixed;
     left: 50%;
-    margin-left: -72px;
     opacity: 0;
 }
 .skip-link:focus {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {inject, ref} from 'vue'
+import {ref} from 'vue'
 import {WlkButton, WlkPasswordInput} from "whelk-ui";
 import router from '@/router/loginRouter.ts';
 import {useI18n} from "petite-vue-i18n";

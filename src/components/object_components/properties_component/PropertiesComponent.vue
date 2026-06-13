@@ -4,13 +4,8 @@ import {
 	maxValue,
 	WlkCard,
 	WlkDatetime,
-	WlkTextInput,
 	WlkNumberInput,
-	WlkSelect,
-	required,
-	type SelectOptionInterface
 } from 'whelk-ui'
-import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import ObjectStatus from "@/components/object_components/object_status/ObjectStatus.vue";
 import ObjectPriority from "@/components/object_components/object_priority/ObjectPriority.vue";

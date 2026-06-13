@@ -2,7 +2,7 @@
 import RelationshipLink from "@/components/object_components/link_objects/relationship_link/RelationshipLink.vue";
 import {TrashIcon} from "lucide-vue-next";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
-import {type PropType, ref} from "vue";
+import {type PropType} from "vue";
 import {useI18n} from "petite-vue-i18n";
 
 // Define i18n

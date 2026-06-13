@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, inject} from "vue";
+import {ref} from "vue";
 import LoginImage from "../login_image/LoginImage.vue"
 import ForgottenPasswordPanel from "./forgotten_password_panel/ForgottenPasswordPanel.vue"
 import PasswordResetDone from "./password_reset_done/PasswordResetDone.vue";
