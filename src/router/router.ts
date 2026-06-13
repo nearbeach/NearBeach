@@ -143,7 +143,7 @@ const routes = [
         },
         component: NotFoundPage,
     },
-    // Fall back page
+    // Fallback page
     {
         path: "/:catchAll(.*)*",
         component: NotFoundPage,
@@ -163,7 +163,7 @@ router.beforeEach(async (to, _, next) => {
     const documentationStore = useDocumentationStore();
     const objectStore = useObjectStore();
 
-    // Check user permissions has been loaded - other load
+    // Check the user permissions have been loaded
     if (!permissionStore.is_loaded) {
         await fetchObjectMetaData();
     }

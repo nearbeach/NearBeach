@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {Folder, Link2, UploadCloudIcon, Upload} from "lucide-vue-next";
-import {WlkDropDown, WlkModal, WlkModalHeader, WlkDropDownItem} from "whelk-ui"
+import {WlkDropDown, WlkModal, WlkModalHeader, WlkDropDownItem} from "whelk-ui";
 import NewFolder from "@/components/object_components/document/create_and_filter/new_folder/NewFolder.vue";
 import NewLink from "@/components/object_components/document/create_and_filter/new_link/NewLink.vue";
 import UploadDocument
 	from "@/components/object_components/document/create_and_filter/upload_document/UploadDocument.vue";
 import {useI18n} from "petite-vue-i18n";
-import { X } from "lucide-vue-next";
-import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
+import {X} from "lucide-vue-next";
 
 // Define i18n
 const {t} = useI18n({
@@ -60,19 +59,23 @@ function dropDownItemClicked(event: string) {
 	<div class="document-create-and-filter">
 		<WlkDropDown v-model="dropdownModel">
 			<template v-slot:button>
-				<Upload :size="12"/> {{t("upload")}}
+				<Upload :size="12"/>
+				{{t("upload")}}
 			</template>
 			<template v-slot:drop-down-items>
 				<WlkDropDownItem v-on:click="dropDownItemClicked('new_folder')">
-					<Folder :size="12" /> {{t("new_folder")}}
+					<Folder :size="12"/>
+					{{t("new_folder")}}
 				</WlkDropDownItem>
 
 				<WlkDropDownItem v-on:click="dropDownItemClicked('new_link')">
-					<Link2 :size="12" /> {{t("new_link")}}
+					<Link2 :size="12"/>
+					{{t("new_link")}}
 				</WlkDropDownItem>
 
 				<WlkDropDownItem v-on:click="dropDownItemClicked('upload_document')">
-					<UploadCloudIcon :size="12" /> {{t("upload_document")}}
+					<UploadCloudIcon :size="12"/>
+					{{t("upload_document")}}
 				</WlkDropDownItem>
 			</template>
 		</WlkDropDown>

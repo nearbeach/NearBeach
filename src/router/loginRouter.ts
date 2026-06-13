@@ -22,7 +22,7 @@ const loginRoutes = [
         component: PasswordReset,
         name: "password-reset",
     },
-    // Fall back page
+    // The fallback page
     {
         path: "/:catchAll(.*)*",
         redirect: () => {

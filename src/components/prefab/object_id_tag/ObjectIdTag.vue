@@ -31,7 +31,6 @@ const props = defineProps({
         margin-bottom: 0.125rem;
         font-size: 0.75rem;
         text-decoration-line: none;
-        color: var(--color-text);
     }
 }
 </style>

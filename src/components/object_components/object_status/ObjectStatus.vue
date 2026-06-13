@@ -48,7 +48,7 @@ watch(statusModel, (new_value) => {
 		return;
 	}
 
-	// If new value is the same as the state - do nothing
+	// If the new value is the same as the state - do nothing
 	if (new_value === objectStore.status.id.toString()) {
 		return;
 	}

@@ -83,7 +83,7 @@ const getInbetweenFolders = computed(() => {
 		}
 	}
 
-	> .middle-span href="#"{
+	> .middle-span {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;

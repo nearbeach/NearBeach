@@ -25,7 +25,7 @@ watch(
 
 // Define onMount
 onMounted(async () => {
-	// Only load data if object has loaded in
+	// Only load data if the object has loaded in
 	if (objectStore.is_loaded) {
 		await loadData();
 	}

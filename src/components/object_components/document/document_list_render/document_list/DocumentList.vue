@@ -136,7 +136,7 @@ function getIcon(description: string | null, urlLocation: string | null) {
 		&:hover {
 			> .document-delete {
 				> svg {
-					tradocumentListnsition: opacity 1s;
+					transition: opacity 1s;
 					opacity: 1;
 				}
 			}

@@ -85,7 +85,7 @@ async function createObject(): Promise<void> {
 	// Notify the user of the action
 	isFormSubmitting.value = true;
 
-	// Setup the form for the ajax
+	// Set up the form for the ajax
 	const body = {
 		title: titleModel.value,
 		group_list: groupModel.value,

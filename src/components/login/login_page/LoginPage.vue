@@ -34,10 +34,10 @@ const isLoginPage = ref(true);
 
 // Methods
 function ActivateLoginPanel() {
-	// Go back to login
+	// Go back to the login page
 	isLoginPage.value = true;
 
-	// Tell user they can use the button again
+	// Tell the user they can use the button again
 	buttonState.value = ObjectStateEnum.NoAction;
 }
 
@@ -45,7 +45,7 @@ function ActiveTwoFactorPanel() {
 	// Backend requires a 2FA key
 	isLoginPage.value = false;
 
-	// Tell user they can use the button again
+	// Tell the user they can use the button again
 	buttonState.value = ObjectStateEnum.NoAction;
 }
 
@@ -96,7 +96,6 @@ async function signIn(event: any) {
 
 		switch (error.status) {
 			case 401:
-				// error_message.value = fail_count <= 5 ? "Credentials have failed" : "Impostor detected, initiating self-destruction";
 				error_message.value = fail_count <= 5
 					? t("error_message")
 					: t("error_final_message");

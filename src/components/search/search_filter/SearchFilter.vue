@@ -52,7 +52,7 @@ const showClosed = ref(false);
 const search = ref('');
 const timer = ref(0);
 
-// Define Watche
+// Define Watch
 watch(
 	() => route.meta.destination,
 	() => {
