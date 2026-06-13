@@ -40,6 +40,8 @@ const documentationStore = useDocumentationStore();
 
 		> .folder-icon {
 			grid-column: icon;
+			display: flex;
+			align-items: center;
 
 			> svg {
 				flex: 1;
@@ -57,6 +59,8 @@ const documentationStore = useDocumentationStore();
 		> .folder-details {
 			padding-left: 0.25rem;
 			grid-column: details;
+			display: flex;
+			align-items: center;
 
 			> p {
 				margin: 0;
@@ -80,6 +84,8 @@ const documentationStore = useDocumentationStore();
 
 		> .folder-delete {
 			grid-column: delete;
+			display: flex;
+			align-items: center;
 
 			> svg {
 				opacity: 0;

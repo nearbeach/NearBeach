@@ -1,3 +1,4 @@
+from django.db.models import F
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -14,13 +15,17 @@ class DocumentLinkService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, False
 
+        # Extract data before model - bug when not done like this
+        description=serializer.validated_data['description']
+        url_location=serializer.validated_data['url_location']
+
         # Save the document link
         document_submit = Document(
             change_user=request.user,
             creation_user=request.user,
-            description=serializer.validated_data['description'],
-            url_location=serializer.validated_data['url_location'],
-            document_upload_successfully=True,
+            description=description,
+            url_location=url_location,
+            upload_successfully=True,
         )
         document_submit.save()
 
@@ -28,29 +33,40 @@ class DocumentLinkService(ObjectServiceAbstraction):
         document_permission_submit = DocumentPermission(
             change_user=request.user,
             creation_user=request.user,
-            document_key=document_submit,
-            folder=serializer.validated_data['parent_folder'],
+            document=document_submit,
             **{F"{self.destination}_id": self.location_id},
         )
+
+        # If parent folder exists
+        if "parent_folder" in serializer.validated_data:
+            folder=serializer.validated_data['parent_folder'],
+
         document_permission_submit.save()
 
         # Get current document results to send back
         document_results = DocumentPermission.objects.filter(
             is_deleted=False,
-            document_key=document_submit,
+            document=document_submit,
+        ).annotate(
+            description=F("document__description"),
+            url_location=F("document__url_location"),
+            key=F("document__key"),
         ).values(
-            "document_key_id",
-            "document_key__description",
-            "document_key__url_location",
-            "document_key__document",
+            "document",
+            "description",
+            "url_location",
+            "key",
             "folder",
         )
 
         # Serialize
-        serializer = DocumentSerializer(document_results)
+        serializer = DocumentSerializer(document_results.first())
 
         # Return
-        return serializer, True
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+        ), True
 
     def delete(self, request, document_id):
         """Method to delete a link"""

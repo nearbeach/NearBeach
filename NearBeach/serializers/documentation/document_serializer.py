@@ -11,9 +11,19 @@ class DocumentSerializer(serializers.Serializer):
         required=True,
     )
     url_location = serializers.CharField(
-        read_only=True,
+        required=False,
     )
-    folder = FolderSerializer()
+    folder = FolderSerializer(
+        required=False,
+    )
     document = serializers.FileField(
         required=False,
+    )
+    type = serializers.ChoiceField(
+        write_only=True,
+        choices=[
+            'document',
+            'folder',
+            'link'
+        ]
     )

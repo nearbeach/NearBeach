@@ -11,13 +11,14 @@ from rest_framework.response import Response
 from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.models import Project, ObjectAssignment, UserGroup, Group
+from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.services.LinkListService import LinkListService
 from NearBeach.services.NoteService import NoteService
+from NearBeach.services.document.DocumentLinkService import DocumentLinkService
 from NearBeach.services.document.DocumentService import DocumentService
+from NearBeach.services.document.FolderService import FolderService
 from NearBeach.utils.api.check_group_list import check_group_list
-
-import string
 
 
 @extend_schema(
@@ -98,7 +99,101 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
-    # TODO - Write documentation post where users can; create folders, insert hyperlinks, upload documentation
+    @destination_permission(min_permission_level=1)
+    @documents.mapping.post
+    def documents_create(self, request, pk, *args, **kwargs):
+        serializer = DocumentSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Defined variables
+        success = False
+
+        # Depending on the type - depends on what we do
+        match serializer.validated_data['type']:
+            case "folder":
+                folder_service = FolderService(destination="project", location_id=pk)
+                serializer, success = folder_service.create(request)
+            case "link":
+                link_service = DocumentLinkService(destination="project", location_id=pk)
+                serializer, success = link_service.create(request)
+            case _:
+                document_service = DocumentService(destination="project", location_id=pk)
+                serializer, success = document_service.create(request)
+
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_201_CREATED,
+            )
+
+        return Response(
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['DELETE'],
+        detail=True,
+        url_path=r'documents/(?P<document_pk>[^/.]+)'
+    )
+    def documents_delete(self, request, pk, document_pk, *args, **kwargs):
+        serializer = DocumentSerializer(data=request.data)
+        if not serializer.is_valid():
+            return serializer.errors, False
+
+        # Depending on the type - depends on what we do
+        match serializer.validated_data['type']:
+            case "folder":
+                folder_service = FolderService(destination="project", location_id=pk)
+                if folder_service.delete(request, document_pk):
+                    return Response(status=status.HTTP_204_NO_CONTENT)
+            case "link":
+                link_service = DocumentLinkService(destination="project", location_id=pk)
+                if link_service.delete(request, document_pk):
+                    return Response(status=status.HTTP_204_NO_CONTENT)
+            case _:
+                document_service = DocumentService(destination="project", location_id=pk)
+                if document_service.delete(request, document_pk):
+                    return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @documents.mapping.patch
+    def documents_update(self, request, pk, document_pk, *args, **kwargs):
+        serializer = DocumentSerializer(data=request.data)
+        if not serializer.is_valid():
+            return serializer.errors, False
+
+        # Depending on the type - depends on what we do
+        match serializer.validated_data['type']:
+            case "folder":
+                folder_service = FolderService(destination="project", location_id=pk)
+                serializer, success = folder_service.update(request)
+            case "link":
+                link_service = DocumentLinkService(destination="project", location_id=pk)
+                serializer, success = link_service.update(request)
+            case _:
+                document_service = DocumentService(destination="project", location_id=pk)
+                serializer, success = document_service.update(request)
+
+        # Update the data
+        if success:
+            return Response(
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     @destination_permission(min_permission_level=1)
     @action(

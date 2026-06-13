@@ -29,14 +29,6 @@ const emit = defineEmits(["closeModal"]);
 // Define object store
 const objectStore = useObjectStore();
 
-// Define props
-defineProps({
-	currentFolderId: {
-		type: Number,
-		required: true,
-	},
-});
-
 // Define refs
 const newFolderModel = ref<string>("")
 
@@ -54,25 +46,32 @@ async function createNewFolder() {
 	// TODO - add to optimistic list
 	// TODO - close modal
 
-	const data_to_send = new FormData()
-	data_to_send.set("description", newFolderModel.value);
-	data_to_send.set("task", "create_folder");
+	const body = {
+		description: newFolderModel.value,
+		type: "folder",
+	}
 
-	const response = await fetch(
-		`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
-		{
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"X-CSRFTOKEN": getCsrfToken(),
-			}
-		},
-	).then((response) => {
-		// Update the folders in DocumentComponent
-	}).catch((error) => {
+	try {
+
+		const response = await fetch(
+			`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				},
+				body: JSON.stringify(body),
+			},
+		)
+
+		const data = await response.json();
+		emit("closeModal");
+		// TODO - Update the folders in DocumentComponent
+	} catch (error) {
 		// TODO - Handle errors
 		// TODO - Remove from optimistic list
-	})
+	}
 }
 
 </script>

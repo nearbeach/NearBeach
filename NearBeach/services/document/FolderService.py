@@ -18,11 +18,16 @@ class FolderService(ObjectServiceAbstraction):
         # Save the form information
         folder_submit = Folder(
             change_user=request.user,
-            change_name=request.user,
+            creation_user=request.user,
             description=serializer.validated_data['description'],
-            parent_folder=serializer.validated_data['parent_folder'],
             **{F"{self.destination}_id": self.location_id},
         )
+
+        # If there is a parent folder - attach to record
+        if "parent_folder" in serializer.validated_data:
+            folder_submit.parent_folder = serializer.validated_data['parent_folder']
+
+        # Check parent folder
         folder_submit.save()
 
         # return data
@@ -31,7 +36,7 @@ class FolderService(ObjectServiceAbstraction):
         return Response(
             serializer.data,
             status=status.HTTP_201_CREATED,
-        )
+        ), True
 
     def delete(self, request, folder_id):
         """Method to delete a folder"""
@@ -52,6 +57,9 @@ class FolderService(ObjectServiceAbstraction):
         )
 
         return True
+
+    def get_list(self, request):
+        pass
 
     def update(self, request, folder_id):
         """Method to update a folder"""

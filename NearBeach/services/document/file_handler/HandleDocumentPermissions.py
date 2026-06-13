@@ -10,7 +10,7 @@ FILE_HANDLER = get_file_handler(settings)
 def handle_document_permissions(request, destination, location_id, file, serializer, is_profile_picture):
     """
     The function that handles the document permission - i.e. if user has access to the
-    document then it'll send it to the user. Otherwise it will send a 404 not found.
+    document then it'll send it to the user, otherwise it will send a 404 not found.
     Please note - we don't use permission denied here to hopefully trip people up
     """
     document_submit = Document(
