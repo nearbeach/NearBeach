@@ -50,12 +50,12 @@ const objectStore = useObjectStore();
 
 		<WlkDatetime
 			class="start-date compact"
-			v-model="objectStore.start_date ?? ''"
+			v-model="objectStore.start_date"
 			:label="t('start_date')"
 		/>
 		<WlkDatetime
 			class="end-date compact"
-			v-model="objectStore.end_date ?? ''"
+			v-model="objectStore.end_date"
 			:label="t('end_date')"
 		/>
 	</WlkCard>

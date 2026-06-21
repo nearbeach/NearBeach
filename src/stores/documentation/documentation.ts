@@ -52,5 +52,19 @@ export const useDocumentationStore = defineStore('documentation', {
                 return parent_folder_id === state.currentFolderId.toString();
             });
         },
+        getParentFolder: (state) => {
+            // Get the data for the current folder
+            const current_folder = state.folders.filter((row) => {
+                return state.currentFolderId === row.id;
+            });
+
+            // If there are no results - just return 0 as parent folder
+            if (current_folder.length === 0) {
+                return  0;
+            }
+
+            // Return the first result with a fallback of 0
+            return current_folder[0]?.parent_folder ?? 0;
+        },
     }
 })

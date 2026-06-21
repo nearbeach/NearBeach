@@ -1,28 +1,64 @@
 <script setup lang="ts">
-import {Folder, Trash} from "lucide-vue-next";
+import {Folder, Trash, CornerLeftUp} from "lucide-vue-next";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
+import { useI18n } from "petite-vue-i18n";
+
+// Define i18n
+const {t} = useI18n({
+	messages: {
+		en: {
+			"parent_folder": "Go to parent folder",
+		},
+		ja: {
+			"parent_folder": "親フォルダへ移動",
+		},
+	}
+})
 
 // Define store
 const documentationStore = useDocumentationStore();
+
+// Define functions
+function gotoParentFolder() {
+	documentationStore.currentFolderId = documentationStore.getParentFolder;
+}
+
+function updateDocumentation(folder_id: number) {
+	documentationStore.currentFolderId = folder_id;
+}
 </script>
 
 <template>
 	<div class="folder-list">
+		<div class="folder-item"
+			 v-show="documentationStore.currentFolderId !== 0"
+			 v-on:click="gotoParentFolder()"
+		>
+			<div class="folder-icon">
+				<CornerLeftUp />
+			</div>
+			<div class="folder-details">
+				{{ t("parent_folder")}}
+			</div>
+			<div class="folder-delete"></div>
+		</div>
 		<div
 			class="folder-item"
 			v-for="item in documentationStore.getFolders"
 			:key="item.id"
 		>
-			<div class="folder-icon">
+			<div class="folder-icon"
+				 v-on:click="updateDocumentation(item.id)"
+			>
 				<Folder/>
 			</div>
-			<div class="folder-details">
-				<p>
-					<a href="javascript:void">{{ item.description }}</a>
-				</p>
+			<div class="folder-details"
+				 v-on:click="updateDocumentation(item.id)"
+			>
+				<p>{{ item.description }}</p>
 			</div>
 			<div class="folder-delete">
-				<Trash />
+				<Trash/>
 			</div>
 		</div>
 	</div>
@@ -110,6 +146,10 @@ const documentationStore = useDocumentationStore();
 				}
 			}
 		}
+	}
+
+	&:hover {
+		cursor: pointer;
 	}
 }
 </style>
