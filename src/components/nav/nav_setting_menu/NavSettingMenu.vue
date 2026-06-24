@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Cog, LogOut} from 'lucide-vue-next';
+import {Cog, LogOut} from '@lucide/vue';
 import NavMenuItem from '../nav_menu/nav_menu_item/NavMenuItem.vue';
 import { usePermissionStore} from "@/stores/permissions/permission.ts";
 import {useI18n} from "petite-vue-i18n";

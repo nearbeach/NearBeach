@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Plus} from "lucide-vue-next";
+import {Plus} from "@lucide/vue";
 import {useI18n} from "petite-vue-i18n";
 import {computed, onMounted, ref} from "vue";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";

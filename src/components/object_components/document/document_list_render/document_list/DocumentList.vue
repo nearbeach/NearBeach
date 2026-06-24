@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Image, File, FileText, Link, Presentation, Trash} from "lucide-vue-next";
+import {Image, File, FileText, Link, Presentation, Trash} from "@lucide/vue";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 
 // Define store

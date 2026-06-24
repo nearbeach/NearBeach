@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineModel } from 'vue'
-import { Search } from 'lucide-vue-next';
+import { Search } from '@lucide/vue';
 
 // Define props
 defineProps({

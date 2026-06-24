@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Folder, Trash, CornerLeftUp} from "lucide-vue-next";
+import {Folder, Trash, CornerLeftUp} from "@lucide/vue";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import { useI18n } from "petite-vue-i18n";
 

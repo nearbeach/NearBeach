@@ -8,7 +8,7 @@ import {
 	FolderOpenIcon,
 	ListTodo,
 	ReplaceAll,
-} from 'lucide-vue-next';
+} from '@lucide/vue';
 import {useI18n} from "petite-vue-i18n";
 
 // Define i18n

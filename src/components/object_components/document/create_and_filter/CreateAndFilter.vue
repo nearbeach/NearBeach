@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import {Folder, Link2, UploadCloudIcon, Upload} from "lucide-vue-next";
+import {Folder, Link2, UploadCloudIcon, Upload} from "@lucide/vue";
 import {WlkDropDown, WlkModal, WlkModalHeader, WlkDropDownItem} from "whelk-ui";
 import NewFolder from "@/components/object_components/document/create_and_filter/new_folder/NewFolder.vue";
 import NewLink from "@/components/object_components/document/create_and_filter/new_link/NewLink.vue";
 import UploadDocument
 	from "@/components/object_components/document/create_and_filter/upload_document/UploadDocument.vue";
 import {useI18n} from "petite-vue-i18n";
-import {X} from "lucide-vue-next";
+import {X} from "@lucide/vue";
 
 // Define i18n
 const {t} = useI18n({

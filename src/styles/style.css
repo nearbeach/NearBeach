@@ -3,21 +3,21 @@
 
 @font-face {
     font-family: "Roboto";
-    src: url("@/assets/fonts/Roboto-Regular.ttf") format("truetype");
+    src: url("@/assets/fonts/Roboto-Regular.woff2") format("truetype");
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: "Roboto";
-    src: url("@/assets/fonts/Roboto-Thin.ttf") format("truetype");
+    src: url("@/assets/fonts/Roboto-Thin.woff2") format("truetype");
     font-weight: 100;
     font-style: normal;
 }
 
 @font-face {
     font-family: "CalSans";
-    src: url("@/assets/fonts/CalSans-Regular.ttf") format("truetype");
+    src: url("@/assets/fonts/CalSans-Regular.woff2") format("truetype");
     font-style: normal;
 }
 

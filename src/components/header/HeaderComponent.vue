@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useNavStore } from '@/stores/nav/nav.ts';
-import { Menu } from 'lucide-vue-next';
+import { Menu } from '@lucide/vue'
 import { computed } from 'vue';
 
 // Stores

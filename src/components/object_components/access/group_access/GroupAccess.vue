@@ -3,7 +3,7 @@
 import {ObjectTitleCaseEnums} from "@/utils/enums/ObjectTitleCaseEnums.ts";
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import type {PropType} from "vue";
-import {TrashIcon} from "lucide-vue-next";
+import {TrashIcon} from "@lucide/vue";
 
 // DEFINE EMITS
 const emit = defineEmits([

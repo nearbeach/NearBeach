@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useNavStore } from '@/stores/nav/nav.ts';
-import { Plus } from 'lucide-vue-next';
+import { Plus } from '@lucide/vue';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
