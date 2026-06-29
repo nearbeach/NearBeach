@@ -1,10 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import {computed, ref} from 'vue'
 import {WlkButton, WlkFileUpload, WlkModalFooter, WlkTextInput} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
+import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -31,7 +32,7 @@ const emit = defineEmits(["closeModal"]);
 
 // Define refs
 const documentModel = ref();
-const documentNameModel = ref("");
+const documentNameModel = ref<string>("");
 
 // Define computed
 const isUploadDisabled = computed(() => {
@@ -49,7 +50,7 @@ function documentChanged() {
 }
 
 async function uploadDocument() {
-	// Setup form data
+	// Setup form dafromta
 	const body = new FormData();
 	body.set("type", "document");
 	body.set("description", documentNameModel.value);
@@ -67,27 +68,30 @@ async function uploadDocument() {
 			{
 				method: "POST",
 				headers: {
-					"Content-Type": "application/json",
 					"X-CSRFTOKEN": getCsrfToken(),
 				},
 				body: body,
 			},
 		)
 
-		const data = await response.json();
-		// TODO - Fix this
-		// const link: DocumentItemInterface = {
-		// 	description: data.description.toString(),
-		// 	key: data.key.toString(),
-		// 	parent_folder_id: parseInt(data.parent_folder_id),
-		// 	url_location: data.url_location.toString(),
-		// 	document: data.document,
-		// 	folder: null,
-		// }
-		// documentationStore.documents.push(link);
+		const data : DocumentItemInterface[] = await response.json();
+
+		// Loop through the results and add to store
+		data.forEach((row : DocumentItemInterface) => {
+			documentationStore.documents.push({
+				description: row.description,
+				key: row.key,
+				parent_folder_id: row.parent_folder_id,
+				url_location: null,
+				document: null,
+				folder: null,
+			})
+		});
 
 		// TEMP CODE
 		emit("closeModal");
+		documentModel.value = []
+		documentNameModel.value = "";
 		// END TEMP CODE
 	} catch (error) {
 		console.log("ERROR: ", error);

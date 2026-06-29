@@ -26,15 +26,16 @@ def handle_document_permissions(request, destination, location_id, file, seriali
     # Add the document permission row
     document_permission_submit = DocumentPermission(
         change_user=request.user,
-        document_key=document_submit,
+        document=document_submit,
         is_profile_picture=is_profile_picture,
         **{F"{destination}_id": location_id},
     )
 
     # Apply the parent folder if required
-    parent_folder_id = serializer.validated_data["parent_folder_id"]
-    if parent_folder_id != 0:
-        document_permission_submit.folder = parent_folder_id
+    if "parent_folder_id" in serializer.validated_data:
+        parent_folder_id = serializer.validated_data["parent_folder_id"]
+        if parent_folder_id != 0:
+            document_permission_submit.folder_id = parent_folder_id
 
     # Save document permission
     document_permission_submit.save()
@@ -43,22 +44,22 @@ def handle_document_permissions(request, destination, location_id, file, seriali
     upload = request.FILES["document"]
     FILE_HANDLER.upload(upload, document_submit, file)
 
-    document_submit.document_upload_successfully = True
+    document_submit.upload_successfully = True
     document_submit.save()
 
     # Serializer
     document_results = Document.objects.filter(
         is_deleted=False,
-        key=document_submit,
+        key=document_submit.key,
     ).annotate(
-        folder=F("documentpermission__folder"),
+        parent_folder_id=F("documentpermission__folder"),
     ).values(
         "key",
         "description",
         "url_location",
         "document",
-        "folder",
+        "parent_folder_id",
     )
-    serializer = DocumentSerializer(document_results)
+    serializer = DocumentSerializer(document_results, many=True)
 
-    return serializer, True
+    return serializer

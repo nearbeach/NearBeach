@@ -21,6 +21,7 @@ class DocumentSerializer(serializers.Serializer):
     )
     parent_folder_id = serializers.IntegerField(
         required=False,
+        allow_null=True,
     )
     type = serializers.ChoiceField(
         write_only=True,
