@@ -38,8 +38,8 @@ class DocumentLinkService(ObjectServiceAbstraction):
         )
 
         # If parent folder exists
-        if "parent_folder" in serializer.validated_data:
-            folder=serializer.validated_data['parent_folder'],
+        if "parent_folder_id" in serializer.validated_data:
+            document_permission_submit.folder_id = serializer.validated_data["parent_folder_id"]
 
         document_permission_submit.save()
 
@@ -51,12 +51,13 @@ class DocumentLinkService(ObjectServiceAbstraction):
             description=F("document__description"),
             url_location=F("document__url_location"),
             key=F("document__key"),
+            parent_folder_id=F("folder_id"),
         ).values(
             "document",
             "description",
             "url_location",
             "key",
-            "folder",
+            "parent_folder_id",
         )
 
         # Serialize
@@ -73,15 +74,25 @@ class DocumentLinkService(ObjectServiceAbstraction):
         document = Document.objects.filter(
             is_deleted=False,
             pk=document_id,
+        )
+
+        document_permission = DocumentPermission.objects.filter(
+            is_deleted=False,
+            document=document_id,
             **{F"{self.destination}_id": self.location_id},
         )
 
         # If there are no values to update - notify the user
-        if len(document) == 0:
+        if len(document) == 0 or len(document_permission) == 0:
             return False
 
         # Soft delete the data
         document.update(
+            change_user=request.user,
+            is_deleted=True,
+        )
+
+        document_permission.update(
             change_user=request.user,
             is_deleted=True,
         )

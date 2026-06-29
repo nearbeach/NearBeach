@@ -32,9 +32,9 @@ def handle_document_permissions(request, destination, location_id, file, seriali
     )
 
     # Apply the parent folder if required
-    parent_folder = serializer.validated_data["parent_folder"]
-    if parent_folder != 0:
-        document_permission_submit.folder = parent_folder
+    parent_folder_id = serializer.validated_data["parent_folder_id"]
+    if parent_folder_id != 0:
+        document_permission_submit.folder = parent_folder_id
 
     # Save document permission
     document_permission_submit.save()

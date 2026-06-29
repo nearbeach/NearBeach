@@ -10,7 +10,7 @@ const documentationStore = useDocumentationStore();
 // Define computed
 const hasNoResults = computed(() => {
 	return documentationStore.documents.length + documentationStore.folders.length === 0;
-})
+});
 </script>
 
 <template>

@@ -4,6 +4,7 @@ import {WlkButton, WlkFileUpload, WlkModalFooter, WlkTextInput} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
+import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -22,6 +23,7 @@ const {t} = useI18n({
 });
 
 // Define stores
+const documentationStore = useDocumentationStore();
 const objectStore = useObjectStore();
 
 // Define emits
@@ -47,14 +49,16 @@ function documentChanged() {
 }
 
 async function uploadDocument() {
-	console.log("GOT HERE!");
-
 	// Setup form data
 	const body = new FormData();
 	body.set("type", "document");
 	body.set("description", documentNameModel.value);
 	for (const document of documentModel.value) {
 		body.append("document", document);
+	}
+
+	if (documentationStore.currentFolderId !== 0) {
+		body.set("parent_folder_id", documentationStore.currentFolderId);
 	}
 
 	try {
@@ -71,8 +75,20 @@ async function uploadDocument() {
 		)
 
 		const data = await response.json();
+		// TODO - Fix this
+		// const link: DocumentItemInterface = {
+		// 	description: data.description.toString(),
+		// 	key: data.key.toString(),
+		// 	parent_folder_id: parseInt(data.parent_folder_id),
+		// 	url_location: data.url_location.toString(),
+		// 	document: data.document,
+		// 	folder: null,
+		// }
+		// documentationStore.documents.push(link);
+
+		// TEMP CODE
 		emit("closeModal");
-		// TODO - Update the folders in DocumentComponent
+		// END TEMP CODE
 	} catch (error) {
 		console.log("ERROR: ", error);
 		// TODO - Handle errors

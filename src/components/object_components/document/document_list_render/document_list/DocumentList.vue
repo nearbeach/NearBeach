@@ -1,11 +1,42 @@
 <script setup lang="ts">
 import {Image, File, FileText, Link, Presentation, Trash} from "@lucide/vue";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
+import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {useObjectStore} from "@/stores/object/object.ts";
 
 // Define store
 const documentationStore = useDocumentationStore();
+const objectStore = useObjectStore();
 
 // Define computed
+async function deleteDocument(document: DocumentItemInterface) {
+	const isLink = document.url_location !== null && document.url_location !== undefined && document.url_location !== "";
+	const body = {
+		type: isLink ? "link": "document",
+	}
+
+	try {
+		await fetch(
+			`/api/v1/${objectStore.destination}/${objectStore.id}/documents/${document.key}/`,
+			{
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				},
+				body: JSON.stringify(body),
+			},
+		);
+
+		// Remove document
+		documentationStore.removeDocument(document.key);
+	} catch (error) {
+		console.log("ERROR: ", error);
+		// TODO - handle error
+	}
+}
+
 function getIcon(description: string | null, urlLocation: string | null) {
 	if (urlLocation !== null && urlLocation !== undefined && urlLocation !== "") {
 		// Links do not have a urlLocation
@@ -56,7 +87,9 @@ function getIcon(description: string | null, urlLocation: string | null) {
 					</a>
 				</p>
 			</div>
-			<div class="document-delete">
+			<div class="document-delete"
+				 @click="deleteDocument(item)"
+			>
 				<Trash />
 			</div>
 		</div>

@@ -14,10 +14,31 @@ export const useDocumentationStore = defineStore('documentation', {
         maxUploadSize: 0,
     }),
     actions: {
+        addBreadCrumb(folder: FolderItemInterface) {
+            // Push the folder onto the bread crumbs array
+            this.breadCrumbsArray.push({
+                folderId: folder.id,
+                label: folder.description,
+            });
+        },
         goToRootFolder() {
             // Set default values
             this.breadCrumbsArray = [];
             this.currentFolderId = 0;
+        },
+        removeBreadCrumb() {
+            // Remove the last item
+            this.breadCrumbsArray.pop();
+        },
+        removeDocument(document_key: string) {
+            this.documents = this.documents.filter((row) => {
+                return row.key !== document_key;
+            });
+        },
+        removeFolder(folder_id: number) {
+            this.folders = this.folders.filter((row) => {
+                return row.id !== folder_id;
+            });
         },
         resetDocumentation() {
             // Place everything onto defaults
@@ -39,17 +60,17 @@ export const useDocumentationStore = defineStore('documentation', {
         getDocuments: (state) => {
             return state.documents.filter((row) => {
                 // If the row.folder is null - we assume it is a "0"
-                const folder_id = row.folder ?? "0";
+                const parent_folder_id = row.parent_folder_id?.toString() ?? "0";
 
-                return folder_id === state.currentFolderId.toString();
+                return parent_folder_id === state.currentFolderId.toString();
             });
         },
         getFolders: (state) => {
             return state.folders.filter((row) => {
                 // If the row.parent_folder is null - we assume it is a "0"
-                const parent_folder_id = row.parent_folder ?? "0";
+                const parent_folder_id = row.parent_folder_id ?? "0";
 
-                return parent_folder_id === state.currentFolderId.toString();
+                return parent_folder_id.toString() === state.currentFolderId.toString();
             });
         },
         getParentFolder: (state) => {
@@ -58,13 +79,13 @@ export const useDocumentationStore = defineStore('documentation', {
                 return state.currentFolderId === row.id;
             });
 
-            // If there are no results - just return 0 as parent folder
+            // If there are no results - just return 0 as the parent folder
             if (current_folder.length === 0) {
                 return  0;
             }
 
             // Return the first result with a fallback of 0
-            return current_folder[0]?.parent_folder ?? 0;
+            return current_folder[0]?.parent_folder_id ?? 0;
         },
     }
 })

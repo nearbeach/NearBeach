@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import {Folder, Trash, CornerLeftUp} from "@lucide/vue";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
-import { useI18n } from "petite-vue-i18n";
+import {useI18n} from "petite-vue-i18n";
+import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {useObjectStore} from "@/stores/object/object.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -17,28 +20,63 @@ const {t} = useI18n({
 
 // Define store
 const documentationStore = useDocumentationStore();
+const objectStore = useObjectStore();
 
 // Define functions
-function gotoParentFolder() {
-	documentationStore.currentFolderId = documentationStore.getParentFolder;
+async function deleteFolder(folder_id: number) {
+	const body = {
+		type: "folder",
+	}
+
+	try {
+		await fetch(
+			`/api/v1/${objectStore.destination}/${objectStore.id}/documents/${folder_id}/`,
+			{
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				},
+				body: JSON.stringify(body),
+			},
+		);
+
+		// Remove folder
+		documentationStore.removeFolder(folder_id);
+	} catch (error) {
+		console.log("ERROR: ", error);
+		// TODO - handle error
+	}
 }
 
-function updateDocumentation(folder_id: number) {
-	documentationStore.currentFolderId = folder_id;
+function gotoParentFolder() {
+	// Update current folder
+	documentationStore.currentFolderId = documentationStore.getParentFolder;
+
+	// Update bread crumbs
+	documentationStore.removeBreadCrumb();
+}
+
+function updateDocumentation(folder: FolderItemInterface) {
+	// Update current folder
+	documentationStore.currentFolderId = folder.id;
+
+	// Update bread crumbs
+	documentationStore.addBreadCrumb(folder);
 }
 </script>
 
 <template>
 	<div class="folder-list">
 		<div class="folder-item"
-			 v-show="documentationStore.currentFolderId !== 0"
-			 v-on:click="gotoParentFolder()"
+		     v-show="documentationStore.currentFolderId !== 0"
+		     v-on:click="gotoParentFolder()"
 		>
 			<div class="folder-icon">
-				<CornerLeftUp />
+				<CornerLeftUp/>
 			</div>
 			<div class="folder-details">
-				{{ t("parent_folder")}}
+				{{ t("parent_folder") }}
 			</div>
 			<div class="folder-delete"></div>
 		</div>
@@ -48,16 +86,18 @@ function updateDocumentation(folder_id: number) {
 			:key="item.id"
 		>
 			<div class="folder-icon"
-				 v-on:click="updateDocumentation(item.id)"
+			     v-on:click="updateDocumentation(item)"
 			>
 				<Folder/>
 			</div>
 			<div class="folder-details"
-				 v-on:click="updateDocumentation(item.id)"
+			     v-on:click="updateDocumentation(item)"
 			>
 				<p>{{ item.description }}</p>
 			</div>
-			<div class="folder-delete">
+			<div class="folder-delete"
+			     @click="deleteFolder(item.id)"
+			>
 				<Trash/>
 			</div>
 		</div>

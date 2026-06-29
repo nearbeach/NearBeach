@@ -24,14 +24,16 @@ class FolderService(ObjectServiceAbstraction):
         )
 
         # If there is a parent folder - attach to record
-        if "parent_folder" in serializer.validated_data:
-            folder_submit.parent_folder = serializer.validated_data['parent_folder']
+        if "parent_folder_id" in serializer.validated_data:
+            folder_submit.parent_folder_id = serializer.validated_data['parent_folder_id']
 
         # Check parent folder
         folder_submit.save()
 
         # return data
-        serializer = FolderSerializer(folder_submit)
+        serializer = FolderSerializer(
+            folder_submit,
+        )
 
         return Response(
             serializer.data,

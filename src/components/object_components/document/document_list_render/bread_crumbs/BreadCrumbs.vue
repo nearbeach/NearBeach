@@ -26,7 +26,7 @@ const currentFolderLabel = computed(() => {
 	}
 
 	// Get last array object and return the label
-	return documentationStore.breadCrumbsArray[documentationStore.breadCrumbsArray.length - 1]?.description;
+	return documentationStore.breadCrumbsArray[documentationStore.breadCrumbsArray.length - 1]?.label;
 });
 
 const getInbetweenFolders = computed(() => {
@@ -53,10 +53,10 @@ const getInbetweenFolders = computed(() => {
 			<a v-for="(folder, index) in getInbetweenFolders"
 			   class="navigation-button"
 			   type="button"
-			   :key="folder.id"
+			   :key="folder.folderId"
 			   v-on:click="documentationStore.updateFolderLocation(index)"
 			>
-				{{folder.description}}
+				{{folder.label}}
 			</a>
 		</span>
 		<span class="end-span">{{currentFolderLabel}}</span>

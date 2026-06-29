@@ -10,8 +10,9 @@ class FolderSerializer(serializers.ModelSerializer):
     description = serializers.CharField(
         required=False,
     )
-    parent_folder = serializers.IntegerField(
+    parent_folder_id = serializers.IntegerField(
         required=False,
+        allow_null=True,
     )
 
     class Meta:
@@ -19,5 +20,5 @@ class FolderSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'description',
-            'parent_folder',
+            'parent_folder_id',
         ]

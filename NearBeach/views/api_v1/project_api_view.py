@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.models import Project, ObjectAssignment, UserGroup, Group
+from NearBeach.serializers.documentation.document_delete_serializer import DocumentDeleteSerializer
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.services.LinkListService import LinkListService
@@ -116,17 +117,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
         match serializer.validated_data['type']:
             case "folder":
                 folder_service = FolderService(destination="project", location_id=pk)
-                serializer, success = folder_service.create(request)
+                return_serializer, success = folder_service.create(request)
             case "link":
                 link_service = DocumentLinkService(destination="project", location_id=pk)
-                serializer, success = link_service.create(request)
+                return_serializer, success = link_service.create(request)
             case _:
                 document_service = DocumentService(destination="project", location_id=pk)
-                serializer, success = document_service.create(request)
+                return_serializer, success = document_service.create(request)
 
         if success:
             return Response(
-                data=serializer.data,
+                data=return_serializer.data,
                 status=status.HTTP_201_CREATED,
             )
 
@@ -142,7 +143,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         url_path=r'documents/(?P<document_pk>[^/.]+)'
     )
     def documents_delete(self, request, pk, document_pk, *args, **kwargs):
-        serializer = DocumentSerializer(data=request.data)
+        serializer = DocumentDeleteSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, False
 

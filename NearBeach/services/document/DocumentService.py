@@ -94,7 +94,7 @@ class DocumentService(ObjectServiceAbstraction):
         ).values(
             'id',
             'description',
-            'parent_folder',
+            'parent_folder_id',
         )
 
         document_permission_results = DocumentPermission.objects.filter(
@@ -108,13 +108,13 @@ class DocumentService(ObjectServiceAbstraction):
             is_deleted=False,
             key__in=document_permission_results.values("document_id"),
         ).annotate(
-            folder=F("documentpermission__folder"),
+            parent_folder_id=F("documentpermission__folder"),
         ).values(
             "key",
             "description",
             "url_location",
             "document",
-            "folder",
+            "parent_folder_id",
         )
 
         serializer = FileSystemSerializer({

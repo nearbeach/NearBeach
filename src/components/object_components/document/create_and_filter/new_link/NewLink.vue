@@ -4,6 +4,8 @@ import {required, WlkButton, WlkModalFooter, WlkTextInput} from "whelk-ui";
 import {computed, ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
+import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
+import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -27,6 +29,7 @@ const {t} = useI18n({
 const emit = defineEmits(["closeModal"]);
 
 // Define object store
+const documentationStore = useDocumentationStore();
 const objectStore = useObjectStore();
 
 // Define refs
@@ -43,11 +46,16 @@ async function createNewLink() {
 	// TODO - add to optimistic list
 	// TODO - close modal
 
+	const parent_folder_id = documentationStore.currentFolderId === 0 ? null : documentationStore.currentFolderId;
+
 	const body = {
 		description: descriptionModel.value,
 		type: "link",
 		url_location: newLinkModel.value,
+		parent_folder_id: parent_folder_id,
 	}
+
+	// TODO - clean models
 
 	try {
 
@@ -64,8 +72,21 @@ async function createNewLink() {
 		)
 
 		const data = await response.json();
+		const link: DocumentItemInterface = {
+			description: data.description.toString(),
+			key: data.key.toString(),
+			parent_folder_id: parseInt(data.parent_folder_id),
+			url_location: data.url_location.toString(),
+			document: null,
+			folder: null,
+		}
+		documentationStore.documents.push(link);
+
+		// TEMP CODE
 		emit("closeModal");
-		// TODO - Update the folders in DocumentComponent
+		descriptionModel.value = "";
+		newLinkModel.value = "";
+		// END TEMP CODE
 	} catch (error) {
 		// TODO - Handle errors
 		// TODO - Remove from optimistic list

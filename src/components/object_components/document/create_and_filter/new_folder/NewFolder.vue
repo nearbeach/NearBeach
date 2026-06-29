@@ -4,6 +4,8 @@ import {useI18n} from "petite-vue-i18n";
 import {computed, ref} from "vue";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
+import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -22,6 +24,9 @@ const {t} = useI18n({
 		}
 	}
 });
+
+// Define store
+const documentationStore = useDocumentationStore();
 
 // Define emits
 const emit = defineEmits(["closeModal"]);
@@ -49,10 +54,14 @@ async function createNewFolder() {
 	const body = {
 		description: newFolderModel.value,
 		type: "folder",
+		parent_folder_id: documentationStore.currentFolderId === 0
+			? null
+			: documentationStore.currentFolderId,
 	}
 
-	try {
+	// TODO - clear data from models
 
+	try {
 		const response = await fetch(
 			`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
 			{
@@ -65,8 +74,20 @@ async function createNewFolder() {
 			},
 		)
 
+		// Add data
 		const data = await response.json();
+		const folder: FolderItemInterface = {
+			id: data.id,
+			description: data.description,
+			parent_folder_id: data.parent_folder_id,
+		}
+		documentationStore.folders.push(folder);
+
+		// TEMP CODE
 		emit("closeModal");
+		newFolderModel.value = "";
+		// END TEMP CODE
+
 		// TODO - Update the folders in DocumentComponent
 	} catch (error) {
 		// TODO - Handle errors
