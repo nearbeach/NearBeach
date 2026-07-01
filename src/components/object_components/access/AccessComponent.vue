@@ -1,54 +1,20 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import { WlkCard } from "whelk-ui";
 import GroupAccess from "@/components/object_components/access/group_access/GroupAccess.vue";
-import UserAccess from "@/components/object_components/access/user_access/UserAccess.vue";
-
-
-// DECLARE REF
-const groupList = ref<{group_id: number, group_name: string}[]>([
-	{group_id: 1, group_name: "Administration"},
-	{group_id: 2, group_name: "QA Team"},
-	{group_id: 3, group_name: "Developers"},
-]);
-
-const userList = ref<{user_id: number, user_name: string}[]>([
-	{user_id: 1, user_name: "Administration"},
-	{user_id: 2, user_name: "Frank Miller"},
-	{user_id: 3, user_name: "Oscar Fluffy"},
-	{user_id: 4, user_name: "Socks Fluffy Butt"},
-]);
-
-// DECLARE FUNCTIONS
-function removeGroup(group_id: number) {
-	groupList.value = groupList.value.filter((row) => {
-		return row.group_id !== group_id;
-	});
-}
-
-function removeUser(user_id: number) {
-	userList.value = userList.value.filter((row) => {
-		return row.user_id !== user_id;
-	});
-}
+import AssignedUsers from "@/components/object_components/access/assigned_users/AssignedUsers.vue";
 </script>
 
 <template>
 	<WlkCard class="access-component">
-		<GroupAccess
-			:group-list="groupList"
-			v-on:remove-group="removeGroup"
-		/>
-		<UserAccess
-			:user-list="userList"
-			v-on:remove-user="removeUser"
-		/>
+		<GroupAccess/>
+		<AssignedUsers/>
 	</WlkCard>
 </template>
 
 <style scoped>
 .access-component {
 	padding: 0 0.5rem;
+	margin-bottom: 0.5rem;
 
 	@media (--medium-screen) {
 		padding: 0.5rem;

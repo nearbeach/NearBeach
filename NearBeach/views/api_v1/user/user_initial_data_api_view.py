@@ -6,11 +6,15 @@ from rest_framework.response import Response
 from django.db.models import F
 
 from NearBeach.models import (
-    ListOfRequirementStatus,
-    ListOfRequirementItemStatus,
+    Group,
     ListOfProjectStatus,
+    ListOfRequirementItemStatus,
+    ListOfRequirementItemType,
+    ListOfRequirementStatus,
+    ListOfRequirementType,
     ListOfTaskStatus,
-    UserGroup, ListOfRequirementType, ListOfRequirementItemType, Tag,
+    UserGroup,
+    Tag,
 )
 from NearBeach.serializers.user.user_initial_data_serializer import UserInitialDataSerializer
 
@@ -21,6 +25,13 @@ from NearBeach.serializers.user.user_initial_data_serializer import UserInitialD
 class UserInitialDataView(APIView):
     """Class dealing with user intial data"""
     serializer_class = None
+
+    @staticmethod
+    def _get_all_groups():
+        """Method to get all current groups"""
+        return Group.objects.filter(
+            is_deleted=False,
+        ).order_by("name")
 
     @staticmethod
     def _get_permissions(user):
@@ -108,10 +119,12 @@ class UserInitialDataView(APIView):
         user_result = user_results.first()
 
         # Extra required data
+        # user_result.groups = self._get_groups()
         user_result.permissions = self._get_permissions(request.user)
         user_result.object_status = self._get_status()
         user_result.object_types = self._get_types()
         user_result.tags = self._get_tags()
+        user_result.all_groups = self._get_all_groups()
 
         # Serialize data
         serializer = UserInitialDataSerializer(user_result)

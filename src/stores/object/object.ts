@@ -1,15 +1,17 @@
 // store/object.ts
 import {defineStore} from 'pinia'
+import type {GroupInterface} from "@/utils/interfaces/stores/GroupInterface.ts";
 
 export const useObjectStore = defineStore('object', {
     state: () => ({
         description: "",
         destination: "",
         end_date: null,
-        group_list: [],
+        group_list: [] as GroupInterface[],
         id: 0,
         is_loaded: false,
         organisation: {},
+        potential_user_list: [],
         priority: {
             value: 0,
             label: "",
@@ -53,6 +55,12 @@ export const useObjectStore = defineStore('object', {
             this.title = "";
             this.user_list = [];
         }
+    },
+    getters: {
+        fetchArrayOfGroupIds: (state) => {
+            return state.group_list.map((row) => {
+                return row.id;
+            });
+        },
     }
-
 });

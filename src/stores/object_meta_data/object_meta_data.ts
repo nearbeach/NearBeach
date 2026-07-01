@@ -5,10 +5,13 @@ import type {TagsInterface} from "@/utils/interfaces/stores/TagsInterface.ts";
 import type {TypesInterface} from "@/utils/interfaces/stores/TypesInterface.ts";
 import type {ObjectStatusInterface} from "@/utils/interfaces/stores/ObjectStatusInterface.ts";
 import type {ObjectTypesInterface} from "@/utils/interfaces/stores/ObjectTypesInterface.ts";
+import type {GroupInterface} from "@/utils/interfaces/stores/GroupInterface.ts";
+import {useObjectStore} from "@/stores/object/object.ts";
 
 export const useObjectMetaDataStore = defineStore('object_meta_data', {
     state: () => {
         return {
+            all_groups: [] as GroupInterface[],
             is_loaded: false as boolean,
             object_status: {
                 requirement: [],
@@ -36,4 +39,16 @@ export const useObjectMetaDataStore = defineStore('object_meta_data', {
             this.type = this.object_types[destination as keyof ObjectTypesInterface] ?? [];
         },
     },
+    getters: {
+        availableGroupsToAdd: (state) => {
+            // Fetch all group ids for current object
+            const objectStore = useObjectStore();
+            const excludeIds = objectStore.fetchArrayOfGroupIds;
+
+            // Send back a list of groups that are not in the exclude id list
+            return state.all_groups.filter((row) => {
+                return !excludeIds.some((id) => row.id === id);
+            });
+        },
+    }
 })

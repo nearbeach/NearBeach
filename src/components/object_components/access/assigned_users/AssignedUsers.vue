@@ -1,45 +1,44 @@
 <script setup lang="ts">
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import {ObjectTitleCaseEnums} from "@/utils/enums/ObjectTitleCaseEnums.ts";
-import type {PropType} from "vue";
+import {type PropType, ref} from "vue";
 import {TrashIcon} from "@lucide/vue";
+import {useObjectStore} from "@/stores/object/object.ts";
 
-// DEFINE EMITS
-const emit = defineEmits(['removeUser']);
+// Define ref
+const newAssignedUserModel = ref("");
 
-// DEFINE PROPS
-const props = defineProps({
-	userList: {
-		type: Array as PropType<{ user_id: number, user_name: string }[]>,
-		required: true,
-	},
-});
+// Define stores
+const objectStore = useObjectStore();
 
 // DEFINE FUNCTIONS
+function addUser(user_id: number) {
+	// ADD CODE
+}
 function removeUser(user_id: number) {
-	emit('removeUser', user_id);
+	// ADD CODE
 }
 </script>
 
 <template>
 	<div class="user-access">
-		<h3>User Access</h3>
+		<h3>Assigned Users</h3>
 		<div
-			v-if="props.userList.length > 0"
+			v-if="objectStore.user_list.length > 0"
 			class="user-access-list"
 		>
 			<div
-				v-for="user in props.userList"
-				:key="user.user_id"
+				v-for="user in objectStore.user_list"
+				:key="user.id"
 				class="user-access-item"
 			>
 				<img
 					src="https://nearbeach.org/media/gkgmptvg/bee-socks.jpg?width=120"
 					alt="User Profile Picture"
 				/>
-				<p>{{ user.user_name }}</p>
+				<p>{{ user.name }}</p>
 				<TrashIcon
-					v-on:click="removeUser(user.user_id)"
+					v-on:click="removeUser(user.id)"
 					type="button"
 					aria-label="Remove User"
 				/>
@@ -47,7 +46,12 @@ function removeUser(user_id: number) {
 		</div>
 
 		<AddObject
-			:object-type="ObjectTitleCaseEnums.user"
+			label="Users"
+			optionsLabel="name"
+			optionsValue="id"
+			:options="objectStore.potential_user_list"
+			v-model="newAssignedUserModel"
+			@change="addUser"
 		/>
 	</div>
 </template>

@@ -3,21 +3,21 @@
 
 @font-face {
     font-family: "Roboto";
-    src: url("@/assets/fonts/Roboto-Regular.woff2") format("truetype");
+    src: url("@/assets/fonts/Roboto-Regular.woff2") format("woff2");
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: "Roboto";
-    src: url("@/assets/fonts/Roboto-Thin.woff2") format("truetype");
+    src: url("@/assets/fonts/Roboto-Thin.woff2") format("woff2");
     font-weight: 100;
     font-style: normal;
 }
 
 @font-face {
     font-family: "CalSans";
-    src: url("@/assets/fonts/CalSans-Regular.woff2") format("truetype");
+    src: url("@/assets/fonts/CalSans-Regular.woff2") format("woff2");
     font-style: normal;
 }
 
@@ -28,8 +28,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
-    font-family: "CalSans",
-    sans-serif;
+    font-family: "CalSans", sans-serif;
     font-weight: normal;
     font-style: normal;
     color: var(--text-red);

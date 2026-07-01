@@ -454,9 +454,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         # Define user list
         project_results.user_list = User.objects.filter(
-            username__in=object_assignments.filter(
+            pk__in=object_assignments.filter(
                 assigned_user__isnull=False,
-            ).values("assigned_user"),
+            ).values("assigned_user_id"),
         ).annotate(
             profile_picture=F('userprofilepicture__document_id__key')
         )

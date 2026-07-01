@@ -10,6 +10,7 @@ import { WlkCard, WlkCardHeader, ObjectTitleCaseEnums} from "whelk-ui";
 // DEFINE REFS
 const organisationName = ref<string>("Muenchener Rueckversicherungs Gesellschaft");
 const organisationId = ref<number>(3);
+const newOrganisationModel = ref("");
 
 // DEFINE METHODS
 function removeOrganisation() {
@@ -31,10 +32,12 @@ function removeOrganisation() {
 			:organisation-id="organisationId"
 			v-on:remove-organisation="removeOrganisation"
 		/>
-		<AddObject
-			:object-type="ObjectTitleCaseEnums.organisation"
-			v-else
-		/>
+<!--		<AddObject-->
+<!--			label="Organisation"-->
+<!--			:object-type="ObjectTitleCaseEnums.organisation"-->
+<!--			v-model="newOrganisationModel"-->
+<!--			v-else-->
+<!--		/>-->
 
 		<StakeholderCustomer v-if="organisationId !== 0" />
 	</WlkCard>

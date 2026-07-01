@@ -67,6 +67,7 @@ const objectStore = useObjectStore();
 	grid-template-columns: minmax(0, 1fr);
 	grid-column-gap: 0.5rem;
 	padding: 0 0.5rem;
+	margin-bottom: 0.5rem;
 
 	@media (--small-screen) {
 		grid-template-columns: repeat(6, minmax(0, 1fr));
