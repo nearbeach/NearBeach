@@ -20,6 +20,7 @@ from NearBeach.services.document.DocumentLinkService import DocumentLinkService
 from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.services.document.FolderService import FolderService
 from NearBeach.utils.api.check_group_list import check_group_list
+from services.GroupService import GroupService
 
 
 @extend_schema(
@@ -113,6 +114,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # Defined variables
         success = False
 
+        # TODO - move this into the service
         # Depending on the type - depends on what we do
         match serializer.validated_data['type']:
             case "folder":
@@ -147,6 +149,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if not serializer.is_valid():
             return serializer.errors, False
 
+        # TODO - Remove this switch statement into the service
         # Depending on the type - depends on what we do
         match serializer.validated_data['type']:
             case "folder":
@@ -194,6 +197,54 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(
             data=serializer,
             status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['GET'],
+        detail=True,
+        url_path='groups'
+    )
+    def groups_list(self, _, pk, *args, **kwargs):
+        group_service = GroupService(destination="project", location_id=pk)
+        serializer = group_service.get_list(_)
+
+        return Response(
+            data=serializer.data,
+            status=status.HTTP_200_OK,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @groups_list.mapping.post
+    def groups_list(self, request, pk, *args, **kwargs):
+        group_service = GroupService(destination="project", location_id=pk)
+        serializer, success = group_service.create(request)
+
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_201_CREATED,
+            )
+
+        return Response(
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['DELETE'],
+        detail=True,
+        url_path=r'groups/(?P<group_pk>[^/.]+)'
+    )
+    def groups_delete(self, request, pk, group_pk, *args, **kwargs):
+        link_list_service = LinkListService(destination="project", location_id=pk)
+
+        if link_list_service.delete(request, group_pk):
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST
         )
 
     @destination_permission(min_permission_level=1)

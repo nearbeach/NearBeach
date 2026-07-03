@@ -69,7 +69,28 @@ async function addGroup() {
 	}
 }
 
-function removeGroup(group_id: number) {
+async function removeGroup(group_id: number) {
+	// Remove group optimistically
+	objectStore.removeGroup(group_id);
+
+	// Tell backend to remove data
+	try {
+		const respose = await fetch(
+			`/api/v1/${objectStore.destination}/${objectStore.id}/groups/${group_id}/`,
+			{
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				},
+			},
+		);
+
+		// TODO handle the response and update the potential users and user list
+	} catch (error) {
+		console.log("ERROR: ", error);
+		// TODO - handle error
+	}
 }
 </script>
 

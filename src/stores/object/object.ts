@@ -1,6 +1,7 @@
 // store/object.ts
 import {defineStore} from 'pinia'
 import type {GroupInterface} from "@/utils/interfaces/stores/GroupInterface.ts";
+import type {UserInterface} from "@/utils/interfaces/stores/UserInterface.ts";
 
 export const useObjectStore = defineStore('object', {
     state: () => ({
@@ -11,7 +12,7 @@ export const useObjectStore = defineStore('object', {
         id: 0,
         is_loaded: false,
         organisation: {},
-        potential_user_list: [],
+        potential_user_list: [] as UserInterface[],
         priority: {
             value: 0,
             label: "",
@@ -27,9 +28,19 @@ export const useObjectStore = defineStore('object', {
         },
         story_points: 0,
         title: "",
-        user_list: [],
+        user_list: [] as UserInterface[],
     }),
     actions: {
+        removeGroup(group_id: number) {
+            this.group_list = this.group_list.filter((row) => {
+                return row.id !== group_id;
+            });
+        },
+        removeUser(user_id: number) {
+            this.user_list = this.user_list.filter((row) => {
+                return row.id !== user_id;
+            });
+        },
         resetObject() {
             this.description = "";
             this.destination = "";
