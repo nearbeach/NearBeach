@@ -39,11 +39,6 @@ async function addGroup() {
 	// Add group to the "group_list" optimistically
 	objectStore.group_list.push(new_group[0] as GroupInterface);
 
-	// Wipe it clean on the next tick
-	await nextTick(() => {
-		newGroupModel.value = null;
-	});
-
 	// Send to the backend
 	const body = {
 		group_list: [newGroupModel.value],
@@ -62,7 +57,15 @@ async function addGroup() {
 			},
 		)
 
-		// TODO - update the potential user list
+		// Clear model data
+		newGroupModel.value = null;
+
+		// Get response
+		const data = await response.json();
+
+		// Update store with correct information
+		objectStore.potential_user_list = data.potential_user_list;
+		objectStore.user_list = data.user_list;
 	} catch (e) {
 		// TODO - handle the errors
 		console.error("ERROR: ", e);
@@ -75,7 +78,7 @@ async function removeGroup(group_id: number) {
 
 	// Tell backend to remove data
 	try {
-		const respose = await fetch(
+		const response = await fetch(
 			`/api/v1/${objectStore.destination}/${objectStore.id}/groups/${group_id}/`,
 			{
 				method: "DELETE",
@@ -86,7 +89,12 @@ async function removeGroup(group_id: number) {
 			},
 		);
 
-		// TODO handle the response and update the potential users and user list
+		// Get response
+		const data = await response.json();
+
+		// Update store with correct information
+		objectStore.potential_user_list = data.potential_user_list;
+		objectStore.user_list = data.user_list;
 	} catch (error) {
 		console.log("ERROR: ", error);
 		// TODO - handle error

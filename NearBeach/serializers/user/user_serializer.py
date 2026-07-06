@@ -4,9 +4,13 @@ from django.contrib.auth.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Class to serialize a user"""
+    full_name = serializers.CharField(read_only=True)
+
     profile_picture = serializers.ImageField(
         read_only=True,
     )
+
     profile_picture_path = serializers.SerializerMethodField()
 
     @staticmethod
@@ -25,6 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "first_name",
             "last_name",
+            "full_name",
             "email",
             "profile_picture",
             "profile_picture_path",

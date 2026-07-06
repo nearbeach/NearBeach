@@ -43,11 +43,6 @@ async function addUser() {
 	// Add group to the "group_list" optimistically
 	objectStore.user_list.push(new_user[0] as UserInterface);
 
-	// Wipe it clean on the next tick
-	await nextTick(() => {
-		newAssignedUserModel.value = null;
-	});
-
 	// Send to the backend
 	const body = {
 		user_list: [newAssignedUserModel.value],
@@ -65,6 +60,9 @@ async function addUser() {
 				body: JSON.stringify(body)
 			},
 		)
+
+		// Clear model
+		newAssignedUserModel.value = null;
 	} catch (e) {
 		// TODO - handle the errors
 		console.error("ERROR: ", e);
@@ -148,9 +146,9 @@ async function removeUser(user_id: number) {
 
 		<AddObject
 			label="Users"
-			optionsLabel="name"
+			optionsLabel="full_name"
 			optionsValue="id"
-			:options="objectStore.potential_user_list"
+			:options="objectStore.availableUsersToAdd"
 			v-model="newAssignedUserModel"
 			@change="addUser"
 		/>

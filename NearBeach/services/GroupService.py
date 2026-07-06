@@ -1,3 +1,5 @@
+from django.db.models.functions import Concat
+
 from NearBeach.models import (
     Group,
     KanbanCard,
@@ -5,32 +7,74 @@ from NearBeach.models import (
     UserGroup,
 )
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
-from NearBeach.serializers.group_serializer import GroupSerializer
-from django.db.models import F
+from django.db.models import F, Value
 from django.contrib.auth.models import User
 
 from serializers.group_and_user_serializer import GroupAndUserSerializer
+from serializers.group_list_serializer import GroupListSerializer
 
 
 class GroupService(ObjectServiceAbstraction):
     """Service to help create, read, update, and delete groups against an object"""
+    def _clean_users_from_object(self):
+        """
+        Problem: There could be users assigned to this object but have no group association. They must be removed from this
+        object.
+        Solution
+        1. Get new list of groups associated with object
+        2. From prior list get list of current users for those groups
+        3. Grab all users associated with the object, exclude those from prior step
+        4. Update and remove those users (as they are no longer associated with this object).
+        """
+        groups_associated = ObjectAssignment.objects.filter(
+            is_deleted=False,
+            group_id__isnull=False,
+            **{F"{self.destination}_id": self.location_id},
+        )
+
+        # Users associated with the groups
+        user_list_results = UserGroup.objects.filter(
+            is_deleted=False,
+            group_id__in=groups_associated.values('group_id'),
+        )
+
+        remove_user_list = ObjectAssignment.objects.filter(
+            is_deleted=False,
+            assigned_user_id__isnull=False,
+            **{F"{self.destination}_id": self.location_id},
+        ).exclude(
+            assigned_user_id__in=user_list_results.values('username_id'),
+        )
+
+        # Delete what is left
+        remove_user_list.update(
+            is_deleted=True,
+        )
+
     def _get_group_list(self):
         object_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             group_id__isnull=False,
+            **{F"{self.destination}_id": self.location_id},
         )
 
         # If the destination is NOT a kanban_card - we'll send back the filtered results
         if self.destination != "kanban_card":
-            return object_results.filter(
-                **{F"{self.destination}_id": self.location_id},
+            return Group.objects.filter(
+                is_deleted=False,
+                id__in=object_results.filter(
+                    **{F"{self.destination}_id": self.location_id},
+                ).values("group_id"),
             )
 
         # We need to get the kanban card's kanban board's id
         kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)
 
-        return object_results.filter(
-            kanban_board_id=kanban_card_results.kanban_board_id,
+        return Group.objects.filter(
+            is_deleted=False,
+            id__in=object_results.filter(
+                kanban_board_id=kanban_card_results.kanban_board_id,
+            ).values("group_id"),
         )
 
     def _get_potential_user_list(self):
@@ -69,97 +113,81 @@ class GroupService(ObjectServiceAbstraction):
         ).exclude(
             id__in=object_results.values("assigned_user_id")
         ).annotate(
-            profile_picture=F('userprofilepicture__document_id__document_key')
+            profile_picture=F('userprofilepicture__document_id'),
+            full_name=Concat('first_name', Value(' '), 'last_name'),
         )
 
-    @staticmethod
-    def _get_user_list(destination, location_id):
+    def _get_user_list(self):
         # Get the data we want
         object_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             assigned_user_id__isnull=False,
-            **{F"{destination}_id": location_id}
-        ).annotate(
-            profile_picture=F("assigned_user_id__userprofilepicture__document_id__document_key")
+            **{F"{self.destination}_id": self.location_id}
         )
 
-        return object_results
+        return User.objects.filter(
+            id__in=object_results.values("assigned_user_id"),
+            is_active=True,
+        ).annotate(
+            profile_picture=F("userprofilepicture__document_id"),
+            full_name=Concat('first_name', Value(' '), 'last_name'),
+        )
 
     def create(self, request):
         # Serialize the data for references
-        serializer = GroupSerializer(data=request.data)
+        serializer = GroupListSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer, False
 
-        # Flat pack the variables
-        # group_list = serializer.data["group_list"]
-        # user_list = serializer.data["user_list"]
-
         # Loop through all the groups and add to the current object
-        for single_group in group_list:
-            # Get group instance
-            group_instance = Group.objects.get(group_id=single_group)
-
+        for single_group in serializer.validated_data["group_list"]:
             # Construct the object assignment
             submit_object_assignment = ObjectAssignment(
-                group_id=group_instance,
+                group_id=single_group.id,
                 change_user=request.user,
-            )
-            submit_object_assignment = set_object_from_destination(
-                submit_object_assignment, destination, location_id
+                **{F"{self.destination}_id": self.location_id},
             )
 
             # Save the data
             submit_object_assignment.save()
 
-        # Get the current permission/groups for this object
-        object_groups = ObjectAssignment.objects.filter(
-            is_deleted=False,
-            group_id__isnull=False,
-            **{F"{destination}_id": location_id},
-        ).values('group_id')
-        error_array = []
+        return None, True
 
-        return_data = self._get_group_and_user_list(
-            destination,
-            location_id,
-            request,
+
+    def delete(self, request, group_pk):
+        remove_object_assignment = ObjectAssignment.objects.filter(
+            group_id=group_pk,
+            **{F"{self.destination}_id": self.location_id}
         )
 
-        if len(error_array) > 0:
-            return Response(
-                data={
-                    "error_array": error_array,
-                    "error_message": "Users in Error Array can not be added to object, as their groups are not assigned to object",
-                    "error_note": "Please run the get command to get the latest groups and users list",
-                }
-            )
+        # If there is nothing to delete, notify the user
+        if len(remove_object_assignment) == 0:
+            return False
 
-        # TODO - 0.32 - Look at the obtaining the object_assignment_id from the database, so users can easily delete both users and groups from the object
-        return Response(
-            data=return_data.data,
-            status=status.HTTP_201_CREATED,
+        # Remove the group
+        remove_object_assignment.update(
+            is_deleted=True,
         )
-        pass
 
-    def delete(self, request, object_id):
-        pass
+        # Remove any unwanted users
+        self._clean_users_from_object()
 
-
+        return True
 
     def get_list(self, request):
         # Get the data dependent on the object lookup
-        group_list = self._get_group_list
-        user_list = self._get_user_list
-        potential_user_list = self._get_potential_user_list
+        group_list = self._get_group_list()
+        user_list = self._get_user_list()
+        potential_user_list = self._get_potential_user_list()
 
-        return GroupAndUserSerializer(
-            data={
-                "group_list": group_list,
-                "potential_user_list": potential_user_list,
-                "user_list": user_list,
-            }
-        )
+        # Data
+        data = {
+            "group_list": group_list,
+            "potential_user_list": potential_user_list,
+            "user_list": user_list,
+        }
+
+        return GroupAndUserSerializer(data)
 
     def update(self, request, object_id):
         pass

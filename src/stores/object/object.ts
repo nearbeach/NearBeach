@@ -68,6 +68,12 @@ export const useObjectStore = defineStore('object', {
         }
     },
     getters: {
+        availableUsersToAdd: (state) => {
+            // Send back a list of users that are not in user list
+            return state.potential_user_list.filter((row: UserInterface) => {
+                return !state.user_list.some(user => row.id === user.id);
+            });
+        },
         fetchArrayOfGroupIds: (state) => {
             return state.group_list.map((row) => {
                 return row.id;

@@ -21,6 +21,7 @@ from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.services.document.FolderService import FolderService
 from NearBeach.utils.api.check_group_list import check_group_list
 from services.GroupService import GroupService
+from services.UserService import UserService
 
 
 @extend_schema(
@@ -177,6 +178,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return serializer.errors, False
 
         # Depending on the type - depends on what we do
+        success = False
         match serializer.validated_data['type']:
             case "folder":
                 folder_service = FolderService(destination="project", location_id=pk)
@@ -216,19 +218,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @destination_permission(min_permission_level=1)
     @groups_list.mapping.post
-    def groups_list(self, request, pk, *args, **kwargs):
+    def groups_list_create(self, request, pk, *args, **kwargs):
+        # Create new connection first
         group_service = GroupService(destination="project", location_id=pk)
         serializer, success = group_service.create(request)
 
-        if success:
+        # Check results
+        if not success:
             return Response(
-                data=serializer.data,
-                status=status.HTTP_201_CREATED,
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Utilise get list method and send back the complete list
+        serializer = group_service.get_list(request)
+
         return Response(
-            data=serializer,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=serializer.data,
+            status=status.HTTP_201_CREATED,
         )
 
     @destination_permission(min_permission_level=1)
@@ -237,14 +244,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path=r'groups/(?P<group_pk>[^/.]+)'
     )
-    def groups_delete(self, request, pk, group_pk, *args, **kwargs):
-        link_list_service = LinkListService(destination="project", location_id=pk)
+    def groups_list_delete(self, request, pk, group_pk, *args, **kwargs):
+        # Delete group
+        group_service = GroupService(destination="project", location_id=pk)
 
-        if link_list_service.delete(request, group_pk):
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        # If you can not delete - notify user
+        if not group_service.delete(request, group_pk):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        # Return complete list
+        # Utilise get list method and send back the complete list
+        serializer = group_service.get_list(request)
 
         return Response(
-            status=status.HTTP_400_BAD_REQUEST
+            data=serializer.data,
+            status=status.HTTP_200_OK,
         )
 
     @destination_permission(min_permission_level=1)
@@ -524,3 +538,47 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # Append extra data
 
         return Response(serializer.data)
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['POST'],
+        detail=True,
+        url_path='users'
+    )
+    def users_list_create(self, request, pk, *args, **kwargs):
+        # Create new connection first
+        user_service = UserService(destination="project", location_id=pk)
+        serializer, success = user_service.create(request)
+
+        # Check results
+        if not success:
+            return Response(
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            status=status.HTTP_201_CREATED,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['DELETE'],
+        detail=True,
+        url_path=r'users/(?P<user_pk>[^/.]+)'
+    )
+    def users_list_delete(self, request, pk, user_pk, *args, **kwargs):
+        # Delete user
+        user_service = UserService(destination="project", location_id=pk)
+
+        # If you can not delete - notify user
+        if not user_service.delete(request, user_pk):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        # Return complete list
+        # Utilise get list method and send back the complete list
+        serializer = user_service.get_list(request)
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
+        )
