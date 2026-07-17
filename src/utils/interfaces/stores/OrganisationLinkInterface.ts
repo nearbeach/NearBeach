@@ -1,11 +1,9 @@
 import type {CustomerInterface} from "@/utils/interfaces/stores/CustomerInterface.ts";
+import type {OrganisationInterface} from "@/utils/interfaces/stores/OrganisationInterface.ts";
 
-export interface OrganisationInterface {
+export interface OrganisationLinkInterface {
     id: number,
-    name: string,
-    website: string,
-    email: string,
-    profile_picture_path: null | string,
     customers: null | CustomerInterface[],
     potential_customers: null | CustomerInterface[],
+    organisation: OrganisationInterface,
 }

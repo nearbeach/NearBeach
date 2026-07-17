@@ -27,7 +27,7 @@ class CustomerSerializer(serializers.ModelSerializer):
     )
 
     @staticmethod
-    def get_customer_profile_picture_path(obj):
+    def get_profile_picture_path(obj):
         if obj.profile_picture_id is None:
             return None
 

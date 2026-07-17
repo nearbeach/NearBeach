@@ -531,11 +531,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @destination_permission(min_permission_level=1)
-    @action(
-        methods=['DELETE'],
-        detail=True,
-        url_path='organisation',
-    )
+    @organisation.mapping.delete
     def organisation_delete(self, _, pk, *args, **kwargs):
         organisation_service = OrganisationService(destination="project", location_id=pk)
 
@@ -543,7 +539,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer, success = organisation_service.unlink_organisation()
         if success:
             return Response(
-                data=serializer.data,
+                data={},
                 status=status.HTTP_204_NO_CONTENT,
             )
 

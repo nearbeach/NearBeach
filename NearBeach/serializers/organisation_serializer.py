@@ -8,11 +8,6 @@ from django.conf import settings
 
 class OrganisationSerializer(serializers.ModelSerializer):
     """Class containing serializer for Organisation"""
-    customers = CustomerSerializer(
-        many=True,
-        allow_null=True,
-        read_only=True,
-    )
     email = serializers.EmailField(
         required=True,
     )
@@ -58,5 +53,4 @@ class OrganisationSerializer(serializers.ModelSerializer):
             "website",
             "email",
             "profile_picture_path",
-            "customers",
         ]

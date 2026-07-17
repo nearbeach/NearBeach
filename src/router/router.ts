@@ -41,6 +41,7 @@ async function fetchObjectMetaData() {
         // Update object meta data
         objectMetaDataStore.$patch({
             all_groups: result.all_groups,
+            organisations: result.organisations,
             object_status: result.object_status,
             object_types: result.object_types,
             tags: result.tags,

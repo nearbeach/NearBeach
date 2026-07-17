@@ -32,6 +32,9 @@ class OrganisationService(ObjectServiceAbstraction):
 
         return True
 
+    def get_list(self, request):
+        pass
+
     def link_organisation(self, request):
         serializer = OrganisationLinkSerializer(data=request.data)
         if not serializer.is_valid():
@@ -56,13 +59,16 @@ class OrganisationService(ObjectServiceAbstraction):
         )
 
         # Send back data
-        organisation_result['customers'] = Customer.objects.filter(
+        potential_customers = Customer.objects.filter(
             is_deleted=False,
-            organisation=organisation_result,
+            organisation_id=organisation_result.id,
         )
 
         # Serializer
-        serializer = OrganisationSerializer(organisation_result)
+        serializer = OrganisationLinkSerializer({
+            "organisation": organisation_result,
+            "potential_customers": potential_customers,
+        })
 
         return serializer, True
 

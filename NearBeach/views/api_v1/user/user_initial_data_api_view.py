@@ -14,7 +14,7 @@ from NearBeach.models import (
     ListOfRequirementType,
     ListOfTaskStatus,
     UserGroup,
-    Tag,
+    Tag, Organisation,
 )
 from NearBeach.serializers.user.user_initial_data_serializer import UserInitialDataSerializer
 
@@ -30,6 +30,13 @@ class UserInitialDataView(APIView):
     def _get_all_groups():
         """Method to get all current groups"""
         return Group.objects.filter(
+            is_deleted=False,
+        ).order_by("name")
+
+    @staticmethod
+    def _get_organisations():
+        """Method to get all organisations"""
+        return Organisation.objects.filter(
             is_deleted=False,
         ).order_by("name")
 
@@ -120,6 +127,7 @@ class UserInitialDataView(APIView):
 
         # Extra required data
         # user_result.groups = self._get_groups()
+        user_result.organisations = self._get_organisations()
         user_result.permissions = self._get_permissions(request.user)
         user_result.object_status = self._get_status()
         user_result.object_types = self._get_types()

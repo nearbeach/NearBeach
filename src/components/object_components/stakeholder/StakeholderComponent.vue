@@ -1,23 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import StakeholderOrganisation
 	from "@/components/object_components/stakeholder/stakeholder_organisation/StakeholderOrganisation.vue";
-import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import StakeholderCustomer
 	from "@/components/object_components/stakeholder/stakeholder_customer/StakeholderCustomer.vue";
-import { WlkCard, WlkCardHeader, ObjectTitleCaseEnums} from "whelk-ui";
+import { WlkCard, WlkCardHeader} from "whelk-ui";
 
-// DEFINE REFS
-const organisationName = ref<string>("Muenchener Rueckversicherungs Gesellschaft");
-const organisationId = ref<number>(3);
-const newOrganisationModel = ref("");
-
-// DEFINE METHODS
-function removeOrganisation() {
-	// Default the data for organisation
-	organisationName.value = "";
-	organisationId.value = 0;
-}
 </script>
 
 <template>
@@ -26,20 +13,8 @@ function removeOrganisation() {
 			<h3>Stakeholders</h3>
 		</WlkCardHeader>
 
-		<StakeholderOrganisation
-			v-if="organisationId !== 0"
-			:organisation-name="organisationName"
-			:organisation-id="organisationId"
-			v-on:remove-organisation="removeOrganisation"
-		/>
-<!--		<AddObject-->
-<!--			label="Organisation"-->
-<!--			:object-type="ObjectTitleCaseEnums.organisation"-->
-<!--			v-model="newOrganisationModel"-->
-<!--			v-else-->
-<!--		/>-->
-
-		<StakeholderCustomer v-if="organisationId !== 0" />
+		<StakeholderOrganisation/>
+		<StakeholderCustomer/>
 	</WlkCard>
 </template>
 
@@ -50,10 +25,5 @@ function removeOrganisation() {
 	@media (--medium-screen) {
 		padding: 0.5rem;
 	}
-
-	> .add-object {
-		margin: 1rem 0;
-	}
 }
-
 </style>

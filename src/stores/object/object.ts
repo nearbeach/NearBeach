@@ -2,16 +2,19 @@
 import {defineStore} from 'pinia'
 import type {GroupInterface} from "@/utils/interfaces/stores/GroupInterface.ts";
 import type {UserInterface} from "@/utils/interfaces/stores/UserInterface.ts";
+import type {OrganisationInterface} from "@/utils/interfaces/stores/OrganisationInterface.ts";
+import type {CustomerInterface} from "@/utils/interfaces/stores/CustomerInterface.ts";
 
 export const useObjectStore = defineStore('object', {
     state: () => ({
+        customers: [] as CustomerInterface[],
         description: "",
         destination: "",
         end_date: null,
         group_list: [] as GroupInterface[],
         id: 0,
         is_loaded: false,
-        organisation: {},
+        organisation: {} as OrganisationInterface | null,
         potential_user_list: [] as UserInterface[],
         priority: {
             value: 0,
@@ -42,13 +45,14 @@ export const useObjectStore = defineStore('object', {
             });
         },
         resetObject() {
+            this.customers = [];
             this.description = "";
             this.destination = "";
             this.end_date = null;
             this.group_list = [];
             this.id = 0;
             this.is_loaded = false;
-            this.organisation = {};
+            this.organisation = null;
             this.priority = {
                 value: 0,
                 label: "",
