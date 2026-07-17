@@ -14,14 +14,16 @@ from NearBeach.models import Project, ObjectAssignment, UserGroup, Group
 from NearBeach.serializers.documentation.document_delete_serializer import DocumentDeleteSerializer
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.serializers.project_serializer import ProjectSerializer
+from NearBeach.services.CustomerService import CustomerService
 from NearBeach.services.LinkListService import LinkListService
 from NearBeach.services.NoteService import NoteService
+from NearBeach.services.OrganisationService import OrganisationService
 from NearBeach.services.document.DocumentLinkService import DocumentLinkService
 from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.services.document.FolderService import FolderService
 from NearBeach.utils.api.check_group_list import check_group_list
-from services.GroupService import GroupService
-from services.UserService import UserService
+from NearBeach.services.GroupService import GroupService
+from NearBeach.services.UserService import UserService
 
 
 @extend_schema(
@@ -70,6 +72,50 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(
             data=serializer.data,
             status=status.HTTP_201_CREATED,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['POST'],
+        detail=True,
+        url_path='customer',
+    )
+    def customer(self, request, pk, *args, **kwargs):
+        customer_service = CustomerService(destination="project", location_id=pk)
+
+        # Create Link
+        serializer, success = customer_service.link_customer(request)
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_201_CREATED,
+            )
+
+        return Response(
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['DELETE'],
+        detail=True,
+        url_path='customer',
+    )
+    def customer_delete(self, _, pk, *args, **kwargs):
+        customer_service = CustomerService(destination="project", location_id=pk)
+
+        # Create Link
+        serializer, success = customer_service.unlink_customer(pk)
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_204_NO_CONTENT,
+            )
+
+        return Response(
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @staticmethod
@@ -455,6 +501,50 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(
                 data=serializer.data,
                 status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['POST'],
+        detail=True,
+        url_path='organisation',
+    )
+    def organisation(self, request, pk, *args, **kwargs):
+        organisation_service = OrganisationService(destination="project", location_id=pk)
+
+        # Create Link
+        serializer, success = organisation_service.link_organisation(request)
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_201_CREATED,
+            )
+
+        return Response(
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=['DELETE'],
+        detail=True,
+        url_path='organisation',
+    )
+    def organisation_delete(self, _, pk, *args, **kwargs):
+        organisation_service = OrganisationService(destination="project", location_id=pk)
+
+        # Create Link
+        serializer, success = organisation_service.unlink_organisation()
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_204_NO_CONTENT,
             )
 
         return Response(

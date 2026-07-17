@@ -2,7 +2,7 @@ from NearBeach.models import (
     ObjectAssignment,
 )
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
-from serializers.user_list_serializer import UserListSerializer
+from NearBeach.serializers.user_list_serializer import UserListSerializer
 
 
 class UserService(ObjectServiceAbstraction):

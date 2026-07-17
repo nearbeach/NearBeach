@@ -10,8 +10,8 @@ from NearBeach.services.abstraction.object_services_abstraction import ObjectSer
 from django.db.models import F, Value
 from django.contrib.auth.models import User
 
-from serializers.group_and_user_serializer import GroupAndUserSerializer
-from serializers.group_list_serializer import GroupListSerializer
+from NearBeach.serializers.group_and_user_serializer import GroupAndUserSerializer
+from NearBeach.serializers.group_list_serializer import GroupListSerializer
 
 
 class GroupService(ObjectServiceAbstraction):

@@ -1,10 +1,6 @@
 from rest_framework import serializers
-from NearBeach.models import (
-    Group,
-)
-from NearBeach.serializers.parent_group_serializer import ParentGroupSerializer
-from serializers.group_serializer import GroupSerializer
-from serializers.user.user_serializer import UserSerializer
+from NearBeach.serializers.group_serializer import GroupSerializer
+from NearBeach.serializers.user.user_serializer import UserSerializer
 
 
 class GroupAndUserSerializer(serializers.Serializer):
