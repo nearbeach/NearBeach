@@ -30,6 +30,12 @@ class OrganisationLinkSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
+    potential_organisations = OrganisationSerializer(
+        read_only=True,
+        many=True,
+        allow_null=True,
+    )
+
     class Meta:
         model = Organisation
         fields = [
@@ -37,4 +43,5 @@ class OrganisationLinkSerializer(serializers.ModelSerializer):
             "customers",
             "organisation",
             "potential_customers",
+            "potential_organisations",
         ]

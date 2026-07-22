@@ -1,0 +1,1 @@
+function e(){let e=document.cookie.match(RegExp(`csrftoken=([^;]+)`));return e===null?``:e[0].replace(`csrftoken=`,``)}export{e as t};

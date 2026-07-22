@@ -34,6 +34,11 @@ export const useObjectStore = defineStore('object', {
         user_list: [] as UserInterface[],
     }),
     actions: {
+        removeCustomer(customer_id: number) {
+            this.customers = this.customers.filter((row) => {
+                return row.id !== customer_id;
+            });
+        },
         removeGroup(group_id: number) {
             this.group_list = this.group_list.filter((row) => {
                 return row.id !== group_id;

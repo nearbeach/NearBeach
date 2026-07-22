@@ -15,12 +15,6 @@ class UserInitialDataSerializer(UserSerializer):
         allow_null=True,
     )
 
-    organisations = OrganisationSerializer(
-        many=True,
-        read_only=True,
-        allow_null=True,
-    )
-
     permissions = PermissionSerializer(
         many=True,
         read_only=True,
@@ -47,7 +41,6 @@ class UserInitialDataSerializer(UserSerializer):
         model = UserSerializer.Meta.model
         fields = UserSerializer.Meta.fields + [
             'all_groups',
-            'organisations',
             'permissions',
             'object_status',
             'object_types',

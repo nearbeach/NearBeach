@@ -7,6 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import MultiPartParser, JSONParser, FormParser
 from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
 from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
@@ -100,13 +101,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(
         methods=['DELETE'],
         detail=True,
-        url_path='customer',
+        url_path=r'customer/(?P<customer_pk>[^/.]+)'
     )
-    def customer_delete(self, _, pk, *args, **kwargs):
+    def customer_delete(self, _, pk, customer_pk, *args, **kwargs):
         customer_service = CustomerService(destination="project", location_id=pk)
 
         # Create Link
-        serializer, success = customer_service.unlink_customer(pk)
+        serializer, success = customer_service.unlink_customer(customer_pk)
         if success:
             return Response(
                 data=serializer.data,
@@ -508,13 +509,31 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    @destination_permission(min_permission_level=1)
+    @destination_permission(min_permission_level=2)
     @action(
-        methods=['POST'],
+        methods=['GET'],
         detail=True,
         url_path='organisation',
     )
     def organisation(self, request, pk, *args, **kwargs):
+        organisation_service = OrganisationService(destination="project", location_id=pk)
+
+        # Get data
+        serializer, success = organisation_service.get_data(request)
+        if success:
+            return Response(
+                data=serializer.data,
+                status=HTTP_200_OK,
+            )
+
+        return Response(
+            data=serializer,
+            status=HTTP_400_BAD_REQUEST,
+        )
+
+    @destination_permission(min_permission_level=2)
+    @organisation.mapping.post
+    def organisation_create(self, request, pk, *args, **kwargs):
         organisation_service = OrganisationService(destination="project", location_id=pk)
 
         # Create Link

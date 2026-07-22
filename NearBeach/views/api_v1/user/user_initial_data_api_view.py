@@ -34,13 +34,6 @@ class UserInitialDataView(APIView):
         ).order_by("name")
 
     @staticmethod
-    def _get_organisations():
-        """Method to get all organisations"""
-        return Organisation.objects.filter(
-            is_deleted=False,
-        ).order_by("name")
-
-    @staticmethod
     def _get_permissions(user):
         """Method to get the current user's permissions"""
         return UserGroup.objects.filter(
@@ -127,7 +120,6 @@ class UserInitialDataView(APIView):
 
         # Extra required data
         # user_result.groups = self._get_groups()
-        user_result.organisations = self._get_organisations()
         user_result.permissions = self._get_permissions(request.user)
         user_result.object_status = self._get_status()
         user_result.object_types = self._get_types()

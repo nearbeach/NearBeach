@@ -1,0 +1,1 @@
+import{g as e,k as t,p as n,t as r}from"./_plugin-vue_export-helper-_LzCDhZg.js";var i={},a={class:`dashboard-page`};function o(r,i){return t(),e(`div`,a,[...i[0]||=[n(`h1`,{id:`main-title`},`Dashboard`,-1),n(`p`,null,`TODO - Implement the dashboard functionality`,-1)]])}var s=r(i,[[`render`,o]]);export{s as default};

@@ -19,10 +19,9 @@ class CustomerService(ObjectServiceAbstraction):
             ).values("customer_id"),
         )
 
-        serializer = CustomerSerializer(customer_results)
+        serializer = CustomerSerializer(customer_results, many=True)
 
         return serializer
-
 
     def create(self, request):
         serializer = CustomerSerializer(data=request.data)

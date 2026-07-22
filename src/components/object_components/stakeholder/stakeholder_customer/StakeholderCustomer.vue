@@ -5,6 +5,7 @@ import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import type {CustomerInterface} from "@/utils/interfaces/stores/CustomerInterface.ts";
 
 // Define stores
 const objectStore = useObjectStore();
@@ -29,7 +30,7 @@ async function addCustomer() {
 
 	try {
 		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/organisation/`,
+			`/api/v1/${objectStore.destination}/${objectStore.id}/customer/`,
 			{
 				method: "POST",
 				headers: {
@@ -38,7 +39,10 @@ async function addCustomer() {
 				},
 				body: JSON.stringify(body),
 			},
-		)
+		);
+
+		// Get data
+		objectStore.customers = await response.json();
 	} catch (error) {
 		// TODO - Add better error handline
 		console.error(error);
@@ -47,8 +51,7 @@ async function addCustomer() {
 
 async function removeCustomer(customer_id: number) {
 	// Optimistically remove customer id
-	// objectStore.organisation = null;
-	// TODO - actually write this code
+	objectStore.removeCustomer(customer_id);
 
 	try {
 		await fetch(
@@ -92,7 +95,7 @@ async function removeCustomer(customer_id: number) {
 			label="Customer"
 			optionsLabel="first_name"
 			optionsValue="id"
-			:options="objectMetaDataStore.potential_customers"
+			:options="objectMetaDataStore?.potential_customers"
 			v-model="customerModel"
 			@change="addCustomer"
 		/>

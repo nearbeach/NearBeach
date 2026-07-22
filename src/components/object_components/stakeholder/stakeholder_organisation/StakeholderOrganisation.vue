@@ -100,7 +100,7 @@ async function removeOrganisation() {
 				label="Organisation"
 				optionsLabel="name"
 				optionsValue="id"
-				:options="objectMetaDataStore.organisations"
+				:options="objectMetaDataStore.potential_organisations"
 				v-model="organisationModel"
 				@change="addOrganisation"
 			/>
