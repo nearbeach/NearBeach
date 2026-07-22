@@ -4,7 +4,7 @@ from NearBeach.models.organisation import Organisation
 from NearBeach.models.user import UserGroup
 
 
-def initalize_permission_sets(user):
+def initialize_permission_sets(user):
     admin_set = PermissionSet(
         name="Administration Permission Set",
         administration_assign_user_to_group=4,
@@ -107,7 +107,7 @@ def initalize_permission_sets(user):
     }
 
 
-def initalize_admin_user(user, permission_set):
+def initialize_admin_user(user, permission_set):
     if not getattr(user, "is_superuser", False):
         return
 
@@ -128,7 +128,7 @@ def initalize_admin_user(user, permission_set):
     admin_user_group.save()
 
 
-def initalize_org(user):
+def initialize_org(user):
     # Create no organization
     submit_organisation = Organisation(
         name="No Organisation",
@@ -139,13 +139,13 @@ def initalize_org(user):
     submit_organisation.save()
 
 
-def initalize_base_values(user):
+def initialize_base_values(user):
     if not PermissionSet.objects.all():
-        initalize_permission_sets(user)
+        initialize_permission_sets(user)
 
     if not UserGroup.objects.all():
         admin_set = PermissionSet.objects.get(pk=1)
-        initalize_admin_user(user, admin_set)
+        initialize_admin_user(user, admin_set)
 
     if not Organisation.objects.all():
-        initalize_org(user)
+        initialize_org(user)

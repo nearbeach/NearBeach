@@ -3,7 +3,7 @@ from rest_framework.permissions import BasePermission
 
 class IsSuperUser(BasePermission):
     """
-    Allows access only to super users.
+    Allows access only to superusers.
     """
 
     def has_permission(self, request, view):

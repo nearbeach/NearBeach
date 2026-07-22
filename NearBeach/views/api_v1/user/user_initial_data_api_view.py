@@ -14,7 +14,7 @@ from NearBeach.models import (
     ListOfRequirementType,
     ListOfTaskStatus,
     UserGroup,
-    Tag, Organisation,
+    Tag,
 )
 from NearBeach.serializers.user.user_initial_data_serializer import UserInitialDataSerializer
 
@@ -23,7 +23,7 @@ from NearBeach.serializers.user.user_initial_data_serializer import UserInitialD
     exclude=True,
 )
 class UserInitialDataView(APIView):
-    """Class dealing with user intial data"""
+    """Class dealing with user initial data"""
     serializer_class = None
 
     @staticmethod

@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 
 
 class DocumentDeleteSerializer(serializers.Serializer):

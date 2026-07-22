@@ -53,7 +53,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Check that there exists groups
+        # Check that there are groups
         group_list = request.data.getlist('group_list', [])
         if not check_group_list(request.user, group_list):
             return Response(
@@ -266,7 +266,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @destination_permission(min_permission_level=1)
     @groups_list.mapping.post
     def groups_list_create(self, request, pk, *args, **kwargs):
-        # Create new connection first
+        # Create a new connection first
         group_service = GroupService(destination="project", location_id=pk)
         serializer, success = group_service.create(request)
 
@@ -295,7 +295,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # Delete group
         group_service = GroupService(destination="project", location_id=pk)
 
-        # If you can not delete - notify user
+        # If you cannot delete - notify the user
         if not group_service.delete(request, group_pk):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -651,7 +651,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         url_path='users'
     )
     def users_list_create(self, request, pk, *args, **kwargs):
-        # Create new connection first
+        # Create a new connection first
         user_service = UserService(destination="project", location_id=pk)
         serializer, success = user_service.create(request)
 
@@ -676,7 +676,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # Delete user
         user_service = UserService(destination="project", location_id=pk)
 
-        # If you can not delete - notify user
+        # If you cannot delete - notify the user
         if not user_service.delete(request, user_pk):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 

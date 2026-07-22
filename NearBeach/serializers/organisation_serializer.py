@@ -2,7 +2,6 @@ from rest_framework import serializers
 from NearBeach.models import (
     Organisation,
 )
-from NearBeach.serializers.customer_serializer import CustomerSerializer
 from django.conf import settings
 
 

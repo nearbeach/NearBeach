@@ -95,7 +95,7 @@ class RequestForChangeForeignKey(models.Model):
     )
 
     class Meta:
-        """Meta information for RequestForChange model"""
+        """Meta-information for RequestForChange model"""
 
         abstract = True
 
@@ -121,6 +121,6 @@ class RequestForChangeGroupApproval(CommonInfo):
         return str(self.approval)
 
     class Meta:
-        """Meta definition for RequestForChangeGroupApproval."""
+        """Meta-definition for RequestForChangeGroupApproval."""
 
         verbose_name_plural = "Request for change group approvals"

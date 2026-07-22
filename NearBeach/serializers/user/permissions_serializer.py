@@ -1,7 +1,5 @@
 from rest_framework import serializers
 
-from NearBeach.serializers.group_serializer import GroupSerializer
-
 
 class PermissionSerializer(serializers.Serializer):
     """Class for permission serializer"""

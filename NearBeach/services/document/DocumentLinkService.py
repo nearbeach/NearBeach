@@ -2,7 +2,7 @@ from django.db.models import F
 from rest_framework import status
 from rest_framework.response import Response
 
-from NearBeach.models import Folder, Document, DocumentPermission
+from NearBeach.models import Document, DocumentPermission
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction

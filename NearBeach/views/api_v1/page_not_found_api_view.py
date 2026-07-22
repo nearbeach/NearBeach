@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 )
 class PageNotFoundView(APIView):
     @staticmethod
-    def connect(request, *args, **kwargs):
+    def connect(_, *args, **kwargs):
         return Response(
             data={"Error": "Page not found"},
             status=status.HTTP_404_NOT_FOUND,

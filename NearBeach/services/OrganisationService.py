@@ -32,8 +32,8 @@ class OrganisationService(ObjectServiceAbstraction):
 
         return True
 
-    def get_data(self, request):
-        """Method to extract out any organisation/customer data for given destination/location"""
+    def get_data(self, _):
+        """Method to extract out any organisation/customer data for a given destination / location"""
         # Get the object we wish to extract information for
         extract_object = OBJECT_DICT[self.destination].filter(
             is_deleted=False,
@@ -44,13 +44,13 @@ class OrganisationService(ObjectServiceAbstraction):
         if len(extract_object) == 0:
             return {"No object exists"}, False
 
-        # Setup the initial return data
+        # Set up the initial return data
         organisations = Organisation.objects.filter(
             is_deleted=False,
             pk__in=extract_object.values('organisation_id'),
         )
 
-        # TODO - figure out if we can use methods to extract data (and for it to be re-useable)
+        # TODO - figure out if we can use methods to extract data (and for it to be re-usable)
         data = {
             "id": None,
             "potential_organisations": Organisation.objects.filter(
@@ -125,7 +125,7 @@ class OrganisationService(ObjectServiceAbstraction):
         return serializer, True
 
     @destination_permission(min_permission_level=1)
-    def list(self, request):
+    def list(self, _):
         # TODO - Check how we are going to do serialization etc
         # Get the organisation results
         organisation_results = Organisation.objects.filter(
@@ -164,7 +164,7 @@ class OrganisationService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, False
 
-        # Double check the organisation exists
+        # Double-check the organisation exists
         update_organisation = Organisation.objects.filter(
             is_deleted=False,
             pk=pk,

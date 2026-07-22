@@ -43,10 +43,3 @@ class CoffeeViewSet(viewsets.ViewSet):
             data={"Teapot": "Sorry, I'm a teapot"},
             status=status.HTTP_418_IM_A_TEAPOT,
         )
-
-    # @staticmethod
-    # def update(_, *args, **kwargs):
-    #     return Response(
-    #         data={"Teapot": "Sorry, teapot can not be upgraded to coffee pot"},
-    #         status=status.HTTP_418_IM_A_TEAPOT,
-    #     )

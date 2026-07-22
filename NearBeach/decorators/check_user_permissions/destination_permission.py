@@ -24,11 +24,11 @@ def destination_permission(min_permission_level):
         def inner(request, *args, **kwargs):
             # Get the path
             path = getattr(request, "path", None)
-            path = request.request.path if path == None else path
+            path = request.request.path if path is None else path
 
             # Get the username
             username = getattr(request, "user", None)
-            username = request.request.user if username == None else username
+            username = request.request.user if username is None else username
 
             # Get the destination
             destination = get_destination_from_url(path)

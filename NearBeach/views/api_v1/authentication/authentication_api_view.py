@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login
 from django_otp import match_token
 
 from NearBeach.serializers.authentication.authentication_serializer import AuthenticationSerializer
-from NearBeach.utils.admin import initalize_base_values
+from NearBeach.utils.admin import initialize_base_values
 from NearBeach.utils.enums.login_status_enum import LoginStatusEnum
 from NearBeach.utils.throttle.AuthMinuteThrottle import AuthMinuteThrottle
 from NearBeach.utils.throttle.AuthHourThrottle import AuthHourThrottle
@@ -44,7 +44,7 @@ class AuthenticationView(APIView):
 
     @staticmethod
     def _generate_email_token(user):
-        """Function to generate a token for an user's two-factor devices."""
+        """Function to generate a token for a user's two-factor devices."""
         email_device, created = EmailDevice.objects.get_or_create(
             user=user,
             confirmed=True
@@ -68,7 +68,7 @@ class AuthenticationView(APIView):
 
     @staticmethod
     def _login(request, user):
-        """Function to login user and return success status"""
+        """Function to log in user and return success status"""
         login(request, user)
 
         return Response(
@@ -104,22 +104,22 @@ class AuthenticationView(APIView):
             )
 
         # Check first time login
-        initalize_base_values(user)
+        initialize_base_values(user)
 
-        # Check to see if user has a device
+        # Check to see if the user has a device
         devices = self._check_user_two_factor_devices(user)
 
-        # User has not setup 2FA - log user in
+        # User has not set up 2FA - log user in
         if len(devices) == 0:
             return self._login(request, user)
-        # User has setup 2FA but has not supplied the otp_token
+        # User has set up 2FA but has not supplied the otp_token
         elif self.serializer.validated_data['otp_token'] == "":
-            # User has setup 2FA but has not supplied credentials
+            # User has set up 2FA but has not supplied credentials
             return Response(
                 data={'status': LoginStatusEnum.TWO_FACTOR_REQUIRED},
                 status=status.HTTP_200_OK,
             )
 
-        # Handle the two factor
+        # Handle the two-factor process
         return self._handle_two_factor(request, user)
 

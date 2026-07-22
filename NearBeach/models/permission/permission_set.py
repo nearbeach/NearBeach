@@ -107,7 +107,7 @@ class PermissionSet(CommonInfo):
         return str(self.name)
 
     class Meta:
-        """Meta definition for permission set."""
+        """Meta-definition for a permission set."""
 
         verbose_name_plural = "Permission Sets"
         ordering = ["name"]

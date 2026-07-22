@@ -12,8 +12,8 @@ class S3FileHandler(FileHandler):
             "aws_secret_access_key": local_settings.AWS_SECRET_ACCESS_KEY,
         }
         if getattr(local_settings, "AWS_S3_ENDPOINT_URL", None):
-            # Assume the person is using minio  so defualts are the values
-            # which will allow for connection to minio
+            # Assume the person is using minio so defaults are the values
+            # that will allow for connection to minio
             boto_init_values.update(
                 endpoint_url=local_settings.AWS_S3_ENDPOINT_URL,
                 aws_session_token=getattr(local_settings, "AWS_S3_SESSION_TOKEN", None),

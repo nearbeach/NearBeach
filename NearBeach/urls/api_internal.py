@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from NearBeach.views.api_v1.authentication import (
     authentication_api_view,
     forgotten_password_api_view,

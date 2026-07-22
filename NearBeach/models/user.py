@@ -70,7 +70,7 @@ class UserJob(
 
 
 class UserProfilePicture(CommonInfo):
-    """Class contains fields for User Profile Picture table"""
+    """Class contains fields for the User Profile Picture table"""
 
     username = models.OneToOneField(
         settings.AUTH_USER_MODEL,

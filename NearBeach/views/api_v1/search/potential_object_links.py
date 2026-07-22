@@ -1,7 +1,7 @@
 from typing import Any
 
 from rest_framework import viewsets, status
-from django.db.models import F, QuerySet, Value, CharField
+from django.db.models import F, Value
 from rest_framework.response import Response
 
 from NearBeach.models import (
@@ -136,7 +136,7 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
         # TODO - pass query string through
         # TODO - pass exclusion items through
         # TODO - limit results back
-        # TODO - this the propery way with https://www.django-rest-framework.org/api-guide/filtering/
+        # TODO - this the proper way with https://www.django-rest-framework.org/api-guide/filtering/
         # AKA Search Fields
         project_data = self._get_project()
         requirement_data = self._get_requirement()
