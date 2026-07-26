@@ -47,8 +47,8 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ObjectNote
         fields = [
-            "object_note_id",
-            "object_note",
+            "id",
+            "note",
             "first_name",
             "last_name",
             "username",
