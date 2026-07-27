@@ -6,7 +6,9 @@ from django.db.models import Q, F, Value
 
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction, OBJECT_STRUCTURE
+from NearBeach.utils.api.check_object_exists import check_object_exists
 from NearBeach.utils.dicts.relation_dict import RELATION_DICT
+from NearBeach.utils.objects.error_object import ErrorObject
 
 
 class LinkListService(ObjectServiceAbstraction):
@@ -48,6 +50,9 @@ class LinkListService(ObjectServiceAbstraction):
         return object_assignment
 
     def create(self, request):
+        if not check_object_exists(self.destination, self.location_id):
+            return ErrorObject("Object does not exist"), False
+
         serializer = LinkSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer, False
@@ -94,6 +99,9 @@ class LinkListService(ObjectServiceAbstraction):
         return serializer, True
 
     def delete(self, request, object_id):
+        if not check_object_exists(self.destination, self.location_id):
+            return False
+
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             pk=object_id,
@@ -113,6 +121,9 @@ class LinkListService(ObjectServiceAbstraction):
         return True
 
     def get_list(self, _):
+        if not check_object_exists(self.destination, self.location_id):
+            return ErrorObject("Object does not exist"), False
+
         object_assignment_results = ObjectAssignment.objects.filter(
             Q(
                 is_deleted=False,
@@ -251,7 +262,7 @@ class LinkListService(ObjectServiceAbstraction):
         return LinkSerializer(
             data_results,
             many=True,
-        )
+        ), True
 
     def update(self, request, object_assignment_id):
         """Method to update a link"""

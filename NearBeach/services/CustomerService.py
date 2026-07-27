@@ -4,6 +4,8 @@ from NearBeach.models import (
 from NearBeach.serializers.customer_link_serializer import CustomerLinkSerializer
 from NearBeach.serializers.customer_serializer import CustomerSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.utils.api.check_object_exists import check_object_exists
+from NearBeach.utils.objects.error_object import ErrorObject
 
 
 class CustomerService(ObjectServiceAbstraction):
@@ -48,9 +50,12 @@ class CustomerService(ObjectServiceAbstraction):
         return self._get_list()
 
     def link_customer(self, request):
+        if not check_object_exists(self.destination, self.location_id):
+            return ErrorObject("Object does not exist"), False
+
         serializer = CustomerLinkSerializer(data=request.data)
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer, False
 
         # Add customer to object
         submit_object_assignment = ObjectAssignment(

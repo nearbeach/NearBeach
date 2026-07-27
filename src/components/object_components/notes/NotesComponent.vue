@@ -5,6 +5,7 @@ import {useI18n} from "petite-vue-i18n";
 import NoteList from "@/components/object_components/notes/note_list/NoteList.vue";
 import type {NoteItemInterface} from "@/utils/interfaces/NoteItemInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -58,6 +59,7 @@ async function createNote(): Promise<void> {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+	                "X-CSRFTOKEN": getCsrfToken(),
                 },
                 body: JSON.stringify(body),
             }

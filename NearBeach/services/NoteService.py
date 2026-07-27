@@ -6,11 +6,16 @@ from django.db.models import F, Value, Case, When
 
 from NearBeach.serializers.object_data.note_serializer import NoteSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.utils.api.check_object_exists import check_object_exists
+from NearBeach.utils.objects.error_object import ErrorObject
 
 
 class NoteService(ObjectServiceAbstraction):
     """Service to help create, read, update and delete note objects"""
     def create(self, request):
+        if not check_object_exists(self.destination, self.location_id):
+            return ErrorObject("Object does not exist"), False
+
         serializer = NoteSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, False
@@ -18,7 +23,8 @@ class NoteService(ObjectServiceAbstraction):
         # SAVE DATA
         submit_object_note = ObjectNote(
             change_user=request.user,
-            object_note=serializer.data["object_note"],
+            creation_user=request.user,
+            note=serializer.data["note"],
             **{F"{self.destination}_id": self.location_id}
         )
 
@@ -63,6 +69,9 @@ class NoteService(ObjectServiceAbstraction):
 
     def get_list(self, request):
         """Method to retrieve all notes for an object"""
+        if not check_object_exists(self.destination, self.location_id):
+            return ErrorObject("Object does not exist"), False
+
         note_results = ObjectNote.objects.filter(
             is_deleted=False,
             **{F"{self.destination}_id": self.location_id},
@@ -70,24 +79,25 @@ class NoteService(ObjectServiceAbstraction):
             username=F('change_user'),
             first_name=F('change_user__first_name'),
             last_name=F('change_user__last_name'),
-            profile_picture=F('change_user__userprofilepicture__document_id__document_key'),
+            profile_picture=F('change_user__userprofilepicture__document_id__document'),
             can_edit=Case(
                 When(change_user=request.user, then=Value('true')),
                 default=Value('false')
             )
         ).values(
-            "object_note_id",
+            "id",
             "username",
             "first_name",
             "last_name",
             "profile_picture",
-            "object_note",
+            "note",
             "date_modified",
             "can_edit",
         )
 
         # Serialise
-        return NoteSerializer(note_results, many=True)
+        serializer = NoteSerializer(note_results, many=True)
+        return serializer, True
 
     def update(self, request, pk):
         """Method to update a note"""

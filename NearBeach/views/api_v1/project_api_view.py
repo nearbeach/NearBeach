@@ -93,7 +93,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
         return Response(
-            data=serializer,
+            data=serializer.errors,
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -142,11 +142,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
     )
     def documents(self, _, pk, *args, **kwargs):
         document_service = DocumentService(destination="project", location_id=pk)
-        serializer = document_service.get_list(_)
+        serializer, success = document_service.get_list(_)
+
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_200_OK,
+            )
 
         return Response(
-            data=serializer.data,
-            status=status.HTTP_200_OK,
+            data=serializer,
+            status=status.HTTP_404_NOT_FOUND,
         )
 
     @destination_permission(min_permission_level=1)
@@ -164,6 +170,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         # TODO - move this into the service
         # Depending on the type - depends on what we do
+        return_serializer = None
         match serializer.validated_data['type']:
             case "folder":
                 folder_service = FolderService(destination="project", location_id=pk)
@@ -182,7 +189,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
         return Response(
-            data=serializer,
+            data=return_serializer,
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -256,11 +263,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
     )
     def groups_list(self, _, pk, *args, **kwargs):
         group_service = GroupService(destination="project", location_id=pk)
-        serializer = group_service.get_list(_)
+        serializer, success = group_service.get_list(_)
+
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_200_OK,
+            )
 
         return Response(
-            data=serializer.data,
-            status=status.HTTP_200_OK,
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @destination_permission(min_permission_level=1)
@@ -277,12 +290,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Utilise get list method and send back the complete list
-        serializer = group_service.get_list(request)
+        # Utilise the get list method and send back the complete list
+        serializer, success = group_service.get_list(request)
+
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_201_CREATED,
+            )
 
         return Response(
-            data=serializer.data,
-            status=status.HTTP_201_CREATED,
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @destination_permission(min_permission_level=1)
@@ -292,20 +311,25 @@ class ProjectViewSet(viewsets.ModelViewSet):
         url_path=r'groups/(?P<group_pk>[^/.]+)'
     )
     def groups_list_delete(self, request, pk, group_pk, *args, **kwargs):
-        # Delete group
+        # Delete a group
         group_service = GroupService(destination="project", location_id=pk)
 
         # If you cannot delete - notify the user
         if not group_service.delete(request, group_pk):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        # Return complete list
-        # Utilise get list method and send back the complete list
-        serializer = group_service.get_list(request)
+        # Utilise the get list method and send back the complete list
+        serializer, success = group_service.get_list(request)
+
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_200_OK,
+            )
 
         return Response(
-            data=serializer.data,
-            status=status.HTTP_200_OK,
+            data=serializer,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @destination_permission(min_permission_level=1)
@@ -316,11 +340,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
     )
     def link_list(self, _, pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
-        serializer = link_list_service.get_list(_)
+        serializer, success = link_list_service.get_list(_)
+
+        if success:
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_200_OK,
+            )
 
         return Response(
-            data=serializer.data,
-            status=status.HTTP_200_OK,
+            data=serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @destination_permission(min_permission_level=1)
@@ -336,7 +366,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
         return Response(
-            data=serializer,
+            data=serializer.errors,
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -432,29 +462,31 @@ class ProjectViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path='notes',
     )
-    def notes(self, _, pk, *args, **kwargs):
+    def notes(self, request, pk, *args, **kwargs):
         note_service = NoteService(destination="project", location_id=pk)
 
         # Get data
-        serialize = note_service.get_all_notes()
+        serialize, success = note_service.get_list(request)
 
         # Return data
+        if success:
+            return Response(
+                data=serialize.data,
+                status=status.HTTP_200_OK,
+            )
+
         return Response(
-            data=serialize.data,
-            status=status.HTTP_200_OK,
+            data=serialize.errors,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @destination_permission(min_permission_level=1)
-    @action(
-        methods=['POST'],
-        detail=True,
-        url_path='notes',
-    )
-    def notes_create(self, request, pk):
+    @notes.mapping.post
+    def notes_create(self, request, pk, *args, **kwargs):
         note_service = NoteService(destination="project", location_id=pk)
 
         # Create note
-        serializer, success = note_service.create_note(request)
+        serializer, success = note_service.create(request)
         if success:
             return Response(
                 data=serializer.data,
@@ -462,7 +494,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
         return Response(
-            data=serializer,
+            data=serializer.errors,
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -472,7 +504,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path=r'notes/(?P<note_pk>[^/.]+)'
     )
-    def notes_delete(self, request, pk, note_pk):
+    def notes_delete(self, request, pk, note_pk, *args, **kwargs):
         note_service = NoteService(destination="project", location_id=pk)
 
         # Delete notes
@@ -487,11 +519,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @destination_permission(min_permission_level=2)
-    @action(
-        methods=['DELETE'],
-        detail=True,
-        url_path=r'notes/(?P<note_pk>[^/.]+)'
-    )
+    @notes_delete.mapping.post
     def notes_update(self, request, pk, note_pk):
         note_service = NoteService(destination="project", location_id=pk)
 
@@ -527,7 +555,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
         return Response(
-            data=serializer,
+            data=serializer.errors,
             status=HTTP_400_BAD_REQUEST,
         )
 
@@ -545,7 +573,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
         return Response(
-            data=serializer,
+            data=serializer.errors,
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -563,7 +591,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
         return Response(
-            data=serializer,
+            data=serializer.errors,
             status=status.HTTP_400_BAD_REQUEST,
         )
 

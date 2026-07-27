@@ -13,13 +13,13 @@ class NoteSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(
         read_only=True,
     )
+    id = serializers.IntegerField(
+        read_only=True,
+    )
     last_name = serializers.CharField(
         read_only=True,
     )
-    object_note_id = serializers.IntegerField(
-        read_only=True,
-    )
-    object_note = serializers.CharField()
+    note = serializers.CharField()
     profile_picture = serializers.CharField(
         read_only=True,
         required=False,
@@ -37,10 +37,10 @@ class NoteSerializer(serializers.ModelSerializer):
             return fields
 
         if self.context["request"].method == "GET":
-            fields["object_note"].required = False
+            fields["note"].required = False
 
         if self.context["request"].method == "DELETE":
-            fields["object_note"].required = False
+            fields["note"].required = False
 
         return fields
 

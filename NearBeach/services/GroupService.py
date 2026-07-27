@@ -12,6 +12,8 @@ from django.contrib.auth.models import User
 
 from NearBeach.serializers.group_and_user_serializer import GroupAndUserSerializer
 from NearBeach.serializers.group_list_serializer import GroupListSerializer
+from NearBeach.utils.api.check_object_exists import check_object_exists
+from NearBeach.utils.objects.error_object import ErrorObject
 
 
 class GroupService(ObjectServiceAbstraction):
@@ -134,6 +136,10 @@ class GroupService(ObjectServiceAbstraction):
         )
 
     def create(self, request):
+        # Check to see if the object exists first
+        if not check_object_exists(self.destination, self.location_id):
+            return ErrorObject("Object does not exist"), False
+
         # Serialize the data for references
         serializer = GroupListSerializer(data=request.data)
         if not serializer.is_valid():
@@ -175,6 +181,10 @@ class GroupService(ObjectServiceAbstraction):
         return True
 
     def get_list(self, request):
+        # Check the object exists
+        if not check_object_exists(self.destination, self.location_id):
+            return {"Object does not exist"}, False
+
         # Get the data dependent on the object lookup
         group_list = self._get_group_list()
         user_list = self._get_user_list()
@@ -187,7 +197,7 @@ class GroupService(ObjectServiceAbstraction):
             "user_list": user_list,
         }
 
-        return GroupAndUserSerializer(data)
+        return GroupAndUserSerializer(data), True
 
     def update(self, request, object_id):
         pass

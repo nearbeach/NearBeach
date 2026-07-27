@@ -6,7 +6,9 @@ from NearBeach.serializers.organisation_link_serializer import OrganisationLinkS
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.utils.api.check_object_exists import check_object_exists
 from NearBeach.utils.dicts.object_dict import OBJECT_DICT
+from NearBeach.utils.objects.error_object import ErrorObject
 
 
 class OrganisationService(ObjectServiceAbstraction):
@@ -42,7 +44,7 @@ class OrganisationService(ObjectServiceAbstraction):
 
         # Check there is an object to extract information for
         if len(extract_object) == 0:
-            return {"No object exists"}, False
+            return ErrorObject("No object exists"), False
 
         # Set up the initial return data
         organisations = Organisation.objects.filter(
@@ -88,6 +90,9 @@ class OrganisationService(ObjectServiceAbstraction):
         pass
 
     def link_organisation(self, request):
+        if not check_object_exists(self.destination, self.location_id):
+            return ErrorObject("Object does not exist"), False
+
         serializer = OrganisationLinkSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, False
@@ -100,7 +105,7 @@ class OrganisationService(ObjectServiceAbstraction):
 
         # Check there is an object to update
         if len(update_object) == 0:
-            return {"No object exists"}, False
+            return ErrorObject("No object exists"), False
 
         # Get organisation
         organisation_result = Organisation.objects.get(

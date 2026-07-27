@@ -7,6 +7,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from NearBeach.services.document.file_handler.HandleDocumentPermissions import handle_document_permissions
+from NearBeach.utils.api.check_object_exists import check_object_exists
 
 
 class DocumentService(ObjectServiceAbstraction):
@@ -87,6 +88,10 @@ class DocumentService(ObjectServiceAbstraction):
         return None, True
 
     def get_list(self, _):
+        # Check to see if the base object exists first
+        if not check_object_exists(self.destination, self.location_id):
+            return {"Object does not exist"}, False
+
         # Fetch required data
         folder_results = Folder.objects.filter(
             is_deleted=False,
@@ -123,7 +128,7 @@ class DocumentService(ObjectServiceAbstraction):
             "max_upload_size": self._get_max_upload(),
         })
 
-        return serializer
+        return serializer, True
 
     def update(self, request, document_id):
         serializer = DocumentSerializer(data=request.data)

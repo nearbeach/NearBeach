@@ -1,7 +1,6 @@
 from collections import namedtuple
-
-from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient, APIRequestFactory
+from unittest.mock import patch
 
 
 class BaseApiClass(APITestCase):
@@ -16,9 +15,17 @@ class BaseApiClass(APITestCase):
     )
 
     def setUp(self):
-        """Method run on test start up - sets up the test by logging in and providing the client and factory"""
+        """Method run on test start-up - sets up the test by logging in and providing the client and factory"""
         self.client = APIClient()
         self.factory = APIRequestFactory()
+
+        # Disable throttling for the auth endpoint during tests
+        patcher = patch(
+            "NearBeach.views.api_v1.authentication.authentication_api_view.AuthenticationView.throttle_classes",
+            [],
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
         self._login_user()
     

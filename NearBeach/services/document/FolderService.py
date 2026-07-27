@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from NearBeach.models import Folder
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.utils.api.check_object_exists import check_object_exists
 
 
 class FolderService(ObjectServiceAbstraction):
@@ -12,6 +13,9 @@ class FolderService(ObjectServiceAbstraction):
         serializer = FolderSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, False
+
+        if not check_object_exists(self.destination, self.location_id):
+            return {"Object does not exist"}, False
 
         # Save the form information
         folder_submit = Folder(
