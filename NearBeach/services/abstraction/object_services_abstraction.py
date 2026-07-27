@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from collections import namedtuple
+from typing import Tuple, Union
+from rest_framework.serializers import Serializer
 
 from NearBeach.models import (
     ChangeTask,
@@ -8,6 +10,7 @@ from NearBeach.models import (
     Requirement,
     RequirementItem,
 )
+from NearBeach.utils.objects.error_object import ErrorObject
 
 # OBJECT STRUCTURE TYPE
 OBJECT_STRUCTURE = namedtuple(
@@ -38,17 +41,17 @@ class ObjectServiceAbstraction(ABC):
         self.location_id = location_id
 
     @abstractmethod
-    def create(self, request):
+    def create(self, request) -> Tuple[Union[Serializer, ErrorObject], bool]:
         pass
 
     @abstractmethod
-    def delete(self, request, object_id):
+    def delete(self, request, object_id) -> bool:
         pass
 
     @abstractmethod
-    def get_list(self, request):
+    def get_list(self, request) -> Tuple[Union[Serializer, ErrorObject], bool]:
         pass
 
     @abstractmethod
-    def update(self, request, object_id):
+    def update(self, request, object_id) -> Tuple[Union[Serializer, ErrorObject], bool]:
         pass

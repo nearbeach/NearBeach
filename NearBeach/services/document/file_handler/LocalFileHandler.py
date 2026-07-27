@@ -15,7 +15,7 @@ class LocalFileHandler(FileHandler):
         file = self.root / str(document_results.document)
         return FileResponse(open(file, 'rb'))
 
-    def upload(self, upload_document, document_results, file):
+    def upload(self, upload_document, document_results, _):
         """
         This function will upload the file and store it in the private folder destination under a subfolder that
         contains the same document_key value.

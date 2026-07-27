@@ -236,13 +236,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
         match serializer.validated_data['type']:
             case "folder":
                 folder_service = FolderService(destination="project", location_id=pk)
-                serializer, success = folder_service.update(request)
+                serializer, success = folder_service.update(request, document_pk)
             case "link":
                 link_service = DocumentLinkService(destination="project", location_id=pk)
-                serializer, success = link_service.update(request)
+                serializer, success = link_service.update(request, document_pk)
             case _:
                 document_service = DocumentService(destination="project", location_id=pk)
-                serializer, success = document_service.update(request)
+                serializer, success = document_service.update(request, document_pk)
 
         # Update the data
         if success:
