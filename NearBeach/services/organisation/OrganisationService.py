@@ -1,9 +1,7 @@
 from typing import Dict, Tuple, Union
 from rest_framework import status
 from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
-from NearBeach.models import (
-    Organisation, Customer, ObjectAssignment
-)
+from NearBeach.models import Organisation
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
