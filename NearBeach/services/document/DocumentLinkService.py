@@ -1,6 +1,4 @@
 from django.db.models import F
-from rest_framework import status
-from rest_framework.response import Response
 
 from NearBeach.models import Document, DocumentPermission
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
@@ -64,10 +62,7 @@ class DocumentLinkService(ObjectServiceAbstraction):
         serializer = DocumentSerializer(document_results.first())
 
         # Return
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
-        ), True
+        return serializer, True
 
     def delete(self, request, document_id):
         """Method to delete a link"""

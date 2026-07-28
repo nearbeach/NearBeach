@@ -385,7 +385,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         note_service = NoteService(destination="project", location_id=pk)
 
         # Update notes
-        serializer, success = note_service.update_note(request, note_pk)
+        serializer, success = note_service.update(request, note_pk)
 
         if success:
             return Response(
@@ -406,7 +406,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     )
     def organisation(self, request, pk, *args, **kwargs):
         organisation_service = OrganisationService(
-            destination="project", location_id=pk
+            destination="project",
+            location_id=pk
         )
 
         # Get data
@@ -453,7 +454,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer, success = organisation_service.unlink_organisation()
         if success:
             return Response(
-                data={},
                 status=status.HTTP_204_NO_CONTENT,
             )
 
@@ -519,11 +519,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def users_list_delete(self, request, pk, user_pk, *args, **kwargs):
         # Delete user
         user_service = UserService(destination="project", location_id=pk)
-
-        # If you cannot delete - notify the user
-        if not user_service.delete(request, user_pk):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        success = user_service.delete(request, user_pk)
 
         return Response(
-            status=status.HTTP_204_NO_CONTENT,
+            status=status.HTTP_204_NO_CONTENT if success else status.HTTP_400_BAD_REQUEST
         )

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import namedtuple
-from typing import Tuple, Union
+from typing import Tuple, Union, Dict
 from rest_framework.serializers import Serializer
 
 from NearBeach.models import (
