@@ -129,7 +129,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/documents/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/2/documents/", {}, 200, "GET"),
-            self.URLTest("/api/v1/project/3/documents/", {}, 404, "GET"),
+            self.URLTest("/api/v1/project/3/documents/", {}, 400, "GET"),
             #########
             # CREATE
             #########

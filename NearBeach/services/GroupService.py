@@ -1,3 +1,5 @@
+from typing import Dict, Tuple, Union
+from rest_framework import status
 from django.db.models.functions import Concat
 
 from NearBeach.models import (
@@ -7,13 +9,12 @@ from NearBeach.models import (
     UserGroup,
 )
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
-from django.db.models import F, Value
+from django.db.models import F, Value, QuerySet
 from django.contrib.auth.models import User
 
 from NearBeach.serializers.group_and_user_serializer import GroupAndUserSerializer
 from NearBeach.serializers.group_list_serializer import GroupListSerializer
 from NearBeach.utils.api.check_object_exists import check_object_exists
-from NearBeach.utils.objects.error_object import ErrorObject
 
 
 class GroupService(ObjectServiceAbstraction):
@@ -53,7 +54,7 @@ class GroupService(ObjectServiceAbstraction):
             is_deleted=True,
         )
 
-    def _get_group_list(self):
+    def _get_group_list(self) -> QuerySet:
         object_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             group_id__isnull=False,
@@ -79,7 +80,7 @@ class GroupService(ObjectServiceAbstraction):
             ).values("group_id"),
         )
 
-    def _get_potential_user_list(self):
+    def _get_potential_user_list(self) -> QuerySet:
         # Get a list of users we want to exclude
         object_results = ObjectAssignment.objects.filter(
             is_deleted=False,
@@ -119,7 +120,7 @@ class GroupService(ObjectServiceAbstraction):
             full_name=Concat('first_name', Value(' '), 'last_name'),
         )
 
-    def _get_user_list(self):
+    def _get_user_list(self) -> QuerySet:
         # Get the data we want
         object_results = ObjectAssignment.objects.filter(
             is_deleted=False,
@@ -135,15 +136,15 @@ class GroupService(ObjectServiceAbstraction):
             full_name=Concat('first_name', Value(' '), 'last_name'),
         )
 
-    def create(self, request):
+    def create(self, request) -> Tuple[Union[Dict, str], int]:
         # Check to see if the object exists first
         if not check_object_exists(self.destination, self.location_id):
-            return ErrorObject("Object does not exist"), False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Serialize the data for references
         serializer = GroupListSerializer(data=request.data)
         if not serializer.is_valid():
-            return serializer, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Loop through all the groups and add to the current object
         for single_group in serializer.validated_data["group_list"]:
@@ -157,10 +158,10 @@ class GroupService(ObjectServiceAbstraction):
             # Save the data
             submit_object_assignment.save()
 
-        return None, True
+        return {}, status.HTTP_201_CREATED
 
 
-    def delete(self, request, group_pk):
+    def delete(self, request, group_pk) -> Tuple[Union[Dict, str], int]:
         remove_object_assignment = ObjectAssignment.objects.filter(
             group_id=group_pk,
             **{F"{self.destination}_id": self.location_id}
@@ -168,7 +169,7 @@ class GroupService(ObjectServiceAbstraction):
 
         # If there is nothing to delete, notify the user
         if len(remove_object_assignment) == 0:
-            return False
+            return "No groups found", status.HTTP_400_BAD_REQUEST
 
         # Remove the group
         remove_object_assignment.update(
@@ -178,12 +179,12 @@ class GroupService(ObjectServiceAbstraction):
         # Remove any unwanted users
         self._clean_users_from_object()
 
-        return True
+        return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, request):
+    def get_list(self, request) -> Tuple[Union[Dict, str], int]:
         # Check the object exists
         if not check_object_exists(self.destination, self.location_id):
-            return {"Object does not exist"}, False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Get the data dependent on the object lookup
         group_list = self._get_group_list()
@@ -197,7 +198,10 @@ class GroupService(ObjectServiceAbstraction):
             "user_list": user_list,
         }
 
-        return GroupAndUserSerializer(data), True
+        # Serialize
+        serializer = GroupAndUserSerializer(data)
+
+        return serializer.data, status.HTTP_200_OK
 
     def update(self, request, object_id):
         pass

@@ -1,3 +1,6 @@
+from typing import Dict, Tuple, Union
+from rest_framework import status
+
 from NearBeach.models import (
     ObjectAssignment,
     KanbanCard,
@@ -25,8 +28,9 @@ class LinkListService(ObjectServiceAbstraction):
         relationship = serializer.validated_data["object_relation"]
 
         # If relationship in array - then object type will be parent object
-        return str(object_type) if relationship in ["blocked_by", "sub_object_of", "has_duplicate"] else str(
-            self.destination)
+        return str(object_type) \
+            if relationship in ["blocked_by", "sub_object_of", "has_duplicate"] \
+            else str(self.destination)
 
     def _set_meta_object(self, object_assignment: ObjectAssignment, single_object, object_type: str):
         # If object destination is the same as the object type, add the meta_object value
@@ -49,13 +53,13 @@ class LinkListService(ObjectServiceAbstraction):
 
         return object_assignment
 
-    def create(self, request):
+    def create(self, request) -> Tuple[Union[Dict, str], int]:
         if not check_object_exists(self.destination, self.location_id):
-            return ErrorObject("Object does not exist"), False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         serializer = LinkSerializer(data=request.data)
         if not serializer.is_valid():
-            return serializer, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Get the parent object of
         object_type = serializer.validated_data["object_type"]
@@ -63,7 +67,7 @@ class LinkListService(ObjectServiceAbstraction):
 
         # Check to make sure the object_id exists
         if not object_type in list(self.object_dict):
-            return {"Object Type not in system"}, False
+            return "Object Type not in system", status.HTTP_400_BAD_REQUEST
 
         # We have the object type
         # We have the object id
@@ -96,11 +100,11 @@ class LinkListService(ObjectServiceAbstraction):
         })
 
         # Now get the new data
-        return serializer, True
+        return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, object_id):
+    def delete(self, request, object_id) -> Tuple[Union[Dict, str], int]:
         if not check_object_exists(self.destination, self.location_id):
-            return False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
@@ -110,7 +114,7 @@ class LinkListService(ObjectServiceAbstraction):
 
         # If there are no values to update - notify the user
         if len(object_assignment_results) == 0:
-            return False
+            return "Object connection does not exist", status.HTTP_400_BAD_REQUEST
 
         # Soft delete the data
         object_assignment_results.update(
@@ -118,11 +122,11 @@ class LinkListService(ObjectServiceAbstraction):
             change_user=request.user,
         )
 
-        return True
+        return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, _):
+    def get_list(self, _) -> Tuple[Union[Dict, str], int]:
         if not check_object_exists(self.destination, self.location_id):
-            return ErrorObject("Object does not exist"), False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         object_assignment_results = ObjectAssignment.objects.filter(
             Q(
@@ -259,18 +263,17 @@ class LinkListService(ObjectServiceAbstraction):
             ))
 
         # Return the serialized data
-        return LinkSerializer(
-            data_results,
-            many=True,
-        ), True
+        serializer = LinkSerializer(data_results, many=True)
 
-    def update(self, request, object_assignment_id):
+        return serializer.data, status.HTTP_200_OK
+
+    def update(self, request, object_assignment_id) -> Tuple[Union[Dict, str], int]:
         """Method to update a link"""
         serializer = LinkSerializer(
             data=request.data,
         )
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Fetch object assignment row
         object_assignment = ObjectAssignment.objects.get(
@@ -289,7 +292,7 @@ class LinkListService(ObjectServiceAbstraction):
             )
         )
         if object_assignment is None:
-            return {"Object Assignment does not exist"}, False
+            return "Object Assignment does not exist", status.HTTP_400_BAD_REQUEST
 
         # Get the parent object of
         object_id = serializer.validated_data["object_id"]
@@ -298,7 +301,7 @@ class LinkListService(ObjectServiceAbstraction):
 
         # Check to make sure the object_id exists
         if not object_type in list(self.object_dict):
-            return {"Object Type not in system"}, False
+            return "Object Type not in system", status.HTTP_400_BAD_REQUEST
 
         # Get single object
         single_object = self.object_dict[object_type].get(pk=object_id)
@@ -319,4 +322,4 @@ class LinkListService(ObjectServiceAbstraction):
         object_assignment.save()
 
         # Now get the new data
-        return None, True
+        return {}, status.HTTP_200_OK

@@ -1,3 +1,6 @@
+from typing import Dict, Tuple, Union
+
+from rest_framework import status
 from django.db.models import F
 from NearBeach.models import Document, DocumentPermission, Folder
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
@@ -14,7 +17,7 @@ class DocumentService(ObjectServiceAbstraction):
     """Class for handling document crud operations"""
 
     @staticmethod
-    def _get_max_upload():
+    def _get_max_upload() -> int:
         """
         This function will query the settings file for the variable "max_upload_size".
         If it does not exist it will send back
@@ -25,7 +28,7 @@ class DocumentService(ObjectServiceAbstraction):
 
         return 0
 
-    def create(self, request):
+    def create(self, request) -> Tuple[Union[Dict, str], int]:
         """
         The following function will deal with the uploaded document. It will first;
         1. Check user's permission
@@ -41,7 +44,7 @@ class DocumentService(ObjectServiceAbstraction):
         # Check file size upload
         file = serializer.validated_data["document"]
         if file.size > settings.MAX_FILE_SIZE_UPLOAD:
-            return {"File size too large"}, False
+            return "File size too large", status.HTTP_413_REQUEST_ENTITY_TOO_LARGE
 
         # Upload the document
         serializer = handle_document_permissions(
@@ -53,13 +56,13 @@ class DocumentService(ObjectServiceAbstraction):
             is_profile_picture=False,
         )
 
-        return serializer, True
+        return serializer.data, True
 
-    def delete(self, request, document_id):
+    def delete(self, request, document_id) -> Tuple[Union[Dict, str], int]:
         """Method for removing document"""
         serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Check to make sure data exists
         document = Document.objects.filter(
@@ -68,7 +71,7 @@ class DocumentService(ObjectServiceAbstraction):
             **{F"{self.destination}_id": self.location_id},
         )
         if len(document) == 0:
-            return {"Document object does not exist"}, False
+            return "Document object does not exist", status.HTTP_400_BAD_REQUEST
 
         document.update(
             change_user=request.user,
@@ -85,12 +88,12 @@ class DocumentService(ObjectServiceAbstraction):
             date_modified=timezone.now(),
         )
 
-        return None, True
+        return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, _):
+    def get_list(self, _) -> Tuple[Union[Dict, str], int]:
         # Check to see if the base object exists first
         if not check_object_exists(self.destination, self.location_id):
-            return {"Object does not exist"}, False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Fetch required data
         folder_results = Folder.objects.filter(
@@ -128,19 +131,19 @@ class DocumentService(ObjectServiceAbstraction):
             "max_upload_size": self._get_max_upload(),
         })
 
-        return serializer, True
+        return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, document_id):
+    def update(self, request, document_id) -> Tuple[Union[Dict, str], int]:
         serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         document = DocumentPermission.objects.get(
             document_key=document_id,
             **{F"{self.destination}_id": self.location_id},
         )
         if document is None:
-            return {"Document object does not exist"}, False
+            return "Document object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Update the document
         description = serializer.validated_data["description"]
@@ -153,4 +156,4 @@ class DocumentService(ObjectServiceAbstraction):
         # Serializer
         serializer = DocumentSerializer(document)
 
-        return serializer, True
+        return serializer.data, status.HTTP_200_OK

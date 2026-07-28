@@ -1,3 +1,5 @@
+from typing import Dict, Tuple, Union
+from rest_framework import status
 from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.models import (
     Organisation, Customer, ObjectAssignment
@@ -8,15 +10,14 @@ from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 from NearBeach.utils.api.check_object_exists import check_object_exists
 from NearBeach.utils.dicts.object_dict import OBJECT_DICT
-from NearBeach.utils.objects.error_object import ErrorObject
 
 
 class OrganisationService(ObjectServiceAbstraction):
     """Service to help create, read, update, and delete organisation objects and their associations"""
-    def create(self, request):
+    def create(self, request) -> Tuple[Union[Dict, str], int]:
         serializer = OrganisationSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Save
         created_organisation = serializer.save(change_user=request.user)
@@ -24,17 +25,17 @@ class OrganisationService(ObjectServiceAbstraction):
         # Re-serialize
         serializer = OrganisationSerializer(created_organisation, many=False)
 
-        return serializer, True
+        return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, organisation_pk: int):
+    def delete(self, request, organisation_pk: int) -> Tuple[Union[Dict, str], int]:
         organisation = Organisation.objects.get(pk=organisation_pk)
         organisation.is_deleted = True
         organisation.change_user = request.user
         organisation.save()
 
-        return True
+        return {}, status.HTTP_204_NO_CONTENT
 
-    def get_data(self, _):
+    def get_data(self, _) -> Tuple[Union[Dict, str], int]:
         """Method to extract out any organisation/customer data for a given destination / location"""
         # Get the object we wish to extract information for
         extract_object = OBJECT_DICT[self.destination].filter(
@@ -44,7 +45,7 @@ class OrganisationService(ObjectServiceAbstraction):
 
         # Check there is an object to extract information for
         if len(extract_object) == 0:
-            return ErrorObject("No object exists"), False
+            return "No object exists", status.HTTP_400_BAD_REQUEST
 
         # Set up the initial return data
         organisations = Organisation.objects.filter(
@@ -84,18 +85,18 @@ class OrganisationService(ObjectServiceAbstraction):
         # Serialize data
         serializer = OrganisationLinkSerializer(data)
 
-        return serializer, True
+        return serializer.data, status.HTTP_200_OK
 
     def get_list(self, request):
         pass
 
-    def link_organisation(self, request):
+    def link_organisation(self, request) -> Tuple[Union[Dict, str], int]:
         if not check_object_exists(self.destination, self.location_id):
-            return ErrorObject("Object does not exist"), False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         serializer = OrganisationLinkSerializer(data=request.data)
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Get the object we wish to update
         update_object = OBJECT_DICT[self.destination].filter(
@@ -105,7 +106,7 @@ class OrganisationService(ObjectServiceAbstraction):
 
         # Check there is an object to update
         if len(update_object) == 0:
-            return ErrorObject("No object exists"), False
+            return "No object exists", status.HTTP_400_BAD_REQUEST
 
         # Get organisation
         organisation_result = Organisation.objects.get(
@@ -127,10 +128,10 @@ class OrganisationService(ObjectServiceAbstraction):
             "potential_customers": potential_customers,
         })
 
-        return serializer, True
+        return serializer.data, status.HTTP_201_CREATED
 
     @destination_permission(min_permission_level=1)
-    def list(self, _):
+    def list(self, _) -> Tuple[Union[Dict, str], int]:
         # TODO - Check how we are going to do serialization etc
         # Get the organisation results
         organisation_results = Organisation.objects.filter(
@@ -145,9 +146,9 @@ class OrganisationService(ObjectServiceAbstraction):
 
         serializer = OrganisationSerializer(organisation_results, many=True)
 
-        return serializer
+        return serializer.data, status.HTTP_200_OK
 
-    def unlink_organisation(self):
+    def unlink_organisation(self) -> Tuple[Union[Dict, str], int]:
         update_object = OBJECT_DICT[self.destination].filter(
             is_deleted=False,
             pk=self.location_id,
@@ -155,19 +156,19 @@ class OrganisationService(ObjectServiceAbstraction):
 
         #Check there is an object to update
         if len(update_object) == 0:
-            return {"No object exists"}, False
+            return "No object exists", status.HTTP_400_BAD_REQUEST
 
         # Remove organisation from object
         update_object.update(
             organisation=None,
         )
 
-        return None, True
+        return {}, status.HTTP_204_NO_CONTENT
 
-    def update(self, request, pk):
+    def update(self, request, pk) -> Tuple[Union[Dict, str], int]:
         serializer = OrganisationSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Double-check the organisation exists
         update_organisation = Organisation.objects.filter(
@@ -175,7 +176,7 @@ class OrganisationService(ObjectServiceAbstraction):
             pk=pk,
         )
         if len(update_organisation) == 0:
-            return {"Organisation does not exist"}, False
+            return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
 
         # Update data
         update_organisation.change_user = request.user
@@ -190,4 +191,4 @@ class OrganisationService(ObjectServiceAbstraction):
             many=False
         )
 
-        return serializer, True
+        return serializer.data, status.HTTP_200_OK

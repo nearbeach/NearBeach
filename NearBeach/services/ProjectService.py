@@ -1,3 +1,7 @@
+from typing import Tuple, Union, Dict
+
+from rest_framework import status
+
 from django.contrib.auth.models import User
 from django.db.models import QuerySet, Q, F
 
@@ -6,13 +10,12 @@ from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 from NearBeach.utils.api.check_group_list import check_group_list
 from NearBeach.utils.api.check_object_exists import check_object_exists
-from NearBeach.utils.objects.error_object import ErrorObject
 
 
 class ProjectService(ObjectServiceAbstraction):
     """Service to help create, read, update, and delete project objects"""
 
-    def create(self, request):
+    def create(self, request) -> Tuple[Union[Dict, str], int]:
         """Method for creating a new project"""
         serializer = ProjectSerializer(
             context={
@@ -22,12 +25,12 @@ class ProjectService(ObjectServiceAbstraction):
             data=request.data,
         )
         if not serializer.is_valid():
-            return serializer, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Check that there are groups
         group_list = serializer.validated_data["group_list"]
         if not check_group_list(request.user, group_list):
-            return ErrorObject("No Access to groups provided"), False
+            return "No Access to groups provided", status.HTTP_400_BAD_REQUEST
 
         # Create the project
         created_project = serializer.save(
@@ -37,23 +40,23 @@ class ProjectService(ObjectServiceAbstraction):
         # Re-serialize the created project so it is in the same shape for the user
         serializer = ProjectSerializer(created_project, many=False)
 
-        return serializer, True
+        return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, _):
+    def delete(self, request, _) -> int:
         project = Project.objects.filter(
             pk=self.location_id,
             is_deleted=False,
         )
 
         if len(project) == 0:
-            return False
+            return status.HTTP_400_BAD_REQUEST
 
         project.update(
             is_deleted=True,
             change_user=request.user,
         )
 
-        return True
+        return status.HTTP_204_NO_CONTENT
 
     def get_list(self, request) -> QuerySet:
         object_assignment_results = ObjectAssignment.objects.filter(
@@ -92,10 +95,10 @@ class ProjectService(ObjectServiceAbstraction):
 
         return project_results
 
-    def retrieve(self, request):
+    def retrieve(self, request) -> Tuple[Union[Dict, str], int]:
         """Method used to retrieve a single project"""
         if not check_object_exists(self.destination, self.location_id):
-            return ErrorObject("Object does not exist"), False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Get object
         project_results = Project.objects.get(pk=self.location_id)
@@ -132,11 +135,11 @@ class ProjectService(ObjectServiceAbstraction):
             },
         )
 
-        return serializer, True
+        return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, _):
+    def update(self, request, _) -> Tuple[Union[Dict, str], int]:
         if not check_object_exists(self.destination, self.location_id):
-            return ErrorObject("Object does not exist"), False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Get project
         project = Project.objects.get(pk=self.location_id)
@@ -152,10 +155,10 @@ class ProjectService(ObjectServiceAbstraction):
             partial=True,
         )
         if not serializer.is_valid():
-            return serializer, False
+            return serializer.errors, False
 
         # Make sure we update the change user
         serializer.change_user = request.user
         serializer.save()
 
-        return serializer, True
+        return serializer.data, status.HTTP_200_OK

@@ -1,3 +1,5 @@
+from typing import Dict, Tuple, Union
+from rest_framework import status
 from NearBeach.models import (
     ObjectNote,
     KanbanCard,
@@ -7,18 +9,17 @@ from django.db.models import F, Value, Case, When
 from NearBeach.serializers.object_data.note_serializer import NoteSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 from NearBeach.utils.api.check_object_exists import check_object_exists
-from NearBeach.utils.objects.error_object import ErrorObject
 
 
 class NoteService(ObjectServiceAbstraction):
     """Service to help create, read, update and delete note objects"""
-    def create(self, request):
+    def create(self, request) -> Tuple[Union[Dict, str], int]:
         if not check_object_exists(self.destination, self.location_id):
-            return ErrorObject("Object does not exist"), False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         serializer = NoteSerializer(data=request.data)
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # SAVE DATA
         submit_object_note = ObjectNote(
@@ -45,9 +46,9 @@ class NoteService(ObjectServiceAbstraction):
         # Get the serialized data
         serializer = NoteSerializer(submit_object_note)
 
-        return serializer, True
+        return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, note_pk: int):
+    def delete(self, request, note_pk: int) -> Tuple[Union[Dict, str], int]:
         """Method to delete a note"""
         object_note = ObjectNote.objects.filter(
             is_deleted=False,
@@ -57,7 +58,7 @@ class NoteService(ObjectServiceAbstraction):
 
         # If there are no values to update - notify the user
         if len(object_note) == 0:
-            return False
+            return "Object note does not exist", status.HTTP_400_BAD_REQUEST
 
         # Soft delete the data
         object_note.update(
@@ -65,12 +66,12 @@ class NoteService(ObjectServiceAbstraction):
             change_user=request.user,
         )
 
-        return True
+        return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, request):
+    def get_list(self, request) -> Tuple[Union[Dict, str], int]:
         """Method to retrieve all notes for an object"""
         if not check_object_exists(self.destination, self.location_id):
-            return ErrorObject("Object does not exist"), False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         note_results = ObjectNote.objects.filter(
             is_deleted=False,
@@ -97,13 +98,13 @@ class NoteService(ObjectServiceAbstraction):
 
         # Serialise
         serializer = NoteSerializer(note_results, many=True)
-        return serializer, True
+        return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, pk):
+    def update(self, request, pk) -> Tuple[Union[Dict, str], int]:
         """Method to update a note"""
         serializer = NoteSerializer(data=request.data)
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Check object exists
         object_note = ObjectNote.objects.get(
@@ -112,7 +113,7 @@ class NoteService(ObjectServiceAbstraction):
             **{self.destination: self.location_id},
         )
         if object_note is None:
-            return {"Note object does not exist"}, False
+            return "Note object does not exist", status.HTTP_400_BAD_REQUEST
 
         # TODO - Limit the ability to edit to administrators OR Author of note
 
@@ -124,4 +125,4 @@ class NoteService(ObjectServiceAbstraction):
         # Serialize
         serializer = NoteSerializer(object_note)
 
-        return serializer, True
+        return serializer.data, status.HTTP_200_OK

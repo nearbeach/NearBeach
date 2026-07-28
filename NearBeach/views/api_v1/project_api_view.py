@@ -32,19 +32,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     @destination_permission(min_permission_level=3)
-    def create(request, *args, **kwargs):
+    def create(request, *args, **kwargs) -> Response:
         project_service = ProjectService(destination="project", location_id=0)
-        serializer, success = project_service.create(request)
-
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_201_CREATED,
-            )
+        data, http_status = project_service.create(request)
 
         return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
@@ -53,20 +47,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path="customer",
     )
-    def customer(self, request, pk, *args, **kwargs):
+    def customer(self, request, pk, *args, **kwargs) -> Response:
         customer_service = CustomerService(destination="project", location_id=pk)
 
         # Create Link
-        serializer, success = customer_service.link_customer(request)
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_201_CREATED,
-            )
+        data, http_status = customer_service.link_customer(request)
 
         return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
@@ -75,25 +64,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path=r"customer/(?P<customer_pk>[^/.]+)",
     )
-    def customer_delete(self, _, pk, customer_pk, *args, **kwargs):
+    def customer_delete(self, _, pk, customer_pk, *args, **kwargs) -> Response:
         customer_service = CustomerService(destination="project", location_id=pk)
 
         # Create Link
-        serializer, success = customer_service.unlink_customer(customer_pk)
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_204_NO_CONTENT,
-            )
+        data, http_status = customer_service.unlink_customer(customer_pk)
 
         return Response(
-            data=serializer,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @staticmethod
     @object_permission(min_permission_level=4)
-    def destroy(request, pk, *args, **kwargs):
+    def destroy(request, pk, *args, **kwargs) -> Response:
         project_service = ProjectService(destination="project", location_id=pk)
         if project_service.delete(request, None):
             return Response(
@@ -111,36 +95,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path="documents",
     )
-    def documents(self, _, pk, *args, **kwargs):
+    def documents(self, _, pk, *args, **kwargs) -> Response:
         document_service = DocumentService(destination="project", location_id=pk)
-        serializer, success = document_service.get_list(_)
-
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK,
-            )
+        data, http_status = document_service.get_list(_)
 
         return Response(
-            data=serializer,
-            status=status.HTTP_404_NOT_FOUND,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
     @documents.mapping.post
-    def documents_create(self, request, pk, *args, **kwargs):
+    def documents_create(self, request, pk, *args, **kwargs) -> Response:
         document_middleman_service = DocumentMiddlemanService(destination="project", location_id=pk)
-        serializer, success = document_middleman_service.create(request)
-
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_201_CREATED,
-            )
+        data, http_status = document_middleman_service.create(request)
 
         return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
@@ -149,164 +121,135 @@ class ProjectViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path=r"documents/(?P<document_pk>[^/.]+)",
     )
-    def documents_delete(self, request, pk, document_pk, *args, **kwargs):
+    def documents_delete(self, request, pk, document_pk, *args, **kwargs) -> Response:
         document_middleman_service = DocumentMiddlemanService(destination="project", location_id=pk)
-        success = document_middleman_service.delete(request, document_pk)
+        data, http_status = document_middleman_service.delete(request, document_pk)
 
         return Response(
-            status=status.HTTP_200_OK if success else status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
     @documents.mapping.patch
-    def documents_update(self, request, pk, document_pk, *args, **kwargs):
+    def documents_update(self, request, pk, document_pk, *args, **kwargs) -> Response:
         document_middleman_service = DocumentMiddlemanService(destination="project", location_id=pk)
-        serializer, success = document_middleman_service.update(request, document_pk)
-
-        # Update the data
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK,
-            )
+        data, http_status = document_middleman_service.update(request, document_pk)
 
         return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
-    @action(methods=["GET"], detail=True, url_path="groups")
-    def groups_list(self, _, pk, *args, **kwargs):
+    @action(
+        methods=["GET"],
+        detail=True,
+        url_path="groups"
+    )
+    def groups_list(self, _, pk, *args, **kwargs) -> Response:
         group_service = GroupService(destination="project", location_id=pk)
-        serializer, success = group_service.get_list(_)
-
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK,
-            )
+        data, http_status = group_service.get_list(_)
 
         return Response(
-            data=serializer,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
     @groups_list.mapping.post
-    def groups_list_create(self, request, pk, *args, **kwargs):
+    def groups_list_create(self, request, pk, *args, **kwargs) -> Response:
         # Create a new connection first
         group_service = GroupService(destination="project", location_id=pk)
-        serializer, success = group_service.create(request)
+        data, http_status = group_service.create(request)
 
         # Check results
-        if not success:
+        if http_status != status.HTTP_201_CREATED:
             return Response(
-                data=serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
+                data=data,
+                status=http_status,
             )
 
         # Utilise the get list method and send back the complete list
-        serializer, success = group_service.get_list(request)
-
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_201_CREATED,
-            )
+        data, http_status = group_service.get_list(request)
 
         return Response(
-            data=serializer,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=status.HTTP_201_CREATED if http_status == status.HTTP_200_OK else http_status,
         )
 
     @destination_permission(min_permission_level=1)
-    @action(methods=["DELETE"], detail=True, url_path=r"groups/(?P<group_pk>[^/.]+)")
-    def groups_list_delete(self, request, pk, group_pk, *args, **kwargs):
+    @action(
+        methods=["DELETE"],
+        detail=True,
+        url_path=r"groups/(?P<group_pk>[^/.]+)",
+    )
+    def groups_list_delete(self, request, pk, group_pk, *args, **kwargs) -> Response:
         # Delete a group
         group_service = GroupService(destination="project", location_id=pk)
+        data, http_status = group_service.delete(request, group_pk)
 
         # If you cannot delete - notify the user
-        if not group_service.delete(request, group_pk):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        # Utilise the get list method and send back the complete list
-        serializer, success = group_service.get_list(request)
-
-        if success:
+        if http_status != status.HTTP_204_NO_CONTENT:
             return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK,
+                data=data,
+                status=http_status,
             )
 
+        # Utilise the get list method and send back the complete list
+        data, http_status = group_service.get_list(request)
+
         return Response(
-            data=serializer,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
     @action(methods=["GET"], detail=True, url_path="link_list")
-    def link_list(self, _, pk, *args, **kwargs):
+    def link_list(self, _, pk, *args, **kwargs) -> Response:
         link_list_service = LinkListService(destination="project", location_id=pk)
-        serializer, success = link_list_service.get_list(_)
-
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK,
-            )
+        data, http_status = link_list_service.get_list(_)
 
         return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
     @link_list.mapping.post
-    def link_list_create(self, request, pk, *args, **kwargs):
+    def link_list_create(self, request, pk, *args, **kwargs) -> Response:
         link_list_service = LinkListService(destination="project", location_id=pk)
-        serializer, success = link_list_service.create(request)
-
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_201_CREATED,
-            )
+        data, http_status = link_list_service.create(request)
 
         return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
     @action(methods=["DELETE"], detail=True, url_path=r"link_list/(?P<link_pk>[^/.]+)")
-    def link_list_delete(self, request, pk, link_pk, *args, **kwargs):
+    def link_list_delete(self, request, pk, link_pk, *args, **kwargs) -> Response:
         link_list_service = LinkListService(destination="project", location_id=pk)
-
-        if link_list_service.delete(request, link_pk):
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    @destination_permission(min_permission_level=1)
-    @link_list_delete.mapping.patch
-    def link_list_update(self, request, pk, link_pk, *args, **kwargs):
-        link_list_service = LinkListService(destination="project", location_id=pk)
-
-        # Update the data
-        serializer, success = link_list_service.update(request, link_pk)
-        if success:
-            return Response(
-                status=status.HTTP_200_OK,
-            )
+        data, http_status = link_list_service.delete(request, link_pk)
 
         return Response(
-            data=serializer,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
-    def list(self, request, *args, **kwargs):
+    @link_list_delete.mapping.patch
+    def link_list_update(self, request, pk, link_pk, *args, **kwargs) -> Response:
+        link_list_service = LinkListService(destination="project", location_id=pk)
+        data, http_status = link_list_service.update(request, link_pk)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @destination_permission(min_permission_level=1)
+    def list(self, request, *args, **kwargs) -> Response:
         """Method for getting a list of all projects through search"""
         project_service = ProjectService(destination="project", location_id=0)
         project_results = project_service.get_list(request)
@@ -327,75 +270,46 @@ class ProjectViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path="notes",
     )
-    def notes(self, request, pk, *args, **kwargs):
+    def notes(self, request, pk, *args, **kwargs) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
-
-        # Get data
-        serialize, success = note_service.get_list(request)
-
-        # Return data
-        if success:
-            return Response(
-                data=serialize.data,
-                status=status.HTTP_200_OK,
-            )
+        data, http_status = note_service.get_list(request)
 
         return Response(
-            data=serialize.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
     @notes.mapping.post
-    def notes_create(self, request, pk, *args, **kwargs):
+    def notes_create(self, request, pk, *args, **kwargs) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
-
-        # Create note
-        serializer, success = note_service.create(request)
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_201_CREATED,
-            )
+        data, http_status = note_service.create(request)
 
         return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=2)
     @action(methods=["DELETE"], detail=True, url_path=r"notes/(?P<note_pk>[^/.]+)")
-    def notes_delete(self, request, pk, note_pk, *args, **kwargs):
+    def notes_delete(self, request, pk, note_pk, *args, **kwargs) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
-
-        # Delete notes
-        success = note_service.delete(request, note_pk)
-        if success:
-            return Response(
-                status=status.HTTP_204_NO_CONTENT,
-            )
+        data, http_status = note_service.delete(request, note_pk)
 
         return Response(
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=2)
     @notes_delete.mapping.post
-    def notes_update(self, request, pk, note_pk):
+    def notes_update(self, request, pk, note_pk) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
-
-        # Update notes
-        serializer, success = note_service.update(request, note_pk)
-
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK,
-            )
+        data, http_status = note_service.update(request, note_pk)
 
         return Response(
-            data=serializer,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=2)
@@ -404,123 +318,86 @@ class ProjectViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path="organisation",
     )
-    def organisation(self, request, pk, *args, **kwargs):
+    def organisation(self, request, pk, *args, **kwargs) -> Response:
         organisation_service = OrganisationService(
             destination="project",
             location_id=pk
         )
-
-        # Get data
-        serializer, success = organisation_service.get_data(request)
-        if success:
-            return Response(
-                data=serializer.data,
-                status=HTTP_200_OK,
-            )
+        data, http_status = organisation_service.get_data(request)
 
         return Response(
-            data=serializer.errors,
-            status=HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=2)
     @organisation.mapping.post
-    def organisation_create(self, request, pk, *args, **kwargs):
+    def organisation_create(self, request, pk, *args, **kwargs) -> Response:
         organisation_service = OrganisationService(
             destination="project", location_id=pk
         )
-
-        # Create Link
-        serializer, success = organisation_service.link_organisation(request)
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_201_CREATED,
-            )
+        data, http_status = organisation_service.link_organisation(request)
 
         return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
     @organisation.mapping.delete
-    def organisation_delete(self, _, pk, *args, **kwargs):
+    def organisation_delete(self, _, pk, *args, **kwargs) -> Response:
         organisation_service = OrganisationService(
             destination="project", location_id=pk
         )
-
-        # Create Link
-        serializer, success = organisation_service.unlink_organisation()
-        if success:
-            return Response(
-                status=status.HTTP_204_NO_CONTENT,
-            )
+        data, http_status = organisation_service.unlink_organisation()
 
         return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @staticmethod
     @object_permission(min_permission_level=2)
-    def partial_update(request, pk, *args, **kwargs):
+    def partial_update(request, pk, *args, **kwargs) -> Response:
         project_services = ProjectService(destination="project", location_id=pk)
-        serializer, success = project_services.update(request, None)
-
-        if success:
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK,
-            )
+        data, http_status = project_services.update(request, None)
 
         return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @staticmethod
     @object_permission(min_permission_level=1)
-    def retrieve(request, pk, *args, **kwargs):
+    def retrieve(request, pk, *args, **kwargs) -> Response:
         project_service = ProjectService(destination="project", location_id=pk)
-        serializer, success = project_service.retrieve(request)
-
-        if success:
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK,
-            )
+        data, http_status = project_service.retrieve(request)
 
         return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
     @action(methods=["POST"], detail=True, url_path="users")
-    def users_list_create(self, request, pk, *args, **kwargs):
+    def users_list_create(self, request, pk, *args, **kwargs) -> Response:
         # Create a new connection first
         user_service = UserService(destination="project", location_id=pk)
-        serializer, success = user_service.create(request)
-
-        # Check results
-        if not success:
-            return Response(
-                data=serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        data, http_status = user_service.create(request)
 
         return Response(
-            status=status.HTTP_201_CREATED,
+            data=data,
+            status=http_status,
         )
 
     @destination_permission(min_permission_level=1)
     @action(methods=["DELETE"], detail=True, url_path=r"users/(?P<user_pk>[^/.]+)")
-    def users_list_delete(self, request, pk, user_pk, *args, **kwargs):
+    def users_list_delete(self, request, pk, user_pk, *args, **kwargs) -> Response:
         # Delete user
         user_service = UserService(destination="project", location_id=pk)
-        success = user_service.delete(request, user_pk)
+        data, http_status = user_service.delete(request, user_pk)
 
         return Response(
-            status=status.HTTP_204_NO_CONTENT if success else status.HTTP_400_BAD_REQUEST
+            data=data,
+            status=http_status,
         )

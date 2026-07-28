@@ -1,5 +1,6 @@
+from typing import Dict, Tuple, Union
+
 from rest_framework import status
-from rest_framework.response import Response
 from NearBeach.models import Folder
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
@@ -9,13 +10,13 @@ from NearBeach.utils.api.check_object_exists import check_object_exists
 class FolderService(ObjectServiceAbstraction):
     """Class for handling folder crud operations"""
 
-    def create(self, request):
+    def create(self, request) -> Tuple[Union[Dict, str], int]:
         serializer = FolderSerializer(data=request.data)
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         if not check_object_exists(self.destination, self.location_id):
-            return {"Object does not exist"}, False
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Save the form information
         folder_submit = Folder(
@@ -37,12 +38,9 @@ class FolderService(ObjectServiceAbstraction):
             folder_submit,
         )
 
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
-        ), True
+        return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, folder_id):
+    def delete(self, request, folder_id) -> Tuple[Union[Dict, str], int]:
         """Method to delete a folder"""
         folder = Folder.objects.filter(
             is_deleted=False,
@@ -52,7 +50,7 @@ class FolderService(ObjectServiceAbstraction):
 
         # If there are no values to update - notify the user
         if len(folder) == 0:
-            return False
+            return "Folder does not exist", status.HTTP_400_BAD_REQUEST
 
         # Soft delete the data
         folder.update(
@@ -60,16 +58,16 @@ class FolderService(ObjectServiceAbstraction):
             is_deleted=True,
         )
 
-        return True
+        return {}, status.HTTP_204_NO_CONTENT
 
     def get_list(self, request):
         pass
 
-    def update(self, request, folder_id):
+    def update(self, request, folder_id) -> Tuple[Union[Dict, str], int]:
         """Method to update a folder"""
         serializer = FolderSerializer(data=request.data)
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Check folder exists
         folder = Folder.objects.get(
@@ -78,7 +76,7 @@ class FolderService(ObjectServiceAbstraction):
             **{F"{self.destination}_id": self.location_id},
         )
         if folder is None:
-            return {"Folder object does not exist"}, False
+            return "Folder object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Update
         description = serializer.validated_data['description']
@@ -93,4 +91,4 @@ class FolderService(ObjectServiceAbstraction):
         # Serialize
         serializer = FolderSerializer(folder)
 
-        return serializer, True
+        return serializer.data, status.HTTP_200_OK
