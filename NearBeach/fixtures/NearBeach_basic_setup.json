@@ -4504,8 +4504,8 @@
     "total_story_points": 0,
     "completed_story_points": 0,
     "sprint_status": "Draft",
-    "sprint_start_date": "2024-03-18T08:45:28.841Z",
-    "sprint_end_date": "2024-03-25T08:45:28.841Z"
+    "start_date": "2024-03-18T08:45:28.841Z",
+    "end_date": "2024-03-25T08:45:28.841Z"
   }
 },
 {
@@ -4523,8 +4523,8 @@
     "total_story_points": 0,
     "completed_story_points": 0,
     "sprint_status": "Draft",
-    "sprint_start_date": "2024-03-18T08:45:29.300Z",
-    "sprint_end_date": "2024-03-25T08:45:29.300Z"
+    "start_date": "2024-03-18T08:45:29.300Z",
+    "end_date": "2024-03-25T08:45:29.300Z"
   }
 },
 {
@@ -4542,8 +4542,8 @@
     "total_story_points": 0,
     "completed_story_points": 0,
     "sprint_status": "Draft",
-    "sprint_start_date": "2024-03-18T08:45:37.303Z",
-    "sprint_end_date": "2024-03-25T08:45:37.303Z"
+    "start_date": "2024-03-18T08:45:37.303Z",
+    "end_date": "2024-03-25T08:45:37.303Z"
   }
 },
 {
@@ -4561,8 +4561,8 @@
     "total_story_points": 0,
     "completed_story_points": 0,
     "sprint_status": "Draft",
-    "sprint_start_date": "2024-03-18T08:45:37.782Z",
-    "sprint_end_date": "2024-03-25T08:45:37.782Z"
+    "start_date": "2024-03-18T08:45:37.782Z",
+    "end_date": "2024-03-25T08:45:37.782Z"
   }
 },
 {

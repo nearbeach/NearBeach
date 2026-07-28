@@ -46,7 +46,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @staticmethod
     @destination_permission(min_permission_level=3)
     def create(request, *args, **kwargs):
-        project_service = ProjectService(destination="project")
+        project_service = ProjectService(destination="project", location_id=0)
         serializer, success = project_service.create(request)
 
         if success:
