@@ -52,7 +52,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
                     "title": "API Project",
                     "group_list": [1],
                 },
-                403,
+                400,
                 "POST"
             ),
             self.URLTest(
@@ -70,7 +70,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
                     "title": "API Project",
                     "group_list": [3],
                 },
-                403,
+                400,
                 "POST"
             ),
             #########

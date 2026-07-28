@@ -2,6 +2,7 @@
 import {setActivePinia, createPinia} from "pinia";
 import {describe, test, expect, beforeEach} from "vitest";
 import {useSearchStore} from "@/stores/search/search.ts";
+import type {SearchResultsInterface} from "@/utils/interfaces/stores/SearchResultsInterface.ts";
 
 describe("Search Stores - check getters", () => {
     beforeEach(() => {
@@ -20,7 +21,7 @@ describe("Search Stores - check getters", () => {
 
     test("Check defaults are not null", async () => {
         const search = useSearchStore();
-        const searchResults = [{"description":"<p>Project - QA Team</p>","id":2,"title":"Project - QA Team","end_date":"2023-03-01T05:00:00Z","start_date":"2023-02-14T22:00:00Z","organisation":{"id":1,"name":"NearBeach Incorporate","website":"https://nearbeach.org","email":"support@nearbeach.org","profile_picture_path":null,"customers":null},"priority":{"value":2,"label":"Normal"},"status":{"id":1,"status":"New","higher_order_status":{"value":"Backlog","label":"Backlog"}}},{"description":"<p>Project - Only Administration</p>","id":1,"title":"Project - Only Administration","end_date":"2023-03-01T05:00:00Z","start_date":"2023-02-14T22:00:00Z","organisation":{"id":1,"name":"NearBeach Incorporate","website":"https://nearbeach.org","email":"support@nearbeach.org","profile_picture_path":null,"customers":null},"priority":{"value":2,"label":"Normal"},"status":{"id":1,"status":"New","higher_order_status":{"value":"Backlog","label":"Backlog"}}}];
+        const searchResults : SearchResultsInterface[] = [{"description":"<p>Project - QA Team</p>","id":2,"title":"Project - QA Team","end_date":"2023-03-01T05:00:00Z","start_date":"2023-02-14T22:00:00Z","organisation":{"id":1,"name":"NearBeach Incorporate","website":"https://nearbeach.org","email":"support@nearbeach.org","profile_picture_path":null,"customers":null, "potential_customers": null},"priority":{"value":2,"label":"Normal"},"status":{"id":1,"status":"New","higher_order_status":{"value":"Backlog","label":"Backlog"}}},{"description":"<p>Project - Only Administration</p>","id":1,"title":"Project - Only Administration","end_date":"2023-03-01T05:00:00Z","start_date":"2023-02-14T22:00:00Z","organisation":{"id":1,"name":"NearBeach Incorporate","website":"https://nearbeach.org","email":"support@nearbeach.org","profile_picture_path":null,"customers":null, "potential_customers": null},"priority":{"value":2,"label":"Normal"},"status":{"id":1,"status":"New","higher_order_status":{"value":"Backlog","label":"Backlog"}}}];
 
         // Set values
         search.previous = 0;

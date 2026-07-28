@@ -21,7 +21,8 @@ class ProjectService(ObjectServiceAbstraction):
             return serializer, False
 
         # Check that there are groups
-        group_list = request.data.getlist("group_list", [])
+        # group_list = request.data.getlist("group_list", [])
+        group_list = serializer.validated_data["group_list"]
         if not check_group_list(request.user, group_list):
             return ErrorObject("No Access to groups provided"), False
 

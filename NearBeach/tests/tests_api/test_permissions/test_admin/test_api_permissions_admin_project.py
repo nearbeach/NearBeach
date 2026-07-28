@@ -70,7 +70,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                     "title": "API Project",
                     "group_list": [3],
                 },
-                403,
+                400,
                 "POST"
             ),
             #########

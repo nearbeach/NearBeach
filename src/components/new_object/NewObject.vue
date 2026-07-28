@@ -88,7 +88,7 @@ async function createObject(): Promise<void> {
 	// Set up the form for the ajax
 	const body = {
 		title: titleModel.value,
-		group_list: groupModel.value,
+		group_list: [groupModel.value],
 	}
 
 	try {
