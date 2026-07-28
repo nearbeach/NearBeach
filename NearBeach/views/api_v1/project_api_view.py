@@ -1,3 +1,4 @@
+from NearBeach.services.ProjectService import ProjectService
 from django.contrib.auth.models import User
 from django.db.models import Q, F
 from django.shortcuts import get_object_or_404
@@ -9,10 +10,16 @@ from rest_framework.parsers import MultiPartParser, JSONParser, FormParser
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
-from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
-from NearBeach.decorators.check_user_permissions.object_permission import object_permission
+from NearBeach.decorators.check_user_permissions.destination_permission import (
+    destination_permission,
+)
+from NearBeach.decorators.check_user_permissions.object_permission import (
+    object_permission,
+)
 from NearBeach.models import Project, ObjectAssignment, UserGroup, Group
-from NearBeach.serializers.documentation.document_delete_serializer import DocumentDeleteSerializer
+from NearBeach.serializers.documentation.document_delete_serializer import (
+    DocumentDeleteSerializer,
+)
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.services.CustomerService import CustomerService
@@ -22,7 +29,6 @@ from NearBeach.services.OrganisationService import OrganisationService
 from NearBeach.services.document.DocumentLinkService import DocumentLinkService
 from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.services.document.FolderService import FolderService
-from NearBeach.utils.api.check_group_list import check_group_list
 from NearBeach.services.GroupService import GroupService
 from NearBeach.services.UserService import UserService
 
@@ -34,52 +40,31 @@ from NearBeach.services.UserService import UserService
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.filter(is_deleted=False)
     serializer_class = ProjectSerializer
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ["get", "post", "patch", "delete"]
     parser_classes = (MultiPartParser, JSONParser, FormParser)
 
     @staticmethod
     @destination_permission(min_permission_level=3)
     def create(request, *args, **kwargs):
-        serializer = ProjectSerializer(
-            context={
-                'request': request,
-                'method': 'POST',
-            },
-            data=request.data,
-        )
-        if not serializer.is_valid():
+        project_service = ProjectService(destination="project")
+        serializer, success = project_service.create(request)
+
+        if success:
             return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
+                data=serializer.data,
+                status=status.HTTP_201_CREATED,
             )
-
-        # Check that there are groups
-        group_list = request.data.getlist('group_list', [])
-        if not check_group_list(request.user, group_list):
-            return Response(
-                "No Access to groups provided",
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        # Create the project
-        created_project = serializer.save(
-            change_user=request.user,
-            creation_user=request.user
-        )
-
-        # Re-serialize the created project so it is in the same shape for the user
-        serializer = ProjectSerializer(created_project, many=False)
 
         return Response(
-            data=serializer.data,
-            status=status.HTTP_201_CREATED,
+            data=serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @destination_permission(min_permission_level=1)
     @action(
-        methods=['POST'],
+        methods=["POST"],
         detail=True,
-        url_path='customer',
+        url_path="customer",
     )
     def customer(self, request, pk, *args, **kwargs):
         customer_service = CustomerService(destination="project", location_id=pk)
@@ -99,9 +84,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @destination_permission(min_permission_level=1)
     @action(
-        methods=['DELETE'],
-        detail=True,
-        url_path=r'customer/(?P<customer_pk>[^/.]+)'
+        methods=["DELETE"], detail=True, url_path=r"customer/(?P<customer_pk>[^/.]+)"
     )
     def customer_delete(self, _, pk, customer_pk, *args, **kwargs):
         customer_service = CustomerService(destination="project", location_id=pk)
@@ -122,23 +105,22 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @staticmethod
     @object_permission(min_permission_level=4)
     def destroy(request, pk, *args, **kwargs):
-        project = get_object_or_404(
-            Project.objects.filter(is_deleted=False),
-            pk=pk
-        )
-        project.is_deleted = True
-        project.change_user = request.user
-        project.save()
+        project_service = ProjectService(destination="project", location_id=pk)
+        if project_service.delete(request, None):
+            return Response(
+                status=status.HTTP_204_NO_CONTENT,
+            )
+
         return Response(
-            data='project deleted',
-            status=status.HTTP_204_NO_CONTENT,
+            data={"Object does not exist"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @destination_permission(min_permission_level=1)
     @action(
-        methods=['GET'],
+        methods=["GET"],
         detail=True,
-        url_path='documents',
+        url_path="documents",
     )
     def documents(self, _, pk, *args, **kwargs):
         document_service = DocumentService(destination="project", location_id=pk)
@@ -171,15 +153,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # TODO - move this into the service
         # Depending on the type - depends on what we do
         return_serializer = None
-        match serializer.validated_data['type']:
+        match serializer.validated_data["type"]:
             case "folder":
                 folder_service = FolderService(destination="project", location_id=pk)
                 return_serializer, success = folder_service.create(request)
             case "link":
-                link_service = DocumentLinkService(destination="project", location_id=pk)
+                link_service = DocumentLinkService(
+                    destination="project", location_id=pk
+                )
                 return_serializer, success = link_service.create(request)
             case _:
-                document_service = DocumentService(destination="project", location_id=pk)
+                document_service = DocumentService(
+                    destination="project", location_id=pk
+                )
                 return_serializer, success = document_service.create(request)
 
         if success:
@@ -195,9 +181,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @destination_permission(min_permission_level=1)
     @action(
-        methods=['DELETE'],
-        detail=True,
-        url_path=r'documents/(?P<document_pk>[^/.]+)'
+        methods=["DELETE"], detail=True, url_path=r"documents/(?P<document_pk>[^/.]+)"
     )
     def documents_delete(self, request, pk, document_pk, *args, **kwargs):
         serializer = DocumentDeleteSerializer(data=request.data)
@@ -206,17 +190,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         # TODO - Remove this switch statement into the service
         # Depending on the type - depends on what we do
-        match serializer.validated_data['type']:
+        match serializer.validated_data["type"]:
             case "folder":
                 folder_service = FolderService(destination="project", location_id=pk)
                 if folder_service.delete(request, document_pk):
                     return Response(status=status.HTTP_204_NO_CONTENT)
             case "link":
-                link_service = DocumentLinkService(destination="project", location_id=pk)
+                link_service = DocumentLinkService(
+                    destination="project", location_id=pk
+                )
                 if link_service.delete(request, document_pk):
                     return Response(status=status.HTTP_204_NO_CONTENT)
             case _:
-                document_service = DocumentService(destination="project", location_id=pk)
+                document_service = DocumentService(
+                    destination="project", location_id=pk
+                )
                 if document_service.delete(request, document_pk):
                     return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -233,15 +221,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         # Depending on the type - depends on what we do
         success = False
-        match serializer.validated_data['type']:
+        match serializer.validated_data["type"]:
             case "folder":
                 folder_service = FolderService(destination="project", location_id=pk)
                 serializer, success = folder_service.update(request, document_pk)
             case "link":
-                link_service = DocumentLinkService(destination="project", location_id=pk)
+                link_service = DocumentLinkService(
+                    destination="project", location_id=pk
+                )
                 serializer, success = link_service.update(request, document_pk)
             case _:
-                document_service = DocumentService(destination="project", location_id=pk)
+                document_service = DocumentService(
+                    destination="project", location_id=pk
+                )
                 serializer, success = document_service.update(request, document_pk)
 
         # Update the data
@@ -256,11 +248,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @destination_permission(min_permission_level=1)
-    @action(
-        methods=['GET'],
-        detail=True,
-        url_path='groups'
-    )
+    @action(methods=["GET"], detail=True, url_path="groups")
     def groups_list(self, _, pk, *args, **kwargs):
         group_service = GroupService(destination="project", location_id=pk)
         serializer, success = group_service.get_list(_)
@@ -305,11 +293,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @destination_permission(min_permission_level=1)
-    @action(
-        methods=['DELETE'],
-        detail=True,
-        url_path=r'groups/(?P<group_pk>[^/.]+)'
-    )
+    @action(methods=["DELETE"], detail=True, url_path=r"groups/(?P<group_pk>[^/.]+)")
     def groups_list_delete(self, request, pk, group_pk, *args, **kwargs):
         # Delete a group
         group_service = GroupService(destination="project", location_id=pk)
@@ -333,11 +317,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @destination_permission(min_permission_level=1)
-    @action(
-        methods=['GET'],
-        detail=True,
-        url_path='link_list'
-    )
+    @action(methods=["GET"], detail=True, url_path="link_list")
     def link_list(self, _, pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
         serializer, success = link_list_service.get_list(_)
@@ -371,20 +351,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @destination_permission(min_permission_level=1)
-    @action(
-        methods=['DELETE'],
-        detail=True,
-        url_path=r'link_list/(?P<link_pk>[^/.]+)'
-    )
+    @action(methods=["DELETE"], detail=True, url_path=r"link_list/(?P<link_pk>[^/.]+)")
     def link_list_delete(self, request, pk, link_pk, *args, **kwargs):
         link_list_service = LinkListService(destination="project", location_id=pk)
 
         if link_list_service.delete(request, link_pk):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-        return Response(
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @destination_permission(min_permission_level=1)
     @link_list_delete.mapping.patch
@@ -413,7 +387,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 username=request.user,
             ).values(
                 "group_id",
-            )
+            ),
         )
 
         project_results = Project.objects.filter(
@@ -429,8 +403,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
             # Apply search filter
             project_results = project_results.filter(
-                Q(title__icontains=search) |
-                Q(id=search_id)
+                Q(title__icontains=search) | Q(id=search_id)
             )
 
         show_closed = request.query_params.get("show_closed", None)
@@ -458,9 +431,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @destination_permission(min_permission_level=1)
     @action(
-        methods=['GET'],
+        methods=["GET"],
         detail=True,
-        url_path='notes',
+        url_path="notes",
     )
     def notes(self, request, pk, *args, **kwargs):
         note_service = NoteService(destination="project", location_id=pk)
@@ -499,11 +472,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @destination_permission(min_permission_level=2)
-    @action(
-        methods=['DELETE'],
-        detail=True,
-        url_path=r'notes/(?P<note_pk>[^/.]+)'
-    )
+    @action(methods=["DELETE"], detail=True, url_path=r"notes/(?P<note_pk>[^/.]+)")
     def notes_delete(self, request, pk, note_pk, *args, **kwargs):
         note_service = NoteService(destination="project", location_id=pk)
 
@@ -539,12 +508,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @destination_permission(min_permission_level=2)
     @action(
-        methods=['GET'],
+        methods=["GET"],
         detail=True,
-        url_path='organisation',
+        url_path="organisation",
     )
     def organisation(self, request, pk, *args, **kwargs):
-        organisation_service = OrganisationService(destination="project", location_id=pk)
+        organisation_service = OrganisationService(
+            destination="project", location_id=pk
+        )
 
         # Get data
         serializer, success = organisation_service.get_data(request)
@@ -562,7 +533,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @destination_permission(min_permission_level=2)
     @organisation.mapping.post
     def organisation_create(self, request, pk, *args, **kwargs):
-        organisation_service = OrganisationService(destination="project", location_id=pk)
+        organisation_service = OrganisationService(
+            destination="project", location_id=pk
+        )
 
         # Create Link
         serializer, success = organisation_service.link_organisation(request)
@@ -580,7 +553,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @destination_permission(min_permission_level=1)
     @organisation.mapping.delete
     def organisation_delete(self, _, pk, *args, **kwargs):
-        organisation_service = OrganisationService(destination="project", location_id=pk)
+        organisation_service = OrganisationService(
+            destination="project", location_id=pk
+        )
 
         # Create Link
         serializer, success = organisation_service.unlink_organisation()
@@ -598,24 +573,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @staticmethod
     @object_permission(min_permission_level=2)
     def partial_update(request, pk, *args, **kwargs):
-        project = get_object_or_404(
-            Project.objects.filter(is_deleted=False),
-            pk=pk
-        )
+        project = get_object_or_404(Project.objects.filter(is_deleted=False), pk=pk)
         serializer = ProjectSerializer(
             project,
             data=request.data,
             context={
-                'request': request,
-                'method': 'PATCH',
+                "request": request,
+                "method": "PATCH",
             },
             partial=True,
         )
         if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Make sure we update the change user
         serializer.change_user = request.user
@@ -645,9 +614,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             is_deleted=False,
             id__in=object_assignments.filter(
                 group_id__isnull=False,
-            ).values(
-                "group_id"
-            ),
+            ).values("group_id"),
         )
 
         # Define user list
@@ -655,16 +622,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
             pk__in=object_assignments.filter(
                 assigned_user__isnull=False,
             ).values("assigned_user_id"),
-        ).annotate(
-            profile_picture=F('userprofilepicture__document_id__key')
-        )
+        ).annotate(profile_picture=F("userprofilepicture__document_id__key"))
 
         # Create the serializer
         serializer = ProjectSerializer(
             project_results,
             context={
-                'request': request,
-                'method': 'GET',
+                "request": request,
+                "method": "GET",
             },
         )
 
@@ -673,11 +638,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @destination_permission(min_permission_level=1)
-    @action(
-        methods=['POST'],
-        detail=True,
-        url_path='users'
-    )
+    @action(methods=["POST"], detail=True, url_path="users")
     def users_list_create(self, request, pk, *args, **kwargs):
         # Create a new connection first
         user_service = UserService(destination="project", location_id=pk)
@@ -695,11 +656,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @destination_permission(min_permission_level=1)
-    @action(
-        methods=['DELETE'],
-        detail=True,
-        url_path=r'users/(?P<user_pk>[^/.]+)'
-    )
+    @action(methods=["DELETE"], detail=True, url_path=r"users/(?P<user_pk>[^/.]+)")
     def users_list_delete(self, request, pk, user_pk, *args, **kwargs):
         # Delete user
         user_service = UserService(destination="project", location_id=pk)

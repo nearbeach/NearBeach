@@ -41,8 +41,8 @@ class Sprint(CommonInfo):
         blank=True,
         default=SprintStatus.DRAFT,
     )
-    sprint_start_date = models.DateTimeField()
-    sprint_end_date = models.DateTimeField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
 
     def __str__(self):
         return str(self.title)

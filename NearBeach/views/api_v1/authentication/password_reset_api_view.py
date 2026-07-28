@@ -7,13 +7,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from NearBeach.serializers.authentication.password_reset_serializer import PasswordResetSerializer
+from NearBeach.serializers.authentication.password_reset_serializer import (
+    PasswordResetSerializer,
+)
 from NearBeach.utils.throttle.AuthMinuteThrottle import AuthMinuteThrottle
 from NearBeach.utils.throttle.AuthHourThrottle import AuthHourThrottle
 
 
 class PasswordResetView(APIView):
     """Class dealing with forgotten password"""
+
     authentication_classes = []  # important for login
     permission_classes = [AllowAny]
     serializer_class = PasswordResetSerializer
@@ -34,13 +37,10 @@ class PasswordResetView(APIView):
         """Method handling post requests for password reset"""
         serializer = self.serializer_class(data=request.data)
         if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         # Get user
-        user = self._get_user(serializer.validated_data['uid'])
+        user = self._get_user(serializer.validated_data["uid"])
         if user is None:
             # Silently fail - ensure the attacker that the password has updated
             return Response(
@@ -48,7 +48,9 @@ class PasswordResetView(APIView):
             )
 
         # Verify token
-        is_token_valid = PasswordResetTokenGenerator().check_token(user, serializer.validated_data['token'])
+        is_token_valid = PasswordResetTokenGenerator().check_token(
+            user, serializer.validated_data["token"]
+        )
         if not is_token_valid:
             # Notify the user that the token has expired
             return Response(
@@ -57,7 +59,7 @@ class PasswordResetView(APIView):
             )
 
         # Reset the user's password
-        user.set_password(serializer.validated_data['password'])
+        user.set_password(serializer.validated_data["password"])
         user.save()
 
         # Send user 200 response

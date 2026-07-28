@@ -27,7 +27,7 @@ class CoffeeViewSet(viewsets.ViewSet):
     def list(_, *args, **kwargs):
         return Response(
             data={"Teapot": "Hello, did you want to make some tea"},
-            status=status.HTTP_418_IM_A_TEAPOT
+            status=status.HTTP_418_IM_A_TEAPOT,
         )
 
     @staticmethod

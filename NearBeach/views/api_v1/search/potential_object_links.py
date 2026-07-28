@@ -17,7 +17,8 @@ from NearBeach.serializers.object_data.link_serializer import LinkSerializer
 
 class PotentialObjectLinksViewSet(viewsets.ViewSet):
     """Class dealing for searching potential object links"""
-    http_method_names = ['get']
+
+    http_method_names = ["get"]
 
     def __init__(self, **kwargs: Any):
         super().__init__(**kwargs)
@@ -25,21 +26,25 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
 
     def _get_project(self):
         """Private method to get project object links"""
-        results = Project.objects.filter(
-            is_deleted=False,
-            id__in=self.object_assignment_results.filter(
-                project_id__isnull=False,
-            ).values(
-                "project_id",
-            ),
-        ).annotate(
-            object_id=F("id"),
-            object_title=F("title"),
-            object_type=Value("project"),
-        ).values(
-            "object_id",
-            "object_title",
-            "object_type",
+        results = (
+            Project.objects.filter(
+                is_deleted=False,
+                id__in=self.object_assignment_results.filter(
+                    project_id__isnull=False,
+                ).values(
+                    "project_id",
+                ),
+            )
+            .annotate(
+                object_id=F("id"),
+                object_title=F("title"),
+                object_type=Value("project"),
+            )
+            .values(
+                "object_id",
+                "object_title",
+                "object_type",
+            )
         )
 
         # Serialize the data
@@ -49,21 +54,25 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
 
     def _get_requirement(self):
         """Private method to get project object links"""
-        results = Requirement.objects.filter(
-            is_deleted=False,
-            id__in=self.object_assignment_results.filter(
-                requirement_id__isnull=False,
-            ).values(
-                "requirement_id",
-            ),
-        ).annotate(
-            object_id=F("id"),
-            object_title=F("title"),
-            object_type=Value("requirement"),
-        ).values(
-            "object_id",
-            "object_title",
-            "object_type",
+        results = (
+            Requirement.objects.filter(
+                is_deleted=False,
+                id__in=self.object_assignment_results.filter(
+                    requirement_id__isnull=False,
+                ).values(
+                    "requirement_id",
+                ),
+            )
+            .annotate(
+                object_id=F("id"),
+                object_title=F("title"),
+                object_type=Value("requirement"),
+            )
+            .values(
+                "object_id",
+                "object_title",
+                "object_type",
+            )
         )
 
         # Serialize the data
@@ -73,21 +82,25 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
 
     def _get_requirement_item(self):
         """Private method to get project object links"""
-        results = RequirementItem.objects.filter(
-            is_deleted=False,
-            id__in=self.object_assignment_results.filter(
-                requirement_item_id__isnull=False,
-            ).values(
-                "requirement_item_id",
-            ),
-        ).annotate(
-            object_id=F("id"),
-            object_title=F("title"),
-            object_type=Value("requirement_item"),
-        ).values(
-            "object_id",
-            "object_title",
-            "object_type",
+        results = (
+            RequirementItem.objects.filter(
+                is_deleted=False,
+                id__in=self.object_assignment_results.filter(
+                    requirement_item_id__isnull=False,
+                ).values(
+                    "requirement_item_id",
+                ),
+            )
+            .annotate(
+                object_id=F("id"),
+                object_title=F("title"),
+                object_type=Value("requirement_item"),
+            )
+            .values(
+                "object_id",
+                "object_title",
+                "object_type",
+            )
         )
 
         # Serialize the data
@@ -97,21 +110,25 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
 
     def _get_task(self):
         """Private method to get project object links"""
-        results = Task.objects.filter(
-            is_deleted=False,
-            id__in=self.object_assignment_results.filter(
-                task_id__isnull=False,
-            ).values(
-                "task_id",
-            ),
-        ).annotate(
-            object_id=F("id"),
-            object_title=F("title"),
-            object_type=Value("task"),
-        ).values(
-            "object_id",
-            "object_title",
-            "object_type",
+        results = (
+            Task.objects.filter(
+                is_deleted=False,
+                id__in=self.object_assignment_results.filter(
+                    task_id__isnull=False,
+                ).values(
+                    "task_id",
+                ),
+            )
+            .annotate(
+                object_id=F("id"),
+                object_title=F("title"),
+                object_type=Value("task"),
+            )
+            .values(
+                "object_id",
+                "object_title",
+                "object_type",
+            )
         )
 
         # Serialize the data
@@ -121,7 +138,7 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
 
     def list(self, request, *args, **kwargs):
         """Method used to fetch potential object links"""
-        query_string = request.query_params.get('q')
+        query_string = request.query_params.get("q")
 
         # Fetch objects the user has access too
         self.object_assignment_results = ObjectAssignment.objects.filter(
@@ -130,7 +147,7 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
                 is_deleted=False,
                 username=request.user.id,
                 group__isnull=False,
-            ).values("group_id")
+            ).values("group_id"),
         )
 
         # TODO - pass query string through

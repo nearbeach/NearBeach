@@ -7,7 +7,9 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate, login
 from django_otp import match_token
 
-from NearBeach.serializers.authentication.authentication_serializer import AuthenticationSerializer
+from NearBeach.serializers.authentication.authentication_serializer import (
+    AuthenticationSerializer,
+)
 from NearBeach.utils.admin import initialize_base_values
 from NearBeach.utils.enums.login_status_enum import LoginStatusEnum
 from NearBeach.utils.throttle.AuthMinuteThrottle import AuthMinuteThrottle
@@ -16,6 +18,7 @@ from NearBeach.utils.throttle.AuthHourThrottle import AuthHourThrottle
 
 class AuthenticationView(APIView):
     """Class dealing with user authentication"""
+
     authentication_classes = []  # important for login
     permission_classes = [AllowAny]
     serializer: AuthenticationSerializer = None
@@ -27,10 +30,7 @@ class AuthenticationView(APIView):
 
         # Get list of all potential devices
         totp_device = TOTPDevice.objects.filter(user=user, confirmed=True)
-        email_device = EmailDevice.objects.filter(
-            user=user,
-            confirmed=True
-        )
+        email_device = EmailDevice.objects.filter(user=user, confirmed=True)
 
         # Add the device to the array if it exists
         if totp_device.exists():
@@ -46,20 +46,19 @@ class AuthenticationView(APIView):
     def _generate_email_token(user):
         """Function to generate a token for a user's two-factor devices."""
         email_device, created = EmailDevice.objects.get_or_create(
-            user=user,
-            confirmed=True
+            user=user, confirmed=True
         )
 
         email_device.generate_challenge()
 
     def _handle_two_factor(self, request, user):
         """Handle the Two Factor verification and login request."""
-        otp_token = self.serializer.validated_data['otp_token']
+        otp_token = self.serializer.validated_data["otp_token"]
 
         device = match_token(user, otp_token)
         if device is None:
             return Response(
-                data={'status': LoginStatusEnum.FAILURE},
+                data={"status": LoginStatusEnum.FAILURE},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
@@ -72,7 +71,7 @@ class AuthenticationView(APIView):
         login(request, user)
 
         return Response(
-            data={'status': LoginStatusEnum.SUCCESS},
+            data={"status": LoginStatusEnum.SUCCESS},
             status=status.HTTP_200_OK,
         )
 
@@ -90,8 +89,8 @@ class AuthenticationView(APIView):
 
         # Authenticate the user
         user = authenticate(
-            username=self.serializer.validated_data['username'],
-            password=self.serializer.validated_data['password']
+            username=self.serializer.validated_data["username"],
+            password=self.serializer.validated_data["password"],
         )
 
         # Check user is authenticated
@@ -113,13 +112,12 @@ class AuthenticationView(APIView):
         if len(devices) == 0:
             return self._login(request, user)
         # User has set up 2FA but has not supplied the otp_token
-        elif self.serializer.validated_data['otp_token'] == "":
+        elif self.serializer.validated_data["otp_token"] == "":
             # User has set up 2FA but has not supplied credentials
             return Response(
-                data={'status': LoginStatusEnum.TWO_FACTOR_REQUIRED},
+                data={"status": LoginStatusEnum.TWO_FACTOR_REQUIRED},
                 status=status.HTTP_200_OK,
             )
 
         # Handle the two-factor process
         return self._handle_two_factor(request, user)
-

@@ -16,7 +16,9 @@ from NearBeach.models import (
     UserGroup,
     Tag,
 )
-from NearBeach.serializers.user.user_initial_data_serializer import UserInitialDataSerializer
+from NearBeach.serializers.user.user_initial_data_serializer import (
+    UserInitialDataSerializer,
+)
 
 
 @extend_schema(
@@ -24,6 +26,7 @@ from NearBeach.serializers.user.user_initial_data_serializer import UserInitialD
 )
 class UserInitialDataView(APIView):
     """Class dealing with user initial data"""
+
     serializer_class = None
 
     @staticmethod
@@ -44,9 +47,15 @@ class UserInitialDataView(APIView):
         ).values(
             "group_id",
             group_name=F("group__name"),
-            administration_assign_user_to_group=F("permission_set__administration_assign_user_to_group"),
-            administration_create_group=F("permission_set__administration_create_group"),
-            administration_create_permission_set=F("permission_set__administration_create_permission_set"),
+            administration_assign_user_to_group=F(
+                "permission_set__administration_assign_user_to_group"
+            ),
+            administration_create_group=F(
+                "permission_set__administration_create_group"
+            ),
+            administration_create_permission_set=F(
+                "permission_set__administration_create_permission_set"
+            ),
             administration_create_user=F("permission_set__administration_create_user"),
             customer=F("permission_set__customer"),
             document=F("permission_set__document"),
@@ -105,9 +114,7 @@ class UserInitialDataView(APIView):
         """Get method to retrieve initial data required by user"""
         user_results = User.objects.filter(
             username=request.user,
-        ).annotate(
-            profile_picture=F("userprofilepicture__document__key")
-        )
+        ).annotate(profile_picture=F("userprofilepicture__document__key"))
 
         # Check to make sure we have one record only - error otherwise
         if len(user_results) != 1:

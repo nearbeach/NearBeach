@@ -1,4 +1,5 @@
 """Module providing the Authentication views for NearBeach"""
+
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_str
@@ -25,8 +26,8 @@ class ResetPasswordView(View):
 
     def get(self, request, *args, **kwargs):
         """Method handling GET request for reset password."""
-        uid = request.GET.get('uid', None)
-        token = request.GET.get('token', None)
+        uid = request.GET.get("uid", None)
+        token = request.GET.get("token", None)
 
         # Check uid and token exist
         if uid is None or token is None:

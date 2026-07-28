@@ -7,7 +7,9 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from django.utils.encoding import force_bytes
 
-from NearBeach.serializers.authentication.forgotten_password_serializer import ForgottenPasswordSerializer
+from NearBeach.serializers.authentication.forgotten_password_serializer import (
+    ForgottenPasswordSerializer,
+)
 from NearBeach.services.AsyncEmailService import AsyncEmailService
 from NearBeach.utils.throttle.AuthMinuteThrottle import AuthMinuteThrottle
 from NearBeach.utils.throttle.AuthHourThrottle import AuthHourThrottle
@@ -15,6 +17,7 @@ from NearBeach.utils.throttle.AuthHourThrottle import AuthHourThrottle
 
 class ForgottenPasswordView(APIView):
     """Class dealing with forgotten password"""
+
     authentication_classes = []
     permission_classes = [AllowAny]
     serializer_class = ForgottenPasswordSerializer
@@ -28,8 +31,11 @@ class ForgottenPasswordView(APIView):
 
         # Context
         context = {
-            'url': request.scheme + "://" + request.get_host() + F"/login/reset-password/?uid={uid}&token={token}",
-            'user': user,
+            "url": request.scheme
+            + "://"
+            + request.get_host()
+            + f"/login/reset-password/?uid={uid}&token={token}",
+            "user": user,
         }
 
         # Send email
@@ -43,14 +49,11 @@ class ForgottenPasswordView(APIView):
     def post(self, request):
         serializer = ForgottenPasswordSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Get the user async
         users = User.objects.filter(
-            email=serializer.validated_data['email'],
+            email=serializer.validated_data["email"],
             is_active=True,
         )
 
