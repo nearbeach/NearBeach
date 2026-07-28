@@ -4,7 +4,6 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, JSONParser, FormParser
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
 from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
