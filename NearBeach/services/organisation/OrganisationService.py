@@ -36,56 +36,7 @@ class OrganisationService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_data(self, _) -> Tuple[Union[Dict, str], int]:
-        """Method to extract out any organisation/customer data for a given destination / location"""
-        # Get the object we wish to extract information for
-        extract_object = OBJECT_DICT[self.destination].filter(
-            is_deleted=False,
-            pk=self.location_id,
-        )
-
-        # Check there is an object to extract information for
-        if len(extract_object) == 0:
-            return "No object exists", status.HTTP_400_BAD_REQUEST
-
-        # Set up the initial return data
-        organisations = Organisation.objects.filter(
-            is_deleted=False,
-            pk__in=extract_object.values('organisation_id'),
-        )
-
-        # TODO - figure out if we can use methods to extract data (and for it to be re-usable)
-        data = {
-            "id": None,
-            "potential_organisations": Organisation.objects.filter(
-                is_deleted=False,
-            ).order_by(
-                "name",
-            ),
-        }
-
-        if len(organisations) > 0:
-            # Get the organisation
-            organisation = organisations.first()
-
-            # Set the data attributes
-            data['organisation'] = organisation
-            data['customers'] = Customer.objects.filter(
-                is_deleted=False,
-                id__in=ObjectAssignment.objects.filter(
-                    is_deleted=False,
-                    customer_id__isnull=False,
-                    **{F"{self.destination}_id": self.location_id},
-                ).values("customer_id"),
-            )
-            data['potential_customers'] = Customer.objects.filter(
-                is_deleted=False,
-                organisation_id=organisation.pk,
-            )
-
-        # Serialize data
-        serializer = OrganisationLinkSerializer(data)
-
-        return serializer.data, status.HTTP_200_OK
+        pass
 
     def get_list(self, request):
         pass

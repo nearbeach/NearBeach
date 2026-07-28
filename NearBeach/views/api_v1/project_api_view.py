@@ -13,7 +13,6 @@ from NearBeach.services.customer.CustomerLinkService import CustomerLinkService
 from NearBeach.services.LinkListService import LinkListService
 from NearBeach.services.NoteService import NoteService
 from NearBeach.services.organisation.OrganisationLinkService import OrganisationLinkService
-from NearBeach.services.organisation.OrganisationService import OrganisationService
 from NearBeach.services.document.DocumentMiddlemanService import DocumentMiddlemanService
 from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.services.GroupService import GroupService
@@ -319,11 +318,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         url_path="organisation",
     )
     def organisation(self, request, pk, *args, **kwargs) -> Response:
-        organisation_service = OrganisationService(
+        organisation_link_service = OrganisationLinkService(
             destination="project",
             location_id=pk
         )
-        data, http_status = organisation_service.get_data(request)
+        data, http_status = organisation_link_service.get_data(request)
 
         return Response(
             data=data,
