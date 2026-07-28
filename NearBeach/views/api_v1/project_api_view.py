@@ -379,54 +379,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @destination_permission(min_permission_level=1)
     def list(self, request, *args, **kwargs):
-        object_assignment_results = ObjectAssignment.objects.filter(
-            project_id__isnull=False,
-            is_deleted=False,
-            group_id__in=UserGroup.objects.filter(
-                is_deleted=False,
-                username=request.user,
-            ).values(
-                "group_id",
-            ),
-        )
+        """Method for getting a list of all projects through search"""
+        project_service = ProjectService(destination="project", location_id=0)
+        project_results = project_service.get_list(request)
 
-        project_results = Project.objects.filter(
-            is_deleted=False,
-            id__in=object_assignment_results.values("project_id"),
-        )
-
-        # Filter by search parameter in the query string
-        search = request.query_params.get("search", None)
-        if search is not None:
-            # Translate search to id
-            search_id = int(search) if str.isdigit(search) else None
-
-            # Apply search filter
-            project_results = project_results.filter(
-                Q(title__icontains=search) | Q(id=search_id)
-            )
-
-        show_closed = request.query_params.get("show_closed", None)
-        if not show_closed == "true":
-            # Hide all the closed
-            project_results = project_results.exclude(
-                status__higher_order_status="Closed",
-            )
-
-        # Handle pagination
         page = self.paginate_queryset(project_results)
         if page is not None:
             serializer = ProjectSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        # Fallback method
-        serializer = ProjectSerializer(
-            project_results,
-            many=True,
-        )
         return Response(
-            data=serializer.data,
-            status=status.HTTP_200_OK,
+            data={"Issue with pagination of object"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
     @destination_permission(min_permission_level=1)
@@ -573,67 +537,25 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @staticmethod
     @object_permission(min_permission_level=2)
     def partial_update(request, pk, *args, **kwargs):
-        project = get_object_or_404(Project.objects.filter(is_deleted=False), pk=pk)
-        serializer = ProjectSerializer(
-            project,
-            data=request.data,
-            context={
-                "request": request,
-                "method": "PATCH",
-            },
-            partial=True,
-        )
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        project_services = ProjectService(destination="project", location_id=pk)
+        serializer, success = project_services.update(request, None)
 
-        # Make sure we update the change user
-        serializer.change_user = request.user
-        serializer.save()
+        if success:
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
 
         return Response(
-            serializer.data,
-            status=status.HTTP_200_OK,
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @staticmethod
     @object_permission(min_permission_level=1)
     def retrieve(request, pk, *args, **kwargs):
-        project_results = get_object_or_404(
-            queryset=Project.objects.filter(is_deleted=False),
-            pk=pk,
-        )
-
-        # Get assigned object
-        object_assignments = ObjectAssignment.objects.filter(
-            is_deleted=False,
-            project_id=pk,
-        )
-
-        # Define groups list
-        project_results.group_list = Group.objects.filter(
-            is_deleted=False,
-            id__in=object_assignments.filter(
-                group_id__isnull=False,
-            ).values("group_id"),
-        )
-
-        # Define user list
-        project_results.user_list = User.objects.filter(
-            pk__in=object_assignments.filter(
-                assigned_user__isnull=False,
-            ).values("assigned_user_id"),
-        ).annotate(profile_picture=F("userprofilepicture__document_id__key"))
-
-        # Create the serializer
-        serializer = ProjectSerializer(
-            project_results,
-            context={
-                "request": request,
-                "method": "GET",
-            },
-        )
-
-        # Append extra data
+        project_service = ProjectService(destination="project", location_id=pk)
+        serializer, success = project_service.retrieve(request)
 
         return Response(serializer.data)
 
