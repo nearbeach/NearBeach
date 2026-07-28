@@ -9,10 +9,11 @@ from NearBeach.decorators.check_user_permissions.destination_permission import d
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.models import Project
 from NearBeach.serializers.project_serializer import ProjectSerializer
-from NearBeach.services.CustomerService import CustomerService
+from NearBeach.services.customer.CustomerLinkService import CustomerLinkService
 from NearBeach.services.LinkListService import LinkListService
 from NearBeach.services.NoteService import NoteService
-from NearBeach.services.OrganisationService import OrganisationService
+from NearBeach.services.organisation.OrganisationLinkService import OrganisationLinkService
+from NearBeach.services.organisation.OrganisationService import OrganisationService
 from NearBeach.services.document.DocumentMiddlemanService import DocumentMiddlemanService
 from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.services.GroupService import GroupService
@@ -47,10 +48,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         url_path="customer",
     )
     def customer(self, request, pk, *args, **kwargs) -> Response:
-        customer_service = CustomerService(destination="project", location_id=pk)
+        customer_service = CustomerLinkService(destination="project", location_id=pk)
 
         # Create Link
-        data, http_status = customer_service.link_customer(request)
+        data, http_status = customer_service.create(request)
 
         return Response(
             data=data,
@@ -64,10 +65,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         url_path=r"customer/(?P<customer_pk>[^/.]+)",
     )
     def customer_delete(self, _, pk, customer_pk, *args, **kwargs) -> Response:
-        customer_service = CustomerService(destination="project", location_id=pk)
+        customer_service = CustomerLinkService(destination="project", location_id=pk)
 
         # Create Link
-        data, http_status = customer_service.unlink_customer(customer_pk)
+        data, http_status = customer_service.delete(customer_pk)
 
         return Response(
             data=data,
@@ -332,10 +333,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @destination_permission(min_permission_level=2)
     @organisation.mapping.post
     def organisation_create(self, request, pk, *args, **kwargs) -> Response:
-        organisation_service = OrganisationService(
+        organisation_service = OrganisationLinkService(
             destination="project", location_id=pk
         )
-        data, http_status = organisation_service.link_organisation(request)
+        data, http_status = organisation_service.create(request)
 
         return Response(
             data=data,
@@ -345,10 +346,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @destination_permission(min_permission_level=1)
     @organisation.mapping.delete
     def organisation_delete(self, _, pk, *args, **kwargs) -> Response:
-        organisation_service = OrganisationService(
+        organisation_service = OrganisationLinkService(
             destination="project", location_id=pk
         )
-        data, http_status = organisation_service.unlink_organisation()
+        data, http_status = organisation_service.delete()
 
         return Response(
             data=data,

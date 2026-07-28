@@ -90,46 +90,6 @@ class OrganisationService(ObjectServiceAbstraction):
     def get_list(self, request):
         pass
 
-    def link_organisation(self, request) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
-        serializer = OrganisationLinkSerializer(data=request.data)
-        if not serializer.is_valid():
-            return serializer.errors, status.HTTP_400_BAD_REQUEST
-
-        # Get the object we wish to update
-        update_object = OBJECT_DICT[self.destination].filter(
-            is_deleted=False,
-            pk=self.location_id,
-        )
-
-        # Check there is an object to update
-        if len(update_object) == 0:
-            return "No object exists", status.HTTP_400_BAD_REQUEST
-
-        # Get organisation
-        organisation_result = Organisation.objects.get(
-            pk=serializer.validated_data["id"],
-        )
-        update_object.update(
-            organisation=organisation_result,
-        )
-
-        # Send back data
-        potential_customers = Customer.objects.filter(
-            is_deleted=False,
-            organisation_id=organisation_result.id,
-        )
-
-        # Serializer
-        serializer = OrganisationLinkSerializer({
-            "organisation": organisation_result,
-            "potential_customers": potential_customers,
-        })
-
-        return serializer.data, status.HTTP_201_CREATED
-
     @destination_permission(min_permission_level=1)
     def list(self, _) -> Tuple[Union[Dict, str], int]:
         # TODO - Check how we are going to do serialization etc
@@ -147,23 +107,6 @@ class OrganisationService(ObjectServiceAbstraction):
         serializer = OrganisationSerializer(organisation_results, many=True)
 
         return serializer.data, status.HTTP_200_OK
-
-    def unlink_organisation(self) -> Tuple[Union[Dict, str], int]:
-        update_object = OBJECT_DICT[self.destination].filter(
-            is_deleted=False,
-            pk=self.location_id,
-        )
-
-        #Check there is an object to update
-        if len(update_object) == 0:
-            return "No object exists", status.HTTP_400_BAD_REQUEST
-
-        # Remove organisation from object
-        update_object.update(
-            organisation=None,
-        )
-
-        return {}, status.HTTP_204_NO_CONTENT
 
     def update(self, request, pk) -> Tuple[Union[Dict, str], int]:
         serializer = OrganisationSerializer(data=request.data, context={'request': request})
