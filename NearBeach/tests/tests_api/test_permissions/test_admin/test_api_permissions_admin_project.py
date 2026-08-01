@@ -173,7 +173,7 @@ class ApiAdminPermissionTests(BaseApiClass):
 
         self._run_test_array(data_list)
 
-    def test_api_permissions_admin_project_groups_and_users(self):
+    def test_api_permissions_admin_project_groups(self):
         """Test - API Admin Permissions for the Project Documentation submodule"""
         data_list = [
             #########
@@ -408,6 +408,51 @@ class ApiAdminPermissionTests(BaseApiClass):
 
         self._run_test_array(data_list)
 
+    def test_api_permissions_admin_project_public_link(self):
+        """Test - API Admin Permissions for the Project public links submodule"""
+        data_list = [
+            #########
+            # READ
+            #########
+            self.URLTest("/api/v1/project/1/public_link/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/2/public_link/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/3/public_link/", {}, 400, "GET"),
+
+            #########
+            # CREATE
+            #########
+            self.URLTest(
+                "/api/v1/project/1/public_link/",
+                {},
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/public_link/",
+                {},
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v1/project/3/public_link/",
+                {},
+                400,
+                "POST",
+            ),
+
+            #########
+            # UPDATE
+            #########
+            # TODO - Create fixture where it contains public links
+
+            #########
+            # DELETE
+            #########
+            # TODO - Create fixture where it contains public links
+        ]
+
+        self._run_test_array(data_list)
+
     def test_api_permissions_admin_project_sprint_links(self):
         """Test - API Admin Permissions for the Project sprint link module"""
         data_list = [
@@ -420,3 +465,43 @@ class ApiAdminPermissionTests(BaseApiClass):
         ]
 
         self._run_test_array(data_list)
+
+    def test_api_permissions_admin_project_user_list(self):
+        """Test - API Admin Permissions for the Project user list module"""
+        data_list = [
+            #########
+            # CREATE
+            #########
+            self.URLTest(
+                "/api/v1/project/1/users/",
+                {
+                    "user_list": [1],
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/users/",
+                {
+                    "user_list": [2, 3],
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v1/project/3/users/",
+                {
+                    "user_list": [2, 3],
+                },
+                400,
+                "POST",
+            ),
+
+            #########
+            # DELETE
+            #########
+            # TODO - Update fixture to have some projects with assigned users to remove etc.
+        ]
+
+        self._run_test_array(data_list)
+

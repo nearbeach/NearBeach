@@ -9,6 +9,7 @@ from NearBeach.decorators.check_user_permissions.destination_permission import d
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.models import Project
 from NearBeach.serializers.project_serializer import ProjectSerializer
+from NearBeach.services.PublicLinkService import PublicLinkService
 from NearBeach.services.customer.CustomerLinkService import CustomerLinkService
 from NearBeach.services.LinkListService import LinkListService
 from NearBeach.services.NoteService import NoteService
@@ -361,6 +362,58 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def partial_update(request, pk, *args, **kwargs) -> Response:
         project_services = ProjectService(destination="project", location_id=pk)
         data, http_status = project_services.update(request, None)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=["GET"],
+        detail=True,
+        url_path="public_link",
+    )
+    def public_link(self, request, pk, *args, **kwargs):
+        public_link_service = PublicLinkService(destination="project", location_id=pk)
+        data, http_status = public_link_service.get_list(request)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @destination_permission(min_permission_level=2)
+    @public_link.mapping.post
+    def public_link_create(self, request, pk, *args, **kwargs):
+        public_link_service = PublicLinkService(destination="project", location_id=pk)
+        data, http_status = public_link_service.create(request)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @destination_permission(min_permission_level=2)
+    @action(
+        methods=["DELETE"],
+        detail=True,
+        url_path=r"public_link/(?P<public_link_pk>[^/.]+)"
+    )
+    def public_link_delete(self, request, pk, public_link_pk, *args, **kwargs):
+        public_link_service = PublicLinkService(destination="project", location_id=pk)
+        data, http_status = public_link_service.delete(request, public_link_pk)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @destination_permission(min_permission_level=2)
+    @public_link_delete.mapping.patch
+    def public_link_update(self, request, pk, public_link_pk, *args, **kwargs):
+        public_link_service = PublicLinkService(destination="project", location_id=pk)
+        data, http_status = public_link_service.update(request, public_link_pk)
 
         return Response(
             data=data,
