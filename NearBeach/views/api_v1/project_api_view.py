@@ -17,6 +17,7 @@ from NearBeach.services.document.DocumentMiddlemanService import DocumentMiddlem
 from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.services.GroupService import GroupService
 from NearBeach.services.UserService import UserService
+from NearBeach.services.sprint.SprintLinkService import SprintLinkService
 
 
 @extend_schema(
@@ -322,7 +323,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             destination="project",
             location_id=pk
         )
-        data, http_status = organisation_link_service.get_data(request)
+        data, http_status = organisation_link_service.get_list(request)
 
         return Response(
             data=data,
@@ -371,6 +372,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def retrieve(request, pk, *args, **kwargs) -> Response:
         project_service = ProjectService(destination="project", location_id=pk)
         data, http_status = project_service.retrieve(request)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @destination_permission(min_permission_level=1)
+    @action(
+        methods=["GET"],
+        detail=True,
+        url_path="sprint"
+    )
+    def sprint(self, request, pk, *args, **kwargs):
+        sprint_link_service = SprintLinkService(
+            destination="project",
+            location_id=pk,
+        )
+        data, http_status = sprint_link_service.get_list(request)
 
         return Response(
             data=data,

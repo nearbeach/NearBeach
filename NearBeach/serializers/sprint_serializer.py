@@ -1,3 +1,4 @@
+from NearBeach.models import Sprint
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.serializers.requirement_serializer import RequirementSerializer
 from rest_framework import serializers
@@ -21,7 +22,7 @@ class SprintSerializer(serializers.ModelSerializer, BaseObjectSerializer, DateFi
     )
 
     class Meta:
-        model = 'sprint.Sprint'
+        model = Sprint
         fields = [
             "id",
             "title",

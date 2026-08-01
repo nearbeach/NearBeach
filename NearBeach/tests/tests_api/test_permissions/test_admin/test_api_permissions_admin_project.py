@@ -407,3 +407,16 @@ class ApiAdminPermissionTests(BaseApiClass):
         ]
 
         self._run_test_array(data_list)
+
+    def test_api_permissions_admin_project_sprint_links(self):
+        """Test - API Admin Permissions for the Project sprint link module"""
+        data_list = [
+            #########
+            # READ
+            #########
+            self.URLTest("/api/v1/project/1/sprint/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/2/sprint/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/3/sprint/", {}, 400, "GET"),
+        ]
+
+        self._run_test_array(data_list)

@@ -1,6 +1,7 @@
 # requirements-dev.txt
 black
 bandit
+coverage
 python-dotenv
 django-storages
 pip-tools
