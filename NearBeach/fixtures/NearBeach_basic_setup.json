@@ -4503,7 +4503,7 @@
     "project": 1,
     "total_story_points": 0,
     "completed_story_points": 0,
-    "sprint_status": "Draft",
+    "status": "Draft",
     "start_date": "2024-03-18T08:45:28.841Z",
     "end_date": "2024-03-25T08:45:28.841Z"
   }
@@ -4522,7 +4522,7 @@
     "project": 2,
     "total_story_points": 0,
     "completed_story_points": 0,
-    "sprint_status": "Draft",
+    "status": "Draft",
     "start_date": "2024-03-18T08:45:29.300Z",
     "end_date": "2024-03-25T08:45:29.300Z"
   }
@@ -4541,7 +4541,7 @@
     "project": null,
     "total_story_points": 0,
     "completed_story_points": 0,
-    "sprint_status": "Draft",
+    "status": "Draft",
     "start_date": "2024-03-18T08:45:37.303Z",
     "end_date": "2024-03-25T08:45:37.303Z"
   }
@@ -4560,7 +4560,7 @@
     "project": null,
     "total_story_points": 0,
     "completed_story_points": 0,
-    "sprint_status": "Draft",
+    "status": "Draft",
     "start_date": "2024-03-18T08:45:37.782Z",
     "end_date": "2024-03-25T08:45:37.782Z"
   }

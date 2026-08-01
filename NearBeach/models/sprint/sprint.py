@@ -35,7 +35,7 @@ class Sprint(CommonInfo):
     completed_story_points = models.IntegerField(
         default=0,
     )
-    sprint_status = models.CharField(
+    status = models.CharField(
         max_length=10,
         choices=SprintStatus,
         blank=True,

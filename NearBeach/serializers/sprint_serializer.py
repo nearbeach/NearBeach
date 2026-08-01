@@ -30,7 +30,7 @@ class SprintSerializer(serializers.ModelSerializer, BaseObjectSerializer, DateFi
             "project",
             "total_story_points",
             "completed_story_points",
-            "sprint_status",
+            "status",
             "start_date",
             "end_date",
         ]

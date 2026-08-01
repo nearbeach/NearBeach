@@ -476623,7 +476623,7 @@
     "project": 10,
     "total_story_points": 0,
     "completed_story_points": 0,
-    "sprint_status": "Draft",
+    "status": "Draft",
     "start_date": "2025-09-03T10:51:54.011Z",
     "end_date": "2025-09-10T10:51:54.011Z"
   }
