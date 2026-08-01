@@ -4,7 +4,6 @@ from rest_framework import status
 from NearBeach.models import Organisation, Customer, ObjectAssignment
 from NearBeach.serializers.organisation_link_serializer import OrganisationLinkSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
-from NearBeach.utils.api.check_object_exists import check_object_exists
 from NearBeach.utils.dicts.object_dict import OBJECT_DICT
 
 
@@ -12,9 +11,6 @@ class OrganisationLinkService(ObjectServiceAbstraction):
     """Class for create, read, update, delete of organisation links"""
 
     def create(self, request) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         serializer = OrganisationLinkSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST

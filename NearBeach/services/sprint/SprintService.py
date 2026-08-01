@@ -4,7 +4,6 @@ from rest_framework import status
 from NearBeach.models import Sprint, ObjectAssignment
 from NearBeach.serializers.sprint_serializer import SprintSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
-from NearBeach.utils.api.check_object_exists import check_object_exists
 
 
 class SprintService(ObjectServiceAbstraction):
@@ -53,10 +52,6 @@ class SprintService(ObjectServiceAbstraction):
         pass
 
     def retrieve(self, request) -> Tuple[Union[Dict, str], int]:
-        """Method used to retrieve a single sprint"""
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         # Get object
         sprint_results = Sprint.objects.get(pk=self.location_id)
 
@@ -95,9 +90,6 @@ class SprintService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_200_OK
 
     def update(self, request, sprint_id: int):
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         # Get project
         sprint = Sprint.objects.get(pk=self.location_id)
 

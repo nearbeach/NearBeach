@@ -3,7 +3,6 @@ from rest_framework import status
 
 from NearBeach.serializers.public_link_serializer import PublicLinkSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
-from NearBeach.utils.api.check_object_exists import check_object_exists
 from NearBeach.models import PublicLink
 
 
@@ -11,10 +10,6 @@ class PublicLinkService(ObjectServiceAbstraction):
     """Class for creating, reading, updating, and deleting public links"""
 
     def create(self, request) -> Tuple[Union[Dict, str], int]:
-        """Function to create new public link"""
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         # Create the public link
         # TODO - Move this creation step into the serializer?
         new_public_link = PublicLink(
@@ -47,9 +42,6 @@ class PublicLinkService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_list(self, request) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         public_links = PublicLink.objects.filter(
             is_deleted=False,
             **{F"{self.destination}_id": self.location_id},

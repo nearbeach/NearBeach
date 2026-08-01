@@ -8,16 +8,12 @@ from NearBeach.services.abstraction.object_services_abstraction import ObjectSer
 from NearBeach.services.document.DocumentLinkService import DocumentLinkService
 from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.services.document.FolderService import FolderService
-from NearBeach.utils.api.check_object_exists import check_object_exists
 
 
 class DocumentMiddlemanService(ObjectServiceAbstraction):
     """Middleman Service to help point at the correct document service"""
 
     def create(self, request) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -50,9 +46,6 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
                 return document_service.create(request)
 
     def delete(self, request, document_pk) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         serializer = DocumentDeleteSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -88,9 +81,6 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
         pass
 
     def update(self, request, document_pk) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST

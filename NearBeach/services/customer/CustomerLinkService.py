@@ -6,7 +6,6 @@ from NearBeach.models import ObjectAssignment, Customer
 from NearBeach.serializers.customer_link_serializer import CustomerLinkSerializer
 from NearBeach.serializers.customer_serializer import CustomerSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
-from NearBeach.utils.api.check_object_exists import check_object_exists
 
 
 class CustomerLinkService(ObjectServiceAbstraction):
@@ -27,9 +26,6 @@ class CustomerLinkService(ObjectServiceAbstraction):
         return serializer
 
     def create(self, request) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         serializer = CustomerLinkSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST

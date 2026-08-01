@@ -10,7 +10,6 @@ from django.conf import settings
 from django.utils import timezone
 
 from NearBeach.services.document.file_handler.HandleDocumentPermissions import handle_document_permissions
-from NearBeach.utils.api.check_object_exists import check_object_exists
 
 
 class DocumentService(ObjectServiceAbstraction):
@@ -91,10 +90,6 @@ class DocumentService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_list(self, _) -> Tuple[Union[Dict, str], int]:
-        # Check to see if the base object exists first
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         # Fetch required data
         folder_results = Folder.objects.filter(
             is_deleted=False,

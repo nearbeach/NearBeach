@@ -5,7 +5,6 @@ from NearBeach.models import (
 )
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 from NearBeach.serializers.user_list_serializer import UserListSerializer
-from NearBeach.utils.api.check_object_exists import check_object_exists
 
 
 class UserService(ObjectServiceAbstraction):
@@ -15,10 +14,6 @@ class UserService(ObjectServiceAbstraction):
         serializer = UserListSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
-
-        # Check object exists
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Loop through all the groups and add to the current object
         for single_user in serializer.validated_data["user_list"]:

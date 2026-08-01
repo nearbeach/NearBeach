@@ -9,7 +9,6 @@ from django.db.models import Q, F, Value
 
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction, OBJECT_STRUCTURE
-from NearBeach.utils.api.check_object_exists import check_object_exists
 from NearBeach.utils.dicts.relation_dict import RELATION_DICT
 from NearBeach.utils.objects.error_object import ErrorObject
 
@@ -54,9 +53,6 @@ class LinkListService(ObjectServiceAbstraction):
         return object_assignment
 
     def create(self, request) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         serializer = LinkSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -103,9 +99,6 @@ class LinkListService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_201_CREATED
 
     def delete(self, request, object_id) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             pk=object_id,
@@ -125,9 +118,6 @@ class LinkListService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_list(self, _) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         object_assignment_results = ObjectAssignment.objects.filter(
             Q(
                 is_deleted=False,

@@ -9,7 +9,6 @@ from NearBeach.models import Project, ObjectAssignment, UserGroup, Group
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 from NearBeach.utils.api.check_group_list import check_group_list
-from NearBeach.utils.api.check_object_exists import check_object_exists
 
 
 class ProjectService(ObjectServiceAbstraction):
@@ -96,10 +95,6 @@ class ProjectService(ObjectServiceAbstraction):
         return project_results
 
     def retrieve(self, request) -> Tuple[Union[Dict, str], int]:
-        """Method used to retrieve a single project"""
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         # Get object
         project_results = Project.objects.get(pk=self.location_id)
 
@@ -138,9 +133,6 @@ class ProjectService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_200_OK
 
     def update(self, request, _) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         # Get project
         project = Project.objects.get(pk=self.location_id)
 

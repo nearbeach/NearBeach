@@ -4,7 +4,6 @@ from rest_framework import status
 from NearBeach.models import Folder
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
-from NearBeach.utils.api.check_object_exists import check_object_exists
 
 
 class FolderService(ObjectServiceAbstraction):
@@ -14,9 +13,6 @@ class FolderService(ObjectServiceAbstraction):
         serializer = FolderSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
-
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Save the form information
         folder_submit = Folder(

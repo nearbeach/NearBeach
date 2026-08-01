@@ -8,15 +8,11 @@ from django.db.models import F, Value, Case, When
 
 from NearBeach.serializers.object_data.note_serializer import NoteSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
-from NearBeach.utils.api.check_object_exists import check_object_exists
 
 
 class NoteService(ObjectServiceAbstraction):
     """Service to help create, read, update and delete note objects"""
     def create(self, request) -> Tuple[Union[Dict, str], int]:
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         serializer = NoteSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -69,10 +65,6 @@ class NoteService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_list(self, request) -> Tuple[Union[Dict, str], int]:
-        """Method to retrieve all notes for an object"""
-        if not check_object_exists(self.destination, self.location_id):
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
         note_results = ObjectNote.objects.filter(
             is_deleted=False,
             **{F"{self.destination}_id": self.location_id},
