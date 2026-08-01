@@ -109,7 +109,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "id": 1,
                 },
-                400,
+                404,
                 "POST",
             ),
 
@@ -129,7 +129,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/documents/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/2/documents/", {}, 200, "GET"),
-            self.URLTest("/api/v1/project/3/documents/", {}, 400, "GET"),
+            self.URLTest("/api/v1/project/3/documents/", {}, 404, "GET"),
             #########
             # CREATE
             #########
@@ -157,7 +157,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                     "description": "Creating Folder",
                     "type": "folder",
                 },
-                400,
+                404,
                 "POST",
             ),
             #########
@@ -181,7 +181,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/groups/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/2/groups/", {}, 200, "GET"),
-            self.URLTest("/api/v1/project/3/groups/", {}, 400, "GET"),
+            self.URLTest("/api/v1/project/3/groups/", {}, 404, "GET"),
 
             #########
             # CREATE
@@ -207,7 +207,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "group_list": [1],
                 },
-                400,
+                404,
                 "POST",
             ),
 
@@ -229,7 +229,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest(
                 "/api/v1/project/3/groups/1/",
                 {},
-                400,
+                404,
                 "DELETE",
             ),
         ]
@@ -244,7 +244,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/link_list/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/2/link_list/", {}, 200, "GET"),
-            self.URLTest("/api/v1/project/3/link_list/", {}, 400, "GET"),
+            self.URLTest("/api/v1/project/3/link_list/", {}, 404, "GET"),
 
             #########
             # CREATE
@@ -276,7 +276,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                     "object_id": "1",
                     "object_relation": "relates",
                 },
-                400,
+                404,
                 "POST",
             ),
 
@@ -319,7 +319,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/notes/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/2/notes/", {}, 200, "GET"),
-            self.URLTest("/api/v1/project/3/notes/", {}, 400, "GET"),
+            self.URLTest("/api/v1/project/3/notes/", {}, 404, "GET"),
 
             #########
             # CREATE
@@ -345,7 +345,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "note": "Hello World",
                 },
-                400,
+                404,
                 "POST",
             ),
 
@@ -370,7 +370,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/organisation/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/2/organisation/", {}, 200, "GET"),
-            self.URLTest("/api/v1/project/3/organisation/", {}, 400, "GET"),
+            self.URLTest("/api/v1/project/3/organisation/", {}, 404, "GET"),
 
             #########
             # CREATE
@@ -396,7 +396,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "id": 1,
                 },
-                400,
+                404,
                 "POST",
             ),
 
@@ -416,7 +416,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/public_link/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/2/public_link/", {}, 200, "GET"),
-            self.URLTest("/api/v1/project/3/public_link/", {}, 400, "GET"),
+            self.URLTest("/api/v1/project/3/public_link/", {}, 404, "GET"),
 
             #########
             # CREATE
@@ -436,7 +436,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest(
                 "/api/v1/project/3/public_link/",
                 {},
-                400,
+                404,
                 "POST",
             ),
 
@@ -461,7 +461,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/sprint/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/2/sprint/", {}, 200, "GET"),
-            self.URLTest("/api/v1/project/3/sprint/", {}, 400, "GET"),
+            self.URLTest("/api/v1/project/3/sprint/", {}, 404, "GET"),
         ]
 
         self._run_test_array(data_list)
@@ -493,7 +493,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "user_list": [2, 3],
                 },
-                400,
+                404,
                 "POST",
             ),
 

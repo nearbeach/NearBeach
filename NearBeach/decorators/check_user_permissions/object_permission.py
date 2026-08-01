@@ -22,8 +22,16 @@ def object_permission(min_permission_level):
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
+            # Get the path
+            path = getattr(request, "path", None)
+            path = request.request.path if path is None else path
+
+            # Get the username
+            username = getattr(request, "user", None)
+            username = request.request.user if username is None else username
+
             # Get the destination and location id
-            destination, location_id = get_object_from_url(request.path)
+            destination, location_id = get_object_from_url(path)
 
             # Get parent destination if required
             destination, location_id = get_parent_object(destination, location_id)
@@ -40,7 +48,7 @@ def object_permission(min_permission_level):
             # All user group results
             user_group_results = UserGroup.objects.filter(
                 is_deleted=False,
-                username=request.user,
+                username=username,
             )
 
             # Exclude organisation

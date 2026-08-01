@@ -1,3 +1,4 @@
+from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.services.ProjectService import ProjectService
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
@@ -5,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, JSONParser, FormParser
 from rest_framework.response import Response
 
-from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
+from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.models import Project
 from NearBeach.serializers.project_serializer import ProjectSerializer
@@ -42,7 +43,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @action(
         methods=["POST"],
         detail=True,
@@ -59,7 +60,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @action(
         methods=["DELETE"],
         detail=True,
@@ -90,7 +91,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=1)
     @action(
         methods=["GET"],
         detail=True,
@@ -105,7 +106,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @documents.mapping.post
     def documents_create(self, request, pk, *args, **kwargs) -> Response:
         document_middleman_service = DocumentMiddlemanService(destination="project", location_id=pk)
@@ -116,7 +117,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @action(
         methods=["DELETE"],
         detail=True,
@@ -131,7 +132,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @documents.mapping.patch
     def documents_update(self, request, pk, document_pk, *args, **kwargs) -> Response:
         document_middleman_service = DocumentMiddlemanService(destination="project", location_id=pk)
@@ -142,7 +143,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=1)
     @action(
         methods=["GET"],
         detail=True,
@@ -157,7 +158,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @groups_list.mapping.post
     def groups_list_create(self, request, pk, *args, **kwargs) -> Response:
         # Create a new connection first
@@ -179,7 +180,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED if http_status == status.HTTP_200_OK else http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @action(
         methods=["DELETE"],
         detail=True,
@@ -205,7 +206,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=1)
     @action(methods=["GET"], detail=True, url_path="link_list")
     def link_list(self, _, pk, *args, **kwargs) -> Response:
         link_list_service = LinkListService(destination="project", location_id=pk)
@@ -216,7 +217,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @link_list.mapping.post
     def link_list_create(self, request, pk, *args, **kwargs) -> Response:
         link_list_service = LinkListService(destination="project", location_id=pk)
@@ -227,7 +228,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @action(methods=["DELETE"], detail=True, url_path=r"link_list/(?P<link_pk>[^/.]+)")
     def link_list_delete(self, request, pk, link_pk, *args, **kwargs) -> Response:
         link_list_service = LinkListService(destination="project", location_id=pk)
@@ -238,7 +239,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @link_list_delete.mapping.patch
     def link_list_update(self, request, pk, link_pk, *args, **kwargs) -> Response:
         link_list_service = LinkListService(destination="project", location_id=pk)
@@ -265,7 +266,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=1)
     @action(
         methods=["GET"],
         detail=True,
@@ -280,7 +281,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @notes.mapping.post
     def notes_create(self, request, pk, *args, **kwargs) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
@@ -291,7 +292,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=2)
+    @object_permission(min_permission_level=2)
     @action(methods=["DELETE"], detail=True, url_path=r"notes/(?P<note_pk>[^/.]+)")
     def notes_delete(self, request, pk, note_pk, *args, **kwargs) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
@@ -302,7 +303,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=2)
+    @object_permission(min_permission_level=2)
     @notes_delete.mapping.post
     def notes_update(self, request, pk, note_pk) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
@@ -313,7 +314,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=2)
+    @object_permission(min_permission_level=1)
     @action(
         methods=["GET"],
         detail=True,
@@ -331,7 +332,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=2)
+    @object_permission(min_permission_level=2)
     @organisation.mapping.post
     def organisation_create(self, request, pk, *args, **kwargs) -> Response:
         organisation_service = OrganisationLinkService(
@@ -344,7 +345,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @organisation.mapping.delete
     def organisation_delete(self, _, pk, *args, **kwargs) -> Response:
         organisation_service = OrganisationLinkService(
@@ -368,7 +369,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=1)
     @action(
         methods=["GET"],
         detail=True,
@@ -383,7 +384,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=2)
+    @object_permission(min_permission_level=2)
     @public_link.mapping.post
     def public_link_create(self, request, pk, *args, **kwargs):
         public_link_service = PublicLinkService(destination="project", location_id=pk)
@@ -394,7 +395,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=2)
+    @object_permission(min_permission_level=2)
     @action(
         methods=["DELETE"],
         detail=True,
@@ -409,7 +410,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=2)
+    @object_permission(min_permission_level=2)
     @public_link_delete.mapping.patch
     def public_link_update(self, request, pk, public_link_pk, *args, **kwargs):
         public_link_service = PublicLinkService(destination="project", location_id=pk)
@@ -431,7 +432,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=1)
     @action(
         methods=["GET"],
         detail=True,
@@ -449,7 +450,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @action(methods=["POST"], detail=True, url_path="users")
     def users_list_create(self, request, pk, *args, **kwargs) -> Response:
         # Create a new connection first
@@ -461,7 +462,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=2)
     @action(methods=["DELETE"], detail=True, url_path=r"users/(?P<user_pk>[^/.]+)")
     def users_list_delete(self, request, pk, user_pk, *args, **kwargs) -> Response:
         # Delete user
