@@ -103,6 +103,9 @@ class AuthenticationView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
+        # Check first time login
+        initialize_base_values(user)
+
         # Check to make sure user has groups/permissions assigned
         user_groups = UserGroup.objects.filter(
             is_deleted=False,
@@ -115,9 +118,6 @@ class AuthenticationView(APIView):
                 self.serializer.data,
                 status=status.HTTP_401_UNAUTHORIZED,
             )
-
-        # Check first time login
-        initialize_base_values(user)
 
         # Check to see if the user has a device
         devices = self._check_user_two_factor_devices(user)
