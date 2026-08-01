@@ -10,7 +10,6 @@ from django.db.models import Q, F, Value
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction, OBJECT_STRUCTURE
 from NearBeach.utils.dicts.relation_dict import RELATION_DICT
-from NearBeach.utils.objects.error_object import ErrorObject
 
 
 class LinkListService(ObjectServiceAbstraction):

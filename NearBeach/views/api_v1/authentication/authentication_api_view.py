@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate, login
 from django_otp import match_token
 
+from NearBeach.models import UserGroup
 from NearBeach.serializers.authentication.authentication_serializer import (
     AuthenticationSerializer,
 )
@@ -97,6 +98,19 @@ class AuthenticationView(APIView):
         if user is None:
             self.serializer.status = LoginStatusEnum.INCORRECT_LOGIN
 
+            return Response(
+                self.serializer.data,
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        # Check to make sure user has groups/permissions assigned
+        user_groups = UserGroup.objects.filter(
+            is_deleted=False,
+            username=user,
+        )
+        if len(user_groups) == 0:
+            # User has no permissions
+            self.serializer.status = LoginStatusEnum.FAILURE
             return Response(
                 self.serializer.data,
                 status=status.HTTP_401_UNAUTHORIZED,

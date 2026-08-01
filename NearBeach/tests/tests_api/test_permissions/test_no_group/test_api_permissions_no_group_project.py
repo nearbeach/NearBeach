@@ -1,9 +1,45 @@
 from NearBeach.tests.utils.BaseApiClass import BaseApiClass
+from rest_framework.test import APIClient, APIRequestFactory
+from unittest.mock import patch
 
 
 class ApiNoGroupPermissionTests(BaseApiClass):
     username = "no_group"
     password = "Test1234$"
+
+    # OVERRIDE
+    def setUp(self):
+        """Method run on test start-up - sets up the test by logging in and providing the client and factory"""
+        self.client = APIClient()
+        self.factory = APIRequestFactory()
+
+        # Disable throttling for the auth endpoint during tests
+        patcher = patch(
+            "NearBeach.views.api_v1.authentication.authentication_api_view.AuthenticationView.throttle_classes",
+            [],
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+        self._login_user()
+
+    # OVERRIDE
+    def _login_user(self):
+        """Private Method for logging user in"""
+        if self.username == "":
+            # No username to log in with
+            return
+
+        response = self.client.post(
+            "/api/v1/authentication/",
+            {
+                "username": self.username,
+                "password": self.password,
+                "otp_token": ""
+            },
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 401)
 
     def test_api_permissions_no_group_project(self):
         """Test - API No Group Permissions for Project"""
@@ -14,7 +50,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
             self.URLTest("/api/v1/project/", {}, 403, "GET"),
             self.URLTest("/api/v1/project/1/", {}, 403, "GET"),
             self.URLTest("/api/v1/project/2/", {}, 403, "GET"),
-            self.URLTest("/api/v1/project/6/", {}, 404, "GET"),
+            self.URLTest("/api/v1/project/6/", {}, 403, "GET"),
             #########
             # UPDATE
             #########
@@ -110,7 +146,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
                 {
                     "id": 1,
                 },
-                404,
+                403,
                 "POST",
             ),
 
@@ -130,7 +166,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/documents/", {}, 403, "GET"),
             self.URLTest("/api/v1/project/2/documents/", {}, 403, "GET"),
-            self.URLTest("/api/v1/project/3/documents/", {}, 404, "GET"),
+            self.URLTest("/api/v1/project/3/documents/", {}, 403, "GET"),
             #########
             # CREATE
             #########
@@ -158,7 +194,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
                     "description": "Creating Folder",
                     "type": "folder",
                 },
-                404,
+                403,
                 "POST",
             ),
             #########
@@ -182,7 +218,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/groups/", {}, 403, "GET"),
             self.URLTest("/api/v1/project/2/groups/", {}, 403, "GET"),
-            self.URLTest("/api/v1/project/3/groups/", {}, 404, "GET"),
+            self.URLTest("/api/v1/project/3/groups/", {}, 403, "GET"),
 
             #########
             # CREATE
@@ -208,7 +244,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
                 {
                     "group_list": [1],
                 },
-                404,
+                403,
                 "POST",
             ),
 
@@ -230,7 +266,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
             self.URLTest(
                 "/api/v1/project/3/groups/1/",
                 {},
-                404,
+                403,
                 "DELETE",
             ),
         ]
@@ -245,7 +281,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/link_list/", {}, 403, "GET"),
             self.URLTest("/api/v1/project/2/link_list/", {}, 403, "GET"),
-            self.URLTest("/api/v1/project/3/link_list/", {}, 404, "GET"),
+            self.URLTest("/api/v1/project/3/link_list/", {}, 403, "GET"),
 
             #########
             # CREATE
@@ -277,7 +313,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
                     "object_id": "1",
                     "object_relation": "relates",
                 },
-                404,
+                403,
                 "POST",
             ),
 
@@ -320,7 +356,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/notes/", {}, 403, "GET"),
             self.URLTest("/api/v1/project/2/notes/", {}, 403, "GET"),
-            self.URLTest("/api/v1/project/3/notes/", {}, 404, "GET"),
+            self.URLTest("/api/v1/project/3/notes/", {}, 403, "GET"),
 
             #########
             # CREATE
@@ -346,7 +382,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
                 {
                     "note": "Hello World",
                 },
-                404,
+                403,
                 "POST",
             ),
 
@@ -371,7 +407,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/organisation/", {}, 403, "GET"),
             self.URLTest("/api/v1/project/2/organisation/", {}, 403, "GET"),
-            self.URLTest("/api/v1/project/3/organisation/", {}, 404, "GET"),
+            self.URLTest("/api/v1/project/3/organisation/", {}, 403, "GET"),
 
             #########
             # CREATE
@@ -397,7 +433,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
                 {
                     "id": 1,
                 },
-                404,
+                403,
                 "POST",
             ),
 
@@ -417,7 +453,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/public_link/", {}, 403, "GET"),
             self.URLTest("/api/v1/project/2/public_link/", {}, 403, "GET"),
-            self.URLTest("/api/v1/project/3/public_link/", {}, 404, "GET"),
+            self.URLTest("/api/v1/project/3/public_link/", {}, 403, "GET"),
 
             #########
             # CREATE
@@ -437,7 +473,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
             self.URLTest(
                 "/api/v1/project/3/public_link/",
                 {},
-                404,
+                403,
                 "POST",
             ),
 
@@ -462,7 +498,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/sprint/", {}, 403, "GET"),
             self.URLTest("/api/v1/project/2/sprint/", {}, 403, "GET"),
-            self.URLTest("/api/v1/project/3/sprint/", {}, 404, "GET"),
+            self.URLTest("/api/v1/project/3/sprint/", {}, 403, "GET"),
         ]
 
         self._run_test_array(data_list)
@@ -494,7 +530,7 @@ class ApiNoGroupPermissionTests(BaseApiClass):
                 {
                     "user_list": [2, 3],
                 },
-                404,
+                403,
                 "POST",
             ),
 
