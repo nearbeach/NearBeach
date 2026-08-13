@@ -1,4 +1,4 @@
-# The following script, will automatically deploy NearBeach's static files to Cloudflare R2
+# The following script will automatically deploy NearBeach's static files to Cloudflare R2
 
 import NearBeach
 import argparse
@@ -16,7 +16,7 @@ current_version = NearBeach.__version__
 
 # Access the Cloudflare R2 using Boto
 s3 = boto3.resource('s3',
-                    endpoint_url='https://<accound_id>.r2.cloudflarestorage.com',
+                    endpoint_url='https://<account_id>.r2.cloudflarestorage.com',
                     aws_access_key_id='<access_key_id>',
                     aws_secret_access_key='<access_key_secret>'
                     )

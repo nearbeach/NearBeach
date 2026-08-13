@@ -7,7 +7,6 @@ from rest_framework.parsers import MultiPartParser, JSONParser, FormParser
 from rest_framework.response import Response
 
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
-from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.models import Project
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.services.PublicLinkService import PublicLinkService

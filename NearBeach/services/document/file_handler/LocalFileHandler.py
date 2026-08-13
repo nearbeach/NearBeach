@@ -10,7 +10,7 @@ class LocalFileHandler(FileHandler):
         self.root = Path(local_settings.PRIVATE_MEDIA_ROOT)
 
     def fetch(self, document_results):
-        # Normal setup - find document on server and serve
+        # Normal setup - find a document on server and serve
         # Get the Document path information
         file = self.root / str(document_results.document)
         return FileResponse(open(file, 'rb'))
@@ -21,6 +21,7 @@ class LocalFileHandler(FileHandler):
         contains the same document_key value.
         :param upload_document: The FILE itself - to be uploaded
         :param document_results: The document_results - with variables we require
+        :param _: please ignore, not used
         :return:
         """
         # Make the directory we want to save the file in. The directory will have the document_key

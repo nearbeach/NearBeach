@@ -31,7 +31,7 @@ class OrganisationSerializer(serializers.ModelSerializer):
     def get_fields(self):
         fields = super().get_fields()
 
-        # Check to see if request exists in context
+        # Check to see if the request exists in context
         if "request" not in self.context:
             return fields
 

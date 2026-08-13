@@ -7,4 +7,6 @@ django-storages
 pip-tools
 pylint
 pylint-django
+djangorestframework-stubs
+boto3-stubs
 -r ./requirements.txt

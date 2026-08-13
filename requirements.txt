@@ -18,3 +18,5 @@ django-rest-knox
 pip>=25.1
 requests>=2.32.2
 sqlparse>=0.5.0
+
+python-dotenv

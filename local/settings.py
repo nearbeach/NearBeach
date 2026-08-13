@@ -4,11 +4,11 @@ Django Settings for TESTING PURPOSES
 Do not utilise this settings.py file for your own project. Even if it is not
 a production environment.
 
-This file is only for the automatic testing and is not build for server use.
+This file is only for the automatic testing and is not built for server use.
 """
 
 import os
-from NearBeach import __version__ as VERSION, templates
+from NearBeach import __version__ as version
 from rest_framework.settings import api_settings
 
 from dotenv import load_dotenv
@@ -170,8 +170,6 @@ REST_KNOX = {
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -202,7 +200,7 @@ if "CLOUDFLARE_ACCOUNT_ID" in os.environ:
     AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
     AWS_DEFAULT_ACL = 'public-read'
     AWS_S3_REGION_NAME = 'auto'
-    AWS_LOCATION = F"{VERSION}"
+    AWS_LOCATION = F"{version}"
     AWS_S3_ENDPOINT_URL = F"https://{CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
 
     # To use a selfsigned cert you can put the path to the cert bundle

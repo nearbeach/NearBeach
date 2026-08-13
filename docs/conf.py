@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'NearBeach'
-copyright = '2023, Luke Christopher Clarke'
-author = 'Luke Christopher Clarke'
+project: str = 'NearBeach'
+copyright: str = '2026, Luke Christopher Clarke'
+author: str = 'Luke Christopher Clarke'
 
 # The full version, including alpha/beta/rc tags
 release = '0.30.27'
@@ -38,7 +38,7 @@ extensions = [
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-# List of patterns, relative to source directory, that match files and
+# List of patterns, relative to the source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']

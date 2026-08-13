@@ -1,7 +1,7 @@
 from typing import Dict, Tuple, Union
 from rest_framework import status
 
-from NearBeach.models import Sprint, ObjectAssignment
+from NearBeach.models import Sprint
 from NearBeach.serializers.sprint_serializer import SprintSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 
@@ -56,10 +56,10 @@ class SprintService(ObjectServiceAbstraction):
         sprint_results = Sprint.objects.get(pk=self.location_id)
 
         # Get assigned object
-        object_assignments = ObjectAssignment.objects.filter(
-            is_deleted=False,
-            project_id=self.location_id,
-        )
+        # object_assignments = ObjectAssignment.objects.filter(
+        #     is_deleted=False,
+        #     project_id=self.location_id,
+        # )
 
         # Define groups list
         # sprint_results.group_list = Group.objects.filter(
