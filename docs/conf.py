@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project: str = 'NearBeach'
-copyright: str = '2026, Luke Christopher Clarke'
+project_copyright: str = '2026, Luke Christopher Clarke'
 author: str = 'Luke Christopher Clarke'
 
 # The full version, including alpha/beta/rc tags

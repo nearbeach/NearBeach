@@ -9,7 +9,7 @@
 #################################################################################
 version: "1.0"
 
-#Specify inspection profile for code analysis
+#Specify the inspection profile for code analysis
 profile:
   name: qodana.starter
 
@@ -18,10 +18,15 @@ profile:
 #  - name: <SomeEnabledInspectionId>
 
 #Disable inspections
-#exclude:
-#  - name: <SomeDisabledInspectionId>
-#    paths:
-#      - <path/where/not/run/inspection>
+exclude:
+  - name: Automatically generated Django Migration Files
+    paths:
+      - NearBeach/migrations/0016_document_document_upload_successfully.py
+      - NearBeach/migrations/0021_project_status_task_status.py
+  - name: Browser Stack Testing
+    paths:
+      - browserstack/config_example.py
+      - browserstack/shakeout_testing.py
 
 #Execute shell command before Qodana execution (Applied in CI/CD pipeline)
 #bootstrap: sh ./prepare-qodana.sh
@@ -33,7 +38,7 @@ profile:
 # Quality gate. Will fail the CI/CD pipeline if any condition is not met
 # severityThresholds - configures maximum thresholds for different problem severities
 # testCoverageThresholds - configures minimum code coverage on a whole project and newly added code
-# Code Coverage is available in Ultimate and Ultimate Plus plans
+# code Coverage is available in Ultimate and Ultimate Plus plans
 #failureConditions:
 #  severityThresholds:
 #    any: 15
