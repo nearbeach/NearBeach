@@ -12,7 +12,7 @@ const {t} = useI18n({
 	messages: {
 		en: {
 			closed: "Show closed objects",
-			instructions: "User the filters below to refine your results.",
+			instructions: "Use the filters below to refine your results.",
 			search_kanban_board: "Search Kanban Board",
 			search_placeholder_kanban_board: "Search for a kanban board",
 			search_request_for_change: "Search Request For Change",
@@ -26,7 +26,7 @@ const {t} = useI18n({
 		},
 		ja: {
 			closed: "閉じたオブジェクトを表示",
-			instructions: "以下のフィルターを使用して結果を絞り込みます",
+			instructions: "以下のフィルターを使用して、検索結果を絞り込んでください",
 			search_kanban_board: "カンバンボードを検索",
 			search_placeholder_kanban_board: "カンバンボードを検索",
 			search_request_for_change: "検索変更リクエスト",
