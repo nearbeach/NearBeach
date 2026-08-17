@@ -105,6 +105,7 @@ async function loadData(): Promise<void> {
         />
         <WlkButton
             class="compact primary"
+            :isDisabled="model.length === 0"
             @click="createNote"
         >{{t("create")}}</WlkButton>
 
