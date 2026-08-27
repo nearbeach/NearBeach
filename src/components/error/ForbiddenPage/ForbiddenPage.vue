@@ -4,16 +4,16 @@ import {WlkCard, WlkCardHeader} from "whelk-ui";
 </script>
 
 <template>
-    <WlkCard class="not-found-page">
+    <WlkCard class="server-error-page">
         <WlkCardHeader>
-            <h1 id="main-title">404 Not Found</h1>
+            <h1 id="main-title">Forbidden</h1>
         </WlkCardHeader>
-	    <p>Sorry, we could not find that object</p>
+	    <p>Sorry, you do not have permission to view that object</p>
     </WlkCard>
 </template>
 
 <style scoped>
-.not-found-page {
+.server-error-page {
     display: grid;
     grid-template-columns: 1fr;
     margin: auto;

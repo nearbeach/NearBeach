@@ -17,6 +17,7 @@ import {usePermissionStore} from "@/stores/permissions/permission.ts";
 import router from "@/router/router.ts";
 import {failedValidation} from "@/composables/failedValidation.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -51,6 +52,7 @@ const {t} = useI18n({
 });
 
 // Define Route
+const errorStore = useErrorStore();
 const route = useRoute();
 
 // Define Permissions
@@ -104,19 +106,24 @@ async function createObject(): Promise<void> {
 			}
 		);
 
-		// Get the data
-		const data: { id: string } = await response.json();
+		switch (response.status) {
+			case 201:
+				// Get the data
+				const data: { id: string } = await response.json();
 
-		// Get the ID of the response and redirect the user to the new object
-		await router.push(`/${route.meta.destination}/${data.id}`);
-
+				// Get the ID of the response and redirect the user to the new object
+				await router.push(`/${route.meta.destination}/${data.id}`);
+				break;
+			default:
+				// TODO - Check if this is the correct error handling
+				errorStore.setError(response);
+				await router.push({name: "server-error"});
+		}
 	} catch (error) {
-		// TODO - Add in the error handling
-		// if (error instanceof Error) {
-		// 	// error.message
-		// } else {
-		// 	// String(error)
-		// }
+		// Set error and redirect to error page
+		errorStore.setError(error);
+
+		await router.push({name: "server-error"});
 	}
 }
 

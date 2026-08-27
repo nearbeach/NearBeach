@@ -5,6 +5,8 @@ import {useObjectStore} from "@/stores/object/object.ts";
 import {useRoute} from "vue-router";
 import {useI18n} from "petite-vue-i18n";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import router from "@/router/router.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -66,6 +68,7 @@ const {t} = useI18n({
 })
 
 // Define router
+const errorStore = useErrorStore();
 const route = useRoute();
 
 // Define refs
@@ -115,16 +118,31 @@ onMounted(async () => {
 			}
 		);
 
-		// Get the data
-		// TODO - structure the data type
-		const data = await response.json();
-		data.destination = destination;
-		data.is_loaded = true;
+		switch (response.status) {
+			case 200:
+				// Get data
+				const data = await response.json();
+				data.destination = destination;
+				data.is_loaded = true;
 
-		objectStore.$patch(data);
+				// Patch
+				objectStore.$patch(data);
+				break;
+			case 403:
+				// Use does not have access to the object
+				return router.push({name: "forbidden"});
+			case 404:
+				// Object does not exist
+				return router.push({name: "not-found"});
+			default:
+				// Assuming a 500 error
+				errorStore.setError(response);
+				return router.push({name: "server-error"});
+		}
 	} catch (error) {
-		// TODO - Handle error correctly
-		console.log("Error: ", error);
+		// Assuming a 500 error
+		errorStore.setError(error);
+		return router.push({name: "server-error"});
 	}
 });
 
@@ -174,9 +192,11 @@ function updateData() {
 		// TODO - handle errors property
 		updateState.value = "error";
 
-		setTimeout(() => {
-			updateState.value = "normal";
-		})
+		console.error("ERROR: ", error);
+
+		// setTimeout(() => {
+		// 	updateState.value = "normal";
+		// })
 	});
 }
 </script>

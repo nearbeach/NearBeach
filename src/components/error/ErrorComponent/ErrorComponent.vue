@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { WlkCard, WlkCardHeader } from "whelk-ui";
+import {WlkCard, WlkCardHeader} from "whelk-ui";
+import {useErrorStore} from "@/stores/error/error.ts";
 
 // Declare props
 defineProps({
@@ -11,7 +12,10 @@ defineProps({
 		type: String,
 		required: true,
 	},
-})
+});
+
+// Define store
+const errorStore = useErrorStore();
 </script>
 
 <template>
@@ -19,7 +23,10 @@ defineProps({
 		<WlkCardHeader>
 			<h1 id="main-title">{{ title }}</h1>
 		</WlkCardHeader>
-		<p>{{ message }}</p>
+		<textarea
+			rows="20"
+			v-model="errorStore.message"
+		/>
 	</WlkCard>
 </template>
 

@@ -4,6 +4,8 @@ import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data
 import {useUserStore} from "@/stores/user/user.ts";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
+import ServerErrorPage from "@/components/error/ServerErrorPage/ServerErrorPage.vue";
+import ForbiddenPage from "@/components/error/ForbiddenPage/ForbiddenPage.vue";
 
 // Async components
 const DashboardPage = () =>
@@ -134,7 +136,7 @@ const routes = [
         meta: {
             destination: "forbidden",
         },
-        component: DashboardPage,
+        component: ForbiddenPage,
     },
     {
         path: "/not-found",
@@ -143,6 +145,14 @@ const routes = [
             destination: "not-found",
         },
         component: NotFoundPage,
+    },
+    {
+        path: "/server-error",
+        name: "server-error",
+        meta: {
+            destination: "server-error",
+        },
+        component: ServerErrorPage,
     },
     // Fallback page
     {
