@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
-import {nextTick, type PropType} from "vue";
-import { ref} from "vue";
+import {ref} from "vue";
 import {TrashIcon} from "@lucide/vue";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import type {GroupInterface} from "@/utils/interfaces/stores/GroupInterface.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {WlkRenderErrorMessage} from "whelk-ui";
 
 // DEFINE EMITS
 const emit = defineEmits([
@@ -18,6 +18,7 @@ const objectStore = useObjectStore();
 const objectMetaDataStore = useObjectMetaDataStore();
 
 // Define refs
+const errorMessage = ref<string>("");
 const newGroupModel = ref<number | null | undefined>();
 
 // DEFINE FUNCTIONS
@@ -44,32 +45,35 @@ async function addGroup() {
 		group_list: [newGroupModel.value],
 	}
 
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/groups/`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body: JSON.stringify(body)
+	const response = await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/groups/`,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
 			},
-		)
+			body: JSON.stringify(body)
+		},
+	)
 
-		// Clear model data
-		newGroupModel.value = null;
+	// Clear model data
+	newGroupModel.value = null;
 
-		// Get response
-		const data = await response.json();
+	// Get response
+	const data = await response.json();
 
-		// Update store with correct information
-		objectStore.potential_user_list = data.potential_user_list;
-		objectStore.user_list = data.user_list;
-	} catch (e) {
-		// TODO - handle the errors
-		console.error("ERROR: ", e);
+	switch (response.status) {
+		case 201:
+			// Update store with correct information
+			objectStore.potential_user_list = data.potential_user_list;
+			objectStore.user_list = data.user_list;
+			break;
+		default:
+			errorMessage.value = data;
+			break;
 	}
+
 }
 
 async function removeGroup(group_id: number) {
@@ -77,27 +81,29 @@ async function removeGroup(group_id: number) {
 	objectStore.removeGroup(group_id);
 
 	// Tell backend to remove data
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/groups/${group_id}/`,
-			{
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
+	const response = await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/groups/${group_id}/`,
+		{
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
 			},
-		);
+		},
+	);
 
-		// Get response
-		const data = await response.json();
+	// Get response
+	const data = await response.json();
 
-		// Update store with correct information
-		objectStore.potential_user_list = data.potential_user_list;
-		objectStore.user_list = data.user_list;
-	} catch (error) {
-		console.log("ERROR: ", error);
-		// TODO - handle error
+	switch (response.status) {
+		case 200:
+			// Update store with correct information
+			objectStore.potential_user_list = data.potential_user_list;
+			objectStore.user_list = data.user_list;
+			break;
+		default:
+			errorMessage.value = data;
+			break;
 	}
 }
 </script>
@@ -132,6 +138,7 @@ async function removeGroup(group_id: number) {
 			v-model="newGroupModel"
 			@change="addGroup"
 		/>
+		<WlkRenderErrorMessage v-if="errorMessage !== ''">{{ errorMessage }}</WlkRenderErrorMessage>
 	</div>
 </template>
 

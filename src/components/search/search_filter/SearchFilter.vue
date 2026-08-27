@@ -6,6 +6,8 @@ import SearchInput from '@/components/search/search_filter/search_input/SearchIn
 import {WlkCard, WlkCardHeader, WlkCheckBox} from 'whelk-ui';
 import {useI18n} from "petite-vue-i18n";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
+import router from "@/router/router.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -42,6 +44,7 @@ const {t} = useI18n({
 })
 
 // Define route
+const errorStore = useErrorStore();
 const route = useRoute();
 
 // Define store
@@ -95,35 +98,34 @@ async function getSearchResults() {
 	const queryString = `?search=${search.value}&show_closed=${showClosed.value ? 'true' : 'false'}`;
 
 	// Fetch data
-	try {
-		const response = await fetch(
-			`/api/v1/${route.meta.destination}/${queryString}`,
-			{
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-			}
-		)
-
-		// Get data
-		const data = await response.json();
-
-		// Patch data
-		store.$patch({
-			previous: data.previous,
-			next: data.next,
-			searchResults: data.results,
-		});
-	} catch (error) {
-		if (error instanceof Error) {
-			// TODO - put in method to handle the errors
-			console.log(error.message);
-		} else {
-			console.log(String(error));
+	const response = await fetch(
+		`/api/v1/${route.meta.destination}/${queryString}`,
+		{
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
 		}
+	)
+
+	// Get data
+	const data = await response.json();
+
+	switch (response.status) {
+		case 200:
+			// Patch data
+			store.$patch({
+				previous: data.previous,
+				next: data.next,
+				searchResults: data.results,
+			});
+			break;
+		default:
+			errorStore.setError(data);
+			await router.push({name: "server-error"});
 	}
+
 }
 
 function startTimer() {

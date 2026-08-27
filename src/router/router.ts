@@ -6,6 +6,7 @@ import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import ServerErrorPage from "@/components/error/ServerErrorPage/ServerErrorPage.vue";
 import ForbiddenPage from "@/components/error/ForbiddenPage/ForbiddenPage.vue";
+import {useErrorStore} from "@/stores/error/error.ts";
 
 // Async components
 const DashboardPage = () =>
@@ -59,8 +60,9 @@ async function fetchObjectMetaData() {
             profile_picture_path: result.profile_picture_path,
         });
     } catch (error) {
-        // TODO - Apply correct error handling
-        console.error(error);
+        const errorStore = useErrorStore();
+        errorStore.setError(error);
+        await router.push({name: "server-error"});
     }
 }
 

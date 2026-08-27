@@ -93,37 +93,29 @@ async function createObject(): Promise<void> {
 		group_list: [groupModel.value],
 	}
 
-	try {
-		const response = await fetch(
-			`/api/v1/${route.meta.destination}/`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body: JSON.stringify(body),
-			}
-		);
-
-		switch (response.status) {
-			case 201:
-				// Get the data
-				const data: { id: string } = await response.json();
-
-				// Get the ID of the response and redirect the user to the new object
-				await router.push(`/${route.meta.destination}/${data.id}`);
-				break;
-			default:
-				// TODO - Check if this is the correct error handling
-				errorStore.setError(response);
-				await router.push({name: "server-error"});
+	const response = await fetch(
+		`/api/v1/${route.meta.destination}/`,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+			body: JSON.stringify(body),
 		}
-	} catch (error) {
-		// Set error and redirect to error page
-		errorStore.setError(error);
+	);
 
-		await router.push({name: "server-error"});
+	switch (response.status) {
+		case 201:
+			// Get the data
+			const data: { id: string } = await response.json();
+
+			// Get the ID of the response and redirect the user to the new object
+			await router.push(`/${route.meta.destination}/${data.id}`);
+			break;
+		default:
+			errorStore.setError(response);
+			await router.push({name: "server-error"});
 	}
 }
 
