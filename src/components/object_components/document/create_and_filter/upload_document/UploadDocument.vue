@@ -39,7 +39,7 @@ const isUploadDisabled = computed(() => {
 	// Two conditions;
 	// 1. Document Model has to have documents within it
 	// 2. Document Name Model has to have a value
-	return !documentModel?.value?.length > 0 || !documentNameModel?.value?.length > 0;
+	return !(documentModel?.value?.length > 0) || !(documentNameModel?.value?.length > 0);
 })
 
 // Define functions
@@ -59,7 +59,7 @@ async function uploadDocument() {
 	}
 
 	if (documentationStore.currentFolderId !== 0) {
-		body.set("parent_folder_id", documentationStore.currentFolderId);
+		body.set("parent_folder_id", documentationStore.currentFolderId.toString());
 	}
 
 	try {

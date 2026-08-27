@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineModel } from 'vue'
 import { Search } from '@lucide/vue';
 
 // Define props

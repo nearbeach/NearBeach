@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineModel, defineEmits, onMounted, useTemplateRef} from "vue";
+import {onMounted, useTemplateRef} from "vue";
 import {WlkTextInput, WlkButton, ObjectStateEnum, required} from "whelk-ui"
 import {useI18n} from "petite-vue-i18n";
 

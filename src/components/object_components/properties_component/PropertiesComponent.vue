@@ -10,6 +10,7 @@ import {useObjectStore} from "@/stores/object/object.ts";
 import ObjectStatus from "@/components/object_components/object_status/ObjectStatus.vue";
 import ObjectPriority from "@/components/object_components/object_priority/ObjectPriority.vue";
 import {useI18n} from "petite-vue-i18n";
+import {computed} from "vue";
 
 // Define i18n
 const {t} = useI18n({
@@ -32,6 +33,23 @@ const {t} = useI18n({
 
 // Define Stores
 const objectStore = useObjectStore();
+
+// Define computed
+const endDate = computed(() => {
+	if (objectStore.end_date === null) {
+		return "";
+	}
+
+	return objectStore.end_date;
+});
+
+const startDate = computed(() => {
+	if (objectStore.start_date === null) {
+		return "";
+	}
+
+	return objectStore.start_date;
+});
 </script>
 
 <template>
@@ -50,12 +68,12 @@ const objectStore = useObjectStore();
 
 		<WlkDatetime
 			class="start-date compact"
-			v-model="objectStore.start_date"
+			v-model="startDate"
 			:label="t('start_date')"
 		/>
 		<WlkDatetime
 			class="end-date compact"
-			v-model="objectStore.end_date"
+			v-model="endDate"
 			:label="t('end_date')"
 		/>
 	</WlkCard>
