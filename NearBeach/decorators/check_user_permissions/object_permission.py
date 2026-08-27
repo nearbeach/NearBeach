@@ -8,6 +8,8 @@ from NearBeach.utils.api.check_object_exists import check_object_exists
 from NearBeach.utils.api.get_destination import get_object_from_url
 from NearBeach.utils.api.get_parent_object import get_parent_object
 
+import numbers
+
 
 def object_permission(min_permission_level):
     """
@@ -39,6 +41,10 @@ def object_permission(min_permission_level):
             # Check the destination and location id
             if destination is None or location_id is None:
                 raise PermissionDenied
+
+            # Check to make sure the location id is a number
+            if not isinstance(location_id, numbers.Number):
+                raise NotFound
 
             # Check to see if the object exists
             object_exists = check_object_exists(destination, location_id)
