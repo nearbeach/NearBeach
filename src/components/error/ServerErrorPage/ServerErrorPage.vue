@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import {WlkCard, WlkCardHeader} from "whelk-ui";
+import {useErrorStore} from "@/stores/error/error.ts";
+
+// Define store
+const errorStore = useErrorStore();
 
 </script>
 
@@ -8,7 +12,7 @@ import {WlkCard, WlkCardHeader} from "whelk-ui";
         <WlkCardHeader>
             <h1 id="main-title">Server Error</h1>
         </WlkCardHeader>
-        <p>Sorry, something has gone wrong with the server. Please contact you system admin.</p>
+        <p>{{errorStore.message}}</p>
     </WlkCard>
 </template>
 
