@@ -162,7 +162,13 @@ function updateValidation(field: string, value: boolean): void {
 				:is-disabled="isButtonDisabled"
 				v-on:click="createObject"
 			>
-				{{ t("button_create") }}
+				<template v-slot:default>
+					{{ t("button_create") }}
+				</template>
+
+				<template v-slot:action-state>
+					{{ t("button_submitting")}}
+				</template>
 			</WlkButton>
 		</WlkCardFooter>
 	</WlkCard>
