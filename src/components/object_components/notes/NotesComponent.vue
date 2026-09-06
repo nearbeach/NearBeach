@@ -76,6 +76,28 @@ async function createNote(): Promise<void> {
     }
 }
 
+async function deleteNote(note_id: number) {
+	try {
+		await fetch(
+            `/api/v1/${objectStore.destination}/${objectStore.id}/notes/${note_id}/`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            },
+		);
+
+		// Remove note
+		noteList.value = noteList.value.filter(row => {
+			return row.id !== note_id;
+		});
+	} catch (error) {
+		// TODO - handle errors properly
+		console.error(error);
+	}
+}
+
 async function loadData(): Promise<void> {
     try {
         const response = await fetch(
@@ -100,6 +122,7 @@ async function loadData(): Promise<void> {
 <template>
 	<div class="notes">
         <WlkTextArea
+	        class="compact new-note"
             :label="t('label')"
             v-model="model"
         />
@@ -109,12 +132,19 @@ async function loadData(): Promise<void> {
             @click="createNote"
         >{{t("create")}}</WlkButton>
 
-        <NoteList :note-list="noteList" />
+        <NoteList
+	        :note-list="noteList"
+	        v-on:delete-note="deleteNote"
+        />
 	</div>
 </template>
 
 <style scoped>
 .notes {
+
+	> .new-note {
+		margin-top: 2rem;
+	}
 
 }
 </style>
