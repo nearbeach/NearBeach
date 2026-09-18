@@ -33,7 +33,7 @@ onMounted(async () => {
 // Define functions
 async function createPublicLink() {
 	const response = await fetch(
-		`/api/v1/${objectStore.destination}/${objectStore.id}/public_links/`,
+		`/api/v1/${objectStore.destination}/${objectStore.id}/public_link/`,
 		{
 			method: "POST",
 			headers: {
@@ -58,7 +58,7 @@ async function createPublicLink() {
 
 async function loadData() {
 	const response = await fetch(
-		`/api/v1/${objectStore.destination}/${objectStore.id}/public_links/`,
+		`/api/v1/${objectStore.destination}/${objectStore.id}/public_link/`,
 		{
 			method: "GET",
 			headers: {
