@@ -131,6 +131,7 @@ async function removeGroup(group_id: number) {
 		</div>
 
 		<AddObject
+			v-if="objectMetaDataStore.availableGroupsToAdd.length > 0"
 			label="Group"
 			optionsLabel="name"
 			optionsValue="id"
@@ -138,6 +139,9 @@ async function removeGroup(group_id: number) {
 			v-model="newGroupModel"
 			@change="addGroup"
 		/>
+		<div class="space"
+			 v-if="objectMetaDataStore.availableGroupsToAdd.length === 0"
+		></div>
 		<WlkRenderErrorMessage v-if="errorMessage !== ''">{{ errorMessage }}</WlkRenderErrorMessage>
 	</div>
 </template>
@@ -173,7 +177,7 @@ async function removeGroup(group_id: number) {
 		}
 	}
 
-	> .add-object {
+	> .add-object, .space {
 		margin: 1rem 0;
 	}
 }
