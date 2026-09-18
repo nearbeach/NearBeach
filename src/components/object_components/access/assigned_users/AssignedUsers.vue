@@ -145,6 +145,7 @@ async function removeUser(user_id: number) {
 		</div>
 
 		<AddObject
+			v-if="objectStore.availableUsersToAdd.length > 0"
 			label="Users"
 			optionsLabel="full_name"
 			optionsValue="id"
