@@ -11,42 +11,10 @@ class SprintService(ObjectServiceAbstraction):
     # TODO - actually implement this functionality
 
     def create(self, request):
-        """Method for creating a new sprint"""
-        serializer = SprintSerializer(
-            context={
-                "request": request,
-                "method": "POST",
-            },
-            data=request.data,
-        )
-        if not serializer.is_valid():
-            return serializer.errors, status.HTTP_400_BAD_REQUEST
-
-        # Create the sprint
-        created_sprint = serializer.save(
-            change_user=request.user, creation_user=request.user
-        )
-
-        # Re-serialize the created project so it is in the same shape for the user
-        serializer = SprintSerializer(created_sprint, many=False)
-
-        return serializer.data, status.HTTP_201_CREATED
+        pass
 
     def delete(self, request, sprint_id: int) -> Tuple[Union[Dict, str], int]:
-        sprint_results = Sprint.objects.filter(
-            is_deleted=False,
-            pk=sprint_id,
-            **{self.destination: self.location_id},
-        )
-
-        if len(sprint_results) == 0:
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
-
-        sprint_results.update(
-            is_deleted=True,
-        )
-
-        return {}, status.HTTP_204_NO_CONTENT
+        pass
 
     def get_list(self, request):
         pass
