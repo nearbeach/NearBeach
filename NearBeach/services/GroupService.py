@@ -166,6 +166,14 @@ class GroupService(ObjectServiceAbstraction):
         if len(remove_object_assignment) == 0:
             return "No groups found", status.HTTP_400_BAD_REQUEST
 
+        # If this is the last group - do not delete from object
+        existing_group_count = ObjectAssignment.objects.filter(
+            **{F"{self.destination}_id": self.location_id},
+            is_deleted=False,
+        )
+        if len(existing_group_count) <= 1:
+            return "Can not delete last group", status.HTTP_400_BAD_REQUEST
+
         # Remove the group
         remove_object_assignment.update(
             is_deleted=True,
