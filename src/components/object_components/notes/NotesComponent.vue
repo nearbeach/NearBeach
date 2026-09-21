@@ -84,6 +84,7 @@ async function deleteNote(note_id: number) {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
                 }
             },
 		);

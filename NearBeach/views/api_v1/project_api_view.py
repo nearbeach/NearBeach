@@ -292,7 +292,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @object_permission(min_permission_level=2)
-    @action(methods=["DELETE"], detail=True, url_path=r"notes/(?P<note_pk>[^/.]+)")
+    @action(
+        methods=["DELETE"],
+        detail=True,
+        url_path = r"notes/(?P<note_pk>[^/.]+)",
+    )
     def notes_delete(self, request, pk, note_pk, *args, **kwargs) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
         data, http_status = note_service.delete(request, note_pk)
