@@ -26,7 +26,7 @@ const disableButtons = ref<boolean>(true);
 
 // Define computed
 const modalClass = computed(() => {
-	return errorStore.showErrorModal ? "show modal" : "modal";
+	return errorStore.showErrorModal ? "wlk-modal open" : "wlk-modal";
 
 });
 
