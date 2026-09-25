@@ -4,27 +4,48 @@ import {
 	maxValue,
 	WlkCard,
 	WlkDatetime,
-	WlkNumberInput,
+	WlkNumberInput, type OnChangeInterface,
 } from 'whelk-ui'
 import {useObjectStore} from "@/stores/object/object.ts";
 import ObjectStatus from "@/components/object_components/object_status/ObjectStatus.vue";
 import ObjectPriority from "@/components/object_components/object_priority/ObjectPriority.vue";
 import {useI18n} from "petite-vue-i18n";
-import {computed} from "vue";
+import {computed, ref} from "vue";
+import router from "@/router/router.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
 const {t} = useI18n({
 	messages: {
 		en: {
+			date_invalid: "Date is not valid",
+			date_updated: "Date updated",
+			date_updating: "Updating date",
 			end_date: "End Date",
+			error_forbidden: "You do not have access to the object",
+			error_not_found: "Could not find the object",
+			error_server_error: "Server returned an error: ",
 			properties: "Properties",
 			start_date: "Start Date",
+			story_point_invalid: "Invalid story points",
+			story_point_updated: "Story points updated",
+			story_point_updating: "Updating story points",
 			story_points: "Story Points",
 		},
 		ja: {
+			date_invalid: "日付が有効ではありません",
+			date_updated: "更新日",
+			date_updating: "現在、日付を更新中です。",
 			end_date: "終了日",
+			error_forbidden: "そのオブジェクトにアクセスする権限がありません。",
+			error_not_found: "オブジェクトが見つかりませんでした。",
+			error_server_error: "サーバーがエラーを返しました: ",
 			properties: "プロパティ",
 			start_date: "開始日",
+			story_point_invalid: "無効なストーリーポイント",
+			story_point_updated: "ストーリーポイントが更新されました",
+			story_point_updating: "ストーリーポイントの更新",
 			story_points: "ストーリーポイント",
 		},
 	}
@@ -32,7 +53,16 @@ const {t} = useI18n({
 })
 
 // Define Stores
+const errorStore = useErrorStore();
 const objectStore = useObjectStore();
+
+// Define refs
+const dateTimeout = ref<null | ReturnType<typeof setTimeout>>(null);
+const endDateStatus = ref<string>("");
+const startDateStatus = ref<string>("");
+const storyPointsStatus = ref<string>("");
+const storyPointsTimeout = ref<null | ReturnType<typeof setTimeout>>(null);
+
 
 // Define computed
 const endDate = computed(() => {
@@ -50,31 +80,202 @@ const startDate = computed(() => {
 
 	return objectStore.start_date;
 });
+
+// Define functions
+async function endDateChanged(data: OnChangeInterface) {
+	// Stop the timeout
+	if (dateTimeout.value !== null) {
+		clearTimeout(dateTimeout.value);
+	}
+
+	// If invalid - escape
+	if (!data.isValid) {
+		// Notify the user
+		endDateStatus.value = t("date_invalid");
+
+		// null the timeout
+		dateTimeout.value = null;
+
+		return;
+	}
+
+	// Notify the user of the change
+	endDateStatus.value = t("date_updating");
+
+	// Set timeout - update when finished
+	setTimeout(async () => {
+		await datesUpdated();
+	}, 500);
+}
+
+async function startDateChanged(data: OnChangeInterface) {
+	// Stop the timeout
+	if (dateTimeout.value !== null) {
+		clearTimeout(dateTimeout.value);
+	}
+
+	// If invalid - escape
+	if (!data.isValid) {
+		// Notify the user
+		endDateStatus.value = t("date_invalid");
+
+		// null the timeout
+		dateTimeout.value = null;
+
+		return;
+	}
+
+	// Notify the user of the change
+	endDateStatus.value = t("date_updating");
+
+	// Set timeout - update when finished
+	setTimeout(async () => {
+		await datesUpdated();
+	}, 500);
+}
+
+async function datesUpdated() {
+	const body = {
+		end_date: objectStore.end_date,
+		start_date: objectStore.start_date,
+	}
+
+	try {
+		const response = await fetch(
+			`/api/v1/${objectStore.destination}/${objectStore.id}/`,
+			{
+				method: "PATCH",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				},
+				body: JSON.stringify(body),
+			}
+		);
+
+		startDateStatus.value = t("date_updated");
+		endDateStatus.value = t("date_updated");
+		handleResponseStatus(response);
+
+		setTimeout(() => {
+			startDateStatus.value = "";
+			endDateStatus.value = "";
+		}, 2000);
+	} catch (error) {
+		// Assuming a 500 error
+		errorStore.setError(error);
+		return router.push({name: "server-error"});
+	}
+}
+
+function handleResponseStatus(response: Response) {
+	switch (response.status) {
+		case 200:
+			// Everything is fine
+			break;
+		case 403:
+			// User does not have access to the object
+			errorStore.message = t("error_forbidden");
+			break;
+		case 404:
+			// Object does not exist
+			errorStore.message = t("error_not_found");
+			break;
+		default:
+			// Assuming a 500 error
+			errorStore.setError(response);
+			errorStore.showErrorModal = true;
+	}
+}
+
+function storyPointsChanged(data: OnChangeInterface) {
+	// Stop the timeout
+	if (storyPointsTimeout.value !== null) {
+		clearTimeout(storyPointsTimeout.value);
+	}
+
+	// If invalid - escape
+	if (!data.isValid) {
+		// Notify the user
+		storyPointsStatus.value = t("story_point_invalid");
+
+		// null the timeout
+		storyPointsTimeout.value = null;
+
+		return;
+	}
+
+	// Notify the user of the change
+	storyPointsStatus.value = t("story_point_updating");
+
+	// Set timeout - update when finished
+	setTimeout(async () => {
+		await storyPointsUpdate();
+	}, 500);
+}
+
+async function storyPointsUpdate() {
+	const body = {
+		story_points: objectStore.story_points,
+	}
+
+	try {
+		const response = await fetch(
+			`/api/v1/${objectStore.destination}/${objectStore.id}/`,
+			{
+				method: "PATCH",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				},
+				body: JSON.stringify(body),
+			}
+		);
+
+		// Update status and check response
+		storyPointsStatus.value = t("story_point_updated");
+		handleResponseStatus(response);
+
+		setTimeout(() => {
+			storyPointsStatus.value = "";
+		}, 2000);
+	} catch (error) {
+		// Assuming a 500 error
+		errorStore.setError(error);
+		errorStore.showErrorModal = true;
+	}
+}
 </script>
 
 <template>
 	<WlkCard class="properties-component">
-		<h3>{{t("properties")}}</h3>
+		<h3>{{ t("properties") }}</h3>
 
-		<ObjectPriority />
-		<ObjectStatus />
+		<ObjectPriority/>
+		<ObjectStatus/>
 
 		<WlkNumberInput
 			class="story-points compact"
 			v-model="objectStore.story_points"
 			:label="t('story_points')"
-			:validation="[minValue(0), maxValue(5)]"
+			:status="storyPointsStatus"
+			:validationRules="[minValue(0), maxValue(5)]"
+			v-on:change="storyPointsChanged"
 		/>
 
 		<WlkDatetime
 			class="start-date compact"
 			v-model="startDate"
 			:label="t('start_date')"
+			:status="startDateStatus"
+			v-on:change="startDateChanged"
 		/>
 		<WlkDatetime
 			class="end-date compact"
 			v-model="endDate"
 			:label="t('end_date')"
+			:status="endDateStatus"
+			v-on:change="endDateChanged"
 		/>
 	</WlkCard>
 </template>

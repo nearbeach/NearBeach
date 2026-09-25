@@ -4,6 +4,7 @@ import AppStructure from "@/components/structure/AppStructure.vue";
 import StructureSkeleton from "@/components/structure/structure_skeleton/StructureSkeleton.vue";
 import { usePermissionStore} from "@/stores/permissions/permission.ts";
 import ErrorComponent from "@/components/error/ErrorComponent/ErrorComponent.vue";
+import ErrorModal from "@/components/error/ErrorModal/ErrorModal.vue";
 
 // Store
 const permissionStore = usePermissionStore();
@@ -26,6 +27,7 @@ const showErrorComponent = computed(() => {
 		title="Error Fetching Permission Data"
 		:message="permissionStore.getErrorInformation"
 	/>
+	<ErrorModal/>
 </template>
 
 <style scoped>
