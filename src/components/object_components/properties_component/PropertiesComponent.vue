@@ -10,7 +10,7 @@ import {useObjectStore} from "@/stores/object/object.ts";
 import ObjectStatus from "@/components/object_components/object_status/ObjectStatus.vue";
 import ObjectPriority from "@/components/object_components/object_priority/ObjectPriority.vue";
 import {useI18n} from "petite-vue-i18n";
-import {computed, ref} from "vue";
+import {computed, nextTick, ref} from "vue";
 import router from "@/router/router.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
@@ -31,7 +31,7 @@ const {t} = useI18n({
 			story_point_invalid: "Invalid story points",
 			story_point_updated: "Story points updated",
 			story_point_updating: "Updating story points",
-			story_points: "Story Points",
+			story_point: "Story Points",
 		},
 		ja: {
 			date_invalid: "日付が有効ではありません",
@@ -46,7 +46,7 @@ const {t} = useI18n({
 			story_point_invalid: "無効なストーリーポイント",
 			story_point_updated: "ストーリーポイントが更新されました",
 			story_point_updating: "ストーリーポイントの更新",
-			story_points: "ストーリーポイント",
+			story_point: "ストーリーポイント",
 		},
 	}
 
@@ -63,30 +63,17 @@ const startDateStatus = ref<string>("");
 const storyPointsStatus = ref<string>("");
 const storyPointsTimeout = ref<null | ReturnType<typeof setTimeout>>(null);
 
-
-// Define computed
-const endDate = computed(() => {
-	if (objectStore.end_date === null) {
-		return "";
-	}
-
-	return objectStore.end_date;
-});
-
-const startDate = computed(() => {
-	if (objectStore.start_date === null) {
-		return "";
-	}
-
-	return objectStore.start_date;
-});
-
 // Define functions
 async function endDateChanged(data: OnChangeInterface) {
 	// Stop the timeout
 	if (dateTimeout.value !== null) {
 		clearTimeout(dateTimeout.value);
 	}
+
+	// Wait for the next tick before processing
+	await nextTick();
+	console.log("Data: ", data);
+	console.log("Object Store: ", objectStore);
 
 	// If invalid - escape
 	if (!data.isValid) {
@@ -114,7 +101,11 @@ async function startDateChanged(data: OnChangeInterface) {
 		clearTimeout(dateTimeout.value);
 	}
 
+	// Wait for the next tick before processing
+	await nextTick();
+
 	// If invalid - escape
+	console.log("Data: ", data);
 	if (!data.isValid) {
 		// Notify the user
 		endDateStatus.value = t("date_invalid");
@@ -123,6 +114,18 @@ async function startDateChanged(data: OnChangeInterface) {
 		dateTimeout.value = null;
 
 		return;
+	}
+
+	// If end date is null set as start date
+	if (objectStore.end_date === null || objectStore.end_date === "") {
+		objectStore.end_date = objectStore.start_date;
+	}
+
+	// If start date > end_date -> end_date = start_date
+	const start_date = new Date(objectStore.start_date ?? 0);
+	const end_date = new Date(objectStore.end_date ?? 0);
+	if (start_date > end_date) {
+		objectStore.end_date = objectStore.start_date;
 	}
 
 	// Notify the user of the change
@@ -152,6 +155,8 @@ async function datesUpdated() {
 				body: JSON.stringify(body),
 			}
 		);
+
+		console.log("Response: ", response);
 
 		startDateStatus.value = t("date_updated");
 		endDateStatus.value = t("date_updated");
@@ -183,7 +188,7 @@ function handleResponseStatus(response: Response) {
 			break;
 		default:
 			// Assuming a 500 error
-			errorStore.setError(response);
+			errorStore.message = t("error_server_error");
 			errorStore.showErrorModal = true;
 	}
 }
@@ -216,7 +221,7 @@ function storyPointsChanged(data: OnChangeInterface) {
 
 async function storyPointsUpdate() {
 	const body = {
-		story_points: objectStore.story_points,
+		story_point: objectStore.story_point,
 	}
 
 	try {
@@ -256,8 +261,8 @@ async function storyPointsUpdate() {
 
 		<WlkNumberInput
 			class="story-points compact"
-			v-model="objectStore.story_points"
-			:label="t('story_points')"
+			v-model="objectStore.story_point"
+			:label="t('story_point')"
 			:status="storyPointsStatus"
 			:validationRules="[minValue(0), maxValue(5)]"
 			v-on:change="storyPointsChanged"
@@ -265,14 +270,14 @@ async function storyPointsUpdate() {
 
 		<WlkDatetime
 			class="start-date compact"
-			v-model="startDate"
+			v-model="objectStore.start_date"
 			:label="t('start_date')"
 			:status="startDateStatus"
 			v-on:change="startDateChanged"
 		/>
 		<WlkDatetime
 			class="end-date compact"
-			v-model="endDate"
+			v-model="objectStore.end_date"
 			:label="t('end_date')"
 			:status="endDateStatus"
 			v-on:change="endDateChanged"

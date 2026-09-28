@@ -57,7 +57,7 @@ watch(
 			{{ errorStore.message }}
 			<WlkModalFooter>
 				<WlkButton
-					class="info"
+					class="info compact"
 					v-on:click="errorStore.showErrorModal = false"
 				>
 					{{t("close_modal")}}
@@ -69,5 +69,10 @@ watch(
 </template>
 
 <style scoped>
+.modal {
+	> .wlk-modal-footer {
+		padding-top: 0.75rem;
+	}
+}
 
 </style>

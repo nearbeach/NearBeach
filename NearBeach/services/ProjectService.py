@@ -147,7 +147,7 @@ class ProjectService(ObjectServiceAbstraction):
             partial=True,
         )
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Make sure we update the change user
         serializer.change_user = request.user

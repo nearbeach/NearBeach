@@ -29,7 +29,7 @@ export const useObjectStore = defineStore('object', {
                 label: "",
             }
         },
-        story_points: 0,
+        story_point: 0,
         title: "",
         user_list: [] as UserInterface[],
     }),
@@ -71,7 +71,7 @@ export const useObjectStore = defineStore('object', {
                     label: "",
                 }
             };
-            this.story_points = 0;
+            this.story_point = 0;
             this.title = "";
             this.user_list = [];
         }
