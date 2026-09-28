@@ -94,7 +94,7 @@ async function uploadDocument() {
 		documentNameModel.value = "";
 		// END TEMP CODE
 	} catch (error) {
-		console.log("ERROR: ", error);
+		console.error("ERROR: ", error);
 		// TODO - Handle errors
 		// TODO - Remove from optimistic list
 	}

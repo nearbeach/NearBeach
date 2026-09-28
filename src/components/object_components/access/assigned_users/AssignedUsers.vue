@@ -89,7 +89,7 @@ async function fetchPotentialUsers() {
 		objectStore.potential_user_list = data.potential_user_list;
 	} catch (error) {
 		// TODO - handle errors
-		console.log("ERROR: ", error);
+		console.error("ERROR: ", error);
 	}
 }
 
@@ -112,7 +112,7 @@ async function removeUser(user_id: number) {
 
 		// TODO handle the response and update the potential users and user list
 	} catch (error) {
-		console.log("ERROR: ", error);
+		console.error("ERROR: ", error);
 		// TODO - handle error
 	}
 }

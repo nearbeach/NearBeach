@@ -44,7 +44,7 @@ async function deleteFolder(folder_id: number) {
 		// Remove folder
 		documentationStore.removeFolder(folder_id);
 	} catch (error) {
-		console.log("ERROR: ", error);
+		console.error("ERROR: ", error);
 		// TODO - handle error
 	}
 }

@@ -32,7 +32,7 @@ async function deleteDocument(document: DocumentItemInterface) {
 		// Remove document
 		documentationStore.removeDocument(document.key);
 	} catch (error) {
-		console.log("ERROR: ", error);
+		console.error("ERROR: ", error);
 		// TODO - handle error
 	}
 }
