@@ -212,7 +212,7 @@ function updateData() {
 			:label="t('title')"
 			:validationRules="[required(), maxLength(255), minLength(5)]"
 			:placeholderText="t(`${objectStore.destination}_title_placeholder`)"
-			@isValid="(value) => (fieldValidation['titleModel'] = value)"
+			v-on:change="(value: boolean) => (fieldValidation['titleModel'] = value)"
 		/>
 		<WlkTextArea
 			v-model="objectStore.description"

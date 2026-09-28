@@ -143,7 +143,7 @@ function updateValidation(field: string, value: boolean): void {
 			:placeholderText="t(`placeholder_${route.meta.destination}`)"
 			:validationRules="[required(), maxLength(255), minLength(5)]"
 			ref="title-ref"
-			@isValid="(value) => (updateValidation('titleModel', value))"
+			v-on:change="(value: boolean) => (updateValidation('titleModel', value))"
 		/>
 
 		<WlkSelect
@@ -152,7 +152,7 @@ function updateValidation(field: string, value: boolean): void {
 			:validationRules="[required()]"
 			ref="group-ref"
 			v-model="groupModel"
-			@isValid="(value) => (updateValidation('groupModel', value))"
+			v-on:change="(value: boolean) => (updateValidation('groupModel', value))"
 		/>
 
 		<WlkCardFooter>
