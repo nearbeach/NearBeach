@@ -5,6 +5,7 @@ export const useErrorStore = defineStore("error", {
 	state: () => {
 		return {
 			message: "" as string,
+			showErrorModal: false as boolean,
 		};
 	},
 	actions: {
