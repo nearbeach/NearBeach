@@ -64,7 +64,7 @@
     "style-loader": "^3.3.1",
     "tinymce": "^7.9.3",
     "typescript-eslint": "^8.46.0",
-    "vitest": "^4.1.8",
+    "vitest": "^4.1.11",
     "vue": "^3.5.13",
     "vue-loader": "^17.4.2",
     "vuedraggable": "^4.1.0",
