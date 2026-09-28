@@ -10,7 +10,7 @@ import {useObjectStore} from "@/stores/object/object.ts";
 import ObjectStatus from "@/components/object_components/object_status/ObjectStatus.vue";
 import ObjectPriority from "@/components/object_components/object_priority/ObjectPriority.vue";
 import {useI18n} from "petite-vue-i18n";
-import {computed, nextTick, ref} from "vue";
+import {ref, nextTick, watch} from "vue";
 import router from "@/router/router.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
@@ -57,86 +57,93 @@ const errorStore = useErrorStore();
 const objectStore = useObjectStore();
 
 // Define refs
-const dateTimeout = ref<null | ReturnType<typeof setTimeout>>(null);
-const endDateStatus = ref<string>("");
-const startDateStatus = ref<string>("");
+const dateStatus = ref<string>("");
 const storyPointsStatus = ref<string>("");
 const storyPointsTimeout = ref<null | ReturnType<typeof setTimeout>>(null);
 
+// Define watches
+watch(
+	() => objectStore.end_date,
+	async (newValue: null | string, oldValue: null | string) => {
+		// If there is already a change happening - do nothing
+		if (dateStatus.value !== "") {
+			return;
+		}
+
+		// If nothing changes don't do anything
+		if (newValue === oldValue) {
+			return;
+		}
+
+		// Check to make sure the new_value is a valid date
+		const date = new Date(newValue ?? 0);
+		if (isNaN(date.getTime())) {
+			// Not a valid date
+			return;
+		}
+
+		// Notify the user of the change
+		dateStatus.value = t("date_updating");
+
+		// If start date is null set as end date
+		if (objectStore.start_date === null || objectStore.start_date === "") {
+			objectStore.start_date = newValue;
+		}
+
+		// If end date <  start date -> start_date = end_date
+		const start_date = new Date(objectStore.start_date ?? 0);
+		const end_date = new Date(newValue ?? 0);
+		if (end_date < start_date) {
+			objectStore.start_date = objectStore.end_date;
+		}
+
+		// Update the dates
+		await datesUpdated();
+	},
+)
+
+watch(
+	() => objectStore.start_date,
+	async (newValue: string | null, oldValue: string | null) => {
+		console.log("Start Date Status: ", dateStatus.value);
+		// If there is already a change happening - do nothing
+		if (dateStatus.value !== "") {
+			return;
+		}
+
+		// If nothing changes don't do anything
+		if (newValue === oldValue) {
+			return;
+		}
+
+		// Check to make sure the new_value is a valid date
+		const date = new Date(newValue ?? 0);
+		if (isNaN(date.getTime())) {
+			// Not a valid date
+			return;
+		}
+
+		// Notify the user of the change
+		dateStatus.value = t("date_updating");
+
+		// If end date is null set as start date
+		if (objectStore.end_date === null || objectStore.end_date === "") {
+			objectStore.end_date = objectStore.start_date;
+		}
+
+		// If start date > end_date -> end_date = start_date
+		const start_date = new Date(objectStore.start_date ?? 0);
+		const end_date = new Date(objectStore.end_date ?? 0);
+		if (start_date > end_date) {
+			objectStore.end_date = objectStore.start_date;
+		}
+
+		// Update the dates
+		await datesUpdated();
+	},
+)
+
 // Define functions
-async function endDateChanged(data: OnChangeInterface) {
-	// Stop the timeout
-	if (dateTimeout.value !== null) {
-		clearTimeout(dateTimeout.value);
-	}
-
-	// Wait for the next tick before processing
-	await nextTick();
-	console.log("Data: ", data);
-	console.log("Object Store: ", objectStore);
-
-	// If invalid - escape
-	if (!data.isValid) {
-		// Notify the user
-		endDateStatus.value = t("date_invalid");
-
-		// null the timeout
-		dateTimeout.value = null;
-
-		return;
-	}
-
-	// Notify the user of the change
-	endDateStatus.value = t("date_updating");
-
-	// Set timeout - update when finished
-	setTimeout(async () => {
-		await datesUpdated();
-	}, 500);
-}
-
-async function startDateChanged(data: OnChangeInterface) {
-	// Stop the timeout
-	if (dateTimeout.value !== null) {
-		clearTimeout(dateTimeout.value);
-	}
-
-	// Wait for the next tick before processing
-	await nextTick();
-
-	// If invalid - escape
-	console.log("Data: ", data);
-	if (!data.isValid) {
-		// Notify the user
-		endDateStatus.value = t("date_invalid");
-
-		// null the timeout
-		dateTimeout.value = null;
-
-		return;
-	}
-
-	// If end date is null set as start date
-	if (objectStore.end_date === null || objectStore.end_date === "") {
-		objectStore.end_date = objectStore.start_date;
-	}
-
-	// If start date > end_date -> end_date = start_date
-	const start_date = new Date(objectStore.start_date ?? 0);
-	const end_date = new Date(objectStore.end_date ?? 0);
-	if (start_date > end_date) {
-		objectStore.end_date = objectStore.start_date;
-	}
-
-	// Notify the user of the change
-	endDateStatus.value = t("date_updating");
-
-	// Set timeout - update when finished
-	setTimeout(async () => {
-		await datesUpdated();
-	}, 500);
-}
-
 async function datesUpdated() {
 	const body = {
 		end_date: objectStore.end_date,
@@ -156,15 +163,11 @@ async function datesUpdated() {
 			}
 		);
 
-		console.log("Response: ", response);
-
-		startDateStatus.value = t("date_updated");
-		endDateStatus.value = t("date_updated");
+		dateStatus.value = t("date_updated");
 		handleResponseStatus(response);
 
 		setTimeout(() => {
-			startDateStatus.value = "";
-			endDateStatus.value = "";
+			dateStatus.value = "";
 		}, 2000);
 	} catch (error) {
 		// Assuming a 500 error
@@ -272,15 +275,15 @@ async function storyPointsUpdate() {
 			class="start-date compact"
 			v-model="objectStore.start_date"
 			:label="t('start_date')"
-			:status="startDateStatus"
-			v-on:change="startDateChanged"
+			:status="dateStatus"
+			:disabled="dateStatus === t('date_updating')"
 		/>
 		<WlkDatetime
 			class="end-date compact"
 			v-model="objectStore.end_date"
 			:label="t('end_date')"
-			:status="endDateStatus"
-			v-on:change="endDateChanged"
+			:status="dateStatus"
+			:disabled="dateStatus === t('date_updating')"
 		/>
 	</WlkCard>
 </template>

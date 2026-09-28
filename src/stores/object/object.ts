@@ -10,7 +10,7 @@ export const useObjectStore = defineStore('object', {
         customers: [] as CustomerInterface[],
         description: "",
         destination: "",
-        end_date: null,
+        end_date: null as string | null,
         group_list: [] as GroupInterface[],
         id: 0,
         is_loaded: false,
@@ -20,7 +20,7 @@ export const useObjectStore = defineStore('object', {
             value: 0,
             label: "",
         },
-        start_date: null,
+        start_date: null as string | null,
         status: {
             id: 0,
             status: "",
