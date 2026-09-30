@@ -340,7 +340,7 @@ async function storyPointsUpdate() {
 		}
 	}
 
-	> .priority {
+	> .object-priority {
 		@media (--small-screen) {
 			grid-column-start: 3;
 			grid-column-end: 5;
