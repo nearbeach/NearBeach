@@ -55,7 +55,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
             case "folder":
                 folder_service = FolderService(
                     destination="project",
-                    location_id=self.location_id
+                    location_id=self.location_id,
                 )
 
                 # Return results

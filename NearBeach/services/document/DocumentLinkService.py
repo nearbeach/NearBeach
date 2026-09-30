@@ -8,6 +8,8 @@ from NearBeach.serializers.documentation.document_serializer import DocumentSeri
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 
+import datetime
+
 
 class DocumentLinkService(ObjectServiceAbstraction):
     """Class for handling link crud operations"""
@@ -92,11 +94,13 @@ class DocumentLinkService(ObjectServiceAbstraction):
         document.update(
             change_user=request.user,
             is_deleted=True,
+            date_modified=timezone.now(),
         )
 
         document_permission.update(
             change_user=request.user,
             is_deleted=True,
+            date_modified=timezone.now(),
         )
 
         return {}, status.HTTP_204_NO_CONTENT

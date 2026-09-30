@@ -74,7 +74,7 @@ class DocumentService(ObjectServiceAbstraction):
 
         document.update(
             change_user=request.user,
-            modification_date=timezone.now(),
+            date_modified=timezone.now(),
             is_deleted=True,
         )
 

@@ -5,6 +5,8 @@ from NearBeach.models import Folder
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 
+import datetime
+
 
 class FolderService(ObjectServiceAbstraction):
     """Class for handling folder crud operations"""
@@ -52,6 +54,7 @@ class FolderService(ObjectServiceAbstraction):
         folder.update(
             change_user=request.user,
             is_deleted=True,
+            date_modified=timezone.now(),
         )
 
         return {}, status.HTTP_204_NO_CONTENT
@@ -80,6 +83,7 @@ class FolderService(ObjectServiceAbstraction):
 
         # 'true' if True else 'false'
         folder.change_user = request.user
+        folder.date_modified = datetime.datetime.now()
         folder.description = folder.description if description is None else description
         folder.parent_folder = folder.parent_folder if parent_folder is None else parent_folder
         folder.save()

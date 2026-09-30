@@ -1,5 +1,6 @@
 from typing import Tuple, Union, Dict
 from rest_framework import status
+from django.utils import timezone
 
 from NearBeach.models import Organisation, Customer, ObjectAssignment
 from NearBeach.serializers.organisation_link_serializer import OrganisationLinkSerializer
@@ -61,6 +62,8 @@ class OrganisationLinkService(ObjectServiceAbstraction):
         # Remove organisation from object
         update_object.update(
             organisation=None,
+            change_user=request.user,
+            date_modified=timezone.now(),
         )
 
         return {}, status.HTTP_204_NO_CONTENT

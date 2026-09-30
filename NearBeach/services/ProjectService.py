@@ -4,6 +4,7 @@ from rest_framework import status
 
 from django.contrib.auth.models import User
 from django.db.models import QuerySet, Q, F
+from django.utils import timezone
 
 from NearBeach.models import Project, ObjectAssignment, UserGroup, Group
 from NearBeach.serializers.project_serializer import ProjectSerializer
@@ -53,6 +54,7 @@ class ProjectService(ObjectServiceAbstraction):
         project.update(
             is_deleted=True,
             change_user=request.user,
+            date_modified=timezone.now(),
         )
 
         return status.HTTP_204_NO_CONTENT

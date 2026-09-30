@@ -1,6 +1,7 @@
 from typing import Dict, Tuple, Union
 from rest_framework import status
 from django.db.models.functions import Concat
+from django.utils import timezone
 
 from NearBeach.models import (
     Group,
@@ -177,6 +178,8 @@ class GroupService(ObjectServiceAbstraction):
         # Remove the group
         remove_object_assignment.update(
             is_deleted=True,
+            change_user=request.user,
+            date_modified=timezone.now(),
         )
 
         # Remove any unwanted users

@@ -1,5 +1,6 @@
 from typing import Dict, Tuple, Union
 from rest_framework import status
+from django.utils import timezone
 from NearBeach.models import (
     ObjectAssignment,
 )
@@ -42,6 +43,8 @@ class UserService(ObjectServiceAbstraction):
 
         # Remove the group
         remove_object_assignment.update(
+            change_user=request.user,
+            date_modified=timezone.now(),
             is_deleted=True,
         )
 

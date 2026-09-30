@@ -7,6 +7,8 @@ from NearBeach.serializers.customer_link_serializer import CustomerLinkSerialize
 from NearBeach.serializers.customer_serializer import CustomerSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 
+import datetime
+
 
 class CustomerLinkService(ObjectServiceAbstraction):
     """Class for create, read, update, delete of customer links"""
@@ -59,6 +61,8 @@ class CustomerLinkService(ObjectServiceAbstraction):
         # Update the results
         object_assignment_results.update(
             is_deleted=True,
+            date_modified=timezone.now(),
+            change_user=request.user,
         )
 
         # Send data back to user

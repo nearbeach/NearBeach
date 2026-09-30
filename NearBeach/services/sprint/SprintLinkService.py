@@ -1,5 +1,6 @@
 from typing import Dict, Tuple, Union
 from rest_framework import status
+from django.utils import timezone
 from NearBeach.models import (
     Sprint,
 )
@@ -24,7 +25,8 @@ class SprintLinkService(ObjectServiceAbstraction):
 
         # Create the sprint
         created_sprint = serializer.save(
-            change_user=request.user, creation_user=request.user
+            change_user=request.user,
+            creation_user=request.user
         )
 
         # Re-serialize the created project so it is in the same shape for the user
@@ -44,6 +46,8 @@ class SprintLinkService(ObjectServiceAbstraction):
 
         sprint_results.update(
             is_deleted=True,
+            change_user=request.user,
+            date_modified=timezone.now(),
         )
 
         return {}, status.HTTP_204_NO_CONTENT

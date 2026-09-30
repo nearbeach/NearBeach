@@ -5,6 +5,7 @@ from NearBeach.models import (
     KanbanCard,
 )
 from django.db.models import F, Value, Case, When
+from django.utils import timezone
 
 from NearBeach.serializers.object_data.note_serializer import NoteSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
@@ -85,6 +86,7 @@ class NoteService(ObjectServiceAbstraction):
         object_note.update(
             is_deleted=True,
             change_user=request.user,
+            date_modified=timezone.now(),
         )
 
         return {}, status.HTTP_204_NO_CONTENT
@@ -136,6 +138,7 @@ class NoteService(ObjectServiceAbstraction):
 
         # Update
         object_note.change_user = request.user
+        object_note.date_modified = timezone.now()
         object_note.note = serializer.data["note"]
         object_note.save()
 

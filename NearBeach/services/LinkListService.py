@@ -6,6 +6,7 @@ from NearBeach.models import (
     KanbanCard,
 )
 from django.db.models import Q, F, Value
+from django.utils import timezone
 
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction, OBJECT_STRUCTURE
@@ -112,6 +113,7 @@ class LinkListService(ObjectServiceAbstraction):
         object_assignment_results.update(
             is_deleted=True,
             change_user=request.user,
+            date_modified=timezone.now(),
         )
 
         return {}, status.HTTP_204_NO_CONTENT
@@ -301,6 +303,7 @@ class LinkListService(ObjectServiceAbstraction):
         setattr(object_assignment, object_type, single_object)
         setattr(object_assignment, F"{self.destination}_id", int(self.location_id))
         object_assignment.change_user = request.user
+        object_assignment.date_modified = timezone.now()
         object_assignment.parent_link = str(parent_link)
         object_assignment.link_relationship = str(link_relationship)
 

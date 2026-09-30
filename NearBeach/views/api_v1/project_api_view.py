@@ -65,11 +65,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path=r"customer/(?P<customer_pk>[^/.]+)",
     )
-    def customer_delete(self, _, pk, customer_pk, *args, **kwargs) -> Response:
+    def customer_delete(self, request, pk, customer_pk, *args, **kwargs) -> Response:
         customer_service = CustomerLinkService(destination="project", location_id=pk)
 
         # Create Link
-        data, http_status = customer_service.delete(customer_pk)
+        data, http_status = customer_service.delete(request, customer_pk)
 
         return Response(
             data=data,
@@ -350,11 +350,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @object_permission(min_permission_level=2)
     @organisation.mapping.delete
-    def organisation_delete(self, _, pk, *args, **kwargs) -> Response:
+    def organisation_delete(self, request, pk, *args, **kwargs) -> Response:
         organisation_service = OrganisationLinkService(
             destination="project", location_id=pk
         )
-        data, http_status = organisation_service.delete()
+        data, http_status = organisation_service.delete(request, pk)
 
         return Response(
             data=data,

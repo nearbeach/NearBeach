@@ -1,5 +1,6 @@
 from typing import Tuple, Union, Dict
 from rest_framework import status
+from django.utils import timezone
 
 from NearBeach.serializers.public_link_serializer import PublicLinkSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
@@ -37,6 +38,8 @@ class PublicLinkService(ObjectServiceAbstraction):
 
         delete_public_link.update(
             is_deleted=True,
+            change_user=request.user,
+            date_modified=timezone.now(),
         )
 
         return {}, status.HTTP_204_NO_CONTENT
@@ -71,6 +74,7 @@ class PublicLinkService(ObjectServiceAbstraction):
         update_public_link.update(
             change_user=request.user,
             is_active=serializer.validated_data["is_active"],
+            date_modified=timezone.now(),
         )
 
         return serializer.data, status.HTTP_200_OK
