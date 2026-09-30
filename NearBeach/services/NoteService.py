@@ -39,8 +39,33 @@ class NoteService(ObjectServiceAbstraction):
 
         submit_object_note.save()
 
+        # Fetch the single note result
+        note_result = ObjectNote.objects.filter(
+            is_deleted=False,
+            **{F"{self.destination}_id": self.location_id},
+            id=submit_object_note.id,
+        ).annotate(
+            username=F('change_user'),
+            first_name=F('change_user__first_name'),
+            last_name=F('change_user__last_name'),
+            profile_picture=F('change_user__userprofilepicture__document_id__document'),
+            can_edit=Case(
+                When(change_user=request.user, then=Value('true')),
+                default=Value('false')
+            )
+        ).values(
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "profile_picture",
+            "note",
+            "date_modified",
+            "can_edit",
+        )
+
         # Get the serialized data
-        serializer = NoteSerializer(submit_object_note)
+        serializer = NoteSerializer(note_result.first(), many=False)
 
         return serializer.data, status.HTTP_201_CREATED
 
