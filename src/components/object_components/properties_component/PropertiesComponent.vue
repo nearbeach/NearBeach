@@ -105,7 +105,6 @@ watch(
 watch(
 	() => objectStore.start_date,
 	async (newValue: string | null, oldValue: string | null) => {
-		console.log("Start Date Status: ", dateStatus.value);
 		// If there is already a change happening - do nothing
 		if (dateStatus.value !== "") {
 			return;

@@ -111,7 +111,7 @@ class NoteService(ObjectServiceAbstraction):
 
         # Update
         object_note.change_user = request.user
-        object_note.note = serializer.data["object_note"]
+        object_note.note = serializer.data["note"]
         object_note.save()
 
         # Serialize

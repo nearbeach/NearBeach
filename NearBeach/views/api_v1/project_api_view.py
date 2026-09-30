@@ -307,8 +307,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @object_permission(min_permission_level=2)
-    @notes_delete.mapping.post
-    def notes_update(self, request, pk, note_pk) -> Response:
+    @notes_delete.mapping.patch
+    def notes_update(self, request, pk, note_pk, *args, **kwargs) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
         data, http_status = note_service.update(request, note_pk)
 
