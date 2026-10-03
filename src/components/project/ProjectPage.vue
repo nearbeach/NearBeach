@@ -7,6 +7,7 @@ import StakeholderComponent from "@/components/object_components/stakeholder/Sta
 import DocumentComponent from "@/components/object_components/document/DocumentComponent.vue";
 import NotesComponent from "@/components/object_components/notes/NotesComponent.vue";
 import LinkObjects from "@/components/object_components/link_objects/LinkObjects.vue";
+import SprintLinks from "@components/object_components/sprint_links/SprintLinks.vue";
 import type {TabHeaderInterface} from "whelk-ui";
 import {WlkCard, WlkTabs} from "whelk-ui";
 import {onMounted} from "vue";
@@ -71,6 +72,8 @@ onMounted(() => {
 					</template>
 					<template #misc>
 						<PublicLinks/>
+                        <hr />
+                        <SprintLinks />
 					</template>
 				</WlkTabs>
 			</WlkCard>

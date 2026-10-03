@@ -687,7 +687,7 @@ paths:
   /api/v0/available_data/sprint_list/:
     get:
       operationId: available_data_sprint_list_list
-      description: "\n# \U0001F4CC Description\n\nPresent a list of all sprints user\
+      description: "\n# \U0001F4CC Description\n\nPresent a list of all sprint_links user\
         \ has access too\n\n        "
       tags:
       - Available Data|Sprint List
