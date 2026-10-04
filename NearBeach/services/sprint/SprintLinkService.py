@@ -23,10 +23,14 @@ class SprintLinkService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
+        if not self.destination in ["requirement", "project"]:
+            return "Parent object not allowed", status.HTTP_400_BAD_REQUEST
+
         # Create the sprint
         created_sprint = serializer.save(
             change_user=request.user,
-            creation_user=request.user
+            creation_user=request.user,
+            **{F"{self.destination}_id": self.location_id},
         )
 
         # Re-serialize the created project so it is in the same shape for the user

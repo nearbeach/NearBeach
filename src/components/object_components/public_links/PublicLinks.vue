@@ -189,11 +189,13 @@ async function updateActive(data: {id: string, index: number}) {
             </tbody>
         </table>
 
-        <WlkButton class="compact primary"
-                   @click="createPublicLink"
-        >
-            {{t("create_public_link")}}
-        </WlkButton>
+	    <div class="public-link-buttons">
+			<WlkButton class="compact primary"
+					   @click="createPublicLink"
+			>
+				{{t("create_public_link")}}
+			</WlkButton>
+	    </div>
     </div>
 </template>
 
@@ -228,6 +230,10 @@ async function updateActive(data: {id: string, index: number}) {
             background-color: var(--bg-dark);
         }
     }
+
+	> .public-link-buttons {
+		margin-top: 0.75rem;
+	}
 }
 
 </style>

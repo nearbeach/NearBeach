@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from "vue";
 import {useObjectStore} from "@/stores/object/object.ts";
-import {WlkButton, WlkCard, WlkModal, WlkModalFooter, WlkModalHeader, WlkTextInput} from "whelk-ui";
+import {WlkButton, WlkDate, WlkModal, WlkModalFooter, WlkModalHeader, WlkTextInput} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import type {SprintLinkInterface} from "@/utils/interfaces/SprintLinkInterface.ts";
 import {X} from "@lucide/vue";
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import SprintLink from "@/components/object_components/sprint_links/sprint_link/SprintLink.vue";
 
 // Define i18n
 const {t} = useI18n({
@@ -67,7 +69,66 @@ function closeModal() {
 }
 
 async function createSprint() {
-    // TODO - ADD CODE
+	// TODO - validate fields before sending data
+
+	const body = {
+		title: sprintTitleModel.value,
+		end_date: sprintEndDateModel.value,
+		start_date: sprintStartDateModel.value,
+	};
+
+	const response = await fetch(
+        `/api/v1/${objectStore.destination}/${objectStore.id}/sprint/`,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+			body: JSON.stringify(body),
+		},
+	);
+
+	const data = await response.json();
+
+	switch (response.status) {
+		case 201:
+			sprintData.value.push(data);
+			closeModal();
+			break;
+		default:
+			errorMessage.value = data.error;
+			break;
+	}
+}
+
+async function deleteSprint(sprint_id: string) {
+	// Remove from list
+	sprintData.value = sprintData.value.filter((sprint) => {
+		return sprint.id !== sprint_id;
+	});
+
+	// Update backend
+	const response = await fetch(
+        `/api/v1/${objectStore.destination}/${objectStore.id}/sprint/${sprint_id}/`,
+        {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+            }
+		}
+	)
+
+	const data = await response.json();
+
+	switch (response.status) {
+		case 204:
+			break;
+		default:
+			errorMessage.value = data.error;
+			break;
+	}
 }
 
 async function loadData() {
@@ -77,6 +138,7 @@ async function loadData() {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
             }
         }
     )
@@ -94,6 +156,20 @@ async function loadData() {
 }
 
 function openModal() {
+	// Get start date
+	let date = new Date();
+	const start_date = date.toISOString().split("T")[0] ?? "";
+	sprintStartDateModel.value = start_date;
+
+	// Get end date
+	date.setDate(date.getDate() + 7);
+	const end_date = date.toISOString().split("T")[0] ?? "";
+	sprintEndDateModel.value = end_date;
+
+	// Set the title
+	sprintTitleModel.value = `${objectStore.destination}-${objectStore.id}: ${start_date} -> ${end_date}`;
+
+	// Open Modal
     modalClass.value = "open";
 }
 </script>
@@ -111,17 +187,21 @@ function openModal() {
         <div class="sprint-list"
              v-if="sprintData.length > 0"
         >
-            <WlkCard v-for="(sprint, index) in sprintData">
-
-            </WlkCard>
-
+	        <SprintLink v-for="(sprint, index) in sprintData"
+	                    :index="index"
+	                    :key="sprint.id"
+	                    :sprint="sprint"
+	                    v-on:delete-sprint="deleteSprint"
+	        />
         </div>
 
-        <WlkButton class="compact primary"
-                   @click="openModal"
-        >
-            {{ t("create_sprint") }}
-        </WlkButton>
+	    <div class="sprint-buttons">
+			<WlkButton class="compact primary"
+					   @click="openModal"
+			>
+				{{ t("create_sprint") }}
+			</WlkButton>
+	    </div>
     </div>
 
     <teleport to="body">
@@ -138,8 +218,8 @@ function openModal() {
 
             <WlkTextInput :label="t('modal_sprint_title')" v-model="sprintTitleModel"/>
             <div class="date-row">
-<!--                <WlkDate :label="t('modal_start_date')" v-model="sprintStartDateModel" />-->
-<!--                <WlkDate :label="t('modal_end_date')" v-model="sprintEndDateModel" />-->
+                <WlkDate :label="t('modal_start_date')" v-model="sprintStartDateModel" />
+                <WlkDate :label="t('modal_end_date')" v-model="sprintEndDateModel" />
             </div>
 
             <WlkModalFooter class="modal-footer-row">
@@ -159,6 +239,10 @@ function openModal() {
 
 <style scoped>
 .sprint-links {
+	> .sprint-buttons {
+		padding-top: 0.75rem;
+	}
+
     > .empty-sprint-list {
         margin-top: 2rem;
         height: 7rem;
@@ -185,5 +269,17 @@ function openModal() {
 .date-row {
     display: flex;
     flex-direction: row;
+
+	> .wlk-date {
+		width: 50%;
+	}
+
+	> .wlk-date:nth-child(1) {
+		margin-right: 0.125rem;
+	}
+
+	> .wlk-date:nth-child(2) {
+		margin-left: 0.125rem;
+	}
 }
 </style>

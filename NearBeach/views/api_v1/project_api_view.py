@@ -454,11 +454,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @object_permission(min_permission_level=2)
-    @action(
-        methods=["POST"],
-        detail=True,
-        url_path=r"sprint/(?P<sprint>[^/.]+)"
-    )
+    @sprint.mapping.post
     def sprint_create(self, request, pk, *args, **kwargs):
         sprint_link_service = SprintLinkService(destination="project", location_id=pk)
         data, http_status = sprint_link_service.create(request)
@@ -469,10 +465,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @object_permission(min_permission_level=2)
-    @sprint_create.mapping.delete
-    def sprint_delete(self, request, pk, *args, **kwargs):
+    @action(
+        methods=["DELETE"],
+        detail=True,
+        url_path=r"sprint/(?P<sprint>[^/.]+)"
+    )
+    def sprint_delete(self, request, pk, sprint, *args, **kwargs):
         sprint_link_service = SprintLinkService(destination="project", location_id=pk)
-        data, http_status = sprint_link_service.delete(request, pk)
+        data, http_status = sprint_link_service.delete(request, sprint)
 
         return Response(
             data=data,
