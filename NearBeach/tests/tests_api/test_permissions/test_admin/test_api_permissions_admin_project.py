@@ -89,7 +89,8 @@ class ApiAdminPermissionTests(BaseApiClass):
             # READ
             #########
             self.URLTest("/api/v1/project/1/customer/", {}, 200, "GET"),
-            self.URLTest("/api/v1/project/1/customer/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/2/customer/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/3/customer/", {}, 404, "GET"),
 
             #########
             # CREATE
@@ -127,6 +128,8 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest("/api/v1/project/1/customer/2/", {}, 400, "DELETE"),
             self.URLTest("/api/v1/project/2/customer/1/", {}, 204, "DELETE"),
             self.URLTest("/api/v1/project/2/customer/2/", {}, 400, "DELETE"),
+            self.URLTest("/api/v1/project/3/customer/1/", {}, 404, "DELETE"),
+            self.URLTest("/api/v1/project/3/customer/2/", {}, 404, "DELETE"),
         ]
 
         self._run_test_array(data_list)
