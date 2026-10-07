@@ -181,6 +181,126 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             # DELETE
             #########
+            self.URLTest(
+                "/api/v1/project/1/documents/1/",
+                {
+                    "type": "folder",
+                },
+                204,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/1/documents/277b25be-7913-4432-968f-fa3c699956f3/",
+                {
+                    "type": "link",
+                },
+                204,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/1/documents/5390175c-82e6-47cb-b9ae-91d88a323868/",
+                {
+                    "type": "link",
+                },
+                204,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/1/documents/3/",
+                {
+                    "type": "folder",
+                },
+                400,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/1/documents/17f494c7-067e-4f70-b944-64439d9101a7/",
+                {
+                    "type": "document",
+                },
+                400,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/1/documents/93ac2002-ff86-4835-9607-65037279c8b9/",
+                {
+                    "type": "link",
+                },
+                400,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/2/documents/3/",
+                {
+                    "type": "folder",
+                },
+                204,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/2/documents/1/",
+                {
+                    "type": "folder",
+                },
+                400,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/2/documents/17f494c7-067e-4f70-b944-64439d9101a7/",
+                {
+                    "type": "link",
+                },
+                204,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/2/documents/277b25be-7913-4432-968f-fa3c699956f3/",
+                {
+                    "type": "document",
+                },
+                400,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/2/documents/5390175c-82e6-47cb-b9ae-91d88a323868/",
+                {
+                    "type": "document",
+                },
+                400,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/1/documents/93ac2002-ff86-4835-9607-65037279c8b9/",
+                {
+                    "type": "link",
+                },
+                400,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/2/documents/1/",
+                {
+                    "type": "folder",
+                },
+                400,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/3/documents/1/",
+                {
+                    "type": "folder",
+                },
+                404,
+                "DELETE"
+            ),
+            self.URLTest(
+                "/api/v1/project/3/documents/10/",
+                {
+                    "type": "folder",
+                },
+                404,
+                "DELETE"
+            ),
             # TODO - Insert folders/documents/links etc into fixture so we can test this
         ]
 
