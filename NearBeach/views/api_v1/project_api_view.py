@@ -42,13 +42,26 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @object_permission(min_permission_level=2)
+    @object_permission(min_permission_level=1)
     @action(
-        methods=["POST"],
+        methods=["GET"],
         detail=True,
         url_path="customer",
     )
     def customer(self, request, pk, *args, **kwargs) -> Response:
+        customer_service = CustomerLinkService(destination="project", location_id=pk)
+
+        # Get customer links
+        data, http_status = customer_service.get_list(request)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @object_permission(min_permission_level=2)
+    @customer.mapping.post
+    def customer_create(self, request, pk, *args, **kwargs) -> Response:
         customer_service = CustomerLinkService(destination="project", location_id=pk)
 
         # Create Link

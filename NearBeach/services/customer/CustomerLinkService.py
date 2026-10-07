@@ -1,13 +1,12 @@
 from typing import Tuple, Union, Dict
 from rest_framework import status
 from rest_framework.serializers import Serializer
+from django.utils import timezone
 
 from NearBeach.models import ObjectAssignment, Customer
 from NearBeach.serializers.customer_link_serializer import CustomerLinkSerializer
 from NearBeach.serializers.customer_serializer import CustomerSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
-
-import datetime
 
 
 class CustomerLinkService(ObjectServiceAbstraction):
@@ -65,13 +64,13 @@ class CustomerLinkService(ObjectServiceAbstraction):
             change_user=request.user,
         )
 
-        # Send data back to user
+        return {}, status.HTTP_204_NO_CONTENT
+
+    def get_list(self, request) -> Tuple[Union[Dict, str], int]:
+        # Send back data to user
         serializer = self._get_list()
 
         return serializer.data, status.HTTP_200_OK
-
-    def get_list(self, request) -> Tuple[Union[Dict, str], int]:
-        pass
 
     def update(self, request, object_id) -> Tuple[Union[Dict, str], int]:
         pass

@@ -38,7 +38,7 @@ class DocumentService(ObjectServiceAbstraction):
         """
         serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Check file size upload
         file = serializer.validated_data["document"]
@@ -55,7 +55,7 @@ class DocumentService(ObjectServiceAbstraction):
             is_profile_picture=False,
         )
 
-        return serializer.data, True
+        return serializer.data, status.HTTP_201_CREATED
 
     def delete(self, request, document_id) -> Tuple[Union[Dict, str], int]:
         """Method for removing document"""

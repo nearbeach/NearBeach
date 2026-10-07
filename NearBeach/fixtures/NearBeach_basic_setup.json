@@ -1,6 +1,54 @@
 [
 {
   "model": "NearBeach.document",
+  "pk": "17f494c7-067e-4f70-b944-64439d9101a7",
+  "fields": {
+    "date_created": "2026-10-07T08:17:17.499Z",
+    "date_modified": "2026-10-07T08:17:17.521Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "description": "nearbeach_logo.jpg",
+    "url_location": "",
+    "document": "private/17f494c7-067e-4f70-b944-64439d9101a7/nearbeach_logo.jpg",
+    "upload_successfully": true,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.document",
+  "pk": "26e4332f-90f5-47f3-ba97-125ba2712908",
+  "fields": {
+    "date_created": "2026-10-07T08:10:25.840Z",
+    "date_modified": "2026-10-07T08:10:25.843Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "description": "nearbeach_logo.jpg",
+    "url_location": "",
+    "document": "private/26e4332f-90f5-47f3-ba97-125ba2712908/nearbeach_logo.jpg",
+    "upload_successfully": false,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.document",
+  "pk": "277b25be-7913-4432-968f-fa3c699956f3",
+  "fields": {
+    "date_created": "2026-10-07T08:15:41.105Z",
+    "date_modified": "2026-10-07T08:15:41.105Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "description": "NearBeach Marketing Site",
+    "url_location": "https://nearbeach.org",
+    "document": "",
+    "upload_successfully": true,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.document",
   "pk": "2fc398ee-d12b-4f60-9ecb-40199ac74f13",
   "fields": {
     "date_created": "2023-02-22T09:18:33.040Z",
@@ -17,6 +65,22 @@
 },
 {
   "model": "NearBeach.document",
+  "pk": "5390175c-82e6-47cb-b9ae-91d88a323868",
+  "fields": {
+    "date_created": "2026-10-07T08:13:45.814Z",
+    "date_modified": "2026-10-07T08:13:45.842Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "description": "nearbeach_logo.jpg",
+    "url_location": "",
+    "document": "private/5390175c-82e6-47cb-b9ae-91d88a323868/nearbeach_logo.jpg",
+    "upload_successfully": true,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.document",
   "pk": "80a7bd50-eba9-49f8-a55c-d1febd052ab9",
   "fields": {
     "date_created": "2023-02-22T09:18:51.309Z",
@@ -28,6 +92,86 @@
     "url_location": "https://nearbeach.org",
     "document": "",
     "upload_successfully": false,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.document",
+  "pk": "93ac2002-ff86-4835-9607-65037279c8b9",
+  "fields": {
+    "date_created": "2026-10-07T08:17:08.957Z",
+    "date_modified": "2026-10-07T08:17:08.957Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "description": "NearBeach Marketing Site",
+    "url_location": "https://nearbeach.org",
+    "document": "",
+    "upload_successfully": true,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.document",
+  "pk": "a3cb3749-91cf-4b07-9e21-35b4278d3ce4",
+  "fields": {
+    "date_created": "2026-10-07T08:18:01.091Z",
+    "date_modified": "2026-10-07T08:18:01.114Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "description": "nearbeach_logo.jpg",
+    "url_location": "",
+    "document": "private/a3cb3749-91cf-4b07-9e21-35b4278d3ce4/nearbeach_logo.jpg",
+    "upload_successfully": true,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.document",
+  "pk": "d531a725-12db-46b8-8924-de3933fd42b1",
+  "fields": {
+    "date_created": "2026-10-07T08:15:53.834Z",
+    "date_modified": "2026-10-07T08:15:53.863Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "description": "nearbeach_logo.jpg",
+    "url_location": "",
+    "document": "private/d531a725-12db-46b8-8924-de3933fd42b1/nearbeach_logo.jpg",
+    "upload_successfully": true,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.document",
+  "pk": "e6bfcfe9-a5c9-4dc2-a634-7067aa3dc666",
+  "fields": {
+    "date_created": "2026-10-07T08:09:57.198Z",
+    "date_modified": "2026-10-07T08:09:57.198Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "description": "NearBeach Marketing Site",
+    "url_location": "https://nearbeach.org",
+    "document": "",
+    "upload_successfully": true,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.document",
+  "pk": "ea6fb519-bf03-4f1f-a8e3-b9c73979797b",
+  "fields": {
+    "date_created": "2026-10-07T08:17:52.855Z",
+    "date_modified": "2026-10-07T08:17:52.855Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "description": "NearBeach Blogs",
+    "url_location": "https://nearbeach.org/blogs",
+    "document": "",
+    "upload_successfully": true,
     "is_purged": false
   }
 },
@@ -107,6 +251,23 @@
     "first_name": "Socks",
     "last_name": "Fluffy",
     "email": "socks@nearbeach.org",
+    "profile_picture": null,
+    "organisation": 1
+  }
+},
+{
+  "model": "NearBeach.customer",
+  "pk": 2,
+  "fields": {
+    "date_created": "2023-02-15T08:57:03.560Z",
+    "date_modified": "2023-02-15T08:57:03.560Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "title": 1,
+    "first_name": "Paddy",
+    "last_name": "Da'StreetCat",
+    "email": "paddy@nearbeach.org",
     "profile_picture": null,
     "organisation": 1
   }
@@ -576,15 +737,15 @@
   "pk": 1,
   "fields": {
     "date_created": "2023-02-15T09:13:53.432Z",
-    "date_modified": "2023-02-15T09:13:53.432Z",
+    "date_modified": "2026-10-07T08:15:13.859Z",
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
+    "start_date": "2023-02-14T22:00:00Z",
+    "end_date": "2023-03-01T05:00:00Z",
     "title": "Project - Only Administration",
     "description": "<p>Project - Only Administration</p>",
     "organisation": 1,
-    "start_date": "2023-02-14T22:00:00Z",
-    "end_date": "2023-03-01T05:00:00Z",
     "status": 1,
     "story_point": 1,
     "priority": 2
@@ -595,15 +756,15 @@
   "pk": 2,
   "fields": {
     "date_created": "2023-02-15T09:14:14.985Z",
-    "date_modified": "2023-02-15T09:14:14.985Z",
+    "date_modified": "2026-10-07T08:16:08.608Z",
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
+    "start_date": "2023-02-14T22:00:00Z",
+    "end_date": "2023-03-01T05:00:00Z",
     "title": "Project - QA Team",
     "description": "<p>Project - QA Team</p>",
     "organisation": 1,
-    "start_date": "2023-02-14T22:00:00Z",
-    "end_date": "2023-03-01T05:00:00Z",
     "status": 1,
     "story_point": 1,
     "priority": 2
@@ -962,11 +1123,11 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
+    "start_date": "2023-02-14T22:00:00Z",
+    "end_date": "2023-03-01T05:00:00Z",
     "title": "Task - Administration",
     "description": "<p>Task - Administration</p>",
     "organisation": 1,
-    "start_date": "2023-02-14T22:00:00Z",
-    "end_date": "2023-03-01T05:00:00Z",
     "assigned_to": null,
     "status": 1,
     "story_point": 1,
@@ -982,11 +1143,11 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
+    "start_date": "2023-02-14T22:00:00Z",
+    "end_date": "2023-03-01T05:00:00Z",
     "title": "Task - QA Team",
     "description": "<p>Task - QA Team</p>",
     "organisation": 1,
-    "start_date": "2023-02-14T22:00:00Z",
-    "end_date": "2023-03-01T05:00:00Z",
     "assigned_to": null,
     "status": 1,
     "story_point": 1,
@@ -1094,6 +1255,90 @@
   }
 },
 {
+  "model": "NearBeach.folder",
+  "pk": 1,
+  "fields": {
+    "date_created": "2026-10-07T08:09:39.375Z",
+    "date_modified": "2026-10-07T08:09:39.375Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 1,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "description": "Folder at root",
+    "parent_folder": null
+  }
+},
+{
+  "model": "NearBeach.folder",
+  "pk": 2,
+  "fields": {
+    "date_created": "2026-10-07T08:15:29.693Z",
+    "date_modified": "2026-10-07T08:15:29.693Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 1,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "description": "Sub Folder",
+    "parent_folder": 1
+  }
+},
+{
+  "model": "NearBeach.folder",
+  "pk": 3,
+  "fields": {
+    "date_created": "2026-10-07T08:16:53.150Z",
+    "date_modified": "2026-10-07T08:16:53.150Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 2,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "description": "Root Level Folder",
+    "parent_folder": null
+  }
+},
+{
+  "model": "NearBeach.folder",
+  "pk": 4,
+  "fields": {
+    "date_created": "2026-10-07T08:17:26.224Z",
+    "date_modified": "2026-10-07T08:17:26.224Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 2,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "description": "Sub Folder",
+    "parent_folder": 3
+  }
+},
+{
   "model": "NearBeach.documentpermission",
   "pk": 1,
   "fields": {
@@ -1139,6 +1384,231 @@
     "user": null,
     "new_object": null,
     "folder": null,
+    "is_profile_picture": false,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.documentpermission",
+  "pk": 3,
+  "fields": {
+    "date_created": "2026-10-07T08:09:57.202Z",
+    "date_modified": "2026-10-07T08:09:57.202Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 1,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "document": "e6bfcfe9-a5c9-4dc2-a634-7067aa3dc666",
+    "user": null,
+    "new_object": null,
+    "folder": null,
+    "is_profile_picture": false,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.documentpermission",
+  "pk": 4,
+  "fields": {
+    "date_created": "2026-10-07T08:10:25.847Z",
+    "date_modified": "2026-10-07T08:10:25.847Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 1,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "document": "26e4332f-90f5-47f3-ba97-125ba2712908",
+    "user": null,
+    "new_object": null,
+    "folder": null,
+    "is_profile_picture": false,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.documentpermission",
+  "pk": 5,
+  "fields": {
+    "date_created": "2026-10-07T08:13:45.821Z",
+    "date_modified": "2026-10-07T08:13:45.821Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 1,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "document": "5390175c-82e6-47cb-b9ae-91d88a323868",
+    "user": null,
+    "new_object": null,
+    "folder": null,
+    "is_profile_picture": false,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.documentpermission",
+  "pk": 6,
+  "fields": {
+    "date_created": "2026-10-07T08:15:41.108Z",
+    "date_modified": "2026-10-07T08:15:41.108Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 1,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "document": "277b25be-7913-4432-968f-fa3c699956f3",
+    "user": null,
+    "new_object": null,
+    "folder": 1,
+    "is_profile_picture": false,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.documentpermission",
+  "pk": 7,
+  "fields": {
+    "date_created": "2026-10-07T08:15:53.840Z",
+    "date_modified": "2026-10-07T08:15:53.840Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 1,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "document": "d531a725-12db-46b8-8924-de3933fd42b1",
+    "user": null,
+    "new_object": null,
+    "folder": 1,
+    "is_profile_picture": false,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.documentpermission",
+  "pk": 8,
+  "fields": {
+    "date_created": "2026-10-07T08:17:08.961Z",
+    "date_modified": "2026-10-07T08:17:08.961Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 2,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "document": "93ac2002-ff86-4835-9607-65037279c8b9",
+    "user": null,
+    "new_object": null,
+    "folder": null,
+    "is_profile_picture": false,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.documentpermission",
+  "pk": 9,
+  "fields": {
+    "date_created": "2026-10-07T08:17:17.505Z",
+    "date_modified": "2026-10-07T08:17:17.505Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 2,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "document": "17f494c7-067e-4f70-b944-64439d9101a7",
+    "user": null,
+    "new_object": null,
+    "folder": null,
+    "is_profile_picture": false,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.documentpermission",
+  "pk": 10,
+  "fields": {
+    "date_created": "2026-10-07T08:17:52.859Z",
+    "date_modified": "2026-10-07T08:17:52.859Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 2,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "document": "ea6fb519-bf03-4f1f-a8e3-b9c73979797b",
+    "user": null,
+    "new_object": null,
+    "folder": 3,
+    "is_profile_picture": false,
+    "is_purged": false
+  }
+},
+{
+  "model": "NearBeach.documentpermission",
+  "pk": 11,
+  "fields": {
+    "date_created": "2026-10-07T08:18:01.097Z",
+    "date_modified": "2026-10-07T08:18:01.097Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "customer": null,
+    "requirement": null,
+    "project": 2,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "document": "a3cb3749-91cf-4b07-9e21-35b4278d3ce4",
+    "user": null,
+    "new_object": null,
+    "folder": 3,
     "is_profile_picture": false,
     "is_purged": false
   }
@@ -2621,6 +3091,25 @@
     "kanban_card": null,
     "request_for_change": null,
     "note": "<p>Requirement item notes</p>"
+  }
+},
+{
+  "model": "NearBeach.objectnote",
+  "pk": 14,
+  "fields": {
+    "date_created": "2026-10-07T08:00:32.136Z",
+    "date_modified": "2026-10-07T08:00:32.136Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "organisation": null,
+    "requirement": null,
+    "project": 1,
+    "requirement_item": null,
+    "task": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "note": "Creating another note"
   }
 },
 {
@@ -4292,6 +4781,118 @@
   }
 },
 {
+  "model": "NearBeach.objectassignment",
+  "pk": 49,
+  "fields": {
+    "date_created": "2026-10-07T07:59:00.644Z",
+    "date_modified": "2026-10-07T07:59:00.644Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "assigned_user": null,
+    "group": null,
+    "requirement": null,
+    "requirement_item": null,
+    "project": 2,
+    "task": null,
+    "kanban_board": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "customer": 1,
+    "organisation": null,
+    "change_task": null,
+    "meta_object": null,
+    "meta_object_title": "",
+    "meta_object_status": "",
+    "link_relationship": "",
+    "parent_link": ""
+  }
+},
+{
+  "model": "NearBeach.objectassignment",
+  "pk": 50,
+  "fields": {
+    "date_created": "2026-10-07T07:59:11.020Z",
+    "date_modified": "2026-10-07T07:59:11.020Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "assigned_user": 5,
+    "group": null,
+    "requirement": null,
+    "requirement_item": null,
+    "project": 2,
+    "task": null,
+    "kanban_board": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "customer": null,
+    "organisation": null,
+    "change_task": null,
+    "meta_object": null,
+    "meta_object_title": "",
+    "meta_object_status": "",
+    "link_relationship": "",
+    "parent_link": ""
+  }
+},
+{
+  "model": "NearBeach.objectassignment",
+  "pk": 51,
+  "fields": {
+    "date_created": "2026-10-07T07:59:13.723Z",
+    "date_modified": "2026-10-07T07:59:13.723Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "assigned_user": 2,
+    "group": null,
+    "requirement": null,
+    "requirement_item": null,
+    "project": 2,
+    "task": null,
+    "kanban_board": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "customer": null,
+    "organisation": null,
+    "change_task": null,
+    "meta_object": null,
+    "meta_object_title": "",
+    "meta_object_status": "",
+    "link_relationship": "",
+    "parent_link": ""
+  }
+},
+{
+  "model": "NearBeach.objectassignment",
+  "pk": 52,
+  "fields": {
+    "date_created": "2026-10-07T07:59:35.539Z",
+    "date_modified": "2026-10-07T07:59:35.539Z",
+    "change_user": 1,
+    "creation_user": 1,
+    "is_deleted": false,
+    "assigned_user": null,
+    "group": null,
+    "requirement": null,
+    "requirement_item": null,
+    "project": 1,
+    "task": null,
+    "kanban_board": null,
+    "kanban_card": null,
+    "request_for_change": null,
+    "customer": 1,
+    "organisation": null,
+    "change_task": null,
+    "meta_object": null,
+    "meta_object_title": "",
+    "meta_object_status": "",
+    "link_relationship": "",
+    "parent_link": ""
+  }
+},
+{
   "model": "NearBeach.permissionset",
   "pk": 1,
   "fields": {
@@ -5014,8 +5615,8 @@
   "model": "auth.user",
   "pk": 1,
   "fields": {
-    "password": "pbkdf2_sha256$1000000$KXozqanrdtkNtU5sIruh26$ZMqTWvF2Rhfy7feE3DdO1IYUUaAO8X6ry1pC6dQkIoQ=",
-    "last_login": "2025-09-26T09:17:17.663Z",
+    "password": "pbkdf2_sha256$1200000$QmgGhMwrmiwqHSgj5cReVV$nmgW2AVsa8JUrJikqha/Y1RANOCL+jQWSubF37SkYD8=",
+    "last_login": "2026-10-07T07:58:23.858Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "Admin",
@@ -5224,6 +5825,14 @@
   "fields": {
     "session_data": ".eJxVjjsOwjAQRO_iGln-yklKes5gjb1rEkAJipMKcXewlALaeTNP8xIR-zbGvfIaJxKDMOL0myXkO88N0A3zdZF5mbd1SrJV5EGrvCzEj_PR_ROMqON3nYKzSoOSt9YA1rJP8KZouD4HogJCVlmHYgz3Fsjadz5rx0oF17VXU411f_LatGIoeFR-fwDnpUAT:1rWu2C:w9CQ0CqBFz3eAoPmkTJMR7Jl_30-3aTVL3156Fwm8UA",
     "expire_date": "2024-02-19T08:08:56.987Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "dgd4dux7pwr2lfu45507a32evo9g1ywz",
+  "fields": {
+    "session_data": ".eJxVzMEOwiAQBNB_4WxIoduGevTuN5Bld5GqgaS0p8Z_tyQ96HXezOzK47Ymv1VZ_Mzqqoy6_GYB6SW5AT8xP4qmktdlDrpV9KlV3wvL-3Z2_w4S1tTWAGjEiukJXKQQeiQG43qOjDaOQWCI3WgnRAQ7RJkO7cQAOXMAqM8XDvk4pg:1xEMXf:7HxZabygSv9ybubMwnV9dhJ60RGOWe3RCMep1MSflQQ",
+    "expire_date": "2026-10-21T07:58:23.862Z"
   }
 },
 {

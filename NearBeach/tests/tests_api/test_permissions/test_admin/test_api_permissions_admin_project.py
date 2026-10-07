@@ -86,6 +86,12 @@ class ApiAdminPermissionTests(BaseApiClass):
         """Test - API Admin Permissions for the Project customers submodule"""
         data_list = [
             #########
+            # READ
+            #########
+            self.URLTest("/api/v1/project/1/customer/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/1/customer/", {}, 200, "GET"),
+
+            #########
             # CREATE
             #########
             self.URLTest(
@@ -113,10 +119,14 @@ class ApiAdminPermissionTests(BaseApiClass):
                 "POST",
             ),
 
+
             #########
             # DELETE
             #########
-            # TODO - Create fixture where these are already assigned
+            self.URLTest("/api/v1/project/1/customer/1/", {}, 204, "DELETE"),
+            self.URLTest("/api/v1/project/1/customer/2/", {}, 400, "DELETE"),
+            self.URLTest("/api/v1/project/2/customer/1/", {}, 204, "DELETE"),
+            self.URLTest("/api/v1/project/2/customer/2/", {}, 400, "DELETE"),
         ]
 
         self._run_test_array(data_list)
