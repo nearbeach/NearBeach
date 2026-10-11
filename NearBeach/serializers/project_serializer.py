@@ -51,6 +51,7 @@ class ProjectSerializer(serializers.ModelSerializer, BaseObjectSerializer, DateF
                 group=single_group,
                 project=project,
                 change_user=validated_data["change_user"],
+                creation_user=validated_data["creation_user"],
             )
             submit_object_assignment.save()
 
