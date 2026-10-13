@@ -1,6 +1,7 @@
 import re
 from uuid import uuid4
 
+import pytest
 from playwright.sync_api import Page, expect
 
 
@@ -25,9 +26,10 @@ def test_create_project(authenticated_page: Page, app_url, e2e_group):
         create_button.click()
 
     response = response_info.value
-    assert response.status == 201, (
-        f"Project creation failed: {response.status}\n{response.text()}"
-    )
+    if response.status != 201:
+        pytest.fail(
+            f"Project creation failed: {response.status}\n{response.text()}"
+        )
     expect(page).to_have_url(re.compile(rf"^{re.escape(app_url)}/project/\d+/?$"))
 
     title_input = page.get_by_placeholder("Your project title", exact=True)

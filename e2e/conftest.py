@@ -14,7 +14,7 @@ def app_url(live_server):
 
 
 @pytest.fixture
-def e2e_user(transactional_db, django_user_model):
+def e2e_user(django_user_model):
     return django_user_model.objects.create_user(
         username="qa_e2e",
         password=None,

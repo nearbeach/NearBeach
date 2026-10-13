@@ -1,4 +1,5 @@
-from local.settings import *
+# Import all application settings before overriding E2E-specific values.
+from local.settings import *  # skipcq: PYL-W0614
 
 
 DATABASES = {
