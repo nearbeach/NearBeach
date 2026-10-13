@@ -54,10 +54,3 @@ Open it using the returned path:
 ```bash
 python -m playwright show-trace "test-results/<test-folder>/trace.zip"
 ```
-
-## Status
-
-Five consecutive local runs passed on macOS with Chromium and Vite.
-Earlier intermittent authentication failures were observed; their cause
-was not confirmed.
-CI and production-build execution have not been verified.
