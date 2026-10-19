@@ -301,7 +301,6 @@ class ApiAdminPermissionTests(BaseApiClass):
                 404,
                 "DELETE"
             ),
-            # TODO - Insert folders/documents/links etc into fixture so we can test this
         ]
 
         self._run_test_array(data_list)
