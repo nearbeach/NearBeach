@@ -9,8 +9,6 @@ from NearBeach.serializers.documentation.document_serializer import DocumentSeri
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 
-import datetime
-
 
 class DocumentLinkService(ObjectServiceAbstraction):
     """Class for handling link crud operations"""
