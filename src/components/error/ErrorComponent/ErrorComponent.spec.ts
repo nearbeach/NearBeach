@@ -22,8 +22,6 @@ describe("ErrorComponent", () => {
     const heading = wrapper.find("h1");
     expect(heading.exists()).toBe(true);
     expect(heading.text()).toBe(defaultProps.title);
-
-    wrapper.unmount();
   });
 
   test("renders the supplied message", async () => {
@@ -36,8 +34,6 @@ describe("ErrorComponent", () => {
     const message = wrapper.find("p");
     expect(message.exists()).toBe(true);
     expect(message.text()).toBe(defaultProps.message);
-
-    wrapper.unmount();
   });
 
   test("adds the error-component class to the card", async () => {
@@ -49,8 +45,6 @@ describe("ErrorComponent", () => {
 
     const error_component = wrapper.find(".error-component");
     expect(error_component.exists()).toBe(true);
-
-    wrapper.unmount();
   });
 });
 
@@ -67,8 +61,6 @@ describe("ErrorComponent - A11Y checks", () => {
 
     expect(h1_elements.length).toBe(1);
     expect(main_title_elements.length).toBe(1);
-
-    wrapper.unmount();
   });
 
   test("main title contains text", async () => {
@@ -80,7 +72,5 @@ describe("ErrorComponent - A11Y checks", () => {
 
     const main_title = wrapper.find("#main-title");
     expect(main_title.text()).not.toBe("");
-
-    wrapper.unmount();
   });
 });

@@ -25,9 +25,6 @@ describe("DashboardPage - A11Y checks", async () => {
         const main_title_elements = wrapper.findAll("#main-title");
         expect(h1_elements.length).toBe(1);
         expect(main_title_elements.length).toBe(1);
-
-        // Unmount wrapper
-        wrapper.unmount();
     });
 
     test("main title contains text", async () => {
@@ -41,8 +38,5 @@ describe("DashboardPage - A11Y checks", async () => {
         // Make sure main-title contains text
         const main_title = wrapper.find("#main-title");
         expect(main_title.text()).not.toBe("");
-
-        // Unmount wrapper
-        wrapper.unmount();
     });
 });
