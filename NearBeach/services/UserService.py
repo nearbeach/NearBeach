@@ -51,7 +51,7 @@ class UserService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_list(self, request):
-        pass
+        pass # Method not required in current class
 
     def update(self, request, object_id):
-        pass
+        pass # Method not required in current class

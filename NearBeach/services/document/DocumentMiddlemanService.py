@@ -78,7 +78,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
                 return document_service.delete(request, document_pk)
 
     def get_list(self, request):
-        pass
+        pass # Method not required in current class
 
     def update(self, request, document_pk) -> Tuple[Union[Dict, str], int]:
         serializer = DocumentSerializer(data=request.data)

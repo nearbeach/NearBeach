@@ -61,7 +61,7 @@ class FolderService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_list(self, request):
-        pass
+        pass # Method not required in current class
 
     def update(self, request, folder_id) -> Tuple[Union[Dict, str], int]:
         """Method to update a folder"""

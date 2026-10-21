@@ -11,13 +11,13 @@ class SprintService(ObjectServiceAbstraction):
     # TODO - actually implement this functionality
 
     def create(self, request):
-        pass
+        pass # Method not required in current class
 
     def delete(self, request, sprint_id: int) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class
 
     def get_list(self, request):
-        pass
+        pass # Method not required in current class
 
     def retrieve(self, request) -> Tuple[Union[Dict, str], int]:
         # Get object

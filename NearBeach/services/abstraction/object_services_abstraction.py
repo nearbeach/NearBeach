@@ -40,16 +40,16 @@ class ObjectServiceAbstraction(ABC):
 
     @abstractmethod
     def create(self, request) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class
 
     @abstractmethod
     def delete(self, request, object_id) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class
 
     @abstractmethod
     def get_list(self, request) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class
 
     @abstractmethod
     def update(self, request, object_id) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class

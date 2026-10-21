@@ -121,4 +121,4 @@ class OrganisationLinkService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_200_OK
 
     def update(self, request, object_id) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class

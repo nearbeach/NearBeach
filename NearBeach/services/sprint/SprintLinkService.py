@@ -67,4 +67,4 @@ class SprintLinkService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_200_OK
 
     def update(self, request, sprint_id: int):
-        pass
+        pass # Method not required in current class

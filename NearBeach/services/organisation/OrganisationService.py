@@ -31,10 +31,10 @@ class OrganisationService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_data(self, _) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class
 
     def get_list(self, request):
-        pass
+        pass # Method not required in current class
 
     @destination_permission(min_permission_level=1)
     def list(self, _) -> Tuple[Union[Dict, str], int]:
