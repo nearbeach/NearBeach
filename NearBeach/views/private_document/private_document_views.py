@@ -13,7 +13,7 @@ from NearBeach.models.requirement.requirement_item import RequirementItem
 from NearBeach.services.document.file_handler.HandleDocumentPermissions import FILE_HANDLER
 
 
-class PrivateDocumentViews(LoginRequiredMixin, View):
+class PrivateDocumentView(LoginRequiredMixin, View):
     """Class handing crud for ApplicationView"""
 
     login_url = "/private/"
