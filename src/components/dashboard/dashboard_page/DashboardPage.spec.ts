@@ -4,8 +4,8 @@ import DashboardPage from "./DashboardPage.vue";
 import {flushPromises, mount} from "@vue/test-utils";
 import {nextTick} from "vue";
 
-describe("DashboardPage", async () => {
-    test("mounting component", async () => {
+describe("DashboardPage", () => {
+    test("mounting component", () => {
         // Dashboard Page exists
         expect(DashboardPage).toBeTruthy();
     });

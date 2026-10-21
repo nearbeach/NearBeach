@@ -4,11 +4,11 @@ import NotFoundPage from "./NotFoundPage.vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import DashboardPage from "@/components/dashboard/dashboard_page/DashboardPage.vue";
 
-describe("NotFound", async () => {
+describe("NotFound", () => {
   // Mount the wrapper
   const wrapper = mount(NotFoundPage, {});
 
-  test("mount component", async () => {
+  test("mount component", () => {
     // App exists
     expect(NotFoundPage).toBeTruthy();
   });

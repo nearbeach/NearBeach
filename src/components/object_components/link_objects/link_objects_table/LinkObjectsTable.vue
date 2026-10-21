@@ -39,7 +39,7 @@ defineProps({
 const emit = defineEmits(["deleteObjectLink", "updateRelationship"])
 
 // Define functions
-async function deleteObjectLink(object_assignment_id: number, index: number) {
+function deleteObjectLink(object_assignment_id: number, index: number) : void {
 	emit("deleteObjectLink", {
 		"object_assignment_id": object_assignment_id,
 		"index": index,

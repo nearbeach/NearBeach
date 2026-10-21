@@ -13,7 +13,7 @@ const router = createRouter({
 });
 
 describe("HeaderComponent", () => {
-  test("mounting component", async () => {
+  test("mounting component", () => {
     // Header component exists
     expect(HeaderComponent).toBeTruthy();
   });
@@ -97,7 +97,7 @@ describe("HeaderComponent - toggle Menu", () => {
 });
 
 describe("HeaderComponent - A11Y", () => {
-  test("Hidden Visually to be in the document", async () => {
+  test("Hidden Visually to be in the document", () => {
     // Mount the wrapper
     const wrapper = mount(HeaderComponent, {
       global: {

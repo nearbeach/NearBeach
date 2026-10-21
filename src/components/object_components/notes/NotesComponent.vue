@@ -123,7 +123,7 @@ async function deleteNote(note_id: number) {
 	}
 }
 
-async function editNote(index: number): Promise<void> {
+function editNote(index: number): void {
 	// Check to see if the index exists
 	if (noteList.value.length < index + 1) {
 		return;
@@ -164,7 +164,7 @@ async function loadData(): Promise<void> {
     }
 }
 
-async function openModal() {
+function openModal() {
 	// New note - clear reference to previous notes
 	modelId.value = null;
 	modelNote.value = "";
