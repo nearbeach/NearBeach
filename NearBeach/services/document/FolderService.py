@@ -32,7 +32,6 @@ class FolderService(ObjectServiceAbstraction):
         # Check parent folder
         folder_submit.save()
 
-        # return data
         serializer = FolderSerializer(
             folder_submit,
         )
@@ -82,7 +81,6 @@ class FolderService(ObjectServiceAbstraction):
         description = serializer.validated_data['description']
         parent_folder = serializer.validated_data['parent_folder']
 
-        # 'true' if True else 'false'
         folder.change_user = request.user
         folder.date_modified = datetime.datetime.now()
         folder.description = folder.description if description is None else description
