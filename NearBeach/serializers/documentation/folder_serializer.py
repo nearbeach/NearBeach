@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import Folder
+from NearBeach.models.document.folder import Folder
 
 
 class FolderSerializer(serializers.ModelSerializer):

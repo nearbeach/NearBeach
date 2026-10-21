@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 from django.db.models import QuerySet, Q, F
 from django.utils import timezone
 
-from NearBeach.models import Project, ObjectAssignment, UserGroup, Group
+from NearBeach.models.project import Project
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
+from NearBeach.models.user import UserGroup, Group
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 from NearBeach.utils.api.check_group_list import check_group_list

@@ -3,15 +3,12 @@ from typing import Any
 from rest_framework import viewsets, status
 from django.db.models import F, Value
 from rest_framework.response import Response
-
-from NearBeach.models import (
-    ObjectAssignment,
-    Project,
-    Requirement,
-    RequirementItem,
-    Task,
-    UserGroup,
-)
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
+from NearBeach.models.project import Project
+from NearBeach.models.requirement.requirement import Requirement
+from NearBeach.models.requirement.requirement_item import RequirementItem
+from NearBeach.models.task import Task
+from NearBeach.models.user import UserGroup
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer
 
 

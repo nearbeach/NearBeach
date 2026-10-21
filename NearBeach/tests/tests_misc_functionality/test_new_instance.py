@@ -1,4 +1,4 @@
-from NearBeach.models import Group, PermissionSet, UserGroup
+from NearBeach.models.user import Group, PermissionSet, UserGroup
 from django.test import TestCase, Client
 
 

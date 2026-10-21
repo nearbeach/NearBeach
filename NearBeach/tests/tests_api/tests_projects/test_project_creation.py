@@ -4,14 +4,9 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITransactionTestCase
 
-from NearBeach.models import (
-    Group,
-    ListOfProjectStatus,
-    ObjectAssignment,
-    PermissionSet,
-    Project,
-    UserGroup,
-)
+from NearBeach.models.user import Group, UserGroup, PermissionSet
+from NearBeach.models.project import Project, ListOfProjectStatus
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.utils.enums.permission_enums import PermissionLevel
 
 

@@ -2,7 +2,7 @@ from typing import Dict, Tuple, Union
 from django.utils import timezone
 
 from rest_framework import status
-from NearBeach.models import Folder
+from NearBeach.models.document.folder import Folder
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 

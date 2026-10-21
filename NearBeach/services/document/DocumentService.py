@@ -2,7 +2,9 @@ from typing import Dict, Tuple, Union
 
 from rest_framework import status
 from django.db.models import F
-from NearBeach.models import Document, DocumentPermission, Folder
+from NearBeach.models.document.document import Document
+from NearBeach.models.document.document_permission import DocumentPermission
+from NearBeach.models.document.folder import Folder
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.serializers.documentation.file_system_serializer import FileSystemSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction

@@ -3,7 +3,8 @@ from rest_framework import status
 from rest_framework.serializers import Serializer
 from django.utils import timezone
 
-from NearBeach.models import ObjectAssignment, Customer
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
+from NearBeach.models.customer import Customer
 from NearBeach.serializers.customer_link_serializer import CustomerLinkSerializer
 from NearBeach.serializers.customer_serializer import CustomerSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction

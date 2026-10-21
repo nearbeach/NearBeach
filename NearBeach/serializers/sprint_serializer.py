@@ -1,4 +1,4 @@
-from NearBeach.models import Sprint
+from NearBeach.models.sprint.sprint import Sprint
 from NearBeach.serializers.project_serializer import ProjectSerializer
 from NearBeach.serializers.requirement_serializer import RequirementSerializer
 from rest_framework import serializers

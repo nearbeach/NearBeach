@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import ListOfProjectStatus
+from NearBeach.models.project import ListOfProjectStatus
 from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 

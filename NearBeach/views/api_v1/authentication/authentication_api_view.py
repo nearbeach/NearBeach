@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate, login
 from django_otp import match_token
 
-from NearBeach.models import UserGroup
+from NearBeach.models.user import UserGroup
 from NearBeach.serializers.authentication.authentication_serializer import (
     AuthenticationSerializer,
 )

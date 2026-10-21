@@ -2,13 +2,11 @@ from abc import ABC, abstractmethod
 from collections import namedtuple
 from typing import Tuple, Union, Dict
 
-from NearBeach.models import (
-    ChangeTask,
-    Project,
-    Task,
-    Requirement,
-    RequirementItem,
-)
+from NearBeach.models.request_for_change.change_task import ChangeTask
+from NearBeach.models.project import Project
+from NearBeach.models.task import Task
+from NearBeach.models.requirement.requirement import Requirement
+from NearBeach.models.requirement.requirement_item import RequirementItem
 
 # OBJECT STRUCTURE TYPE
 OBJECT_STRUCTURE = namedtuple(

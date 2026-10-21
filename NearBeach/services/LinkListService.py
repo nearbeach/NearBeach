@@ -1,10 +1,8 @@
 from typing import Dict, Tuple, Union
 from rest_framework import status
 
-from NearBeach.models import (
-    ObjectAssignment,
-    KanbanCard,
-)
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
+from NearBeach.models.kanban_board.kanban_card import KanbanCard
 from django.db.models import Q, F, Value
 from django.utils import timezone
 

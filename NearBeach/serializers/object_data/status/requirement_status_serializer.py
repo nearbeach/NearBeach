@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import ListOfRequirementStatus
+from NearBeach.models.requirement.requirement import ListOfRequirementStatus
 from NearBeach.serializers.enum_serializer import EnumField
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 

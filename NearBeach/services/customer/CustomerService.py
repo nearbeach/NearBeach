@@ -2,9 +2,8 @@ from typing import Dict, Tuple, Union
 from rest_framework import status
 from rest_framework.serializers import Serializer
 
-from NearBeach.models import (
-    Customer, ObjectAssignment
-)
+from NearBeach.models.customer import Customer
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.serializers.customer_serializer import CustomerSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 

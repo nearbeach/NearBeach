@@ -1,7 +1,7 @@
 from typing import Dict, Tuple, Union
 from rest_framework import status
 
-from NearBeach.models import Sprint
+from NearBeach.models.sprint.sprint import Sprint
 from NearBeach.serializers.sprint_serializer import SprintSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 

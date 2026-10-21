@@ -1,5 +1,5 @@
 from typing import List
-from NearBeach.models import UserGroup
+from NearBeach.models.user import UserGroup
 import logging
 
 _logger = logging.getLogger(__name__)

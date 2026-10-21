@@ -1,4 +1,4 @@
-from NearBeach.models import Project, Requirement
+from NearBeach.models.project import Project, Requirement
 from rest_framework import serializers
 
 

@@ -3,7 +3,8 @@ from functools import wraps
 from django.db.models import Max
 from rest_framework.exceptions import PermissionDenied, NotFound
 
-from NearBeach.models import UserGroup, ObjectAssignment
+from NearBeach.models.user import UserGroup
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.utils.api.check_object_exists import check_object_exists
 from NearBeach.utils.api.get_destination import get_object_from_url
 from NearBeach.utils.api.get_parent_object import get_parent_object

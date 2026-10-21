@@ -1,8 +1,6 @@
-from NearBeach.models import (
-    ChangeTask,
-    KanbanCard,
-    RequirementItem,
-)
+from NearBeach.models.request_for_change.change_task import ChangeTask
+from NearBeach.models.kanban_board.kanban_card import KanbanCard
+from NearBeach.models.requirement.requirement_item import RequirementItem
 from NearBeach.utils.api.object_to_permission_set_mapping import get_object_permission_set
 import logging
 

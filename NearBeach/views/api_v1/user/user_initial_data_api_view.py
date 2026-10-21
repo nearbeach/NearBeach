@@ -4,18 +4,12 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import F
-
-from NearBeach.models import (
-    Group,
-    ListOfProjectStatus,
-    ListOfRequirementItemStatus,
-    ListOfRequirementItemType,
-    ListOfRequirementStatus,
-    ListOfRequirementType,
-    ListOfTaskStatus,
-    UserGroup,
-    Tag,
-)
+from NearBeach.models.user import UserGroup, Group
+from NearBeach.models.project import ListOfProjectStatus
+from NearBeach.models.requirement.requirement import ListOfRequirementStatus, ListOfRequirementType
+from NearBeach.models.requirement.requirement_item import ListOfRequirementItemStatus, ListOfRequirementItemType
+from NearBeach.models.task import ListOfTaskStatus
+from NearBeach.models.misc.tag import Tag
 from NearBeach.serializers.user.user_initial_data_serializer import (
     UserInitialDataSerializer,
 )

@@ -2,13 +2,9 @@ from typing import Dict, Tuple, Union
 from rest_framework import status
 from django.db.models.functions import Concat
 from django.utils import timezone
-
-from NearBeach.models import (
-    Group,
-    KanbanCard,
-    ObjectAssignment,
-    UserGroup,
-)
+from NearBeach.models.user import Group, UserGroup
+from NearBeach.models.kanban_board.kanban_card import KanbanCard
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 from django.db.models import F, Value, QuerySet
 from django.contrib.auth.models import User
