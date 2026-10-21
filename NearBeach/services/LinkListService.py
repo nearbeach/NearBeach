@@ -41,13 +41,13 @@ class LinkListService(ObjectServiceAbstraction):
             setattr(
                 object_assignment,
                 "meta_object_title",
-                getattr(single_object, "title"),
+                single_object.title,
             )
 
             setattr(
                 object_assignment,
                 "meta_object_status",
-                getattr(single_object, "status"),
+                single_object.status,
             )
 
         return object_assignment
