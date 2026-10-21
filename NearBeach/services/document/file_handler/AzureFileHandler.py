@@ -28,7 +28,7 @@ class AzureFileHandler(FileHandler):
         return FileResponse(
             file_to_send,
             as_attachment=True,
-            filename=document_results.document_description,
+            filename=document_results.description,
         )
 
     def upload(self, upload_document, document_results, file):
