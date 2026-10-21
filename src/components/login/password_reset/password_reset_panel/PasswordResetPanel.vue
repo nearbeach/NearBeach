@@ -51,7 +51,7 @@ async function submitPasswordReset(): Promise<void> {
 	// Send data to the backend
 	const body = {
 		password: password1.value,
-		udi: `${uid}`,
+		uid: `${uid}`,
 		token: `${token}`,
 	}
 
