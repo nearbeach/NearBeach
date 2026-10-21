@@ -45,7 +45,7 @@ class LinkListService(ObjectServiceAbstraction):
             setattr(
                 object_assignment,
                 "meta_object_status",
-                single_object.status,
+                single_object.status.status,
             )
 
         return object_assignment
@@ -271,12 +271,12 @@ class LinkListService(ObjectServiceAbstraction):
                 pk=object_assignment_id,
             ) &
             Q(
-                # The object could be in its natural field, or the meta field
+                # The object could be in its natural field or the meta-field
                 Q(
                     **{self.destination + "_id": self.location_id},
                 ) |
                 Q(
-                    meta_object=self.location_id,
+                    meta_object=int(self.location_id),
                 )
             )
         )
