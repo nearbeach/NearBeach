@@ -23,8 +23,8 @@ export default defineConfig({
             },
             output: {
                 // Output JS bundles to js/ directory with -bundle suffix
-                entryFileNames: `js/[name]-bundle.js`,
-                assetFileNames: `css/[name].css`,
+                entryFileNames: 'js/[name]-bundle.js',
+                assetFileNames: 'css/[name].css',
             },
         },
     },
