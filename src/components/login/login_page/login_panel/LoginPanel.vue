@@ -72,7 +72,7 @@ onMounted(() => {
 });
 
 // Declare functions
-function signIn(event: any) {
+function signIn(event: Event) {
 	// Prevent form from submitting
 	event.preventDefault();
 
