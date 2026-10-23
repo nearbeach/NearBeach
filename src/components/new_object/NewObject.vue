@@ -106,13 +106,14 @@ async function createObject(): Promise<void> {
 	);
 
 	switch (response.status) {
-		case 201:
+		case 201: {
 			// Get the data
 			const data: { id: string } = await response.json();
 
 			// Get the ID of the response and redirect the user to the new object
 			await router.push(`/${route.meta.destination}/${data.id}`);
 			break;
+		}
 		default:
 			errorStore.setError(response);
 			await router.push({name: "server-error"});
