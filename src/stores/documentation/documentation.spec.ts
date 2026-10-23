@@ -12,6 +12,6 @@ describe('Nav - todo', () => {
         const documentationStore = useDocumentationStore();
 
         // Expects
-        expect("").toBe("");
+        expect(documentationStore.currentFolderId).toBe(0);
     });
 });

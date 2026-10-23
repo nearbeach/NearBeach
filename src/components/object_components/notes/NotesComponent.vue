@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { WlkButton, WlkTextArea, WlkModal, WlkModalHeader, WlkModalFooter } from "whelk-ui";
+import { WlkButton, WlkTextArea, WlkModal, WlkModalHeader } from "whelk-ui";
 import {computed, onMounted, ref, watch} from "vue";
 import {useI18n} from "petite-vue-i18n";
 import NoteList from "@/components/object_components/notes/note_list/NoteList.vue";

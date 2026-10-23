@@ -5,7 +5,6 @@ import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
-import type {OrganisationInterface} from "@/utils/interfaces/stores/OrganisationInterface.ts";
 import type {OrganisationLinkInterface} from "@/utils/interfaces/stores/OrganisationLinkInterface.ts";
 
 // Define stores
