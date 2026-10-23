@@ -2,7 +2,7 @@ import 'vite/modulepreload-polyfill';
 import 'whelk-ui/dist/whelk-ui.css'
 import { createPinia } from "pinia";
 import { createApp } from "vue";
-import App from "./pages/app/App.vue";
+import {App} from "./pages/app/";
 import i18n from "./i18n";
 import router from "./router/router.ts";
 

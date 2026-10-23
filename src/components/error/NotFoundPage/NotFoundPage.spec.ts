@@ -1,6 +1,6 @@
 // NotFound.spec.ts
 import { describe, test, expect } from "vitest";
-import NotFoundPage from "./NotFoundPage.vue";
+import {NotFoundPage} from "./";
 import { flushPromises, mount } from "@vue/test-utils";
 import DashboardPage from "@/components/dashboard/dashboard_page/DashboardPage.vue";
 

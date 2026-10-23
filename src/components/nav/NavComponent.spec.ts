@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import NavComponent from "./NavComponent.vue";
+import {NavComponent} from "./";
 
 describe("NavComponent", () => {
   test("mounting component", () => {

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
-import ErrorComponent from "./ErrorComponent.vue";
+import {ErrorComponent} from "./";
 
 const defaultProps = {
   title: "Something went wrong",

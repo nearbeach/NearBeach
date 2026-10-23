@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
-import LoginImage from "../login_image/LoginImage.vue";
-import PasswordResetPanel from "./password_reset_panel/PasswordResetPanel.vue"
+import {LoginImage} from "../login_image/";
+import {PasswordResetPanel} from "./password_reset_panel/"
 </script>
 
 <template>
