@@ -35,7 +35,7 @@ defineProps({
 	buttonState: {
 		required: true,
 		type: String,
-		validator: function (value: string): boolean {
+		validator(value: string): boolean {
 			const enumValues: string[] = Object.values(ObjectStateEnum);
 			return enumValues.includes(value);
 		},

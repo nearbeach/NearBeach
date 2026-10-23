@@ -52,7 +52,7 @@ async function createNewLink() {
 		description: descriptionModel.value,
 		type: "link",
 		url_location: newLinkModel.value,
-		parent_folder_id: parent_folder_id,
+		parent_folder_id,
 	}
 
 	// TODO - clean models

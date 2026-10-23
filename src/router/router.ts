@@ -166,7 +166,7 @@ const routes = [
 // Router setup
 const router = createRouter({
     history: createWebHistory(),
-    routes: routes,
+    routes,
 });
 
 router.beforeEach(async (to, _, next) => {

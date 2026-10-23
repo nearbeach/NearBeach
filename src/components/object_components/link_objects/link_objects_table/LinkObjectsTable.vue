@@ -41,8 +41,8 @@ const emit = defineEmits(["deleteObjectLink", "updateRelationship"])
 // Define functions
 function deleteObjectLink(object_assignment_id: number, index: number) : void {
 	emit("deleteObjectLink", {
-		"object_assignment_id": object_assignment_id,
-		"index": index,
+		object_assignment_id,
+		index,
 	})
 }
 

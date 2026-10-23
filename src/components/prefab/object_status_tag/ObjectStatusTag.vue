@@ -6,7 +6,7 @@ const props = defineProps({
     higherOrderStatus: {
         required: true,
         type: String,
-        validator: function (value: string): boolean {
+        validator(value: string): boolean {
             return ['backlog', 'blocked', 'normal', 'closed'].includes(
                 value.toLowerCase()
             );

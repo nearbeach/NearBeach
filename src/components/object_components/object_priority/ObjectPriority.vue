@@ -85,7 +85,7 @@ watch(priorityModel, (new_value) => {
 	}
 
 	objectStore.$patch({
-		priority: priority,
+		priority,
 	});
 
 	// Save data

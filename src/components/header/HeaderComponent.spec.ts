@@ -9,7 +9,7 @@ import { useNavStore } from "@/stores/nav/nav.ts";
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes,
+  routes,
 });
 
 describe("HeaderComponent", () => {
