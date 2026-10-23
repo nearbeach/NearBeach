@@ -50,5 +50,3 @@ const permissionStore = usePermissionStore();
 	</NavMenuItem>
 
 </template>
-
-<style scoped></style>

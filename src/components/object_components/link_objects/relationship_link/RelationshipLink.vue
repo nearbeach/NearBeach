@@ -167,6 +167,3 @@ function updateRelationship() : void {
 		/>
 	</div>
 </template>
-
-<style scoped>
-</style>

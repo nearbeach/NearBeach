@@ -1,7 +1,3 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
 	<div class="structure-skeleton">
 		<header role="banner"/>

@@ -29,7 +29,3 @@ const showErrorComponent = computed(() => {
 	/>
 	<ErrorModal/>
 </template>
-
-<style scoped>
-
-</style>

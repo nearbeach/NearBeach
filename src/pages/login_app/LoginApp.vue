@@ -1,7 +1,3 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
 	<main id="main" aria-labelledby="main-title" role="main">
 		<RouterView v-slot="{ Component }">

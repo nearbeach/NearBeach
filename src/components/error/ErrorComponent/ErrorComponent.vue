@@ -22,7 +22,3 @@ defineProps({
 		<p>{{message}}</p>
 	</WlkCard>
 </template>
-
-<style scoped>
-
-</style>
