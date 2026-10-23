@@ -46,10 +46,9 @@ const priorityList = [
 ]
 
 // Define store
-const objectMetaDataStore = useObjectMetaDataStore();
 const objectStore = useObjectStore();
 
-// Define subscribes
+// Define subscriptions
 objectStore.$subscribe((mutation, state) => {
 	if (state?.priority?.value === undefined || state?.priority?.value.toString() === priorityModel.value.toString()) {
 		// nothing needs to be done;
