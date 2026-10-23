@@ -48,13 +48,9 @@ export const usePermissionStore = defineStore('permissions', {
             this.permissionData.forEach((item: PermissionDataInterface) => {
                 //field as keyof typeof someObj
                 const item_results: number | string = item[field as keyof typeof item];
-                if (typeof (item_results) !== "number") {
-                    // Early return
-                    return permission_result;
+                if (typeof (item_results) === "number") {
+                    permission_result = permission_result < item_results ? item_results : permission_result;
                 }
-
-                // Check the value
-                permission_result = permission_result < item_results ? item_results : permission_result;
             });
 
             // Fallback

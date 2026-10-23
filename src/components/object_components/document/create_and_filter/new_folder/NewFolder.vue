@@ -38,12 +38,14 @@ const objectStore = useObjectStore();
 const newFolderModel = ref<string>("")
 
 // Define computed component
-const isCreateDisabled = computed(() => {
+const isCreateDisabled = computed(() : boolean => {
 	if (newFolderModel.value === "") {
 		// Disable the button
 		return true;
 	}
 	// TODO - check the if the folder name already exists in the current folder
+
+	return false;
 });
 
 // Define functions

@@ -173,6 +173,8 @@ async function datesUpdated() {
 		errorStore.setError(error);
 		return router.push({name: "server-error"});
 	}
+
+	return null;
 }
 
 function handleResponseStatus(response: Response) {

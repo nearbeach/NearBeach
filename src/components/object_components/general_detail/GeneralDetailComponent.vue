@@ -145,6 +145,8 @@ onMounted(async () => {
 		errorStore.setError(error);
 		return router.push({name: "server-error"});
 	}
+	
+	return null;
 });
 
 // Define computed
