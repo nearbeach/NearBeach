@@ -44,7 +44,7 @@ export const usePermissionStore = defineStore('permissions', {
             }
 
             // TODO - Look at implementing this as a reduce functionality
-            let permission_result: number = 0;
+            let permission_result = 0;
             this.permissionData.forEach((item: PermissionDataInterface) => {
                 //field as keyof typeof someObj
                 let item_results: number | string = item[field as keyof typeof item];
