@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {DocumentList} from './document_list/';
-import {FolderList} from "@/components/object_components/document/document_list_render/folder_list/";
+import {DocumentList} from './document_list';
+import {FolderList} from "@/components/object_components/document/document_list_render/folder_list";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import {computed} from "vue";
 

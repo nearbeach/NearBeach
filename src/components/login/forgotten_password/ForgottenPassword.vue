@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import {LoginImage} from "../login_image/"
-import {ForgottenPasswordPanel} from "./forgotten_password_panel/"
+import {LoginImage} from "../login_image"
+import {ForgottenPasswordPanel} from "./forgotten_password_panel"
 import PasswordResetDone from "./password_reset_done/PasswordResetDone.vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
