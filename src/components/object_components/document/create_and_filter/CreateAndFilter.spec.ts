@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { mount, flushPromises, nextTick } from "@vue/test-utils";
-import CreateAndFilter from "./CreateAndFilter.vue";
+import { mount, flushPromises } from "@vue/test-utils";
+import {CreateAndFilter} from ".";
 import i18n from "@/i18n.ts";
 import { createPinia, setActivePinia } from "pinia";
 

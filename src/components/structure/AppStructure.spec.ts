@@ -3,7 +3,7 @@ import { mount, flushPromises } from "@vue/test-utils";
 import { defineComponent, h } from "vue";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createMemoryHistory } from "vue-router";
-import AppStructure from "./AppStructure.vue";
+import {AppStructure} from ".";
 import { useNavStore } from "@/stores/nav/nav.ts";
 import { nextTick } from "vue";
 import i18n from "@/i18n.ts";

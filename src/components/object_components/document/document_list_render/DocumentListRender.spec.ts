@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { mount, flushPromises, nextTick } from "@vue/test-utils";
-import DocumentListRender from "./DocumentListRender.vue";
+import { mount, flushPromises } from "@vue/test-utils";
+import {DocumentListRender} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
 import i18n from "@/i18n.ts";

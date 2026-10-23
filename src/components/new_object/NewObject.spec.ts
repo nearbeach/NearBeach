@@ -3,7 +3,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { defineComponent, h } from "vue";
-import NewObject from "./NewObject.vue";
+import {NewObject} from ".";
 import i18n from "@/i18n.ts";
 import { useErrorStore } from "@/stores/error/error.ts";
 import { usePermissionStore } from "@/stores/permissions/permission.ts";

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount } from "@vue/test-utils";
-import ObjectStatusTag from "./ObjectStatusTag.vue";
+import {ObjectStatusTag} from ".";
 
 describe("ObjectStatusTag", () => {
   test("renders with correct class and text for valid higherOrderStatus", async () => {

@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
-import PasswordReset from "./PasswordReset.vue";
-import LoginImage from "../login_image/LoginImage.vue";
-import PasswordResetPanel from "./password_reset_panel/PasswordResetPanel.vue";
+import {PasswordReset} from ".";
+import {LoginImage} from "../login_image";
+import {PasswordResetPanel} from "./password_reset_panel";
 import { createPinia, setActivePinia } from "pinia";
 import i18n from "@/i18n.ts";
 

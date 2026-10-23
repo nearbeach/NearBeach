@@ -1,6 +1,6 @@
 import { beforeEach, afterEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
-import PasswordResetPanel from "./PasswordResetPanel.vue";
+import {PasswordResetPanel} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { loginRoutes } from "@/router/loginRouter.ts";

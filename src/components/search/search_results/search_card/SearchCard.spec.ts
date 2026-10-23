@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
-import SearchCard from "./SearchCard.vue";
+import {SearchCard} from ".";
 import { createRouter, createMemoryHistory } from "vue-router";
 import { nextTick } from "vue";
 

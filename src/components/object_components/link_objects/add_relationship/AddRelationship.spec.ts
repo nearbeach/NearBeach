@@ -1,10 +1,12 @@
 import { beforeEach, afterEach, describe, expect, test } from "vitest";
-import { mount, flushPromises, nextTick } from "@vue/test-utils";
-import AddRelationship from "./AddRelationship.vue";
+import { mount, flushPromises } from "@vue/test-utils";
+import {AddRelationship} from ".";
 import { createPinia, setActivePinia } from "pinia";
-import { useObjectStore } from "@/stores/object.ts";
+import { useObjectStore } from "@/stores/object/object.ts";
 import { vi } from "vitest";
 import i18n from "@/i18n.ts";
+import {nextTick} from "vue";
+import {createRouter, createWebHistory} from "vue-router";
 
 const router = createRouter({
   history: createWebHistory(),

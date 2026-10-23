@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import GeneralDetailComponent from '@/components/object_components/general_detail/GeneralDetailComponent.vue';
-import PropertiesComponent from '@/components/object_components/properties_component/PropertiesComponent.vue';
-import AccessComponent from "@/components/object_components/access/AccessComponent.vue";
-import PublicLinks from "@/components/object_components/public_links/PublicLinks.vue";
-import StakeholderComponent from "@/components/object_components/stakeholder/StakeholderComponent.vue";
-import DocumentComponent from "@/components/object_components/document/DocumentComponent.vue";
-import NotesComponent from "@/components/object_components/notes/NotesComponent.vue";
-import LinkObjects from "@/components/object_components/link_objects/LinkObjects.vue";
-import SprintLinks from "@components/object_components/sprint_links/SprintLinks.vue";
+import {GeneralDetailComponent} from '@/components/object_components/general_detail';
+import {PropertiesComponent} from '@/components/object_components/properties_component';
+import {AccessComponent} from "@/components/object_components/access";
+import {PublicLinks} from "@/components/object_components/public_links";
+import {StakeholderComponent} from "@/components/object_components/stakeholder";
+import {DocumentComponent} from "@/components/object_components/document";
+import {NotesComponent} from "@/components/object_components/notes";
+import {LinkObjects} from "@/components/object_components/link_objects";
+import {SprintLinks} from "@/components/object_components/sprint_links";
 import type {TabHeaderInterface} from "whelk-ui";
 import {WlkCard, WlkTabs} from "whelk-ui";
 import {onMounted} from "vue";

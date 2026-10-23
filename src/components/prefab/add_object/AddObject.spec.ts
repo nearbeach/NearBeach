@@ -1,8 +1,26 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { mount, flushPromises } from "@vue/test-utils";
-import AddObject from "./AddObject.vue";
+import { mount } from "@vue/test-utils";
+import {AddObject} from ".";
 import { createPinia, setActivePinia } from "pinia";
-import { nextTick } from "vue";
+
+const DEFAULT_PROPS = {
+  label: "Test Label",
+  options: [{ label: "Option 1", value: "1" }],
+  modelValue: null,
+};
+
+function mountAddObject(
+  props: Partial<typeof DEFAULT_PROPS> = {},
+  options = {}
+) {
+  return mount(AddObject, {
+    props: {
+      ...DEFAULT_PROPS,
+      ...props,
+    },
+    ...options,
+  });
+}
 
 describe("AddObject", () => {
   beforeEach(() => {
@@ -10,26 +28,18 @@ describe("AddObject", () => {
   });
 
   test("renders label correctly", async () => {
-    const wrapper = mount(AddObject, {
-      props: {
-        label: "Test Label",
-        options: [{ label: "Option 1", value: "1" }],
-      },
-    });
+    const wrapper = mountAddObject();
 
     const label = wrapper.find("label");
     expect(label.text()).toBe("+Test Label");
   });
 
   test("renders options correctly", async () => {
-    const wrapper = mount(AddObject, {
-      props: {
-        label: "Test Label",
-        options: [
-          { label: "Option 1", value: "1" },
-          { label: "Option 2", value: "2" },
-        ],
-      },
+    const wrapper = mountAddObject({
+      options: [
+        { label: "Option 1", value: "1" },
+        { label: "Option 2", value: "2" },
+      ],
     });
 
     const options = wrapper.findAll("option");
@@ -39,11 +49,8 @@ describe("AddObject", () => {
   });
 
   test("select is disabled when options are empty", async () => {
-    const wrapper = mount(AddObject, {
-      props: {
-        label: "Test Label",
-        options: [],
-      },
+    const wrapper = mountAddObject({
+      options: [],
     });
 
     const select = wrapper.find("select");
@@ -51,26 +58,18 @@ describe("AddObject", () => {
   });
 
   test("select is not disabled when options are present", async () => {
-    const wrapper = mount(AddObject, {
-      props: {
-        label: "Test Label",
-        options: [{ label: "Option 1", value: "1" }],
-      },
-    });
+    const wrapper = mountAddObject();
 
     const select = wrapper.find("select");
     expect(select.attributes("disabled")).toBeUndefined();
   });
 
   test("emits update:modelValue on change", async () => {
-    const wrapper = mount(AddObject, {
-      props: {
-        label: "Test Label",
-        options: [
-          { label: "Option 1", value: "1" },
-          { label: "Option 2", value: "2" },
-        ],
-      },
+    const wrapper = mountAddObject({
+      options: [
+        { label: "Option 1", value: "1" },
+        { label: "Option 2", value: "2" },
+      ],
     });
 
     const select = wrapper.find("select");
@@ -81,12 +80,7 @@ describe("AddObject", () => {
   });
 
   test("calls showPicker on focus if user activation is active", async () => {
-    const wrapper = mount(AddObject, {
-      props: {
-        label: "Test Label",
-        options: [{ label: "Option 1", value: "1" }],
-      },
-    });
+    const wrapper = mountAddObject();
 
     const select = wrapper.find("select");
     const focusEvent = new FocusEvent("focus");
@@ -108,12 +102,7 @@ describe("AddObject", () => {
   });
 
   test("does not call showPicker on focus if user activation is not active", async () => {
-    const wrapper = mount(AddObject, {
-      props: {
-        label: "Test Label",
-        options: [{ label: "Option 1", value: "1" }],
-      },
-    });
+    const wrapper = mountAddObject();
 
     const select = wrapper.find("select");
     const focusEvent = new FocusEvent("focus");

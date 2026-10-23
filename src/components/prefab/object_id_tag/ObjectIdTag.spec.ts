@@ -3,7 +3,7 @@ import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createMemoryHistory } from "vue-router";
 import { defineComponent, h } from "vue";
-import ObjectIdTag from "./ObjectIdTag.vue";
+import {ObjectIdTag} from ".";
 import shortObjectType from "@/utils/dictionary/ShortObjectDictionary.ts";
 
 const router = createRouter({

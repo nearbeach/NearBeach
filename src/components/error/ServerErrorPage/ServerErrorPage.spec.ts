@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import ServerErrorPage from "./ServerErrorPage.vue";
+import {ServerErrorPage} from ".";
 import { useErrorStore } from "@/stores/error/error.ts";
 
 describe("ServerErrorPage", () => {

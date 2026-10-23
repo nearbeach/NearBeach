@@ -1,8 +1,8 @@
 import { beforeEach, afterEach, describe, expect, test } from "vitest";
-import { mount, flushPromises, nextTick } from "@vue/test-utils";
+import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { useObjectStore } from "@/stores/object/object.ts";
-import PublicLinks from "./PublicLinks.vue";
+import {PublicLinks} from ".";
 import { vi } from "vitest";
 
 const i18n = {

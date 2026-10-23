@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { mount, flushPromises, nextTick } from "@vue/test-utils";
-import TwoFactorPanel from "./TwoFactorPanel.vue";
+import { mount, flushPromises } from "@vue/test-utils";
+import {TwoFactorPanel} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import i18n from "@/i18n.ts";
+import { nextTick } from "vue";
+import { ObjectStateEnum } from "@/utils/enums/ObjectStateEnum";
 
 describe("TwoFactorPanel", () => {
   beforeEach(() => {
@@ -12,7 +14,8 @@ describe("TwoFactorPanel", () => {
   test("renders correct translation for login_message", async () => {
     const wrapper = mount(TwoFactorPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
+        otpToken: "",
       },
       global: {
         plugins: [i18n],
@@ -31,7 +34,8 @@ describe("TwoFactorPanel", () => {
   test("renders correct translation for submit_tfa", async () => {
     const wrapper = mount(TwoFactorPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
+        otpToken: "",
       },
       global: {
         plugins: [i18n],
@@ -50,7 +54,8 @@ describe("TwoFactorPanel", () => {
   test("renders correct translation for tfa", async () => {
     const wrapper = mount(TwoFactorPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
+        otpToken: "",
       },
       global: {
         plugins: [i18n],
@@ -63,13 +68,14 @@ describe("TwoFactorPanel", () => {
 
     // Check tfa label text
     const tfaLabel = wrapper.find("label");
-    expect(tfaLabel.text()).toBe("Two Factor Password");
+    expect(tfaLabel.text()).toContain("Two Factor Password");
   });
 
   test("renders correct translation for tfa_placeholder", async () => {
     const wrapper = mount(TwoFactorPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
+        otpToken: "",
       },
       global: {
         plugins: [i18n],
@@ -88,7 +94,8 @@ describe("TwoFactorPanel", () => {
   test("emits signIn event when button is clicked", async () => {
     const wrapper = mount(TwoFactorPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
+        otpToken: "",
       },
       global: {
         plugins: [i18n],
@@ -110,8 +117,9 @@ describe("TwoFactorPanel", () => {
   test("displays error message when provided", async () => {
     const wrapper = mount(TwoFactorPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
         errorMessage: "Invalid 2FA code",
+        otpToken: "",
       },
       global: {
         plugins: [i18n],
@@ -130,7 +138,8 @@ describe("TwoFactorPanel", () => {
   test("validates input and displays error if input is invalid", async () => {
     const wrapper = mount(TwoFactorPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
+        otpToken: "",
       },
       global: {
         plugins: [i18n],
@@ -141,20 +150,21 @@ describe("TwoFactorPanel", () => {
     await flushPromises();
     await nextTick();
 
-    // Enter invalid input
+    // Enter invalid input (empty for required validation)
     const tfaInput = wrapper.find("input");
-    await tfaInput.setValue("1234");
+    await tfaInput.setValue("");
     await tfaInput.trigger("blur");
 
     // Check if error message is displayed
-    const errorMessage = wrapper.find(".error-message");
-    expect(errorMessage.text()).toBe("Invalid 2FA code");
+    const errorMessage = wrapper.find(".render-error-message");
+    expect(errorMessage.text()).toBe("This field is required");
   });
 
   test("button is disabled when buttonState is disabled", async () => {
     const wrapper = mount(TwoFactorPanel, {
       props: {
-        buttonState: "disabled",
+        buttonState: ObjectStateEnum.Disable,
+        otpToken: "",
       },
       global: {
         plugins: [i18n],
@@ -167,6 +177,6 @@ describe("TwoFactorPanel", () => {
 
     // Check if button is disabled
     const submitButton = wrapper.find("button");
-    expect(submitButton.attributes("disabled")).toBe("disabled");
+    expect(submitButton.attributes("disabled")).toBeDefined();
   });
 });

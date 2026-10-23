@@ -1,6 +1,6 @@
 import { beforeEach, afterEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
-import StakeholderCustomer from "./StakeholderCustomer.vue";
+import {StakeholderCustomer} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createMemoryHistory } from "vue-router";
 import { vi } from "vitest";

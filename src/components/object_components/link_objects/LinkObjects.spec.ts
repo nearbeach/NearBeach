@@ -3,7 +3,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import LinkObjects from "./LinkObjects.vue";
+import {LinkObjects} from ".";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { getCsrfToken } from "@/composables/getCsrfToken.ts";
 

@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { mount, flushPromises, nextTick } from "@vue/test-utils";
+import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
 import i18n from "@/i18n.ts";
-import BreadCrumbs from "./BreadCrumbs.vue";
+import {BreadCrumbs} from ".";
+import {nextTick} from "vue";
 
 describe("BreadCrumbs", () => {
   beforeEach(() => {
@@ -27,8 +28,8 @@ describe("BreadCrumbs", () => {
   test("renders navigation buttons when breadCrumbsArray is not empty", async () => {
     const store = useDocumentationStore();
     store.breadCrumbsArray = [
-      { name: "Folder 1", id: 1 },
-      { name: "Folder 2", id: 2 },
+      { label: "Folder 1", folderId: 1 },
+      { label: "Folder 2", folderId: 2 },
     ];
 
     const wrapper = mount(BreadCrumbs, {
@@ -49,8 +50,8 @@ describe("BreadCrumbs", () => {
   test("goes back to previous folder when navigation button is clicked", async () => {
     const store = useDocumentationStore();
     store.breadCrumbsArray = [
-      { name: "Folder 1", id: 1 },
-      { name: "Folder 2", id: 2 },
+      { label: "Folder 1", folderId: 1 },
+      { label: "Folder 2", folderId: 2 },
     ];
 
     const wrapper = mount(BreadCrumbs, {
@@ -69,14 +70,14 @@ describe("BreadCrumbs", () => {
     await nextTick();
 
     expect(store.breadCrumbsArray.length).toBe(1);
-    expect(store.breadCrumbsArray[0].name).toBe("Folder 1");
+    expect(store.breadCrumbsArray[0].label).toBe("Folder 1");
   });
 
   test("goes back to root when root label is clicked", async () => {
     const store = useDocumentationStore();
     store.breadCrumbsArray = [
-      { name: "Folder 1", id: 1 },
-      { name: "Folder 2", id: 2 },
+      { label: "Folder 1", folderId: 1 },
+      { label: "Folder 2", folderId: 2 },
     ];
 
     const wrapper = mount(BreadCrumbs, {

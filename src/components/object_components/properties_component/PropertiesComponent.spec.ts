@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, afterEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { vi } from "vitest";
-import PropertiesComponent from "./PropertiesComponent.vue";
+import {PropertiesComponent} from ".";
 import { useErrorStore } from "@/stores/error/error.ts";
 import i18n from "@/i18n.ts";
 

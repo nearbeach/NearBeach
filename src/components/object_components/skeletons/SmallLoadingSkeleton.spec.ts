@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount } from "@vue/test-utils";
-import SmallLoadingSkeleton from "./SmallLoadingSkeleton.vue";
+import {SmallLoadingSkeleton} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";

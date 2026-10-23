@@ -2,10 +2,10 @@ import { beforeEach, afterEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { vi } from "vitest";
-import AssignedUsers from "@/components/AssignedUsers.vue";
+import {AssignedUsers} from ".";
 import { useObjectStore } from "@/stores/object/object.ts";
-import { getCsrfToken } from "@/composables/getCsrfToken.ts";
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
+import { nextTick } from "vue";
 
 describe("AssignedUsers", () => {
   let wrapper: any;

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { mount, flushPromises, nextTick } from "@vue/test-utils";
-import SearchInput from "./SearchInput.vue";
+import { mount, flushPromises } from "@vue/test-utils";
+import {SearchInput} from ".";
 import { defineComponent, h } from "vue";
 
 describe("SearchInput", () => {

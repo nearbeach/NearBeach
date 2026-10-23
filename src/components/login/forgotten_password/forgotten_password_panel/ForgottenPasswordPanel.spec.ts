@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
-import ForgottenPasswordPanel from "./ForgottenPasswordPanel.vue";
+import {ForgottenPasswordPanel} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createMemoryHistory } from "vue-router";
 import i18n from "@/i18n.ts";

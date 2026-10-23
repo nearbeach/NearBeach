@@ -1,6 +1,6 @@
 import { beforeEach, afterEach, describe, expect, test } from "vitest";
-import { mount, flushPromises, nextTick } from "@vue/test-utils";
-import DocumentComponent from "./DocumentComponent.vue";
+import { mount, flushPromises } from "@vue/test-utils";
+import {DocumentComponent} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { vi } from "vitest";
 import i18n from "@/i18n.ts";

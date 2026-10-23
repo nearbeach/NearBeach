@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { mount, flushPromises, nextTick } from "@vue/test-utils";
+import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createMemoryHistory } from "vue-router";
-import NavMenuItem from "./NavMenuItem.vue";
+import {NavMenuItem} from ".";
 import { useNavStore } from "@/stores/nav/nav.ts";
 import { defineComponent, h } from "vue";
 

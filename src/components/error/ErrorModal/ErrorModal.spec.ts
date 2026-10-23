@@ -2,8 +2,9 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { useErrorStore } from "@/stores/error/error.ts";
-import ErrorModal from "./ErrorModal.vue";
+import {ErrorModal} from ".";
 import i18n from "@/i18n.ts";
+import { nextTick } from "vue";
 
 describe("ErrorModal", () => {
   beforeEach(() => {

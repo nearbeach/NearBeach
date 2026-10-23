@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { mount, flushPromises, nextTick } from "@vue/test-utils";
-import LoginPage from "./LoginPage.vue";
+import { mount, flushPromises } from "@vue/test-utils";
+import {LoginPage} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
