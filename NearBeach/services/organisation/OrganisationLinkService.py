@@ -58,7 +58,7 @@ class OrganisationLinkService(ObjectServiceAbstraction):
 
         #Check there is an object to update
         if len(update_object) == 0:
-            return "No object exists", status.HTTP_400_BAD_REQUEST
+            return "No organisation exists in current object", status.HTTP_404_NOT_FOUND
 
         # Remove organisation from object
         update_object.update(

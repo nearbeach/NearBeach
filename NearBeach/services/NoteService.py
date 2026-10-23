@@ -86,7 +86,7 @@ class NoteService(ObjectServiceAbstraction):
 
         # If there are no values to update - notify the user
         if len(object_note) == 0:
-            return "Object note does not exist", status.HTTP_400_BAD_REQUEST
+            return "Object note does not exist under current object", status. HTTP_404_NOT_FOUND
 
         if not self._check_user_permission(request, object_note):
             return "User does not have permission to delete this note", status.HTTP_400_BAD_REQUEST
@@ -141,7 +141,7 @@ class NoteService(ObjectServiceAbstraction):
             **{self.destination: self.location_id},
         )
         if len(object_note) == 0:
-            return "Note object does not exist", status.HTTP_400_BAD_REQUEST
+            return "Object note does not exist under current object", status. HTTP_404_NOT_FOUND
 
         if not self._check_user_permission(request, object_note):
             return "User does not have permission to delete this note", status.HTTP_400_BAD_REQUEST
@@ -149,12 +149,12 @@ class NoteService(ObjectServiceAbstraction):
 
         # Update
         object_note.update(
-            change_user = request.user,
-            date_modified = timezone.now(),
-            note = serializer.data["note"],
+            change_user=request.user,
+            date_modified=timezone.now(),
+            note=serializer.data["note"],
         )
 
         # Serialize
-        serializer = NoteSerializer(object_note)
+        serializer = NoteSerializer(object_note.first())
 
         return serializer.data, status.HTTP_200_OK
