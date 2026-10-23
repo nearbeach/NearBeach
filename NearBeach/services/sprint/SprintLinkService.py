@@ -21,7 +21,7 @@ class SprintLinkService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
-        if not self.destination in ["requirement", "project"]:
+        if self.destination not in ["requirement", "project"]:
             return "Parent object not allowed", status.HTTP_400_BAD_REQUEST
 
         # Create the sprint

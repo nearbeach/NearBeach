@@ -60,7 +60,7 @@ class LinkListService(ObjectServiceAbstraction):
         object_relation = serializer.validated_data["object_relation"]
 
         # Check to make sure the object_id exists
-        if not object_type in list(self.object_dict):
+        if object_type not in list(self.object_dict):
             return "Object Type not in system", status.HTTP_400_BAD_REQUEST
 
         # We have the object type
@@ -289,7 +289,7 @@ class LinkListService(ObjectServiceAbstraction):
         object_relation = serializer.validated_data["object_relation"]
 
         # Check to make sure the object_id exists
-        if not object_type in list(self.object_dict):
+        if object_type not in list(self.object_dict):
             return "Object Type not in system", status.HTTP_400_BAD_REQUEST
 
         # Get single object
