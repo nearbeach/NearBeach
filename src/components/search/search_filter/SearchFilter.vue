@@ -161,6 +161,7 @@ function stopTimer() {
 			:label="t('closed')"
 			id="show-closed-objects"
 			v-model="showClosed"
+			v-on:change="checkboxClicked"
 		/>
 	</WlkCard>
 </template>
