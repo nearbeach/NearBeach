@@ -29,7 +29,7 @@ defineProps({
 	buttonState: {
 		required: true,
 		type: String,
-		validator: function (value: string): boolean {
+		validator(value: string): boolean {
 			const enumValues: string[] = Object.values(ObjectStateEnum);
 			return enumValues.includes(value);
 		},
@@ -47,15 +47,15 @@ const otpTokenRef = useTemplateRef("otp-token-ref");
 const otpToken = defineModel("otpToken", {
 	type: String,
 	required: true,
-})
+});
 
 // On Mounted
 onMounted(() => {
 	document.getElementById("input-two-factor-password")
-})
+});
 
 // Define functions
-function signIn(event: any) {
+function signIn(event: Event) {
 	// Prevent default
 	event.preventDefault();
 
@@ -64,7 +64,7 @@ function signIn(event: any) {
 
 	// Emit data upstream
 	emit('signIn');
-}
+};
 </script>
 
 <template>

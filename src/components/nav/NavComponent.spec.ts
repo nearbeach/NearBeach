@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
-import NavComponent from "./NavComponent.vue";
+import {NavComponent} from ".";
 
 describe("NavComponent", () => {
-  test("mounting component", async () => {
+  test("mounting component", () => {
     // Header component exists
     expect(NavComponent).toBeTruthy();
   });

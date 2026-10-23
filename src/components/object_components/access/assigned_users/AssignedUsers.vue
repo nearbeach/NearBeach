@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
-import {nextTick, onMounted, ref, watch} from "vue";
+import { ref, watch} from "vue";
 import {TrashIcon} from "@lucide/vue";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";

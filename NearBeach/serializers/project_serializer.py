@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import ListOfProjectStatus
+from NearBeach.models.project import ListOfProjectStatus, Project
 from NearBeach.serializers.abstraction.base_object_serializer import BaseObjectSerializer
 from NearBeach.serializers.abstraction.date_fields_serializer import DateFieldsSerializer
 from NearBeach.serializers.enum_serializer import EnumField
@@ -8,7 +8,6 @@ from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 from NearBeach.serializers.object_data.status.project_status_serializer import ProjectStatusSerializer
 from NearBeach.serializers.user.user_serializer import UserSerializer
 from NearBeach.utils.enums.object_enums import ObjectPriority
-from NearBeach.models.project import Project
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 
 

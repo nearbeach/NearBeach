@@ -1,8 +1,9 @@
 from typing import Tuple, Union, Dict
 from rest_framework import status
 from django.utils import timezone
-
-from NearBeach.models import Organisation, Customer, ObjectAssignment
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
+from NearBeach.models.customer import Customer
+from NearBeach.models.organisation import Organisation
 from NearBeach.serializers.organisation_link_serializer import OrganisationLinkSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 from NearBeach.utils.dicts.object_dict import OBJECT_DICT
@@ -57,7 +58,7 @@ class OrganisationLinkService(ObjectServiceAbstraction):
 
         #Check there is an object to update
         if len(update_object) == 0:
-            return "No object exists", status.HTTP_400_BAD_REQUEST
+            return "No organisation exists in current object", status.HTTP_404_NOT_FOUND
 
         # Remove organisation from object
         update_object.update(
@@ -121,4 +122,4 @@ class OrganisationLinkService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_200_OK
 
     def update(self, request, object_id) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class

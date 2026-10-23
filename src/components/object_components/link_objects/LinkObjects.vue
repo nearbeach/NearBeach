@@ -132,7 +132,7 @@ async function loadData() {
 }
 
 function updateRelationship(data: { index: number, link_relationship: string }) {
-	let mutated_row = objectLinkList.value[data.index];
+	const mutated_row = objectLinkList.value[data.index];
 
 	// Check mutated_row exists
 	if (mutated_row === undefined) {

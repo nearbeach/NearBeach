@@ -77,7 +77,7 @@ class S3FileHandler(FileHandler):
         return FileResponse(
             response["Body"],
             as_attachment=True,
-            filename=document_results.document_description,
+            filename=document_results.description,
         )
 
     def upload(self, upload_document, document_results, file):

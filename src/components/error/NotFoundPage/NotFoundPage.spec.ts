@@ -1,14 +1,14 @@
 // NotFound.spec.ts
 import { describe, test, expect } from "vitest";
-import NotFoundPage from "./NotFoundPage.vue";
+import {NotFoundPage} from ".";
 import { flushPromises, mount } from "@vue/test-utils";
 import DashboardPage from "@/components/dashboard/dashboard_page/DashboardPage.vue";
 
-describe("NotFound", async () => {
+describe("NotFound", () => {
   // Mount the wrapper
   const wrapper = mount(NotFoundPage, {});
 
-  test("mount component", async () => {
+  test("mount component", () => {
     // App exists
     expect(NotFoundPage).toBeTruthy();
   });

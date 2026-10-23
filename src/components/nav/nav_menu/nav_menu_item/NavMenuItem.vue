@@ -42,7 +42,7 @@ const defineClass = computed(() => {
 
     // If the route name contains the destination - we are currently on that route
     const routeName = route?.name?.toString().toLowerCase();
-    let isActive = routeName?.includes(props.destination.toLowerCase()) == true;
+    let isActive = routeName?.includes(props.destination.toLowerCase()) === true;
 
     // If the route is the same as the props route - we are currently on that route
     isActive =

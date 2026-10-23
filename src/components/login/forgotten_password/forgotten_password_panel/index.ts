@@ -1,0 +1,1 @@
+export { default as ForgottenPasswordPanel } from "./ForgottenPasswordPanel.vue";

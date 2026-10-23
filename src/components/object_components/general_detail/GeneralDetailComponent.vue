@@ -119,7 +119,7 @@ onMounted(async () => {
 		);
 
 		switch (response.status) {
-			case 200:
+			case 200: {
 				// Get data
 				const data = await response.json();
 				data.destination = destination;
@@ -128,6 +128,7 @@ onMounted(async () => {
 				// Patch
 				objectStore.$patch(data);
 				break;
+			}
 			case 403:
 				// Use does not have access to the object
 				return router.push({name: "forbidden"});
@@ -144,6 +145,8 @@ onMounted(async () => {
 		errorStore.setError(error);
 		return router.push({name: "server-error"});
 	}
+	
+	return null;
 });
 
 // Define computed

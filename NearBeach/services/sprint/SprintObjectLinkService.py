@@ -5,13 +5,13 @@ class SprintObjectLinkService(ObjectServiceAbstraction):
     """Service to help create, read, update, delete sprint object links"""
 
     def create(self, request):
-        pass
+        pass # Method not required in current class
 
     def delete(self, request, sprint_object_link_id: int):
-        pass
+        pass # Method not required in current class
 
     def get_list(self, request):
-        pass
+        pass # Method not required in current class
 
     def update(self, request, sprint_object_link_id: int):
-        pass
+        pass # Method not required in current class

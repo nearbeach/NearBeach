@@ -3,12 +3,12 @@ import {setActivePinia, createPinia} from "pinia";
 import {describe, test, expect, beforeEach} from "vitest";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
-describe("Permission store - _getMaximumFieldValue action", async () => {
+describe("Permission store - _getMaximumFieldValue action", () => {
     beforeEach(() => {
         setActivePinia(createPinia());
     });
 
-    test("Permission Data is empty, and thus everything returns a 0", async () => {
+    test("Permission Data is empty, and thus everything returns a 0", () => {
         const permissionStore = usePermissionStore();
 
         expect(permissionStore._getMaximumFieldValue("administration_assign_user_to_group")).toBe(0);
@@ -35,7 +35,7 @@ describe("Permission store - _getMaximumFieldValue action", async () => {
         expect(permissionStore._getMaximumFieldValue("task_note")).toBe(0);
     });
 
-     test("Test with fake field", async () => {
+     test("Test with fake field", () => {
         const permissionStore = usePermissionStore();
 
         // Set the data
@@ -98,7 +98,7 @@ describe("Permission store - _getMaximumFieldValue action", async () => {
         expect(permissionStore._getMaximumFieldValue("fake_field")).toBe(0);
     })
 
-    test("Permission Data with variation number 1", async () => {
+    test("Permission Data with variation number 1", () => {
         const permissionStore = usePermissionStore();
 
         // Set the data
@@ -183,7 +183,7 @@ describe("Permission store - _getMaximumFieldValue action", async () => {
     })
 
 
-    test("Permission Data with variation number 2", async () => {
+    test("Permission Data with variation number 2", () => {
         const permissionStore = usePermissionStore();
 
         // Set the data
@@ -269,7 +269,7 @@ describe("Permission store - _getMaximumFieldValue action", async () => {
 
 
 
-    test("Permission Data with variation number 3", async () => {
+    test("Permission Data with variation number 3", () => {
         const permissionStore = usePermissionStore();
 
         // Set the data

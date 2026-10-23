@@ -1,6 +1,6 @@
 from NearBeach.serializers.object_data.types.requirement_types_serializer import RequirementTypesSerializer
 from rest_framework import serializers
-from NearBeach.models import ListOfRequirementStatus, Requirement, ListOfRequirementType
+from NearBeach.models.requirement.requirement import ListOfRequirementStatus, Requirement, ListOfRequirementType
 from NearBeach.serializers.abstraction.base_object_serializer import BaseObjectSerializer
 from NearBeach.serializers.abstraction.date_fields_serializer import DateFieldsSerializer
 from NearBeach.serializers.group_serializer import GroupSerializer

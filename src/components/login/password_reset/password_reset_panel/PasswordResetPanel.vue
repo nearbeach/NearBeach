@@ -51,32 +51,33 @@ async function submitPasswordReset(): Promise<void> {
 	// Send data to the backend
 	const body = {
 		password: password1.value,
-		udi: `${uid}`,
+		uid: `${uid}`,
 		token: `${token}`,
 	}
 
-	try {
-		await fetch(
-			`/api/v1/authentication/reset-password/`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body: JSON.stringify(body),
+	// Update password in backend
+	const response = await fetch(
+		"/api/v1/authentication/reset-password/",
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
 			},
-		)
+			body: JSON.stringify(body),
+		},
+	);
 
-		// Navigate to the login screen
-		await router.push('/login');
-	} catch (error) {
-		// Handling the error
-		if (error instanceof Error) {
-			errorMessage.value = error.message;
-		} else {
-			errorMessage.value = String(error);
-		}
+	// Handle response codes
+	switch (response.status) {
+		case 200:
+			// User successfully updated password
+			await router.push('/login');
+			break;
+		default:
+			// Handle other response codes
+			errorMessage.value = response.statusText;
+			break;
 	}
 }
 </script>

@@ -2,13 +2,11 @@ from abc import ABC, abstractmethod
 from collections import namedtuple
 from typing import Tuple, Union, Dict
 
-from NearBeach.models import (
-    ChangeTask,
-    Project,
-    Task,
-    Requirement,
-    RequirementItem,
-)
+from NearBeach.models.request_for_change.change_task import ChangeTask
+from NearBeach.models.project import Project
+from NearBeach.models.task import Task
+from NearBeach.models.requirement.requirement import Requirement
+from NearBeach.models.requirement.requirement_item import RequirementItem
 
 # OBJECT STRUCTURE TYPE
 OBJECT_STRUCTURE = namedtuple(
@@ -40,16 +38,16 @@ class ObjectServiceAbstraction(ABC):
 
     @abstractmethod
     def create(self, request) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class
 
     @abstractmethod
     def delete(self, request, object_id) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class
 
     @abstractmethod
     def get_list(self, request) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class
 
     @abstractmethod
     def update(self, request, object_id) -> Tuple[Union[Dict, str], int]:
-        pass
+        pass # Method not required in current class

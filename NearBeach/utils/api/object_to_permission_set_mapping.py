@@ -19,5 +19,9 @@ def get_object_permission_set(destination: str) -> str | None:
     try:
         return _mapping[destination]
     except KeyError:
-        _logger.error(F"get_object_permission_set: unknown destination: {destination} | KeyError: {KeyError}")
+        _logger.error(
+            "get_object_permission_set: unknown destination: %s | KeyError: %s",
+            destination,
+            KeyError
+        )
         return None

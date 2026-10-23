@@ -4,12 +4,11 @@ from django.db.models import F
 from django.utils import timezone
 from rest_framework import status
 
-from NearBeach.models import Document, DocumentPermission
+from NearBeach.models.document.document import Document
+from NearBeach.models.document.document_permission import DocumentPermission
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
-
-import datetime
 
 
 class DocumentLinkService(ObjectServiceAbstraction):
@@ -107,7 +106,7 @@ class DocumentLinkService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_list(self, _):
-        pass
+        pass # Method not required in current class
 
     def update(self, request, document_id) -> Tuple[Union[Dict, str], int]:
         """Method to update a link"""

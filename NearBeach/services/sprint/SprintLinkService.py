@@ -1,9 +1,7 @@
 from typing import Dict, Tuple, Union
 from rest_framework import status
 from django.utils import timezone
-from NearBeach.models import (
-    Sprint,
-)
+from NearBeach.models.sprint.sprint import Sprint
 from NearBeach.serializers.sprint_serializer import SprintSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 
@@ -23,7 +21,7 @@ class SprintLinkService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
-        if not self.destination in ["requirement", "project"]:
+        if self.destination not in ["requirement", "project"]:
             return "Parent object not allowed", status.HTTP_400_BAD_REQUEST
 
         # Create the sprint
@@ -67,4 +65,4 @@ class SprintLinkService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_200_OK
 
     def update(self, request, sprint_id: int):
-        pass
+        pass # Method not required in current class

@@ -1,15 +1,13 @@
-from NearBeach.models import (
-    ChangeTask,
-    Customer,
-    KanbanBoard,
-    KanbanCard,
-    RequestForChange,
-    Requirement,
-    RequirementItem,
-    Organisation,
-    Project,
-    Task,
-)
+from NearBeach.models.request_for_change.change_task import ChangeTask
+from NearBeach.models.customer import Customer
+from NearBeach.models.kanban_board.kanban_board import KanbanBoard
+from NearBeach.models.kanban_board.kanban_card import KanbanCard
+from NearBeach.models.organisation import Organisation
+from NearBeach.models.project import Project
+from NearBeach.models.request_for_change.request_for_change import RequestForChange
+from NearBeach.models.requirement.requirement import Requirement
+from NearBeach.models.requirement.requirement_item import RequirementItem
+from NearBeach.models.task import Task
 
 OBJECT_DICT = {
     "change_task": ChangeTask.objects,

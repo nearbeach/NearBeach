@@ -5,14 +5,14 @@ import {mount} from "@vue/test-utils";
 import {setActivePinia, createPinia} from "pinia";
 import {describe, test, expect, beforeEach} from "vitest";
 import {createRouter, createWebHistory} from "vue-router";
-import App from "./App.vue";
+import {App} from ".";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
 import {createI18n} from "petite-vue-i18n";
 import i18n from "@/i18n.ts";
 
 const router = createRouter({
     history: createWebHistory(),
-    routes: routes,
+    routes,
 });
 
 describe("App", () => {

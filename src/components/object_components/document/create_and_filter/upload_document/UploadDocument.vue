@@ -70,7 +70,7 @@ async function uploadDocument() {
 				headers: {
 					"X-CSRFTOKEN": getCsrfToken(),
 				},
-				body: body,
+				body,
 			},
 		)
 

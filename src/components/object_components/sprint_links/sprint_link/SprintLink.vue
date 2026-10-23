@@ -33,6 +33,7 @@ const renderDates = computed(() => {
 		<div class="sprint-description">
 			<div class="sprint-title">
 				<a target="_blank"
+				   rel="noopener noreferrer"
 				   :href="`/sprint/${sprint.id}/`"
 				>
 					{{ sprint.title }}

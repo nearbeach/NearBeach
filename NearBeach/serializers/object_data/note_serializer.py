@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import ObjectNote
+from NearBeach.models.misc.note import ObjectNote
 
 
 class NoteSerializer(serializers.ModelSerializer):
@@ -27,22 +27,6 @@ class NoteSerializer(serializers.ModelSerializer):
     username = serializers.IntegerField(
         read_only=True,
     )
-
-
-    def get_fields(self):
-        fields = super().get_fields()
-
-        # Check to see if request exists in context
-        if "request" not in self.context:
-            return fields
-
-        if self.context["request"].method == "GET":
-            fields["note"].required = False
-
-        if self.context["request"].method == "DELETE":
-            fields["note"].required = False
-
-        return fields
 
     class Meta:
         model = ObjectNote

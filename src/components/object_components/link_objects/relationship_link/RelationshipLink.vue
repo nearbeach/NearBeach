@@ -109,7 +109,7 @@ onMounted(() => {
 });
 
 // Define function
-async function updateRelationship() {
+function updateRelationship() : void {
 	// Escape conditions
 	if (relationshipModel.value === "") {
 		return;
@@ -167,6 +167,3 @@ async function updateRelationship() {
 		/>
 	</div>
 </template>
-
-<style scoped>
-</style>

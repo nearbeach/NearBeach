@@ -1,16 +1,14 @@
-from NearBeach.models import (
-    ChangeTask,
-    Customer,
-    KanbanBoard,
-    KanbanCard,
-    Organisation,
-    Project,
-    RequestForChange,
-    Requirement,
-    RequirementItem,
-    Sprint,
-    Task,
-)
+from NearBeach.models.request_for_change.change_task import ChangeTask
+from NearBeach.models.customer import Customer
+from NearBeach.models.kanban_board.kanban_board import KanbanBoard
+from NearBeach.models.kanban_board.kanban_card import KanbanCard
+from NearBeach.models.organisation import Organisation
+from NearBeach.models.project import Project
+from NearBeach.models.request_for_change.request_for_change import RequestForChange
+from NearBeach.models.requirement.requirement import Requirement
+from NearBeach.models.requirement.requirement_item import RequirementItem
+from NearBeach.models.sprint.sprint import Sprint
+from NearBeach.models.task import Task
 
 import logging
 
@@ -41,5 +39,10 @@ def check_object_exists(destination: str, location_id: int) -> bool:
         # If there is exactly one object, the object exists
         return len(nb_object) == 1
     except KeyError:
-        _logger.error(F"check_object_exists: unknown destination: {destination} | unknown location {location_id} | KeyError: {KeyError}")
+        _logger.error(
+            "check_object_exists: unknown destination: %s | unknown location %s | KeyError: %s",
+            destination,
+            location_id,
+            KeyError
+        )
         return False

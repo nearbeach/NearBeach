@@ -1,5 +1,5 @@
 from typing import List
-from NearBeach.models import UserGroup
+from NearBeach.models.user import UserGroup
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -30,5 +30,10 @@ def check_group_list(username: str, group_list: List[str] | None) -> bool:
         # Return results
         return user_group_results > 0
     except ValueError:
-        _logger.error(F"check_group_list - username: {username} | group_list: {group_list} | ValueError: {ValueError}")
+        _logger.error(
+            "check_group_list - username: %s | group_list: %s | ValueError: %s",
+            username,
+            group_list,
+            ValueError
+        )
         return False

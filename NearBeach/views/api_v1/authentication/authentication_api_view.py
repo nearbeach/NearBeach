@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate, login
 from django_otp import match_token
 
-from NearBeach.models import UserGroup
+from NearBeach.models.user import UserGroup
 from NearBeach.serializers.authentication.authentication_serializer import (
     AuthenticationSerializer,
 )
@@ -21,6 +21,7 @@ class AuthenticationView(APIView):
     """Class dealing with user authentication"""
 
     authentication_classes = []  # important for login
+    otp_token = ""
     permission_classes = [AllowAny]
     serializer: AuthenticationSerializer = None
     throttle_classes = [AuthMinuteThrottle, AuthHourThrottle]
@@ -39,7 +40,10 @@ class AuthenticationView(APIView):
 
         if email_device.exists():
             devices.append("email")
-            self._generate_email_token(user)
+
+            # If user has not supplied a token - we'll generate one
+            if self.otp_token == "":
+                self._generate_email_token(user)
 
         return devices
 
@@ -54,9 +58,7 @@ class AuthenticationView(APIView):
 
     def _handle_two_factor(self, request, user):
         """Handle the Two Factor verification and login request."""
-        otp_token = self.serializer.validated_data["otp_token"]
-
-        device = match_token(user, otp_token)
+        device = match_token(user, self.otp_token)
         if device is None:
             return Response(
                 data={"status": LoginStatusEnum.FAILURE},
@@ -120,6 +122,7 @@ class AuthenticationView(APIView):
             )
 
         # Check to see if the user has a device
+        self.otp_token = self.serializer.validated_data["otp_token"]
         devices = self._check_user_two_factor_devices(user)
 
         # User has not set up 2FA - log user in

@@ -107,7 +107,3 @@ watch(statusModel, (new_value) => {
 		v-model="statusModel"
 	/>
 </template>
-
-<style scoped>
-
-</style>

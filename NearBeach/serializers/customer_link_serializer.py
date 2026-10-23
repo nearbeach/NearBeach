@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import (
-    Customer,
-)
+from NearBeach.models.customer import Customer
 
 
 class CustomerLinkSerializer(serializers.ModelSerializer):

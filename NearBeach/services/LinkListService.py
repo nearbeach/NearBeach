@@ -1,10 +1,8 @@
 from typing import Dict, Tuple, Union
 from rest_framework import status
 
-from NearBeach.models import (
-    ObjectAssignment,
-    KanbanCard,
-)
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
+from NearBeach.models.kanban_board.kanban_card import KanbanCard
 from django.db.models import Q, F, Value
 from django.utils import timezone
 
@@ -41,13 +39,13 @@ class LinkListService(ObjectServiceAbstraction):
             setattr(
                 object_assignment,
                 "meta_object_title",
-                getattr(single_object, "title"),
+                single_object.title,
             )
 
             setattr(
                 object_assignment,
                 "meta_object_status",
-                getattr(single_object, "status"),
+                single_object.status.status,
             )
 
         return object_assignment
@@ -62,7 +60,7 @@ class LinkListService(ObjectServiceAbstraction):
         object_relation = serializer.validated_data["object_relation"]
 
         # Check to make sure the object_id exists
-        if not object_type in list(self.object_dict):
+        if object_type not in list(self.object_dict):
             return "Object Type not in system", status.HTTP_400_BAD_REQUEST
 
         # We have the object type
@@ -273,12 +271,12 @@ class LinkListService(ObjectServiceAbstraction):
                 pk=object_assignment_id,
             ) &
             Q(
-                # The object could be in its natural field, or the meta field
+                # The object could be in its natural field or the meta-field
                 Q(
                     **{self.destination + "_id": self.location_id},
                 ) |
                 Q(
-                    meta_object=self.location_id,
+                    meta_object=int(self.location_id),
                 )
             )
         )
@@ -291,7 +289,7 @@ class LinkListService(ObjectServiceAbstraction):
         object_relation = serializer.validated_data["object_relation"]
 
         # Check to make sure the object_id exists
-        if not object_type in list(self.object_dict):
+        if object_type not in list(self.object_dict):
             return "Object Type not in system", status.HTTP_400_BAD_REQUEST
 
         # Get single object

@@ -1,9 +1,7 @@
 from typing import Dict, Tuple, Union
 from rest_framework import status
 from django.utils import timezone
-from NearBeach.models import (
-    ObjectAssignment,
-)
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 from NearBeach.serializers.user_list_serializer import UserListSerializer
 
@@ -51,7 +49,7 @@ class UserService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_list(self, request):
-        pass
+        pass # Method not required in current class
 
     def update(self, request, object_id):
-        pass
+        pass # Method not required in current class

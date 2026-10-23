@@ -24,13 +24,13 @@ const {t} = useI18n({
 });
 
 // Define ref
-let fail_count = 0;
-const username = ref('');
-const password = ref('');
-const otp_token = ref('');
-const error_message = ref('');
+let failCount = 0;
+const usernameModel = ref<string>('');
+const passwordModel = ref<string>('');
+const otpTokenModel = ref<string>('');
+const errorMessage = ref<string>('');
 const buttonState = ref(ObjectStateEnum.NoAction);
-const isLoginPage = ref(true);
+const isLoginPage = ref<boolean>(true);
 
 // Methods
 function ActivateLoginPanel() {
@@ -49,25 +49,25 @@ function ActiveTwoFactorPanel() {
 	buttonState.value = ObjectStateEnum.NoAction;
 }
 
-async function signIn(event: any) {
+async function signIn() {
 	// Check field validation
-	if (username.value === "" || username.value === null || password.value === "" || password.value === null)
-	{
-		error_message.value = t("validation_error_message");
+	if (usernameModel.value === "" || usernameModel.value === null || passwordModel.value === "" || passwordModel.value === null) {
+		errorMessage.value = t("validation_error_message");
 		return;
 	}
 
 	// Set the data we want to send
 	const body = {
-		username: username.value,
-		password: password.value,
-		otp_token: otp_token.value,
+		username: usernameModel.value,
+		password: passwordModel.value,
+		otp_token: otpTokenModel.value,
 	}
 
 	// Tell the user we are logging in
 	buttonState.value = ObjectStateEnum.LoggingIn;
 
-	await fetch(
+	// Attempt the login
+	const response = await fetch(
 		"/api/v1/authentication/",
 		{
 			method: "POST",
@@ -77,38 +77,33 @@ async function signIn(event: any) {
 			},
 			body: JSON.stringify(body),
 		}
-	).then(async (response: Response) => {
-		// Get data
-		const data : { status: string } = await response.json();
+	);
 
-		// Handle the next stage
-		switch (data.status) {
-			case "success":
-				UserLoggedIn();
-				break;
-			default:
-				ActiveTwoFactorPanel();
-				break;
-		}
-	}).catch((error) => {
-		// Increase the fail count
-		fail_count += 1;
+	// Depending on the status code - depends what we do next
+	switch (response.status) {
+		case 200:
+			// Username and Password are correct
+			const data: { status: string } = await response.json();
 
-		switch (error.status) {
-			case 401:
-				error_message.value = fail_count <= 5
-					? t("error_message")
-					: t("error_final_message");
-				username.value = "";
-				password.value = "";
-				otp_token.value = "";
-				ActivateLoginPanel();
-				break;
-			default:
-				error_message.value = error.message;
-				break;
-		}
-	});
+			// Depends on the status - initiates the correct action
+			data.status === "success"
+				? UserLoggedIn()
+				: ActiveTwoFactorPanel();
+			break;
+		case 401:
+			errorMessage.value = failCount <= 5
+				? t("error_message")
+				: t("error_final_message");
+			usernameModel.value = "";
+			passwordModel.value = "";
+			otpTokenModel.value = "";
+			ActivateLoginPanel();
+			break;
+		default:
+			// Something went wrong
+			errorMessage.value = response.statusText;
+			break;
+	}
 }
 
 function UserLoggedIn() {
@@ -124,17 +119,17 @@ function UserLoggedIn() {
 		<LoginPanel
 			v-show="isLoginPage"
 			:buttonState="buttonState"
-			:error-message="error_message"
-			v-model:password="password"
-			v-model:username="username"
+			:error-message="errorMessage"
+			v-model:password="passwordModel"
+			v-model:username="usernameModel"
 			@signIn="signIn"
 		/>
 
 		<TwoFactorPanel
 			v-show="!isLoginPage"
 			:button-state="buttonState"
-			:error-message="error_message"
-			v-model:otp-token="otp_token"
+			:error-message="errorMessage"
+			v-model:otp-token="otpTokenModel"
 			@signIn="signIn"
 		/>
 

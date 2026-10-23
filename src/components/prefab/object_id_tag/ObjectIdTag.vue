@@ -10,7 +10,7 @@ const props = defineProps({
     objectType: {
         required: true,
         type: String,
-        validator: function (value: string): boolean {
+        validator(value: string): boolean {
             return shortObjectType[value] !== undefined;
         },
     },

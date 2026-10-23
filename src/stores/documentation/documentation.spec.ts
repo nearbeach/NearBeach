@@ -8,10 +8,10 @@ describe('Nav - todo', () => {
 		setActivePinia(createPinia());
 	});
 
-    test("Check defaults", async () => {
+    test("Check defaults", () => {
         const documentationStore = useDocumentationStore();
 
         // Expects
-        expect("").toBe("");
+        expect(documentationStore.currentFolderId).toBe(0);
     });
 });

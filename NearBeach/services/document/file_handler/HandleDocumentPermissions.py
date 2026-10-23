@@ -1,4 +1,5 @@
-from NearBeach.models import Document, DocumentPermission
+from NearBeach.models.document.document import Document
+from NearBeach.models.document.document_permission import DocumentPermission
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.services.document.file_handler.GetFileHandler import get_file_handler
 from django.conf import settings

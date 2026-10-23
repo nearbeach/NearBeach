@@ -30,10 +30,10 @@ def get_destination_from_url(url : str) -> str | None:
         # Destination only
         return url[2]
     except ValueError:
-        _logger.error(F"get_destination_from_url: {url} | ValueError: {ValueError}")
+        _logger.error("get_destination_from_url: %s | ValueError: %s", url, ValueError)
         return None
 
-def get_object_from_url(url: str) -> tuple[str | None, int | None]:
+def get_object_from_url(url: str) -> tuple[None, None] | tuple[str, str]:
     """
     Utility function to object from the url
 
@@ -61,6 +61,6 @@ def get_object_from_url(url: str) -> tuple[str | None, int | None]:
         # Destination only
         return url[2], url[3]
     except ValueError:
-        _logger.error(F"get_object_from_url: {url} | ValueError: {ValueError}")
+        _logger.error("get_object_from_url: %s | ValueError: %s", url, ValueError)
         return None, None
 

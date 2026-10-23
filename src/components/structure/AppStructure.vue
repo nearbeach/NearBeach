@@ -8,7 +8,7 @@ import HeaderComponent from "@/components/header/HeaderComponent.vue";
 // Stores
 const navStore = useNavStore();
 
-onMounted(async () => {
+onMounted(() => {
 	// If the user is on mobile, the menu will not appear by default
 	if (window.innerWidth > 1280) {
 		navStore.toggleNav();

@@ -51,7 +51,7 @@ const permissionStore = usePermissionStore();
 // Define Functions
 function canUserCreate(object: string) {
 	// Get potential value
-	let item_results: number | string = permissionStore.maximumPermissions[
+	const item_results: number | string = permissionStore.maximumPermissions[
 		object as keyof typeof permissionStore.maximumPermissions
 		];
 

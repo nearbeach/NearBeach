@@ -81,6 +81,7 @@ function getIcon(description: string | null, urlLocation: string | null) {
 				<p>
 					<a
 						target="_blank"
+						rel="noopener noreferrer"
 						:href="`/private/${item.key}/`"
 					>
 						{{ item.description }}

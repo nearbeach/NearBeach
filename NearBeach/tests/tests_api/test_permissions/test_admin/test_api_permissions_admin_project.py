@@ -120,7 +120,6 @@ class ApiAdminPermissionTests(BaseApiClass):
                 "POST",
             ),
 
-
             #########
             # DELETE
             #########
@@ -143,6 +142,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest("/api/v1/project/1/documents/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/2/documents/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/3/documents/", {}, 404, "GET"),
+
             #########
             # CREATE
             #########
@@ -173,6 +173,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 404,
                 "POST",
             ),
+
             #########
             # UPDATE
             #########
@@ -301,7 +302,6 @@ class ApiAdminPermissionTests(BaseApiClass):
                 404,
                 "DELETE"
             ),
-            # TODO - Insert folders/documents/links etc into fixture so we can test this
         ]
 
         self._run_test_array(data_list)
@@ -485,12 +485,65 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             # UPDATE
             #########
-            # TODO - Add in notes into the fixture and write tests against this
-
+            self.URLTest(
+                "/api/v1/project/1/notes/2/",
+                {
+                    "note": "Hello World",
+                },
+                200,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/notes/3/",
+                {
+                    "note": "Hello World",
+                },
+                200,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/1/notes/3/",
+                {
+                    "note": "Hello World",
+                },
+                404,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/notes/2/",
+                {
+                    "note": "Hello World",
+                },
+                404,
+                "PATCH",
+            ),
             #########
             # DELETE
             #########
-            # TODO - Add in notes into the fixture and write tests against this
+            self.URLTest(
+                "/api/v1/project/1/notes/2/",
+                {},
+                204,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/notes/3/",
+                {},
+                204,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/1/notes/3/",
+                {},
+                404,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/notes/2/",
+                {},
+                404,
+                "DELETE",
+            ),
         ]
 
         self._run_test_array(data_list)
@@ -536,7 +589,30 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             # DELETE
             #########
-            # TODO - Create fixture where these are already assigned
+            self.URLTest(
+                "/api/v1/project/1/organisation/",
+                {},
+                204,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/organisation/",
+                {},
+                204,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/1/organisation/2/",
+                {},
+                404,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/organisation/4/",
+                {},
+                404,
+                "DELETE",
+            ),
         ]
 
         self._run_test_array(data_list)

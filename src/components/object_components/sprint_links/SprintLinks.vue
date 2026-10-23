@@ -157,7 +157,7 @@ async function loadData() {
 
 function openModal() {
 	// Get start date
-	let date = new Date();
+	const date = new Date();
 	const start_date = date.toISOString().split("T")[0] ?? "";
 	sprintStartDateModel.value = start_date;
 

@@ -8,7 +8,7 @@ describe('Nav - check "toggleNav" action works', () => {
 		setActivePinia(createPinia());
 	});
 
-    test("Check defaults", async () => {
+    test("Check defaults", () => {
         const objectStore = useObjectStore();
 
         // Expects

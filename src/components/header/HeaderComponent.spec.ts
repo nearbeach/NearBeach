@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
-import HeaderComponent from "./HeaderComponent.vue";
+import {HeaderComponent} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
@@ -9,11 +9,11 @@ import { useNavStore } from "@/stores/nav/nav.ts";
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes,
+  routes,
 });
 
 describe("HeaderComponent", () => {
-  test("mounting component", async () => {
+  test("mounting component", () => {
     // Header component exists
     expect(HeaderComponent).toBeTruthy();
   });
@@ -97,7 +97,7 @@ describe("HeaderComponent - toggle Menu", () => {
 });
 
 describe("HeaderComponent - A11Y", () => {
-  test("Hidden Visually to be in the document", async () => {
+  test("Hidden Visually to be in the document", () => {
     // Mount the wrapper
     const wrapper = mount(HeaderComponent, {
       global: {

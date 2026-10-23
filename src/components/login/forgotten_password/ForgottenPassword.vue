@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import LoginImage from "../login_image/LoginImage.vue"
-import ForgottenPasswordPanel from "./forgotten_password_panel/ForgottenPasswordPanel.vue"
+import {LoginImage} from "../login_image"
+import {ForgottenPasswordPanel} from "./forgotten_password_panel"
 import PasswordResetDone from "./password_reset_done/PasswordResetDone.vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
@@ -20,7 +20,7 @@ async function submitPasswordReset(): Promise<void> {
 	}
 
 	await fetch(
-		`/api/v1/authentication/forgotten-password/`,
+		"/api/v1/authentication/forgotten-password/",
 		{
 			method: "POST",
 			headers: {

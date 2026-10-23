@@ -57,7 +57,7 @@ onMounted(() => {
 });
 
 // Define functions
-async function createObjectLink() {
+function createObjectLink() : void {
 	// Escape conditions
 	if (objectSelectorModel.value === null || objectSelectorModel.value === "") {
 		// Nothing to do

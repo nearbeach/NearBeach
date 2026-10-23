@@ -4,7 +4,8 @@ from django.middleware.csrf import get_token
 from django.test import Client, RequestFactory
 from playwright.sync_api import Page
 
-from NearBeach.models import Group, ListOfProjectStatus, PermissionSet, UserGroup
+from NearBeach.models.user import Group, PermissionSet, UserGroup
+from NearBeach.models.project import ListOfProjectStatus
 from NearBeach.utils.enums.permission_enums import PermissionLevel
 
 

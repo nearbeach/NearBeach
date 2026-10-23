@@ -8,11 +8,6 @@ import type {GroupInterface} from "@/utils/interfaces/stores/GroupInterface.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {WlkRenderErrorMessage} from "whelk-ui";
 
-// DEFINE EMITS
-const emit = defineEmits([
-	'removeGroup',
-]);
-
 // Define stores
 const objectStore = useObjectStore();
 const objectMetaDataStore = useObjectMetaDataStore();

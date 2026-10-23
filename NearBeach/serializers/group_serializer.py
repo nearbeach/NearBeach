@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from NearBeach.models import (
-    Group,
-)
+from NearBeach.models.user import Group
 from NearBeach.serializers.parent_group_serializer import ParentGroupSerializer
 
 

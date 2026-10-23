@@ -2,7 +2,7 @@ from typing import Dict, Tuple, Union
 from django.utils import timezone
 
 from rest_framework import status
-from NearBeach.models import Folder
+from NearBeach.models.document.folder import Folder
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
 from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
 
@@ -32,7 +32,6 @@ class FolderService(ObjectServiceAbstraction):
         # Check parent folder
         folder_submit.save()
 
-        # return data
         serializer = FolderSerializer(
             folder_submit,
         )
@@ -61,7 +60,7 @@ class FolderService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_list(self, request):
-        pass
+        pass # Method not required in current class
 
     def update(self, request, folder_id) -> Tuple[Union[Dict, str], int]:
         """Method to update a folder"""
@@ -82,7 +81,6 @@ class FolderService(ObjectServiceAbstraction):
         description = serializer.validated_data['description']
         parent_folder = serializer.validated_data['parent_folder']
 
-        # 'true' if True else 'false'
         folder.change_user = request.user
         folder.date_modified = datetime.datetime.now()
         folder.description = folder.description if description is None else description

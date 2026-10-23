@@ -1,0 +1,1 @@
+export { default as PasswordResetPanel } from './PasswordResetPanel.vue';

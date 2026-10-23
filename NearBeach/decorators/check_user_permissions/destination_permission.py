@@ -3,7 +3,7 @@ from functools import wraps
 from django.db.models import Max
 from rest_framework.exceptions import PermissionDenied
 
-from NearBeach.models import UserGroup
+from NearBeach.models.user import UserGroup
 from NearBeach.utils.api.get_destination import get_destination_from_url
 from NearBeach.utils.api.object_to_permission_set_mapping import get_object_permission_set
 
