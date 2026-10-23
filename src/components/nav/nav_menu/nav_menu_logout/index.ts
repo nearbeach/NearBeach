@@ -1,0 +1,1 @@
+export { default as NavMenuLogout } from "./NavMenuLogout.vue";
