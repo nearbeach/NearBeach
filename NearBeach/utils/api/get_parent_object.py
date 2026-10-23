@@ -49,5 +49,10 @@ def get_parent_object(destination: str, location_id: int) -> tuple[str | None, i
         # Return the parent destination and parent id
         return parent_destination, parent_object.pk
     except ImportError:
-        _logger.error(F"get_parent_object: Destination {destination} | Location Id: {location_id} | ImportError: {ImportError}")
+        _logger.error(
+            "get_parent_object: Destination %s | Location Id: %s | ImportError: %s",
+            destination,
+            location_id,
+            ImportError
+        )
         return None, None

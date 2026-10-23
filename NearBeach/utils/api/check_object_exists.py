@@ -39,5 +39,10 @@ def check_object_exists(destination: str, location_id: int) -> bool:
         # If there is exactly one object, the object exists
         return len(nb_object) == 1
     except KeyError:
-        _logger.error(F"check_object_exists: unknown destination: {destination} | unknown location {location_id} | KeyError: {KeyError}")
+        _logger.error(
+            "check_object_exists: unknown destination: %s | unknown location %s | KeyError: %s",
+            destination,
+            location_id,
+            KeyError
+        )
         return False
