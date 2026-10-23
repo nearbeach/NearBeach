@@ -47,7 +47,7 @@ export const usePermissionStore = defineStore('permissions', {
             let permission_result = 0;
             this.permissionData.forEach((item: PermissionDataInterface) => {
                 //field as keyof typeof someObj
-                let item_results: number | string = item[field as keyof typeof item];
+                const item_results: number | string = item[field as keyof typeof item];
                 if (typeof (item_results) !== "number") {
                     // Early return
                     return permission_result;

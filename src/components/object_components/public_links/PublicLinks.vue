@@ -125,7 +125,7 @@ async function loadData() {
 
 async function updateActive(data: {id: string, index: number}) {
     // Get copy of data
-    let public_link_row = publicLinks.value[data.index];
+    const public_link_row = publicLinks.value[data.index];
 
     // Checks and balances
     if (public_link_row === undefined || public_link_row === null) {
