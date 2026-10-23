@@ -18,9 +18,9 @@ export default defineConfig({
         coverage: {
             enabled: true,
             exclude: [
-                `NearBeach/static/**/*`,
-                `venv/**/*`,
-                `node_modules/**/*`
+                'NearBeach/static/**/*',
+                'venv/**/*',
+                'node_modules/**/*'
             ],
             include: [
                 'src/js/components/**/*.vue',
@@ -32,11 +32,11 @@ export default defineConfig({
         },
         environment: "jsdom",
         exclude: [
-            `./src/js/components.js`,
-            `./src/js/composables/**/*`,
+            './src/js/components.js',
+            './src/js/composables/**/*',
         ],
         include: [
-            `./tests/unit/**/*.unit.js`,
+            './tests/unit/**/*.unit.js',
         ],
         minThreads: 2,
         maxThreads: 5

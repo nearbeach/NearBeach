@@ -57,7 +57,7 @@ async function submitPasswordReset(): Promise<void> {
 
 	try {
 		await fetch(
-			`/api/v1/authentication/reset-password/`,
+			"/api/v1/authentication/reset-password/",
 			{
 				method: "POST",
 				headers: {

@@ -20,7 +20,7 @@ async function submitPasswordReset(): Promise<void> {
 	}
 
 	await fetch(
-		`/api/v1/authentication/forgotten-password/`,
+		"/api/v1/authentication/forgotten-password/",
 		{
 			method: "POST",
 			headers: {
