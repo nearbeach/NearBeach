@@ -9,7 +9,7 @@ export const useErrorStore = defineStore("error", {
 		};
 	},
 	actions: {
-		setError(error: any | unknown) {
+		setError(error: unknown | Error) {
 			if (error instanceof Error) {
 				this.message = error.message;
 			} else {

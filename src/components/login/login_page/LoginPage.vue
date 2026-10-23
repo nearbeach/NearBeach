@@ -49,7 +49,7 @@ function ActiveTwoFactorPanel() {
 	buttonState.value = ObjectStateEnum.NoAction;
 }
 
-async function signIn(event: any) {
+async function signIn() {
 	// Check field validation
 	if (username.value === "" || username.value === null || password.value === "" || password.value === null)
 	{
