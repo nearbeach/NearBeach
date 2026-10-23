@@ -2,7 +2,7 @@ from typing import Dict, Tuple, Union
 from rest_framework import status
 from NearBeach.models.misc.note import ObjectNote
 from NearBeach.models.kanban_board.kanban_card import KanbanCard
-from django.db.models import F, Value, Case, When
+from django.db.models import F, Value, Case, When, QuerySet
 from django.utils import timezone
 
 from NearBeach.serializers.object_data.note_serializer import NoteSerializer
@@ -11,6 +11,14 @@ from NearBeach.services.abstraction.object_services_abstraction import ObjectSer
 
 class NoteService(ObjectServiceAbstraction):
     """Service to help create, read, update and delete note objects"""
+    @staticmethod
+    def _check_user_permission(request, object_notes: QuerySet[ObjectNote]):
+        object_note = object_notes.first()
+        if object_note is None:
+            return False
+
+        return object_note.change_user == request.user or request.user.is_superuser
+
     def create(self, request) -> Tuple[Union[Dict, str], int]:
         serializer = NoteSerializer(data=request.data)
         if not serializer.is_valid():
@@ -80,6 +88,9 @@ class NoteService(ObjectServiceAbstraction):
         if len(object_note) == 0:
             return "Object note does not exist", status.HTTP_400_BAD_REQUEST
 
+        if not self._check_user_permission(request, object_note):
+            return "User does not have permission to delete this note", status.HTTP_400_BAD_REQUEST
+
         # Soft delete the data
         object_note.update(
             is_deleted=True,
@@ -124,21 +135,24 @@ class NoteService(ObjectServiceAbstraction):
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Check object exists
-        object_note = ObjectNote.objects.get(
+        object_note = ObjectNote.objects.filter(
             pk=pk,
             is_deleted=False,
             **{self.destination: self.location_id},
         )
-        if object_note is None:
+        if len(object_note) == 0:
             return "Note object does not exist", status.HTTP_400_BAD_REQUEST
 
-        # TODO - Limit the ability to edit to administrators OR Author of note
+        if not self._check_user_permission(request, object_note):
+            return "User does not have permission to delete this note", status.HTTP_400_BAD_REQUEST
+
 
         # Update
-        object_note.change_user = request.user
-        object_note.date_modified = timezone.now()
-        object_note.note = serializer.data["note"]
-        object_note.save()
+        object_note.update(
+            change_user = request.user,
+            date_modified = timezone.now(),
+            note = serializer.data["note"],
+        )
 
         # Serialize
         serializer = NoteSerializer(object_note)
