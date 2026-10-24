@@ -30,7 +30,7 @@ class ProjectService(ObjectServiceAbstraction):
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Check that there are groups
-        group_list = serializer.validated_data["group_list"]
+        group_list = serializer.validated_data.get("group_list", [])
         if not check_group_list(request.user, group_list):
             return "No Access to groups provided", status.HTTP_400_BAD_REQUEST
 
