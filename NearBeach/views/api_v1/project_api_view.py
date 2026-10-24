@@ -45,6 +45,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         detail=True,
         url_path="customer",
+        pagination_class=None,
     )
     def customer(self, request, pk, *args, **kwargs) -> Response:
         customer_service = CustomerLinkService(destination="project", location_id=pk)
@@ -217,7 +218,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @object_permission(min_permission_level=1)
-    @action(methods=["GET"], detail=True, url_path="link_list")
+    @action(methods=["GET"], detail=True, url_path="link_list", pagination_class=None)
     def link_list(self, _, pk, *args, **kwargs) -> Response:
         link_list_service = LinkListService(destination="project", location_id=pk)
         data, http_status = link_list_service.get_list(_)
@@ -281,6 +282,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         detail=True,
         url_path="notes",
+        pagination_class=None,
     )
     def notes(self, request, pk, *args, **kwargs) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
@@ -388,6 +390,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         methods=["GET"],
         detail=True,
         url_path="public_link",
+        pagination_class=None,
     )
     def public_link(self, request, pk, *args, **kwargs):
         public_link_service = PublicLinkService(destination="project", location_id=pk)
@@ -450,7 +453,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(
         methods=["GET"],
         detail=True,
-        url_path="sprint"
+        url_path="sprint",
+        pagination_class=None,
     )
     def sprint(self, request, pk, *args, **kwargs):
         sprint_link_service = SprintLinkService(
