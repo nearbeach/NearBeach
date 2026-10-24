@@ -1,4 +1,4 @@
-# TODO - Test two factor authentication (how? Look this up)
+# Two-factor authentication is covered in test_api_login_two_factor.py
 
 from NearBeach.tests.utils.BaseApiClass import BaseApiClass
 
