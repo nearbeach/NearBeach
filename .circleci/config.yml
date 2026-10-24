@@ -25,7 +25,7 @@ jobs:
           command: |
             . venv/bin/activate
             CI=true coverage run --branch \
-              --omit='venv/*,NearBeach/tests/*,NearBeach/migrations/*,*/__init__.py,manage.py,settings.py,NearBeach/admin.py,NearBeach/apps.py,local/*,NearBeach/models/abstraction/*,NearBeach/serializers/abstraction/*,NearBeach/services/abstraction/*' \
+              --omit='venv/*,NearBeach/tests/*,NearBeach/migrations/*,*/__init__.py,manage.py,settings.py,NearBeach/admin.py,NearBeach/apps.py,local/*,NearBeach/models/abstraction/*,NearBeach/serializers/abstraction/*,NearBeach/services/abstraction/*,e2e/*' \
               manage.py test
             coverage report
             coverage html
