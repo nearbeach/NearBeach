@@ -96,3 +96,66 @@ class ProjectBadInputTests(BaseApiClass):
             {"title": "x", "start_date": "2026-01-01T00:00:00Z", "end_date": "2026-02-01T00:00:00Z"},
         )
         self.assertEqual(response.status_code, 201)
+
+    # ---------- references to things that do not exist ----------
+    def test_public_link_update_needs_is_active(self):
+        url = f"{PROJECT_URL}public_link/3d7346c4-05b6-41df-816a-eff814d9bbd0/"
+
+        missing = self._request("PATCH", url, {})
+        self.assertEqual(missing.status_code, 400)
+        self.assertIn("is_active", missing.data)
+
+        self.assertEqual(self._request("PATCH", url, {"is_active": False}).status_code, 200)
+
+    def test_customer_link_to_unknown_customer_is_rejected(self):
+        response = self._request("POST", f"{PROJECT_URL}customer/", {"id": 99999})
+        self.assertEqual(response.status_code, 400)
+
+    def test_customer_link_to_known_customer_works(self):
+        response = self._request("POST", f"{PROJECT_URL}customer/", {"id": 1})
+        self.assertEqual(response.status_code, 201)
+
+    def test_organisation_link_to_unknown_organisation_is_rejected(self):
+        response = self._request("POST", f"{PROJECT_URL}organisation/", {"id": 99999})
+        self.assertEqual(response.status_code, 400)
+
+    def test_link_list_create_with_unknown_object_is_rejected(self):
+        response = self._request(
+            "POST",
+            f"{PROJECT_URL}link_list/",
+            {"object_type": "task", "object_id": 99999, "object_relation": "relates"},
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_link_list_update_with_unknown_references_is_rejected(self):
+        created = self._request(
+            "POST",
+            f"{PROJECT_URL}link_list/",
+            {"object_type": "task", "object_id": 1, "object_relation": "relates"},
+        )
+        self.assertEqual(created.status_code, 201)
+        link_id = created.data["object_assignment_id"]
+
+        # The link exists - but the object it is being pointed at does not
+        unknown_object = self._request(
+            "PATCH",
+            f"{PROJECT_URL}link_list/{link_id}/",
+            {"object_type": "task", "object_id": 99999, "object_relation": "relates"},
+        )
+        self.assertEqual(unknown_object.status_code, 400)
+
+        # The link itself does not exist
+        unknown_link = self._request(
+            "PATCH",
+            f"{PROJECT_URL}link_list/99999/",
+            {"object_type": "task", "object_id": 1, "object_relation": "relates"},
+        )
+        self.assertEqual(unknown_link.status_code, 400)
+
+        # And the happy path still works
+        updated = self._request(
+            "PATCH",
+            f"{PROJECT_URL}link_list/{link_id}/",
+            {"object_type": "task", "object_id": 1, "object_relation": "relates"},
+        )
+        self.assertEqual(updated.status_code, 200)

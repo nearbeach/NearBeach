@@ -74,7 +74,9 @@ class LinkListService(ObjectServiceAbstraction):
 
         # We have the object type
         # We have the object id
-        single_object = self.object_dict[object_type].get(pk=serializer.validated_data["object_id"])
+        single_object = self.object_dict[object_type].filter(pk=serializer.validated_data["object_id"]).first()
+        if single_object is None:
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
         submit_object_assignment = ObjectAssignment(
             change_user=request.user,
@@ -274,7 +276,7 @@ class LinkListService(ObjectServiceAbstraction):
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Fetch object assignment row
-        object_assignment = ObjectAssignment.objects.get(
+        object_assignment = ObjectAssignment.objects.filter(
             Q(
                 is_deleted=False,
                 pk=object_assignment_id,
@@ -288,7 +290,7 @@ class LinkListService(ObjectServiceAbstraction):
                     meta_object=int(self.location_id),
                 )
             )
-        )
+        ).first()
         if object_assignment is None:
             return "Object Assignment does not exist", status.HTTP_400_BAD_REQUEST
 
@@ -302,7 +304,10 @@ class LinkListService(ObjectServiceAbstraction):
             return "Object Type not in system", status.HTTP_400_BAD_REQUEST
 
         # Get single object
-        single_object = self.object_dict[object_type].get(pk=object_id)
+        single_object = self.object_dict[object_type].filter(pk=object_id).first()
+        if single_object is None:
+            return "Object does not exist", status.HTTP_400_BAD_REQUEST
+
         link_relationship = RELATION_DICT[object_relation]
         parent_link = self._get_parent_link(serializer)
 

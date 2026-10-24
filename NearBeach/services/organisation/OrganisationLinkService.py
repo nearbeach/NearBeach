@@ -33,9 +33,13 @@ class OrganisationLinkService(ObjectServiceAbstraction):
             return "No object exists", status.HTTP_400_BAD_REQUEST
 
         # Get organisation
-        organisation_result = Organisation.objects.get(
+        organisation_result = Organisation.objects.filter(
+            is_deleted=False,
             pk=serializer.validated_data["id"],
-        )
+        ).first()
+        if organisation_result is None:
+            return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
+
         update_object.update(
             organisation=organisation_result,
         )

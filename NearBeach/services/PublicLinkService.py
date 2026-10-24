@@ -66,6 +66,10 @@ class PublicLinkService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
+        # The serializer keeps this optional (it is read-only on create) - but an update needs it
+        if "is_active" not in serializer.validated_data:
+            return {"is_active": ["This field is required."]}, status.HTTP_400_BAD_REQUEST
+
         update_public_link = PublicLink.objects.filter(
             is_deleted=False,
             **{F"{self.destination}_id": self.location_id},

@@ -36,6 +36,10 @@ class CustomerLinkService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
+        # Check the customer exists
+        if not Customer.objects.filter(pk=serializer.validated_data["id"], is_deleted=False).exists():
+            return "Customer does not exist", status.HTTP_400_BAD_REQUEST
+
         # Add customer to object
         submit_object_assignment = ObjectAssignment(
             customer_id=serializer.validated_data['id'],
