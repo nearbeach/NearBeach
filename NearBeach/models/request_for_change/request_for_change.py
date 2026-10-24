@@ -73,7 +73,7 @@ class RequestForChange(CommonInfo):
         default="",
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.title)
 
     class Meta:
@@ -117,7 +117,7 @@ class RequestForChangeGroupApproval(CommonInfo):
         default=RequestForChangeApproval.WAITING,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.approval)
 
     class Meta:

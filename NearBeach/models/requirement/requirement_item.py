@@ -24,14 +24,15 @@ class ListOfRequirementItemStatus(CommonInfo):
     sort_order = models.PositiveIntegerField(
         default=0,
     )
-    change_user = models.ForeignKey(
+    # Nullable here, unlike CommonInfo, so the override is intentional
+    change_user = models.ForeignKey(  # type: ignore[assignment]
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
         null=True,
     )
-    creation_user = models.ForeignKey(
+    creation_user = models.ForeignKey(  # type: ignore[assignment]
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_creation_user",
@@ -53,14 +54,15 @@ class ListOfRequirementItemType(CommonInfo):
     type = models.CharField(
         max_length=100,
     )
-    change_user = models.ForeignKey(
+    # Nullable here, unlike CommonInfo, so the override is intentional
+    change_user = models.ForeignKey(  # type: ignore[assignment]
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
         null=True,
     )
-    creation_user = models.ForeignKey(
+    creation_user = models.ForeignKey(  # type: ignore[assignment]
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_creation_user",
@@ -101,7 +103,7 @@ class RequirementItem(CommonInfo):
         default=ObjectPriority.NORMAL,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.title)
 
     class Meta:

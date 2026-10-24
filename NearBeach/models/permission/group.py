@@ -1,5 +1,7 @@
 """Module providing group tables for NearBeach"""
 
+from typing import Tuple
+
 from django.db import models
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
@@ -19,11 +21,11 @@ class Group(CommonInfo):
         blank=True,
     )
 
-    def natural_key(self):
+    def natural_key(self) -> Tuple[int, str]:
         """Method returns natural key for group"""
         return self.id, self.name
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.name)
 
     class Meta:

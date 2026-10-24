@@ -20,7 +20,7 @@ class Organisation(CommonInfo):
         blank=True,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.name)
 
     class Meta:

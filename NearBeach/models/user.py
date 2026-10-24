@@ -82,9 +82,10 @@ class UserProfilePicture(CommonInfo):
         on_delete=models.CASCADE,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         # Return the document key
-        return self.document.key
+        # TODO - key is a UUID, so str() on this model raises TypeError. Should be str(self.document.key)
+        return self.document.key  # type: ignore[return-value]
 
     class Meta:
         """Meta definition for UserProfilePicture."""

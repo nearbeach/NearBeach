@@ -18,7 +18,7 @@ load_dotenv()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-LOGGING = {}
+LOGGING: dict = {}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -119,13 +119,13 @@ THROTTLE_AUTH_MINUTE = '10/minute'
 THROTTLE_AUTH_HOUR = '100/hour'
 THROTTLE_USER_MINUTE = '100/minute'
 if "THROTTLE_AUTH_MINUTE" in os.environ:
-    THROTTLE_AUTH_MINUTE = os.getenv("THROTTLE_AUTH_MINUTE")
+    THROTTLE_AUTH_MINUTE = os.environ["THROTTLE_AUTH_MINUTE"]
 
 if "THROTTLE_AUTH_HOUR" in os.environ:
-    THROTTLE_AUTH_HOUR = os.getenv("THROTTLE_AUTH_HOUR")
+    THROTTLE_AUTH_HOUR = os.environ["THROTTLE_AUTH_HOUR"]
 
 if "THROTTLE_USER_MINUTE" in os.environ:
-    THROTTLE_USER_MINUTE = os.getenv("THROTTLE_USER_MINUTE")
+    THROTTLE_USER_MINUTE = os.environ["THROTTLE_USER_MINUTE"]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -192,16 +192,16 @@ PRIVATE_MEDIA_URL = '/private/'
 # Check to see if we are importing Azure Credentials
 if "CLOUDFLARE_ACCOUNT_ID" in os.environ:
     # Get the cloudflare account id
-    CLOUDFLARE_ACCOUNT_ID = os.getenv("CLOUDFLARE_ACCOUNT_ID")
+    CLOUDFLARE_ACCOUNT_ID = os.environ["CLOUDFLARE_ACCOUNT_ID"]
 
     # Setup the variables for the django-storages
-    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_ACCESS_KEY_ID: str | None = os.getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
     AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
     AWS_DEFAULT_ACL = 'public-read'
     AWS_S3_REGION_NAME = 'auto'
     AWS_LOCATION = F"{version}"
-    AWS_S3_ENDPOINT_URL = F"https://{CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
+    AWS_S3_ENDPOINT_URL: str | None = F"https://{CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
 
     # To use a selfsigned cert you can put the path to the cert bundle
     # here e.g. AWS_VERIFY_TLS = path/to/cert/bundle.pem
@@ -225,14 +225,14 @@ STATICFILES_DIRS = [
 
 # Check to see if we are importing AWS credentials
 if "AWS_ACCESS_KEY_ID" in os.environ and "CLOUDFLARE_ACCOUNT_ID" not in os.environ:
-    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
     AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
     AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
 
 # Check to see if we are importing Azure Credentials
 if "AZURE_STORAGE_CONNECTION_STRING" in os.environ:
-    AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    AZURE_STORAGE_CONNECTION_STRING = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
     AZURE_STORAGE_CONTAINER_NAME = os.getenv("AZURE_STORAGE_CONTAINER_NAME")
 
 MEDIA_URL = '/media/'
@@ -240,12 +240,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 MAX_FILE_SIZE_UPLOAD = 104857600
 if "MAX_FILE_SIZE_UPLOAD" in os.environ:
-    MAX_FILE_SIZE_UPLOAD = os.getenv("MAX_FILE_SIZE_UPLOAD")
+    # Compared against the upload size in bytes, so it has to be an int
+    MAX_FILE_SIZE_UPLOAD = int(os.environ["MAX_FILE_SIZE_UPLOAD"])
 
 # If user wants to use a custom auth user model
 # Requested in Issue-533
 if "OVERRIDE_AUTH_USER_MODEL" in os.environ:
-    AUTH_USER_MODEL = os.getenv("OVERRIDE_AUTH_USER_MODEL")
+    AUTH_USER_MODEL = os.environ["OVERRIDE_AUTH_USER_MODEL"]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = False

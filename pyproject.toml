@@ -73,17 +73,15 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = [
   "NearBeach.decorators.*",
-  "NearBeach.models.*",
   "NearBeach.serializers.*",
   "NearBeach.utils.*",
   "NearBeach.views.*",
-  "local.*",
 ]
 ignore_errors = true
 
 # Modules that are fully typed - raise strictness here as each area is cleaned up
 [[tool.mypy.overrides]]
-module = ["NearBeach.services.*"]
+module = ["NearBeach.models.*", "NearBeach.services.*"]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
 

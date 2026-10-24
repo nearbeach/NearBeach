@@ -13,12 +13,12 @@ from django.http import FileResponse
 
 class AzureFileHandler(FileHandler):
     def __init__(self, local_settings: LazySettings) -> None:
-        # get_file_handler only picks this handler when Azure is configured, so these are set
-        # (mypy reads their types from local/settings.py, where they are optional)
         # Create the BlobServiceClient object
         self._service_client = BlobServiceClient.from_connection_string(
-            cast(str, local_settings.AZURE_STORAGE_CONNECTION_STRING)
+            local_settings.AZURE_STORAGE_CONNECTION_STRING
         )
+        # get_file_handler only picks this handler when Azure is configured, so the container is set
+        # (mypy reads its type from local/settings.py, where it is optional)
         self._client_name = cast(str, local_settings.AZURE_STORAGE_CONTAINER_NAME)
 
     def fetch(self, document_results: Document) -> FileResponse:

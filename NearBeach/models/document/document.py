@@ -30,7 +30,7 @@ class Document(CommonInfo):
         default=False,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.description)
 
     class Meta:

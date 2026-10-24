@@ -35,7 +35,7 @@ class Folder(
         on_delete=models.CASCADE,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.description)
 
     class Meta:

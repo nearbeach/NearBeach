@@ -22,7 +22,7 @@ class KanbanBoard(
         default="Open",
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.title)
 
     class Meta:
@@ -65,7 +65,7 @@ class KanbanColumn(CommonInfo):
         on_delete=models.CASCADE,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.name)
 
     class Meta:
@@ -86,7 +86,7 @@ class KanbanLevel(CommonInfo):
         on_delete=models.CASCADE,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.name)
 
     class Meta:

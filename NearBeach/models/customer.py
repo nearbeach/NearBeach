@@ -13,14 +13,15 @@ class ListOfTitle(CommonInfo):
 
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=10)
-    change_user = models.ForeignKey(
+    # Nullable here, unlike CommonInfo, so the override is intentional
+    change_user = models.ForeignKey(  # type: ignore[assignment]
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_change_user",
         blank=True,
         null=True,
     )
-    creation_user = models.ForeignKey(
+    creation_user = models.ForeignKey(  # type: ignore[assignment]
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="%(class)s_creation_user",
@@ -28,7 +29,7 @@ class ListOfTitle(CommonInfo):
         null=True,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.title)
 
     class Meta:
@@ -62,7 +63,7 @@ class Customer(CommonInfo):
         blank=True,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(str(self.id) + " - " + self.first_name + " " + self.last_name)
 
     class Meta:

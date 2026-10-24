@@ -49,7 +49,7 @@ class ChangeTask(CommonInfo):
         default=False,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str("$" + str(self.title))
 
     class Meta:

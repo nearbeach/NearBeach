@@ -44,7 +44,7 @@ class Sprint(CommonInfo):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.title)
 
     class Meta:

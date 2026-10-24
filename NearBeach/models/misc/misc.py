@@ -123,7 +123,7 @@ class PublicLink(
         default=True,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.id)
 
     class Meta:
