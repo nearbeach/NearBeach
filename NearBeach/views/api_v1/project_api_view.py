@@ -481,11 +481,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(
         methods=["DELETE"],
         detail=True,
-        url_path=r"sprint/(?P<sprint>[^/.]+)"
+        url_path=r"sprint/(?P<sprint_pk>[^/.]+)"
     )
-    def sprint_delete(self, request, pk, sprint, *args, **kwargs):
+    def sprint_delete(self, request, pk, sprint_pk, *args, **kwargs):
         sprint_link_service = SprintLinkService(destination="project", location_id=pk)
-        data, http_status = sprint_link_service.delete(request, sprint)
+        data, http_status = sprint_link_service.delete(request, sprint_pk)
 
         return Response(
             data=data,

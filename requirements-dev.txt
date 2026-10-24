@@ -9,4 +9,6 @@ pylint
 pylint-django
 djangorestframework-stubs
 boto3-stubs
+schemathesis
 -r ./requirements.txt
+

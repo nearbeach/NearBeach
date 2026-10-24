@@ -1,0 +1,33 @@
+name: API fuzz testing (Schemathesis)
+
+on:
+  pull_request:
+    paths:
+      - "NearBeach/**"
+      - "local/**"
+      - "scripts/run_schemathesis.sh"
+      - "requirements*.txt"
+  workflow_dispatch:
+  schedule:
+    - cron: "0 16 * * 0"   # weekly, with more examples
+
+jobs:
+  schemathesis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Fuzz API as admin and as a restricted user
+        env:
+          SCHEMATHESIS_MAX_EXAMPLES: ${{ github.event_name == 'schedule' && '500' || '50' }}
+        run: |
+          # Start with the checks the API currently passes (no 500s). Once the findings
+          # are fixed, add SCHEMATHESIS_CHECKS=all and remove continue-on-error.
+          scripts/run_schemathesis.sh admin
+          scripts/run_schemathesis.sh read_only
+        continue-on-error: true   # TODO remove once the backlog of 500s is fixed
