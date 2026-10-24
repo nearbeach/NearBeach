@@ -1,6 +1,7 @@
+from NearBeach.api_docs import apply_schema
+from NearBeach.api_docs.api_v1.project_docs import PROJECT_SCHEMA
 from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.services.ProjectService import ProjectService
-from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, JSONParser, FormParser
@@ -21,10 +22,7 @@ from NearBeach.services.UserService import UserService
 from NearBeach.services.sprint.SprintLinkService import SprintLinkService
 
 
-@extend_schema(
-    tags=["Projects"],
-    methods=["GET", "POST", "PATCH", "DELETE"],
-)
+@apply_schema(PROJECT_SCHEMA)
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.filter(is_deleted=False)
     serializer_class = ProjectSerializer
