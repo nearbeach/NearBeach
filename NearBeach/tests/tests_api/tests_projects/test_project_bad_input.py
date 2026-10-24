@@ -5,6 +5,7 @@ Every case here was a server error found by Schemathesis (scripts/run_schemathes
 
 from django.urls import resolve
 
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.tests.utils.BaseApiClass import BaseApiClass
 
 PROJECT_URL = "/api/v1/project/1/"
@@ -159,3 +160,30 @@ class ProjectBadInputTests(BaseApiClass):
             {"object_type": "task", "object_id": 1, "object_relation": "relates"},
         )
         self.assertEqual(updated.status_code, 200)
+
+    # ---------- nothing to add ----------
+    def test_adding_groups_or_users_needs_at_least_one(self):
+        """A form post with the list missing arrives as an empty list - it used to answer 201 having done nothing"""
+        for path in ["groups/", "users/"]:
+            field = "group_list" if path == "groups/" else "user_list"
+            for name, response in {
+                "empty form": self.client.post(PROJECT_URL + path, {}, format="multipart"),
+                "empty json list": self.client.post(PROJECT_URL + path, {field: []}, format="json"),
+                "missing json list": self.client.post(PROJECT_URL + path, {}, format="json"),
+            }.items():
+                with self.subTest(path=path, case=name):
+                    self.assertEqual(response.status_code, 400)
+                    self.assertIn(field, response.data)
+
+    def test_adding_a_group_and_a_user_still_works(self):
+        self.assertEqual(self._request("POST", f"{PROJECT_URL}groups/", {"group_list": [2]}).status_code, 201)
+        self.assertEqual(self._request("POST", f"{PROJECT_URL}users/", {"user_list": [2]}).status_code, 201)
+
+    def test_adding_the_same_group_or_user_twice_does_not_duplicate_it(self):
+        for _ in range(3):
+            self.assertEqual(self._request("POST", f"{PROJECT_URL}groups/", {"group_list": [2]}).status_code, 201)
+            self.assertEqual(self._request("POST", f"{PROJECT_URL}users/", {"user_list": [2]}).status_code, 201)
+
+        assignments = ObjectAssignment.objects.filter(project_id=1, is_deleted=False)
+        self.assertEqual(assignments.filter(group_id=2).count(), 1)
+        self.assertEqual(assignments.filter(assigned_user_id=2).count(), 1)

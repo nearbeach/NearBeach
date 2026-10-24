@@ -20,6 +20,14 @@ class UserService(ObjectServiceAbstraction):
 
         # Loop through all the groups and add to the current object
         for single_user in serializer.validated_data["user_list"]:
+            # Already on the object - adding it again would only create a duplicate row
+            if ObjectAssignment.objects.filter(
+                is_deleted=False,
+                assigned_user_id=single_user.pk,
+                **{F"{self.destination}_id": self.location_id},
+            ).exists():
+                continue
+
             # Construct the object assignment
             submit_object_assignment = ObjectAssignment(
                 assigned_user_id=single_user.pk,

@@ -5,6 +5,8 @@
 #   username  fixture user to authenticate as (default: admin). Run it once per role.
 #
 # Env: SCHEMATHESIS_CHECKS (default not_a_server_error; use 'all' for schema/status conformance too),
+#      SCHEMATHESIS_EXCLUDE_CHECKS (default positive_data_acceptance: the schema can not say 'this id must exist',
+#      so a 400 for an unknown id looks like a valid request being rejected),
 #      SCHEMATHESIS_MAX_EXAMPLES (50), SCHEMATHESIS_SEED (1), SCHEMATHESIS_PASSWORD, PYTHON
 # Needs: pip install -r requirements-dev.txt
 set -euo pipefail
@@ -49,6 +51,7 @@ schemathesis run "$WORK/schema.yml" \
   --url "http://127.0.0.1:$PORT" \
   --auth "$USER_NAME:$PASSWORD" \
   --checks "${SCHEMATHESIS_CHECKS:-not_a_server_error}" \
+  --exclude-checks "${SCHEMATHESIS_EXCLUDE_CHECKS:-positive_data_acceptance}" \
   --exclude-path-regex '^/api/v1/authentication/' \
   --max-examples "${SCHEMATHESIS_MAX_EXAMPLES:-50}" \
   --seed "${SCHEMATHESIS_SEED:-1}" \

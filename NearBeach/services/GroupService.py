@@ -146,6 +146,14 @@ class GroupService(ObjectServiceAbstraction):
 
         # Loop through all the groups and add to the current object
         for single_group in serializer.validated_data["group_list"]:
+            # Already on the object - adding it again would only create a duplicate row
+            if ObjectAssignment.objects.filter(
+                is_deleted=False,
+                group_id=single_group.id,
+                **{F"{self.destination}_id": self.location_id},
+            ).exists():
+                continue
+
             # Construct the object assignment
             submit_object_assignment = ObjectAssignment(
                 group_id=single_group.id,

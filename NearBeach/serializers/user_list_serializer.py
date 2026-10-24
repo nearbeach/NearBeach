@@ -7,6 +7,7 @@ class UserListSerializer(serializers.Serializer):
     user_list = serializers.PrimaryKeyRelatedField(
         required=True,
         many=True,
+        allow_empty=False,  # a form post with no user_list at all arrives as an empty list
         queryset=User.objects.filter(
             is_active=True,
         ),

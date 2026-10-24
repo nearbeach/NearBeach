@@ -7,6 +7,7 @@ class GroupListSerializer(serializers.Serializer):
     group_list = serializers.PrimaryKeyRelatedField(
         required=True,
         many=True,
+        allow_empty=False,  # a form post with no group_list at all arrives as an empty list
         queryset=Group.objects.filter(
             is_deleted=False,
         ),
