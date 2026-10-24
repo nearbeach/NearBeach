@@ -73,6 +73,15 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
                 400,
                 "POST"
             ),
+            # Missing group_list must be a 400, not a 500
+            self.URLTest(
+                "/api/v1/project/",
+                {
+                    "title": "API Project",
+                },
+                400,
+                "POST"
+            ),
             #########
             # DELETE
             #########
