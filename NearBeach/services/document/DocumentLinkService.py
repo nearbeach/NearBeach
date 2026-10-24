@@ -1,19 +1,24 @@
-from typing import Dict, Union, Tuple
 
 from django.db.models import F
 from django.utils import timezone
 from rest_framework import status
+from rest_framework.serializers import Serializer
 
 from NearBeach.models.document.document import Document
 from NearBeach.models.document.document_permission import DocumentPermission
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 
 
 class DocumentLinkService(ObjectServiceAbstraction):
     """Class for handling link crud operations"""
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -69,7 +74,7 @@ class DocumentLinkService(ObjectServiceAbstraction):
         # Return
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, document_id) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, document_id: str) -> ServiceResponse:
         """Method to delete a link"""
         serializer = FolderSerializer(data=request.data)
         if not serializer.is_valid():
@@ -82,7 +87,7 @@ class DocumentLinkService(ObjectServiceAbstraction):
 
         document_permission = DocumentPermission.objects.filter(
             is_deleted=False,
-            document=document_id,
+            document_id=document_id,
             **{F"{self.destination}_id": self.location_id},
         )
 
@@ -105,16 +110,18 @@ class DocumentLinkService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, _):
-        pass # Method not required in current class
+    def get_list(self, _: AuthenticatedRequest) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class
 
-    def update(self, request, document_id) -> Tuple[Union[Dict, str], int]:
+    def update(self, request: AuthenticatedRequest, document_id: str) -> ServiceResponse:
         """Method to update a link"""
-        serializer = DocumentSerializer(data=request.data)
+        serializer: Serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Check folder exists
+        # TODO - Document has no project_id or folder (both live on DocumentPermission), so updating a link
+        #  raises a FieldError, and the response serializes the folder rather than the document
         document = Document.objects.get(
             is_deleted=False,
             pk=document_id,
@@ -129,7 +136,7 @@ class DocumentLinkService(ObjectServiceAbstraction):
         url_location = serializer.validated_data['url_location']
 
         document.description = document.description if description is None else description
-        document.folder = document.folder if folder is None else folder
+        document.folder = document.folder if folder is None else folder  # type: ignore[attr-defined]
         document.url_location = document.url_location if url_location is None else url_location
         document.save()
 

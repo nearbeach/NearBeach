@@ -1,13 +1,18 @@
-from typing import Dict, Tuple, Union
 
 from rest_framework import status
+from rest_framework.serializers import Serializer
 from django.db.models import F
 from NearBeach.models.document.document import Document
 from NearBeach.models.document.document_permission import DocumentPermission
 from NearBeach.models.document.folder import Folder
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.serializers.documentation.file_system_serializer import FileSystemSerializer
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 from django.conf import settings
 from django.utils import timezone
 
@@ -24,12 +29,9 @@ class DocumentService(ObjectServiceAbstraction):
         If it does not exist it will send back
         a simple 0. If it does exist it will send back itself
         """
-        if hasattr(settings, "MAX_UPLOAD_SIZE"):
-            return settings.MAX_UPLOAD_SIZE
+        return getattr(settings, "MAX_UPLOAD_SIZE", 0)
 
-        return 0
-
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         """
         The following function will deal with the uploaded document. It will first;
         1. Check user's permission
@@ -38,7 +40,7 @@ class DocumentService(ObjectServiceAbstraction):
         4. Create a new row in document permission and assign it to the appropriate object
         5. Send back the document information in JSON format
         """
-        serializer = DocumentSerializer(data=request.data)
+        serializer: Serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
@@ -59,13 +61,15 @@ class DocumentService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, document_id) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, document_id: str) -> ServiceResponse:
         """Method for removing document"""
         serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Check to make sure data exists
+        # TODO - Document has no project_id (the link lives on DocumentPermission) and no document_id,
+        #  so deleting an uploaded document raises a FieldError
         document = Document.objects.filter(
             is_deleted=False,
             pk=document_id,
@@ -82,7 +86,7 @@ class DocumentService(ObjectServiceAbstraction):
 
         # Remove the document permission
         DocumentPermission.objects.filter(
-            document_id__in=document.values("document_id"),
+            document_id__in=document.values("document_id"),  # type: ignore[misc]
             **{F"{self.destination}_id": self.location_id},
         ).update(
             is_deleted=True,
@@ -91,7 +95,7 @@ class DocumentService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, _) -> Tuple[Union[Dict, str], int]:
+    def get_list(self, _: AuthenticatedRequest) -> ServiceResponse:
         # Fetch required data
         folder_results = Folder.objects.filter(
             is_deleted=False,
@@ -130,12 +134,14 @@ class DocumentService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, document_id) -> Tuple[Union[Dict, str], int]:
+    def update(self, request: AuthenticatedRequest, document_id: str) -> ServiceResponse:
         serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
-        document = DocumentPermission.objects.get(
+        # TODO - DocumentPermission has no document_key or description, so updating an uploaded document
+        #  raises a FieldError. Probably meant document_id here and document.document.description below
+        document = DocumentPermission.objects.get(  # type: ignore[misc]
             document_key=document_id,
             **{F"{self.destination}_id": self.location_id},
         )
@@ -146,7 +152,7 @@ class DocumentService(ObjectServiceAbstraction):
         description = serializer.validated_data["description"]
         folder = serializer.validated_data["folder"]
 
-        document.description = document.description if description is None else description
+        document.description = document.description if description is None else description  # type: ignore[attr-defined]
         document.folder = document.folder if folder is None else folder
         document.save()
 

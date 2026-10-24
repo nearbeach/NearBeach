@@ -1,4 +1,11 @@
 import shutil
+from typing import Union
+from uuid import UUID
+
+from django.conf import LazySettings
+from django.core.files.uploadedfile import UploadedFile
+
+from NearBeach.models.document.document import Document
 
 from NearBeach.services.document.file_handler.FileHandler import FileHandler
 from pathlib import Path
@@ -6,16 +13,16 @@ from django.http import FileResponse
 
 
 class LocalFileHandler(FileHandler):
-    def __init__(self, local_settings):
+    def __init__(self, local_settings: LazySettings) -> None:
         self.root = Path(local_settings.PRIVATE_MEDIA_ROOT)
 
-    def fetch(self, document_results):
+    def fetch(self, document_results: Document) -> FileResponse:
         # Normal setup - find a document on server and serve
         # Get the Document path information
         file = self.root / str(document_results.document)
         return FileResponse(open(file, 'rb'))
 
-    def upload(self, upload_document, document_results, _):
+    def upload(self, upload_document: UploadedFile, document_results: Document, _: UploadedFile) -> None:
         """
         This function will upload the file and store it in the private folder destination under a subfolder that
         contains the same document_key value.
@@ -34,6 +41,6 @@ class LocalFileHandler(FileHandler):
             for chunk in upload_document.chunks():
                 destination.write(chunk)
 
-    def delete(self, document_key_id):
+    def delete(self, document_key_id: Union[UUID, str]) -> None:
         storage_location = self.root / "private" / str(document_key_id)
         shutil.rmtree(storage_location, ignore_errors=True)

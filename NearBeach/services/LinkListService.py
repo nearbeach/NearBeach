@@ -1,4 +1,5 @@
-from typing import Dict, Tuple, Union
+from typing import Any
+
 from rest_framework import status
 
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
@@ -7,14 +8,20 @@ from django.db.models import Q, F, Value
 from django.utils import timezone
 
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction, OBJECT_STRUCTURE
+from NearBeach.services.abstraction.object_services_abstraction import (
+    OBJECT_STRUCTURE,
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 from NearBeach.utils.dicts.relation_dict import RELATION_DICT
 
 
 class LinkListService(ObjectServiceAbstraction):
     """Service to help list/add/delete object links"""
 
-    def _get_parent_link(self, serializer: LinkSerializer):
+    def _get_parent_link(self, serializer: LinkSerializer) -> str:
         """Uses data to determine the parent object"""
         object_type = serializer.validated_data["object_type"]
 
@@ -29,7 +36,9 @@ class LinkListService(ObjectServiceAbstraction):
             if relationship in ["blocked_by", "sub_object_of", "has_duplicate"] \
             else str(self.destination)
 
-    def _set_meta_object(self, object_assignment: ObjectAssignment, single_object, object_type: str):
+    def _set_meta_object(
+        self, object_assignment: ObjectAssignment, single_object: Any, object_type: str
+    ) -> ObjectAssignment:
         # If object destination is the same as the object type, add the meta_object value
         if self.destination == object_type:
             # We need to set the metaobject
@@ -50,7 +59,7 @@ class LinkListService(ObjectServiceAbstraction):
 
         return object_assignment
 
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         serializer = LinkSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -96,7 +105,7 @@ class LinkListService(ObjectServiceAbstraction):
         # Now get the new data
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, object_id) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, object_id: ObjectId) -> ServiceResponse:
         object_assignment_results = ObjectAssignment.objects.filter(
             is_deleted=False,
             pk=object_id,
@@ -116,7 +125,7 @@ class LinkListService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, _) -> Tuple[Union[Dict, str], int]:
+    def get_list(self, _: AuthenticatedRequest) -> ServiceResponse:
         object_assignment_results = ObjectAssignment.objects.filter(
             Q(
                 is_deleted=False,
@@ -256,7 +265,7 @@ class LinkListService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, object_assignment_id) -> Tuple[Union[Dict, str], int]:
+    def update(self, request: AuthenticatedRequest, object_assignment_id: ObjectId) -> ServiceResponse:
         """Method to update a link"""
         serializer = LinkSerializer(
             data=request.data,

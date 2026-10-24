@@ -1,3 +1,7 @@
+from typing import Any, Dict
+
+from django.db.models import Manager
+
 from NearBeach.models.request_for_change.change_task import ChangeTask
 from NearBeach.models.customer import Customer
 from NearBeach.models.kanban_board.kanban_board import KanbanBoard
@@ -9,7 +13,7 @@ from NearBeach.models.requirement.requirement import Requirement
 from NearBeach.models.requirement.requirement_item import RequirementItem
 from NearBeach.models.task import Task
 
-OBJECT_DICT = {
+OBJECT_DICT: Dict[str, Manager[Any]] = {
     "change_task": ChangeTask.objects,
     "customer": Customer.objects,
     "kanban_board": KanbanBoard.objects,

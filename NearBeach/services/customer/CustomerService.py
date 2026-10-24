@@ -1,11 +1,15 @@
-from typing import Dict, Tuple, Union
 from rest_framework import status
 from rest_framework.serializers import Serializer
 
 from NearBeach.models.customer import Customer
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.serializers.customer_serializer import CustomerSerializer
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 
 
 class CustomerService(ObjectServiceAbstraction):
@@ -25,7 +29,7 @@ class CustomerService(ObjectServiceAbstraction):
 
         return serializer
 
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         serializer = CustomerSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -38,7 +42,7 @@ class CustomerService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, customer_pk: int) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, customer_pk: ObjectId) -> ServiceResponse:
         # TODO - this will change
         customer = Customer.objects.get(pk=customer_pk)
         customer.is_deleted = True
@@ -47,13 +51,13 @@ class CustomerService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, request) -> Tuple[Union[Dict, str], int]:
+    def get_list(self, request: AuthenticatedRequest) -> ServiceResponse:
         serializer = self._get_list()
 
         # Return list
         return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, pk) -> Tuple[Union[Dict, str], int]:
+    def update(self, request: AuthenticatedRequest, pk: ObjectId) -> ServiceResponse:
         serializer = CustomerSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, False
@@ -61,7 +65,8 @@ class CustomerService(ObjectServiceAbstraction):
         # TODO - check how we want to use serializers to update objects
         # TODO - check to see if we want to do partial updates
         # Update serializer
-        serializer.change_user = request.user
+        # TODO - this sets an attribute on the serializer, so change_user is never saved (class is not used by any view yet)
+        serializer.change_user = request.user  # type: ignore[attr-defined]
         serializer.save()
 
         return serializer.data, status.HTTP_200_OK

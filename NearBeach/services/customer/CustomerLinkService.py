@@ -1,4 +1,3 @@
-from typing import Tuple, Union, Dict
 from rest_framework import status
 from rest_framework.serializers import Serializer
 from django.utils import timezone
@@ -7,7 +6,12 @@ from NearBeach.models.object_assignment.object_assignment import ObjectAssignmen
 from NearBeach.models.customer import Customer
 from NearBeach.serializers.customer_link_serializer import CustomerLinkSerializer
 from NearBeach.serializers.customer_serializer import CustomerSerializer
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 
 
 class CustomerLinkService(ObjectServiceAbstraction):
@@ -27,8 +31,8 @@ class CustomerLinkService(ObjectServiceAbstraction):
 
         return serializer
 
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
-        serializer = CustomerLinkSerializer(data=request.data)
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
+        serializer: Serializer = CustomerLinkSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
@@ -47,7 +51,7 @@ class CustomerLinkService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, object_id) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, object_id: ObjectId) -> ServiceResponse:
         # Get the object link
         object_assignment_results = ObjectAssignment.objects.filter(
             customer_id=object_id,
@@ -67,11 +71,11 @@ class CustomerLinkService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, request) -> Tuple[Union[Dict, str], int]:
+    def get_list(self, request: AuthenticatedRequest) -> ServiceResponse:
         # Send back data to user
         serializer = self._get_list()
 
         return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, object_id) -> Tuple[Union[Dict, str], int]:
-        pass # Method not required in current class
+    def update(self, request: AuthenticatedRequest, object_id: ObjectId) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class

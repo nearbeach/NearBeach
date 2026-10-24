@@ -18,7 +18,7 @@ class AsyncEmailService(threading.Thread):
         self.context = context
         threading.Thread.__init__(self)
 
-    def run(self):
+    def run(self) -> None:
         try:
             """Send emails asynchronously"""
             html_content = render_to_string(

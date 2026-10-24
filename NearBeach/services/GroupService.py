@@ -1,11 +1,15 @@
-from typing import Dict, Tuple, Union
 from rest_framework import status
 from django.db.models.functions import Concat
 from django.utils import timezone
 from NearBeach.models.user import Group, UserGroup
 from NearBeach.models.kanban_board.kanban_card import KanbanCard
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 from django.db.models import F, Value, QuerySet
 from django.contrib.auth.models import User
 
@@ -15,7 +19,7 @@ from NearBeach.serializers.group_list_serializer import GroupListSerializer
 
 class GroupService(ObjectServiceAbstraction):
     """Service to help create, read, update, and delete groups against an object"""
-    def _clean_users_from_object(self):
+    def _clean_users_from_object(self) -> None:
         """
         Problem: There could be users assigned to this object but have no group association. They must be removed from this
         object.
@@ -67,7 +71,8 @@ class GroupService(ObjectServiceAbstraction):
             )
 
         # We need to get the kanban card's kanban board's id
-        kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)
+        # TODO - unreachable today (only called with project), but KanbanCard has no kanban_card_id field
+        kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)  # type: ignore[misc]
 
         return Group.objects.filter(
             is_deleted=False,
@@ -96,7 +101,8 @@ class GroupService(ObjectServiceAbstraction):
             )
         else:
             # Get the kanban board information from the card
-            kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)
+            # TODO - same kanban_card_id issue as _get_group_list
+            kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)  # type: ignore[misc]
 
             group_results = group_results.filter(
                 kanban_board_id=kanban_card_results.kanban_board_id,
@@ -132,7 +138,7 @@ class GroupService(ObjectServiceAbstraction):
             full_name=Concat('first_name', Value(' '), 'last_name'),
         )
 
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         # Serialize the data for references
         serializer = GroupListSerializer(data=request.data)
         if not serializer.is_valid():
@@ -153,7 +159,7 @@ class GroupService(ObjectServiceAbstraction):
         return {}, status.HTTP_201_CREATED
 
 
-    def delete(self, request, group_pk) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, group_pk: ObjectId) -> ServiceResponse:
         remove_object_assignment = ObjectAssignment.objects.filter(
             group_id=group_pk,
             **{F"{self.destination}_id": self.location_id}
@@ -183,7 +189,7 @@ class GroupService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, request) -> Tuple[Union[Dict, str], int]:
+    def get_list(self, request: AuthenticatedRequest) -> ServiceResponse:
         # Get the data dependent on the object lookup
         group_list = self._get_group_list()
         user_list = self._get_user_list()
@@ -201,5 +207,5 @@ class GroupService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, object_id):
-        pass # Method not required in current class
+    def update(self, request: AuthenticatedRequest, object_id: ObjectId) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class

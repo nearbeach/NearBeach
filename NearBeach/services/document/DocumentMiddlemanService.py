@@ -1,10 +1,14 @@
-from typing import Dict, Tuple, Union
 
 from rest_framework import status
 
 from NearBeach.serializers.documentation.document_delete_serializer import DocumentDeleteSerializer
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 from NearBeach.services.document.DocumentLinkService import DocumentLinkService
 from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.services.document.FolderService import FolderService
@@ -13,7 +17,7 @@ from NearBeach.services.document.FolderService import FolderService
 class DocumentMiddlemanService(ObjectServiceAbstraction):
     """Middleman Service to help point at the correct document service"""
 
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -45,7 +49,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
                 # Return results
                 return document_service.create(request)
 
-    def delete(self, request, document_pk) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, document_pk: str) -> ServiceResponse:
         serializer = DocumentDeleteSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -77,10 +81,10 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
                 # Return results
                 return document_service.delete(request, document_pk)
 
-    def get_list(self, request):
-        pass # Method not required in current class
+    def get_list(self, request: AuthenticatedRequest) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class
 
-    def update(self, request, document_pk) -> Tuple[Union[Dict, str], int]:
+    def update(self, request: AuthenticatedRequest, document_pk: str) -> ServiceResponse:
         serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST

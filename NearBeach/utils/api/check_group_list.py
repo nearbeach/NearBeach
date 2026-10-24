@@ -1,10 +1,11 @@
-from typing import List
-from NearBeach.models.user import UserGroup
+from typing import List, Union
+from django.contrib.auth.models import User
+from NearBeach.models.user import Group, UserGroup
 import logging
 
 _logger = logging.getLogger(__name__)
 
-def check_group_list(username: str, group_list: List[str] | None) -> bool:
+def check_group_list(username: User, group_list: List[Union[Group, int]]) -> bool:
     """
     Utility function to check if user has access to all groups in the list
 

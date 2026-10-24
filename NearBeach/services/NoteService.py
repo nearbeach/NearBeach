@@ -1,4 +1,3 @@
-from typing import Dict, Tuple, Union
 from rest_framework import status
 from NearBeach.models.misc.note import ObjectNote
 from NearBeach.models.kanban_board.kanban_card import KanbanCard
@@ -6,20 +5,25 @@ from django.db.models import F, Value, Case, When, QuerySet
 from django.utils import timezone
 
 from NearBeach.serializers.object_data.note_serializer import NoteSerializer
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 
 
 class NoteService(ObjectServiceAbstraction):
     """Service to help create, read, update and delete note objects"""
     @staticmethod
-    def _check_user_permission(request, object_notes: QuerySet[ObjectNote]):
+    def _check_user_permission(request: AuthenticatedRequest, object_notes: QuerySet[ObjectNote]) -> bool:
         object_note = object_notes.first()
         if object_note is None:
             return False
 
         return object_note.change_user == request.user or request.user.is_superuser
 
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         serializer = NoteSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -35,12 +39,14 @@ class NoteService(ObjectServiceAbstraction):
         # When we have a kanban_card as a destination, we want to make sure it isn't a linked object.
         # If it is, we'll need to link the object to the same note
         if self.destination == "kanban_card":
-            kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)
+            # TODO - unreachable today (only called with project), but KanbanCard has no kanban_card_id field and
+            #  ObjectNote has no .filter(), so this branch would raise if a kanban_card destination is added
+            kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)  # type: ignore[misc]
 
             # Go through each potential object connection
             for object_type in ["project", "task", "requirement"]:
                 if not getattr(kanban_card_results, F"{object_type}_id") is None:
-                    submit_object_note = submit_object_note.filter(
+                    submit_object_note = submit_object_note.filter(  # type: ignore[attr-defined]
                         **{F"{object_type}": getattr(kanban_card_results, F"{object_type}_id")}
                     )
 
@@ -76,7 +82,7 @@ class NoteService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, note_pk: int) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, note_pk: ObjectId) -> ServiceResponse:
         """Method to delete a note"""
         object_note = ObjectNote.objects.filter(
             is_deleted=False,
@@ -100,7 +106,7 @@ class NoteService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, request) -> Tuple[Union[Dict, str], int]:
+    def get_list(self, request: AuthenticatedRequest) -> ServiceResponse:
         note_results = ObjectNote.objects.filter(
             is_deleted=False,
             **{F"{self.destination}_id": self.location_id},
@@ -128,7 +134,7 @@ class NoteService(ObjectServiceAbstraction):
         serializer = NoteSerializer(note_results, many=True)
         return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, pk) -> Tuple[Union[Dict, str], int]:
+    def update(self, request: AuthenticatedRequest, pk: ObjectId) -> ServiceResponse:
         """Method to update a note"""
         serializer = NoteSerializer(data=request.data)
         if not serializer.is_valid():

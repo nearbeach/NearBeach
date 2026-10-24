@@ -1,15 +1,19 @@
-from typing import Dict, Tuple, Union
 from rest_framework import status
 from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.models.organisation import Organisation
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 
 
 class OrganisationService(ObjectServiceAbstraction):
     """Service to help create, read, update, and delete organisation objects and their associations"""
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         serializer = OrganisationSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -22,7 +26,7 @@ class OrganisationService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, organisation_pk: int) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, organisation_pk: ObjectId) -> ServiceResponse:
         organisation = Organisation.objects.get(pk=organisation_pk)
         organisation.is_deleted = True
         organisation.change_user = request.user
@@ -30,31 +34,33 @@ class OrganisationService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_data(self, _) -> Tuple[Union[Dict, str], int]:
-        pass # Method not required in current class
+    def get_data(self, _: AuthenticatedRequest) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class
 
-    def get_list(self, request):
-        pass # Method not required in current class
+    def get_list(self, request: AuthenticatedRequest) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class
 
     @destination_permission(min_permission_level=1)
-    def list(self, _) -> Tuple[Union[Dict, str], int]:
+    def list(self, _: AuthenticatedRequest) -> ServiceResponse:
         # TODO - Check how we are going to do serialization etc
+        # TODO - paginate_queryset/get_paginated_response live on the viewset, not this service, and update()
+        #  hands a queryset to serializer.update(). Neither works yet, but no view uses this class
         # Get the organisation results
         organisation_results = Organisation.objects.filter(
             is_deleted=False,
         )
 
         # Handle pagination
-        page = self.paginate_queryset(organisation_results)
+        page = self.paginate_queryset(organisation_results)  # type: ignore[attr-defined]
         if page is not None:
             serializer = OrganisationSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            return self.get_paginated_response(serializer.data)  # type: ignore[attr-defined]
 
         serializer = OrganisationSerializer(organisation_results, many=True)
 
         return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, pk) -> Tuple[Union[Dict, str], int]:
+    def update(self, request: AuthenticatedRequest, pk: ObjectId) -> ServiceResponse:
         serializer = OrganisationSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -68,7 +74,7 @@ class OrganisationService(ObjectServiceAbstraction):
             return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
 
         # Update data
-        update_organisation.change_user = request.user
+        update_organisation.change_user = request.user  # type: ignore[attr-defined]
         update_organisation = serializer.update(
             update_organisation,
             serializer.data,

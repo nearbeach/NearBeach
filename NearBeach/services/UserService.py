@@ -1,14 +1,18 @@
-from typing import Dict, Tuple, Union
 from rest_framework import status
 from django.utils import timezone
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 from NearBeach.serializers.user_list_serializer import UserListSerializer
 
 
 class UserService(ObjectServiceAbstraction):
     """Service to help add and remove users against an object"""
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         # Serialize the data for references
         serializer = UserListSerializer(data=request.data)
         if not serializer.is_valid():
@@ -29,9 +33,9 @@ class UserService(ObjectServiceAbstraction):
         return {}, status.HTTP_201_CREATED
 
 
-    def delete(self, request, user_id) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, user_id: ObjectId) -> ServiceResponse:
         remove_object_assignment = ObjectAssignment.objects.filter(
-            assigned_user_id=user_id,
+            assigned_user_id=int(user_id),
             **{F"{self.destination}_id": self.location_id}
         )
 
@@ -48,8 +52,8 @@ class UserService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, request):
-        pass # Method not required in current class
+    def get_list(self, request: AuthenticatedRequest) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class
 
-    def update(self, request, object_id):
-        pass # Method not required in current class
+    def update(self, request: AuthenticatedRequest, object_id: ObjectId) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class

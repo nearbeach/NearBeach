@@ -1,16 +1,20 @@
-from typing import Tuple, Union, Dict
 from rest_framework import status
 from django.utils import timezone
 
 from NearBeach.serializers.public_link_serializer import PublicLinkSerializer
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 from NearBeach.models.misc.misc import PublicLink
 
 
 class PublicLinkService(ObjectServiceAbstraction):
     """Class for creating, reading, updating, and deleting public links"""
 
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         # Create the public link
         # TODO - Move this creation step into the serializer?
         new_public_link = PublicLink(
@@ -25,7 +29,7 @@ class PublicLinkService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, object_id) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, object_id: str) -> ServiceResponse:
         delete_public_link = PublicLink.objects.filter(
             is_deleted=False,
             **{F"{self.destination}_id": self.location_id},
@@ -44,7 +48,7 @@ class PublicLinkService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, request) -> Tuple[Union[Dict, str], int]:
+    def get_list(self, request: AuthenticatedRequest) -> ServiceResponse:
         public_links = PublicLink.objects.filter(
             is_deleted=False,
             **{F"{self.destination}_id": self.location_id},
@@ -57,7 +61,7 @@ class PublicLinkService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, object_id) -> Tuple[Union[Dict, str], int]:
+    def update(self, request: AuthenticatedRequest, object_id: str) -> ServiceResponse:
         serializer = PublicLinkSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST

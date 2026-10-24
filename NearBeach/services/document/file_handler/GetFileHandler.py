@@ -1,8 +1,11 @@
+from django.conf import LazySettings
+
 from NearBeach.services.document.file_handler.AzureFileHandler import AzureFileHandler
+from NearBeach.services.document.file_handler.FileHandler import FileHandler
 from NearBeach.services.document.file_handler.LocalFileHandler import LocalFileHandler
 from NearBeach.services.document.file_handler.S3FileHandler import S3FileHandler
 
-def get_file_handler(local_settings):
+def get_file_handler(local_settings: LazySettings) -> FileHandler:
     # Handle the document upload
     if getattr(local_settings, "AWS_ACCESS_KEY_ID", None):
         return S3FileHandler(local_settings)

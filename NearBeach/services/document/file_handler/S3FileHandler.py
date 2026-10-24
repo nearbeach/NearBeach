@@ -1,13 +1,19 @@
+from typing import Any, Dict, Union
+from uuid import UUID
+
 import boto3
 from botocore.config import Config
+from django.conf import LazySettings
+from django.core.files.uploadedfile import UploadedFile
 
+from NearBeach.models.document.document import Document
 from NearBeach.services.document.file_handler.FileHandler import FileHandler
 from django.http import FileResponse
 
 
 class S3FileHandler(FileHandler):
-    def __init__(self, local_settings):
-        boto_init_values = {
+    def __init__(self, local_settings: LazySettings) -> None:
+        boto_init_values: Dict[str, Any] = {
             "aws_access_key_id": local_settings.AWS_ACCESS_KEY_ID,
             "aws_secret_access_key": local_settings.AWS_SECRET_ACCESS_KEY,
         }
@@ -20,7 +26,7 @@ class S3FileHandler(FileHandler):
                 config=getattr(
                     local_settings,
                     "AWS_CONFIG",
-                    boto3.session.Config(signature_version='s3v4'),
+                    Config(signature_version='s3v4'),
                 ),
                 verify=getattr(local_settings, "AWS_VERIFY_TLS", True),
                 **getattr(local_settings, "AWS_INIT_VALUES", {})
@@ -32,7 +38,7 @@ class S3FileHandler(FileHandler):
         self._bucket = local_settings.AWS_STORAGE_BUCKET_NAME
 
     @staticmethod
-    def _connect_check_client_s3(boto_init_values):
+    def _connect_check_client_s3(boto_init_values: Dict[str, Any]) -> None:
         config = Config(
             connect_timeout=4,
             retries=dict(
@@ -50,7 +56,7 @@ class S3FileHandler(FileHandler):
         except Exception as e:
             print(F"An issue has occurred trying to connect to the S3 bucket. Please see the following errors - {e}")
 
-    def delete(self, document_key_id):
+    def delete(self, document_key_id: Union[UUID, str]) -> None:
         # Use boto3 to delete
         objects_to_delete = self._s3.list_objects(
             Bucket=self._bucket,
@@ -68,7 +74,7 @@ class S3FileHandler(FileHandler):
             Delete=delete_keys
         )
 
-    def fetch(self, document_results):
+    def fetch(self, document_results: Document) -> FileResponse:
         # Use boto3 to download
         response = self._s3.get_object(
             Bucket=self._bucket,
@@ -80,7 +86,7 @@ class S3FileHandler(FileHandler):
             filename=document_results.description,
         )
 
-    def upload(self, upload_document, document_results, file):
+    def upload(self, upload_document: UploadedFile, document_results: Document, file: UploadedFile) -> None:
         # Use boto to upload the file
         # Upload a new file
         self._s3.upload_fileobj(

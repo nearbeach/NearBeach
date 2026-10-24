@@ -1,25 +1,29 @@
-from typing import Dict, Tuple, Union
 from rest_framework import status
 
 from NearBeach.models.sprint.sprint import Sprint
 from NearBeach.serializers.sprint_serializer import SprintSerializer
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 
 
 class SprintService(ObjectServiceAbstraction):
     """Service to help create, read, update, delete sprint objects"""
     # TODO - actually implement this functionality
 
-    def create(self, request):
-        pass # Method not required in current class
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class
 
-    def delete(self, request, sprint_id: int) -> Tuple[Union[Dict, str], int]:
-        pass # Method not required in current class
+    def delete(self, request: AuthenticatedRequest, sprint_id: ObjectId) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class
 
-    def get_list(self, request):
-        pass # Method not required in current class
+    def get_list(self, request: AuthenticatedRequest) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class
 
-    def retrieve(self, request) -> Tuple[Union[Dict, str], int]:
+    def retrieve(self, request: AuthenticatedRequest) -> ServiceResponse:
         # Get object
         sprint_results = Sprint.objects.get(pk=self.location_id)
 
@@ -57,7 +61,7 @@ class SprintService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, sprint_id: int):
+    def update(self, request: AuthenticatedRequest, sprint_id: ObjectId) -> ServiceResponse:
         # Get project
         sprint = Sprint.objects.get(pk=self.location_id)
 
@@ -75,7 +79,8 @@ class SprintService(ObjectServiceAbstraction):
             return serializer.errors, False
 
         # Make sure we update the change user
-        serializer.change_user = request.user
+        # TODO - this sets an attribute on the serializer, so change_user is never saved (class is not used by any view yet)
+        serializer.change_user = request.user  # type: ignore[attr-defined]
         serializer.save()
 
         return serializer.data, status.HTTP_200_OK

@@ -1,5 +1,3 @@
-from typing import Tuple, Union, Dict
-
 from rest_framework import status
 
 from django.contrib.auth.models import User
@@ -10,14 +8,18 @@ from NearBeach.models.project import Project
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.models.user import UserGroup, Group
 from NearBeach.serializers.project_serializer import ProjectSerializer
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 from NearBeach.utils.api.check_group_list import check_group_list
 
 
 class ProjectService(ObjectServiceAbstraction):
     """Service to help create, read, update, and delete project objects"""
 
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         """Method for creating a new project"""
         serializer = ProjectSerializer(
             context={
@@ -44,7 +46,8 @@ class ProjectService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, _) -> int:
+    # TODO - returns a bare status code, which the view treats as truthy, so destroy always answers 204
+    def delete(self, request: AuthenticatedRequest, _: None) -> int:  # type: ignore[override]
         project = Project.objects.filter(
             pk=self.location_id,
             is_deleted=False,
@@ -61,7 +64,8 @@ class ProjectService(ObjectServiceAbstraction):
 
         return status.HTTP_204_NO_CONTENT
 
-    def get_list(self, request) -> QuerySet:
+    # The view paginates the queryset itself, so this returns the queryset rather than a ServiceResponse
+    def get_list(self, request: AuthenticatedRequest) -> QuerySet[Project]:  # type: ignore[override]
         object_assignment_results = ObjectAssignment.objects.filter(
             project_id__isnull=False,
             is_deleted=False,
@@ -98,7 +102,7 @@ class ProjectService(ObjectServiceAbstraction):
 
         return project_results
 
-    def retrieve(self, request) -> Tuple[Union[Dict, str], int]:
+    def retrieve(self, request: AuthenticatedRequest) -> ServiceResponse:
         # Get object
         project_results = Project.objects.get(pk=self.location_id)
 
@@ -109,7 +113,8 @@ class ProjectService(ObjectServiceAbstraction):
         )
 
         # Define groups list
-        project_results.group_list = Group.objects.filter(
+        # group_list and user_list are extra attributes the serializer reads
+        project_results.group_list = Group.objects.filter(  # type: ignore[attr-defined]
             is_deleted=False,
             id__in=object_assignments.filter(
                 group_id__isnull=False,
@@ -117,7 +122,7 @@ class ProjectService(ObjectServiceAbstraction):
         )
 
         # Define user list
-        project_results.user_list = User.objects.filter(
+        project_results.user_list = User.objects.filter(  # type: ignore[attr-defined]
             pk__in=object_assignments.filter(
                 assigned_user__isnull=False,
             ).values("assigned_user_id"),
@@ -136,7 +141,7 @@ class ProjectService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_200_OK
 
-    def update(self, request, _) -> Tuple[Union[Dict, str], int]:
+    def update(self, request: AuthenticatedRequest, _: None) -> ServiceResponse:
         # Get project
         project = Project.objects.get(pk=self.location_id)
 
@@ -154,7 +159,8 @@ class ProjectService(ObjectServiceAbstraction):
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Make sure we update the change user
-        serializer.change_user = request.user
+        # TODO - this sets an attribute on the serializer, not the project, so change_user is never saved
+        serializer.change_user = request.user  # type: ignore[attr-defined]
         serializer.save()
 
         return serializer.data, status.HTTP_200_OK

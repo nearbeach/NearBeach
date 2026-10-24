@@ -1,10 +1,14 @@
-from typing import Dict, Tuple, Union
 from django.utils import timezone
 
 from rest_framework import status
 from NearBeach.models.document.folder import Folder
 from NearBeach.serializers.documentation.folder_serializer import FolderSerializer
-from NearBeach.services.abstraction.object_services_abstraction import ObjectServiceAbstraction
+from NearBeach.services.abstraction.object_services_abstraction import (
+    AuthenticatedRequest,
+    ObjectId,
+    ObjectServiceAbstraction,
+    ServiceResponse,
+)
 
 import datetime
 
@@ -12,7 +16,7 @@ import datetime
 class FolderService(ObjectServiceAbstraction):
     """Class for handling folder crud operations"""
 
-    def create(self, request) -> Tuple[Union[Dict, str], int]:
+    def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         serializer = FolderSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
@@ -38,7 +42,7 @@ class FolderService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request, folder_id) -> Tuple[Union[Dict, str], int]:
+    def delete(self, request: AuthenticatedRequest, folder_id: ObjectId) -> ServiceResponse:
         """Method to delete a folder"""
         folder = Folder.objects.filter(
             is_deleted=False,
@@ -59,10 +63,10 @@ class FolderService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, request):
-        pass # Method not required in current class
+    def get_list(self, request: AuthenticatedRequest) -> ServiceResponse:
+        raise NotImplementedError  # Method not required in current class
 
-    def update(self, request, folder_id) -> Tuple[Union[Dict, str], int]:
+    def update(self, request: AuthenticatedRequest, folder_id: ObjectId) -> ServiceResponse:
         """Method to update a folder"""
         serializer = FolderSerializer(data=request.data)
         if not serializer.is_valid():

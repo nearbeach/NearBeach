@@ -3,12 +3,23 @@ from NearBeach.models.document.document_permission import DocumentPermission
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.services.document.file_handler.GetFileHandler import get_file_handler
 from django.conf import settings
+from django.core.files.uploadedfile import UploadedFile
 from django.db.models import F
+from rest_framework.serializers import Serializer
+
+from NearBeach.services.abstraction.object_services_abstraction import AuthenticatedRequest, ObjectId
 
 FILE_HANDLER = get_file_handler(settings)
 
 
-def handle_document_permissions(request, destination, location_id, file, serializer, is_profile_picture):
+def handle_document_permissions(
+    request: AuthenticatedRequest,
+    destination: str,
+    location_id: ObjectId,
+    file: UploadedFile,
+    serializer: Serializer,
+    is_profile_picture: bool,
+) -> Serializer:
     """
     The function that handles the document permission - i.e. if user has access to the
     document then it'll send it to the user, otherwise it will send a 404 not found.
