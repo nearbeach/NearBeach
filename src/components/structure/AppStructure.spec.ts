@@ -45,7 +45,7 @@ describe("AppStructure", () => {
     expect(main.classes()).toContain("nav-open");
   });
 
-  test("main class is set based on window width", async () => {
+  test("on desktop - nav-open is applied", async () => {
     Object.defineProperty(window, "innerWidth", {
       writable: true,
       configurable: true,
@@ -58,10 +58,15 @@ describe("AppStructure", () => {
       },
     });
 
+    await nextTick();
+    await flushPromises();
+
     // On desktop, nav should be open
     const main = wrapper.find("#main");
     expect(main.classes()).toContain("nav-open");
+  });
 
+  test("on mobile - nav-open is not around", async() => {
     // On mobile, nav should be closed
     Object.defineProperty(window, "innerWidth", {
       writable: true,
@@ -69,7 +74,15 @@ describe("AppStructure", () => {
       value: 1024,
     });
 
+    const wrapper = mount(AppStructure, {
+      global: {
+        plugins: [router, i18n],
+      },
+    });
+
     await nextTick();
+
+    const main = wrapper.find("#main");
     expect(main.classes()).toContain("main");
     expect(main.classes()).not.toContain("nav-open");
   });

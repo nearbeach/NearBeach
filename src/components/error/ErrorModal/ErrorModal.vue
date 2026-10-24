@@ -21,29 +21,11 @@ const {t} = useI18n({
 // Define store
 const errorStore = useErrorStore();
 
-// Define ref
-const disableButtons = ref<boolean>(true);
-
 // Define computed
 const modalClass = computed(() => {
 	return errorStore.showErrorModal ? "wlk-modal open" : "wlk-modal";
 
 });
-
-// Define watches
-watch(
-	() => errorStore.showErrorModal,
-	(new_value) => {
-		// If true - disable button and set timeout
-		if (new_value) {
-			disableButtons.value = true;
-
-			setTimeout(() => {
-				disableButtons.value = false;
-			}, 1000);
-		}
-	}
-)
 </script>
 
 <template>
@@ -65,11 +47,10 @@ watch(
 			</WlkModalFooter>
 		</WlkModal>
 	</teleport>
-
 </template>
 
 <style scoped>
-.modal {
+.wlk-modal {
 	> .wlk-modal-footer {
 		padding-top: 0.75rem;
 	}

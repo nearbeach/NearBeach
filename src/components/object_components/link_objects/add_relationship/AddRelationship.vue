@@ -72,7 +72,7 @@ function createObjectLink() : void {
 }
 
 async function loadData() {
-	await fetch(
+	const response = await fetch(
 		"/api/v1/data/potential_object_links/",
 		{
 			method: "GET",
@@ -81,19 +81,26 @@ async function loadData() {
 				"X-CSRFTOKEN": getCsrfToken(),
 			},
 		},
-	).then(async (response) => {
-		const unfiltered_data = await response.json();
+	);
 
-		objectOptions.value = unfiltered_data.filter((row: ObjectLinkInterface) => {
-			// Base conditions
-			const condition_1 = row.object_id !== objectStore.id;
-			const condition_2 = row.object_type !== objectStore.destination;
+    // Switch case the response
+    switch (response.status) {
+        case 200:
+            // Get the unfiltered data
+        	const unfiltered_data = await response.json();
 
-			return condition_1 || condition_2;
-		});
-	}).catch((error) => {
-		errorText.value = t("error_text") + ": " + error;
-	});
+        	objectOptions.value = unfiltered_data.filter((row: ObjectLinkInterface) => {
+        		// Base conditions
+        		const condition_1 = row.object_id !== objectStore.id;
+        		const condition_2 = row.object_type !== objectStore.destination;
+
+        		return condition_1 || condition_2;
+        	});
+            break;
+        default:
+            errorText.value = t("error_text") + ": " + response.statusText;
+            break;
+    }
 }
 </script>
 

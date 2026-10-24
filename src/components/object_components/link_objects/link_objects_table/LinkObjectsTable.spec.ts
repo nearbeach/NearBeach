@@ -104,6 +104,7 @@ describe("LinkObjectsTable", () => {
     const wrapper = mount(LinkObjectsTable, {
       props: {
         showCreate: true,
+        objectLinkList: [],
       },
       global: {
         plugins: [router, i18n],
@@ -122,6 +123,7 @@ describe("LinkObjectsTable", () => {
     const wrapper = mount(LinkObjectsTable, {
       props: {
         errorMessage: "An error occurred",
+        objectLinkList: [],
       },
       global: {
         plugins: [router, i18n],
@@ -140,6 +142,7 @@ describe("LinkObjectsTable", () => {
     const wrapper = mount(LinkObjectsTable, {
       props: {
         isLoading: true,
+        objectLinkList: [],
       },
       global: {
         plugins: [router, i18n],

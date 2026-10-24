@@ -102,7 +102,7 @@ describe("ProjectPage", () => {
     expect(wlkTabs.exists()).toBe(true);
 
     const documentationTab = wlkTabs.findAll("button").at(1);
-    await documentationTab.trigger("click");
+    await documentationTab?.trigger("click");
 
     const documentComponent = wrapper.findComponent({ name: "DocumentComponent" });
     expect(documentComponent.exists()).toBe(true);
@@ -122,7 +122,7 @@ describe("ProjectPage", () => {
     expect(wlkTabs.exists()).toBe(true);
 
     const notesTab = wlkTabs.findAll("button").at(2);
-    await notesTab.trigger("click");
+    await notesTab?.trigger("click");
 
     const notesComponent = wrapper.findComponent({ name: "NotesComponent" });
     expect(notesComponent.exists()).toBe(true);
@@ -142,7 +142,7 @@ describe("ProjectPage", () => {
     expect(wlkTabs.exists()).toBe(true);
 
     const miscTab = wlkTabs.findAll("button").at(3);
-    await miscTab.trigger("click");
+    await miscTab?.trigger("click");
 
     const publicLinksComponent = wrapper.findComponent({ name: "PublicLinks" });
     expect(publicLinksComponent.exists()).toBe(true);

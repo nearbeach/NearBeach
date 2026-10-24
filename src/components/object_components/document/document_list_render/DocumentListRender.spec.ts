@@ -24,7 +24,9 @@ describe("DocumentListRender", () => {
 
   test("does not render empty folder message when there are documents", async () => {
     const documentationStore = useDocumentationStore();
-    documentationStore.documents = [{ key: "doc1", parent_folder_id: 0 }];
+    documentationStore.documents = [
+        { description: "The document of writing unit tests", document: null, folder: null, key: "doc1", parent_folder_id: 0, url_location: null }
+    ];
 
     const wrapper = mount(DocumentListRender, {
       global: {

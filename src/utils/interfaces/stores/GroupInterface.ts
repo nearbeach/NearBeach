@@ -3,5 +3,5 @@ import type {ParentGroupInterface} from "@/utils/interfaces/stores/ParentGroupIn
 export interface GroupInterface {
     id: number,
     name: string,
-    parent_group: ParentGroupInterface,
+    parent_group: ParentGroupInterface | null,
 }

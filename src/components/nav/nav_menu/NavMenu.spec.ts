@@ -5,7 +5,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
 import { nextTick } from "vue";
-import { usePermissionStore } from "@/stores/permission.ts";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import i18n from "@/i18n.ts";
 
 const router = createRouter({

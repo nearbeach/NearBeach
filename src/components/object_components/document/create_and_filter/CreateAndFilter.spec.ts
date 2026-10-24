@@ -3,6 +3,8 @@ import { mount, flushPromises } from "@vue/test-utils";
 import {CreateAndFilter} from ".";
 import i18n from "@/i18n.ts";
 import { createPinia, setActivePinia } from "pinia";
+import {nextTick} from "vue";
+import {NewFolder} from "@/components/object_components/document/create_and_filter/new_folder";
 
 describe("CreateAndFilter", () => {
   beforeEach(() => {
@@ -13,6 +15,9 @@ describe("CreateAndFilter", () => {
     const wrapper = mount(CreateAndFilter, {
       global: {
         plugins: [i18n],
+        stubs: {
+          teleport: true,
+        }
       },
     });
 
@@ -41,6 +46,9 @@ describe("CreateAndFilter", () => {
     const wrapper = mount(CreateAndFilter, {
       global: {
         plugins: [i18n],
+        stubs: {
+          teleport: true,
+        }
       },
     });
 

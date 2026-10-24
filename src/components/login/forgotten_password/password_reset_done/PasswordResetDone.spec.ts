@@ -4,7 +4,7 @@ import {PasswordResetDone} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createMemoryHistory } from "vue-router";
 import i18n from "@/i18n.ts";
-import { defineComponent, h } from "vue";
+import {defineComponent, h, nextTick} from "vue";
 
 const router = createRouter({
   history: createMemoryHistory(),

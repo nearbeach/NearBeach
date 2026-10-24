@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import {SearchCard} from ".";
-import { createRouter, createMemoryHistory } from "vue-router";
-import { nextTick } from "vue";
+import {createRouter, createMemoryHistory, RouterLink} from "vue-router";
+import {defineComponent, h, nextTick} from "vue";
+import {ObjectIdTag} from "@/components/prefab/object_id_tag";
+import {ObjectStatusTag} from "@/components/prefab/object_status_tag";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -49,7 +51,7 @@ describe("SearchCard", () => {
     // Check RouterLink
     const routerLink = wrapper.findComponent(RouterLink);
     expect(routerLink.exists()).toBe(true);
-    expect(routerLink.props("to")).toBe("/test/123");
+    expect(routerLink.props("to")).toBe("test/123");
     expect(routerLink.text()).toBe("Test Object");
   });
 

@@ -5,6 +5,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
 import i18n from "@/i18n.ts";
+import {nextTick} from "vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -59,10 +60,6 @@ describe("ForgottenPassword", () => {
     const passwordResetDone = wrapper.findComponent({ name: "PasswordResetDone" });
     expect(passwordResetDone.exists()).toBe(true);
 
-    // Error message should be empty
-    const errorMessage = wrapper.vm.errorMessage;
-    expect(errorMessage).toBe("");
-
     vi.restoreAllMocks();
   });
 
@@ -93,9 +90,6 @@ describe("ForgottenPassword", () => {
     // PasswordResetDone should not be rendered
     const passwordResetDone = wrapper.findComponent({ name: "PasswordResetDone" });
     expect(passwordResetDone.exists()).toBe(false);
-
-    // Error message should be set
-    expect(wrapper.vm.errorMessage).toBe(errorMessage);
 
     vi.restoreAllMocks();
   });

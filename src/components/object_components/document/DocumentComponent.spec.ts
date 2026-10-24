@@ -4,6 +4,9 @@ import {DocumentComponent} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { vi } from "vitest";
 import i18n from "@/i18n.ts";
+import {createRouter, createWebHistory} from "vue-router";
+import {nextTick} from "vue";
+import {useObjectStore} from "@/stores/object/object.ts";
 
 const router = createRouter({
   history: createWebHistory(),

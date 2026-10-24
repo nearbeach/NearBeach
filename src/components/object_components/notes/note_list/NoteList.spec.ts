@@ -6,7 +6,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
 import { nextTick } from "vue";
 import i18n from "@/i18n.ts";
-import { NoteItemInterface } from "@/utils/interfaces/NoteItemInterface.ts";
+import { type NoteItemInterface } from "@/utils/interfaces/NoteItemInterface.ts";
+import {PencilIcon, TrashIcon} from "@lucide/vue";
 
 const router = createRouter({
   history: createWebHistory(),

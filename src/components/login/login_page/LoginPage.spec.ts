@@ -5,6 +5,10 @@ import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
 import i18n from "@/i18n.ts";
+import {LoginPanel} from "@/components/login/login_page/login_panel";
+import {LoginImage} from "@/components/login/login_image";
+import {TwoFactorPanel} from "@/components/login/login_page/two_factor_panel";
+import {nextTick} from "vue";
 
 const router = createRouter({
   history: createWebHistory(),

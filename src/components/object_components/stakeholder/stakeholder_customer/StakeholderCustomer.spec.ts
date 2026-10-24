@@ -4,7 +4,7 @@ import {StakeholderCustomer} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createMemoryHistory } from "vue-router";
 import { vi } from "vitest";
-import { nextTick } from "vue";
+import {defineComponent, h, nextTick} from "vue";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useObjectMetaDataStore } from "@/stores/object_meta_data/object_meta_data.ts";
 
@@ -29,8 +29,8 @@ describe("StakeholderCustomer", () => {
     const objectMetaDataStore = useObjectMetaDataStore();
 
     objectStore.customers = [
-      { id: 1, first_name: "John", last_name: "Doe", email: "john@example.com" },
-      { id: 2, first_name: "Jane", last_name: "Smith", email: "jane@example.com" },
+      { id: 1, first_name: "John", last_name: "Doe", email: "john@example.com", title: { id: 0, title: "Mr"}},
+      { id: 2, first_name: "Jane", last_name: "Smith", email: "jane@example.com", title: { id: 1, title: "Mrs"}},
     ];
 
     const wrapper = mount(StakeholderCustomer, {
@@ -53,7 +53,7 @@ describe("StakeholderCustomer", () => {
     const objectMetaDataStore = useObjectMetaDataStore();
 
     objectMetaDataStore.potential_customers = [
-      { id: 1, first_name: "Alice", last_name: "Johnson", email: "alice@example.com" },
+      { id: 1, first_name: "John", last_name: "Doe", email: "john@example.com", title: { id: 0, title: "Mr"}},
     ];
 
     const wrapper = mount(StakeholderCustomer, {

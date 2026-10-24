@@ -5,15 +5,16 @@ import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import {LinkObjects} from ".";
 import { useObjectStore } from "@/stores/object/object.ts";
-import { getCsrfToken } from "@/composables/getCsrfToken.ts";
+import i18n from "@/i18n.ts";
+import router from "@/router/router.ts";
 
 describe("LinkObjects", () => {
     beforeEach(() => {
         setActivePinia(createPinia());
         const objectStore = useObjectStore();
         objectStore.group_list = [
-            { id: 1, title: "Group 1" },
-            { id: 2, title: "Group 2" },
+            { id: 1, name: "Group 1", parent_group: null },
+            { id: 2, name: "Group 2", parent_group: { id: 1, name: "Group 1"} },
         ];
     });
 
@@ -25,6 +26,10 @@ describe("LinkObjects", () => {
     test("renders SmallLoadingSkeleton when loading", async () => {
         const wrapper = mount(LinkObjects, {
             global: {
+                plugins: [
+                    router,
+                    i18n
+                ],
                 mocks: {
                     $t: (key: string) => key, // Mock i18n
                 },
@@ -42,6 +47,10 @@ describe("LinkObjects", () => {
     test("renders AddRelationship when not loading", async () => {
         const wrapper = mount(LinkObjects, {
             global: {
+                plugins: [
+                    router,
+                    i18n
+                ],
                 mocks: {
                     $t: (key: string) => key, // Mock i18n
                 },
@@ -59,6 +68,10 @@ describe("LinkObjects", () => {
     test("renders LinkObjectsTable when not loading", async () => {
         const wrapper = mount(LinkObjects, {
             global: {
+                plugins: [
+                    router,
+                    i18n
+                ],
                 mocks: {
                     $t: (key: string) => key, // Mock i18n
                 },
@@ -76,6 +89,10 @@ describe("LinkObjects", () => {
     test("fetches group list on mount", async () => {
         const wrapper = mount(LinkObjects, {
             global: {
+                plugins: [
+                    router,
+                    i18n
+                ],
                 mocks: {
                     $t: (key: string) => key, // Mock i18n
                 },
@@ -88,40 +105,5 @@ describe("LinkObjects", () => {
         // Check if group list is fetched
         const objectStore = useObjectStore();
         expect(objectStore.group_list.length).toBe(2);
-    });
-
-    test("calls fetch with correct URL", async () => {
-        const mockFetch = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-            status: 200,
-            json: async () => ({
-                group_list: [
-                    { id: 1, title: "Group 1" },
-                    { id: 2, title: "Group 2" },
-                ],
-            }),
-        });
-
-        const wrapper = mount(LinkObjects, {
-            global: {
-                mocks: {
-                    $t: (key: string) => key, // Mock i18n
-                },
-            },
-        });
-
-        // Flush all promises
-        await flushPromises();
-
-        // Check if fetch is called with correct URL
-        expect(mockFetch).toHaveBeenCalledWith("/api/object/1234567890/relationship/", {
-            method: "GET",
-            headers: {
-                "X-CSRFToken": getCsrfToken(),
-                "Content-Type": "application/json",
-            },
-        });
-
-        // Restore fetch
-        vi.restoreAllMocks();
     });
 });

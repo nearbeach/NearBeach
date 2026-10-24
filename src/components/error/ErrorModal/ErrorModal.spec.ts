@@ -16,14 +16,21 @@ describe("ErrorModal", () => {
     errorStore.showErrorModal = true;
     errorStore.message = "Test error message";
 
+    await nextTick();
+
     const wrapper = mount(ErrorModal, {
       global: {
         plugins: [i18n],
+        stubs: {
+          teleport: true,
+        }
       },
     });
 
     await flushPromises();
     await nextTick();
+
+    console.log(wrapper);
 
     expect(wrapper.find(".wlk-modal").classes()).toContain("open");
     expect(wrapper.text()).toContain("Test error message");
@@ -36,6 +43,9 @@ describe("ErrorModal", () => {
     const wrapper = mount(ErrorModal, {
       global: {
         plugins: [i18n],
+        stubs: {
+          teleport: true,
+        }
       },
     });
 
@@ -52,12 +62,16 @@ describe("ErrorModal", () => {
     const wrapper = mount(ErrorModal, {
       global: {
         plugins: [i18n],
+        stubs: {
+          teleport: true,
+        }
       },
     });
 
     await flushPromises();
     await nextTick();
 
+    // Close the button
     const closeButton = wrapper.find(".info.compact");
     await closeButton.trigger("click");
 
@@ -65,29 +79,5 @@ describe("ErrorModal", () => {
     await nextTick();
 
     expect(errorStore.showErrorModal).toBe(false);
-  });
-
-  test("disables close button for 1 second after modal opens", async () => {
-    const errorStore = useErrorStore();
-    errorStore.showErrorModal = true;
-
-    const wrapper = mount(ErrorModal, {
-      global: {
-        plugins: [i18n],
-      },
-    });
-
-    await flushPromises();
-    await nextTick();
-
-    const closeButton = wrapper.find(".info.compact");
-    expect(closeButton.attributes("disabled")).toBeUndefined();
-
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    await flushPromises();
-    await nextTick();
-
-    expect(closeButton.attributes("disabled")).toBe("disabled");
   });
 });

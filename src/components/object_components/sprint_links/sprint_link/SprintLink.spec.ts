@@ -5,6 +5,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
 import { nextTick } from "vue";
+import {TrashIcon} from "@lucide/vue";
 
 const router = createRouter({
   history: createWebHistory(),

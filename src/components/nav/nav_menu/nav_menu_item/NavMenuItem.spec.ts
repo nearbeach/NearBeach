@@ -4,7 +4,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createMemoryHistory } from "vue-router";
 import {NavMenuItem} from ".";
 import { useNavStore } from "@/stores/nav/nav.ts";
-import { defineComponent, h } from "vue";
+import {defineComponent, h, nextTick} from "vue";
 
 const router = createRouter({
   history: createMemoryHistory(),

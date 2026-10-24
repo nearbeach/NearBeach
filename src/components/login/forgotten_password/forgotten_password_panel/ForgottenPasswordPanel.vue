@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch} from 'vue'
 import { WlkButton, WlkTextInput, ObjectStateEnum } from "whelk-ui";
+import { type ObjectStateEnumType } from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 
 // Define i18y
@@ -33,25 +34,58 @@ const emailAddress = defineModel('emailAddress', {
 })
 
 // Define ref
-const buttonState = ref(ObjectStateEnum.NoAction);
+const buttonState = ref<ObjectStateEnumType>(ObjectStateEnum.NoAction);
+const disableButton = ref<boolean>(true);
+const disableTextInput = ref<boolean>(false);
+
+// Define watch
+watch(emailAddress, async(new_value) => {
+    if (buttonState.value !== ObjectStateEnum.NoAction) {
+        // Disable this by default
+        disableButton.value = true;
+        disableTextInput.value = true;
+
+        // Nothing to do
+        return null;
+    }
+
+    // Make sure emailAddress is an email address
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    disableButton.value = !emailRegex.test(new_value);
+
+    return null;
+});
+
+// Define Functions
+function passwordReset() {
+    // Emit the event upstream
+    emit("passwordReset");
+
+    // Update the button state
+    buttonState.value = ObjectStateEnum.Loading;
+    disableButton.value = true;
+    disableTextInput.value = true;
+}
 </script>
 
 <template>
 	<form class="forgotten-password-panel"
-		  @submit="emit('passwordReset')"
+		  @submit="passwordReset()"
 	>
 		<h1 id="main-title">{{ t("forgotten_password")}}</h1>
 		<WlkTextInput class="compact"
-				   :label="t('email')"
-				   :placeholderText="t('email_placeholder')"
-				   :isRequired="true"
-				   v-model="emailAddress"
+                      :label="t('email')"
+                      :placeholderText="t('email_placeholder')"
+                      :isRequired="true"
+                      :is-disabled="disableTextInput"
+                      v-model="emailAddress"
 		/>
 
 		<WlkButton
 			class="primary"
 			:object-state="buttonState"
-			@click="emit('passwordReset')"
+            :is-disabled="disableButton"
+			@click="passwordReset()"
 		>
 			{{ t("submit") }}
 		</WlkButton>
