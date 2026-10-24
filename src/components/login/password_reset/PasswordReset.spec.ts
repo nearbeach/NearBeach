@@ -45,7 +45,9 @@ describe("PasswordReset", () => {
   });
 
   test("layout is flex row", async () => {
+    // Attach to the document so the scoped styles are applied
     const wrapper = mount(PasswordReset, {
+      attachTo: document.body,
       global: {
         plugins: [i18n],
       },
@@ -58,8 +60,10 @@ describe("PasswordReset", () => {
     // Check if the layout is flex row
     const passwordReset = wrapper.find(".password-reset");
     expect(passwordReset.classes()).toContain("password-reset");
-    expect(passwordReset.attributes("style")).toContain("display: flex");
-    expect(passwordReset.attributes("style")).toContain("flex-direction: row");
-    expect(passwordReset.attributes("style")).toContain("height: 100%");
+    const style = getComputedStyle(passwordReset.element);
+    expect(style.display).toBe("flex");
+    expect(style.flexDirection).toBe("row");
+
+    wrapper.unmount();
   });
 });

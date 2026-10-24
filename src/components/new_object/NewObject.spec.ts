@@ -75,7 +75,7 @@ describe("NewObject", () => {
     test("is disabled while the form is empty", async () => {
       const wrapper = await mountForDestination("project");
 
-      expect(wrapper.find(".primary").attributes("is-disabled")).toBe("true");
+      expect(wrapper.find<HTMLButtonElement>(".primary").element.disabled).toBe(true);
     });
 
     test("is enabled once a valid title and a group are provided", async () => {
@@ -83,7 +83,7 @@ describe("NewObject", () => {
 
       await fillForm(wrapper, "My new project");
 
-      expect(wrapper.find(".primary").attributes("is-disabled")).toBe("false");
+      expect(wrapper.find<HTMLButtonElement>(".primary").element.disabled).toBe(false);
     });
 
     test("stays disabled when the title is shorter than 5 characters", async () => {
@@ -91,7 +91,7 @@ describe("NewObject", () => {
 
       await fillForm(wrapper, "abc");
 
-      expect(wrapper.find(".primary").attributes("is-disabled")).toBe("true");
+      expect(wrapper.find<HTMLButtonElement>(".primary").element.disabled).toBe(true);
     });
   });
 

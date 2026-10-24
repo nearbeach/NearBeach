@@ -109,7 +109,8 @@ function signIn(event: Event) {
 
 		<WlkButton
 			class="primary"
-			:object-state="buttonState"
+			:disabled="buttonState === ObjectStateEnum.Disable"
+			:is-action-running="buttonState === ObjectStateEnum.LoggingIn"
 			@click="signIn"
 		>
 			{{ t("sign_in") }}

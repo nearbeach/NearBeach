@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import {AddObject} from ".";
 import { createPinia, setActivePinia } from "pinia";
@@ -27,6 +27,21 @@ describe("AddObject", () => {
     setActivePinia(createPinia());
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  // Never let the real showPicker() run - in a real browser it opens a native
+  // popup, which can close the test page and crash the whole run.
+  function mockShowPicker(isActive: boolean) {
+    vi.spyOn(Navigator.prototype, "userActivation", "get").mockReturnValue({
+      isActive,
+    } as UserActivation);
+    return vi
+      .spyOn(HTMLSelectElement.prototype, "showPicker")
+      .mockImplementation(() => {});
+  }
+
   test("renders label correctly", async () => {
     const wrapper = mountAddObject();
 
@@ -54,7 +69,7 @@ describe("AddObject", () => {
     });
 
     const select = wrapper.find("select");
-    expect(select.attributes("disabled")).toBe("disabled");
+    expect((select.element as HTMLSelectElement).disabled).toBe(true);
   });
 
   test("select is not disabled when options are present", async () => {
@@ -82,44 +97,24 @@ describe("AddObject", () => {
   test("calls showPicker on focus if user activation is active", async () => {
     const wrapper = mountAddObject();
 
+    const showPicker = mockShowPicker(true);
     const select = wrapper.find("select");
-    const focusEvent = new FocusEvent("focus");
-    Object.defineProperty(focusEvent, "target", {
-      writable: false,
-      value: select.element,
-    });
-
-    // Mock user activation
-    Object.defineProperty(navigator, "userActivation", {
-      writable: true,
-      value: { isActive: true },
-    });
 
     await select.trigger("focus");
 
     // Check if showPicker was called
-    expect(select.element.showPicker).toHaveBeenCalled();
+    expect(showPicker).toHaveBeenCalled();
   });
 
   test("does not call showPicker on focus if user activation is not active", async () => {
     const wrapper = mountAddObject();
 
+    const showPicker = mockShowPicker(false);
     const select = wrapper.find("select");
-    const focusEvent = new FocusEvent("focus");
-    Object.defineProperty(focusEvent, "target", {
-      writable: false,
-      value: select.element,
-    });
-
-    // Mock user activation
-    Object.defineProperty(navigator, "userActivation", {
-      writable: true,
-      value: { isActive: false },
-    });
 
     await select.trigger("focus");
 
     // Check if showPicker was not called
-    expect(select.element.showPicker).not.toHaveBeenCalled();
+    expect(showPicker).not.toHaveBeenCalled();
   });
 });

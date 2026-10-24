@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import {ObjectStatusTag} from ".";
 
@@ -17,17 +17,22 @@ describe("ObjectStatusTag", () => {
     expect(span.text()).toBe("Active");
   });
 
-  test("throws error for invalid higherOrderStatus", async () => {
-    expect(() => {
-      mount(ObjectStatusTag, {
-        props: {
-          higherOrderStatus: "invalid",
-          status: "Active",
-        },
-      });
-    }).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid prop: custom validator check failed for prop "higherOrderStatus"."`
+  test("warns for invalid higherOrderStatus", async () => {
+    // Vue prop validators only warn, they never throw
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    mount(ObjectStatusTag, {
+      props: {
+        higherOrderStatus: "invalid",
+        status: "Active",
+      },
+    });
+
+    const warnings = warnSpy.mock.calls.map((call) => String(call[0]));
+    expect(warnings).toContainEqual(
+      expect.stringContaining('Invalid prop: custom validator check failed for prop "higherOrderStatus"'),
     );
+    warnSpy.mockRestore();
   });
 
   test("renders with correct class and text for different higherOrderStatus", async () => {

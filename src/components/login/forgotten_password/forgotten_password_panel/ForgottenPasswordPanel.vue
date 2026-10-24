@@ -70,22 +70,21 @@ function passwordReset() {
 
 <template>
 	<form class="forgotten-password-panel"
-		  @submit="passwordReset()"
+		  @submit.prevent="passwordReset()"
 	>
 		<h1 id="main-title">{{ t("forgotten_password")}}</h1>
 		<WlkTextInput class="compact"
                       :label="t('email')"
                       :placeholderText="t('email_placeholder')"
                       :isRequired="true"
-                      :is-disabled="disableTextInput"
+                      :disabled="disableTextInput"
                       v-model="emailAddress"
 		/>
 
 		<WlkButton
 			class="primary"
-			:object-state="buttonState"
-            :is-disabled="disableButton"
-			@click="passwordReset()"
+			:disabled="disableButton"
+			:is-action-running="buttonState === ObjectStateEnum.Loading"
 		>
 			{{ t("submit") }}
 		</WlkButton>

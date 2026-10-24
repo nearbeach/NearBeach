@@ -63,7 +63,7 @@ describe("ForgottenPassword", () => {
     vi.restoreAllMocks();
   });
 
-  test("submits password reset with error and shows error message", async () => {
+  test("submits password reset with error and shows error message in PasswordResetDone", async () => {
     const errorMessage = "An error occurred";
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error(errorMessage));
 
@@ -84,12 +84,10 @@ describe("ForgottenPassword", () => {
     await flushPromises();
     await nextTick();
 
-    // ForgottenPasswordPanel should still be rendered
-    expect(forgottenPasswordPanel.exists()).toBe(true);
-
-    // PasswordResetDone should not be rendered
+    // PasswordResetDone renders the error instead of the success message
     const passwordResetDone = wrapper.findComponent({ name: "PasswordResetDone" });
-    expect(passwordResetDone.exists()).toBe(false);
+    expect(passwordResetDone.exists()).toBe(true);
+    expect(passwordResetDone.text()).toContain(errorMessage);
 
     vi.restoreAllMocks();
   });

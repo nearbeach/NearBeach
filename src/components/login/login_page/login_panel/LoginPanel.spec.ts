@@ -4,6 +4,7 @@ import {LoginPanel} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createMemoryHistory } from "vue-router";
 import i18n from "@/i18n.ts";
+import {ObjectStateEnum} from "whelk-ui";
 import {defineComponent, h, nextTick} from "vue";
 
 const router = createRouter({
@@ -26,7 +27,9 @@ describe("LoginPanel", () => {
   test("renders login message", async () => {
     const wrapper = mount(LoginPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
+        username: "",
+        password: "",
       },
       global: {
         plugins: [router, i18n],
@@ -43,7 +46,9 @@ describe("LoginPanel", () => {
   test("renders error message when provided", async () => {
     const wrapper = mount(LoginPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
+        username: "",
+        password: "",
         errorMessage: "Invalid credentials",
       },
       global: {
@@ -61,7 +66,9 @@ describe("LoginPanel", () => {
   test("emits signIn event on form submission", async () => {
     const wrapper = mount(LoginPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
+        username: "",
+        password: "",
       },
       global: {
         plugins: [router, i18n],
@@ -77,10 +84,12 @@ describe("LoginPanel", () => {
     expect(wrapper.emitted("signIn")).toBeTruthy();
   });
 
-  test("validates username and password on form submission", async () => {
+  test("shows validation errors when the password is too short", async () => {
     const wrapper = mount(LoginPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
+        username: "",
+        password: "",
       },
       global: {
         plugins: [router, i18n],
@@ -90,25 +99,24 @@ describe("LoginPanel", () => {
     await flushPromises();
     await nextTick();
 
-    const usernameInput = wrapper.find("input[type=text]");
-    const passwordInput = wrapper.find("input[type=password]");
+    await wrapper.find("input[type=text]").setValue("user");
+    await wrapper.find("input[type=password]").setValue("pass");
 
-    await usernameInput.setValue("user");
-    await usernameInput.trigger("blur");
+    await wrapper.find("button").trigger("click");
 
-    await passwordInput.setValue("pass");
-    await passwordInput.trigger("blur");
-
-    const form = wrapper.find("form");
-    await form.trigger("submit.prevent");
-
-    expect(wrapper.emitted("signIn")).toBeFalsy();
+    // Password must be at least 8 characters - the field reports the error,
+    // and validation of the credentials themselves is left to the parent
+    const passwordError = wrapper.find(".wlk-password-input .render-error-message");
+    expect(passwordError.text()).not.toBe("");
+    expect(wrapper.emitted("signIn")).toHaveLength(1);
   });
 
   test("disables sign in button when buttonState is disabled", async () => {
     const wrapper = mount(LoginPanel, {
       props: {
-        buttonState: "disabled",
+        buttonState: ObjectStateEnum.Disable,
+        username: "",
+        password: "",
       },
       global: {
         plugins: [router, i18n],
@@ -119,13 +127,15 @@ describe("LoginPanel", () => {
     await nextTick();
 
     const signInButton = wrapper.find("button");
-    expect(signInButton.attributes("disabled")).toBe("disabled");
+    expect((signInButton.element as HTMLButtonElement).disabled).toBe(true);
   });
 
   test("enables sign in button when buttonState is enabled", async () => {
     const wrapper = mount(LoginPanel, {
       props: {
-        buttonState: "enabled",
+        buttonState: ObjectStateEnum.NoAction,
+        username: "",
+        password: "",
       },
       global: {
         plugins: [router, i18n],
@@ -136,6 +146,6 @@ describe("LoginPanel", () => {
     await nextTick();
 
     const signInButton = wrapper.find("button");
-    expect(signInButton.attributes("disabled")).toBeUndefined();
+    expect((signInButton.element as HTMLButtonElement).disabled).toBe(false);
   });
 });

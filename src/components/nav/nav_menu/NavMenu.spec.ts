@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import {NavMenu} from ".";
+import {NavMenuItem} from "./nav_menu_item";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
@@ -13,6 +14,24 @@ const router = createRouter({
   routes: routes,
 });
 
+async function mountNavMenu() {
+  const wrapper = mount(NavMenu, {
+    global: {
+      plugins: [router, i18n],
+    },
+  });
+
+  // Flush all promises
+  await flushPromises();
+  await nextTick();
+
+  return wrapper;
+}
+
+function getDestinations(wrapper: Awaited<ReturnType<typeof mountNavMenu>>) {
+  return wrapper.findAllComponents(NavMenuItem).map((item) => item.props("destination"));
+}
+
 describe("NavMenu", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -24,73 +43,42 @@ describe("NavMenu", () => {
   });
 
   test("renders dashboard menu item", async () => {
-    const wrapper = mount(NavMenu, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+    const wrapper = await mountNavMenu();
 
-    // Flush all promises
-    await flushPromises();
-    await nextTick();
-
-    // Check if dashboard menu item exists
-    const dashboardItem = wrapper.find("a.dashboard");
-    expect(dashboardItem.exists()).toBe(true);
+    // Check if dashboard menu item exists and links to the root
+    const dashboardItem = wrapper.findAllComponents(NavMenuItem).at(0);
+    expect(dashboardItem?.props("destination")).toBe("dashboard");
+    expect(dashboardItem?.find("a").attributes("href")).toBe("/");
   });
 
-  test("renders settings menu item", async () => {
-    const wrapper = mount(NavMenu, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+  test("only renders the dashboard when the user has no permissions", async () => {
+    const wrapper = await mountNavMenu();
 
-    // Flush all promises
-    await flushPromises();
-    await nextTick();
-
-    // Check if settings menu item exists
-    const settingsItem = wrapper.find("a.settings");
-    expect(settingsItem.exists()).toBe(true);
+    expect(getDestinations(wrapper)).toEqual(["dashboard"]);
   });
 
-  test("does not render admin menu item if user has no admin permissions", async () => {
+  test("renders menu items for the objects the user has permissions for", async () => {
     const permissionStore = usePermissionStore();
-    permissionStore.processPermissionData();
+    permissionStore.maximumPermissions.kanban_board = 1;
+    permissionStore.maximumPermissions.project = 1;
 
-    const wrapper = mount(NavMenu, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+    const wrapper = await mountNavMenu();
 
-    // Flush all promises
-    await flushPromises();
-    await nextTick();
-
-    // Check if admin menu item does not exist
-    const adminItem = wrapper.find("a.admin");
-    expect(adminItem.exists()).toBe(false);
+    expect(getDestinations(wrapper)).toEqual(["dashboard", "kanban_board", "project"]);
   });
 
-  test("renders admin menu item if user has admin permissions", async () => {
+  test("renders create new link only when the user can create the object", async () => {
     const permissionStore = usePermissionStore();
-    permissionStore.maximumPermissions.administration_assign_user_to_group = 1;
-    permissionStore.processPermissionData();
+    permissionStore.maximumPermissions.project = 3;
+    permissionStore.maximumPermissions.task = 2;
 
-    const wrapper = mount(NavMenu, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+    const wrapper = await mountNavMenu();
 
-    // Flush all promises
-    await flushPromises();
-    await nextTick();
+    const items = wrapper.findAllComponents(NavMenuItem);
+    const projectItem = items.find((item) => item.props("destination") === "project");
+    const taskItem = items.find((item) => item.props("destination") === "task");
 
-    // Check if admin menu item exists
-    const adminItem = wrapper.find("a.admin");
-    expect(adminItem.exists()).toBe(true);
+    expect(projectItem?.find(".nav-bar--menu--item-new").attributes("href")).toBe("/project/new");
+    expect(taskItem?.find(".nav-bar--menu--item-new").exists()).toBe(false);
   });
 });

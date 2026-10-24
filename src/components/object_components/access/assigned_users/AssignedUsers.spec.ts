@@ -4,42 +4,30 @@ import { createPinia, setActivePinia } from "pinia";
 import { vi } from "vitest";
 import {AssignedUsers} from ".";
 import { useObjectStore } from "@/stores/object/object.ts";
-import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import { nextTick } from "vue";
 
+// The backend adds full_name to the users it sends - it is used as the option label
+const user1 = { id: 1, username: "user1", first_name: "First", last_name: "Last", full_name: "First Last", email: "user1@example.com", profile_picture: "", profile_picture_path: "" };
+const user2 = { id: 2, username: "user2", first_name: "Second", last_name: "User", full_name: "Second User", email: "user2@example.com", profile_picture: "", profile_picture_path: "" };
+
 describe("AssignedUsers", () => {
-  let wrapper: any;
-  let objectStore: any;
+  let objectStore: ReturnType<typeof useObjectStore>;
 
   beforeEach(() => {
     setActivePinia(createPinia());
     objectStore = useObjectStore();
+    objectStore.destination = "project";
+    objectStore.id = 1;
 
     // Mock fetch
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 200,
       json: async () => ({
         group_list: [],
-        potential_user_list: [
-          { id: 1, username: "user1", first_name: "First", last_name: "Last", email: "user1@example.com", profile_picture: "", profile_picture_path: "" },
-        ],
+        potential_user_list: [user1, user2],
         user_list: [],
       }),
     } as Response);
-
-    // Seed the store
-    objectStore.is_loaded = true;
-    objectStore.potential_user_list = [
-      { id: 1, username: "user1", first_name: "First", last_name: "Last", email: "user1@example.com", profile_picture: "", profile_picture_path: "" },
-    ];
-
-    wrapper = mount(AssignedUsers, {
-      global: {
-        components: {
-          AddObject,
-        },
-      },
-    });
   });
 
   afterEach(() => {
@@ -47,73 +35,79 @@ describe("AssignedUsers", () => {
   });
 
   test("renders assigned users", async () => {
+    objectStore.user_list = [user1];
+
+    const wrapper = mount(AssignedUsers);
+
     // Flush all promises
     await flushPromises();
     await nextTick();
 
     // Check if the user is rendered
-    const user = wrapper.find(".user-list");
-    expect(user.exists()).toBe(true);
-    expect(user.text()).toContain("First Last");
+    const users = wrapper.findAll(".user-access-item");
+    expect(users.length).toBe(1);
+    expect(users.at(0)?.text()).toContain("First Last");
+  });
+
+  test("fetches the potential users once the object has loaded", async () => {
+    const wrapper = mount(AssignedUsers);
+    await flushPromises();
+
+    // Nothing to add until the object has loaded
+    expect(wrapper.find("select").exists()).toBe(false);
+
+    objectStore.is_loaded = true;
+    await flushPromises();
+    await nextTick();
+
+    expect(globalThis.fetch).toHaveBeenCalledWith("/api/v1/project/1/groups/", expect.any(Object));
+    expect(objectStore.potential_user_list).toEqual([user1, user2]);
+    expect(wrapper.findAll("option").map((option) => option.attributes("value"))).toEqual(["1", "2"]);
   });
 
   test("adds a user", async () => {
-    // Mock CSRF token
-    Object.defineProperty(document, "cookie", {
-      writable: true,
-      value: "csrftoken=mockedtoken",
-    });
+    objectStore.potential_user_list = [user1, user2];
+    objectStore.user_list = [user1];
 
-    // Mock fetch for adding a user
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      status: 200,
-      json: async () => ({
-        id: 1,
-        username: "user1",
-        first_name: "First",
-        last_name: "Last",
-        email: "user1@example.com",
-        profile_picture: "",
-        profile_picture_path: "",
-      }),
-    } as Response);
+    const wrapper = mount(AssignedUsers);
+    await flushPromises();
 
-    // Trigger the add user event
-    const addObject = wrapper.findComponent(AddObject);
-    await addObject.vm.$emit("add", { id: 1, username: "user1", first_name: "First", last_name: "Last", email: "user1@example.com", profile_picture: "", profile_picture_path: "" });
+    // Only users who are not assigned yet can be picked
+    expect(wrapper.findAll("option").map((option) => option.text())).toEqual(["Second User"]);
+
+    // Pick user 2 from the AddObject select
+    await wrapper.find("select").setValue("2");
 
     // Flush all promises
     await flushPromises();
     await nextTick();
 
     // Check if the user is added to the list
-    const user = wrapper.find(".user-list");
-    expect(user.exists()).toBe(true);
-    expect(user.text()).toContain("First Last");
+    expect(objectStore.user_list.map((user) => user.id)).toEqual([1, 2]);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/v1/project/1/users/",
+      expect.objectContaining({ body: JSON.stringify({ user_list: [2] }) }),
+    );
   });
 
   test("removes a user", async () => {
-    // Mock CSRF token
-    Object.defineProperty(document, "cookie", {
-      writable: true,
-      value: "csrftoken=mockedtoken",
-    });
-
     // Seed the store with a user
-    objectStore.user_list = [
-      { id: 1, username: "user1", first_name: "First", last_name: "Last", email: "user1@example.com", profile_picture: "", profile_picture_path: "" },
-    ];
+    objectStore.user_list = [user1];
+
+    const wrapper = mount(AssignedUsers);
+    await flushPromises();
 
     // Trigger the remove user event
-    const user = wrapper.find(".user-list .remove-user");
-    await user.trigger("click");
+    const removeIcon = wrapper.find(".user-access-item svg");
+    await removeIcon.trigger("click");
 
     // Flush all promises
     await flushPromises();
     await nextTick();
 
     // Check if the user is removed from the list
-    const userList = wrapper.find(".user-list");
-    expect(userList.exists()).toBe(false);
+    expect(objectStore.user_list).toEqual([]);
+    expect(wrapper.find(".user-access-list").exists()).toBe(false);
+    expect(globalThis.fetch).toHaveBeenCalledWith("/api/v1/project/1/users/1/", expect.any(Object));
   });
 });

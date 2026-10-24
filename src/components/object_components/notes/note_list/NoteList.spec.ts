@@ -62,7 +62,8 @@ describe("NoteList", () => {
       const note = notes[index];
       expect(noteItem.find(".name").text()).toBe(`${note.first_name} ${note.last_name}`);
       expect(noteItem.find(".last-modified strong").text()).toBe("Last Modified:");
-      expect(noteItem.find(".last-modified").text()).toContain(note.date_modified.toISOString());
+      // The date is rendered as-is, without any formatting
+      expect(noteItem.find(".last-modified").text()).toContain(String(note.date_modified));
       expect(noteItem.find(".note-content").text()).toBe(note.note);
     });
   });
@@ -146,8 +147,9 @@ describe("NoteList", () => {
     await flushPromises();
     await nextTick();
 
-    const emptyMessage = wrapper.find(".empty-message");
+    const emptyMessage = wrapper.find(".empty-note-list");
     expect(emptyMessage.exists()).toBe(true);
-    expect(emptyMessage.text()).toBe("No notes available.");
+    expect(emptyMessage.text()).toBe("No notes in object");
+    expect(wrapper.find(".note-list").exists()).toBe(false);
   });
 });

@@ -1,19 +1,38 @@
 import { beforeEach, afterEach, describe, expect, test } from "vitest";
-import { mount, flushPromises } from "@vue/test-utils";
+import { mount, flushPromises, type VueWrapper } from "@vue/test-utils";
 import {PasswordResetPanel} from ".";
 import { createPinia, setActivePinia } from "pinia";
-import { createRouter, createWebHistory } from "vue-router";
-import { loginRoutes } from "@/router/loginRouter.ts";
+import loginRouter from "@/router/loginRouter.ts";
 import { nextTick } from "vue";
 import { vi } from "vitest";
 import i18n from "@/i18n.ts";
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes: loginRoutes,
-});
+// The component reads uid/token from the real query string
+function setQueryString(query: string) {
+  window.history.replaceState(null, "", `${window.location.pathname}${query}`);
+}
+
+function mountPasswordResetPanel() {
+  return mount(PasswordResetPanel, {
+    global: {
+      plugins: [loginRouter, i18n],
+    },
+  });
+}
+
+async function submitPasswords(wrapper: VueWrapper, password1: string, password2: string) {
+  const [password1Input, password2Input] = wrapper.findAll("input[type=password]");
+  await password1Input!.setValue(password1);
+  await password2Input!.setValue(password2);
+  await wrapper.find("button").trigger("click");
+
+  await flushPromises();
+  await nextTick();
+}
 
 describe("PasswordResetPanel", () => {
+  const originalSearch = window.location.search;
+
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200, json: async () => ({}) } as Response);
@@ -21,81 +40,53 @@ describe("PasswordResetPanel", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    setQueryString(originalSearch);
   });
 
   test("renders the reset password title", async () => {
-    const wrapper = mount(PasswordResetPanel, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+    const wrapper = mountPasswordResetPanel();
 
     const title = wrapper.find("#main-title");
     expect(title.text()).toBe("Reset Password");
   });
 
   test("displays error message when passwords do not match", async () => {
-    const wrapper = mount(PasswordResetPanel, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+    const wrapper = mountPasswordResetPanel();
 
-    const password1Input = wrapper.findComponent({ ref: "password1" });
-    const password2Input = wrapper.findComponent({ ref: "password2" });
-    const submitButton = wrapper.findComponent({ ref: "submitButton" });
-
-    await password1Input.setValue("password123");
-    await password2Input.setValue("password456");
-    await submitButton.trigger("click");
-
-    await flushPromises();
-    await nextTick();
+    await submitPasswords(wrapper, "password123", "password456");
 
     const errorMessage = wrapper.find(".error-message");
     expect(errorMessage.text()).toBe("Passwords don't match");
+    expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
   test("displays error message when query string is missing", async () => {
-    const wrapper = mount(PasswordResetPanel, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+    setQueryString("");
+    const wrapper = mountPasswordResetPanel();
 
-    const password1Input = wrapper.findComponent({ ref: "password1" });
-    const password2Input = wrapper.findComponent({ ref: "password2" });
-    const submitButton = wrapper.findComponent({ ref: "submitButton" });
-
-    await password1Input.setValue("password123");
-    await password2Input.setValue("password123");
-    await submitButton.trigger("click");
-
-    await flushPromises();
-    await nextTick();
+    await submitPasswords(wrapper, "password123", "password123");
 
     const errorMessage = wrapper.find(".error-message");
     expect(errorMessage.text()).toBe("Query string missing");
+    expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
   test("navigates to login page after successful password reset", async () => {
-    const wrapper = mount(PasswordResetPanel, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+    setQueryString("?uid=abc&token=123");
+    // The component pushes on the login router singleton - stub it so the
+    // test page is not navigated
+    const pushSpy = vi.spyOn(loginRouter, "push").mockResolvedValue(undefined);
+    const wrapper = mountPasswordResetPanel();
 
-    const password1Input = wrapper.findComponent({ ref: "password1" });
-    const password2Input = wrapper.findComponent({ ref: "password2" });
-    const submitButton = wrapper.findComponent({ ref: "submitButton" });
+    await submitPasswords(wrapper, "password123", "password123");
 
-    await password1Input.setValue("password123");
-    await password2Input.setValue("password123");
-    await submitButton.trigger("click");
-
-    await flushPromises();
-    await nextTick();
-
-    expect(router.currentRoute.value.path).toBe("/login");
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/v1/authentication/reset-password/",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ password: "password123", uid: "abc", token: "123" }),
+      }),
+    );
+    expect(pushSpy).toHaveBeenCalledWith("/login");
   });
 });

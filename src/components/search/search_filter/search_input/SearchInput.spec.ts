@@ -8,6 +8,7 @@ describe("SearchInput", () => {
     const placeholder = "Search for something";
     const wrapper = mount(SearchInput, {
       props: {
+        modelValue: "",
         placeholder,
       },
     });
@@ -53,7 +54,8 @@ describe("SearchInput", () => {
     await nextTick();
 
     // Check the search icon exists
-    const searchIcon = wrapper.findComponent({ name: "Search" });
+    // Lucide icons are functional components, so look for the rendered svg
+    const searchIcon = wrapper.find("svg.lucide-search");
     expect(searchIcon.exists()).toBe(true);
   });
 });

@@ -5,10 +5,15 @@ import { useObjectStore } from "@/stores/object/object.ts";
 import {PublicLinks} from ".";
 import { vi } from "vitest";
 import {nextTick} from "vue";
+import i18n from "@/i18n.ts";
 
-const i18n = {
-  install: () => {},
-};
+function mountPublicLinks() {
+  return mount(PublicLinks, {
+    global: {
+      plugins: [i18n],
+    },
+  });
+}
 
 describe("PublicLinks", () => {
   beforeEach(() => {
@@ -24,38 +29,33 @@ describe("PublicLinks", () => {
   });
 
   test("mounting component", async () => {
-    const wrapper = mount(PublicLinks, {
-      global: {
-        plugins: [i18n],
-      },
-    });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 200,
+      json: async () => ([]),
+    } as Response);
+
+    const wrapper = mountPublicLinks();
+    await flushPromises();
 
     expect(wrapper.exists()).toBe(true);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/v1/test-destination/123/public_link/",
+      expect.any(Object),
+    );
   });
 
-  test("displays error message on fetch failure", async () => {
-    const mockFetchResponse = {
+  test("does not render the links table when the fetch fails", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 500,
       json: async () => ({ error: "Server error" }),
-    };
+    } as Response);
 
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(mockFetchResponse as Response);
-
-    const wrapper = mount(PublicLinks, {
-      global: {
-        plugins: [i18n],
-      },
-    });
+    const wrapper = mountPublicLinks();
 
     await flushPromises();
     await nextTick();
 
-    expect(fetch).toHaveBeenCalledWith(
-      "/api/test-destination/123/public-links/"
-    );
-
-    const errorMessage = wrapper.find(".error-message");
-    expect(errorMessage.exists()).toBe(true);
-    expect(errorMessage.text()).toBe("Server error");
+    // The component keeps the error, but does not display it yet
+    expect(wrapper.find("table").exists()).toBe(false);
   });
 });

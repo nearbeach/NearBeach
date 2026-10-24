@@ -49,7 +49,8 @@ describe("SearchCard", () => {
     expect(objectStatusTag.props("status")).toBe("active");
 
     // Check RouterLink
-    const routerLink = wrapper.findComponent(RouterLink);
+    // ObjectIdTag also renders a RouterLink, so look inside the title
+    const routerLink = wrapper.find(".object-title").findComponent(RouterLink);
     expect(routerLink.exists()).toBe(true);
     expect(routerLink.props("to")).toBe("test/123");
     expect(routerLink.text()).toBe("Test Object");

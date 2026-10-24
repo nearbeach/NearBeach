@@ -13,6 +13,14 @@ const router = createRouter({
       path: "/test-route",
       component: defineComponent({ render: () => h("div") }),
     },
+    {
+      path: "/another-route",
+      component: defineComponent({ render: () => h("div") }),
+    },
+    {
+      path: "/new-test-route",
+      component: defineComponent({ render: () => h("div") }),
+    },
   ],
 });
 
@@ -112,7 +120,7 @@ describe("NavMenuItem", () => {
 
     const newLink = wrapper.find(".nav-bar--menu--item-new");
     expect(newLink.exists()).toBe(true);
-    expect(newLink.attributes("to")).toBe("/new-test-route");
+    expect(newLink.attributes("href")).toBe("/new-test-route");
   });
 
   test("does not render new route link when routeAddressNew is not provided", async () => {

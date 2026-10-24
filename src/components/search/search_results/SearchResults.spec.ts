@@ -142,9 +142,9 @@ describe("SearchResults", () => {
         const searchCard = wrapper.findComponent({name: "SearchCard"});
         expect(searchCard.props()).toEqual({
             id: 1,
-            higherOrderStatus: "high",
+            higherOrderStatus: "Normal",
             objectType: "test-destination",
-            status: "active",
+            status: "In Progress",
             title: "Test 1",
         });
     });

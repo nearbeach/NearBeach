@@ -6,28 +6,43 @@ import { createPinia, setActivePinia } from "pinia";
 import {nextTick} from "vue";
 import {NewFolder} from "@/components/object_components/document/create_and_filter/new_folder";
 
+// Keep the teleported modal inside the wrapper so it can be found
+function mountCreateAndFilter() {
+  return mount(CreateAndFilter, {
+    global: {
+      plugins: [i18n],
+      stubs: {
+        teleport: true,
+      }
+    },
+  });
+}
+
+async function openNewFolderModal(wrapper: ReturnType<typeof mountCreateAndFilter>) {
+  // Click on the dropdown button
+  const dropdownButton = wrapper.find(".wlk-drop-down > button");
+  await dropdownButton.trigger("click");
+
+  // Click on the "Create a new folder" dropdown item
+  const newFolderItem = wrapper.findAll(".drop-down-item").find((item) => item.text() === "Create a new folder");
+  await newFolderItem!.trigger("click");
+
+  await flushPromises();
+  await nextTick();
+}
+
 describe("CreateAndFilter", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
   });
 
   test("clicking dropdown item opens modal with correct content", async () => {
-    const wrapper = mount(CreateAndFilter, {
-      global: {
-        plugins: [i18n],
-        stubs: {
-          teleport: true,
-        }
-      },
-    });
+    const wrapper = mountCreateAndFilter();
 
-    // Click on the dropdown button
-    const dropdownButton = wrapper.find(".wlk-dropdown-button");
-    await dropdownButton.trigger("click");
+    // Modal starts closed
+    expect(wrapper.find(".wlk-modal.open").exists()).toBe(false);
 
-    // Click on the "new_folder" dropdown item
-    const newFolderItem = wrapper.find(".wlk-dropdown-item[data-event='new_folder']");
-    await newFolderItem.trigger("click");
+    await openNewFolderModal(wrapper);
 
     // Modal is open
     const modal = wrapper.find(".wlk-modal.open");
@@ -43,25 +58,13 @@ describe("CreateAndFilter", () => {
   });
 
   test("clicking close button closes modal", async () => {
-    const wrapper = mount(CreateAndFilter, {
-      global: {
-        plugins: [i18n],
-        stubs: {
-          teleport: true,
-        }
-      },
-    });
+    const wrapper = mountCreateAndFilter();
 
-    // Click on the dropdown button
-    const dropdownButton = wrapper.find(".wlk-dropdown-button");
-    await dropdownButton.trigger("click");
+    await openNewFolderModal(wrapper);
+    expect(wrapper.find(".wlk-modal.open").exists()).toBe(true);
 
-    // Click on the "new_folder" dropdown item
-    const newFolderItem = wrapper.find(".wlk-dropdown-item[data-event='new_folder']");
-    await newFolderItem.trigger("click");
-
-    // Click on the close button
-    const closeButton = wrapper.find(".modal-header-row .x");
+    // Click on the close (X) icon
+    const closeButton = wrapper.find(".modal-header-row svg.lucide-x");
     await closeButton.trigger("click");
 
     // Flush all promises

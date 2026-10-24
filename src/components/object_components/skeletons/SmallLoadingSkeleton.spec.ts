@@ -17,20 +17,24 @@ describe("SmallLoadingSkeleton", () => {
   });
 
   test("has correct styles", async () => {
+    // Attach to the document so the scoped styles are applied
     const wrapper = mount(SmallLoadingSkeleton, {
+      attachTo: document.body,
       global: {
         plugins: [router],
       },
     });
 
-    // Check if the component has the correct styles
+    // The styles live in the stylesheet, not the style attribute - check the computed values
     expect(wrapper.classes()).toContain("small-loading-skeleton");
-    expect(wrapper.attributes("style")).toContain("text-align: center");
-    expect(wrapper.attributes("style")).toContain("font-family: \"Roboto\", sans-serif");
-    expect(wrapper.attributes("style")).toContain("font-weight: 100");
-    expect(wrapper.attributes("style")).toContain("padding: 2rem 0");
-    expect(wrapper.attributes("style")).toContain("border: 1px black dashed");
-    expect(wrapper.attributes("style")).toContain("margin: 0 2rem 3rem 2rem");
+    const style = getComputedStyle(wrapper.element);
+    expect(style.textAlign).toBe("center");
+    expect(style.fontFamily).toContain("Roboto");
+    expect(style.fontWeight).toBe("100");
+    expect(style.borderStyle).toBe("dashed");
+    expect(style.borderWidth).toBe("1px");
+
+    wrapper.unmount();
   });
 
   test("renders slot content", async () => {

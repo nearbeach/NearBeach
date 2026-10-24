@@ -90,14 +90,15 @@ describe("LinkObjectsTable", () => {
     await flushPromises();
     await nextTick();
 
-    const deleteButton = wrapper.find(".link-object .delete-button");
+    // The delete control is the trash icon
+    const deleteButton = wrapper.find(".link-object .link-object-delete svg");
     await deleteButton.trigger("click");
 
     await flushPromises();
     await nextTick();
 
     expect(wrapper.emitted().deleteObjectLink).toBeTruthy();
-    expect(wrapper.emitted().deleteObjectLink[0]).toEqual([1]);
+    expect(wrapper.emitted().deleteObjectLink[0]).toEqual([{ object_assignment_id: 1, index: 0 }]);
   });
 
   test("renders create message when showCreate is true", async () => {
@@ -114,15 +115,15 @@ describe("LinkObjectsTable", () => {
     await flushPromises();
     await nextTick();
 
-    const createMessage = wrapper.find(".create-message");
+    const createMessage = wrapper.find(".link-create");
     expect(createMessage.exists()).toBe(true);
-    expect(createMessage.text()).toBe("Create new object");
+    expect(createMessage.text()).toBe("Please wait - creating object link");
   });
 
-  test("renders error message when errorMessage is provided", async () => {
+  test("renders error message when errorText is provided", async () => {
     const wrapper = mount(LinkObjectsTable, {
       props: {
-        errorMessage: "An error occurred",
+        errorText: "An error occurred",
         objectLinkList: [],
       },
       global: {
@@ -133,15 +134,15 @@ describe("LinkObjectsTable", () => {
     await flushPromises();
     await nextTick();
 
-    const errorMessage = wrapper.find(".error-message");
+    const errorMessage = wrapper.find(".link-error");
     expect(errorMessage.exists()).toBe(true);
-    expect(errorMessage.text()).toBe("An error occurred");
+    expect(errorMessage.find("h4").text()).toBe("Error");
+    expect(errorMessage.text()).toContain("An error occurred");
   });
 
-  test("renders loading message when isLoading is true", async () => {
+  test("renders no create or error rows by default", async () => {
     const wrapper = mount(LinkObjectsTable, {
       props: {
-        isLoading: true,
         objectLinkList: [],
       },
       global: {
@@ -152,8 +153,8 @@ describe("LinkObjectsTable", () => {
     await flushPromises();
     await nextTick();
 
-    const loadingMessage = wrapper.find(".loading-message");
-    expect(loadingMessage.exists()).toBe(true);
-    expect(loadingMessage.text()).toBe("Loading...");
+    expect(wrapper.find(".link-create").exists()).toBe(false);
+    expect(wrapper.find(".link-error").exists()).toBe(false);
+    expect(wrapper.findAll(".link-object").length).toBe(0);
   });
 });

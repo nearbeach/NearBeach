@@ -42,8 +42,8 @@ describe("ForgottenPasswordPanel", () => {
     // Wait for the input to report its validity
     await nextTick();
 
-    const submitButton = wrapper.findComponent({ name: "WlkButton" });
-    expect(submitButton.attributes("is-disabled")).toBe("true");
+    const submitButton = wrapper.find("button");
+    expect((submitButton.element as HTMLButtonElement).disabled).toBe(true);
   });
 
   test("enables submit button when email is valid", async () => {
@@ -61,8 +61,8 @@ describe("ForgottenPasswordPanel", () => {
     // Wait for the input to report its validity
     await nextTick();
 
-    const submitButton = wrapper.findComponent({ name: "WlkButton" });
-    expect(submitButton.attributes("is-disabled")).toBe("false");
+    const submitButton = wrapper.find("button");
+    expect((submitButton.element as HTMLButtonElement).disabled).toBe(false);
   });
 
   test("emits passwordReset event on form submit", async () => {

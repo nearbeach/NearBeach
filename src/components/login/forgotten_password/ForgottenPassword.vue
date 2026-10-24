@@ -29,8 +29,8 @@ async function submitPasswordReset(): Promise<void> {
 			},
 			body: JSON.stringify(body),
 		},
-	).catch((error: string) => {
-		errorMessage.value = error
+	).catch((error: Error) => {
+		errorMessage.value = error.message;
 	});
 }
 </script>

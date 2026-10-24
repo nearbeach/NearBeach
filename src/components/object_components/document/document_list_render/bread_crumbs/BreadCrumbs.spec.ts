@@ -21,11 +21,13 @@ describe("BreadCrumbs", () => {
     await flushPromises();
     await nextTick();
 
-    const rootLabel = wrapper.find(".root-label");
-    expect(rootLabel.text()).toBe("Root");
+    // The current folder is the root, so there is nothing to navigate back to
+    expect(wrapper.find(".end-span").text()).toBe("Root");
+    expect(wrapper.find(".root-button").exists()).toBe(false);
+    expect(wrapper.findAll(".navigation-button").length).toBe(0);
   });
 
-  test("renders navigation buttons when breadCrumbsArray is not empty", async () => {
+  test("renders root, in between folders and current folder when breadCrumbsArray is not empty", async () => {
     const store = useDocumentationStore();
     store.breadCrumbsArray = [
       { label: "Folder 1", folderId: 1 },
@@ -41,10 +43,12 @@ describe("BreadCrumbs", () => {
     await flushPromises();
     await nextTick();
 
+    // The last crumb is the current folder, everything before it is a button
+    expect(wrapper.find(".root-button").text()).toBe("Root");
     const navigationButtons = wrapper.findAll(".navigation-button");
-    expect(navigationButtons.length).toBe(2);
+    expect(navigationButtons.length).toBe(1);
     expect(navigationButtons.at(0)?.text()).toBe("Folder 1");
-    expect(navigationButtons.at(1)?.text()).toBe("Folder 2");
+    expect(wrapper.find(".end-span").text()).toBe("Folder 2");
   });
 
   test("goes back to previous folder when navigation button is clicked", async () => {
@@ -89,8 +93,8 @@ describe("BreadCrumbs", () => {
     await flushPromises();
     await nextTick();
 
-    const rootLabel = wrapper.find(".root-label");
-    await rootLabel.trigger("click");
+    const rootButton = wrapper.find(".root-button");
+    await rootButton.trigger("click");
 
     await flushPromises();
     await nextTick();

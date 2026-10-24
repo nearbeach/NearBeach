@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import {SearchPage} from ".";
 import { createPinia, setActivePinia } from "pinia";
@@ -14,6 +14,16 @@ const router = createRouter({
 describe("SearchPage", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+
+    // SearchFilter fetches results on mount - there is no backend in the tests
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 200,
+      json: async () => ({ previous: null, next: null, results: [] }),
+    } as Response);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   test("renders SearchFilter and SearchResults components", async () => {

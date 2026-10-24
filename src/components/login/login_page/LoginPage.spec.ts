@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
-import { mount, flushPromises } from "@vue/test-utils";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { mount, flushPromises, type VueWrapper } from "@vue/test-utils";
 import {LoginPage} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
@@ -15,22 +15,47 @@ const router = createRouter({
   routes: routes,
 });
 
+// Both panels are always rendered and toggled with v-show, so the wrapper is
+// attached to the document to let isVisible() see the display style
+function mountLoginPage() {
+  return mount(LoginPage, {
+    attachTo: document.body,
+    global: {
+      plugins: [router, i18n],
+    },
+  });
+}
+
+async function signIn(wrapper: VueWrapper, username = "testuser", password = "testpass") {
+  const loginPanel = wrapper.find(".login-panel");
+  await loginPanel.find("input[type=text]").setValue(username);
+  await loginPanel.find("input[type=password]").setValue(password);
+  await loginPanel.find("button").trigger("click");
+
+  // Wait for fetch to resolve
+  await flushPromises();
+  await nextTick();
+}
+
 describe("LoginPage", () => {
+  let wrapper: VueWrapper;
+
   beforeEach(() => {
     setActivePinia(createPinia());
   });
 
-  test("renders LoginImage and LoginPanel initially", async () => {
-    const wrapper = mount(LoginPage, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+  afterEach(() => {
+    wrapper?.unmount();
+    vi.restoreAllMocks();
+  });
 
-    // Check LoginImage and LoginPanel are rendered
+  test("renders LoginImage and LoginPanel initially", async () => {
+    wrapper = mountLoginPage();
+
+    // Check LoginImage and LoginPanel are shown, TwoFactorPanel is hidden
     expect(wrapper.findComponent(LoginImage).exists()).toBe(true);
-    expect(wrapper.findComponent(LoginPanel).exists()).toBe(true);
-    expect(wrapper.findComponent(TwoFactorPanel).exists()).toBe(false);
+    expect(wrapper.findComponent(LoginPanel).isVisible()).toBe(true);
+    expect(wrapper.findComponent(TwoFactorPanel).isVisible()).toBe(false);
   });
 
   test("renders TwoFactorPanel after successful login attempt", async () => {
@@ -39,101 +64,57 @@ describe("LoginPage", () => {
       json: async () => ({ status: "default" }),
     } as Response);
 
-    const wrapper = mount(LoginPage, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+    wrapper = mountLoginPage();
+    await signIn(wrapper);
 
-    // Fill in credentials
-    await wrapper.find("[data-testid='username']").setValue("testuser");
-    await wrapper.find("[data-testid='password']").setValue("testpass");
-
-    // Trigger sign in
-    await wrapper.find("[data-testid='sign-in-button']").trigger("click");
-
-    // Wait for fetch to resolve
-    await flushPromises();
-    await nextTick();
-
-    // Check TwoFactorPanel is rendered
+    // Check TwoFactorPanel is shown instead of the LoginPanel
     expect(wrapper.findComponent(LoginImage).exists()).toBe(true);
-    expect(wrapper.findComponent(LoginPanel).exists()).toBe(false);
-    expect(wrapper.findComponent(TwoFactorPanel).exists()).toBe(true);
-
-    vi.restoreAllMocks();
+    expect(wrapper.findComponent(LoginPanel).isVisible()).toBe(false);
+    expect(wrapper.findComponent(TwoFactorPanel).isVisible()).toBe(true);
   });
 
   test("displays validation error message when fields are empty", async () => {
-    const wrapper = mount(LoginPage, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    wrapper = mountLoginPage();
 
     // Trigger sign in without filling fields
-    await wrapper.find("[data-testid='sign-in-button']").trigger("click");
+    await wrapper.find(".login-panel button").trigger("click");
 
-    // Check error message
-    const errorMessage = wrapper.find("[data-testid='error-message']");
+    // Check error message, and that we never tried to log in
+    const errorMessage = wrapper.find(".login-panel .error-message");
     expect(errorMessage.text()).toBe("Please fill out all fields");
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   test("displays error message after failed login attempt", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue({
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 401,
     } as Response);
 
-    const wrapper = mount(LoginPage, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
-
-    // Fill in credentials
-    await wrapper.find("[data-testid='username']").setValue("testuser");
-    await wrapper.find("[data-testid='password']").setValue("testpass");
-
-    // Trigger sign in
-    await wrapper.find("[data-testid='sign-in-button']").trigger("click");
-
-    // Wait for fetch to resolve
-    await flushPromises();
-    await nextTick();
+    wrapper = mountLoginPage();
+    await signIn(wrapper);
 
     // Check error message
-    const errorMessage = wrapper.find("[data-testid='error-message']");
+    const errorMessage = wrapper.find(".login-panel .error-message");
     expect(errorMessage.text()).toBe("Credentials have failed");
-
-    vi.restoreAllMocks();
   });
 
-  test("displays final error message after 5 failed login attempts", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue({
+  test("displays final error message after more than 5 failed login attempts", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 401,
     } as Response);
 
-    const wrapper = mount(LoginPage, {
-      global: {
-        plugins: [router, i18n],
-      },
-    });
+    wrapper = mountLoginPage();
 
-    // Fill in credentials
-    await wrapper.find("[data-testid='username']").setValue("testuser");
-    await wrapper.find("[data-testid='password']").setValue("testpass");
-
-    // Trigger sign in 5 times
+    // The fields are cleared after every failure, so fill them in each time
     for (let i = 0; i < 5; i++) {
-      await wrapper.find("[data-testid='sign-in-button']").trigger("click");
-      await flushPromises();
-      await nextTick();
+      await signIn(wrapper);
+      expect(wrapper.find(".login-panel .error-message").text()).toBe("Credentials have failed");
     }
+    await signIn(wrapper);
 
     // Check final error message
-    const errorMessage = wrapper.find("[data-testid='error-message']");
+    const errorMessage = wrapper.find(".login-panel .error-message");
     expect(errorMessage.text()).toBe("Impostor detected, initiating self-destruction");
-
-    vi.restoreAllMocks();
   });
 });
