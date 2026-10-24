@@ -12,7 +12,7 @@ class CustomerSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(
         required=True,
     )
-    id = serializers.ReadOnlyField()
+    id = serializers.IntegerField(read_only=True)
     last_name = serializers.CharField(
         required=True,
     )
@@ -24,7 +24,7 @@ class CustomerSerializer(serializers.ModelSerializer):
     )
 
     @staticmethod
-    def get_profile_picture_path(obj):
+    def get_profile_picture_path(obj) -> str | None:
         if obj.profile_picture_id is None:
             return None
 

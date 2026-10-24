@@ -17,6 +17,7 @@ class ProjectSerializer(serializers.ModelSerializer, BaseObjectSerializer, DateF
     organisation = OrganisationSerializer(
         many=False,
         read_only=True,
+        allow_null=True,
     )
     priority = EnumField(
         enum=ObjectPriority,
@@ -102,3 +103,33 @@ class ProjectSerializer(serializers.ModelSerializer, BaseObjectSerializer, DateF
             "date_created",
             "date_modified",
         ]
+
+
+class ProjectDetailSerializer(ProjectSerializer):
+    """The shape of a single project (GET): groups are readable here and the users are included.
+
+    Exists so the API documentation can describe retrieve accurately; the endpoint itself passes
+    `context={"method": "GET"}` to ProjectSerializer.
+    """
+
+    def get_fields(self):
+        self._context = {**self._context, "method": "GET"}
+
+        return super().get_fields()
+
+
+class ProjectPatchSerializer(ProjectSerializer):
+    """The PATCH shape of a project - request and response (no groups, organisation or users; status is an id).
+
+    Exists so the API documentation can describe PATCH accurately; the endpoint itself passes
+    `context={"method": "PATCH"}` to ProjectSerializer.
+    """
+
+    def get_fields(self):
+        self._context = {**self._context, "method": "PATCH"}
+        fields = super().get_fields()
+
+        # Read-only, and only ever filled in by a GET of a single project
+        fields.pop("user_list", None)
+
+        return fields

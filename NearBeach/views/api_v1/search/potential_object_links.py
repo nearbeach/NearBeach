@@ -11,7 +11,7 @@ from NearBeach.models.requirement.requirement import Requirement
 from NearBeach.models.requirement.requirement_item import RequirementItem
 from NearBeach.models.task import Task
 from NearBeach.models.user import UserGroup
-from NearBeach.serializers.object_data.link_serializer import LinkSerializer
+from NearBeach.serializers.object_data.potential_object_link_serializer import PotentialObjectLinkSerializer
 
 
 @apply_schema(POTENTIAL_OBJECT_LINKS_SCHEMA)
@@ -48,7 +48,7 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
         )
 
         # Serialize the data
-        serializer = LinkSerializer(results, many=True)
+        serializer = PotentialObjectLinkSerializer(results, many=True)
 
         return serializer.data
 
@@ -76,7 +76,7 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
         )
 
         # Serialize the data
-        serializer = LinkSerializer(results, many=True)
+        serializer = PotentialObjectLinkSerializer(results, many=True)
 
         return serializer.data
 
@@ -104,7 +104,7 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
         )
 
         # Serialize the data
-        serializer = LinkSerializer(results, many=True)
+        serializer = PotentialObjectLinkSerializer(results, many=True)
 
         return serializer.data
 
@@ -132,7 +132,7 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
         )
 
         # Serialize the data
-        serializer = LinkSerializer(results, many=True)
+        serializer = PotentialObjectLinkSerializer(results, many=True)
 
         return serializer.data
 

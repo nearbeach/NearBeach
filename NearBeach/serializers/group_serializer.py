@@ -5,7 +5,7 @@ from NearBeach.serializers.parent_group_serializer import ParentGroupSerializer
 
 class GroupSerializer(serializers.ModelSerializer):
     """Class containing serializer for Groups"""
-    id = serializers.ReadOnlyField(source='pk')
+    id = serializers.IntegerField(source='pk', read_only=True)
     name = serializers.CharField(
         required=True,
     )

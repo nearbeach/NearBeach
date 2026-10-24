@@ -23,6 +23,7 @@ class NoteSerializer(serializers.ModelSerializer):
     profile_picture = serializers.CharField(
         read_only=True,
         required=False,
+        allow_null=True,
     )
     username = serializers.IntegerField(
         read_only=True,

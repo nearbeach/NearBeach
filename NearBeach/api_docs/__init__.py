@@ -1,4 +1,6 @@
 from drf_spectacular.utils import extend_schema_view
+
+from NearBeach.api_docs import extensions  # noqa: F401 - registers the custom field extensions
 from drf_spectacular.utils import get_view_method_names
 
 

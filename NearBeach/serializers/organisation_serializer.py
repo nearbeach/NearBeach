@@ -8,7 +8,7 @@ class OrganisationSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
     )
-    id = serializers.ReadOnlyField()
+    id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(
         required=True,
     )
@@ -18,7 +18,7 @@ class OrganisationSerializer(serializers.ModelSerializer):
     profile_picture_path = serializers.SerializerMethodField()
 
     @staticmethod
-    def get_profile_picture_path(obj):
+    def get_profile_picture_path(obj) -> str | None:
         if obj.profile_picture is None:
             return None
 

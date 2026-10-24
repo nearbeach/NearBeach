@@ -5,16 +5,26 @@ from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     """Class to serialize a user"""
-    full_name = serializers.CharField(read_only=True)
+    full_name = serializers.SerializerMethodField()
 
     profile_picture = serializers.ImageField(
         read_only=True,
+        allow_null=True,
     )
 
     profile_picture_path = serializers.SerializerMethodField()
 
     @staticmethod
-    def get_profile_picture_path(obj):
+    def get_full_name(obj) -> str:
+        # Some querysets annotate full_name already (GroupService) - otherwise build it the same way
+        annotated = getattr(obj, "full_name", None)
+        if annotated is not None:
+            return annotated
+
+        return f"{obj.first_name} {obj.last_name}"
+
+    @staticmethod
+    def get_profile_picture_path(obj) -> str | None:
         if obj.profile_picture is None:
             return None
 

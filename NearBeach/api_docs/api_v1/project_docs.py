@@ -18,7 +18,11 @@ from NearBeach.serializers.group_list_serializer import GroupListSerializer
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer
 from NearBeach.serializers.object_data.note_serializer import NoteSerializer
 from NearBeach.serializers.organisation_link_serializer import OrganisationLinkSerializer
-from NearBeach.serializers.project_serializer import ProjectSerializer
+from NearBeach.serializers.project_serializer import (
+    ProjectDetailSerializer,
+    ProjectPatchSerializer,
+    ProjectSerializer,
+)
 from NearBeach.serializers.public_link_serializer import PublicLinkSerializer
 from NearBeach.serializers.sprint_serializer import SprintSerializer
 from NearBeach.serializers.user_list_serializer import UserListSerializer
@@ -53,7 +57,10 @@ PROJECT_SCHEMA = {
     "list": _doc(
         "List projects",
         "Paginated list of projects the user can see. Filter with `?search=` (title or id).",
-        responses=_responses({200: ProjectSerializer(many=True)}, 403),
+        responses={
+            **_responses({200: ProjectSerializer(many=True)}, 403),
+            404: OpenApiResponse(description="Invalid page number"),
+        },
     ),
     "create": _doc(
         "Create a project",
@@ -61,10 +68,13 @@ PROJECT_SCHEMA = {
         "the user belongs to.",
         responses=_responses({201: ProjectSerializer}, 400, 403),
     ),
-    "retrieve": _doc("Get a project", responses=_responses({200: ProjectSerializer}, 403, 404)),
+    "retrieve": _doc("Get a project", responses=_responses({200: ProjectDetailSerializer}, 403, 404)),
     "partial_update": _doc(
         "Update a project",
-        responses=_responses({200: ProjectSerializer}),
+        "Send only the fields to change. Groups, users and organisation have their own endpoints, and "
+        "`status` is the id of a project status. The response is the updated project in this same shape.",
+        request=ProjectPatchSerializer,
+        responses=_responses({200: ProjectPatchSerializer}),
     ),
     "destroy": _doc(
         "Delete a project",
@@ -77,8 +87,9 @@ PROJECT_SCHEMA = {
     ),
     "customer_create": _doc(
         "Link a customer to a project",
+        "Returns the complete list of customers linked to the project.",
         request=CustomerLinkSerializer,
-        responses=_responses({201: CustomerLinkSerializer}),
+        responses=_responses({201: CustomerSerializer(many=True)}),
     ),
     "customer_delete": _doc(
         "Unlink a customer from a project",

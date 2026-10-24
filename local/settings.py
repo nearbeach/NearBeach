@@ -295,6 +295,10 @@ The following documentation covers all API endpoints for NearBeach. You can use 
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',
     'AUTHENTICATION_WHITELIST': [],
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.postprocess_schema_enums',
+        'NearBeach.api_docs.hooks.make_conditional_fields_optional',
+    ],
     # OTHER SETTINGS
 }
 

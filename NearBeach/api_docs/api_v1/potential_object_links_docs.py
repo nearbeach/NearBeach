@@ -1,7 +1,7 @@
 """Swagger/OpenAPI documentation for PotentialObjectLinksViewSet."""
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema
 
-from NearBeach.serializers.object_data.link_serializer import LinkSerializer
+from NearBeach.serializers.object_data.potential_object_link_serializer import PotentialObjectLinkSerializer
 
 POTENTIAL_OBJECT_LINKS_SCHEMA = {
     "list": extend_schema(
@@ -17,6 +17,6 @@ POTENTIAL_OBJECT_LINKS_SCHEMA = {
                 required=False, description="Search string",
             ),
         ],
-        responses={200: LinkSerializer(many=True)},
+        responses={200: PotentialObjectLinkSerializer(many=True)},
     ),
 }

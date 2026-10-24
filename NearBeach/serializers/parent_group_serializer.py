@@ -6,7 +6,7 @@ class ParentGroupSerializer(serializers.ModelSerializer):
     """Class containing serializer for Parent Groups"""
     # Name
     # Parent Group
-    id = serializers.ReadOnlyField(source='pk')
+    id = serializers.IntegerField(source='pk', read_only=True)
     name = serializers.CharField(
         read_only=True,
     )
