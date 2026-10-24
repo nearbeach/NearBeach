@@ -109,11 +109,11 @@ async function getSearchResults() {
 		}
 	)
 
-	// Get data
-	const data = await response.json();
-
 	switch (response.status) {
 		case 200:
+			// Get data
+			const data = await response.json();
+
 			// Patch data
 			store.$patch({
 				previous: data.previous,
@@ -122,7 +122,7 @@ async function getSearchResults() {
 			});
 			break;
 		default:
-			errorStore.setError(data);
+			errorStore.setError(response.statusText);
 			await router.push({name: "server-error"});
 	}
 
