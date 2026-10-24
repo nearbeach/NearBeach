@@ -55,3 +55,37 @@ Repository = "https://github.com/NearBeach/NearBeach.git"
 
 [project.scripts]
 "manage.py" = "myproject:django_manage"
+
+[tool.mypy]
+python_version = "3.10"
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+exclude = ['/migrations/', '^NearBeach/tests/']
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["knox.*", "django_otp.*", "drf_spectacular.*", "simplejson.*", "azure.*"]
+ignore_missing_imports = true
+
+# Not typed yet - remove a module from this list once it passes mypy
+[[tool.mypy.overrides]]
+module = [
+  "NearBeach.decorators.*",
+  "NearBeach.models.*",
+  "NearBeach.serializers.*",
+  "NearBeach.utils.*",
+  "NearBeach.views.*",
+  "local.*",
+]
+ignore_errors = true
+
+# Modules that are fully typed - raise strictness here as each area is cleaned up
+[[tool.mypy.overrides]]
+module = ["NearBeach.services.*"]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[tool.django-stubs]
+django_settings_module = "local.settings"
