@@ -1,3 +1,5 @@
+# TODO - Requirement is not defined in NearBeach.models.project, so importing this module raises ImportError.
+#  Nothing imports it yet; it should come from NearBeach.models.requirement.requirement
 from NearBeach.models.project import Project, Requirement
 from rest_framework import serializers
 

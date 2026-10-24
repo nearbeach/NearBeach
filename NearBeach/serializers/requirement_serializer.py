@@ -36,6 +36,7 @@ class RequirementSerializer(serializers.ModelSerializer, BaseObjectSerializer, D
             "sort_order",
         ).first()
 
+        # TODO - ListOfRequirementType has no sort_order field, so this order_by raises FieldError
         validated_data["type"] = ListOfRequirementType.objects.filter(
             is_deleted=False
         ).order_by(
