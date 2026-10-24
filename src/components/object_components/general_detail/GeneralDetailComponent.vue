@@ -215,7 +215,7 @@ function updateData() {
 			:label="t('title')"
 			:validationRules="[required(), maxLength(255), minLength(5)]"
 			:placeholderText="t(`${objectStore.destination}_title_placeholder`)"
-			v-on:change="(value: boolean) => (fieldValidation['titleModel'] = value)"
+			v-on:change="(event: { isValid: boolean }) => (fieldValidation['titleModel'] = event.isValid)"
 		/>
 		<WlkTextArea
 			v-model="objectStore.description"
@@ -225,7 +225,7 @@ function updateData() {
 
 		<WlkButton
 			class="primary"
-			:isDisabled="isUpdateButtonDisabled"
+			:disabled="isUpdateButtonDisabled"
 			v-on:click="updateData"
 		>
 			{{ renderUpdateButton }}

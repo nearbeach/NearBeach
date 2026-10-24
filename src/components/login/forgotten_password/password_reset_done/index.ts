@@ -1,1 +1,1 @@
-export { default as PasswordResetDone } from './PasswordResetDone.vue';
+export { default as PasswordResetDone } from "./PasswordResetDone.vue";

@@ -5,6 +5,7 @@ import { playwright } from '@vitest/browser-playwright'
 
 export default mergeConfig(viteConfig, defineConfig({
     test: {
+        maxWorkers: 2,
         browser: {
             enabled: true,
             provider: playwright(),

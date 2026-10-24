@@ -91,6 +91,7 @@ async function signIn() {
 				: ActiveTwoFactorPanel();
 			break;
 		case 401:
+			failCount++;
 			errorMessage.value = failCount <= 5
 				? t("error_message")
 				: t("error_final_message");

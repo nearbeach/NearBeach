@@ -43,7 +43,8 @@ export default defineConfig({
     },
     plugins: [
         vue(),
-        vueDevTools(),
+        // Devtools hooks into the same API Vue Test Utils uses to record emitted events
+        ...(process.env.VITEST ? [] : [vueDevTools()]),
     ],
     resolve: {
         alias: {

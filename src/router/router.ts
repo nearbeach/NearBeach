@@ -7,6 +7,7 @@ import {useObjectStore} from "@/stores/object/object.ts";
 import ServerErrorPage from "@/components/error/ServerErrorPage/ServerErrorPage.vue";
 import ForbiddenPage from "@/components/error/ForbiddenPage/ForbiddenPage.vue";
 import {useErrorStore} from "@/stores/error/error.ts";
+import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Async components
 const DashboardPage = () =>
@@ -20,14 +21,23 @@ const ProjectPage = () =>
 const SearchPage = () => import("@/components/search/SearchPage.vue");
 
 // Define functions
-async function fetchObjectMetaData() {
+async function fetchObjectMetaData(): Promise<boolean> {
     const permissionStore = usePermissionStore();
     const objectMetaDataStore = useObjectMetaDataStore();
     const userStore = useUserStore();
 
     // Use fetch to get data
     try {
-        const response = await fetch("/api/v1/user/initial_data/");
+        const response = await fetch(
+            "/api/v1/user/initial_data/",
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFTOKEN": getCsrfToken(),
+                },
+            }
+        );
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
@@ -59,10 +69,14 @@ async function fetchObjectMetaData() {
             profile_picture: result.profile_picture,
             profile_picture_path: result.profile_picture_path,
         });
+
+        return true;
     } catch (error) {
         const errorStore = useErrorStore();
         errorStore.setError(error);
-        await router.push({name: "server-error"});
+
+        // Let the router guard redirect - pushing from inside the guard loops forever
+        return false;
     }
 }
 
@@ -176,9 +190,14 @@ router.beforeEach(async (to, _, next) => {
     const documentationStore = useDocumentationStore();
     const objectStore = useObjectStore();
 
-    // Check the user permissions have been loaded
-    if (!permissionStore.is_loaded) {
-        await fetchObjectMetaData();
+    // Check the user permissions have been loaded - skip on error pages, so a
+    // failed fetch can redirect to them without fetching again
+    const isErrorPage = ["forbidden", "not-found", "server-error"].includes(destination ?? "");
+    if (!permissionStore.is_loaded && !isErrorPage) {
+        const isLoaded = await fetchObjectMetaData();
+        if (!isLoaded) {
+            return next({name: "server-error"});
+        }
     }
 
     // Clean up store data on route change

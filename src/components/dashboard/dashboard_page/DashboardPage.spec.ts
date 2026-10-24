@@ -1,6 +1,6 @@
 // DashboardPage.spec.ts
 import {describe, test, expect} from "vitest";
-import DashboardPage from "./DashboardPage.vue";
+import {DashboardPage} from ".";
 import {flushPromises, mount} from "@vue/test-utils";
 import {nextTick} from "vue";
 

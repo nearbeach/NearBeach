@@ -4,9 +4,9 @@ import {watch, onMounted, ref} from "vue";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
-import SmallLoadingSkeleton from "@/components/object_components/skeletons/SmallLoadingSkeleton.vue";
-import AddRelationship from "@/components/object_components/link_objects/add_relationship/AddRelationship.vue";
-import LinkObjectsTable from "@/components/object_components/link_objects/link_objects_table/LinkObjectsTable.vue";
+import {SmallLoadingSkeleton} from "@/components/object_components/skeletons";
+import {AddRelationship} from "@/components/object_components/link_objects/add_relationship";
+import {LinkObjectsTable} from "@/components/object_components/link_objects/link_objects_table";
 
 // Define i18n
 const {t} = useI18n({

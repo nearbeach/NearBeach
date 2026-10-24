@@ -144,7 +144,7 @@ function updateValidation(field: string, value: boolean): void {
 			:placeholderText="t(`placeholder_${route.meta.destination}`)"
 			:validationRules="[required(), maxLength(255), minLength(5)]"
 			ref="title-ref"
-			v-on:change="(value: boolean) => (updateValidation('titleModel', value))"
+			v-on:change="(event: { isValid: boolean }) => (updateValidation('titleModel', event.isValid))"
 		/>
 
 		<WlkSelect
@@ -153,14 +153,14 @@ function updateValidation(field: string, value: boolean): void {
 			:validationRules="[required()]"
 			ref="group-ref"
 			v-model="groupModel"
-			v-on:change="(value: boolean) => (updateValidation('groupModel', value))"
+			v-on:change="(event: { isValid: boolean }) => (updateValidation('groupModel', event.isValid))"
 		/>
 
 		<WlkCardFooter>
 			<WlkButton
 				class="primary"
 				:is-action-running="isFormSubmitting"
-				:is-disabled="isButtonDisabled"
+				:disabled="isButtonDisabled"
 				v-on:click="createObject"
 			>
 				<template v-slot:default>

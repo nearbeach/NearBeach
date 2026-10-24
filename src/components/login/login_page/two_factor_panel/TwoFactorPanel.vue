@@ -81,10 +81,10 @@ function signIn(event: Event) {
 
 		<WlkButton
 			class="primary"
-			:object-state="buttonState"
+			:disabled="buttonState === ObjectStateEnum.Disable"
 			@click="signIn"
 		>
-			{{ t('signIn') }}
+			{{ t('submit_tfa') }}
 		</WlkButton>
 	</div>
 </template>
