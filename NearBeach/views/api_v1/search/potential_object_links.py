@@ -3,6 +3,8 @@ from typing import Any
 from rest_framework import viewsets, status
 from django.db.models import F, Value
 from rest_framework.response import Response
+from NearBeach.api_docs import apply_schema
+from NearBeach.api_docs.api_v1.potential_object_links_docs import POTENTIAL_OBJECT_LINKS_SCHEMA
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.models.project import Project
 from NearBeach.models.requirement.requirement import Requirement
@@ -12,6 +14,7 @@ from NearBeach.models.user import UserGroup
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer
 
 
+@apply_schema(POTENTIAL_OBJECT_LINKS_SCHEMA)
 class PotentialObjectLinksViewSet(viewsets.ViewSet):
     """Class dealing for searching potential object links"""
 

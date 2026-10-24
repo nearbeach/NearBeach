@@ -2,8 +2,10 @@
 
 from django.shortcuts import render
 from django.views import View
+from drf_spectacular.utils import extend_schema
 
 
+@extend_schema(exclude=True)
 class AuthenticationView(View):
     """Class handling authentication"""
 
