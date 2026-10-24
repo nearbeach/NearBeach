@@ -21,6 +21,19 @@ class SprintSerializer(serializers.ModelSerializer, BaseObjectSerializer, DateFi
         allow_null=True,
     )
 
+    def validate(self, attrs):
+        """Creating a sprint needs both dates - the database columns are NOT NULL"""
+        if self.instance is None and not self.partial:
+            errors = {
+                field: self.fields[field].error_messages["required"]
+                for field in ("start_date", "end_date")
+                if field not in attrs
+            }
+            if errors:
+                raise serializers.ValidationError(errors)
+
+        return attrs
+
     class Meta:
         model = Sprint
         fields = [

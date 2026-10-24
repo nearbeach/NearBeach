@@ -74,7 +74,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(
         methods=["DELETE"],
         detail=True,
-        url_path=r"customer/(?P<customer_pk>[^/.]+)",
+        url_path=r"customer/(?P<customer_pk>\d+)",
     )
     def customer_delete(self, request, pk, customer_pk, *args, **kwargs) -> Response:
         customer_service = CustomerLinkService(destination="project", location_id=pk)
@@ -143,7 +143,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @object_permission(min_permission_level=2)
-    @documents.mapping.patch
+    @documents_delete.mapping.patch
     def documents_update(self, request, pk, document_pk, *args, **kwargs) -> Response:
         document_middleman_service = DocumentMiddlemanService(destination="project", location_id=pk)
         data, http_status = document_middleman_service.update(request, document_pk)
@@ -194,7 +194,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(
         methods=["DELETE"],
         detail=True,
-        url_path=r"groups/(?P<group_pk>[^/.]+)",
+        url_path=r"groups/(?P<group_pk>\d+)",
     )
     def groups_list_delete(self, request, pk, group_pk, *args, **kwargs) -> Response:
         # Delete a group
@@ -239,7 +239,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @object_permission(min_permission_level=2)
-    @action(methods=["DELETE"], detail=True, url_path=r"link_list/(?P<link_pk>[^/.]+)")
+    @action(methods=["DELETE"], detail=True, url_path=r"link_list/(?P<link_pk>\d+)")
     def link_list_delete(self, request, pk, link_pk, *args, **kwargs) -> Response:
         link_list_service = LinkListService(destination="project", location_id=pk)
         data, http_status = link_list_service.delete(request, link_pk)
@@ -306,7 +306,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(
         methods=["DELETE"],
         detail=True,
-        url_path = r"notes/(?P<note_pk>[^/.]+)",
+        url_path = r"notes/(?P<note_pk>\d+)",
     )
     def notes_delete(self, request, pk, note_pk, *args, **kwargs) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
@@ -413,7 +413,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(
         methods=["DELETE"],
         detail=True,
-        url_path=r"public_link/(?P<public_link_pk>[^/.]+)"
+        url_path=r"public_link/(?P<public_link_pk>[0-9a-fA-F-]{36})"
     )
     def public_link_delete(self, request, pk, public_link_pk, *args, **kwargs):
         public_link_service = PublicLinkService(destination="project", location_id=pk)
@@ -479,7 +479,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @action(
         methods=["DELETE"],
         detail=True,
-        url_path=r"sprint/(?P<sprint_pk>[^/.]+)"
+        url_path=r"sprint/(?P<sprint_pk>\d+)"
     )
     def sprint_delete(self, request, pk, sprint_pk, *args, **kwargs):
         sprint_link_service = SprintLinkService(destination="project", location_id=pk)
@@ -503,7 +503,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     @object_permission(min_permission_level=2)
-    @action(methods=["DELETE"], detail=True, url_path=r"users/(?P<user_pk>[^/.]+)")
+    @action(methods=["DELETE"], detail=True, url_path=r"users/(?P<user_pk>\d+)")
     def users_list_delete(self, request, pk, user_pk, *args, **kwargs) -> Response:
         # Delete user
         user_service = UserService(destination="project", location_id=pk)

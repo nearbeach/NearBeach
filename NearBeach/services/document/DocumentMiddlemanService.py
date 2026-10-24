@@ -22,6 +22,16 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
+        # The serializer keeps these optional (they depend on the type) - so check them here
+        required_field = {"document": "document", "link": "url_location"}.get(
+            serializer.validated_data["type"]
+        )
+        if required_field is not None and required_field not in serializer.validated_data:
+            return (
+                {required_field: ["This field is required."]},
+                status.HTTP_400_BAD_REQUEST,
+            )
+
         # Depending on the type - depends on what we do
         match serializer.validated_data["type"]:
             case "folder":
