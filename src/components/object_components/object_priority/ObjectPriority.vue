@@ -61,11 +61,6 @@ objectStore.$subscribe((mutation, state) => {
 
 // Define watchers
 watch(priorityModel, (new_value) => {
-	if (new_value === "0") {
-		// Nothing to do
-		return;
-	}
-
 	// If new value the same in the state - do nothing
 	if (new_value === objectStore.priority.value.toString()) {
 		return;

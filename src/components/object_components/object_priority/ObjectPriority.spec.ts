@@ -62,6 +62,20 @@ describe("ObjectPriority", () => {
     expect(select.props("status")).toBe("");
   });
 
+  test("choosing Highest (value 0) is saved like any other priority", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200 } as Response);
+    const wrapper = mountPriority();
+    useObjectStore().priority = { value: 2, label: "Normal" };
+    await flushPromises();
+    expect(wrapper.findComponent(WlkSelect).props("modelValue")).toBe("2");
+
+    wrapper.findComponent(WlkSelect).vm.$emit("update:modelValue", "0");
+    await flushPromises();
+
+    expect(useObjectStore().priority).toEqual({ value: 0, label: "Highest" });
+    expect(JSON.parse(fetchSpy.mock.calls[0][1]?.body as string)).toEqual({ priority: "0" });
+  });
+
   test("an unknown priority shows an error and does not save", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
