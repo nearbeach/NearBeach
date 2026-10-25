@@ -13,13 +13,13 @@ export default defineConfig({
     base: "/static/",
     build: {
         manifest: "manifest.json",
-        outDir: path.resolve(__dirname, './NearBeach/static/NearBeach/'),
+        outDir: path.resolve(import.meta.dirname, './NearBeach/static/NearBeach/'),
         rollupOptions: {
             input: {
-                'main': path.resolve(__dirname, './src/main.ts'),
-                'login': path.resolve(__dirname, './src/login.ts'),
-                'login_style': path.resolve(__dirname, './src/styles/login_style.css'),
-                'style': path.resolve(__dirname, './src/styles/style.css')
+                'main': path.resolve(import.meta.dirname, './src/main.ts'),
+                'login': path.resolve(import.meta.dirname, './src/login.ts'),
+                'login_style': path.resolve(import.meta.dirname, './src/styles/login_style.css'),
+                'style': path.resolve(import.meta.dirname, './src/styles/style.css')
             },
             output: {
                 // Output JS bundles to js/ directory with -bundle suffix

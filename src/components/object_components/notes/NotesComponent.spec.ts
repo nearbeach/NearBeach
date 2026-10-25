@@ -41,7 +41,7 @@ describe("NotesComponent", () => {
   });
 
   const noteList = (w: ReturnType<typeof mountNotes>) =>
-    w.findComponent(NoteList).props("noteList") as typeof notes;
+    w.findComponent(NoteList).props("noteList") as unknown as typeof notes;
 
   test("loads notes on mount when the object is already loaded", async () => {
     const fetchSpy = mockFetch();
