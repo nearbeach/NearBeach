@@ -182,11 +182,59 @@ class ApiAdminPermissionTests(BaseApiClass):
                 404,
                 "POST",
             ),
+            # NOTE - we only need to test the folder, as this is a permission check only. Links and Uploads hit the
+            # same endpoint. Thus they are not here
 
             #########
             # UPDATE
             #########
-            # TODO - Implement update functionality for renaming folders/documents/links etc
+            self.URLTest(
+                "/api/v1/project/1/documents/1/",
+                {
+                    "description": "Rename Folder",
+                    "type": "folder",
+                },
+                200,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/documents/3/",
+                {
+                    "description": "Rename Folder",
+                    "type": "folder",
+                },
+                200,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/3/documents/1/",
+                {
+                    "description": "Rename Folder",
+                    "type": "folder",
+                },
+                404,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/1/documents/3/",
+                {
+                    "description": "Rename Folder",
+                    "type": "folder",
+                },
+                400,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/documents/1/",
+                {
+                    "description": "Rename Folder",
+                    "type": "folder",
+                },
+                400,
+                "PATCH",
+            ),
+            # NOTE - we only need to test the folder, as this is a permission check only. Links and Uploads hit the
+            # same endpoint. Thus they are not here
 
             #########
             # DELETE
@@ -425,7 +473,36 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             # DELETE
             #########
-            # TODO - Create links in the fixture so we can test deleting them
+            self.URLTest(
+                "/api/v1/project/1/link_list/43/",
+                {},
+                204,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/link_list/47/",
+                {},
+                204,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/3/link_list/43/",
+                {},
+                404,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/1/link_list/48/",
+                {},
+                400,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/link_list/43/",
+                {},
+                400,
+                "DELETE",
+            ),
         ]
 
         self._run_test_array(data_list)

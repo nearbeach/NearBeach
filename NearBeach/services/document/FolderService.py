@@ -73,23 +73,25 @@ class FolderService(ObjectServiceAbstraction):
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Check folder exists
-        folder = Folder.objects.get(
+        folder = Folder.objects.filter(
             is_deleted=False,
             pk=folder_id,
             **{F"{self.destination}_id": self.location_id},
         )
-        if folder is None:
+        if len(folder) == 0:
             return "Folder object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Update
-        description = serializer.validated_data['description']
-        parent_folder = serializer.validated_data['parent_folder']
+        folder.update(
+            change_user = request.user,
+            date_modified = timezone.now(),
+        )
 
-        folder.change_user = request.user
-        folder.date_modified = datetime.datetime.now()
-        folder.description = folder.description if description is None else description
-        folder.parent_folder = folder.parent_folder if parent_folder is None else parent_folder
-        folder.save()
+        if "parent_folder" in serializer.validated_data:
+            folder.update(parent_folder=serializer.validated_data["parent_folder"])
+
+        if "description" in serializer.validated_data:
+            folder.update(description = serializer.validated_data['description'])
 
         # Serialize
         serializer = FolderSerializer(folder)
