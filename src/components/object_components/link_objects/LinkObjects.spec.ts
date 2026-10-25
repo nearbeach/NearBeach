@@ -8,6 +8,7 @@ import { defineComponent, h } from "vue";
 import {LinkObjects} from ".";
 import {AddRelationship} from "./add_relationship";
 import {LinkObjectsTable} from "./link_objects_table";
+import RelationshipLink from "./relationship_link/RelationshipLink.vue";
 import {SmallLoadingSkeleton} from "@/components/object_components/skeletons";
 import { useObjectStore } from "@/stores/object/object.ts";
 import i18n from "@/i18n.ts";
@@ -230,6 +231,18 @@ describe("LinkObjects - managing links", () => {
 
         expect(listOf(wrapper)[1].link_relationship).toBe("duplicate");
         expect(listOf(wrapper)[0].link_relationship).toBe("relates");
+    });
+
+    test("a relationship change in a row reaches the list through the table", async () => {
+        const { wrapper } = await mountLoaded();
+
+        wrapper.findAllComponents(RelationshipLink)[1].vm.$emit("updateRelationship", {
+            index: 1,
+            link_relationship: "duplicate",
+        });
+        await flushPromises();
+
+        expect(listOf(wrapper)[1].link_relationship).toBe("duplicate");
     });
 
     test("updateRelationship ignores an index that does not exist", async () => {

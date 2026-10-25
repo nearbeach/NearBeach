@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import {LinkObjectsTable} from ".";
+import RelationshipLink from "@/components/object_components/link_objects/relationship_link/RelationshipLink.vue";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
@@ -156,5 +157,37 @@ describe("LinkObjectsTable", () => {
     expect(wrapper.find(".link-create").exists()).toBe(false);
     expect(wrapper.find(".link-error").exists()).toBe(false);
     expect(wrapper.findAll(".link-object").length).toBe(0);
+  });
+
+  test("passes updateRelationship through with the payload unwrapped", async () => {
+    const wrapper = mount(LinkObjectsTable, {
+      props: {
+        objectLinkList: [
+          {
+            object_assignment_id: 1,
+            object_id: 101,
+            object_title: "Object 1",
+            object_status: "Active",
+            object_type: "task",
+            parent_link: "Parent 1",
+            link_relationship: "relates",
+            reverse_relation: false,
+          },
+        ],
+      },
+      global: {
+        plugins: [router, i18n],
+      },
+    });
+
+    wrapper.findComponent(RelationshipLink).vm.$emit("updateRelationship", {
+      index: 0,
+      link_relationship: "blocking",
+    });
+    await nextTick();
+
+    expect(wrapper.emitted().updateRelationship).toEqual([
+      [{ index: 0, link_relationship: "blocking" }],
+    ]);
   });
 });

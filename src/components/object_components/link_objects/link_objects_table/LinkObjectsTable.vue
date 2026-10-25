@@ -47,7 +47,7 @@ function deleteObjectLink(object_assignment_id: number, index: number) : void {
 }
 
 function updateRelationship(data: { index: number, link_relationship: string }) {
-	emit("updateRelationship", {data})
+	emit("updateRelationship", data)
 }
 </script>
 
