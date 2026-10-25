@@ -218,7 +218,7 @@ function storyPointsChanged(data: OnChangeInterface) {
 	storyPointsStatus.value = t("story_point_updating");
 
 	// Set timeout - update when finished
-	setTimeout(async () => {
+	storyPointsTimeout.value = setTimeout(async () => {
 		await storyPointsUpdate();
 	}, 500);
 }

@@ -213,6 +213,38 @@ describe("PropertiesComponent - updating", () => {
         expect(wrapper.text()).not.toContain("Story points updated");
     });
 
+    test("quick story point changes are saved once", async () => {
+        vi.useFakeTimers();
+        const fetchSpy = mockStatus(200);
+        const wrapper = mountProperties();
+        const input = wrapper.findComponent({ name: "WlkNumberInput" });
+
+        input.vm.$emit("change", { isValid: true });
+        await vi.advanceTimersByTimeAsync(300);
+        input.vm.$emit("change", { isValid: true });
+        await vi.advanceTimersByTimeAsync(300);
+        expect(fetchSpy).not.toHaveBeenCalled();
+
+        await vi.advanceTimersByTimeAsync(200);
+
+        expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    test("an invalid change cancels the pending story point save", async () => {
+        vi.useFakeTimers();
+        const fetchSpy = mockStatus(200);
+        const wrapper = mountProperties();
+        const input = wrapper.findComponent({ name: "WlkNumberInput" });
+
+        input.vm.$emit("change", { isValid: true });
+        await vi.advanceTimersByTimeAsync(200);
+        input.vm.$emit("change", { isValid: false });
+        await vi.advanceTimersByTimeAsync(1000);
+
+        expect(fetchSpy).not.toHaveBeenCalled();
+        expect(wrapper.text()).toContain("Invalid story points");
+    });
+
     test("invalid story points show a message and are not saved", async () => {
         vi.useFakeTimers();
         const fetchSpy = mockStatus(200);
