@@ -34,6 +34,14 @@ class ApiAdminPermissionTests(BaseApiClass):
                 200,
                 "PATCH",
             ),
+            self.URLTest(
+                "/api/v1/project/3/",
+                {
+                    "title": "New API Project Title",
+                },
+                404,
+                "PATCH",
+            ),
             #########
             # CREATE
             #########
@@ -87,6 +95,8 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             self.URLTest("/api/v1/project/1/", {}, 204, "DELETE"),
             self.URLTest("/api/v1/project/2/", {}, 204, "DELETE"),
+            # The create tests above have made projects 3+, so use an id that is never reached
+            self.URLTest("/api/v1/project/9999/", {}, 404, "DELETE"),
         ]
 
         self._run_test_array(data_list)
@@ -471,6 +481,60 @@ class ApiAdminPermissionTests(BaseApiClass):
             ),
 
             #########
+            # UPDATE
+            #########
+            self.URLTest(
+                "/api/v1/project/1/link_list/43/",
+                {
+                    "object_type": "task",
+                    "object_id": "1",
+                    "object_relation": "blocking",
+                },
+                200,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/link_list/47/",
+                {
+                    "object_type": "task",
+                    "object_id": "1",
+                    "object_relation": "blocking",
+                },
+                200,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/3/link_list/43/",
+                {
+                    "object_type": "task",
+                    "object_id": "1",
+                    "object_relation": "blocking",
+                },
+                404,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/1/link_list/48/",
+                {
+                    "object_type": "task",
+                    "object_id": "1",
+                    "object_relation": "blocking",
+                },
+                400,
+                "PATCH",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/link_list/43/",
+                {
+                    "object_type": "task",
+                    "object_id": "1",
+                    "object_relation": "blocking",
+                },
+                400,
+                "PATCH",
+            ),
+
+            #########
             # DELETE
             #########
             self.URLTest(
@@ -688,6 +752,12 @@ class ApiAdminPermissionTests(BaseApiClass):
                 "DELETE",
             ),
             self.URLTest(
+                "/api/v1/project/3/organisation/",
+                {},
+                404,
+                "DELETE",
+            ),
+            self.URLTest(
                 "/api/v1/project/1/organisation/2/",
                 {},
                 404,
@@ -794,6 +864,24 @@ class ApiAdminPermissionTests(BaseApiClass):
                 204,
                 "DELETE",
             ),
+            self.URLTest(
+                "/api/v1/project/3/public_link/3d7346c4-05b6-41df-816a-eff814d9bbd0/",
+                {},
+                404,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/1/public_link/5f369dc9-a0bb-416d-9779-92576d0500bb/",
+                {},
+                400,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/public_link/3d7346c4-05b6-41df-816a-eff814d9bbd0/",
+                {},
+                400,
+                "DELETE",
+            ),
         ]
 
         self._run_test_array(data_list)
@@ -807,6 +895,58 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest("/api/v1/project/1/sprint/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/2/sprint/", {}, 200, "GET"),
             self.URLTest("/api/v1/project/3/sprint/", {}, 404, "GET"),
+
+            #########
+            # CREATE
+            #########
+            self.URLTest(
+                "/api/v1/project/1/sprint/",
+                {
+                    "title": "API Sprint",
+                    "start_date": "2026-01-05",
+                    "end_date": "2026-01-12",
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v1/project/2/sprint/",
+                {
+                    "title": "API Sprint",
+                    "start_date": "2026-01-05",
+                    "end_date": "2026-01-12",
+                },
+                201,
+                "POST",
+            ),
+            self.URLTest(
+                "/api/v1/project/3/sprint/",
+                {
+                    "title": "API Sprint",
+                    "start_date": "2026-01-05",
+                    "end_date": "2026-01-12",
+                },
+                404,
+                "POST",
+            ),
+            # Both dates are required
+            self.URLTest(
+                "/api/v1/project/1/sprint/",
+                {
+                    "title": "API Sprint",
+                },
+                400,
+                "POST",
+            ),
+
+            #########
+            # DELETE
+            #########
+            self.URLTest("/api/v1/project/1/sprint/1/", {}, 204, "DELETE"),
+            self.URLTest("/api/v1/project/2/sprint/2/", {}, 204, "DELETE"),
+            self.URLTest("/api/v1/project/3/sprint/1/", {}, 404, "DELETE"),
+            self.URLTest("/api/v1/project/1/sprint/2/", {}, 400, "DELETE"),
+            self.URLTest("/api/v1/project/2/sprint/1/", {}, 400, "DELETE"),
         ]
 
         self._run_test_array(data_list)
@@ -855,6 +995,19 @@ class ApiAdminPermissionTests(BaseApiClass):
                 "/api/v1/project/2/users/2/",
                 {},
                 204,
+                "DELETE",
+            ),
+            self.URLTest(
+                "/api/v1/project/3/users/1/",
+                {},
+                404,
+                "DELETE",
+            ),
+            # User 5 is only on project 2
+            self.URLTest(
+                "/api/v1/project/1/users/5/",
+                {},
+                400,
                 "DELETE",
             ),
         ]
