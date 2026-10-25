@@ -90,3 +90,31 @@ describe("PasswordResetPanel", () => {
     expect(pushSpy).toHaveBeenCalledWith("/login");
   });
 });
+
+describe("PasswordResetPanel - backend errors", () => {
+  const originalSearch = window.location.search;
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    setQueryString(originalSearch);
+  });
+
+  test("shows the status text when the reset is rejected", async () => {
+    setQueryString("?uid=abc&token=123");
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 400,
+      statusText: "Bad Request",
+    } as Response);
+    const pushSpy = vi.spyOn(loginRouter, "push").mockResolvedValue(undefined);
+    const wrapper = mountPasswordResetPanel();
+
+    await submitPasswords(wrapper, "password123", "password123");
+
+    expect(wrapper.find(".error-message").text()).toBe("Bad Request");
+    expect(pushSpy).not.toHaveBeenCalled();
+  });
+});

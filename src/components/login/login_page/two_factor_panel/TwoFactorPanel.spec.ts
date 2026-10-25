@@ -180,3 +180,16 @@ describe("TwoFactorPanel", () => {
     expect(submitButton.attributes("disabled")).toBeDefined();
   });
 });
+
+describe("TwoFactorPanel - token model", () => {
+  test("typing a token updates the otpToken model", async () => {
+    const wrapper = mount(TwoFactorPanel, {
+      props: { buttonState: ObjectStateEnum.NoAction, otpToken: "" },
+      global: { plugins: [i18n] },
+    });
+
+    await wrapper.find("input").setValue("654321");
+
+    expect(wrapper.emitted("update:otpToken")?.at(-1)).toEqual(["654321"]);
+  });
+});

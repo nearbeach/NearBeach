@@ -229,3 +229,44 @@ describe("NotesComponent", () => {
     expect(wrapper.find("textarea").element.value).toBe("");
   });
 });
+
+describe("NotesComponent - unusual edits", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    const objectStore = useObjectStore();
+    objectStore.destination = "project";
+    objectStore.id = 3;
+    objectStore.is_loaded = true;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("editing a negative index does nothing", async () => {
+    mockFetch();
+    const wrapper = mountNotes();
+    await flushPromises();
+
+    wrapper.findComponent(NoteList).vm.$emit("editNote", -1);
+    await flushPromises();
+
+    expect(wrapper.find(".open").exists()).toBe(false);
+  });
+
+  test("saving an edit after the note was deleted does nothing", async () => {
+    mockFetch(() => [notes[0]]);
+    const wrapper = mountNotes();
+    await flushPromises();
+
+    wrapper.findComponent(NoteList).vm.$emit("editNote", 0);
+    await flushPromises();
+    wrapper.findComponent(NoteList).vm.$emit("deleteNote", 1);
+    await flushPromises();
+    await wrapper.find(".modal-footer-row button.primary").trigger("click");
+    await flushPromises();
+
+    expect(wrapper.findComponent(NoteList).props("noteList")).toEqual([]);
+    expect(wrapper.find(".open").exists()).toBe(true);
+  });
+});

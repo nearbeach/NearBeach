@@ -1,3 +1,5 @@
+import { NewLink } from "@/components/object_components/document/create_and_filter/new_link";
+import { UploadDocument } from "@/components/object_components/document/create_and_filter/upload_document";
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import {CreateAndFilter} from ".";
@@ -74,5 +76,36 @@ describe("CreateAndFilter", () => {
     // Modal is closed
     const modal = wrapper.find(".wlk-modal.open");
     expect(modal.exists()).toBe(false);
+  });
+});
+
+describe("CreateAndFilter - other dropdown items", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  async function chooseItem(wrapper: ReturnType<typeof mountCreateAndFilter>, label: string) {
+    await wrapper.find(".wlk-drop-down > button").trigger("click");
+    const item = wrapper.findAll(".drop-down-item").find((row) => row.text() === label);
+    await item!.trigger("click");
+    await flushPromises();
+  }
+
+  test("the hyperlink item opens the new link form", async () => {
+    const wrapper = mountCreateAndFilter();
+
+    await chooseItem(wrapper, "Create a new hyperlink");
+
+    expect(wrapper.find(".wlk-modal.open").exists()).toBe(true);
+    expect(wrapper.findComponent(NewLink).exists()).toBe(true);
+  });
+
+  test("the upload item opens the upload form", async () => {
+    const wrapper = mountCreateAndFilter();
+
+    await chooseItem(wrapper, "Upload a document");
+
+    expect(wrapper.find(".wlk-modal.open").exists()).toBe(true);
+    expect(wrapper.findComponent(UploadDocument).exists()).toBe(true);
   });
 });

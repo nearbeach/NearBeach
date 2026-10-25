@@ -113,3 +113,17 @@ describe("DocumentList", () => {
     expect(documentationStore.documents).toHaveLength(1);
   });
 });
+
+describe("DocumentList - missing description", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  test("a document without a description gets the generic file icon", () => {
+    useDocumentationStore().documents = [doc("a", null as unknown as string)];
+
+    const wrapper = mount(DocumentList);
+
+    expect(wrapper.find(".document-icon svg").classes()).toContain("lucide-file");
+  });
+});

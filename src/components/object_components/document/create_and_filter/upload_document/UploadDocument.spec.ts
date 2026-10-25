@@ -128,3 +128,30 @@ describe("UploadDocument", () => {
     expect(wrapper.emitted("closeModal")).toBeUndefined();
   });
 });
+
+describe("UploadDocument - custom name", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    const objectStore = useObjectStore();
+    objectStore.destination = "project";
+    objectStore.id = 9;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("a name typed by the user is what gets uploaded", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      json: async () => [],
+    } as Response);
+    const wrapper = mountUpload();
+
+    await selectFiles(wrapper, [makeFile("report.pdf")]);
+    await wrapper.find("input:not([type=file])").setValue("Quarterly report");
+    await wrapper.find("button.primary").trigger("click");
+    await flushPromises();
+
+    expect((fetchSpy.mock.calls[0][1]?.body as FormData).get("description")).toBe("Quarterly report");
+  });
+});

@@ -1,3 +1,4 @@
+import { afterEach } from "vitest";
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import {SkipLinks} from ".";
@@ -116,5 +117,40 @@ describe("SkipLinks", () => {
 
     // Clean up
     document.body.removeChild(mainContent);
+  });
+});
+
+describe("SkipLinks - focus handling", () => {
+  beforeEach(async () => {
+    await router.push("/test");
+    await router.isReady();
+  });
+
+  afterEach(() => {
+    document.getElementById("main")?.remove();
+  });
+
+  test("clicking the skip link without a main element does nothing", async () => {
+    const wrapper = mount(SkipLinks, { global: { plugins: [router] } });
+    await flushPromises();
+
+    await wrapper.find(".skip-link").trigger("click");
+
+    expect(document.getElementById("main")).toBeNull();
+  });
+
+  test("changing page moves focus back to the top of the page", async () => {
+    router.addRoute({ path: "/other", component: defineComponent({ render: () => h("div") }) });
+    const wrapper = mount(SkipLinks, {
+      attachTo: document.body,
+      global: { plugins: [router] },
+    });
+    await flushPromises();
+
+    await router.push("/other");
+    await flushPromises();
+
+    expect(document.activeElement).toBe(wrapper.find("span").element);
+    wrapper.unmount();
   });
 });

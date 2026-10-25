@@ -101,6 +101,15 @@ describe("router", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  test("an individual project loads the project page", async () => {
+    mockInitialData();
+
+    await router.push("/project/5");
+
+    expect(router.currentRoute.value.name).toBe("Project");
+    expect(router.currentRoute.value.params.id).toBe("5");
+  });
+
   test("a destination the user has no permission for goes to forbidden", async () => {
     mockInitialData();
 

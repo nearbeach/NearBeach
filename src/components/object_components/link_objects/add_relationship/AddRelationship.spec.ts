@@ -103,3 +103,51 @@ describe("AddRelationship", () => {
         expect(button.element.disabled).toBe(false);
     });
 });
+
+describe("AddRelationship - creating a link", () => {
+  const options = [
+    { object_assignment_id: 0, object_id: 5, object_title: "Five", object_status: "Open", object_type: "task", parent_link: "", link_relationship: "", reverse_relation: false },
+  ];
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    const objectStore = useObjectStore();
+    objectStore.id = 1;
+    objectStore.destination = "project";
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 200,
+      json: async () => options,
+    } as Response);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  async function mountReady() {
+    const wrapper = mount(AddRelationship, { global: { plugins: [router, i18n] } });
+    await flushPromises();
+    return wrapper;
+  }
+
+  test("emits the chosen object and relationship", async () => {
+    const wrapper = await mountReady();
+
+    await wrapper.find("#relationship-type").setValue("blocking");
+    await wrapper.find("#object-selector").setValue("task-5");
+    await wrapper.find("button").trigger("click");
+
+    expect(wrapper.emitted("createObjectLink")).toEqual([
+      [{ objectSelectorModel: "task-5", relationshipModel: "blocking" }],
+    ]);
+  });
+
+  test("emits nothing while no object is chosen", async () => {
+    const wrapper = await mountReady();
+
+    // The button is disabled, so call the handler directly
+    (wrapper.vm as unknown as { createObjectLink: () => void }).createObjectLink();
+
+    expect(wrapper.emitted("createObjectLink")).toBeUndefined();
+  });
+});

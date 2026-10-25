@@ -99,3 +99,29 @@ describe("ForgottenPasswordPanel", () => {
     expect(wrapper.text()).toContain("Go back to login");
   });
 });
+
+describe("ForgottenPasswordPanel - after submitting", () => {
+  beforeEach(async () => {
+    setActivePinia(createPinia());
+    await router.push("/forgotten-password");
+    await router.isReady();
+  });
+
+  test("locks the form once the request has been sent", async () => {
+    const wrapper = mount(ForgottenPasswordPanel, { global: { plugins: [router, i18n] } });
+    const emailInput = wrapper.find("input[type=text]");
+    await emailInput.setValue("valid-email@example.com");
+    await emailInput.trigger("blur");
+    await nextTick();
+
+    await wrapper.find("form").trigger("submit.prevent");
+    expect((emailInput.element as HTMLInputElement).disabled).toBe(true);
+
+    // Editing is ignored from now on - the button stays disabled
+    wrapper.findComponent({ name: "WlkTextInput" }).vm.$emit("update:modelValue", "another@example.com");
+    await nextTick();
+
+    expect((wrapper.find("button").element as HTMLButtonElement).disabled).toBe(true);
+    expect((emailInput.element as HTMLInputElement).disabled).toBe(true);
+  });
+});

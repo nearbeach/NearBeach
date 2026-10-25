@@ -166,3 +166,32 @@ describe("LoginPage", () => {
     });
   });
 });
+
+describe("LoginPage - two factor token", () => {
+  let wrapper: VueWrapper;
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  afterEach(() => {
+    wrapper?.unmount();
+    vi.restoreAllMocks();
+  });
+
+  test("sends the token typed into the two factor panel", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 401 } as Response);
+    wrapper = mountLoginPage();
+
+    wrapper.findComponent(TwoFactorPanel).vm.$emit("update:otpToken", "123456");
+    await nextTick();
+    await signIn(wrapper, "luke", "secret");
+
+    expect(JSON.parse(fetchSpy.mock.calls[0][1]?.body as string)).toEqual({
+      username: "luke",
+      password: "secret",
+      otp_token: "123456",
+    });
+  });
+
+});

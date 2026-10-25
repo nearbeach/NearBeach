@@ -101,3 +101,25 @@ describe("DocumentComponent", () => {
     expect(objectStore.is_loaded).toBe(false);
   });
 });
+
+describe("DocumentComponent - already loaded", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("does not fetch again when the documentation is already loaded", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    useDocumentationStore().isDocumentationLoaded = true;
+    const objectStore = useObjectStore();
+    objectStore.is_loaded = true;
+
+    mount(DocumentComponent, { global: { plugins: [router, i18n] } });
+    await flushPromises();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+});

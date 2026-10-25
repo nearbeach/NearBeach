@@ -112,3 +112,57 @@ describe("StakeholderCustomer", () => {
   // The component does not fetch its customers yet - see the TODO in StakeholderCustomer.vue
   test.todo("fetches customers on mount");
 });
+
+describe("StakeholderCustomer - edge cases", () => {
+  beforeEach(async () => {
+    setActivePinia(createPinia());
+    await router.push("/");
+    await router.isReady();
+
+    const objectStore = useObjectStore();
+    objectStore.destination = "project";
+    objectStore.id = 1;
+    useObjectMetaDataStore().potential_customers = [john, jane];
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("choosing nothing does not call the backend", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const wrapper = mountStakeholderCustomer();
+    await flushPromises();
+
+    await wrapper.findComponent({ name: "AddObject" }).vm.$emit("change");
+    await flushPromises();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  test("a failed add is logged", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const wrapper = mountStakeholderCustomer();
+    await flushPromises();
+
+    await wrapper.find("select").setValue("2");
+    await flushPromises();
+
+    expect(consoleError).toHaveBeenCalled();
+  });
+
+  test("a failed remove is logged and the customer is still removed locally", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    useObjectStore().customers = [john, jane];
+    const wrapper = mountStakeholderCustomer();
+    await flushPromises();
+
+    await wrapper.findAll(".customer-name").at(0)!.find("svg").trigger("click");
+    await flushPromises();
+
+    expect(consoleError).toHaveBeenCalled();
+    expect(useObjectStore().customers).toEqual([jane]);
+  });
+});

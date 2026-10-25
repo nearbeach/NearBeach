@@ -118,3 +118,20 @@ describe("AddObject", () => {
     expect(showPicker).not.toHaveBeenCalled();
   });
 });
+
+describe("AddObject - option keys", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  test("options whose value is not a string or number are keyed by position", () => {
+    const wrapper = mountAddObject({
+      options: [
+        { label: "First", value: { nested: 1 } },
+        { label: "Second", value: { nested: 2 } },
+      ] as never,
+    });
+
+    expect(wrapper.findAll("option").map((option) => option.text())).toEqual(["First", "Second"]);
+  });
+});

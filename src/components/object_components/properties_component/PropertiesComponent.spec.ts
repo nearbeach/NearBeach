@@ -251,3 +251,24 @@ describe("PropertiesComponent - updating", () => {
         expect(errorStore.showErrorModal).toBe(true);
     });
 });
+
+describe("PropertiesComponent - story point model", () => {
+    beforeEach(() => {
+        setActivePinia(createPinia());
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    test("the story points input is bound to the object store", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200, json: async () => ({}) } as Response);
+        const wrapper = mount(PropertiesComponent, { global: { plugins: [i18n] } });
+        const input = wrapper.findComponent({ name: "WlkNumberInput" });
+
+        input.vm.$emit("update:modelValue", 4);
+        await flushPromises();
+
+        expect(useObjectStore().story_point).toBe(4);
+    });
+});

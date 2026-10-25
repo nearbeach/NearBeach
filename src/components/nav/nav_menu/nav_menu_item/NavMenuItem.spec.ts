@@ -1,3 +1,4 @@
+import { afterEach, vi } from "vitest";
 import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
@@ -141,5 +142,50 @@ describe("NavMenuItem", () => {
 
     const newLink = wrapper.find(".nav-bar--menu--item-new");
     expect(newLink.exists()).toBe(false);
+  });
+});
+
+describe("NavMenuItem - closing the menu", () => {
+  beforeEach(async () => {
+    setActivePinia(createPinia());
+    await router.push("/test-route");
+    await router.isReady();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    Object.defineProperty(window, "innerWidth", { writable: true, configurable: true, value: 1440 });
+  });
+
+  function mountItem() {
+    return mount(NavMenuItem, {
+      props: {
+        destination: "test",
+        overrideAriaLabel: "Go to test",
+        routeAddress: "/test-route",
+        title: "Test",
+      },
+      global: { plugins: [router] },
+    });
+  }
+
+  test("clicking a link closes the menu on a narrow screen", async () => {
+    Object.defineProperty(window, "innerWidth", { writable: true, configurable: true, value: 800 });
+    const toggleNav = vi.spyOn(useNavStore(), "toggleNav");
+    const wrapper = mountItem();
+
+    await wrapper.find("a").trigger("click");
+
+    expect(toggleNav).toHaveBeenCalledTimes(1);
+  });
+
+  test("clicking a link leaves the menu open on a wide screen", async () => {
+    Object.defineProperty(window, "innerWidth", { writable: true, configurable: true, value: 1440 });
+    const toggleNav = vi.spyOn(useNavStore(), "toggleNav");
+    const wrapper = mountItem();
+
+    await wrapper.find("a").trigger("click");
+
+    expect(toggleNav).not.toHaveBeenCalled();
   });
 });

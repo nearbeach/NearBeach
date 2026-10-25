@@ -161,3 +161,35 @@ describe("GeneralDetailComponent", () => {
     });
   });
 });
+
+describe("GeneralDetailComponent - editing", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    pushMock.mockReset();
+    route.params = { id: "12" };
+    route.meta = { destination: "project" };
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("typed title and description are what gets saved", async () => {
+    const fetchSpy = mockFetch(200, { id: 12, title: "My project", description: "About" });
+    const wrapper = mountDetails();
+    await flushPromises();
+    fetchSpy.mockClear();
+
+    await wrapper.find("input").setValue("A better title");
+    await wrapper.find("textarea").setValue("A better description");
+    wrapper.findComponent({ name: "WlkTextInput" }).vm.$emit("change", { isValid: true });
+    await wrapper.find("button.primary").trigger("click");
+    await flushPromises();
+
+    expect(JSON.parse(fetchSpy.mock.calls[0][1]?.body as string)).toEqual({
+      title: "A better title",
+      description: "A better description",
+    });
+    expect(useObjectStore().title).toBe("A better title");
+  });
+});

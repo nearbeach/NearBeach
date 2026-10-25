@@ -102,3 +102,29 @@ describe("ObjectStatus", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 });
+
+describe("ObjectStatus - no status chosen", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    useObjectMetaDataStore().status = [open, done];
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("going back to no status does not save", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200 } as Response);
+    const wrapper = mountStatus();
+    const select = wrapper.findComponent(WlkSelect);
+
+    select.vm.$emit("update:modelValue", "5");
+    await flushPromises();
+    fetchSpy.mockClear();
+
+    select.vm.$emit("update:modelValue", "0");
+    await flushPromises();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+});

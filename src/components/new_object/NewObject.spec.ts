@@ -172,3 +172,25 @@ describe("NewObject", () => {
     });
   });
 });
+
+describe("NewObject - validation guard", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    pushMock.mockReset();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("createObject does nothing while the form is invalid", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const wrapper = await mountForDestination("project");
+
+    // The button is disabled, so call the handler directly
+    await (wrapper.vm as unknown as { createObject: () => Promise<void> }).createObject();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(pushMock).not.toHaveBeenCalled();
+  });
+});

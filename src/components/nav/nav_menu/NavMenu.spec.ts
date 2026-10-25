@@ -82,3 +82,28 @@ describe("NavMenu", () => {
     expect(taskItem?.find(".nav-bar--menu--item-new").exists()).toBe(false);
   });
 });
+
+describe("NavMenu - creating objects", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  test("a permission that is not a number gives no create link", async () => {
+    const wrapper = await mountNavMenu();
+    const canUserCreate = (wrapper.vm as unknown as { canUserCreate: (object: string) => string }).canUserCreate;
+
+    expect(canUserCreate("not_a_permission")).toBe("");
+  });
+
+  test("create links need permission level 3", async () => {
+    const wrapper = await mountNavMenu();
+    const canUserCreate = (wrapper.vm as unknown as { canUserCreate: (object: string) => string }).canUserCreate;
+    const permissionStore = usePermissionStore();
+
+    permissionStore.maximumPermissions.project = 2;
+    expect(canUserCreate("project")).toBe("");
+
+    permissionStore.maximumPermissions.project = 3;
+    expect(canUserCreate("project")).toBe("/project/new");
+  });
+});

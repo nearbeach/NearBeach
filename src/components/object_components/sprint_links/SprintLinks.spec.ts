@@ -1,3 +1,4 @@
+import { WlkDate, WlkTextInput } from "whelk-ui";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
@@ -185,5 +186,45 @@ describe("SprintLinks", () => {
     await flushPromises();
 
     expect(wrapper.exists()).toBe(true);
+  });
+});
+
+describe("SprintLinks - editing the new sprint", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    const objectStore = useObjectStore();
+    objectStore.destination = "project";
+    objectStore.id = 8;
+    objectStore.is_loaded = true;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("the title and dates typed into the modal are what gets posted", async () => {
+    const fetchSpy = mockFetch((_url, init) =>
+      init?.method === "POST"
+        ? { status: 201, body: { ...sprints[0], id: "s3" } }
+        : { status: 200, body: [] },
+    );
+    const wrapper = mountSprintLinks();
+    await flushPromises();
+    await wrapper.find(".sprint-buttons button").trigger("click");
+
+    wrapper.findComponent(WlkTextInput).vm.$emit("update:modelValue", "Hand-made sprint");
+    const [start, end] = wrapper.findAllComponents(WlkDate);
+    start.vm.$emit("update:modelValue", "2026-06-01");
+    end.vm.$emit("update:modelValue", "2026-06-14");
+    await flushPromises();
+    await wrapper.find("button.primary:not(.sprint-buttons button)").trigger("click");
+    await flushPromises();
+
+    const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST")!;
+    expect(JSON.parse(post[1]?.body as string)).toEqual({
+      title: "Hand-made sprint",
+      start_date: "2026-06-01",
+      end_date: "2026-06-14",
+    });
   });
 });
