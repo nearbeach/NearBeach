@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export const useUserStore = defineStore("user", () => ({
+export const useUserStore = defineStore("user", {
     state: () => {
         return {
             id: 0 as number,
@@ -11,5 +11,5 @@ export const useUserStore = defineStore("user", () => ({
             profile_picture: "" as string,
             profile_picture_path: "" as string,
         }
-    }
-}))
+    },
+})

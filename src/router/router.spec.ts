@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from "pinia";
 import router, { routes } from "@/router/router.ts";
 import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { useObjectMetaDataStore } from "@/stores/object_meta_data/object_meta_data.ts";
+import { useUserStore } from "@/stores/user/user.ts";
 import { useErrorStore } from "@/stores/error/error.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
@@ -67,6 +68,8 @@ describe("router", () => {
     expect(usePermissionStore().maximumPermissions.project).toBe(2);
     expect(useObjectMetaDataStore().all_groups).toEqual(initialData.all_groups);
     expect(useObjectMetaDataStore().tags).toEqual(initialData.tags);
+    expect(useUserStore().username).toBe("luke");
+    expect(useUserStore().email).toBe("luke@example.com");
     expect(router.currentRoute.value.path).toBe("/project");
   });
 
