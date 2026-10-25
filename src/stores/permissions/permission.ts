@@ -98,16 +98,16 @@ export const usePermissionStore = defineStore('permissions', {
     },
     getters: {
         getCurrentObjectPermissions: state => {
-            state.currentObjectPermissions
+            return state.currentObjectPermissions;
         },
         getErrorInformation(): string {
             return this.errorInformation;
         },
         getMaximumPermissions: state => {
-            state.maximumPermissions
+            return state.maximumPermissions;
         },
         getPermissionData: state => {
-            state.permissionData
+            return state.permissionData;
         },
         getUserGroups: state => {
             return state.userGroups;

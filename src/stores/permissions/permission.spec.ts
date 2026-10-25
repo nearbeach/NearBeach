@@ -481,3 +481,32 @@ describe("Permission store - processing", () => {
         expect(permissionStore.getErrorInformation).toBe("Something broke");
     });
 });
+
+describe("Permission store - state getters", () => {
+    beforeEach(() => {
+        setActivePinia(createPinia());
+    });
+
+    test("getCurrentObjectPermissions returns the current object permissions", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.currentObjectPermissions.document = 3;
+
+        expect(permissionStore.getCurrentObjectPermissions).toEqual(permissionStore.currentObjectPermissions);
+        expect(permissionStore.getCurrentObjectPermissions?.document).toBe(3);
+    });
+
+    test("getMaximumPermissions returns the maximum permissions", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.maximumPermissions.project = 4;
+
+        expect(permissionStore.getMaximumPermissions).toEqual(permissionStore.maximumPermissions);
+        expect(permissionStore.getMaximumPermissions?.project).toBe(4);
+    });
+
+    test("getPermissionData returns the permission data", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.permissionData = [makePermission({ group_id: 8 })];
+
+        expect(permissionStore.getPermissionData).toEqual(permissionStore.permissionData);
+    });
+});
