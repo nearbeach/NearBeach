@@ -108,3 +108,139 @@ describe("LinkObjects", () => {
         expect(objectStore.group_list.length).toBe(2);
     });
 });
+
+describe("LinkObjects - managing links", () => {
+    const links = [
+        { object_assignment_id: 10, object_id: 1, object_title: "One", object_status: "Open", object_type: "task", parent_link: "", link_relationship: "relates", reverse_relation: false },
+        { object_assignment_id: 11, object_id: 2, object_title: "Two", object_status: "Open", object_type: "project", parent_link: "", link_relationship: "block", reverse_relation: true },
+    ];
+
+    function mockFetch(responses: Record<string, unknown> = {}) {
+        return vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+            const method = init?.method ?? "GET";
+            const body = method in responses ? responses[method] : (method === "GET" ? links : {});
+            return { status: 200, json: async () => structuredClone(body) } as Response;
+        });
+    }
+
+    async function mountLoaded(responses: Record<string, unknown> = {}) {
+        const fetchSpy = mockFetch(responses);
+        const wrapper = mountLinkObjects();
+        await flushPromises();
+        return { wrapper, fetchSpy };
+    }
+
+    const listOf = (wrapper: ReturnType<typeof mountLinkObjects>) =>
+        wrapper.findComponent(LinkObjectsTable).props("objectLinkList") as typeof links;
+
+    beforeEach(() => {
+        setActivePinia(createPinia());
+        const objectStore = useObjectStore();
+        objectStore.destination = "project";
+        objectStore.id = 1;
+        objectStore.is_loaded = true;
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    test("passes the loaded links to the table", async () => {
+        const { wrapper } = await mountLoaded();
+
+        expect(listOf(wrapper).map((l) => l.object_title)).toEqual(["One", "Two"]);
+    });
+
+    test("a failed load leaves the skeleton showing", async () => {
+        vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+        const wrapper = mountLinkObjects();
+        await flushPromises();
+
+        expect(wrapper.findComponent(SmallLoadingSkeleton).exists()).toBe(true);
+    });
+
+    test("creating a link splits the barcode, posts it and appends the result", async () => {
+        const created = { ...links[0], object_assignment_id: 12, object_title: "Three" };
+        const { wrapper, fetchSpy } = await mountLoaded({ POST: created });
+
+        wrapper.findComponent(AddRelationship).vm.$emit("createObjectLink", {
+            relationshipModel: "blocking",
+            objectSelectorModel: "task-33",
+        });
+        await flushPromises();
+
+        const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST")!;
+        expect(post[0]).toBe("/api/v1/project/1/link_list/");
+        expect(JSON.parse(post[1]?.body as string)).toEqual({
+            object_type: "task",
+            object_id: "33",
+            object_relation: "blocking",
+        });
+        expect(listOf(wrapper).map((l) => l.object_title)).toEqual(["One", "Two", "Three"]);
+    });
+
+    test("a failed create adds nothing", async () => {
+        const { wrapper, fetchSpy } = await mountLoaded();
+        fetchSpy.mockRejectedValueOnce(new Error("offline"));
+
+        wrapper.findComponent(AddRelationship).vm.$emit("createObjectLink", {
+            relationshipModel: "relates",
+            objectSelectorModel: "task-33",
+        });
+        await flushPromises();
+
+        expect(listOf(wrapper)).toHaveLength(2);
+    });
+
+    test("deleting removes the link by index and calls DELETE", async () => {
+        const { wrapper, fetchSpy } = await mountLoaded();
+
+        wrapper.findComponent(LinkObjectsTable).vm.$emit("deleteObjectLink", {
+            object_assignment_id: 10,
+            index: 0,
+        });
+        await flushPromises();
+
+        const del = fetchSpy.mock.calls.find(([, i]) => i?.method === "DELETE")!;
+        expect(del[0]).toBe("/api/v1/project/1/link_list/10/");
+        expect(listOf(wrapper).map((l) => l.object_assignment_id)).toEqual([11]);
+    });
+
+    test("a failed delete request does not throw", async () => {
+        const { wrapper, fetchSpy } = await mountLoaded();
+        fetchSpy.mockRejectedValueOnce(new Error("offline"));
+
+        wrapper.findComponent(LinkObjectsTable).vm.$emit("deleteObjectLink", {
+            object_assignment_id: 10,
+            index: 0,
+        });
+        await flushPromises();
+
+        expect(wrapper.exists()).toBe(true);
+    });
+
+    test("updateRelationship changes the relationship on that row", async () => {
+        const { wrapper } = await mountLoaded();
+
+        wrapper.findComponent(LinkObjectsTable).vm.$emit("updateRelationship", {
+            index: 1,
+            link_relationship: "duplicate",
+        });
+        await flushPromises();
+
+        expect(listOf(wrapper)[1].link_relationship).toBe("duplicate");
+        expect(listOf(wrapper)[0].link_relationship).toBe("relates");
+    });
+
+    test("updateRelationship ignores an index that does not exist", async () => {
+        const { wrapper } = await mountLoaded();
+
+        wrapper.findComponent(LinkObjectsTable).vm.$emit("updateRelationship", {
+            index: 9,
+            link_relationship: "duplicate",
+        });
+        await flushPromises();
+
+        expect(listOf(wrapper)).toHaveLength(2);
+    });
+});
