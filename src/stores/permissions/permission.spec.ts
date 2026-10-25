@@ -2,6 +2,7 @@
 import {setActivePinia, createPinia} from "pinia";
 import {describe, test, expect, beforeEach} from "vitest";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
+import type {PermissionDataInterface} from "@/utils/interfaces/stores/PermissionDataInterface.ts";
 
 describe("Permission store - _getMaximumFieldValue action", () => {
     beforeEach(() => {
@@ -326,3 +327,157 @@ describe("Permission store - _getMaximumFieldValue action", () => {
         expect(permissionStore._getMaximumFieldValue("task_note")).toBe(0);
     });
 })
+function makePermission(overrides: Partial<PermissionDataInterface> = {}): PermissionDataInterface {
+    return {
+        administration_assign_user_to_group: 0,
+        administration_create_group: 0,
+        administration_create_permission_set: 0,
+        administration_create_user: 0,
+        customer: 0,
+        document: 0,
+        group_id: 1,
+        group_name: "Group 1",
+        kanban_board: 0,
+        organisation: 0,
+        organisation_note: 0,
+        project: 0,
+        project_note: 0,
+        request_for_change: 0,
+        requirement: 0,
+        requirement_item_note: 0,
+        requirement_note: 0,
+        schedule_object: 0,
+        sprint: 0,
+        task: 0,
+        tag: 0,
+        kanban_note: 0,
+        task_note: 0,
+        ...overrides,
+    };
+}
+
+describe("Permission store - processing", () => {
+    beforeEach(() => {
+        setActivePinia(createPinia());
+    });
+
+    test("_getMaximumFieldValue returns 0 when permissionData is null", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.permissionData = null;
+
+        expect(permissionStore._getMaximumFieldValue("project")).toBe(0);
+    });
+
+    test("_getMaximumFieldValue ignores non-numeric fields", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.permissionData = [makePermission({ group_name: "Admins" })];
+
+        expect(permissionStore._getMaximumFieldValue("group_name")).toBe(0);
+    });
+
+    test("_setMaximumPermissions takes the highest value across groups", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.permissionData = [
+            makePermission({ project: 1, task: 3, settings: 2 } as Partial<PermissionDataInterface>),
+            makePermission({ group_id: 2, project: 4, task: 2, kanban_board: 1 }),
+        ];
+
+        permissionStore._setMaximumPermissions();
+
+        expect(permissionStore.maximumPermissions.project).toBe(4);
+        expect(permissionStore.maximumPermissions.task).toBe(3);
+        expect(permissionStore.maximumPermissions.kanban_board).toBe(1);
+        expect(permissionStore.maximumPermissions.requirement).toBe(0);
+        expect(permissionStore.maximumPermissions.settings).toBe(2);
+    });
+
+    test.each([
+        "administration_assign_user_to_group",
+        "administration_create_group",
+        "administration_create_permission_set",
+        "administration_create_user",
+    ] as const)("%s alone grants administration permission", (field) => {
+        const permissionStore = usePermissionStore();
+        permissionStore.permissionData = [makePermission({ [field]: 1 })];
+
+        permissionStore._setMaximumPermissions();
+        permissionStore._setHasAdministrationPermission();
+
+        expect(permissionStore.hasAdministrationPermission).toBe(true);
+    });
+
+    test("without administration fields there is no administration permission", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.permissionData = [makePermission({ project: 4 })];
+
+        permissionStore._setMaximumPermissions();
+        permissionStore._setHasAdministrationPermission();
+
+        expect(permissionStore.hasAdministrationPermission).toBe(false);
+    });
+
+    test("_setUserGroups builds select options from the permission data", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.permissionData = [
+            makePermission({ group_id: 5, group_name: "Five" }),
+            makePermission({ group_id: 6, group_name: "Six" }),
+        ];
+
+        permissionStore._setUserGroups();
+
+        expect(permissionStore.userGroups).toEqual([
+            { value: "5", label: "Five", optGroup: "" },
+            { value: "6", label: "Six", optGroup: "" },
+        ]);
+        expect(permissionStore.getUserGroups).toEqual(permissionStore.userGroups);
+    });
+
+    test("_setUserGroups gives an empty list when permissionData is null", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.permissionData = null;
+
+        permissionStore._setUserGroups();
+
+        expect(permissionStore.userGroups).toEqual([]);
+    });
+
+    test("processPermissionData fills everything and marks the store loaded", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.permissionData = [
+            makePermission({ project: 2, administration_create_user: 1 }),
+        ];
+
+        permissionStore.processPermissionData();
+
+        expect(permissionStore.maximumPermissions.project).toBe(2);
+        expect(permissionStore.hasAdministrationPermission).toBe(true);
+        expect(permissionStore.userGroups).toHaveLength(1);
+        expect(permissionStore.is_loaded).toBe(true);
+    });
+
+    test("hasPermission is true for a permission above zero", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.maximumPermissions.project = 1;
+
+        expect(permissionStore.hasPermission("project")).toBe(true);
+    });
+
+    test("hasPermission is false for a known permission at zero", () => {
+        const permissionStore = usePermissionStore();
+
+        expect(permissionStore.hasPermission("project")).toBe(false);
+    });
+
+    test("hasPermission defaults to true for unknown destinations", () => {
+        const permissionStore = usePermissionStore();
+
+        expect(permissionStore.hasPermission("dashboard")).toBe(true);
+    });
+
+    test("getErrorInformation returns the stored error", () => {
+        const permissionStore = usePermissionStore();
+        permissionStore.errorInformation = "Something broke";
+
+        expect(permissionStore.getErrorInformation).toBe("Something broke");
+    });
+});
