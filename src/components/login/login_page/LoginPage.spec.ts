@@ -117,4 +117,52 @@ describe("LoginPage", () => {
     const errorMessage = wrapper.find(".login-panel .error-message");
     expect(errorMessage.text()).toBe("Impostor detected, initiating self-destruction");
   });
+
+  test("shows the response status text for an unexpected error", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 500,
+      statusText: "Internal Server Error",
+    } as Response);
+
+    wrapper = mountLoginPage();
+    await signIn(wrapper);
+
+    expect(wrapper.find(".login-panel .error-message").text()).toBe("Internal Server Error");
+    expect(wrapper.findComponent(LoginPanel).isVisible()).toBe(true);
+  });
+
+  test("a failed two factor attempt returns to the login panel and clears the fields", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 200,
+      json: async () => ({ status: "default" }),
+    } as Response);
+
+    wrapper = mountLoginPage();
+    await signIn(wrapper);
+    expect(wrapper.findComponent(TwoFactorPanel).isVisible()).toBe(true);
+
+    fetchSpy.mockResolvedValue({ status: 401 } as Response);
+    wrapper.findComponent(TwoFactorPanel).vm.$emit("signIn");
+    await flushPromises();
+    await nextTick();
+
+    expect(wrapper.findComponent(LoginPanel).isVisible()).toBe(true);
+    expect(wrapper.findComponent(TwoFactorPanel).isVisible()).toBe(false);
+    expect(wrapper.find(".login-panel .error-message").text()).toBe("Credentials have failed");
+    expect((wrapper.find(".login-panel input[type=text]").element as HTMLInputElement).value).toBe("");
+  });
+
+  test("sends the credentials to the authentication endpoint", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 401 } as Response);
+
+    wrapper = mountLoginPage();
+    await signIn(wrapper, "luke", "secret");
+
+    expect(fetchSpy.mock.calls[0][0]).toBe("/api/v1/authentication/");
+    expect(JSON.parse(fetchSpy.mock.calls[0][1]?.body as string)).toEqual({
+      username: "luke",
+      password: "secret",
+      otp_token: "",
+    });
+  });
 });

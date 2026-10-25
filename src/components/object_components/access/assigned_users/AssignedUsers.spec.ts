@@ -110,4 +110,81 @@ describe("AssignedUsers", () => {
     expect(wrapper.find(".user-access-list").exists()).toBe(false);
     expect(globalThis.fetch).toHaveBeenCalledWith("/api/v1/project/1/users/1/", expect.any(Object));
   });
+
+  test("picking nothing does not call the backend", async () => {
+    objectStore.potential_user_list = [user1, user2];
+    const wrapper = mount(AssignedUsers);
+    await flushPromises();
+    vi.mocked(globalThis.fetch).mockClear();
+
+    await wrapper.findComponent({ name: "AddObject" }).vm.$emit("change");
+    await flushPromises();
+
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  test("picking a user that is not in the potential list does nothing", async () => {
+    objectStore.potential_user_list = [user1];
+    const wrapper = mount(AssignedUsers);
+    await flushPromises();
+    vi.mocked(globalThis.fetch).mockClear();
+
+    const addObject = wrapper.findComponent({ name: "AddObject" });
+    addObject.vm.$emit("update:modelValue", 99);
+    await addObject.vm.$emit("change");
+    await flushPromises();
+
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+    expect(objectStore.user_list).toEqual([]);
+  });
+
+  test("fetches the potential users when the object finishes loading", async () => {
+    objectStore.is_loaded = false;
+    mount(AssignedUsers);
+    await flushPromises();
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+
+    objectStore.is_loaded = true;
+    await flushPromises();
+
+    expect(globalThis.fetch).toHaveBeenCalledWith("/api/v1/project/1/groups/", expect.any(Object));
+  });
+
+  test("a failed add is logged", async () => {
+    objectStore.potential_user_list = [user1, user2];
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const wrapper = mount(AssignedUsers);
+    await flushPromises();
+    vi.mocked(globalThis.fetch).mockRejectedValue(new Error("offline"));
+
+    await wrapper.find("select").setValue("2");
+    await flushPromises();
+
+    expect(consoleError).toHaveBeenCalled();
+  });
+
+  test("a failed fetch of potential users is logged", async () => {
+    vi.mocked(globalThis.fetch).mockRejectedValue(new Error("offline"));
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    mount(AssignedUsers);
+
+    objectStore.is_loaded = true;
+    await flushPromises();
+
+    expect(consoleError).toHaveBeenCalled();
+  });
+
+  test("a failed remove is logged and the user is still removed locally", async () => {
+    objectStore.user_list = [user1];
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const wrapper = mount(AssignedUsers);
+    await flushPromises();
+    vi.mocked(globalThis.fetch).mockRejectedValue(new Error("offline"));
+
+    await wrapper.find(".user-access-item svg").trigger("click");
+    await flushPromises();
+
+    expect(consoleError).toHaveBeenCalled();
+    expect(objectStore.user_list).toEqual([]);
+  });
 });
