@@ -447,7 +447,10 @@ class ProjectUpdateTests(TeamLeaderProjectBase):
         """Known bug - ProjectService.update sets change_user on the serializer, so it is never saved (see its TODO)"""
         self._patch({"title": "Changed by the leader"})
 
-        self.assertEqual(Project.objects.get(pk=2).change_user, self.leader)
+        self.assertEqual(
+            Project.objects.get(pk=2).change_user,
+            self.leader
+        )
 
     def test_a_project_that_does_not_exist_cannot_be_patched(self):
         self.assertEqual(self._patch({"title": "Nope"}, url=f"{PROJECT_LIST_URL}9999/").status_code, 404)
