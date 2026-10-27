@@ -9,7 +9,6 @@ Project 1 has its own documents and folders (1 and 2).
 """
 import shutil
 import tempfile
-import unittest
 import uuid
 from pathlib import Path
 from unittest import mock
@@ -214,7 +213,6 @@ class ProjectFolderTests(ProjectDocumentBase):
         self.assertEqual(Folder.objects.get(pk=SUB_FOLDER).description, "Sub Folder")
         self.assertEqual(Folder.objects.get(pk=OTHER_PROJECT_FOLDER).description, "Folder at root")
 
-    @unittest.expectedFailure
     def test_moving_a_folder_into_another_folder(self):
         """Known bug - FolderService.update looks for "parent_folder" but the serializer sends "parent_folder_id", so a
         folder can be renamed but never moved"""
@@ -334,7 +332,6 @@ class ProjectDocumentLinkTests(ProjectDocumentBase):
         self.assertEqual(Document.objects.count(), before)
 
     # ---------- update ----------
-    @unittest.expectedFailure
     def test_updating_a_link(self):
         """Known bug - DocumentLinkService.update filters Document by project_id/folder, which live on
         DocumentPermission, so it raises a FieldError (see its TODO)"""
@@ -464,7 +461,6 @@ class ProjectDocumentUploadTests(ProjectDocumentBase):
         self.assertEqual(self._upload("ok.txt", b"12345").status_code, 201)
 
     # ---------- update ----------
-    @unittest.expectedFailure
     def test_updating_an_uploaded_document(self):
         """Known bug - DocumentService.update filters DocumentPermission on document_key, which does not exist, so it
         raises a FieldError (see its TODO)"""
@@ -478,7 +474,6 @@ class ProjectDocumentUploadTests(ProjectDocumentBase):
         self.assertEqual(Document.objects.get(pk=ROOT_FILE).description, "Renamed file")
 
     # ---------- delete ----------
-    @unittest.expectedFailure
     def test_deleting_an_uploaded_document(self):
         """Known bug - DocumentService.delete filters Document on project_id, which lives on DocumentPermission, so it
         raises a FieldError (see its TODO). The serializer also demands a description on a delete"""

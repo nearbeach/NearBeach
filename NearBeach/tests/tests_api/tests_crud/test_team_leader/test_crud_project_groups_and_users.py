@@ -5,7 +5,6 @@ Project 2 ("Project - QA Team") is in the QA Team group (2). In the fixture:
  - members of the QA Team: admin (1), team_leader (2), team_member (3), team_intern (4), read_only (5), read_only_extra (8)
  - Administration (1) has admin (1) and dark_admin (7); groups 3 and 4 have no members
 """
-import unittest
 
 from django.contrib.auth import get_user_model
 
@@ -190,7 +189,6 @@ class ProjectGroupRemoveTests(GroupsAndUsersBase):
 
         self.assertTrue(self._group_rows(QA_GROUP).filter(is_deleted=False).exists())
 
-    @unittest.expectedFailure
     def test_the_last_group_cannot_be_removed(self):
         """Known bug - GroupService.delete counts every assignment on the project (users included), not only groups
 
