@@ -9,7 +9,6 @@ from NearBeach.serializers.documentation.document_serializer import DocumentSeri
 from NearBeach.serializers.documentation.file_system_serializer import FileSystemSerializer
 from NearBeach.services.abstraction.object_services_abstraction import (
     AuthenticatedRequest,
-    ObjectId,
     ObjectServiceAbstraction,
     ServiceResponse,
 )

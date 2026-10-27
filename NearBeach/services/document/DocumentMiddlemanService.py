@@ -5,7 +5,6 @@ from NearBeach.serializers.documentation.document_delete_serializer import Docum
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.services.abstraction.object_services_abstraction import (
     AuthenticatedRequest,
-    ObjectId,
     ObjectServiceAbstraction,
     ServiceResponse,
 )

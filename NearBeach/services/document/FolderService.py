@@ -10,8 +10,6 @@ from NearBeach.services.abstraction.object_services_abstraction import (
     ServiceResponse,
 )
 
-import datetime
-
 
 class FolderService(ObjectServiceAbstraction):
     """Class for handling folder crud operations"""
