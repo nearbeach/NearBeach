@@ -6,9 +6,9 @@ import logging
 
 _logger = logging.getLogger(__name__)
 _object_mapping = {
-    'ChangeTask': ChangeTask.objects,
-    'KanbanCard': KanbanCard.objects,
-    'RequirementItem': RequirementItem.objects,
+    'change_task': ChangeTask.objects,
+    'kanban_card': KanbanCard.objects,
+    'requirement_item': RequirementItem.objects,
 }
 
 
@@ -33,10 +33,10 @@ def get_parent_object(destination: str, location_id: int) -> tuple[str | None, i
             return destination, location_id
 
         # Get child object and parent destination
-        child_object = _object_mapping[destination].get(
+        child_object = _object_mapping[destination].filter(
             is_deleted=False,
             pk=location_id,
-        )
+        ).first()
         parent_destination = get_object_permission_set(destination)
         if child_object is None or parent_destination is None:
             return None, None
