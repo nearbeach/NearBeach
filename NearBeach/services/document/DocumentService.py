@@ -5,6 +5,7 @@ from django.db.models import F
 from NearBeach.models.document.document import Document
 from NearBeach.models.document.document_permission import DocumentPermission
 from NearBeach.models.document.folder import Folder
+from NearBeach.serializers.documentation.document_delete_serializer import DocumentDeleteSerializer
 from NearBeach.serializers.documentation.document_serializer import DocumentSerializer
 from NearBeach.serializers.documentation.file_system_serializer import FileSystemSerializer
 from NearBeach.services.abstraction.object_services_abstraction import (
@@ -62,32 +63,29 @@ class DocumentService(ObjectServiceAbstraction):
 
     def delete(self, request: AuthenticatedRequest, document_id: str) -> ServiceResponse:
         """Method for removing document"""
-        serializer = DocumentSerializer(data=request.data)
+        serializer = DocumentDeleteSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
-        # Check to make sure data exists
-        # TODO - Document has no project_id (the link lives on DocumentPermission) and no document_id,
-        #  so deleting an uploaded document raises a FieldError
-        document = Document.objects.filter(
+        # The document has to be on this object - that link lives on the document permission
+        document_permission = DocumentPermission.objects.filter(
             is_deleted=False,
-            pk=document_id,
+            document_id=document_id,
+            document__is_deleted=False,
             **{F"{self.destination}_id": self.location_id},
         )
-        if len(document) == 0:
+        if len(document_permission) == 0:
             return "Document object does not exist", status.HTTP_400_BAD_REQUEST
 
-        document.update(
+        Document.objects.filter(pk=document_id).update(
             change_user=request.user,
             date_modified=timezone.now(),
             is_deleted=True,
         )
 
         # Remove the document permission
-        DocumentPermission.objects.filter(
-            document_id__in=document.values("document_id"),  # type: ignore[misc]
-            **{F"{self.destination}_id": self.location_id},
-        ).update(
+        document_permission.update(
+            change_user=request.user,
             is_deleted=True,
             date_modified=timezone.now(),
         )
@@ -134,28 +132,53 @@ class DocumentService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_200_OK
 
     def update(self, request: AuthenticatedRequest, document_id: str) -> ServiceResponse:
+        """Method for updating an uploaded document - its description and the folder it is in"""
         serializer = DocumentSerializer(data=request.data)
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
-        # TODO - DocumentPermission has no document_key or description, so updating an uploaded document
-        #  raises a FieldError. Probably meant document_id here and document.document.description below
-        document = DocumentPermission.objects.get(  # type: ignore[misc]
-            document_key=document_id,
+        # The document has to be on this object - that link lives on the document permission
+        document_permission = DocumentPermission.objects.filter(
+            is_deleted=False,
+            document_id=document_id,
+            document__is_deleted=False,
             **{F"{self.destination}_id": self.location_id},
         )
-        if document is None:
+        if len(document_permission) == 0:
             return "Document object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Update the document
-        description = serializer.validated_data["description"]
-        folder = serializer.validated_data["folder"]
-
-        document.description = document.description if description is None else description  # type: ignore[attr-defined]
-        document.folder = document.folder if folder is None else folder
+        document = Document.objects.get(pk=document_id)
+        document.description = serializer.validated_data["description"]
+        document.change_user = request.user
+        document.date_modified = timezone.now()
         document.save()
 
-        # Serializer
-        serializer = DocumentSerializer(document)
+        # The folder it lives in is on the permission - 0 means the root
+        if "parent_folder_id" in serializer.validated_data:
+            document_permission.update(
+                folder_id=serializer.validated_data["parent_folder_id"] or None,
+                change_user=request.user,
+                date_modified=timezone.now(),
+            )
+
+        # Serialize the document - the same shape as when it was uploaded
+        serializer = DocumentSerializer(
+            DocumentPermission.objects.filter(
+                is_deleted=False,
+                document=document,
+            ).annotate(
+                description=F("document__description"),
+                url_location=F("document__url_location"),
+                key=F("document__key"),
+                parent_folder_id=F("folder_id"),
+            ).values(
+                "document",
+                "description",
+                "url_location",
+                "key",
+                "parent_folder_id",
+            ).first()
+        )
 
         return serializer.data, status.HTTP_200_OK

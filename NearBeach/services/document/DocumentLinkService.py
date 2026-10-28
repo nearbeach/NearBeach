@@ -118,30 +118,53 @@ class DocumentLinkService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
-        # Check folder exists
-        # TODO - Document has no project_id or folder (both live on DocumentPermission), so updating a link
-        #  raises a FieldError, and the response serializes the folder rather than the document
-        document = Document.objects.get(
+        # The document has to be a link on this object
+        document_permission = DocumentPermission.objects.filter(
             is_deleted=False,
-            pk=document_id,
-            **{F"documentpermission__{self.destination}_id": self.location_id},
+            document_id=document_id,
+            document__is_deleted=False,
+            **{F"{self.destination}_id": self.location_id},
         )
-        if document is None:
-            return "Folder object does not exist", status.HTTP_400_BAD_REQUEST
+        if len(document_permission) == 0:
+            return "Document does not exist", status.HTTP_400_BAD_REQUEST
 
-        # Update
-        if hasattr(serializer.validated_data, "description"):
+        # Update the link itself
+        document = Document.objects.get(pk=document_id)
+        if "description" in serializer.validated_data:
             document.description = serializer.validated_data["description"]
 
-        if hasattr(serializer.validated_data, "folder"):
-            document.folder = serializer.validated_data["folder"]
-
-        if hasattr(serializer.validated_data, "url_location"):
+        if "url_location" in serializer.validated_data:
             document.url_location = serializer.validated_data["url_location"]
 
+        document.change_user = request.user
+        document.date_modified = timezone.now()
         document.save()
 
-        # Serialize
-        serializer = FolderSerializer(document)
+        # The folder it lives in is on the permission - 0 means the root
+        if "parent_folder_id" in serializer.validated_data:
+            document_permission.update(
+                folder_id=serializer.validated_data["parent_folder_id"] or None,
+                change_user=request.user,
+                date_modified=timezone.now(),
+            )
+
+        # Serialize the link - the same shape as when it was created
+        serializer = DocumentSerializer(
+            DocumentPermission.objects.filter(
+                is_deleted=False,
+                document=document,
+            ).annotate(
+                description=F("document__description"),
+                url_location=F("document__url_location"),
+                key=F("document__key"),
+                parent_folder_id=F("folder_id"),
+            ).values(
+                "document",
+                "description",
+                "url_location",
+                "key",
+                "parent_folder_id",
+            ).first()
+        )
 
         return serializer.data, status.HTTP_200_OK

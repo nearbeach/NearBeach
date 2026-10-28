@@ -85,13 +85,14 @@ class FolderService(ObjectServiceAbstraction):
             date_modified = timezone.now(),
         )
 
-        if "parent_folder" in serializer.validated_data:
-            folder.update(parent_folder=serializer.validated_data["parent_folder"])
+        if "parent_folder_id" in serializer.validated_data:
+            # 0 means the root - same as when creating a folder
+            folder.update(parent_folder_id=serializer.validated_data["parent_folder_id"] or None)
 
         if "description" in serializer.validated_data:
             folder.update(description = serializer.validated_data['description'])
 
         # Serialize
-        serializer = FolderSerializer(folder)
+        serializer = FolderSerializer(folder.first())
 
         return serializer.data, status.HTTP_200_OK
