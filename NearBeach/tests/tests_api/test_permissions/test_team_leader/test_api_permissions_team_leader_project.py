@@ -446,7 +446,7 @@ class ApiTeamLeaderPermissionTests(BaseApiClass):
                 "/api/v1/project/1/link_list/",
                 {
                     "object_type": "task",
-                    "object_id": "1",
+                    "object_id": "2",
                     "object_relation": "relates",
                 },
                 403,
@@ -456,7 +456,7 @@ class ApiTeamLeaderPermissionTests(BaseApiClass):
                 "/api/v1/project/2/link_list/",
                 {
                     "object_type": "task",
-                    "object_id": "1",
+                    "object_id": "2",
                     "object_relation": "relates",
                 },
                 201,
@@ -466,7 +466,7 @@ class ApiTeamLeaderPermissionTests(BaseApiClass):
                 "/api/v1/project/3/link_list/",
                 {
                     "object_type": "task",
-                    "object_id": "1",
+                    "object_id": "2",
                     "object_relation": "relates",
                 },
                 404,

@@ -181,8 +181,11 @@ class GroupService(ObjectServiceAbstraction):
         existing_group_count = ObjectAssignment.objects.filter(
             **{F"{self.destination}_id": self.location_id},
             is_deleted=False,
+            group_id__isnull=False,
+        ).exclude(
+            group_id=group_pk,
         )
-        if len(existing_group_count) <= 1:
+        if len(existing_group_count) == 0:
             return "Can not delete last group", status.HTTP_400_BAD_REQUEST
 
         # Remove the group

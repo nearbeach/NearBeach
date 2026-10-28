@@ -4,6 +4,7 @@ from rest_framework import status
 
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.models.kanban_board.kanban_card import KanbanCard
+from NearBeach.models.user import UserGroup
 from django.db.models import Q, F, Value
 from django.utils import timezone
 
@@ -77,6 +78,20 @@ class LinkListService(ObjectServiceAbstraction):
         single_object = self.object_dict[object_type].filter(pk=serializer.validated_data["object_id"]).first()
         if single_object is None:
             return "Object does not exist", status.HTTP_400_BAD_REQUEST
+
+        # Check to make sure the user has access to the object
+        has_access = ObjectAssignment.objects.filter(
+            is_deleted=False,
+            **{object_type: single_object},
+            group_id__in=UserGroup.objects.filter(
+                is_deleted=False,
+                username=request.user,
+            ).values("group_id"),
+        )
+        condition_1 = not has_access.exists()
+        condition_2 = request.user.is_superuser is False
+        if condition_1 and condition_2:
+            return "User does not have access to object they are linking too", status.HTTP_403_FORBIDDEN
 
         submit_object_assignment = ObjectAssignment(
             change_user=request.user,
