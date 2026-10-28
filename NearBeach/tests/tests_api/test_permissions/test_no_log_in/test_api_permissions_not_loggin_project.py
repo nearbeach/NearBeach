@@ -519,29 +519,6 @@ class ApiNoLogInPermissionTests(BaseApiClass):
 
         self._run_test_array(data_list)
 
-    def test_api_permissions_no_log_in_project_misc(self):
-        """Test - API Admin Permissions for the Project Misc submodule"""
-        # TODO - Complete this after setting up front end
-        data_list = [
-            #########
-            # READ
-            #########
-
-            #########
-            # CREATE
-            #########
-
-            #########
-            # UPDATE
-            #########
-
-            #########
-            # DELETE
-            #########
-        ]
-
-        self._run_test_array(data_list)
-
     def test_api_permissions_no_log_in_project_notes(self):
         """Test - API Admin Permissions for the Project Notes submodule"""
         data_list = [
