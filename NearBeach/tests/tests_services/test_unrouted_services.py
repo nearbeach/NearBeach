@@ -96,10 +96,77 @@ class OrganisationServiceTests(ServiceTestBase):
         self.service.delete(self.request(), 1)
         self.assertEqual(self.service.delete(self.request(), 1)[1], status.HTTP_400_BAD_REQUEST)
 
-    def test_methods_that_are_not_needed_say_so(self):
-        for call in (lambda: self.service.get_data(self.request()), lambda: self.service.get_list(self.request())):
-            with self.assertRaises(NotImplementedError):
-                call()
+    def test_get_data_is_not_needed(self):
+        with self.assertRaises(NotImplementedError):
+            self.service.get_data(self.request())
+
+    # ---------- list ----------
+    def _list(self, **query):
+        request = self.request(method="GET")
+        request.query_params = query
+
+        return list(self.service.get_list(request))
+
+    def _make(self, name, **fields):
+        return Organisation.objects.create(
+            name=name,
+            website=fields.pop("website", "https://example.org"),
+            email=fields.pop("email", "info@example.org"),
+            change_user=self.user,
+            creation_user=self.user,
+            **fields,
+        )
+
+    def test_list_has_every_organisation_that_is_not_deleted(self):
+        self._make("Zed Ltd")
+        deleted = self._make("Gone Ltd")
+        Organisation.objects.filter(pk=deleted.pk).update(is_deleted=True)
+
+        names = [organisation.name for organisation in self._list()]
+
+        self.assertIn("Zed Ltd", names)
+        self.assertNotIn("Gone Ltd", names)
+        self.assertEqual(len(names), Organisation.objects.filter(is_deleted=False).count())
+
+    def test_list_is_in_name_order(self):
+        for name in ("Charlie", "Alpha", "Bravo"):  # same case: how upper and lower case sort depends on the database
+            self._make(name)
+
+        names = [organisation.name for organisation in self._list()]
+
+        self.assertEqual(names, sorted(names))
+        self.assertLess(names.index("Alpha"), names.index("Bravo"))
+        self.assertLess(names.index("Bravo"), names.index("Charlie"))
+
+    def test_list_can_be_searched_by_name_email_website_or_id(self):
+        target = self._make("Searchable Pty", email="hello@searchable.example", website="https://searchable.example")
+        self._make("Other Pty", email="other@other.example", website="https://other.example")
+
+        for name, query in {
+            "name": "searchable pty",
+            "email": "HELLO@searchable",
+            "website": "searchable.example",
+            "id": str(target.pk),
+        }.items():
+            with self.subTest(name):
+                self.assertEqual([organisation.pk for organisation in self._list(search=query)], [target.pk])
+
+    def test_a_search_with_no_match_is_empty(self):
+        self.assertEqual(self._list(search="no organisation is called this"), [])
+
+    def test_an_empty_search_is_no_search(self):
+        self.assertEqual(len(self._list(search="")), Organisation.objects.filter(is_deleted=False).count())
+
+    def test_a_numeric_search_also_matches_names(self):
+        target = self._make("Studio 54")
+
+        self.assertIn(target.pk, [organisation.pk for organisation in self._list(search="54")])
+
+    def test_deleted_organisations_are_not_found_by_search(self):
+        target = self._make("Hidden Pty")
+        Organisation.objects.filter(pk=target.pk).update(is_deleted=True)
+
+        self.assertEqual(self._list(search="Hidden"), [])
 
 
 class CustomerServiceTests(ServiceTestBase):

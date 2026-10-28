@@ -1,5 +1,5 @@
+from django.db.models import Q, QuerySet
 from rest_framework import status
-from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.models.organisation import Organisation
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 
@@ -40,28 +40,25 @@ class OrganisationService(ObjectServiceAbstraction):
     def get_data(self, _: AuthenticatedRequest) -> ServiceResponse:
         raise NotImplementedError  # Method not required in current class
 
-    def get_list(self, request: AuthenticatedRequest) -> ServiceResponse:
-        raise NotImplementedError  # Method not required in current class
-
-    @destination_permission(min_permission_level=1)
-    def list(self, _: AuthenticatedRequest) -> ServiceResponse:
-        # TODO - Check how we are going to do serialization etc
-        # TODO - paginate_queryset/get_paginated_response live on the viewset, not this service, and update()
-        #  hands a queryset to serializer.update(). Neither works yet, but no view uses this class
-        # Get the organisation results
+    # The view paginates the queryset itself (like the project list), so this returns the queryset rather than a
+    # ServiceResponse. Organisations belong to no group, so everyone with organisation permission sees them all -
+    # that permission is checked by the view.
+    def get_list(self, request: AuthenticatedRequest) -> QuerySet[Organisation]:  # type: ignore[override]
         organisation_results = Organisation.objects.filter(
             is_deleted=False,
-        )
+        ).order_by("name", "pk")
 
-        # Handle pagination
-        page = self.paginate_queryset(organisation_results)  # type: ignore[attr-defined]
-        if page is not None:
-            serializer = OrganisationSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)  # type: ignore[attr-defined]
+        # Filter by search parameter in the query string
+        search = request.query_params.get("search", None)
+        if search:
+            organisation_results = organisation_results.filter(
+                Q(name__icontains=search)
+                | Q(email__icontains=search)
+                | Q(website__icontains=search)
+                | Q(id=int(search) if search.isdigit() else None)
+            )
 
-        serializer = OrganisationSerializer(organisation_results, many=True)
-
-        return serializer.data, status.HTTP_200_OK
+        return organisation_results
 
     def update(self, request: AuthenticatedRequest, pk: ObjectId) -> ServiceResponse:
         organisation = Organisation.objects.filter(is_deleted=False, pk=pk).first()
