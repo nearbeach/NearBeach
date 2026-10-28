@@ -25,7 +25,9 @@ class SprintService(ObjectServiceAbstraction):
 
     def retrieve(self, request: AuthenticatedRequest) -> ServiceResponse:
         # Get object
-        sprint_results = Sprint.objects.get(pk=self.location_id)
+        sprint_results = Sprint.objects.filter(is_deleted=False, pk=self.location_id).first()
+        if sprint_results is None:
+            return "Sprint does not exist", status.HTTP_404_NOT_FOUND
 
         # Get assigned object
         # object_assignments = ObjectAssignment.objects.filter(
@@ -62,8 +64,9 @@ class SprintService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_200_OK
 
     def update(self, request: AuthenticatedRequest, sprint_id: ObjectId) -> ServiceResponse:
-        # Get project
-        sprint = Sprint.objects.get(pk=self.location_id)
+        sprint = Sprint.objects.filter(is_deleted=False, pk=self.location_id).first()
+        if sprint is None:
+            return "Sprint does not exist", status.HTTP_404_NOT_FOUND
 
         # Setup serializer
         serializer = SprintSerializer(
@@ -76,11 +79,9 @@ class SprintService(ObjectServiceAbstraction):
             partial=True,
         )
         if not serializer.is_valid():
-            return serializer.errors, False
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Make sure we update the change user
-        # TODO - this sets an attribute on the serializer, so change_user is never saved (class is not used by any view yet)
-        serializer.change_user = request.user  # type: ignore[attr-defined]
-        serializer.save()
+        serializer.save(change_user=request.user)
 
         return serializer.data, status.HTTP_200_OK

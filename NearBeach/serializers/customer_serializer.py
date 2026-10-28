@@ -39,7 +39,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         if "request" not in self.context:
             return fields
 
-        if self.context["request"].method in ("POST", "PUT"):
+        if self.context["request"].method in ("POST", "PUT", "PATCH"):
             fields.pop("customer_profile_picture_path", None)
             fields["title"] = serializers.PrimaryKeyRelatedField(
                 queryset=ListOfTitle.objects.filter(
@@ -48,14 +48,6 @@ class CustomerSerializer(serializers.ModelSerializer):
             )
 
         return fields
-
-    def update(self, instance, validated_data):
-        # Update title
-        instance.title_id = validated_data.pop("customer_title")
-
-        # Update instance
-        instance = super().update(instance, validated_data)
-        return instance
 
     class Meta:
         model = Customer

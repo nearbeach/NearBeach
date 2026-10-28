@@ -30,7 +30,7 @@ class CustomerService(ObjectServiceAbstraction):
         return serializer
 
     def create(self, request: AuthenticatedRequest) -> ServiceResponse:
-        serializer = CustomerSerializer(data=request.data)
+        serializer = CustomerSerializer(data=request.data, context={"request": request})
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
@@ -44,7 +44,10 @@ class CustomerService(ObjectServiceAbstraction):
 
     def delete(self, request: AuthenticatedRequest, customer_pk: ObjectId) -> ServiceResponse:
         # TODO - this will change
-        customer = Customer.objects.get(pk=customer_pk)
+        customer = Customer.objects.filter(pk=customer_pk, is_deleted=False).first()
+        if customer is None:
+            return "Customer does not exist", status.HTTP_400_BAD_REQUEST
+
         customer.is_deleted = True
         customer.change_user = request.user
         customer.save()
@@ -58,15 +61,15 @@ class CustomerService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_200_OK
 
     def update(self, request: AuthenticatedRequest, pk: ObjectId) -> ServiceResponse:
-        serializer = CustomerSerializer(data=request.data)
-        if not serializer.is_valid():
-            return serializer.errors, False
+        customer = Customer.objects.filter(pk=pk, is_deleted=False).first()
+        if customer is None:
+            return "Customer does not exist", status.HTTP_400_BAD_REQUEST
 
-        # TODO - check how we want to use serializers to update objects
         # TODO - check to see if we want to do partial updates
-        # Update serializer
-        # TODO - this sets an attribute on the serializer, so change_user is never saved (class is not used by any view yet)
-        serializer.change_user = request.user  # type: ignore[attr-defined]
-        serializer.save()
+        serializer = CustomerSerializer(customer, data=request.data, partial=True, context={"request": request})
+        if not serializer.is_valid():
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
-        return serializer.data, status.HTTP_200_OK
+        updated_customer = serializer.save(change_user=request.user)
+
+        return CustomerSerializer(updated_customer).data, status.HTTP_200_OK

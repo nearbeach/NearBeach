@@ -27,7 +27,10 @@ class OrganisationService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_201_CREATED
 
     def delete(self, request: AuthenticatedRequest, organisation_pk: ObjectId) -> ServiceResponse:
-        organisation = Organisation.objects.get(pk=organisation_pk)
+        organisation = Organisation.objects.filter(pk=organisation_pk, is_deleted=False).first()
+        if organisation is None:
+            return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
+
         organisation.is_deleted = True
         organisation.change_user = request.user
         organisation.save()
@@ -61,29 +64,20 @@ class OrganisationService(ObjectServiceAbstraction):
         return serializer.data, status.HTTP_200_OK
 
     def update(self, request: AuthenticatedRequest, pk: ObjectId) -> ServiceResponse:
-        serializer = OrganisationSerializer(data=request.data, context={'request': request})
+        organisation = Organisation.objects.filter(is_deleted=False, pk=pk).first()
+        if organisation is None:
+            return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
+
+        serializer = OrganisationSerializer(
+            organisation, data=request.data, partial=True, context={'request': request}
+        )
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
-        # Double-check the organisation exists
-        update_organisation = Organisation.objects.filter(
-            is_deleted=False,
-            pk=pk,
-        )
-        if len(update_organisation) == 0:
-            return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
-
         # Update data
-        update_organisation.change_user = request.user  # type: ignore[attr-defined]
-        update_organisation = serializer.update(
-            update_organisation,
-            serializer.data,
-        )
+        updated_organisation = serializer.save(change_user=request.user)
 
         # Re-serialize the data to send back complete set to user
-        serializer = OrganisationSerializer(
-            update_organisation,
-            many=False
-        )
+        serializer = OrganisationSerializer(updated_organisation, many=False)
 
         return serializer.data, status.HTTP_200_OK
