@@ -176,8 +176,8 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
         self.assertEqual(ObjectAssignment.objects.count(), before)
 
     def test_cannot_link_to_objects_the_user_has_no_access_to(self):
-        """Known bug - LinkListService.create never checks the user can see the object being linked, so the leader
-        links to Administration-only objects and is sent their titles"""
+        """Regression - LinkListService.create once never checked the user could see the object being linked, so the
+        leader could link to Administration-only objects and was sent their titles"""
         before = ObjectAssignment.objects.count()
 
         for object_type in ("project", "task", "requirement"):

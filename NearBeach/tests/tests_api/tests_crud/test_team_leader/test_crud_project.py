@@ -444,7 +444,7 @@ class ProjectUpdateTests(TeamLeaderProjectBase):
         self.assertGreater(Project.objects.get(pk=2).date_modified, before)
 
     def test_patch_records_who_made_the_change(self):
-        """Known bug - ProjectService.update sets change_user on the serializer, so it is never saved (see its TODO)"""
+        """Regression - ProjectService.update set change_user on the serializer, so it was never saved"""
         self._patch({"title": "Changed by the leader"})
 
         self.assertEqual(

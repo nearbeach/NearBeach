@@ -190,9 +190,8 @@ class ProjectGroupRemoveTests(GroupsAndUsersBase):
         self.assertTrue(self._group_rows(QA_GROUP).filter(is_deleted=False).exists())
 
     def test_the_last_group_cannot_be_removed(self):
-        """Known bug - GroupService.delete counts every assignment on the project (users included), not only groups
-
-        Project 2 has two users assigned, so its only group can be removed and the project is left with no group.
+        """Regression - GroupService.delete used to count every assignment on the project (users included), not only
+        groups. Project 2 has two users assigned, so its only group could be removed and the project left with no group.
         """
         self.client.delete(f"{GROUPS_URL}{EMPTY_GROUP}/")
 
