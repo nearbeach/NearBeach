@@ -1,8 +1,9 @@
 // composable/getCsrfToken
 
 export function getCsrfToken(): string {
-    const CSRF_TOKEN : RegExpMatchArray | null = document.cookie.match(new RegExp('csrftoken=([^;]+)'));
+    // The cookie has to start the string or follow a "; " - otherwise "other_csrftoken=..." would match too
+    const CSRF_TOKEN : RegExpMatchArray | null = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
     return CSRF_TOKEN === null
         ? ""
-        : CSRF_TOKEN[0].replace("csrftoken=", "");
+        : CSRF_TOKEN[1];
 }
