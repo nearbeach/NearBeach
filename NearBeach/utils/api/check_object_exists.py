@@ -17,7 +17,7 @@ _mapping = {
     'change_task': ChangeTask.objects,
     'customer': Customer.objects,
     'kanban_board': KanbanBoard.objects,
-    'kanban_card': KanbanCard,
+    'kanban_card': KanbanCard.objects,
     'organisation': Organisation.objects,
     'project': Project.objects,
     'request_for_change': RequestForChange.objects,

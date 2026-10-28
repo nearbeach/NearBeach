@@ -117,7 +117,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @object_permission(min_permission_level=2)
+    @object_permission(min_permission_level=2, additive_permission="document")
     @documents.mapping.post
     def documents_create(self, request, pk, *args, **kwargs) -> Response:
         document_middleman_service = DocumentMiddlemanService(destination="project", location_id=pk)
@@ -293,7 +293,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @object_permission(min_permission_level=2)
+    @object_permission(min_permission_level=2, additive_permission="project_note")
     @notes.mapping.post
     def notes_create(self, request, pk, *args, **kwargs) -> Response:
         note_service = NoteService(destination="project", location_id=pk)
@@ -304,7 +304,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @object_permission(min_permission_level=2)
+    @object_permission(min_permission_level=2, additive_permission="project_note")
     @action(
         methods=["DELETE"],
         detail=True,
@@ -319,7 +319,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @object_permission(min_permission_level=2)
+    @object_permission(min_permission_level=2, additive_permission="project_note")
     @notes_delete.mapping.patch
     def notes_update(self, request, pk, note_pk, *args, **kwargs) -> Response:
         note_service = NoteService(destination="project", location_id=pk)

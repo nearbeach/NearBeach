@@ -27,6 +27,7 @@ from NearBeach.models.object_assignment.object_assignment import ObjectAssignmen
 from NearBeach.models.organisation import Organisation
 from NearBeach.models.project import Project
 from NearBeach.models.sprint.sprint import Sprint
+from NearBeach.models.user import Group, PermissionSet, UserGroup
 
 PROJECT = "/api/v1/project/2/"
 TABLES = (Project, ObjectAssignment, ObjectNote, PublicLink, Document, DocumentPermission, Folder, Sprint,
@@ -70,6 +71,11 @@ OPERATIONS = [
 ]
 
 
+# Operations a read-only user is also allowed to do when their permission set has the matching additive permission
+# (project_note for notes, document for documents) - only read_only_extra has them
+ADDITIVE_ROLES = {"add a note": {"read_only_extra"}, "add a folder": {"read_only_extra"}}
+
+
 def snapshot():
     return {model.__name__: list(model.objects.order_by("pk").values()) for model in TABLES}
 
@@ -100,7 +106,7 @@ class RoleDataEffectTests(TestCase):
                 with self.subTest(role=role, operation=name):
                     response, changed = self._run(role, method, url, body)
 
-                    if level is not None and level >= needed:
+                    if (level is not None and level >= needed) or role in ADDITIVE_ROLES.get(name, ()):
                         self.assertEqual(response.status_code, allowed_status, response.data)
                         self.assertEqual(changed, mutates)
                     else:
@@ -164,11 +170,112 @@ class RoleDataEffectTests(TestCase):
     def test_a_user_with_no_group_gets_nothing_from_the_list(self):
         self.assertEqual(self._client("no_group").get("/api/v1/project/").status_code, 403)
 
-    # ---------- the additive note permission ----------
-    def test_read_only_extra_has_the_extra_note_permission_but_it_does_not_unlock_notes(self):
-        """read_only_extra has project_note=1 in its permission set, meant to let a read-only user add notes. The api
-        still needs level 2, so today it is refused - documented here so a change to that is a decision, not an accident."""
-        response, changed = self._run("read_only_extra", "POST", f"{PROJECT}notes/", {"note": "A note"})
+    # ---------- the additive note and document permissions ----------
+    def _set_permission_set(self, **fields):
+        PermissionSet.objects.filter(name="Read Only + Extra").update(**fields)
+
+    def test_the_extra_permissions_let_a_read_only_user_add_notes_and_documents(self):
+        """Their permission set has project_note and document switched on - the additive permissions exist so a
+        read-only user can still contribute notes and documents"""
+        note, changed = self._run("read_only_extra", "POST", f"{PROJECT}notes/", {"note": "A note"})
+        self.assertEqual(note.status_code, 201)
+        self.assertTrue(changed)
+        self.assertEqual(note.data["note"], "A note")
+
+        folder, changed = self._run("read_only_extra", "POST", f"{PROJECT}documents/",
+                                    {"type": "folder", "description": "F"})
+        self.assertEqual(folder.status_code, 201)
+        self.assertTrue(changed)
+
+    def test_without_the_extra_permissions_a_read_only_user_still_can_not(self):
+        for body_url, body in ((f"{PROJECT}notes/", {"note": "A note"}),
+                               (f"{PROJECT}documents/", {"type": "folder", "description": "F"})):
+            with self.subTest(url=body_url):
+                response, changed = self._run("read_only", "POST", body_url, body)
+
+                self.assertEqual(response.status_code, 403)
+                self.assertFalse(changed)
+
+    def test_each_extra_permission_only_unlocks_its_own_thing(self):
+        self._set_permission_set(project_note=0)
+        self.assertEqual(self._run("read_only_extra", "POST", f"{PROJECT}notes/", {"note": "x"})[0].status_code, 403)
+        self.assertEqual(
+            self._run("read_only_extra", "POST", f"{PROJECT}documents/", {"type": "folder", "description": "F"})[0]
+            .status_code, 201)
+
+        self._set_permission_set(project_note=1, document=0)
+        self.assertEqual(self._run("read_only_extra", "POST", f"{PROJECT}notes/", {"note": "x"})[0].status_code, 201)
+        self.assertEqual(
+            self._run("read_only_extra", "POST", f"{PROJECT}documents/", {"type": "folder", "description": "F"})[0]
+            .status_code, 403)
+
+    def test_the_extra_permissions_do_not_unlock_anything_else(self):
+        """Everything except notes and creating documents still needs the normal level"""
+        for name, method, url, body, needed, _, _ in OPERATIONS:
+            if name in ADDITIVE_ROLES:
+                continue
+            with self.subTest(operation=name):
+                response, changed = self._run("read_only_extra", method, url, body)
+
+                if needed > 1:
+                    self.assertEqual(response.status_code, 403)
+                    self.assertFalse(changed)
+
+    def test_a_user_can_not_edit_or_delete_other_peoples_notes_with_the_extra_permission(self):
+        """Notes belong to their author - the extra permission does not change that"""
+        with transaction.atomic():
+            leaders_note = self._client("team_leader").post(f"{PROJECT}notes/", {"note": "Leader's"}, format="json")
+            note_url = f"{PROJECT}notes/{leaders_note.data['id']}/"
+            before = snapshot()
+
+            edit = self._client("read_only_extra").patch(note_url, {"note": "Hijacked"}, format="json")
+            delete = self._client("read_only_extra").delete(note_url)
+
+            self.assertEqual((edit.status_code, delete.status_code), (400, 400))  # not the author
+            self.assertEqual(snapshot(), before)
+            transaction.set_rollback(True)
+
+    def test_a_user_can_edit_and_delete_their_own_notes_with_the_extra_permission(self):
+        with transaction.atomic():
+            client = self._client("read_only_extra")
+            created = client.post(f"{PROJECT}notes/", {"note": "Mine"}, format="json")
+            note_url = f"{PROJECT}notes/{created.data['id']}/"
+
+            self.assertEqual(client.patch(note_url, {"note": "Mine, edited"}, format="json").status_code, 200)
+            self.assertEqual(ObjectNote.objects.get(pk=created.data["id"]).note, "Mine, edited")
+            self.assertEqual(client.delete(note_url).status_code, 204)
+            self.assertTrue(ObjectNote.objects.get(pk=created.data["id"]).is_deleted)
+            transaction.set_rollback(True)
+
+    def test_the_extra_permission_does_not_let_someone_in_who_can_not_read_the_project(self):
+        """It adds an ability to a read-only user - it is not a way in"""
+        self._set_permission_set(project=0)
+
+        for url, body in ((f"{PROJECT}notes/", {"note": "x"}), (f"{PROJECT}documents/", {"type": "folder", "description": "F"})):
+            with self.subTest(url=url):
+                response, changed = self._run("read_only_extra", "POST", url, body)
+
+                self.assertEqual(response.status_code, 403)
+                self.assertFalse(changed)
+
+    def test_the_extra_permission_in_another_group_does_not_count(self):
+        """Read access and the extra permission have to come from the same permission set: a user who reads through one
+        group and has the extra permission only through another is still refused"""
+        extra_only = PermissionSet.objects.create(
+            name="Notes only", project=0, project_note=1, document=1,
+            creation_user=User.objects.get(username="admin"), change_user=User.objects.get(username="admin"),
+        )
+        group = Group.objects.get(name="Empty Group")
+        ObjectAssignment.objects.create(
+            project_id=2, group=group,
+            creation_user=User.objects.get(username="admin"), change_user=User.objects.get(username="admin"),
+        )
+        UserGroup.objects.create(
+            username=User.objects.get(username="read_only"), group=group, permission_set=extra_only,
+            creation_user=User.objects.get(username="admin"), change_user=User.objects.get(username="admin"),
+        )
+
+        response, changed = self._run("read_only", "POST", f"{PROJECT}notes/", {"note": "x"})
 
         self.assertEqual(response.status_code, 403)
         self.assertFalse(changed)
