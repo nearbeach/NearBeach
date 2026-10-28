@@ -13,6 +13,8 @@ def check_group_list(username: User, group_list: List[Union[Group, int]]) -> boo
     ~~~~~~
     1. Run query on UserGroup and select distinct by username & group name
     2. If the results are greater than 0, then user has permission
+
+    Users are only required to be in a minimum of 1 group to have permission.
     """
     try:
         # Deduplicate group_list

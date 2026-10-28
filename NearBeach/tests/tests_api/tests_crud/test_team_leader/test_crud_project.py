@@ -6,7 +6,6 @@ the response body and the rows left in the database.
 The team leader is in the "QA Team" group (2) only, with full permission on projects. In the fixture they can
 see project 2 ("Project - QA Team") but not project 1, which belongs to the Administration group (1).
 """
-import unittest
 from datetime import datetime, timezone
 
 from django.contrib.auth import get_user_model
@@ -444,12 +443,14 @@ class ProjectUpdateTests(TeamLeaderProjectBase):
 
         self.assertGreater(Project.objects.get(pk=2).date_modified, before)
 
-    @unittest.expectedFailure
     def test_patch_records_who_made_the_change(self):
         """Known bug - ProjectService.update sets change_user on the serializer, so it is never saved (see its TODO)"""
         self._patch({"title": "Changed by the leader"})
 
-        self.assertEqual(Project.objects.get(pk=2).change_user, self.leader)
+        self.assertEqual(
+            Project.objects.get(pk=2).change_user,
+            self.leader
+        )
 
     def test_a_project_that_does_not_exist_cannot_be_patched(self):
         self.assertEqual(self._patch({"title": "Nope"}, url=f"{PROJECT_LIST_URL}9999/").status_code, 404)

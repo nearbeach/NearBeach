@@ -124,22 +124,24 @@ class DocumentLinkService(ObjectServiceAbstraction):
         document = Document.objects.get(
             is_deleted=False,
             pk=document_id,
-            **{F"{self.destination}_id": self.location_id},
+            **{F"documentpermission__{self.destination}_id": self.location_id},
         )
         if document is None:
             return "Folder object does not exist", status.HTTP_400_BAD_REQUEST
 
         # Update
-        description = serializer.validated_data['description']
-        folder = serializer.validated_data['folder']
-        url_location = serializer.validated_data['url_location']
+        if hasattr(serializer.validated_data, "description"):
+            document.description = serializer.validated_data["description"]
 
-        document.description = document.description if description is None else description
-        document.folder = document.folder if folder is None else folder  # type: ignore[attr-defined]
-        document.url_location = document.url_location if url_location is None else url_location
+        if hasattr(serializer.validated_data, "folder"):
+            document.folder = serializer.validated_data["folder"]
+
+        if hasattr(serializer.validated_data, "url_location"):
+            document.url_location = serializer.validated_data["url_location"]
+
         document.save()
 
         # Serialize
-        serializer = FolderSerializer(folder)
+        serializer = FolderSerializer(document)
 
         return serializer.data, status.HTTP_200_OK

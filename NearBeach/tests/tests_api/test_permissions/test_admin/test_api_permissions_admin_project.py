@@ -417,7 +417,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest(
                 "/api/v1/project/1/groups/1/",
                 {},
-                200,
+                400, # Cannot remove last group from project
                 "DELETE",
             ),
             self.URLTest(

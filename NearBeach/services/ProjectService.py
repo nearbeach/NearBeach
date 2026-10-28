@@ -159,8 +159,6 @@ class ProjectService(ObjectServiceAbstraction):
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Make sure we update the change user
-        # TODO - this sets an attribute on the serializer, not the project, so change_user is never saved
-        serializer.change_user = request.user  # type: ignore[attr-defined]
-        serializer.save()
+        serializer.save(change_user=request.user)
 
         return serializer.data, status.HTTP_200_OK
