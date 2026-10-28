@@ -69,6 +69,10 @@ class S3FileHandler(FileHandler):
             ]
         }
 
+        # S3 rejects a delete with no objects in it (MalformedXML)
+        if not delete_keys['Objects']:
+            return
+
         self._s3.delete_objects(
             Bucket=self._bucket,
             Delete=delete_keys

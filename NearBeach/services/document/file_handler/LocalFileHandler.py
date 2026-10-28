@@ -9,7 +9,7 @@ from NearBeach.models.document.document import Document
 
 from NearBeach.services.document.file_handler.FileHandler import FileHandler
 from pathlib import Path
-from django.http import FileResponse
+from django.http import FileResponse, Http404
 
 
 class LocalFileHandler(FileHandler):
@@ -20,6 +20,10 @@ class LocalFileHandler(FileHandler):
         # Normal setup - find a document on server and serve
         # Get the Document path information
         file = self.root / str(document_results.document)
+        if not file.is_file():
+            # The row exists but the file does not (moved, or never finished uploading)
+            raise Http404
+
         return FileResponse(open(file, 'rb'))
 
     def upload(self, upload_document: UploadedFile, document_results: Document, _: UploadedFile) -> None:
@@ -34,7 +38,7 @@ class LocalFileHandler(FileHandler):
         # Make the directory we want to save the file in. The directory will have the document_key
         file_permissions = 0o755  # Look at these permissions later
         storage_location = self.root / str(document_results.document)
-        storage_location.parent.mkdir(mode=file_permissions, exist_ok=True)
+        storage_location.parent.mkdir(mode=file_permissions, parents=True, exist_ok=True)
 
         # Save the upload document in the location
         with open(storage_location, "wb+") as destination:
