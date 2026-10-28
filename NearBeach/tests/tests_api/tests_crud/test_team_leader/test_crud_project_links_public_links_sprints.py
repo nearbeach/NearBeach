@@ -121,19 +121,34 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
                 self.assertEqual(response.status_code, 201, response.data)
                 self.assertEqual((response.data["link_relationship"], response.data["parent_link"]), (label, parent))
 
-    # def test_a_new_link_appears_in_the_list(self):
-    #     created = self._create("requirement_item", 2).data["object_assignment_id"]
-    #
-    #     ids = [row["object_assignment_id"] for row in self.client.get(LINK_URL).data]
-    #     self.assertIn(created, ids)
+    def test_a_new_link_appears_in_the_list(self):
+        created = self._create("requirement_item", 2).data["object_assignment_id"]
+    
+        ids = [row["object_assignment_id"] for row in self.client.get(LINK_URL).data]
+        self.assertIn(created, ids)
 
-    # def test_linking_to_another_project(self):
-    #     response = self._create("task", 2, "relates")
-    #
-    #     self.assertEqual(response.status_code, 201, response.data)
-    #     self.assertEqual(response.data["object_type"], "task")
-    #     row = ObjectAssignment.objects.get(pk=response.data["object_assignment_id"])
-    #     self.assertEqual(row.meta_object,  2)
+    def test_linking_to_another_project(self):
+        """Only a link between two objects of the same type sets meta_object (the other project)"""
+        other_project = self.client.post(
+            "/api/v1/project/", {"title": "Other QA project", "group_list": [2]}, format="json"
+        ).data["id"]
+
+        response = self._create("project", other_project, "relates")
+
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["object_type"], "project")
+        row = ObjectAssignment.objects.get(pk=response.data["object_assignment_id"])
+        self.assertEqual(row.meta_object, other_project)
+        self.assertEqual(row.meta_object_title, "Other QA project")
+
+    def test_linking_to_a_child_object_needs_access_to_its_parent(self):
+        """Requirement items have no group of their own - the leader reaches item 2 through requirement 2"""
+        allowed = self._create("requirement_item", 2)
+        self.assertEqual(allowed.status_code, 201, allowed.data)
+
+        # Item 1 belongs to a requirement in the Administration group only
+        denied = self._create("requirement_item", 1)
+        self.assertEqual(denied.status_code, 403)
 
     def test_create_does_not_touch_other_projects(self):
         before = ObjectAssignment.objects.filter(project_id=1).count()

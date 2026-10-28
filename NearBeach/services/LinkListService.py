@@ -19,6 +19,13 @@ from NearBeach.services.abstraction.object_services_abstraction import (
 from NearBeach.utils.dicts.relation_dict import RELATION_DICT
 
 
+# Child objects have no group of their own - they are reached through their parent
+CHILD_OBJECT_PARENTS = {
+    "change_task": "request_for_change",
+    "requirement_item": "requirement",
+}
+
+
 class LinkListService(ObjectServiceAbstraction):
     """Service to help list/add/delete object links"""
 
@@ -79,10 +86,12 @@ class LinkListService(ObjectServiceAbstraction):
         if single_object is None:
             return "Object does not exist", status.HTTP_400_BAD_REQUEST
 
-        # Check to make sure the user has access to the object
+        # Check to make sure the user has access to the object - child objects through their parent
+        access_type = CHILD_OBJECT_PARENTS.get(object_type, object_type)
+        access_object = getattr(single_object, access_type) if access_type != object_type else single_object
         has_access = ObjectAssignment.objects.filter(
             is_deleted=False,
-            **{object_type: single_object},
+            **{access_type: access_object},
             group_id__in=UserGroup.objects.filter(
                 is_deleted=False,
                 username=request.user,
