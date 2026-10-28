@@ -4,7 +4,6 @@ from django.utils import timezone
 from NearBeach.serializers.public_link_serializer import PublicLinkSerializer
 from NearBeach.services.abstraction.object_services_abstraction import (
     AuthenticatedRequest,
-    ObjectId,
     ObjectServiceAbstraction,
     ServiceResponse,
 )
