@@ -1,7 +1,6 @@
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import force_str
-from django.utils.http import urlsafe_base64_decode
-from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,6 +9,7 @@ from rest_framework import status
 from NearBeach.serializers.authentication.password_reset_serializer import (
     PasswordResetSerializer,
 )
+from NearBeach.utils.api.get_user_from_uid import get_user_from_uid
 from NearBeach.utils.throttle.AuthMinuteThrottle import AuthMinuteThrottle
 from NearBeach.utils.throttle.AuthHourThrottle import AuthHourThrottle
 
@@ -22,17 +22,6 @@ class PasswordResetView(APIView):
     serializer_class = PasswordResetSerializer
     throttle_classes = [AuthMinuteThrottle, AuthHourThrottle]
 
-    @staticmethod
-    def _get_user(uid):
-        """Method for retrieving a user by uid"""
-        udi_bytes = urlsafe_base64_decode(uid)
-        user_id = force_str(udi_bytes)
-
-        return User.objects.filter(
-            pk=user_id,
-            is_active=True,
-        ).first()
-
     def post(self, request, *args, **kwargs):
         """Method handling post requests for password reset"""
         serializer = self.serializer_class(data=request.data)
@@ -40,7 +29,7 @@ class PasswordResetView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Get user
-        user = self._get_user(serializer.validated_data["uid"])
+        user = get_user_from_uid(serializer.validated_data["uid"])
         if user is None:
             # Silently fail - ensure the attacker that the password has updated
             return Response(
@@ -56,6 +45,15 @@ class PasswordResetView(APIView):
             return Response(
                 data={"message": "Token has expired and no longer valid"},
                 status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Hold the new password to the same rules as every other password
+        try:
+            validate_password(serializer.validated_data["password"], user)
+        except ValidationError as error:
+            return Response(
+                data={"password": list(error.messages)},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Reset the user's password

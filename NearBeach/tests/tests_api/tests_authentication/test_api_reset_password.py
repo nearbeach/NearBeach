@@ -1,2 +1,1 @@
-# TODO - Reset user password (how? - how can we get the token?)
-# TODO - Reset user password with incorrect fields (how? - see above)
+# Resetting a password with a real token, a bad token, and bad fields is covered in test_api_password_reset_flow.py

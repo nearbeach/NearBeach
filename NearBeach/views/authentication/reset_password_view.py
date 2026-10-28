@@ -1,28 +1,16 @@
 """Module providing the Authentication views for NearBeach"""
 
-from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import force_str
-from django.utils.http import urlsafe_base64_decode
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 
+from NearBeach.utils.api.get_user_from_uid import get_user_from_uid
+
 
 class ResetPasswordView(View):
     """Class handling authentication"""
-
-    @staticmethod
-    def _get_user(uid):
-        """Method for retrieving a user by uid"""
-        udi_bytes = urlsafe_base64_decode(uid)
-        user_id = force_str(udi_bytes)
-
-        return User.objects.filter(
-            pk=user_id,
-            is_active=True,
-        ).first()
 
     def get(self, request, *args, **kwargs):
         """Method handling GET request for reset password."""
@@ -34,7 +22,7 @@ class ResetPasswordView(View):
             return HttpResponseRedirect(reverse("login"))
 
         # Check that uid is valid
-        user = self._get_user(uid)
+        user = get_user_from_uid(uid)
         if user is None:
             return HttpResponseRedirect(reverse("login"))
 

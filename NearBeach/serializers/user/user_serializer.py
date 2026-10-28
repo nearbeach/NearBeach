@@ -7,7 +7,8 @@ class UserSerializer(serializers.ModelSerializer):
     """Class to serialize a user"""
     full_name = serializers.SerializerMethodField()
 
-    profile_picture = serializers.ImageField(
+    # Querysets annotate this with the key of the picture's document (None when there is no picture)
+    profile_picture = serializers.UUIDField(
         read_only=True,
         allow_null=True,
     )
@@ -25,12 +26,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_profile_picture_path(obj) -> str | None:
-        if obj.profile_picture is None:
+        picture_key = getattr(obj, "profile_picture", None)
+        if picture_key is None:
             return None
 
         private_media_url = getattr(settings, "PRIVATE_MEDIA_URL", False)
 
-        return F"{private_media_url}{obj.profile_picture_id}"
+        return F"{private_media_url}{picture_key}"
 
     class Meta:
         model = User
