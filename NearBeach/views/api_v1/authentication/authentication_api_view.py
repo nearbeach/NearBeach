@@ -23,7 +23,6 @@ class AuthenticationView(APIView):
     authentication_classes = []  # important for login
     otp_token = ""
     permission_classes = [AllowAny]
-    serializer: AuthenticationSerializer = None
     throttle_classes = [AuthMinuteThrottle, AuthHourThrottle]
 
     def _check_user_two_factor_devices(self, user) -> list[str]:
@@ -80,28 +79,25 @@ class AuthenticationView(APIView):
 
     def post(self, request):
         """Function to authenticate a user."""
-        self.serializer = AuthenticationSerializer(data=request.data)
-        if not self.serializer.is_valid():
-            # Place the error into the message field
-            self.serializer.message = self.serializer.errors
-
+        serializer = AuthenticationSerializer(data=request.data)
+        if not serializer.is_valid():
+            # TODO - the errors never reach the response: AuthenticationSerializer has no message field
             return Response(
-                self.serializer.data,
+                serializer.data,
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Authenticate the user
         user = authenticate(
-            username=self.serializer.validated_data["username"],
-            password=self.serializer.validated_data["password"],
+            username=serializer.validated_data["username"],
+            password=serializer.validated_data["password"],
         )
 
         # Check user is authenticated
         if user is None:
-            self.serializer.status = LoginStatusEnum.INCORRECT_LOGIN
-
+            # TODO - the status never reaches the response: AuthenticationSerializer has no status field
             return Response(
-                self.serializer.data,
+                serializer.data,
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
@@ -115,21 +111,21 @@ class AuthenticationView(APIView):
         )
         if len(user_groups) == 0:
             # User has no permissions
-            self.serializer.status = LoginStatusEnum.FAILURE
+            # TODO - the status never reaches the response: AuthenticationSerializer has no status field
             return Response(
-                self.serializer.data,
+                serializer.data,
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
         # Check to see if the user has a device
-        self.otp_token = self.serializer.validated_data["otp_token"]
+        self.otp_token = serializer.validated_data["otp_token"]
         devices = self._check_user_two_factor_devices(user)
 
         # User has not set up 2FA - log user in
         if len(devices) == 0:
             return self._login(request, user)
         # User has set up 2FA but has not supplied the otp_token
-        elif self.serializer.validated_data["otp_token"] == "":
+        elif serializer.validated_data["otp_token"] == "":
             # User has set up 2FA but has not supplied credentials
             return Response(
                 data={"status": LoginStatusEnum.TWO_FACTOR_REQUIRED},

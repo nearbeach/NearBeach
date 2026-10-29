@@ -1,7 +1,7 @@
 from typing import Any
 
 from rest_framework import viewsets, status
-from django.db.models import F, Value
+from django.db.models import F, QuerySet, Value
 from rest_framework.response import Response
 from NearBeach.api_docs import apply_schema
 from NearBeach.api_docs.api_v1.potential_object_links_docs import POTENTIAL_OBJECT_LINKS_SCHEMA
@@ -22,7 +22,7 @@ class PotentialObjectLinksViewSet(viewsets.ViewSet):
 
     def __init__(self, **kwargs: Any):
         super().__init__(**kwargs)
-        self.object_assignment_results = None
+        self.object_assignment_results: QuerySet[ObjectAssignment] = ObjectAssignment.objects.none()
 
     def _get_project(self):
         """Private method to get project object links"""

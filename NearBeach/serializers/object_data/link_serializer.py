@@ -13,7 +13,7 @@ class LinkSerializer(serializers.Serializer):
     )
     object_relation = serializers.ChoiceField(
         required=True,
-        choices=RELATION_DICT,
+        choices=list(RELATION_DICT.items()),
         write_only=True,
     )
     object_title = serializers.CharField(

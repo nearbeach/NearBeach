@@ -21,14 +21,14 @@ def get_destination_from_url(url : str) -> str | None:
     3. Return the 3rd position which will be the destination
     """
     try:
-        url = url.lstrip('/').rstrip('/').split('/')
+        parts = url.lstrip('/').rstrip('/').split('/')
 
         # Check to make sure we are correct
-        if len(url) < 3:
+        if len(parts) < 3:
             return None
 
         # Destination only
-        return url[2]
+        return parts[2]
     except ValueError:
         _logger.error("get_destination_from_url: %s | ValueError: %s", url, ValueError)
         return None
@@ -52,14 +52,14 @@ def get_object_from_url(url: str) -> tuple[None, None] | tuple[str, str]:
     3. Return the 3rd and 4th positions which will be the destination and location id
     """
     try:
-        url = url.lstrip('/').rstrip('/').split('/')
+        parts = url.lstrip('/').rstrip('/').split('/')
 
         # Check to make sure we are correct
-        if len(url) < 4:
+        if len(parts) < 4:
             return None, None
 
         # Destination only
-        return url[2], url[3]
+        return parts[2], parts[3]
     except ValueError:
         _logger.error("get_object_from_url: %s | ValueError: %s", url, ValueError)
         return None, None

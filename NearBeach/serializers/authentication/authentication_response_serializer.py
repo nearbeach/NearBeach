@@ -8,5 +8,5 @@ class AuthenticationResponseSerializer(serializers.Serializer):
         required=False,
     )
     status = serializers.CharField(
-        default=LoginStatusEnum.TWO_FACTOR_REQUIRED,
+        default=str(LoginStatusEnum.TWO_FACTOR_REQUIRED),
     )

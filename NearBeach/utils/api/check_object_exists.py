@@ -30,8 +30,7 @@ _mapping = {
 def check_object_exists(destination: str, location_id: int) -> bool:
     """Function to check to make sure a NearBeach object exists"""
     try:
-        nb_object = _mapping[destination]
-        nb_object = nb_object.filter(
+        nb_object = _mapping[destination].filter(
             pk=location_id,
             is_deleted=False,    
         )

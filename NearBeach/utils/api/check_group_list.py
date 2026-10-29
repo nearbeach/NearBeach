@@ -18,13 +18,13 @@ def check_group_list(username: User, group_list: List[Union[Group, int]]) -> boo
     """
     try:
         # Deduplicate group_list
-        group_list = list(set(group_list))
+        group_ids = list({group.pk if isinstance(group, Group) else group for group in group_list})
 
         # Filter for these groups
         user_group_results = UserGroup.objects.filter(
             is_deleted=False,
             username=username,
-            group_id__in=group_list,
+            group_id__in=group_ids,
         ).values(
             'username',
             'group',

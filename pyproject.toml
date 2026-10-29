@@ -69,21 +69,16 @@ check_untyped_defs = true
 module = ["knox.*", "django_otp.*", "drf_spectacular.*", "simplejson.*", "azure.*"]
 ignore_missing_imports = true
 
-# Not typed yet - remove a module from this list once it passes mypy
-[[tool.mypy.overrides]]
-module = [
-  "NearBeach.decorators.*",
-  "NearBeach.serializers.*",
-  "NearBeach.utils.*",
-  "NearBeach.views.*",
-]
-ignore_errors = true
-
 # Modules that are fully typed - raise strictness here as each area is cleaned up
 [[tool.mypy.overrides]]
 module = ["NearBeach.models.*", "NearBeach.services.*"]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
+
+# django-stubs' IntegerChoices metaclass clashes with enum.Enum under mypy; the classes work fine at runtime
+[[tool.mypy.overrides]]
+module = ["NearBeach.utils.enums.*"]
+disable_error_code = ["metaclass"]
 
 [tool.django-stubs]
 django_settings_module = "local.settings"

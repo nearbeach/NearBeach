@@ -16,7 +16,7 @@ class EnumFieldExtension(OpenApiSerializerFieldExtension):
         return {
             "type": "object",
             "properties": {
-                "value": {**build_basic_type(value_type), "enum": [member.value for member in self.target.enum]},
+                "value": {**(build_basic_type(value_type) or {}), "enum": [member.value for member in self.target.enum]},
                 "label": build_basic_type(OpenApiTypes.STR),
             },
             "required": ["value", "label"],

@@ -22,8 +22,7 @@ class OrganisationSerializer(serializers.ModelSerializer):
         if obj.profile_picture is None:
             return None
 
-        # TODO - when PRIVATE_MEDIA_URL is not set this is False + str, which raises TypeError. Default to ""?
-        private_media_url = getattr(settings, "PRIVATE_MEDIA_URL", False)
+        private_media_url = getattr(settings, "PRIVATE_MEDIA_URL", "")
 
         return private_media_url + str(obj.profile_picture_id)
 

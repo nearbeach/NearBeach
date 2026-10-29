@@ -37,19 +37,18 @@ def object_permission(min_permission_level, additive_permission=None):
             username = request.request.user if username is None else username
 
             # Get the destination and location id
-            destination, location_id = get_object_from_url(path)
-
-            # Get parent destination if required
-            destination, location_id = get_parent_object(destination, location_id)
-            location_id = None if location_id is None else str(location_id)  # a parent's id comes back as an int
-
-            # Check the destination and location id
-            if destination is None or location_id is None:
+            url_destination, url_location_id = get_object_from_url(path)
+            if url_destination is None or url_location_id is None:
                 raise PermissionDenied
 
             # Check to make sure the location id is a number
-            if not location_id.isnumeric():
+            if not url_location_id.isnumeric():
                 raise NotFound
+
+            # Get parent destination if required
+            destination, location_id = get_parent_object(url_destination, int(url_location_id))
+            if destination is None or location_id is None:
+                raise PermissionDenied
 
             # Check to see if the object exists
             object_exists = check_object_exists(destination, location_id)
