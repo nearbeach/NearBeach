@@ -21,7 +21,7 @@ GROUPS_URL = f"{QA_PROJECT_URL}groups/"
 USERS_URL = f"{QA_PROJECT_URL}users/"
 
 READ_ONLY, TEAM_LEADER, TEAM_MEMBER, TEAM_INTERN = 5, 2, 3, 4
-ADMIN_USER, DARK_ADMIN, READ_ONLY_EXTRA = 1, 7, 8
+ADMIN_USER, DARK_ADMIN, READ_ONLY_EXTRA, TEAM_NO_PERMISSION = 1, 7, 8, 9
 
 
 class GroupsAndUsersBase(TeamLeaderProjectBase):
@@ -48,7 +48,7 @@ class ProjectGroupListTests(GroupsAndUsersBase):
             {
                 "group_list": [QA_GROUP],
                 "user_list": [TEAM_LEADER, READ_ONLY],
-                "potential_user_list": [ADMIN_USER, TEAM_MEMBER, TEAM_INTERN, READ_ONLY_EXTRA],
+                "potential_user_list": [ADMIN_USER, TEAM_MEMBER, TEAM_INTERN, READ_ONLY_EXTRA, TEAM_NO_PERMISSION],
             },
         )
 
