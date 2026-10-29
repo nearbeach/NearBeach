@@ -28,8 +28,14 @@ jobs:
               --omit='venv/*,NearBeach/tests/*,NearBeach/migrations/*,*/__init__.py,manage.py,settings.py,NearBeach/admin.py,NearBeach/apps.py,local/*,NearBeach/models/abstraction/*,NearBeach/serializers/abstraction/*,NearBeach/services/abstraction/*,e2e/*' \
               manage.py test
             coverage report
-            coverage html
+      - run:
+          name: Build Coverage HTML
+          when: always
+          command: |
+            . venv/bin/activate
+            coverage html || true
       - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+          when: always
           path: ~/project/htmlcov
           destination: tr1
   build-and-test-frontend:
@@ -51,8 +57,13 @@ jobs:
             - ./node_modules
       - run:
           name: Run Vitest Unit Tests for VueJS
-          command: "npm run coverage"
+          command: "npm run coverage -- --coverage.reportsDirectory=./coverage --coverage.reporter=text --coverage.reporter=html --coverage.reporter=json"
+      - run:
+          name: Check Coverage Output
+          when: always
+          command: "ls -la coverage || echo 'No coverage directory was produced'"
       - store_artifacts:
+          when: always
           path: ~/project/coverage
           destination: tr2
 
