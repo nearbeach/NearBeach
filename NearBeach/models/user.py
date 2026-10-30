@@ -44,6 +44,12 @@ class UserGroup(CommonInfo):
         """Meta definition for UserGroup."""
 
         verbose_name_plural = "User Groups"
+        indexes = [
+            models.Index(
+                fields=["username", "is_deleted", "group"],
+                name="ug_user_deleted_group_idx",
+            ),
+        ]
 
 
 class UserJob(

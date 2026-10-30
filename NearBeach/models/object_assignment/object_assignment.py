@@ -139,3 +139,15 @@ class ObjectAssignment(CommonInfo):
         """Meta definitions for the object assignment table"""
 
         verbose_name_plural = "Object Assignment Tables"
+        # Serve the "which objects can this user's groups see" list queries. Benchmarked at 1M rows - see
+        # scripts/benchmark_indexes.py
+        indexes = [
+            models.Index(
+                fields=["group", "is_deleted", "project"],
+                name="oa_group_deleted_project_idx",
+            ),
+            models.Index(
+                fields=["group", "is_deleted", "task"],
+                name="oa_group_deleted_task_idx",
+            ),
+        ]

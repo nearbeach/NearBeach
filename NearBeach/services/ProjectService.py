@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from django.contrib.auth.models import User
-from django.db.models import QuerySet, Q, F
+from django.db.models import Exists, OuterRef, QuerySet, Q, F
 from django.utils import timezone
 
 from NearBeach.models.project import Project
@@ -66,8 +66,10 @@ class ProjectService(ObjectServiceAbstraction):
 
     # The view paginates the queryset itself, so this returns the queryset rather than a ServiceResponse
     def get_list(self, request: AuthenticatedRequest) -> QuerySet[Project]:  # type: ignore[override]
+        # Correlated EXISTS rather than id__in - on MySQL the IN form walks every project the user can see
+        # before filtering, where EXISTS lets the database walk projects and check each one
         object_assignment_results = ObjectAssignment.objects.filter(
-            project_id__isnull=False,
+            project_id=OuterRef("pk"),
             is_deleted=False,
             group_id__in=UserGroup.objects.filter(
                 is_deleted=False,
@@ -78,8 +80,8 @@ class ProjectService(ObjectServiceAbstraction):
         )
 
         project_results = Project.objects.filter(
+            Exists(object_assignment_results),
             is_deleted=False,
-            id__in=object_assignment_results.values("project_id"),
         )
 
         # Filter by search parameter in the query string
@@ -121,7 +123,7 @@ class ProjectService(ObjectServiceAbstraction):
 
         # Define groups list
         # group_list and user_list are extra attributes the serializer reads
-        project.group_list = Group.objects.filter(  # type: ignore[attr-defined]
+        project_results.group_list = Group.objects.filter(  # type: ignore[attr-defined]
             is_deleted=False,
             id__in=object_assignments.filter(
                 group_id__isnull=False,
@@ -129,7 +131,7 @@ class ProjectService(ObjectServiceAbstraction):
         )
 
         # Define user list
-        project.user_list = User.objects.filter(  # type: ignore[attr-defined]
+        project_results.user_list = User.objects.filter(  # type: ignore[attr-defined]
             pk__in=object_assignments.filter(
                 assigned_user__isnull=False,
             ).values("assigned_user_id"),
@@ -139,7 +141,7 @@ class ProjectService(ObjectServiceAbstraction):
 
         # Create the serializer
         serializer = ProjectSerializer(
-            project,
+            project_results,
             context={
                 "request": request,
                 "method": "GET",
