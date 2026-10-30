@@ -83,9 +83,9 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         detail=True,
         url_path=r"customer/(?P<customer_pk>\d+)",
     )
-    def customer_retrieve(self, requst, pk, customer_pk, *args, **kwargs):
+    def customer_retrieve(self, _, pk, customer_pk, *args, **kwargs):
         customer_services = CustomerService(destination="organisation", location_id=pk)
-        data, http_status = customer_services.retrieve(self, customer_pk)
+        data, http_status = customer_services.retrieve(customer_pk)
 
         return Response(
             data=data,

@@ -116,30 +116,28 @@ class PublicLinkService(ObjectServiceAbstraction):
         # Get object
         public_link_results = PublicLink.objects.filter(
             is_deleted=False,
-            id=self.location_id,
+            id=str(self.location_id),
         )
 
-        if not public_link_results.exists():
+        public_link = public_link_results.first()
+        if public_link is None:
             return "Public Link does not exist", status.HTTP_404_NOT_FOUND
 
-        # Get the first and only response
-        public_link_results = public_link_results.first()
-
         # Fetch the data depending on the field connection
-        if public_link_results.kanban_board is not None:
-            return self._fetch_kanban_board_data(public_link_results.kanban_board_id)
-        elif public_link_results.kanban_card is not None:
-            return self._fetch_kanban_card_data(public_link_results.kanban_card_id)
-        elif public_link_results.project is not None:
-            return self._fetch_project_data(public_link_results.project_id)
-        elif public_link_results.request_for_change is not None:
-            return self._fetch_request_for_change_data(public_link_results.request_for_change_id)
-        elif public_link_results.requirement is not None:
-            return self._fetch_requirement_data(public_link_results.requirement_id)
-        elif public_link_results.requirement_item is not None:
-            return self._fetch_requirement_item_data(public_link_results.requirement_item_id)
-        elif public_link_results.task is not None:
-            return self._fetch_task_data(public_link_results.task_id)
+        if public_link.kanban_board_id is not None:
+            return self._fetch_kanban_board_data(public_link.kanban_board_id)
+        elif public_link.kanban_card_id is not None:
+            return self._fetch_kanban_card_data(public_link.kanban_card_id)
+        elif public_link.project_id is not None:
+            return self._fetch_project_data(public_link.project_id)
+        elif public_link.request_for_change_id is not None:
+            return self._fetch_request_for_change_data(public_link.request_for_change_id)
+        elif public_link.requirement_id is not None:
+            return self._fetch_requirement_data(public_link.requirement_id)
+        elif public_link.requirement_item_id is not None:
+            return self._fetch_requirement_item_data(public_link.requirement_item_id)
+        elif public_link.task_id is not None:
+            return self._fetch_task_data(public_link.task_id)
 
         # Error - there is an issue with the link
         return "Public link not setup correctly", status.HTTP_400_BAD_REQUEST

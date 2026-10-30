@@ -5,6 +5,7 @@ from NearBeach.models.customer import Customer
 from NearBeach.serializers.customer_serializer import CustomerSerializer
 from NearBeach.services.abstraction.object_services_abstraction import (
     AuthenticatedRequest,
+    ObjectId,
     ObjectServiceAbstraction,
     ServiceResponse,
 )
@@ -47,7 +48,7 @@ class CustomerService(ObjectServiceAbstraction):
 
         return {}, status.HTTP_204_NO_CONTENT
 
-    def get_list(self, request: AuthenticatedRequest) -> QuerySet[Customer]:
+    def get_list(self, request: AuthenticatedRequest) -> QuerySet[Customer]:  # type: ignore[override]
         customer_results = Customer.objects.filter(
             is_deleted=False,
         ).order_by("last_name", "first_name", "pk")
@@ -64,7 +65,7 @@ class CustomerService(ObjectServiceAbstraction):
 
         return customer_results
 
-    def retrieve(self, customer_pk) -> ServiceResponse:
+    def retrieve(self, customer_pk: ObjectId) -> ServiceResponse:
         organisation = Customer.objects.filter(
             is_deleted=False,
             pk=customer_pk,

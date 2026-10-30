@@ -25,7 +25,7 @@ class OrganisationService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request: AuthenticatedRequest, _) -> ServiceResponse:
+    def delete(self, request: AuthenticatedRequest, _: None) -> ServiceResponse:
         organisation = Organisation.objects.filter(
             pk=self.location_id,
             is_deleted=False
@@ -77,7 +77,7 @@ class OrganisationService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_200_OK
 
-    def update(self, request: AuthenticatedRequest, _) -> ServiceResponse:
+    def update(self, request: AuthenticatedRequest, _: None) -> ServiceResponse:
         organisation = Organisation.objects.filter(
             is_deleted=False,
             pk=self.location_id,
@@ -94,7 +94,7 @@ class OrganisationService(ObjectServiceAbstraction):
             },
         )
         if not serializer.is_valid():
-            return serializer.errors, status.HTTP_500_INTERNAL_SERVER_ERROR
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Update data
         updated_organisation = serializer.save(change_user=request.user)
