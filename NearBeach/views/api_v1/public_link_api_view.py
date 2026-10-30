@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
-from services.PublicLinkService import PublicLinkService
+from NearBeach.services.PublicLinkService import PublicLinkService
 
 
 class PublicLinkViewSet(viewsets.ViewSet):

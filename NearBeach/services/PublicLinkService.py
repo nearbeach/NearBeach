@@ -10,7 +10,7 @@ from NearBeach.services.abstraction.object_services_abstraction import (
 )
 from NearBeach.models.misc.misc import PublicLink
 from NearBeach.models import Project
-from serializers.public_link_data_serializer import PublicLinkDataSerializer
+from NearBeach.serializers.public_link_data_serializer import PublicLinkDataSerializer
 
 
 class PublicLinkService(ObjectServiceAbstraction):

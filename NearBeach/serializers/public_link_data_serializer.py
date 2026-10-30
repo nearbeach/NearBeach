@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from serializers.organisation_serializer import OrganisationSerializer
+from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 
 
 class PublicLinkDataSerializer(serializers.Serializer):
