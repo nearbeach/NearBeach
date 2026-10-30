@@ -1,11 +1,14 @@
 from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
-from NearBeach.models import Organisation
+from NearBeach.models import Organisation, Customer
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 from NearBeach.services.abstraction.object_services_abstraction import AuthenticatedRequest
 from NearBeach.services.organisation.OrganisationService import OrganisationService
+from NearBeach.serializers.customer_serializer import CustomerSerializer
+from NearBeach.services.customer.CustomerService import CustomerService
 
 
 class OrganisationViewSet(viewsets.ModelViewSet):
@@ -20,6 +23,80 @@ class OrganisationViewSet(viewsets.ModelViewSet):
         """Create a new organisation"""
         organisation_services = OrganisationService(destination="organisation", location_id=0)
         data, http_status = organisation_services.create(request)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @object_permission(min_permission_level=1)
+    @action(
+        methods=["GET"],
+        detail=True,
+        url_path="customer",
+    )
+    def customer(self, request, pk, *args, **kwargs) -> Response:
+        customer_services = CustomerService(destination="organisation", location_id=pk)
+        customer_results = customer_services.get_list(request)
+
+        page = self.paginate_queryset(customer_results)
+        if page is not None:
+            serializer = CustomerSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        return Response(
+            data={"Issue with pagination of object"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    @object_permission(min_permission_level=3)
+    @customer.mapping.post
+    def customer_create(self, request, pk, *args, **kwargs) -> Response:
+        """Create a new customer for an organisation"""
+        customer_services = CustomerService(destination="organisation", location_id=pk)
+        data, http_status = customer_services.create(request)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @object_permission(min_permission_level=4)
+    @action(
+        methods=["DELETE"],
+        detail=True,
+        url_path=r"customer/(?P<customer_pk>\d+)",
+    )
+    def customer_delete(self, request, pk, customer_pk, *args, **kwargs) -> Response:
+        """Delete a customer from an organisation"""
+        customer_services = CustomerService(destination="organisation", location_id=pk)
+        data, http_status = customer_services.delete(request, customer_pk)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @object_permission(min_permission_level=1)
+    @action(
+        methods=["GET"],
+        detail=True,
+        url_path=r"customer/(?P<customer_pk>\d+)",
+    )
+    def customer_retrieve(self, requst, pk, customer_pk, *args, **kwargs):
+        customer_services = CustomerService(destination="organisation", location_id=pk)
+        data, http_status = customer_services.retrieve(self, customer_pk)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @object_permission(min_permission_level=2)
+    @customer_retrieve.mapping.patch
+    def customer_update(self, request, pk, customer_pk, *args, **kwargs):
+        customer_service = CustomerService(destination="organisation", location_id=pk)
+        data, http_status = customer_service.update(request, customer_pk)
 
         return Response(
             data=data,
