@@ -1,17 +1,69 @@
 from rest_framework import status
 from django.utils import timezone
+from django.db.models import Value
 
 from NearBeach.serializers.public_link_serializer import PublicLinkSerializer
 from NearBeach.services.abstraction.object_services_abstraction import (
     AuthenticatedRequest,
     ObjectServiceAbstraction,
-    ServiceResponse,
+    ServiceResponse, ObjectId,
 )
 from NearBeach.models.misc.misc import PublicLink
+from NearBeach.models import Project
+from serializers.public_link_data_serializer import PublicLinkDataSerializer
 
 
 class PublicLinkService(ObjectServiceAbstraction):
     """Class for creating, reading, updating, and deleting public links"""
+
+    @staticmethod
+    def _fetch_kanban_board_data(pk: int) -> ServiceResponse:
+        # TODO - Implement
+        return {}, status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    @staticmethod
+    def _fetch_kanban_card_data(pk: int) -> ServiceResponse:
+        # TODO - Implement
+        return {}, status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    @staticmethod
+    def _fetch_project_data(pk: int) -> ServiceResponse:
+        project_results = Project.objects.filter(
+            pk=pk,
+            is_deleted=False,
+        ).annotate(
+            object_type=Value("project"),
+        )
+
+        if not project_results.exists():
+            return "Project does not exist", status.HTTP_404_NOT_FOUND
+
+        serializer = PublicLinkDataSerializer(
+            project_results.first(),
+            many=False
+        )
+
+        return serializer.data, status.HTTP_200_OK
+
+    @staticmethod
+    def _fetch_request_for_change_data(pk: int) -> ServiceResponse:
+        # TODO - Implement
+        return {}, status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    @staticmethod
+    def _fetch_requirement_data(pk: int) -> ServiceResponse:
+        # TODO - Implement
+        return {}, status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    @staticmethod
+    def _fetch_requirement_item_data(pk: int) -> ServiceResponse:
+        # TODO - Implement
+        return {}, status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    @staticmethod
+    def _fetch_task_data(pk: int) -> ServiceResponse:
+        # TODO - Implement
+        return {}, status.HTTP_500_INTERNAL_SERVER_ERROR
 
     def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         # Create the public link
@@ -59,6 +111,38 @@ class PublicLinkService(ObjectServiceAbstraction):
         )
 
         return serializer.data, status.HTTP_200_OK
+
+    def retrieve(self, request: AuthenticatedRequest) -> ServiceResponse:
+        # Get object
+        public_link_results = PublicLink.objects.filter(
+            is_deleted=False,
+            id=self.location_id,
+        )
+
+        if not public_link_results.exists():
+            return "Public Link does not exist", status.HTTP_404_NOT_FOUND
+
+        # Get the first and only response
+        public_link_results = public_link_results.first()
+
+        # Fetch the data depending on the field connection
+        if public_link_results.kanban_board is not None:
+            return self._fetch_kanban_board_data(public_link_results.kanban_board_id)
+        elif public_link_results.kanban_card is not None:
+            return self._fetch_kanban_card_data(public_link_results.kanban_card_id)
+        elif public_link_results.project is not None:
+            return self._fetch_project_data(public_link_results.project_id)
+        elif public_link_results.request_for_change is not None:
+            return self._fetch_request_for_change_data(public_link_results.request_for_change_id)
+        elif public_link_results.requirement is not None:
+            return self._fetch_requirement_data(public_link_results.requirement_id)
+        elif public_link_results.requirement_item is not None:
+            return self._fetch_requirement_item_data(public_link_results.requirement_item_id)
+        elif public_link_results.task is not None:
+            return self._fetch_task_data(public_link_results.task_id)
+
+        # Error - there is an issue with the link
+        return "Public link not setup correctly", status.HTTP_400_BAD_REQUEST
 
     def update(self, request: AuthenticatedRequest, object_id: str) -> ServiceResponse:
         serializer = PublicLinkSerializer(data=request.data)

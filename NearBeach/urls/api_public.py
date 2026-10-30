@@ -8,12 +8,13 @@ from NearBeach.views.api_v1 import (
 from NearBeach.views.api_v1.search import (
     potential_object_links,
 )
-
+from views.api_v1 import public_link_api_view
 
 # Create the router for our view sets
 router = SimpleRouter()
 router.register(r'coffee', coffee_api_view.CoffeeViewSet, basename='coffee')
 router.register(r'project', project_api_view.ProjectViewSet, basename='project')
+router.register(r'public_link', public_link_api_view.PublicLinkViewSet, basename='public_link')
 router.register(r'data/potential_object_links', potential_object_links.PotentialObjectLinksViewSet, basename='potential_object_links')
 
 urlpatterns = [
