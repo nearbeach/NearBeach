@@ -5,7 +5,6 @@ from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 
 from NearBeach.services.abstraction.object_services_abstraction import (
     AuthenticatedRequest,
-    ObjectId,
     ObjectServiceAbstraction,
     ServiceResponse,
 )
@@ -26,19 +25,20 @@ class OrganisationService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    def delete(self, request: AuthenticatedRequest, organisation_pk: ObjectId) -> ServiceResponse:
-        organisation = Organisation.objects.filter(pk=organisation_pk, is_deleted=False).first()
-        if organisation is None:
+    def delete(self, request: AuthenticatedRequest, _) -> ServiceResponse:
+        organisation = Organisation.objects.filter(
+            pk=self.location_id,
+            is_deleted=False
+        )
+        if not organisation.exists():
             return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
 
-        organisation.is_deleted = True
-        organisation.change_user = request.user
-        organisation.save()
+        organisation.update(
+            is_deleted=True,
+            change_user=request.user,
+        )
 
         return {}, status.HTTP_204_NO_CONTENT
-
-    def get_data(self, _: AuthenticatedRequest) -> ServiceResponse:
-        raise NotImplementedError  # Method not required in current class
 
     # The view paginates the queryset itself (like the project list), so this returns the queryset rather than a
     # ServiceResponse. Organisations belong to no group, so everyone with organisation permission sees them all -
@@ -60,16 +60,41 @@ class OrganisationService(ObjectServiceAbstraction):
 
         return organisation_results
 
-    def update(self, request: AuthenticatedRequest, pk: ObjectId) -> ServiceResponse:
-        organisation = Organisation.objects.filter(is_deleted=False, pk=pk).first()
-        if organisation is None:
+    def retrieve(self) -> ServiceResponse:
+        organisation = Organisation.objects.filter(
+            is_deleted=False,
+            pk=self.location_id,
+        )
+
+        if not organisation.exists():
+            return "Organisation does not exist", status.HTTP_404_NOT_FOUND
+
+        # Serialize the data
+        serializer = OrganisationSerializer(
+            organisation.first(),
+            many=False
+        )
+
+        return serializer.data, status.HTTP_200_OK
+
+    def update(self, request: AuthenticatedRequest, _) -> ServiceResponse:
+        organisation = Organisation.objects.filter(
+            is_deleted=False,
+            pk=self.location_id,
+        )
+        if not organisation.exists():
             return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
 
         serializer = OrganisationSerializer(
-            organisation, data=request.data, partial=True, context={'request': request}
+            organisation.first(),
+            data=request.data,
+            partial=True,
+            context={
+                'request': request
+            },
         )
         if not serializer.is_valid():
-            return serializer.errors, status.HTTP_400_BAD_REQUEST
+            return serializer.errors, status.HTTP_500_INTERNAL_SERVER_ERROR
 
         # Update data
         updated_organisation = serializer.save(change_user=request.user)
