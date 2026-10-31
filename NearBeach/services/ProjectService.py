@@ -120,7 +120,7 @@ class ProjectService(ObjectServiceAbstraction):
 
         # Define groups list
         # group_list and user_list are extra attributes the serializer reads
-        project_results.group_list = Group.objects.filter(  # type: ignore[attr-defined]
+        project_results.group_list = Group.objects.filter(
             is_deleted=False,
             id__in=object_assignments.filter(
                 group_id__isnull=False,
@@ -128,7 +128,7 @@ class ProjectService(ObjectServiceAbstraction):
         )
 
         # Define user list
-        project_results.user_list = User.objects.filter(  # type: ignore[attr-defined]
+        project_results.user_list = User.objects.filter(
             pk__in=object_assignments.filter(
                 assigned_user__isnull=False,
             ).values("assigned_user_id"),

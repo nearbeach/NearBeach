@@ -41,7 +41,7 @@ class NoteService(ObjectServiceAbstraction):
         if self.destination == "kanban_card":
             # TODO - unreachable today (only called with project), but KanbanCard has no kanban_card_id field and
             #  ObjectNote has no .filter(), so this branch would raise if a kanban_card destination is added
-            kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)  # type: ignore[misc]
+            kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)
 
             # Go through each potential object connection
             for object_type in ["project", "task", "requirement"]:

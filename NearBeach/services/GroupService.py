@@ -72,7 +72,7 @@ class GroupService(ObjectServiceAbstraction):
 
         # We need to get the kanban card's kanban board's id
         # TODO - unreachable today (only called with project), but KanbanCard has no kanban_card_id field
-        kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)  # type: ignore[misc]
+        kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)
 
         return Group.objects.filter(
             is_deleted=False,
@@ -102,7 +102,7 @@ class GroupService(ObjectServiceAbstraction):
         else:
             # Get the kanban board information from the card
             # TODO - same kanban_card_id issue as _get_group_list
-            kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)  # type: ignore[misc]
+            kanban_card_results = KanbanCard.objects.get(kanban_card_id=self.location_id)
 
             group_results = group_results.filter(
                 kanban_board_id=kanban_card_results.kanban_board_id,
