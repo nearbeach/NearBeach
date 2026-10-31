@@ -108,12 +108,9 @@ class ProjectService(ObjectServiceAbstraction):
         project_results = Project.objects.filter(
             is_deleted=False,
             pk=self.location_id,
-        )
-        if not project_results.exists():
+        ).first()
+        if project_results is None:
             return "Project does not exist", status.HTTP_404_NOT_FOUND
-
-        # Get first project results
-        project_results = project_results.first()
 
         # Get assigned object
         object_assignments = ObjectAssignment.objects.filter(

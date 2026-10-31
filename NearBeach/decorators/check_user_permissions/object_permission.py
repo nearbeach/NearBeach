@@ -72,11 +72,7 @@ def object_permission(min_permission_level, additive_permission=None):
                     ).values("group_id")
                 )
 
-            # Check user group results for any results
-            if len(user_group_results) == 0:
-                raise PermissionDenied
-
-            # Check the user permissions
+            # Check the user permissions - the aggregate is None when the user has no matching group
             user_level = user_group_results.aggregate(
                 Max(f"permission_set__{destination}")
             )[f"permission_set__{destination}__max"]
