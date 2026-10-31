@@ -51,7 +51,7 @@ class CustomerService(ObjectServiceAbstraction):
     def get_list(self, request: AuthenticatedRequest) -> QuerySet[Customer]:  # type: ignore[override]
         customer_results = Customer.objects.filter(
             is_deleted=False,
-        ).order_by("last_name", "first_name", "pk")
+        ).select_related("title").order_by("last_name", "first_name", "pk")
 
         # Filter by search parameter in the query string
         search = request.query_params.get("search", None)
@@ -66,18 +66,18 @@ class CustomerService(ObjectServiceAbstraction):
         return customer_results
 
     def retrieve(self, customer_pk: ObjectId) -> ServiceResponse:
-        organisation = Customer.objects.filter(
+        customer = Customer.objects.filter(
             is_deleted=False,
             pk=customer_pk,
             organisation_id=self.location_id,
-        )
+        ).first()
 
-        if not organisation.exists():
+        if customer is None:
             return "Customer does not exist", status.HTTP_404_NOT_FOUND
 
         # Serialize the data
         serializer = CustomerSerializer(
-            organisation.first(),
+            customer,
             many=False
         )
 
@@ -88,17 +88,22 @@ class CustomerService(ObjectServiceAbstraction):
             pk=customer_pk,
             is_deleted=False,
             organisation_id=self.location_id,
-        )
-        if not customer.exists():
+        ).first()
+        if customer is None:
             return "Customer does not exist", status.HTTP_400_BAD_REQUEST
 
         # Prepare serializer for update
-        serializer = CustomerSerializer(customer, data=request.data, partial=True, context={"request": request})
+        serializer = CustomerSerializer(
+            customer,
+            data=request.data,
+            partial=True,
+            context={"request": request}
+        )
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Apply updates
-        updated_customer = serializer.save(change_user=request.user)
+        serializer.save(change_user=request.user)
 
         # Return results
-        return updated_customer.data, status.HTTP_200_OK
+        return serializer.data, status.HTTP_200_OK
