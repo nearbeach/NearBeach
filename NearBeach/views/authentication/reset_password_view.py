@@ -12,7 +12,8 @@ from NearBeach.utils.api.get_user_from_uid import get_user_from_uid
 class ResetPasswordView(View):
     """Class handling authentication"""
 
-    def get(self, request, *args, **kwargs):
+    @staticmethod
+    def get(request, *args, **kwargs):
         """Method handling GET request for reset password."""
         uid = request.GET.get("uid", None)
         token = request.GET.get("token", None)

@@ -243,7 +243,8 @@ class CustomerServiceTests(ServiceTestBase):
 
 
 class SprintServiceTests(ServiceTestBase):
-    def service(self, pk=1):
+    @staticmethod
+    def service(pk=1):
         return SprintService(destination="sprint", location_id=pk)
 
     def test_retrieve(self):

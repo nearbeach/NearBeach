@@ -5,7 +5,6 @@ Fixture data for project 2 ("Project - QA Team"):
  - customer 1 linked, customer 2 not
  - organisation 1 ("NearBeach Incorporate") whose customers are 1 and 2
 """
-from django.contrib.auth import get_user_model
 
 from NearBeach.models.customer import Customer
 from NearBeach.models.misc.note import ObjectNote
@@ -223,7 +222,8 @@ class ProjectCustomerTests(TeamLeaderProjectBase):
     def _add(self, customer_id):
         return self.client.post(CUSTOMER_URL, {"id": customer_id}, format="json")
 
-    def _rows(self, customer_id, project_id=2):
+    @staticmethod
+    def _rows(customer_id, project_id=2):
         return ObjectAssignment.objects.filter(project_id=project_id, customer_id=customer_id)
 
     def _ids(self):
@@ -343,7 +343,8 @@ class ProjectOrganisationTests(TeamLeaderProjectBase):
     def _set(self, organisation_id):
         return self.client.post(ORGANISATION_URL, {"id": organisation_id}, format="json")
 
-    def _organisation_id(self):
+    @staticmethod
+    def _organisation_id():
         return Project.objects.get(pk=2).organisation_id
 
     # ---------- read ----------

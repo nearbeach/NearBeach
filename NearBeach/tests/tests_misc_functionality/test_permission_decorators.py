@@ -20,7 +20,8 @@ def view_returning_the_level(request, *args, **kwargs):
 class DecoratorTestBase(TestCase):
     fixtures = ["NearBeach_basic_setup.json"]
 
-    def request(self, path, username="team_member"):
+    @staticmethod
+    def request(path, username="team_member"):
         return SimpleNamespace(path=path, user=User.objects.get(username=username))
 
 

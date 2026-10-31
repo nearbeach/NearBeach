@@ -83,7 +83,8 @@ def snapshot():
 class RoleDataEffectTests(TestCase):
     fixtures = ["NearBeach_basic_setup.json"]
 
-    def _client(self, role):
+    @staticmethod
+    def _client(role):
         client = APIClient()
         if role is not None:
             # force_login: a user in no group can not log in through the api but can still hold a session
@@ -171,7 +172,8 @@ class RoleDataEffectTests(TestCase):
         self.assertEqual(self._client("no_group").get("/api/v1/project/").status_code, 403)
 
     # ---------- the additive note and document permissions ----------
-    def _set_permission_set(self, **fields):
+    @staticmethod
+    def _set_permission_set(**fields):
         PermissionSet.objects.filter(name="Read Only + Extra").update(**fields)
 
     def test_the_extra_permissions_let_a_read_only_user_add_notes_and_documents(self):

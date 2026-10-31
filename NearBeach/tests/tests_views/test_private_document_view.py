@@ -124,7 +124,8 @@ class PrivateDocumentViewTests(TestCase):
                 self.assertEqual(self._get(UNKNOWN_KEY, username).status_code, 404)
 
     # ---------- documents that are not attached to an object ----------
-    def _link_document(self, **permission):
+    @staticmethod
+    def _link_document(**permission):
         user = User.objects.get(username="admin")
         document = Document.objects.create(
             change_user=user,
