@@ -33,13 +33,13 @@ class PublicLinkService(ObjectServiceAbstraction):
             is_deleted=False,
         ).annotate(
             object_type=Value("project"),
-        )
+        ).first()
 
-        if not project_results.exists():
+        if project_results is None:
             return "Project does not exist", status.HTTP_404_NOT_FOUND
 
         serializer = PublicLinkDataSerializer(
-            project_results.first(),
+            project_results,
             many=False
         )
 

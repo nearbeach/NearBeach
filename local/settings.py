@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'silk.middleware.SilkyMiddleware',
     'local.silk_profile_middleware.SilkProfileAllRequestsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

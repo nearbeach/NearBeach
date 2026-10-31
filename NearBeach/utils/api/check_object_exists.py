@@ -35,8 +35,8 @@ def check_object_exists(destination: str, location_id: int) -> bool:
             is_deleted=False,    
         )
 
-        # If there is exactly one object, the object exists
-        return len(nb_object) == 1
+        # pk is unique, so the object exists if any row comes back
+        return nb_object.exists()
     except KeyError:
         _logger.error(
             "check_object_exists: unknown destination: %s | unknown location %s | KeyError: %s",

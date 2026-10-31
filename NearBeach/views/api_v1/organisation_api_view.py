@@ -61,22 +61,6 @@ class OrganisationViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @object_permission(min_permission_level=4)
-    @action(
-        methods=["DELETE"],
-        detail=True,
-        url_path=r"customer/(?P<customer_pk>\d+)",
-    )
-    def customer_delete(self, request, pk, customer_pk, *args, **kwargs) -> Response:
-        """Delete a customer from an organisation"""
-        customer_services = CustomerService(destination="organisation", location_id=pk)
-        data, http_status = customer_services.delete(request, customer_pk)
-
-        return Response(
-            data=data,
-            status=http_status,
-        )
-
     @object_permission(min_permission_level=1)
     @action(
         methods=["GET"],
@@ -103,8 +87,20 @@ class OrganisationViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
+    @object_permission(min_permission_level=4)
+    @customer_retrieve.mapping.delete
+    def customer_delete(self, request, pk, customer_pk, *args, **kwargs) -> Response:
+        """Delete a customer from an organisation"""
+        customer_services = CustomerService(destination="organisation", location_id=pk)
+        data, http_status = customer_services.delete(request, customer_pk)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
     @staticmethod
-    @object_permission(min_permission_level=1)
+    @object_permission(min_permission_level=4)
     def destroy(request, pk, *args, **kwargs) -> Response:
         """Delete an organisation"""
         organisation_services = OrganisationService(

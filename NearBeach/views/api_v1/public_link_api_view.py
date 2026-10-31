@@ -6,6 +6,7 @@ from NearBeach.services.PublicLinkService import PublicLinkService
 class PublicLinkViewSet(viewsets.ViewSet):
     """Class for the public link view set"""
     http_method_names = ['get']
+    lookup_value_regex = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
 
     @staticmethod
     def retrieve(request, pk, *args, **kwargs) -> Response:

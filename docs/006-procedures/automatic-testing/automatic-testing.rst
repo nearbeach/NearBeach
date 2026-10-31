@@ -108,18 +108,6 @@ Other variables are SCHEMATHESIS_PASSWORD (default Test1234$), SCHEMATHESIS_PORT
 API Request Profiling (Silk)
 ============================
 
-NearBeach's frontend talks to the backend entirely through API calls, so tools that only decorate HTML pages (such as
-Django Debug Toolbar) cannot show what an API call did. Django Silk records every request on the server, including JSON
-API calls, with the SQL queries it ran and a Python profile of where the time went. Use it to find slow endpoints and
-N+1 queries (the same query repeated once per row) while you develop.
-
-Silk is for local development only. It is configured in local/settings.py and is not part of any production setup. It
-writes every request to the database and slows requests down, so never enable it on a live server.
-
-
-Setting it up
--------------
-
 Activate your python virtual environment
 
     source ./venv/bin/activate
@@ -193,3 +181,109 @@ Turning it off
 
 Remove silk, silk.middleware.SilkyMiddleware and local.silk_profile_middleware.SilkProfileAllRequestsMiddleware from
 local/settings.py. The silk tables can stay in your local database.
+
+
+Database Index Benchmarking
+===========================
+
+scripts/benchmark_indexes.py seeds a throw-away database with a large number of rows, then times NearBeach's list and
+search queries before and after adding candidate indexes. Use it to check that an index (or a query rewrite) really
+helps before it goes into a migration, and to re-check the existing indexes after large model or query changes.
+
+It never touches your real database. SQLite writes to benchmark.sqlite3 in the repo root, and the MySQL and
+PostgreSQL options use a separate empty database. The queries in the script are copies of the real ones in
+ProjectService, OrganisationService and the potential object links view - if those change, update the script too.
+
+Activate your python virtual environment
+
+    source ./venv/bin/activate
+
+
+Run against SQLite (quickest)
+-----------------------------
+
+    python scripts/benchmark_indexes.py --rows 1000000 --explain
+
+1,000,000 rows takes about 5 minutes to seed. Delete benchmark.sqlite3 when you are finished, or point it elsewhere
+with BENCH_DB=/path/to/file.sqlite3.
+
+
+Run against MySQL (matches production)
+--------------------------------------
+
+Production runs MySQL, so this is the run to trust. You need
+
+- a MySQL 8 (or newer) server, for example in Docker
+- an empty database, and a user with all privileges on it
+- the mysqlclient python package (pymysql also works if mysqlclient is not installed)
+
+Create the database
+
+    CREATE DATABASE nearbeach_bench CHARACTER SET utf8mb4;
+
+Run the benchmark
+
+    BENCH_ENGINE=mysql BENCH_MYSQL_USER=nearbeach_benchmark python scripts/benchmark_indexes.py --rows 1000000 --explain
+
+Other variables are BENCH_MYSQL_NAME (default nearbeach_bench), BENCH_MYSQL_PASSWORD, BENCH_MYSQL_HOST (default
+127.0.0.1) and BENCH_MYSQL_PORT (default 3306).
+
+Seeding 1,000,000 rows takes about 7 minutes on MySQL. The script migrates and seeds the database it is pointed at, so
+drop and recreate the database before a fresh run
+
+    DROP DATABASE nearbeach_bench; CREATE DATABASE nearbeach_bench CHARACTER SET utf8mb4;
+
+
+Run against PostgreSQL
+----------------------
+
+This is supported but has not been tested. Set BENCH_ENGINE=postgres together with BENCH_PG_NAME, BENCH_PG_USER,
+BENCH_PG_PASSWORD, BENCH_PG_HOST and BENCH_PG_PORT. The pg_trgm extension is used for the text search candidates.
+
+
+Useful options
+--------------
+
+Smaller, faster run while changing the script
+
+    python scripts/benchmark_indexes.py --rows 200000
+
+Re-use an already seeded database (it is not re-seeded, so the row count is whatever it was seeded with)
+
+    python scripts/benchmark_indexes.py --skip-seed
+
+More timed runs per query for steadier numbers (default is 3, the median is reported)
+
+    python scripts/benchmark_indexes.py --skip-seed --runs 5
+
+
+Reading the results
+-------------------
+
+1. BASELINE is timed with no candidate indexes, then the candidate indexes are created, then WITH INDEXES is timed.
+
+2. The SUMMARY table at the end shows the median time in milliseconds before and after, and the speedup. Anything
+   under 1.0x got slower - do not add that index.
+
+3. Rows starting with ALT are alternative ways of writing a query (for example an EXISTS rewrite, istartswith, or a
+   MySQL FULLTEXT search) compared against the current one. n/a in the before column means the case needs an index
+   that does not exist yet.
+
+4. --explain prints the database's query plan for each query before and after, which shows why a result moved.
+
+5. Trust the ratios more than the absolute times. Timings depend heavily on hardware, the database's memory settings
+   (the default MySQL Docker buffer pool is only 128 MB) and what else is running, so expect noise of 20-30%.
+
+6. The seeded data is synthetic. The test user sees about 10% of all objects through 5 of 50 groups, so a user in
+   every group will be slower than the numbers shown.
+
+
+Candidate indexes
+-----------------
+
+The candidate indexes are listed in candidate_indexes() in the script. They are created with raw SQL so the script
+never creates migrations. When an index proves worthwhile, add it as models.Index in the model's Meta class and
+create a normal migration (see migration 0053 for an example). MySQL has no partial indexes, so the script drops the
+WHERE clause on MySQL. MySQL also drops Django's own foreign key index when a composite index starts with the same
+column, so the script restores a plain index between runs to keep the baseline honest.
+

@@ -64,14 +64,14 @@ class OrganisationService(ObjectServiceAbstraction):
         organisation = Organisation.objects.filter(
             is_deleted=False,
             pk=self.location_id,
-        )
+        ).first()
 
-        if not organisation.exists():
+        if organisation is None:
             return "Organisation does not exist", status.HTTP_404_NOT_FOUND
 
         # Serialize the data
         serializer = OrganisationSerializer(
-            organisation.first(),
+            organisation,
             many=False
         )
 
@@ -81,12 +81,12 @@ class OrganisationService(ObjectServiceAbstraction):
         organisation = Organisation.objects.filter(
             is_deleted=False,
             pk=self.location_id,
-        )
-        if not organisation.exists():
+        ).first()
+        if organisation is None:
             return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
 
         serializer = OrganisationSerializer(
-            organisation.first(),
+            organisation,
             data=request.data,
             partial=True,
             context={
