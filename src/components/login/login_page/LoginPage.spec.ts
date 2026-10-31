@@ -61,7 +61,7 @@ describe("LoginPage", () => {
   test("renders TwoFactorPanel after successful login attempt", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 200,
-      json: async () => ({ status: "default" }),
+      json: () => Promise.resolve({ status: "default" }),
     } as Response);
 
     wrapper = mountLoginPage();
@@ -134,7 +134,7 @@ describe("LoginPage", () => {
   test("a failed two factor attempt returns to the login panel and clears the fields", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 200,
-      json: async () => ({ status: "default" }),
+      json: () => Promise.resolve({ status: "default" }),
     } as Response);
 
     wrapper = mountLoginPage();

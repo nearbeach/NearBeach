@@ -12,7 +12,7 @@ function mountNewLink() {
 
 function mockResponse(overrides = {}) {
   return {
-    json: async () => ({
+    json: () => Promise.resolve({
       description: "My link",
       key: 7,
       parent_folder_id: "4",

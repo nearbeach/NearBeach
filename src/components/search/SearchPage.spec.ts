@@ -18,7 +18,7 @@ describe("SearchPage", () => {
     // SearchFilter fetches results on mount - there is no backend in the tests
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 200,
-      json: async () => ({ previous: null, next: null, results: [] }),
+      json: () => Promise.resolve({ previous: null, next: null, results: [] }),
     } as Response);
   });
 

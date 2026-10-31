@@ -110,7 +110,7 @@ describe("NewObject", () => {
     test("posts the title and selected group to the API for the current destination", async () => {
       const fetchSpy = vi
         .spyOn(globalThis, "fetch")
-        .mockResolvedValue({ status: 201, json: async () => ({ id: "123" }) } as Response);
+        .mockResolvedValue({ status: 201, json: () => Promise.resolve({ id: "123" }) } as Response);
       const wrapper = await mountForDestination("project");
 
       await fillForm(wrapper, "My new project");
@@ -132,7 +132,7 @@ describe("NewObject", () => {
       document.cookie = "csrftoken=abc123";
       const fetchSpy = vi
         .spyOn(globalThis, "fetch")
-        .mockResolvedValue({ status: 201, json: async () => ({ id: "123" }) } as Response);
+        .mockResolvedValue({ status: 201, json: () => Promise.resolve({ id: "123" }) } as Response);
       const wrapper = await mountForDestination("project");
 
       await fillForm(wrapper, "My new project");
@@ -146,7 +146,7 @@ describe("NewObject", () => {
     test("redirects to the new object after a 201 response", async () => {
       vi.spyOn(globalThis, "fetch").mockResolvedValue({
         status: 201,
-        json: async () => ({ id: "123" }),
+        json: () => Promise.resolve({ id: "123" }),
       } as Response);
       const wrapper = await mountForDestination("project");
 

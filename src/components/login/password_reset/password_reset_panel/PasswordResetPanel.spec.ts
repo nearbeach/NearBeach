@@ -35,7 +35,7 @@ describe("PasswordResetPanel", () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200, json: async () => ({}) } as Response);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200, json: () => Promise.resolve({}) } as Response);
   });
 
   afterEach(() => {

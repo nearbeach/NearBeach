@@ -62,7 +62,7 @@ describe("StakeholderCustomer", () => {
     // The backend responds with the object's updated customer list
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 200,
-      json: async () => ([jane]),
+      json: () => Promise.resolve([jane]),
     } as Response);
 
     const wrapper = mountStakeholderCustomer();

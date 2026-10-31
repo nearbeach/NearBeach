@@ -49,7 +49,7 @@ describe("AddRelationship", () => {
 
         vi.spyOn(globalThis, "fetch").mockResolvedValue({
             status: 200,
-            json: async () => [mockResponse],
+            json: () => Promise.resolve([mockResponse]),
         } as Response);
 
         const wrapper = mount(AddRelationship, {
@@ -71,7 +71,7 @@ describe("AddRelationship", () => {
         vi.spyOn(globalThis, "fetch").mockResolvedValue({
             status: 500,
             statusText: "Server error",
-            json: async () => ({}),
+            json: () => Promise.resolve({}),
         } as Response);
 
         const wrapper = mount(AddRelationship, {
@@ -116,7 +116,7 @@ describe("AddRelationship - creating a link", () => {
     objectStore.destination = "project";
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 200,
-      json: async () => options,
+      json: () => Promise.resolve(options),
     } as Response);
   });
 

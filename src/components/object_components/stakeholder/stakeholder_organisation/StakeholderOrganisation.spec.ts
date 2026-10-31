@@ -67,7 +67,7 @@ describe("StakeholderOrganisation", () => {
   test("choosing an organisation posts it and updates the stores", async () => {
     const customers = [{ id: 1 }];
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      json: async () => ({ organisation, potential_customers: customers }),
+      json: () => Promise.resolve({ organisation, potential_customers: customers }),
     } as Response);
     const objectStore = useObjectStore();
     objectStore.customers = [{ id: 99 }] as never;
@@ -86,7 +86,7 @@ describe("StakeholderOrganisation", () => {
 
   test("missing potential customers become an empty list", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      json: async () => ({ organisation }),
+      json: () => Promise.resolve({ organisation }),
     } as Response);
     useObjectMetaDataStore().potential_customers = [{ id: 1 }] as never;
     const wrapper = mountOrganisation();

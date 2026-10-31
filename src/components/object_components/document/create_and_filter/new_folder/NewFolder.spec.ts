@@ -44,7 +44,7 @@ describe("NewFolder", () => {
     const documentationStore = useDocumentationStore();
     documentationStore.currentFolderId = 4;
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      json: async () => ({ id: 8, description: "Reports", parent_folder_id: 4 }),
+      json: () => Promise.resolve({ id: 8, description: "Reports", parent_folder_id: 4 }),
     } as Response);
     const wrapper = mountNewFolder();
 
@@ -66,7 +66,7 @@ describe("NewFolder", () => {
 
   test("creating a folder at the root sends a null parent", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      json: async () => ({ id: 9, description: "Root", parent_folder_id: null }),
+      json: () => Promise.resolve({ id: 9, description: "Root", parent_folder_id: null }),
     } as Response);
     const wrapper = mountNewFolder();
 

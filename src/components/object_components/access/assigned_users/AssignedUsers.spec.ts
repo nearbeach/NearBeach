@@ -22,7 +22,7 @@ describe("AssignedUsers", () => {
     // Mock fetch
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 200,
-      json: async () => ({
+      json: () => Promise.resolve({
         group_list: [],
         potential_user_list: [user1, user2],
         user_list: [],

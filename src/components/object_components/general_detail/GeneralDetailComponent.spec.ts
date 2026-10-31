@@ -19,7 +19,7 @@ vi.mock("vue-router", async (importOriginal) => ({
 function mockFetch(status: number, body: unknown = {}) {
   return vi.spyOn(globalThis, "fetch").mockResolvedValue({
     status,
-    json: async () => body,
+    json: () => Promise.resolve(body),
   } as Response);
 }
 
@@ -130,7 +130,7 @@ describe("GeneralDetailComponent", () => {
       expect(wrapper.find("button.primary").text()).toBe("Please wait");
       expect(wrapper.find("button.primary").attributes("disabled")).toBeDefined();
 
-      release({ status: 200, json: async () => ({}) } as Response);
+      release({ status: 200, json: () => Promise.resolve({}) } as Response);
       await flushPromises();
 
       expect(fetchSpy.mock.calls[0][0]).toBe("/api/v1/project/12/");

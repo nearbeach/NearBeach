@@ -32,7 +32,7 @@ describe("PublicLinks", () => {
   test("mounting component", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 200,
-      json: async () => ([]),
+      json: () => Promise.resolve([]),
     } as Response);
 
     const wrapper = mountPublicLinks();
@@ -48,7 +48,7 @@ describe("PublicLinks", () => {
   test("does not render the links table when the fetch fails", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 500,
-      json: async () => ({ error: "Server error" }),
+      json: () => Promise.resolve({ error: "Server error" }),
     } as Response);
 
     const wrapper = mountPublicLinks();
@@ -71,7 +71,7 @@ describe("PublicLinks - managing links", () => {
   function mockFetch(responses: Record<string, { status: number; body: unknown }>) {
     return vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
       const { status, body } = responses[init?.method ?? "GET"] ?? { status: 200, body: {} };
-      return { status, json: async () => structuredClone(body) } as Response;
+      return { status, json: () => Promise.resolve(structuredClone(body)) } as Response;
     });
   }
 

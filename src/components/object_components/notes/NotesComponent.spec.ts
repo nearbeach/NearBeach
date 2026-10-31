@@ -16,7 +16,7 @@ function mockFetch(handler?: (url: string, init?: RequestInit) => unknown) {
     async (url, init) =>
       ({
         status: 200,
-        json: async () => structuredClone(handler ? handler(String(url), init) : notes),
+        json: () => Promise.resolve(structuredClone(handler ? handler(String(url), init) : notes)),
       }) as Response,
   );
 }
@@ -118,7 +118,7 @@ describe("NotesComponent", () => {
     vi.spyOn(globalThis, "fetch").mockImplementation(async () => {
       if (first) {
         first = false;
-        return { json: async () => structuredClone(notes) } as Response;
+        return { json: () => Promise.resolve(structuredClone(notes)) } as Response;
       }
       throw new Error("fail");
     });
@@ -170,7 +170,7 @@ describe("NotesComponent", () => {
   test("logs an error when updating fails", async () => {
     let calls = 0;
     vi.spyOn(globalThis, "fetch").mockImplementation(async () => {
-      if (calls++ === 0) return { json: async () => structuredClone(notes) } as Response;
+      if (calls++ === 0) return { json: () => Promise.resolve(structuredClone(notes)) } as Response;
       throw new Error("fail");
     });
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
@@ -202,7 +202,7 @@ describe("NotesComponent", () => {
   test("logs an error and keeps the note when deleting fails", async () => {
     let calls = 0;
     vi.spyOn(globalThis, "fetch").mockImplementation(async () => {
-      if (calls++ === 0) return { json: async () => structuredClone(notes) } as Response;
+      if (calls++ === 0) return { json: () => Promise.resolve(structuredClone(notes)) } as Response;
       throw new Error("fail");
     });
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });

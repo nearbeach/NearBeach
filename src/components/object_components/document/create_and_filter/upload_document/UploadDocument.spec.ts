@@ -66,9 +66,9 @@ describe("UploadDocument", () => {
     const documentationStore = useDocumentationStore();
     documentationStore.currentFolderId = 0;
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      json: async () => [
+      json: () => Promise.resolve([
         { description: "report.pdf", key: "k1", parent_folder_id: null },
-      ],
+      ]),
     } as Response);
 
     const wrapper = mountUpload();
@@ -100,7 +100,7 @@ describe("UploadDocument", () => {
     const documentationStore = useDocumentationStore();
     documentationStore.currentFolderId = 12;
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      json: async () => [],
+      json: () => Promise.resolve([]),
     } as Response);
 
     const wrapper = mountUpload();
@@ -143,7 +143,7 @@ describe("UploadDocument - custom name", () => {
 
   test("a name typed by the user is what gets uploaded", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      json: async () => [],
+      json: () => Promise.resolve([]),
     } as Response);
     const wrapper = mountUpload();
 

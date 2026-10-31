@@ -43,7 +43,7 @@ describe("StakeholderComponent", () => {
   test("loads the stakeholders on mount when the object is loaded", async () => {
     useObjectStore().is_loaded = true;
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      json: async () => data,
+      json: () => Promise.resolve(data),
     } as Response);
     mountStakeholders();
     await flushPromises();
@@ -57,7 +57,7 @@ describe("StakeholderComponent", () => {
 
   test("waits for the object to load before fetching", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      json: async () => data,
+      json: () => Promise.resolve(data),
     } as Response);
     mountStakeholders();
     await flushPromises();
@@ -74,7 +74,7 @@ describe("StakeholderComponent", () => {
     useObjectStore().is_loaded = true;
     useObjectMetaDataStore().potential_customers = [{ id: 9 }] as never;
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      json: async () => ({ customers: [], organisation: null }),
+      json: () => Promise.resolve({ customers: [], organisation: null }),
     } as Response);
     mountStakeholders();
     await flushPromises();

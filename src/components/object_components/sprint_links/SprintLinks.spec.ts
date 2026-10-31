@@ -15,7 +15,7 @@ const sprints = [
 function mockFetch(handler: (url: string, init?: RequestInit) => { status: number; body: unknown }) {
   return vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
     const { status, body } = handler(String(url), init);
-    return { status, json: async () => structuredClone(body) } as Response;
+    return { status, json: () => Promise.resolve(structuredClone(body)) } as Response;
   });
 }
 

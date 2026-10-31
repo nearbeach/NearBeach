@@ -34,7 +34,7 @@ describe("ForgottenPassword", () => {
   });
 
   test("submits password reset and renders PasswordResetDone", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200, json: async () => ({}) } as Response);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200, json: () => Promise.resolve({}) } as Response);
 
     const wrapper = mount(ForgottenPassword, {
       global: {

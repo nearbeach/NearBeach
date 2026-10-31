@@ -19,7 +19,7 @@ describe("DocumentComponent", () => {
     setActivePinia(createPinia());
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 200,
-      json: async () => ({
+      json: () => Promise.resolve({
         documents: [],
         folders: [],
         max_upload_size: 10,

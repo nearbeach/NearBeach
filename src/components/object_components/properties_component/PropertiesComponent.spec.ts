@@ -14,7 +14,7 @@ vi.mock("@/router/router.ts", () => ({ default: { push: pushMock } }));
 describe("PropertiesComponent", () => {
     beforeEach(() => {
         setActivePinia(createPinia());
-        vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200, json: async () => ({}) } as Response);
+        vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200, json: () => Promise.resolve({}) } as Response);
     });
 
     afterEach(() => {
@@ -49,7 +49,7 @@ describe("PropertiesComponent - updating", () => {
     function mockStatus(status: number) {
         return vi.spyOn(globalThis, "fetch").mockResolvedValue({
             status,
-            json: async () => ({}),
+            json: () => Promise.resolve({}),
         } as Response);
     }
 
@@ -294,7 +294,7 @@ describe("PropertiesComponent - story point model", () => {
     });
 
     test("the story points input is bound to the object store", async () => {
-        vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200, json: async () => ({}) } as Response);
+        vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200, json: () => Promise.resolve({}) } as Response);
         const wrapper = mount(PropertiesComponent, { global: { plugins: [i18n] } });
         const input = wrapper.findComponent({ name: "WlkNumberInput" });
 

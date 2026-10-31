@@ -26,7 +26,7 @@ function mockFetch(status = 200, body: unknown = results, statusText = "") {
   return vi.spyOn(globalThis, "fetch").mockResolvedValue({
     status,
     statusText,
-    json: async () => body,
+    json: () => Promise.resolve(body),
   } as Response);
 }
 
@@ -163,7 +163,7 @@ describe("SearchFilter", () => {
     useSearchStore().searchResults = [{ id: 9 }] as never;
     fetchSpy.mockResolvedValue({
       status: 200,
-      json: async () => ({ previous: null, next: null, results: [] }),
+      json: () => Promise.resolve({ previous: null, next: null, results: [] }),
     } as Response);
 
     // Change it through the mocked (reactive) route so the watcher fires

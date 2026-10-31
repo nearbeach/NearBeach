@@ -13,7 +13,7 @@ const groupC = { id: 3, name: "Group C", parent_group: null };
 function mockFetch(status: number, body: unknown) {
   return vi.spyOn(globalThis, "fetch").mockResolvedValue({
     status,
-    json: async () => body,
+    json: () => Promise.resolve(body),
   } as Response);
 }
 

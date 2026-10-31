@@ -43,7 +43,7 @@ describe("LinkObjects", () => {
 
         vi.spyOn(globalThis, "fetch").mockResolvedValue({
             status: 200,
-            json: async () => ([]),
+            json: () => Promise.resolve([]),
         } as Response);
     });
 
@@ -120,7 +120,7 @@ describe("LinkObjects - managing links", () => {
         return vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
             const method = init?.method ?? "GET";
             const body = method in responses ? responses[method] : (method === "GET" ? links : {});
-            return { status: 200, json: async () => structuredClone(body) } as Response;
+            return { status: 200, json: () => Promise.resolve(structuredClone(body)) } as Response;
         });
     }
 
