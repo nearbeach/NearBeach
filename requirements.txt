@@ -1,22 +1,22 @@
 # requirement.txt
-Django>=4.2.17
-djangorestframework
-django_otp
-django-vite
-simplejson
-pillow>=10.0.1
-urllib3>=2.5.0
-boto3
-botocore
-azure-storage-blob
-azure-identity>=1.16.1
-drf-spectacular
+Django>=6.1.2
+djangorestframework>=3.18.3
+django_otp>=1.7.5
+django-vite>=3.2.0
+simplejson>=4.2.0
+pillow>=13.0.0
+urllib3>=2.8.0
+boto3>=1.43.123
+botocore>=1.43.123
+azure-storage-blob>=12.31.1
+azure-identity>=1.27.0
+drf-spectacular>=0.30.0
 drf-spectacular[sidecar]
-django-rest-knox
+django-rest-knox>=5.1.0
 
 # Security recommendations - packages are used by libraries used by NearBeach
-pip>=25.1
-requests>=2.32.2
-sqlparse>=0.5.0
+pip>=26.2.2
+requests>=2.34.2
+sqlparse>=0.6.0
 
-python-dotenv
+python-dotenv>=1.2.4
