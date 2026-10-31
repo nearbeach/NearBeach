@@ -2,6 +2,8 @@ from collections import namedtuple
 from rest_framework.test import APITestCase, APIClient, APIRequestFactory
 from unittest.mock import patch
 
+from django.core.cache import cache
+
 
 class BaseApiClass(APITestCase):
     """Abstracted Base Api class for testing"""
@@ -16,6 +18,9 @@ class BaseApiClass(APITestCase):
 
     def setUp(self):
         """Method run on test start-up - sets up the test by logging in and providing the client and factory"""
+        # Rolled back test data does not fire the signals that clear the cache
+        cache.clear()
+
         self.client = APIClient()
         self.factory = APIRequestFactory()
 

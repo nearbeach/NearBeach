@@ -1,4 +1,8 @@
+from functools import partial
+from typing import Any
+
 from django.contrib.auth.models import User
+from django.db.models import QuerySet
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.views import APIView
@@ -10,9 +14,18 @@ from NearBeach.models.requirement.requirement import ListOfRequirementStatus, Li
 from NearBeach.models.requirement.requirement_item import ListOfRequirementItemStatus, ListOfRequirementItemType
 from NearBeach.models.task import ListOfTaskStatus
 from NearBeach.models.misc.tag import Tag
+from NearBeach.utils.initial_data_cache import get_cached
 from NearBeach.serializers.user.user_initial_data_serializer import (
     UserInitialDataSerializer,
 )
+
+
+def _ordered_by_sort_order(model: Any) -> QuerySet:
+    return model.objects.filter(is_deleted=False).order_by("sort_order")
+
+
+def _type_values(model: Any) -> QuerySet:
+    return model.objects.filter(is_deleted=False).values("id", "type")
 
 
 @extend_schema(
@@ -26,9 +39,10 @@ class UserInitialDataView(APIView):
     @staticmethod
     def _get_all_groups():
         """Method to get all current groups"""
-        return Group.objects.filter(
-            is_deleted=False,
-        ).order_by("name")
+        return get_cached(
+            "all_groups",
+            lambda: Group.objects.filter(is_deleted=False).order_by("name"),
+        )
 
     @staticmethod
     def _get_permissions(user):
@@ -73,35 +87,36 @@ class UserInitialDataView(APIView):
     @staticmethod
     def _get_status():
         return {
-            "requirement": ListOfRequirementStatus.objects.filter(
-                is_deleted=False,
-            ).order_by("sort_order"),
-            "requirement_item": ListOfRequirementItemStatus.objects.filter(
-                is_deleted=False,
-            ).order_by("sort_order"),
-            "project": ListOfProjectStatus.objects.filter(
-                is_deleted=False,
-            ).order_by("sort_order"),
-            "task": ListOfTaskStatus.objects.filter(
-                is_deleted=False,
-            ).order_by("sort_order"),
+            name: get_cached(
+                f"status_{name}",
+                partial(_ordered_by_sort_order, model),
+            )
+            for name, model in (
+                ("requirement", ListOfRequirementStatus),
+                ("requirement_item", ListOfRequirementItemStatus),
+                ("project", ListOfProjectStatus),
+                ("task", ListOfTaskStatus),
+            )
         }
 
     @staticmethod
     def _get_tags():
-        return Tag.objects.filter(
-            is_deleted=False,
-        ).order_by("name")
+        return get_cached(
+            "tags",
+            lambda: Tag.objects.filter(is_deleted=False).order_by("name"),
+        )
 
     @staticmethod
     def _get_types():
         return {
-            "requirement": ListOfRequirementType.objects.filter(
-                is_deleted=False,
-            ).values("id", "type"),
-            "requirement_item": ListOfRequirementItemType.objects.filter(
-                is_deleted=False,
-            ).values("id", "type"),
+            name: get_cached(
+                f"types_{name}",
+                partial(_type_values, model),
+            )
+            for name, model in (
+                ("requirement", ListOfRequirementType),
+                ("requirement_item", ListOfRequirementItemType),
+            )
         }
 
     def get(self, request, *args, **kwargs):
