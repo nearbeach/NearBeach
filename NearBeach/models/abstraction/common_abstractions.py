@@ -26,6 +26,9 @@ class CommonInfo(models.Model):
         default=False,
     )
 
+    # Explicit default manager, so IDE static analysis can resolve `objects`
+    objects = models.Manager()
+
     class Meta:
         """Meta information for CommonInfo model"""
 
