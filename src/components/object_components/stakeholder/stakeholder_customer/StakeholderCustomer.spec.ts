@@ -98,7 +98,7 @@ describe("StakeholderCustomer", () => {
     await nextTick();
 
     // Click the trash icon next to John
-    await wrapper.findAll(".customer-name").at(0)!.find("svg").trigger("click");
+    await wrapper.findAll(".customer-name").at(0)?.find("svg").trigger("click");
 
     await flushPromises();
     await nextTick();
@@ -159,7 +159,7 @@ describe("StakeholderCustomer - edge cases", () => {
     const wrapper = mountStakeholderCustomer();
     await flushPromises();
 
-    await wrapper.findAll(".customer-name").at(0)!.find("svg").trigger("click");
+    await wrapper.findAll(".customer-name").at(0)?.find("svg").trigger("click");
     await flushPromises();
 
     expect(consoleError).toHaveBeenCalled();

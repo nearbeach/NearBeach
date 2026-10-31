@@ -125,8 +125,8 @@ describe("PublicLinks - managing links", () => {
     await wrapper.find(".public-link-buttons button").trigger("click");
     await flushPromises();
 
-    const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST")!;
-    expect(post[0]).toBe("/api/v1/project/6/public_link/");
+    const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST");
+    expect(post?.[0]).toBe("/api/v1/project/6/public_link/");
     expect(rows(wrapper).map((row) => row.props("id"))).toEqual(["a", "b", "c"]);
   });
 
@@ -147,8 +147,8 @@ describe("PublicLinks - managing links", () => {
     rows(wrapper)[0].vm.$emit("deleteLink", { id: "a" });
     await flushPromises();
 
-    const del = fetchSpy.mock.calls.find(([, i]) => i?.method === "DELETE")!;
-    expect(del[0]).toBe("/api/v1/project/6/public_link/a/");
+    const del = fetchSpy.mock.calls.find(([, i]) => i?.method === "DELETE");
+    expect(del?.[0]).toBe("/api/v1/project/6/public_link/a/");
     expect(rows(wrapper).map((row) => row.props("id"))).toEqual(["b"]);
   });
 
@@ -169,9 +169,9 @@ describe("PublicLinks - managing links", () => {
     rows(wrapper)[1].vm.$emit("updateActive", { id: "b", index: 1 });
     await flushPromises();
 
-    const patch = fetchSpy.mock.calls.find(([, i]) => i?.method === "PATCH")!;
-    expect(patch[0]).toBe("/api/v1/project/6/public_link/b/");
-    expect(JSON.parse(patch[1]?.body as string)).toEqual({ is_active: true });
+    const patch = fetchSpy.mock.calls.find(([, i]) => i?.method === "PATCH");
+    expect(patch?.[0]).toBe("/api/v1/project/6/public_link/b/");
+    expect(JSON.parse(patch?.[1]?.body as string)).toEqual({ is_active: true });
     expect(rows(wrapper)[1].props("isActive")).toBe(true);
   });
 

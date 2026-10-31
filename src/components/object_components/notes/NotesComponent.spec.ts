@@ -105,9 +105,9 @@ describe("NotesComponent", () => {
     await wrapper.find(".modal-footer-row button.primary").trigger("click");
     await flushPromises();
 
-    const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST")!;
-    expect(post[0]).toBe("/api/v1/project/3/notes/");
-    expect(JSON.parse(post[1]?.body as string)).toEqual({ note: "New" });
+    const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST");
+    expect(post?.[0]).toBe("/api/v1/project/3/notes/");
+    expect(JSON.parse(post?.[1]?.body as string)).toEqual({ note: "New" });
     expect(noteList(wrapper)[0]).toEqual({ id: 9, note: "New" });
     expect(noteList(wrapper)).toHaveLength(3);
     expect(wrapper.find(".open").exists()).toBe(false);
@@ -149,9 +149,9 @@ describe("NotesComponent", () => {
     await wrapper.find(".modal-footer-row button.primary").trigger("click");
     await flushPromises();
 
-    const patch = fetchSpy.mock.calls.find(([, i]) => i?.method === "PATCH")!;
-    expect(patch[0]).toBe("/api/v1/project/3/notes/2/");
-    expect(JSON.parse(patch[1]?.body as string)).toEqual({ note: "Second (edited)" });
+    const patch = fetchSpy.mock.calls.find(([, i]) => i?.method === "PATCH");
+    expect(patch?.[0]).toBe("/api/v1/project/3/notes/2/");
+    expect(JSON.parse(patch?.[1]?.body as string)).toEqual({ note: "Second (edited)" });
     expect(noteList(wrapper)[1].note).toBe("Second (edited)");
     expect(wrapper.find(".open").exists()).toBe(false);
   });
@@ -194,8 +194,8 @@ describe("NotesComponent", () => {
     wrapper.findComponent(NoteList).vm.$emit("deleteNote", 1);
     await flushPromises();
 
-    const del = fetchSpy.mock.calls.find(([, i]) => i?.method === "DELETE")!;
-    expect(del[0]).toBe("/api/v1/project/3/notes/1/");
+    const del = fetchSpy.mock.calls.find(([, i]) => i?.method === "DELETE");
+    expect(del?.[0]).toBe("/api/v1/project/3/notes/1/");
     expect(noteList(wrapper).map((n) => n.id)).toEqual([2]);
   });
 

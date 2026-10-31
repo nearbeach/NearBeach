@@ -22,8 +22,8 @@ function mountPasswordResetPanel() {
 
 async function submitPasswords(wrapper: VueWrapper, password1: string, password2: string) {
   const [password1Input, password2Input] = wrapper.findAll("input[type=password]");
-  await password1Input!.setValue(password1);
-  await password2Input!.setValue(password2);
+  await password1Input?.setValue(password1);
+  await password2Input?.setValue(password2);
   await wrapper.find("button").trigger("click");
 
   await flushPromises();

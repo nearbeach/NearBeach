@@ -37,6 +37,7 @@ export default defineConfigWithVueTs(
         rules: {
             'require-await': 'error', // JS-0116
             '@typescript-eslint/no-empty-function': 'error', // JS-0321
+            '@typescript-eslint/no-non-null-assertion': 'error', // JS-0339
         },
     },
 

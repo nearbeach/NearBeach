@@ -170,9 +170,9 @@ describe("LinkObjects - managing links", () => {
         });
         await flushPromises();
 
-        const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST")!;
-        expect(post[0]).toBe("/api/v1/project/1/link_list/");
-        expect(JSON.parse(post[1]?.body as string)).toEqual({
+        const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST");
+        expect(post?.[0]).toBe("/api/v1/project/1/link_list/");
+        expect(JSON.parse(post?.[1]?.body as string)).toEqual({
             object_type: "task",
             object_id: "33",
             object_relation: "blocking",
@@ -202,8 +202,8 @@ describe("LinkObjects - managing links", () => {
         });
         await flushPromises();
 
-        const del = fetchSpy.mock.calls.find(([, i]) => i?.method === "DELETE")!;
-        expect(del[0]).toBe("/api/v1/project/1/link_list/10/");
+        const del = fetchSpy.mock.calls.find(([, i]) => i?.method === "DELETE");
+        expect(del?.[0]).toBe("/api/v1/project/1/link_list/10/");
         expect(listOf(wrapper).map((l) => l.object_assignment_id)).toEqual([11]);
     });
 

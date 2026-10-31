@@ -139,7 +139,7 @@ describe("NewObject", () => {
       await wrapper.find(".primary").trigger("click");
       await flushPromises();
 
-      const requestInit = fetchSpy.mock.calls[0]![1] as RequestInit;
+      const requestInit = fetchSpy.mock.calls[0]?.[1] as RequestInit;
       expect((requestInit.headers as Record<string, string>)["X-CSRFTOKEN"]).toBe("abc123");
     });
 

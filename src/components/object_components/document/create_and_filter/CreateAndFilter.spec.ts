@@ -27,7 +27,7 @@ async function openNewFolderModal(wrapper: ReturnType<typeof mountCreateAndFilte
 
   // Click on the "Create a new folder" dropdown item
   const newFolderItem = wrapper.findAll(".drop-down-item").find((item) => item.text() === "Create a new folder");
-  await newFolderItem!.trigger("click");
+  await newFolderItem?.trigger("click");
 
   await flushPromises();
   await nextTick();
@@ -87,7 +87,7 @@ describe("CreateAndFilter - other dropdown items", () => {
   async function chooseItem(wrapper: ReturnType<typeof mountCreateAndFilter>, label: string) {
     await wrapper.find(".wlk-drop-down > button").trigger("click");
     const item = wrapper.findAll(".drop-down-item").find((row) => row.text() === label);
-    await item!.trigger("click");
+    await item?.trigger("click");
     await flushPromises();
   }
 

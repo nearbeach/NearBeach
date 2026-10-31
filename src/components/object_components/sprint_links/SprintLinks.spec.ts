@@ -129,9 +129,9 @@ describe("SprintLinks", () => {
     await wrapper.find("button.primary:not(.sprint-buttons button)").trigger("click");
     await flushPromises();
 
-    const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST")!;
-    expect(post[0]).toBe("/api/v1/project/8/sprint/");
-    const body = JSON.parse(post[1]?.body as string);
+    const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST");
+    expect(post?.[0]).toBe("/api/v1/project/8/sprint/");
+    const body = JSON.parse(post?.[1]?.body as string);
     expect(Object.keys(body).sort()).toEqual(["end_date", "start_date", "title"]);
     expect(wrapper.findAllComponents(SprintLink)).toHaveLength(3);
     expect(wrapper.find(".open").exists()).toBe(false);
@@ -166,8 +166,8 @@ describe("SprintLinks", () => {
     wrapper.findAllComponents(SprintLink)[0].vm.$emit("deleteSprint", "s1");
     await flushPromises();
 
-    const del = fetchSpy.mock.calls.find(([, i]) => i?.method === "DELETE")!;
-    expect(del[0]).toBe("/api/v1/project/8/sprint/s1/");
+    const del = fetchSpy.mock.calls.find(([, i]) => i?.method === "DELETE");
+    expect(del?.[0]).toBe("/api/v1/project/8/sprint/s1/");
     const remaining = wrapper.findAllComponents(SprintLink);
     expect(remaining).toHaveLength(1);
     expect(remaining[0].props("sprint").id).toBe("s2");
@@ -220,8 +220,8 @@ describe("SprintLinks - editing the new sprint", () => {
     await wrapper.find("button.primary:not(.sprint-buttons button)").trigger("click");
     await flushPromises();
 
-    const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST")!;
-    expect(JSON.parse(post[1]?.body as string)).toEqual({
+    const post = fetchSpy.mock.calls.find(([, i]) => i?.method === "POST");
+    expect(JSON.parse(post?.[1]?.body as string)).toEqual({
       title: "Hand-made sprint",
       start_date: "2026-06-01",
       end_date: "2026-06-14",
