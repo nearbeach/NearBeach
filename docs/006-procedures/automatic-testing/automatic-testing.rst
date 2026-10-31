@@ -8,6 +8,7 @@ NearBeach has the following automatic testing setup;
 - Frontend End-to-end tests
 - Backend API Fuzzy Testing
 - API Request Profiling (Silk)
+- Database Index Benchmarking
 
 
 Backend Unit Testing
