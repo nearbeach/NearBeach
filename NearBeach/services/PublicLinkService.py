@@ -6,8 +6,7 @@ from NearBeach.serializers.public_link_serializer import PublicLinkSerializer
 from NearBeach.services.abstraction.object_services_abstraction import (
     AuthenticatedRequest,
     ObjectServiceAbstraction,
-    ServiceResponse, ObjectId,
-)
+    ServiceResponse, )
 from NearBeach.models.misc.misc import PublicLink
 from NearBeach.models import Project
 from NearBeach.serializers.public_link_data_serializer import PublicLinkDataSerializer
