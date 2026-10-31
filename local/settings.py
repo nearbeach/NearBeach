@@ -29,7 +29,7 @@ SECRET_KEY = 'jz0k8%ecl#k!z+(9+5(^do1w!11ysus21m41m@i9c#u)*vk($o'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '0.0.0.0', '192.168.1.105']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '192.168.1.105']
 
 KNOX_TOKEN_MODEL = 'knox.AuthToken'
 
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'knox',
     'django_vite',
+    'silk',
     'drf_spectacular',
     'drf_spectacular_sidecar',
     'django.contrib.admin',
@@ -55,6 +56,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'silk.middleware.SilkyMiddleware',
+    'local.silk_profile_middleware.SilkProfileAllRequestsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -318,3 +321,9 @@ DJANGO_VITE_STATIC_URL_PREFIX = 'bundler'
 
 PASSWORD_RESET_TIMEOUT = 300
 APPEND_SLASH = True
+
+# Silk profiling (dev only) - UI at /silk/
+SILKY_PYTHON_PROFILER = True
+SILKY_MAX_RECORDED_REQUESTS = 1000
+SILKY_MAX_REQUEST_BODY_SIZE = 64  # KB
+SILKY_MAX_RESPONSE_BODY_SIZE = 64  # KB

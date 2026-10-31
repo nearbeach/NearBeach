@@ -4,6 +4,7 @@ bandit
 coverage
 python-dotenv
 django-storages
+django-silk
 pip-tools
 pylint
 pylint-django
