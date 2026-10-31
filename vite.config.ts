@@ -41,6 +41,21 @@ export default defineConfig({
             ]
         }
     },
+    server: {
+        watch: {
+            // Only the front end source needs watching. Python, docs and coverage output
+            // contain tens of thousands of files and exhaust the OS file watcher limit.
+            ignored: [
+                '**/venv/**',
+                '**/.venv/**',
+                '**/__pycache__/**',
+                '**/htmlcov/**',
+                '**/coverage/**',
+                '**/docs/**',
+                '**/NearBeach/static/NearBeach/**',
+            ],
+        },
+    },
     plugins: [
         vue(),
         // Devtools hooks into the same API Vue Test Utils uses to record emitted events

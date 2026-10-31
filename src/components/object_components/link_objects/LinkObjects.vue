@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useI18n} from "petite-vue-i18n";
-import {watch, onMounted, ref} from "vue";
+import {watch, onMounted, ref, computed} from "vue";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
@@ -26,6 +26,7 @@ const {t} = useI18n({
 
 // Define stores
 const objectStore = useObjectStore();
+const objectOptions = ref<ObjectLinkInterface[]>([]);
 
 // Define ref
 const errorText = ref<string>("");
@@ -50,6 +51,18 @@ onMounted(async () => {
 	if (objectStore.is_loaded) {
 		await loadData();
 	}
+});
+
+// Define computed
+const filteredObjectOptions = computed(() => {
+    // Setup a key
+    const key = (o: ObjectLinkInterface): string => `${o.object_type}|${o.object_id}`;
+
+    // Setup a set that we'll remove from potential results
+    const removeObjectLinks = new Set(objectLinkList.value.map(key));
+
+    // Return
+    return objectOptions.value.filter(a => !removeObjectLinks.has(key(a)));
 });
 
 // Define functions
@@ -82,7 +95,7 @@ async function createObjectLink(event: {relationshipModel: string, objectSelecto
 
 		// Append the value
 		const data = await response.json();
-		objectLinkList.value.push(data)
+		objectLinkList.value.push(data);
 	}).catch((error) => {
 		errorText.value = error;
 	});
@@ -109,12 +122,9 @@ async function deleteObjectLink(event: {object_assignment_id: number, index: num
 	});
 }
 
-async function loadData() {
-	// State we are loading
-	isLoaded.value = false;
-
-	// Fetch the required data
-	await fetch(
+async function fetchLinkList() {
+    // Fetch the required data
+	const response = await fetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/`,
 		{
 			method: "GET",
@@ -123,12 +133,59 @@ async function loadData() {
 				"X-CSRFTOKEN": getCsrfToken(),
 			},
 		},
-	).then(async (response) => {
-		objectLinkList.value = await response.json();
-		isLoaded.value = true;
-	}).catch((error) => {
-		errorText.value = error;
-	});
+	);
+
+    // Switch case the response
+    switch (response.status) {
+        case 200:
+            // Set object link list
+        	objectLinkList.value = await response.json();
+        	isLoaded.value = true;
+            break;
+        default:
+            errorText.value = t("error_text") + ": " + response.statusText;
+            break;
+    }
+}
+
+async function fetchPotentialObjectLinks() {
+    const response = await fetch(
+		"/api/v1/data/potential_object_links/",
+		{
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+		},
+	);
+
+    // Switch case the response
+    switch (response.status) {
+        case 200:
+            // Get the unfiltered data
+        	const unfiltered_data = await response.json();
+
+        	objectOptions.value = unfiltered_data.filter((row: ObjectLinkInterface) => {
+        		// Base conditions
+        		const condition_1 = row.object_id !== objectStore.id;
+        		const condition_2 = row.object_type !== objectStore.destination;
+
+        		return condition_1 || condition_2;
+        	});
+            break;
+        default:
+            errorText.value = t("error_text") + ": " + response.statusText;
+            break;
+    }
+}
+
+async function loadData() {
+	// State we are loading
+	isLoaded.value = false;
+
+    await fetchLinkList();
+    await fetchPotentialObjectLinks();
 }
 
 function updateRelationship(data: { index: number, link_relationship: string }) {
@@ -162,6 +219,7 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 		</SmallLoadingSkeleton>
 		<AddRelationship
 			v-if="isLoaded"
+            :object-options="filteredObjectOptions"
 			v-on:create-object-link="createObjectLink"
 		/>
 	</div>

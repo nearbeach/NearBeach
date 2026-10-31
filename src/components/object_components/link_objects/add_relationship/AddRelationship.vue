@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import {Plus} from "@lucide/vue";
 import {useI18n} from "petite-vue-i18n";
-import {computed, onMounted, ref} from "vue";
+import {computed, type PropType, ref} from "vue";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
-import {useObjectStore} from "@/stores/object/object.ts";
-import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
 const {t} = useI18n({
@@ -37,23 +35,22 @@ const {t} = useI18n({
 // Define emit
 const emit = defineEmits(["createObjectLink"])
 
-// Define store
-const objectStore = useObjectStore();
+// Define props
+defineProps({
+    objectOptions: {
+        type: Array as PropType<ObjectLinkInterface[]>,
+        required: true,
+    },
+})
 
 // Define models
 const errorText = ref<string>("");
 const relationshipModel = ref<string>("relates");
 const objectSelectorModel = ref<string>("");
-const objectOptions = ref<ObjectLinkInterface[]>([]);
 
 // Define computed
 const isDisabled = computed(() => {
 	return objectSelectorModel.value === "";
-});
-
-// Define on mounted
-onMounted(() => {
-	loadData();
 });
 
 // Define functions
@@ -69,38 +66,6 @@ function createObjectLink() : void {
 		"objectSelectorModel": objectSelectorModel.value,
 		"relationshipModel": relationshipModel.value
 	});
-}
-
-async function loadData() {
-	const response = await fetch(
-		"/api/v1/data/potential_object_links/",
-		{
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				"X-CSRFTOKEN": getCsrfToken(),
-			},
-		},
-	);
-
-    // Switch case the response
-    switch (response.status) {
-        case 200:
-            // Get the unfiltered data
-        	const unfiltered_data = await response.json();
-
-        	objectOptions.value = unfiltered_data.filter((row: ObjectLinkInterface) => {
-        		// Base conditions
-        		const condition_1 = row.object_id !== objectStore.id;
-        		const condition_2 = row.object_type !== objectStore.destination;
-
-        		return condition_1 || condition_2;
-        	});
-            break;
-        default:
-            errorText.value = t("error_text") + ": " + response.statusText;
-            break;
-    }
 }
 </script>
 
