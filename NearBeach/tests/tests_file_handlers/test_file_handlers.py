@@ -262,7 +262,8 @@ class AzureFileHandlerTests(SimpleTestCase):
 class GetFileHandlerTests(SimpleTestCase):
     """Which handler a deployment gets, decided by the settings it provides"""
 
-    def _pick(self, **local_settings):
+    @staticmethod
+    def _pick(**local_settings):
         with mock.patch(f"{S3_MODULE}.boto3.client"), mock.patch(f"{AZURE_MODULE}.BlobServiceClient"):
             return get_file_handler(SimpleNamespace(PRIVATE_MEDIA_ROOT="/tmp/nearbeach", **local_settings))
 

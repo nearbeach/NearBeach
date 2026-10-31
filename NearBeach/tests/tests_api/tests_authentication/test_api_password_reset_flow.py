@@ -65,7 +65,8 @@ class PasswordResetTestBase(BaseApiClass):
             RESET_API_URL, {"uid": uid, "token": token, "password": password}, format="json"
         )
 
-    def _can_log_in(self, password, username=USERNAME):
+    @staticmethod
+    def _can_log_in(password, username=USERNAME):
         return Client().post(
             LOGIN_URL,
             {"username": username, "password": password, "otp_token": ""},

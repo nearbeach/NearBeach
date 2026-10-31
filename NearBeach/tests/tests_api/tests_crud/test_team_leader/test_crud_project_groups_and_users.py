@@ -30,10 +30,12 @@ class GroupsAndUsersBase(TeamLeaderProjectBase):
         data = self.client.get(GROUPS_URL).data
         return {key: sorted(item["id"] for item in data[key]) for key in ("group_list", "user_list", "potential_user_list")}
 
-    def _group_rows(self, group_id, project_id=2):
+    @staticmethod
+    def _group_rows(group_id, project_id=2):
         return ObjectAssignment.objects.filter(project_id=project_id, group_id=group_id)
 
-    def _user_rows(self, user_id, project_id=2):
+    @staticmethod
+    def _user_rows(user_id, project_id=2):
         return ObjectAssignment.objects.filter(project_id=project_id, assigned_user_id=user_id)
 
 
