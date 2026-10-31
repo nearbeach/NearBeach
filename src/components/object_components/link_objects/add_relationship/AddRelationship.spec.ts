@@ -25,7 +25,7 @@ describe("AddRelationship", () => {
         vi.restoreAllMocks();
     });
 
-    test("mounting component", async () => {
+    test("mounting component", () => {
         const wrapper = mount(AddRelationship, {
             global: {
                 plugins: [router, i18n],

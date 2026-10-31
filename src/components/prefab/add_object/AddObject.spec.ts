@@ -42,14 +42,14 @@ describe("AddObject", () => {
       .mockImplementation(() => { /* Intentionally left empty */ });
   }
 
-  test("renders label correctly", async () => {
+  test("renders label correctly", () => {
     const wrapper = mountAddObject();
 
     const label = wrapper.find("label");
     expect(label.text()).toBe("+Test Label");
   });
 
-  test("renders options correctly", async () => {
+  test("renders options correctly", () => {
     const wrapper = mountAddObject({
       options: [
         { label: "Option 1", value: "1" },
@@ -63,7 +63,7 @@ describe("AddObject", () => {
     expect(options.at(1)?.text()).toBe("Option 2");
   });
 
-  test("select is disabled when options are empty", async () => {
+  test("select is disabled when options are empty", () => {
     const wrapper = mountAddObject({
       options: [],
     });
@@ -72,7 +72,7 @@ describe("AddObject", () => {
     expect((select.element as HTMLSelectElement).disabled).toBe(true);
   });
 
-  test("select is not disabled when options are present", async () => {
+  test("select is not disabled when options are present", () => {
     const wrapper = mountAddObject();
 
     const select = wrapper.find("select");

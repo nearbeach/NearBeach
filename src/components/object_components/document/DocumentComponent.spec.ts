@@ -31,7 +31,7 @@ describe("DocumentComponent", () => {
     vi.restoreAllMocks();
   });
 
-  test("mounting component", async () => {
+  test("mounting component", () => {
     expect(DocumentComponent).toBeTruthy();
   });
 

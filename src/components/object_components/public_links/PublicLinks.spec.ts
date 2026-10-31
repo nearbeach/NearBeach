@@ -69,9 +69,9 @@ describe("PublicLinks - managing links", () => {
 
   // Respond to each request by method so loading and mutating can differ
   function mockFetch(responses: Record<string, { status: number; body: unknown }>) {
-    return vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+    return vi.spyOn(globalThis, "fetch").mockImplementation((_url, init) => {
       const { status, body } = responses[init?.method ?? "GET"] ?? { status: 200, body: {} };
-      return { status, json: () => Promise.resolve(structuredClone(body)) } as Response;
+      return Promise.resolve({ status, json: () => Promise.resolve(structuredClone(body)) } as Response);
     });
   }
 

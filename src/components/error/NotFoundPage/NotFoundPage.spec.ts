@@ -19,7 +19,7 @@ describe("NotFound", () => {
   });
 });
 
-describe("NotFound - A11Y checks", async () => {
+describe("NotFound - A11Y checks", () => {
   test("main title exists on page", async () => {
     // Mount the component
     const wrapper = mount(DashboardPage, {});

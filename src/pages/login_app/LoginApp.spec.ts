@@ -16,7 +16,7 @@ describe("LoginApp", () => {
     setActivePinia(createPinia());
   });
 
-  test("mounting component", async () => {
+  test("mounting component", () => {
     // LoginApp component exists
     expect(LoginApp).toBeTruthy();
   });

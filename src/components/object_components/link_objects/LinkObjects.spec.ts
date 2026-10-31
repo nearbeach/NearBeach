@@ -51,7 +51,7 @@ describe("LinkObjects", () => {
         vi.restoreAllMocks();
     });
 
-    test("mounting component", async () => {
+    test("mounting component", () => {
         // LinkObjects component exists
         expect(LinkObjects).toBeTruthy();
     });
@@ -117,10 +117,10 @@ describe("LinkObjects - managing links", () => {
     ];
 
     function mockFetch(responses: Record<string, unknown> = {}) {
-        return vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+        return vi.spyOn(globalThis, "fetch").mockImplementation((_url, init) => {
             const method = init?.method ?? "GET";
             const body = method in responses ? responses[method] : (method === "GET" ? links : {});
-            return { status: 200, json: () => Promise.resolve(structuredClone(body)) } as Response;
+            return Promise.resolve({ status: 200, json: () => Promise.resolve(structuredClone(body)) } as Response);
         });
     }
 

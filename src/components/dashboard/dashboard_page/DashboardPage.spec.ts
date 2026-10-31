@@ -11,7 +11,7 @@ describe("DashboardPage", () => {
     });
 });
 
-describe("DashboardPage - A11Y checks", async () => {
+describe("DashboardPage - A11Y checks", () => {
     test("main title exists on page", async () => {
         // Mount the component
         const wrapper = mount(DashboardPage, {});

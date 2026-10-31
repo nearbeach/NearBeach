@@ -17,7 +17,7 @@ describe("ForgottenPassword", () => {
     setActivePinia(createPinia());
   });
 
-  test("renders ForgottenPasswordPanel initially", async () => {
+  test("renders ForgottenPasswordPanel initially", () => {
     const wrapper = mount(ForgottenPassword, {
       global: {
         plugins: [router, i18n],

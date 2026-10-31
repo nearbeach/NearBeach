@@ -123,7 +123,7 @@ describe("GeneralDetailComponent", () => {
       vi.useFakeTimers({ toFake: ["setTimeout"] });
 
       // Hold the response so the in-progress state can be observed
-      let release: (value: Response) => void = () => {};
+      let release: (value: Response) => void = () => undefined;
       fetchSpy.mockReturnValue(new Promise<Response>((resolve) => (release = resolve)));
 
       await wrapper.find("button.primary").trigger("click");

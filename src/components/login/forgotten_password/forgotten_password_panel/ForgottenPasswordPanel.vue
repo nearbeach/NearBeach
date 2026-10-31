@@ -39,7 +39,7 @@ const disableButton = ref<boolean>(true);
 const disableTextInput = ref<boolean>(false);
 
 // Define watch
-watch(emailAddress, async(new_value) => {
+watch(emailAddress, (new_value) => {
     if (buttonState.value !== ObjectStateEnum.NoAction) {
         // Disable this by default
         disableButton.value = true;

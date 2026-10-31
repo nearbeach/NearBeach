@@ -86,7 +86,7 @@ describe("ForgottenPasswordPanel", () => {
     expect(wrapper.emitted()).toHaveProperty("passwordReset");
   });
 
-  test("renders correct translations", async () => {
+  test("renders correct translations", () => {
     const wrapper = mount(ForgottenPasswordPanel, {
       global: {
         plugins: [router, i18n],

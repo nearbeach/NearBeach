@@ -16,7 +16,7 @@ describe("SmallLoadingSkeleton", () => {
     setActivePinia(createPinia());
   });
 
-  test("has correct styles", async () => {
+  test("has correct styles", () => {
     // Attach to the document so the scoped styles are applied
     const wrapper = mount(SmallLoadingSkeleton, {
       attachTo: document.body,
@@ -37,7 +37,7 @@ describe("SmallLoadingSkeleton", () => {
     wrapper.unmount();
   });
 
-  test("renders slot content", async () => {
+  test("renders slot content", () => {
     const wrapper = mount(SmallLoadingSkeleton, {
       slots: {
         default: "<div class='slot-content'>Slot Content</div>",

@@ -43,7 +43,7 @@ describe("PasswordResetPanel", () => {
     setQueryString(originalSearch);
   });
 
-  test("renders the reset password title", async () => {
+  test("renders the reset password title", () => {
     const wrapper = mountPasswordResetPanel();
 
     const title = wrapper.find("#main-title");

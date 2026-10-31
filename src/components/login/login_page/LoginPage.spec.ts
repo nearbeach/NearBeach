@@ -49,7 +49,7 @@ describe("LoginPage", () => {
     vi.restoreAllMocks();
   });
 
-  test("renders LoginImage and LoginPanel initially", async () => {
+  test("renders LoginImage and LoginPanel initially", () => {
     wrapper = mountLoginPage();
 
     // Check LoginImage and LoginPanel are shown, TwoFactorPanel is hidden

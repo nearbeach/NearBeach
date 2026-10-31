@@ -3,7 +3,7 @@ import { mount } from "@vue/test-utils";
 import {ObjectStatusTag} from ".";
 
 describe("ObjectStatusTag", () => {
-  test("renders with correct class and text for valid higherOrderStatus", async () => {
+  test("renders with correct class and text for valid higherOrderStatus", () => {
     const wrapper = mount(ObjectStatusTag, {
       props: {
         higherOrderStatus: "normal",
@@ -17,7 +17,7 @@ describe("ObjectStatusTag", () => {
     expect(span.text()).toBe("Active");
   });
 
-  test("warns for invalid higherOrderStatus", async () => {
+  test("warns for invalid higherOrderStatus", () => {
     // Vue prop validators only warn, they never throw
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => { /* Intentionally left empty */ });
 
@@ -35,7 +35,7 @@ describe("ObjectStatusTag", () => {
     warnSpy.mockRestore();
   });
 
-  test("renders with correct class and text for different higherOrderStatus", async () => {
+  test("renders with correct class and text for different higherOrderStatus", () => {
     const wrapper = mount(ObjectStatusTag, {
       props: {
         higherOrderStatus: "blocked",
@@ -49,7 +49,7 @@ describe("ObjectStatusTag", () => {
     expect(span.text()).toBe("Blocked");
   });
 
-  test("renders with correct class and text for different higherOrderStatus", async () => {
+  test("renders with correct class and text for different higherOrderStatus", () => {
     const wrapper = mount(ObjectStatusTag, {
       props: {
         higherOrderStatus: "closed",
@@ -63,7 +63,7 @@ describe("ObjectStatusTag", () => {
     expect(span.text()).toBe("Closed");
   });
 
-  test("renders with correct class and text for different higherOrderStatus", async () => {
+  test("renders with correct class and text for different higherOrderStatus", () => {
     const wrapper = mount(ObjectStatusTag, {
       props: {
         higherOrderStatus: "backlog",

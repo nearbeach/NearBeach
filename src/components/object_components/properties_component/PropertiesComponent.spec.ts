@@ -21,7 +21,7 @@ describe("PropertiesComponent", () => {
         vi.restoreAllMocks();
     });
 
-    test("mounting component", async () => {
+    test("mounting component", () => {
         // Properties component exists
         expect(PropertiesComponent).toBeTruthy();
     });

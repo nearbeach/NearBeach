@@ -37,7 +37,7 @@ describe("NavMenu", () => {
     setActivePinia(createPinia());
   });
 
-  test("mounting component", async () => {
+  test("mounting component", () => {
     // NavMenu component exists
     expect(NavMenu).toBeTruthy();
   });

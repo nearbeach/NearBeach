@@ -13,11 +13,11 @@ const notes = [
 
 function mockFetch(handler?: (url: string, init?: RequestInit) => unknown) {
   return vi.spyOn(globalThis, "fetch").mockImplementation(
-    async (url, init) =>
-      ({
+    (url, init) =>
+      Promise.resolve({
         status: 200,
         json: () => Promise.resolve(structuredClone(handler ? handler(String(url), init) : notes)),
-      }) as Response,
+      } as Response),
   );
 }
 
@@ -115,12 +115,12 @@ describe("NotesComponent", () => {
 
   test("logs an error when creating fails", async () => {
     let first = true;
-    vi.spyOn(globalThis, "fetch").mockImplementation(async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(() => {
       if (first) {
         first = false;
-        return { json: () => Promise.resolve(structuredClone(notes)) } as Response;
+        return Promise.resolve({ json: () => Promise.resolve(structuredClone(notes)) } as Response);
       }
-      throw new Error("fail");
+      return Promise.reject(new Error("fail"));
     });
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
 
@@ -169,9 +169,9 @@ describe("NotesComponent", () => {
 
   test("logs an error when updating fails", async () => {
     let calls = 0;
-    vi.spyOn(globalThis, "fetch").mockImplementation(async () => {
-      if (calls++ === 0) return { json: () => Promise.resolve(structuredClone(notes)) } as Response;
-      throw new Error("fail");
+    vi.spyOn(globalThis, "fetch").mockImplementation(() => {
+      if (calls++ === 0) return Promise.resolve({ json: () => Promise.resolve(structuredClone(notes)) } as Response);
+      return Promise.reject(new Error("fail"));
     });
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
 
@@ -201,9 +201,9 @@ describe("NotesComponent", () => {
 
   test("logs an error and keeps the note when deleting fails", async () => {
     let calls = 0;
-    vi.spyOn(globalThis, "fetch").mockImplementation(async () => {
-      if (calls++ === 0) return { json: () => Promise.resolve(structuredClone(notes)) } as Response;
-      throw new Error("fail");
+    vi.spyOn(globalThis, "fetch").mockImplementation(() => {
+      if (calls++ === 0) return Promise.resolve({ json: () => Promise.resolve(structuredClone(notes)) } as Response);
+      return Promise.reject(new Error("fail"));
     });
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
 

@@ -22,7 +22,7 @@ describe("SearchCard", () => {
     await router.isReady();
   });
 
-  test("renders with correct props", async () => {
+  test("renders with correct props", () => {
     const wrapper = mount(SearchCard, {
       props: {
         higherOrderStatus: "normal",
@@ -56,7 +56,7 @@ describe("SearchCard", () => {
     expect(routerLink.text()).toBe("Test Object");
   });
 
-  test("renders with default status", async () => {
+  test("renders with default status", () => {
     const wrapper = mount(SearchCard, {
       props: {
         higherOrderStatus: "normal",
@@ -76,7 +76,7 @@ describe("SearchCard", () => {
     expect(objectStatusTag.props("status")).toBe("");
   });
 
-  test("renders with different higherOrderStatus", async () => {
+  test("renders with different higherOrderStatus", () => {
     const wrapper = mount(SearchCard, {
       props: {
         higherOrderStatus: "blocked",
