@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, ref, watch} from "vue";
+import {computed} from "vue";
 import {useErrorStore} from "@/stores/error/error.ts";
 import {WlkModalHeader, WlkModal, WlkModalFooter, WlkButton} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";

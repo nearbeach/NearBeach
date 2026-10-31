@@ -18,8 +18,8 @@ function makeFile(name = "report.pdf") {
 // Put files into the file upload and let the component react to the change
 async function selectFiles(wrapper: ReturnType<typeof mountUpload>, files: File[]) {
   const upload = wrapper.findComponent(WlkFileUpload);
-  await upload.vm.$emit("update:modelValue", files);
-  await upload.vm.$emit("change");
+  upload.vm.$emit("update:modelValue", files);
+  upload.vm.$emit("change");
   await flushPromises();
 }
 

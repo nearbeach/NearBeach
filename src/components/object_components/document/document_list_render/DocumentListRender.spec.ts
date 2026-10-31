@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { mount, flushPromises } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import {DocumentListRender} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";

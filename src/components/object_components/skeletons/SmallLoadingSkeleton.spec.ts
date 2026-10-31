@@ -4,7 +4,6 @@ import {SmallLoadingSkeleton} from ".";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
-import { nextTick } from "vue";
 
 const router = createRouter({
   history: createWebHistory(),

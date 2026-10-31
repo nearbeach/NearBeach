@@ -2,7 +2,6 @@
 import {required, WlkSelect} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import {ref, watch} from "vue";
-import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 

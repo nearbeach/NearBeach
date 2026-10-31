@@ -26,7 +26,7 @@ function mountOrganisation() {
 async function choose(wrapper: ReturnType<typeof mountOrganisation>, id: number | null) {
   const add = wrapper.findComponent(AddObject);
   add.vm.$emit("update:modelValue", id);
-  await add.vm.$emit("change");
+  add.vm.$emit("change");
   await flushPromises();
 }
 

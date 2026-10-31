@@ -5,7 +5,6 @@ import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
 import { nextTick } from "vue";
-import { useObjectMetaDataStore } from "@/stores/object_meta_data/object_meta_data.ts";
 import i18n from "@/i18n.ts";
 import { WlkTabs } from "whelk-ui";
 

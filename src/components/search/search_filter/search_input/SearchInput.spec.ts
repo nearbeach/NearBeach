@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import {SearchInput} from ".";
-import {defineComponent, h, nextTick} from "vue";
+import { nextTick} from "vue";
 
 describe("SearchInput", () => {
   test("renders with custom placeholder", async () => {

@@ -5,7 +5,6 @@ import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
-import type {CustomerInterface} from "@/utils/interfaces/stores/CustomerInterface.ts";
 
 // Define stores
 const objectStore = useObjectStore();

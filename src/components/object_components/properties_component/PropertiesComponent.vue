@@ -10,7 +10,7 @@ import {useObjectStore} from "@/stores/object/object.ts";
 import ObjectStatus from "@/components/object_components/object_status/ObjectStatus.vue";
 import ObjectPriority from "@/components/object_components/object_priority/ObjectPriority.vue";
 import {useI18n} from "petite-vue-i18n";
-import {ref, nextTick, watch} from "vue";
+import {ref, watch} from "vue";
 import router from "@/router/router.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";

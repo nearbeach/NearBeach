@@ -78,7 +78,7 @@ describe("GroupAccess", () => {
     const wrapper = mount(GroupAccess);
 
     wrapper.findComponent(AddObject).vm.$emit("update:modelValue", 3);
-    await wrapper.findComponent(AddObject).vm.$emit("change");
+    wrapper.findComponent(AddObject).vm.$emit("change");
     await flushPromises();
 
     expect(fetchSpy.mock.calls[0][0]).toBe("/api/v1/project/5/groups/");
@@ -93,7 +93,7 @@ describe("GroupAccess", () => {
     const fetchSpy = mockFetch(201, {});
     const wrapper = mount(GroupAccess);
 
-    await wrapper.findComponent(AddObject).vm.$emit("change");
+    wrapper.findComponent(AddObject).vm.$emit("change");
     await flushPromises();
 
     expect(fetchSpy).not.toHaveBeenCalled();
@@ -104,7 +104,7 @@ describe("GroupAccess", () => {
     const wrapper = mount(GroupAccess);
 
     wrapper.findComponent(AddObject).vm.$emit("update:modelValue", 99);
-    await wrapper.findComponent(AddObject).vm.$emit("change");
+    wrapper.findComponent(AddObject).vm.$emit("change");
     await flushPromises();
 
     expect(fetchSpy).not.toHaveBeenCalled();
@@ -116,7 +116,7 @@ describe("GroupAccess", () => {
     const wrapper = mount(GroupAccess);
 
     wrapper.findComponent(AddObject).vm.$emit("update:modelValue", 3);
-    await wrapper.findComponent(AddObject).vm.$emit("change");
+    wrapper.findComponent(AddObject).vm.$emit("change");
     await flushPromises();
 
     expect(wrapper.text()).toContain("Group could not be added");

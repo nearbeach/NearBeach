@@ -64,7 +64,7 @@ function signIn(event: Event) {
 
 	// Emit data upstream
 	emit('signIn');
-};
+}
 </script>
 
 <template>

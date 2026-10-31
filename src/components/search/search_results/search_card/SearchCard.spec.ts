@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { mount, flushPromises } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import {SearchCard} from ".";
 import {createRouter, createMemoryHistory, RouterLink} from "vue-router";
-import {defineComponent, h, nextTick} from "vue";
+import {defineComponent, h} from "vue";
 import {ObjectIdTag} from "@/components/prefab/object_id_tag";
 import {ObjectStatusTag} from "@/components/prefab/object_status_tag";
 
