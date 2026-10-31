@@ -8,6 +8,7 @@ This file is only for the automatic testing and is not built for server use.
 """
 
 import os
+import sys
 from NearBeach import __version__ as version
 from rest_framework.settings import api_settings
 
@@ -68,6 +69,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Silk writes its own rows (and sometimes runs a clean-up query) on every request, which makes the query count tests
+# flaky - so it only profiles when the server runs, not during `manage.py test`
+if 'test' in sys.argv:
+    MIDDLEWARE = [m for m in MIDDLEWARE if not m.startswith(('silk.', 'local.silk_'))]
 
 ROOT_URLCONF = 'local.urls'
 
