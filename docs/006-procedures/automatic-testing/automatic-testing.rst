@@ -7,6 +7,7 @@ NearBeach has the following automatic testing setup;
 - Frontend Unit Tests
 - Frontend End-to-end tests
 - Backend API Fuzzy Testing
+- API Request Profiling (Silk)
 - Database Index Benchmarking
 
 
@@ -103,6 +104,84 @@ Pass extra schemathesis args after --
     scripts/run_schemathesis.sh admin -- --include-path-regex '^/api/v1/projects/'
 
 Other variables are SCHEMATHESIS_PASSWORD (default Test1234$), SCHEMATHESIS_PORT and PYTHON.
+
+
+API Request Profiling (Silk)
+============================
+
+Activate your python virtual environment
+
+    source ./venv/bin/activate
+
+Make sure you have installed all dev requirements
+
+    pip install -r requirements-dev.txt
+
+Create the Silk tables in your local database
+
+    python3 ./manage.py migrate
+
+Run the server as normal
+
+    python3 ./manage.py runserver
+
+Use NearBeach as you normally would, then open the Silk interface at http://localhost:8000/silk/
+
+
+What is configured
+------------------
+
+- silk is in INSTALLED_APPS, and silk.middleware.SilkyMiddleware is the first entry in MIDDLEWARE.
+- silk.urls is mounted at /silk/ in local/urls.py.
+- SILKY_PYTHON_PROFILER is True, which lets Silk collect a Python profile inside each profiled block.
+- local/silk_profile_middleware.py wraps every request in silk_profile, named after the method and path. Without it
+  the Profiling tab says "No Silk profiling was performed for this request", because Silk only profiles code that has
+  been explicitly marked. The /silk/ pages are skipped so Silk does not profile itself.
+- SILKY_MAX_RECORDED_REQUESTS, SILKY_MAX_REQUEST_BODY_SIZE and SILKY_MAX_RESPONSE_BODY_SIZE keep the Silk tables from
+  growing without limit.
+
+
+Reading the results
+-------------------
+
+1. The Requests page lists every request, newest first. Sort or filter by path, time taken or number of queries to find
+   the slow ones.
+
+2. Open a request, then its SQL tab, to see every query it ran with the time each one took. The same query repeated
+   many times with different ids is an N+1 - fix it with select_related or prefetch_related.
+
+3. The Profiling tab shows the Python call graph and timings for the whole request. Use it when the time is not in the
+   database.
+
+4. Timings include the profiling overhead, so compare requests against each other rather than trusting the absolute
+   numbers.
+
+5. When the list gets noisy, empty the Silk tables with the Clear DB option in the Silk menu, or from the command line
+
+       python3 ./manage.py silk_clear_request_log
+
+
+Profiling a specific piece of code
+----------------------------------
+
+To time one block in more detail, use the context manager or decorator from silk. For class based views, put the
+decorator on the method, not the class.
+
+    from silk.profiling.profiler import silk_profile
+
+    with silk_profile(name='Build kanban payload'):
+        ...
+
+    @silk_profile(name='Project list')
+    def get(self, request):
+        ...
+
+
+Turning it off
+--------------
+
+Remove silk, silk.middleware.SilkyMiddleware and local.silk_profile_middleware.SilkProfileAllRequestsMiddleware from
+local/settings.py. The silk tables can stay in your local database.
 
 
 Database Index Benchmarking
@@ -208,3 +287,4 @@ never creates migrations. When an index proves worthwhile, add it as models.Inde
 create a normal migration (see migration 0053 for an example). MySQL has no partial indexes, so the script drops the
 WHERE clause on MySQL. MySQL also drops Django's own foreign key index when a composite index starts with the same
 column, so the script restores a plain index between runs to keep the baseline honest.
+
