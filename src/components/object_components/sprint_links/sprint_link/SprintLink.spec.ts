@@ -9,7 +9,7 @@ import {TrashIcon} from "@lucide/vue";
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes,
+  routes,
 });
 
 describe("SprintLink", () => {
@@ -33,7 +33,7 @@ describe("SprintLink", () => {
     const wrapper = mount(SprintLink, {
       props: {
         index: 0,
-        sprint: sprint,
+        sprint,
       },
     });
 
@@ -66,7 +66,7 @@ describe("SprintLink", () => {
     const wrapper = mount(SprintLink, {
       props: {
         index: 0,
-        sprint: sprint,
+        sprint,
       },
     });
 

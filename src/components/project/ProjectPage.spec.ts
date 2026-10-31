@@ -11,7 +11,7 @@ import { WlkTabs } from "whelk-ui";
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes,
+  routes,
 });
 
 describe("ProjectPage", () => {

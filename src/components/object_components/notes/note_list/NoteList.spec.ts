@@ -11,7 +11,7 @@ import {PencilIcon, TrashIcon} from "@lucide/vue";
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes,
+  routes,
 });
 
 describe("NoteList", () => {

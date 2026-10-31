@@ -8,7 +8,7 @@ import { nextTick } from "vue";
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes,
+  routes,
 });
 
 describe("SmallLoadingSkeleton", () => {

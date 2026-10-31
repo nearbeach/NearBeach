@@ -12,7 +12,7 @@ import {nextTick} from "vue";
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes,
+  routes,
 });
 
 // Both panels are always rendered and toggled with v-show, so the wrapper is

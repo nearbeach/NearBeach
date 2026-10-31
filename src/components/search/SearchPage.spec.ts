@@ -8,7 +8,7 @@ import i18n from "@/i18n.ts";
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes,
+  routes,
 });
 
 describe("SearchPage", () => {

@@ -9,7 +9,7 @@ import { WlkCard, WlkCardHeader } from "whelk-ui";
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes,
+  routes,
 });
 
 describe("ForbiddenPage", () => {
