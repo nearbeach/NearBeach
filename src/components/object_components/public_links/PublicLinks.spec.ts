@@ -154,7 +154,7 @@ describe("PublicLinks - managing links", () => {
 
   test("a failed delete request is logged", async () => {
     const { wrapper, fetchSpy } = await mountLoaded({});
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     fetchSpy.mockRejectedValueOnce(new Error("offline"));
 
     rows(wrapper)[0].vm.$emit("deleteLink", { id: "a" });
@@ -186,7 +186,7 @@ describe("PublicLinks - managing links", () => {
 
   test("a failed toggle request is logged", async () => {
     const { wrapper, fetchSpy } = await mountLoaded({});
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     fetchSpy.mockRejectedValueOnce(new Error("offline"));
 
     rows(wrapper)[0].vm.$emit("updateActive", { id: "a", index: 0 });

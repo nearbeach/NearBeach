@@ -87,7 +87,7 @@ describe("RelationshipLink", () => {
 
   test("shows an error and does not emit when the request fails", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mountLink();
     const select = wrapper.findComponent(WlkSelect);
 

@@ -142,7 +142,7 @@ describe("StakeholderCustomer - edge cases", () => {
 
   test("a failed add is logged", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mountStakeholderCustomer();
     await flushPromises();
 
@@ -154,7 +154,7 @@ describe("StakeholderCustomer - edge cases", () => {
 
   test("a failed remove is logged and the customer is still removed locally", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     useObjectStore().customers = [john, jane];
     const wrapper = mountStakeholderCustomer();
     await flushPromises();

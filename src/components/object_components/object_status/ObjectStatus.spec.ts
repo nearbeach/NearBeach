@@ -68,7 +68,7 @@ describe("ObjectStatus", () => {
 
   test("an unknown status is logged and not saved", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mountStatus();
 
     wrapper.findComponent(WlkSelect).vm.$emit("update:modelValue", "99");
@@ -80,7 +80,7 @@ describe("ObjectStatus", () => {
 
   test("a failed save shows an error", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mountStatus();
     const select = wrapper.findComponent(WlkSelect);
 

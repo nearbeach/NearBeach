@@ -150,7 +150,7 @@ describe("GeneralDetailComponent", () => {
     test("shows an error and stays disabled when saving fails", async () => {
       const { wrapper, fetchSpy } = await mountLoaded();
       fetchSpy.mockRejectedValue(new Error("offline"));
-      const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+      const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
 
       await wrapper.find("button.primary").trigger("click");
       await flushPromises();

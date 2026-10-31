@@ -54,7 +54,7 @@ describe("PublicLinkRow", () => {
     vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(
       new Error("denied"),
     );
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
 
     const wrapper = mountRow();
     await wrapper.findAll("td")[0].trigger("click");

@@ -39,7 +39,7 @@ describe("AddObject", () => {
     } as UserActivation);
     return vi
       .spyOn(HTMLSelectElement.prototype, "showPicker")
-      .mockImplementation(() => {});
+      .mockImplementation(() => { /* Intentionally left empty */ });
   }
 
   test("renders label correctly", async () => {

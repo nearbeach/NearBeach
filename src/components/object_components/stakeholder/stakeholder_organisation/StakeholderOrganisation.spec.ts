@@ -107,7 +107,7 @@ describe("StakeholderOrganisation", () => {
 
   test("a failed add is logged and leaves the organisation unset", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mountOrganisation();
 
     await choose(wrapper, 3);
@@ -132,7 +132,7 @@ describe("StakeholderOrganisation", () => {
 
   test("a failed removal is logged", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     useObjectStore().organisation = organisation;
     const wrapper = mountOrganisation();
 

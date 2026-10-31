@@ -101,7 +101,7 @@ describe("DocumentList", () => {
 
   test("a failed delete is logged and keeps the document", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const documentationStore = useDocumentationStore();
     documentationStore.documents = [doc("a", "root.pdf")];
     const wrapper = mount(DocumentList);

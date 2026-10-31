@@ -19,7 +19,7 @@ describe("ObjectStatusTag", () => {
 
   test("warns for invalid higherOrderStatus", async () => {
     // Vue prop validators only warn, they never throw
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => { /* Intentionally left empty */ });
 
     mount(ObjectStatusTag, {
       props: {

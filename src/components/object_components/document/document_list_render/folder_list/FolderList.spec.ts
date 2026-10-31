@@ -92,7 +92,7 @@ describe("FolderList", () => {
 
   test("a failed delete is logged and keeps the folder", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const documentationStore = useDocumentationStore();
     const wrapper = mountFolders();
 

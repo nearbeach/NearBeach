@@ -86,7 +86,7 @@ describe("StakeholderComponent", () => {
   test("a failed load is logged", async () => {
     useObjectStore().is_loaded = true;
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     mountStakeholders();
     await flushPromises();
 

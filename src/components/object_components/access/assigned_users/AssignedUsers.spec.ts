@@ -152,7 +152,7 @@ describe("AssignedUsers", () => {
 
   test("a failed add is logged", async () => {
     objectStore.potential_user_list = [user1, user2];
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mount(AssignedUsers);
     await flushPromises();
     vi.mocked(globalThis.fetch).mockRejectedValue(new Error("offline"));
@@ -165,7 +165,7 @@ describe("AssignedUsers", () => {
 
   test("a failed fetch of potential users is logged", async () => {
     vi.mocked(globalThis.fetch).mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     mount(AssignedUsers);
 
     objectStore.is_loaded = true;
@@ -176,7 +176,7 @@ describe("AssignedUsers", () => {
 
   test("a failed remove is logged and the user is still removed locally", async () => {
     objectStore.user_list = [user1];
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mount(AssignedUsers);
     await flushPromises();
     vi.mocked(globalThis.fetch).mockRejectedValue(new Error("offline"));

@@ -78,7 +78,7 @@ describe("ObjectPriority", () => {
 
   test("an unknown priority shows an error and does not save", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mountPriority();
     const select = wrapper.findComponent(WlkSelect);
 
@@ -92,7 +92,7 @@ describe("ObjectPriority", () => {
 
   test("a failed save shows an error", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mountPriority();
     const select = wrapper.findComponent(WlkSelect);
 

@@ -116,7 +116,7 @@ describe("UploadDocument", () => {
     const documentationStore = useDocumentationStore();
     const before = documentationStore.documents.length;
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
 
     const wrapper = mountUpload();
     await selectFiles(wrapper, [makeFile()]);

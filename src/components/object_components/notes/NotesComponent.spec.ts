@@ -73,7 +73,7 @@ describe("NotesComponent", () => {
 
   test("logs an error when loading fails", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("boom"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
 
     mountNotes();
     await flushPromises();
@@ -122,7 +122,7 @@ describe("NotesComponent", () => {
       }
       throw new Error("fail");
     });
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
 
     const wrapper = mountNotes();
     await flushPromises();
@@ -173,7 +173,7 @@ describe("NotesComponent", () => {
       if (calls++ === 0) return { json: async () => structuredClone(notes) } as Response;
       throw new Error("fail");
     });
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
 
     const wrapper = mountNotes();
     await flushPromises();
@@ -205,7 +205,7 @@ describe("NotesComponent", () => {
       if (calls++ === 0) return { json: async () => structuredClone(notes) } as Response;
       throw new Error("fail");
     });
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
 
     const wrapper = mountNotes();
     await flushPromises();
