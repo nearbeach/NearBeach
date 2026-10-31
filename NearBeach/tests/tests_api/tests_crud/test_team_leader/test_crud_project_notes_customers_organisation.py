@@ -5,7 +5,6 @@ Fixture data for project 2 ("Project - QA Team"):
  - customer 1 linked, customer 2 not
  - organisation 1 ("NearBeach Incorporate") whose customers are 1 and 2
 """
-from django.contrib.auth import get_user_model
 
 from NearBeach.models.customer import Customer
 from NearBeach.models.misc.note import ObjectNote

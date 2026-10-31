@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
-from NearBeach.models import Organisation, Customer
+from NearBeach.models import Organisation
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 from NearBeach.services.abstraction.object_services_abstraction import AuthenticatedRequest
 from NearBeach.services.organisation.OrganisationService import OrganisationService
