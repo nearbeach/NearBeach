@@ -6,13 +6,16 @@ import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data
 import {ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import type {OrganisationLinkInterface} from "@/utils/interfaces/stores/OrganisationLinkInterface.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
 
 // Define stores
+const errorStore = useErrorStore();
 const objectStore = useObjectStore();
 const objectMetaDataStore = useObjectMetaDataStore();
 
 // Define refs
 // TODO - Check this is how we handle this on user/group
+const errorString = ref<string>("");
 const organisationModel = ref<number>(0);
 
 // Define functions
@@ -41,18 +44,25 @@ async function addOrganisation() {
 			},
 		)
 
-		// Set data in store
-		const data: OrganisationLinkInterface = await response.json();
+		// Check response status
+		switch (response.status) {
+			case 201:
+				// Set data in store
+				const data: OrganisationLinkInterface = await response.json();
 
-		// Object Store
-		objectStore.customers = [];
-		objectStore.organisation = data.organisation;
+				// Object Store
+				objectStore.customers = [];
+				objectStore.organisation = data.organisation;
 
-		// Object Data Meta Store
-		objectMetaDataStore.potential_customers = data.potential_customers ?? [];
+				// Object Data Meta Store
+				objectMetaDataStore.potential_customers = data.potential_customers ?? [];
+				break;
+			default:
+				errorString.value = response.statusText;
+				break;
+		}
 	} catch (errors) {
-		// TODO - implement correct error handling
-		console.error(errors);
+		errorStore.setError(errors);
 	}
 }
 
@@ -103,6 +113,12 @@ async function removeOrganisation() {
 				v-model="organisationModel"
 				@change="addOrganisation"
 			/>
+		</div>
+
+		<div class="error-message"
+		     v-if="errorString !== ''"
+		>
+			{{errorString}}
 		</div>
 	</div>
 </template>
