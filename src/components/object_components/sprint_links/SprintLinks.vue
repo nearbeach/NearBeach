@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {WlkButton, WlkDate, WlkModal, WlkModalFooter, WlkModalHeader, WlkTextInput} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
@@ -55,6 +55,15 @@ watch(
         }
     }
 );
+
+// Define computed
+const disableCreateSprint = computed(() => {
+	// Set up a set that we'll remove from potential results
+	const existingTitlesSet = new Set(sprintData.value.map(x => x.title));
+
+	// Return
+	return existingTitlesSet.has(sprintTitleModel.value);
+})
 
 // Define onMounted
 onMounted(async () => {
@@ -228,6 +237,7 @@ function openModal() {
                 >{{ t("close_modal") }}
                 </WlkButton>
                 <WlkButton class="compact primary"
+                           :disabled="disableCreateSprint"
                            v-on:click="createSprint"
                 >{{ t("create_sprint") }}
                 </WlkButton>
