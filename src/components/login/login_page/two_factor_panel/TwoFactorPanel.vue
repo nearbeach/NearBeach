@@ -4,22 +4,7 @@ import {WlkTextInput, WlkButton, ObjectStateEnum, required} from "whelk-ui"
 import {useI18n} from "petite-vue-i18n";
 
 // Implement i18y
-const {t} = useI18n({
-	messages: {
-		en: {
-			login_message: "NearBeach Login",
-			submit_tfa: "Submit 2FA",
-			tfa: "Two Factor Password",
-			tfa_placeholder: "Please insert the two factor password",
-		},
-		ja: {
-			login_message: "ニアビーチログイン",
-			submit_tfa: "2要素認証を送信",
-			tfa: "二要素パスワード",
-			tfa_placeholder: "2要素パスワードを入力してください",
-		}
-	}
-})
+const {t} = useI18n()
 
 // Define emits
 const emit = defineEmits(['signIn']);
@@ -69,11 +54,11 @@ function signIn(event: Event) {
 
 <template>
 	<div class="two-factor-panel">
-		<h1 id="main-title">{{ t("login_message") }}</h1>
+		<h1 id="main-title">{{ t("two_factor_panel.login_message") }}</h1>
 		<p class="error-message">{{ errorMessage }}</p>
 		<WlkTextInput class="compact"
-		              :label="t('tfa')"
-		              :placeholderText="t('tfa_placeholder')"
+		              :label="t('two_factor_panel.tfa')"
+		              :placeholderText="t('two_factor_panel.tfa_placeholder')"
 		              :validationRules="[required()]"
 		              v-model="otpToken"
 		              ref="otp-token-ref"
@@ -84,7 +69,7 @@ function signIn(event: Event) {
 			:disabled="buttonState === ObjectStateEnum.Disable"
 			@click="signIn"
 		>
-			{{ t('submit_tfa') }}
+			{{ t('two_factor_panel.submit_tfa') }}
 		</WlkButton>
 	</div>
 </template>

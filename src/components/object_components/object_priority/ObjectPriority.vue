@@ -6,30 +6,7 @@ import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			highest: "Highest",
-			high: "High",
-			normal: "Normal",
-			label: "Priority",
-			low: "Low",
-			lowest: "Lowest",
-			priority_success: "Successfully updated priority",
-			priority_updating: "Updating Priority",
-		},
-		ja: {
-			highest: "最高",
-			high: "高い",
-			normal: "普通",
-			label: "優先度",
-			low: "低い",
-			lowest: "最低",
-			priority_success: "優先度の更新に成功しました",
-			priority_updating: "優先度を更新中",
-		},
-	}
-});
+const {t} = useI18n();
 
 // Define ref
 const priorityModel = ref<string>("0");
@@ -37,11 +14,11 @@ const state = ref<string>("");
 
 // Define constants
 const priorityList = [
-	{value: 0, label: t("highest")},
-	{value: 1, label: t("high")},
-	{value: 2, label: t("normal")},
-	{value: 3, label: t("low")},
-	{value: 4, label: t("lowest")},
+	{value: 0, label: t("object_priority.highest")},
+	{value: 1, label: t("object_priority.high")},
+	{value: 2, label: t("object_priority.normal")},
+	{value: 3, label: t("object_priority.low")},
+	{value: 4, label: t("object_priority.lowest")},
 ]
 
 // Define store
@@ -65,7 +42,7 @@ watch(priorityModel, (new_value) => {
 		return;
 	}
 
-	state.value = t("priority_updating");
+	state.value = t("object_priority.priority_updating");
 
 	// Fetch the status
 	const priority = priorityList[parseInt(new_value)];
@@ -95,7 +72,7 @@ watch(priorityModel, (new_value) => {
 			},
 		},
 	).then(() => {
-		state.value = t("priority_success");
+		state.value = t("object_priority.priority_success");
 
 		setTimeout(() => {
 			state.value = "";
@@ -112,7 +89,7 @@ watch(priorityModel, (new_value) => {
 	<div class="object-priority">
 		<WlkSelect
 			class="status compact"
-			:label="t('label')"
+			:label="t('object_priority.label')"
 			:options="priorityList"
 			:status="state"
 			:validationRules="[required()]"

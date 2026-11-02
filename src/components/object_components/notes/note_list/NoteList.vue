@@ -6,20 +6,7 @@ import { Pencil, TrashIcon } from "@lucide/vue";
 import ProfilePicture from "@/components/prefab/profile_picture/ProfilePicture.vue";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			edit_note: "Edit note",
-			empty_note_list: "No notes in object",
-			last_modified: "Last Modified",
-		},
-		ja: {
-			edit_note: "編集メモ",
-			empty_note_list: "オブジェクトにメモはありません",
-			last_modified: "最終更新日時",
-		}
-	}
-})
+const {t} = useI18n()
 
 // Define emits
 const emit = defineEmits(['deleteNote', 'editNote']);
@@ -49,7 +36,7 @@ const props = defineProps({
 						{{ note.first_name }} {{ note.last_name }}
 					</div>
 					<div class="last-modified">
-						<strong>{{t("last_modified")}}: </strong>{{note.date_modified}}
+						<strong>{{t("note_list.last_modified")}}: </strong>{{note.date_modified}}
 					</div>
 				</div>
 			</div>
@@ -57,10 +44,10 @@ const props = defineProps({
 				{{ note.note }}
 			</div>
 			<div class="edit-controls">
-				<Pencil :aria-label="t('edit_note')"
+				<Pencil :aria-label="t('note_list.edit_note')"
 						v-on:click="emit('editNote', index)"
 				/>
-				<TrashIcon :aria-label="t('delete_note')"
+				<TrashIcon :aria-label="t('note_list.delete_note')"
 						   v-on:click="emit('deleteNote', note.id)"
 				/>
 			</div>
@@ -69,7 +56,7 @@ const props = defineProps({
 	<div v-else
 	     class="empty-note-list"
 	>
-		{{ t("empty_note_list") }}
+		{{ t("note_list.empty_note_list") }}
 	</div>
 </template>
 

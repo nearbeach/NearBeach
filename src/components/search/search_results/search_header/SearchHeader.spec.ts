@@ -5,7 +5,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
 import { nextTick } from "vue";
-import i18n from "@/i18n.ts";
+import i18n, {loadLocale} from "@/i18n.ts";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -52,7 +52,8 @@ describe("SearchHeader", () => {
       },
     });
 
-    // Change locale to Japanese
+    // Japanese is lazy loaded, so fetch it before switching
+    await loadLocale("ja");
     wrapper.vm.$i18n.locale = "ja";
 
     await flushPromises();
@@ -69,7 +70,8 @@ describe("SearchHeader", () => {
       },
     });
 
-    // Change locale to Japanese
+    // Japanese is lazy loaded, so fetch it before switching
+    await loadLocale("ja");
     wrapper.vm.$i18n.locale = "ja";
 
     await flushPromises();

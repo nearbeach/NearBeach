@@ -4,16 +4,7 @@ import {useI18n} from "petite-vue-i18n";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			rootLabel: "Root",
-		},
-		ja: {
-			rootLabel: "ルートディレクトリ",
-		},
-	}
-});
+const {t} = useI18n();
 
 // Define stores
 const documentationStore = useDocumentationStore();
@@ -22,7 +13,7 @@ const documentationStore = useDocumentationStore();
 const currentFolderLabel = computed(() => {
 	// If folderArray length is 0 - return null string
 	if (documentationStore.breadCrumbsArray?.length === 0) {
-		return t("rootLabel");
+		return t("bread_crumbs.rootLabel");
 	}
 
 	// Get last array object and return the label
@@ -47,7 +38,7 @@ const getInbetweenFolders = computed(() => {
 			class="root-button"
 			v-on:click="documentationStore.goToRootFolder()"
 		>
-			{{t("rootLabel")}}
+			{{t("bread_crumbs.rootLabel")}}
 		</a>
 		<span class="middle-span">
 			<a v-for="(folder, index) in getInbetweenFolders"

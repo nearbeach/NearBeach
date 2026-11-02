@@ -12,38 +12,7 @@ import {
 import {useI18n} from "petite-vue-i18n";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			dashboard_title: "Dashboard",
-			dashboard_aria_label: "Go to dashboard",
-			kanban_board_title: "Kanban Board",
-			kanban_board_aria_label: "Search for kanban board",
-			requirement_title: "Requirement",
-			requirement_aria_label: "Search for requirement",
-			project_title: "Project",
-			project_aria_label: "Search for project",
-			task_title: "Task",
-			task_aria_label: "Search for task",
-			request_for_change_title: "Request for change",
-			request_for_change_aria_label: "Search for Request for Change",
-		},
-		ja: {
-			dashboard_title: "ダッシュボード",
-			dashboard_aria_label: "ダッシュボードへ移動",
-			kanban_board_title: "カンバンボード",
-			kanban_board_aria_label: "カンバンボードを検索",
-			requirement_title: "要件",
-			requirement_aria_label: "要件を検索する",
-			project_title: "プロジェクト",
-			project_aria_label: "プロジェクトを検索",
-			task_title: "タスク",
-			task_aria_label: "タスクを検索",
-			request_for_change_title: "変更要求",
-			request_for_change_aria_label: "変更要求を検索",
-		},
-	}
-})
+const {t} = useI18n()
 
 // Define store
 const permissionStore = usePermissionStore();
@@ -70,8 +39,8 @@ function canUserCreate(object: string) {
 		destination="dashboard"
 		route-address="/"
 		route-address-new=""
-		:override-aria-label="t('dashboard_aria_label')"
-		:title="t('dashboard_title')"
+		:override-aria-label="t('nav_menu.dashboard_aria_label')"
+		:title="t('nav_menu.dashboard_title')"
 	>
 		<component :is="LayoutDashboard" :size="14"/>
 	</NavMenuItem>
@@ -81,8 +50,8 @@ function canUserCreate(object: string) {
 		destination="kanban_board"
 		route-address="/kanban_board"
 		:route-address-new="canUserCreate('kanban_board')"
-		:override-aria-label="t('kanban_board_aria_label')"
-		:title="t('kanban_board_title')"
+		:override-aria-label="t('nav_menu.kanban_board_aria_label')"
+		:title="t('nav_menu.kanban_board_title')"
 	>
 		<component :is="SquareKanban" :size="14"/>
 	</NavMenuItem>
@@ -92,8 +61,8 @@ function canUserCreate(object: string) {
 		destination="requirement"
 		route-address="/requirement"
 		:route-address-new="canUserCreate('requirement')"
-		:override-aria-label="t('requirement_aria_label')"
-		:title="t('requirement_title')"
+		:override-aria-label="t('nav_menu.requirement_aria_label')"
+		:title="t('nav_menu.requirement_title')"
 	>
 		<component :is="ClipboardList" :size="14"/>
 	</NavMenuItem>
@@ -103,8 +72,8 @@ function canUserCreate(object: string) {
 		destination="project"
 		route-address="/project"
 		:route-address-new="canUserCreate('project')"
-		:override-aria-label="t('project_aria_label')"
-		:title="t('project_title')"
+		:override-aria-label="t('nav_menu.project_aria_label')"
+		:title="t('nav_menu.project_title')"
 	>
 		<component :is="FolderOpenIcon" :size="14"/>
 	</NavMenuItem>
@@ -114,8 +83,8 @@ function canUserCreate(object: string) {
 		destination="task"
 		route-address="/task"
 		:route-address-new="canUserCreate('task')"
-		:override-aria-label="t('task_aria_label')"
-		:title="t('task_title')"
+		:override-aria-label="t('nav_menu.task_aria_label')"
+		:title="t('nav_menu.task_title')"
 	>
 		<component :is="ListTodo" :size="14"/>
 	</NavMenuItem>
@@ -125,8 +94,8 @@ function canUserCreate(object: string) {
 		destination="request_for_change"
 		route-address="/request_for_change"
 		:route-address-new="canUserCreate('request_for_change')"
-		:override-aria-label="t('request_for_change_aria_label')"
-		:title="t('request_for_change_title')"
+		:override-aria-label="t('nav_menu.request_for_change_aria_label')"
+		:title="t('nav_menu.request_for_change_title')"
 	>
 		<component :is="ReplaceAll" :size="14"/>
 	</NavMenuItem>

@@ -8,20 +8,7 @@ import {useI18n} from 'petite-vue-i18n'
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18y
-const {t} = useI18n({
-	messages: {
-		en: {
-			error_message: "Credentials have failed",
-			error_final_message: "Impostor detected, initiating self-destruction",
-			validation_error_message: "Please fill out all fields",
-		},
-		ja: {
-			error_message: "資格情報が失敗しました",
-			error_final_message: "詐欺師が検出され、自己破壊を開始します",
-			validation_error_message: "すべての項目にご記入ください",
-		}
-	}
-});
+const {t} = useI18n();
 
 // Define ref
 let failCount = 0;
@@ -52,7 +39,7 @@ function ActiveTwoFactorPanel() {
 async function signIn() {
 	// Check field validation
 	if (usernameModel.value === "" || usernameModel.value === null || passwordModel.value === "" || passwordModel.value === null) {
-		errorMessage.value = t("validation_error_message");
+		errorMessage.value = t("login_page.validation_error_message");
 		return;
 	}
 
@@ -93,8 +80,8 @@ async function signIn() {
 		case 401:
 			failCount++;
 			errorMessage.value = failCount <= 5
-				? t("error_message")
-				: t("error_final_message");
+				? t("login_page.error_message")
+				: t("login_page.error_final_message");
 			usernameModel.value = "";
 			passwordModel.value = "";
 			otpTokenModel.value = "";

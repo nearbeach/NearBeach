@@ -10,24 +10,7 @@ import {useI18n} from "petite-vue-i18n";
 import {X} from "@lucide/vue";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			"close_modal": "Click to close current modal",
-			"new_folder": "Create a new folder",
-			"new_link": "Create a new hyperlink",
-			"upload": "Upload",
-			"upload_document": "Upload a document",
-		},
-		ja: {
-			"close_modal": "現在のモーダルを閉じるにはクリックしてください",
-			"new_folder": "新しいフォルダーを作成する",
-			"new_link": "新しいハイパーリンクを作成する",
-			"upload": "アップロード",
-			"upload_document": "ドキュメントをアップロードする",
-		},
-	}
-});
+const {t} = useI18n();
 
 // Define refs
 const dropdownModel = ref<boolean>(false);
@@ -48,7 +31,7 @@ function dropDownItemClicked(event: string) {
 	updateType.value = event;
 
 	// Header string
-	headerString.value = t(event);
+	headerString.value = t(`create_and_filter.${event}`);
 
 	// Show the modal
 	modalClass.value = " open";
@@ -60,22 +43,22 @@ function dropDownItemClicked(event: string) {
 		<WlkDropDown v-model="dropdownModel">
 			<template v-slot:button>
 				<Upload :size="12"/>
-				{{t("upload")}}
+				{{t("create_and_filter.upload")}}
 			</template>
 			<template v-slot:drop-down-items>
 				<WlkDropDownItem v-on:click="dropDownItemClicked('new_folder')">
 					<Folder :size="12"/>
-					{{t("new_folder")}}
+					{{t("create_and_filter.new_folder")}}
 				</WlkDropDownItem>
 
 				<WlkDropDownItem v-on:click="dropDownItemClicked('new_link')">
 					<Link2 :size="12"/>
-					{{t("new_link")}}
+					{{t("create_and_filter.new_link")}}
 				</WlkDropDownItem>
 
 				<WlkDropDownItem v-on:click="dropDownItemClicked('upload_document')">
 					<UploadCloudIcon :size="12"/>
-					{{t("upload_document")}}
+					{{t("create_and_filter.upload_document")}}
 				</WlkDropDownItem>
 			</template>
 		</WlkDropDown>
@@ -90,7 +73,7 @@ function dropDownItemClicked(event: string) {
 				<div class="modal-header-row">
 					<h3>{{ headerString }}</h3>
 					<X :size="20"
-					   :aria-label="t('close_modal')"
+					   :aria-label="t('create_and_filter.close_modal')"
 					   v-on:click="closeModal"
 					/>
 				</div>

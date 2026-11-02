@@ -4,28 +4,7 @@ import {WlkButton, WlkPasswordInput, WlkTextInput, required, minLength, ObjectSt
 import {useI18n} from "petite-vue-i18n";
 
 // Define i18y
-const {t} = useI18n({
-	messages: {
-		en: {
-			forgotten_password: "Forgotten Password",
-			login_message: "NearBeach Login",
-			password: "Password",
-			password_placeholder: "Your password",
-			sign_in: "Sign in",
-			username: "Username",
-			username_placeholder: "Your username or email address",
-		},
-		ja: {
-			forgotten_password: "パスワードを忘れた場合",
-			login_message: "ニアビーチログイン",
-			password: "パスワード",
-			password_placeholder: "パスワード",
-			sign_in: "サインイン",
-			username: "ユーザー名",
-			username_placeholder: "ユーザー名またはメールアドレス",
-		}
-	},
-})
+const {t} = useI18n()
 
 // Define emits
 const emit = defineEmits(['signIn']);
@@ -89,19 +68,19 @@ function signIn(event: Event) {
 	<form class="login-panel"
 	      @submit="signIn"
 	>
-		<h1 id="main-title">{{ t("login_message") }}</h1>
+		<h1 id="main-title">{{ t("login_panel.login_message") }}</h1>
 		<p class="error-message">{{ errorMessage }}</p>
 		<WlkTextInput class="compact"
-		              :label="t('username')"
-		              :placeholderText="t('username_placeholder')"
+		              :label="t('login_panel.username')"
+		              :placeholderText="t('login_panel.username_placeholder')"
 		              :validationRules="[required()]"
 		              v-model="username"
 		              v-focus
 		              ref="username-ref"
 		/>
 		<WlkPasswordInput class="compact"
-		                  :label="t('password')"
-		                  :placeholderText="t('password_placeholder')"
+		                  :label="t('login_panel.password')"
+		                  :placeholderText="t('login_panel.password_placeholder')"
 		                  :validationRules="[required(), minLength(8)]"
 		                  v-model="password"
 		                  ref="password-ref"
@@ -113,10 +92,10 @@ function signIn(event: Event) {
 			:is-action-running="buttonState === ObjectStateEnum.LoggingIn"
 			@click="signIn"
 		>
-			{{ t("sign_in") }}
+			{{ t("login_panel.sign_in") }}
 		</WlkButton>
 
-		<RouterLink to="/login/forgotten-password">{{ t("forgotten_password") }}</RouterLink>
+		<RouterLink to="/login/forgotten-password">{{ t("login_panel.forgotten_password") }}</RouterLink>
 	</form>
 </template>
 

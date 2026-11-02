@@ -15,35 +15,14 @@ import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data
 import {useI18n} from "petite-vue-i18n";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			linked_objects: "Linked Objects",
-			loading_documents: "Loading Documents",
-			loading_misc: "Loading Misc",
-			loading_notes: "Loading Notes",
-			documentation: "Documentation",
-			notes: "Notes & Comments",
-			misc: "Misc",
-		},
-		ja: {
-			linked_objects: "リンクされたオブジェクト",
-			loading_documents: "ドキュメントの読み込み",
-			loading_misc: "その他を読み込んでいます",
-			loading_notes: "注記",
-			documentation: "文書",
-			notes: "注釈とコメント",
-			misc: "その他",
-		},
-	}
-})
+const {t} = useI18n()
 
 // Define variables
 const tabList: TabHeaderInterface[] = [
-	{label: t("linked_objects"), for: "link_objects"},
-	{label: t("documentation"), for: "documentation"},
-	{label: t("notes"), for: "notes"},
-	{label: t("misc"), for: "misc"},
+	{label: t("project_page.linked_objects"), for: "link_objects"},
+	{label: t("project_page.documentation"), for: "documentation"},
+	{label: t("project_page.notes"), for: "notes"},
+	{label: t("project_page.misc"), for: "misc"},
 ]
 
 // Define stores

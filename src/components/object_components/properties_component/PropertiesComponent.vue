@@ -16,41 +16,7 @@ import {useErrorStore} from "@/stores/error/error.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			date_invalid: "Date is not valid",
-			date_updated: "Date updated",
-			date_updating: "Updating date",
-			end_date: "End Date",
-			error_forbidden: "You do not have access to the object",
-			error_not_found: "Could not find the object",
-			error_server_error: "Server returned an error: ",
-			properties: "Properties",
-			start_date: "Start Date",
-			story_point_invalid: "Invalid story points",
-			story_point_updated: "Story points updated",
-			story_point_updating: "Updating story points",
-			story_point: "Story Points",
-		},
-		ja: {
-			date_invalid: "日付が有効ではありません",
-			date_updated: "更新日",
-			date_updating: "現在、日付を更新中です。",
-			end_date: "終了日",
-			error_forbidden: "そのオブジェクトにアクセスする権限がありません。",
-			error_not_found: "オブジェクトが見つかりませんでした。",
-			error_server_error: "サーバーがエラーを返しました: ",
-			properties: "プロパティ",
-			start_date: "開始日",
-			story_point_invalid: "無効なストーリーポイント",
-			story_point_updated: "ストーリーポイントが更新されました",
-			story_point_updating: "ストーリーポイントの更新",
-			story_point: "ストーリーポイント",
-		},
-	}
-
-})
+const {t} = useI18n()
 
 // Define Stores
 const errorStore = useErrorStore();
@@ -83,7 +49,7 @@ watch(
 		}
 
 		// Notify the user of the change
-		dateStatus.value = t("date_updating");
+		dateStatus.value = t("properties_component.date_updating");
 
 		// If start date is null set as end date
 		if (objectStore.start_date === null || objectStore.start_date === "") {
@@ -123,7 +89,7 @@ watch(
 		}
 
 		// Notify the user of the change
-		dateStatus.value = t("date_updating");
+		dateStatus.value = t("properties_component.date_updating");
 
 		// If end date is null set as start date
 		if (objectStore.end_date === null || objectStore.end_date === "") {
@@ -162,7 +128,7 @@ async function datesUpdated() {
 			}
 		);
 
-		dateStatus.value = t("date_updated");
+		dateStatus.value = t("properties_component.date_updated");
 		handleResponseStatus(response);
 
 		setTimeout(() => {
@@ -184,15 +150,15 @@ function handleResponseStatus(response: Response) {
 			break;
 		case 403:
 			// User does not have access to the object
-			errorStore.message = t("error_forbidden");
+			errorStore.message = t("properties_component.error_forbidden");
 			break;
 		case 404:
 			// Object does not exist
-			errorStore.message = t("error_not_found");
+			errorStore.message = t("properties_component.error_not_found");
 			break;
 		default:
 			// Assuming a 500 error
-			errorStore.message = t("error_server_error");
+			errorStore.message = t("properties_component.error_server_error");
 			errorStore.showErrorModal = true;
 	}
 }
@@ -206,7 +172,7 @@ function storyPointsChanged(data: OnChangeInterface) {
 	// If invalid - escape
 	if (!data.isValid) {
 		// Notify the user
-		storyPointsStatus.value = t("story_point_invalid");
+		storyPointsStatus.value = t("properties_component.story_point_invalid");
 
 		// null the timeout
 		storyPointsTimeout.value = null;
@@ -215,7 +181,7 @@ function storyPointsChanged(data: OnChangeInterface) {
 	}
 
 	// Notify the user of the change
-	storyPointsStatus.value = t("story_point_updating");
+	storyPointsStatus.value = t("properties_component.story_point_updating");
 
 	// Set timeout - update when finished
 	storyPointsTimeout.value = setTimeout(async () => {
@@ -242,7 +208,7 @@ async function storyPointsUpdate() {
 		);
 
 		// Update status and check response
-		storyPointsStatus.value = t("story_point_updated");
+		storyPointsStatus.value = t("properties_component.story_point_updated");
 		handleResponseStatus(response);
 
 		setTimeout(() => {
@@ -258,7 +224,7 @@ async function storyPointsUpdate() {
 
 <template>
 	<WlkCard class="properties-component">
-		<h3>{{ t("properties") }}</h3>
+		<h3>{{ t("properties_component.properties") }}</h3>
 
 		<ObjectPriority/>
 		<ObjectStatus/>
@@ -266,7 +232,7 @@ async function storyPointsUpdate() {
 		<WlkNumberInput
 			class="story-points compact"
 			v-model="objectStore.story_point"
-			:label="t('story_point')"
+			:label="t('properties_component.story_point')"
 			:status="storyPointsStatus"
 			:validationRules="[minValue(0), maxValue(5)]"
 			v-on:change="storyPointsChanged"
@@ -275,16 +241,16 @@ async function storyPointsUpdate() {
 		<WlkDatetime
 			class="start-date compact"
 			v-model="objectStore.start_date"
-			:label="t('start_date')"
+			:label="t('properties_component.start_date')"
 			:status="dateStatus"
-			:disabled="dateStatus === t('date_updating')"
+			:disabled="dateStatus === t('properties_component.date_updating')"
 		/>
 		<WlkDatetime
 			class="end-date compact"
 			v-model="objectStore.end_date"
-			:label="t('end_date')"
+			:label="t('properties_component.end_date')"
 			:status="dateStatus"
-			:disabled="dateStatus === t('date_updating')"
+			:disabled="dateStatus === t('properties_component.date_updating')"
 		/>
 	</WlkCard>
 </template>

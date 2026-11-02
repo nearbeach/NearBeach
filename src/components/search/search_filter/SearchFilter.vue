@@ -10,38 +10,7 @@ import {useErrorStore} from "@/stores/error/error.ts";
 import router from "@/router/router.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			closed: "Show closed objects",
-			instructions: "Use the filters below to refine your results.",
-			search_kanban_board: "Search Kanban Board",
-			search_placeholder_kanban_board: "Search for a kanban board",
-			search_request_for_change: "Search Request For Change",
-			search_placeholder_request_for_change: "Search for a request for change",
-			search_requirement: "Search Requirement",
-			search_placeholder_requirement: "Search for a requirement",
-			search_project: "Search Project",
-			search_placeholder_project: "Search for a project",
-			search_task: "Search Task",
-			search_placeholder_task: "Search for a task",
-		},
-		ja: {
-			closed: "閉じたオブジェクトを表示",
-			instructions: "以下のフィルターを使用して、検索結果を絞り込んでください",
-			search_kanban_board: "カンバンボードを検索",
-			search_placeholder_kanban_board: "カンバンボードを検索",
-			search_request_for_change: "検索変更リクエスト",
-			search_placeholder_request_for_change: "変更要求を検索する",
-			search_requirement: "要件を検索する",
-			search_placeholder_requirement: "要件を検索する",
-			search_project: "プロジェクトを検索",
-			search_placeholder_project: "プロジェクトを検索",
-			search_task: "タスクを検索する",
-			search_placeholder_task: "タスクを検索する",
-		},
-	}
-})
+const {t} = useI18n()
 
 // Define route
 const errorStore = useErrorStore();
@@ -149,16 +118,16 @@ function stopTimer() {
 <template>
 	<WlkCard class="search-filter">
 		<WlkCardHeader>
-			<h1 id="main-title">{{ t(`search_${route.meta.destination}`) }}</h1>
+			<h1 id="main-title">{{ t(`search_filter.search_${route.meta.destination}`) }}</h1>
 		</WlkCardHeader>
-		<p class="instructions">{{ t("instructions") }}</p>
+		<p class="instructions">{{ t("search_filter.instructions") }}</p>
 		<SearchInput
-			:placeholder="t(`search_placeholder_${ route.meta.destination }`)"
+			:placeholder="t(`search_filter.search_placeholder_${ route.meta.destination }`)"
 			v-model="search"
 			v-on:keydown="startTimer"
 		/>
 		<WlkCheckBox
-			:label="t('closed')"
+			:label="t('search_filter.closed')"
 			id="show-closed-objects"
 			v-model="showClosed"
 			v-on:change="checkboxClicked"

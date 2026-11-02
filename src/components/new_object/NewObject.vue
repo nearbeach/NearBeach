@@ -20,36 +20,7 @@ import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			button_create: "Create",
-			button_submitting: "Creating",
-			input_label: "Title",
-			select_label: "Select Group",
-			sub_title: "Fill out the details below",
-			placeholder_project: "Your project's title",
-			placeholder_requirement: "Your requirement's title",
-			placeholder_task: "Your task's title",
-			title_project: "Create your new Project",
-			title_requirement: "Create you new Requirement",
-			title_task: "Create your new Task",
-		},
-		ja: {
-			button_create: "作成する",
-			button_submitting: "作成",
-			input_label: "タイトル",
-			select_label: "グループの選択",
-			sub_title: "以下の詳細を入力してください",
-			placeholder_project: "プロジェクトのタイトル",
-			placeholder_requirement: "要件のタイトル",
-			placeholder_task: "タスクのタイトル",
-			title_project: "新しいプロジェクトを作成する",
-			title_requirement: "新しい要件を作成する",
-			title_task: "新しいタスクを作成する",
-		},
-	}
-});
+const {t} = useI18n();
 
 // Define Route
 const errorStore = useErrorStore();
@@ -134,21 +105,21 @@ function updateValidation(field: string, value: boolean): void {
 <template>
 	<WlkCard class="new-object">
 		<WlkCardHeader>
-			<h1 id="main-title">{{ t(`title_${route.meta.destination}`) }}</h1>
-			<p class="sub-text">{{ t("sub_title") }}</p>
+			<h1 id="main-title">{{ t(`new_object.title_${route.meta.destination}`) }}</h1>
+			<p class="sub-text">{{ t("new_object.sub_title") }}</p>
 		</WlkCardHeader>
 
 		<WlkTextInput
 			v-model="titleModel"
-			:label="t('input_label')"
-			:placeholderText="t(`placeholder_${route.meta.destination}`)"
+			:label="t('new_object.input_label')"
+			:placeholderText="t(`new_object.placeholder_${route.meta.destination}`)"
 			:validationRules="[required(), maxLength(255), minLength(5)]"
 			ref="title-ref"
 			v-on:change="(event: { isValid: boolean }) => (updateValidation('titleModel', event.isValid))"
 		/>
 
 		<WlkSelect
-			:label="t('select_label')"
+			:label="t('new_object.select_label')"
 			:options="permissionStore.getUserGroups"
 			:validationRules="[required()]"
 			ref="group-ref"
@@ -164,11 +135,11 @@ function updateValidation(field: string, value: boolean): void {
 				v-on:click="createObject"
 			>
 				<template v-slot:default>
-					{{ t("button_create") }}
+					{{ t("new_object.button_create") }}
 				</template>
 
 				<template v-slot:action-state>
-					{{ t("button_submitting")}}
+					{{ t("new_object.button_submitting")}}
 				</template>
 			</WlkButton>
 		</WlkCardFooter>

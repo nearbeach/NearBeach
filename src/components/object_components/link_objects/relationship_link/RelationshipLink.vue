@@ -6,34 +6,7 @@ import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			has_duplicate: "Is Duplicate Object Of",
-			blocked_by: "Is Blocked By",
-			blocking: "Is Currently Blocking",
-			duplicate_object: "Is Duplicate Object Of",
-			parent_object_of: "Is Parent Object Of",
-			is_sub_object_of: "Is Sub Object Of",
-			label: "Relationship",
-			relates: "Relates To",
-			relationship_success: "Successfully updated priority",
-			relationship_updating: "Updating Priority",
-		},
-		ja: {
-			has_duplicate: "重複オブジェクトです",
-			blocked_by: "ブロックされています",
-			blocking: "現在ブロック中です",
-			duplicate_object: "重複オブジェクトです",
-			parent_object_of: "親オブジェクトです",
-			is_sub_object_of: "サブオブジェクトです",
-			label: "関係",
-			relates: "関連する",
-			relationship_success: "優先度の更新に成功しました",
-			relationship_updating: "優先度を更新中",
-		},
-	}
-});
+const {t} = useI18n();
 
 // Define the emits
 const emit = defineEmits(["updateRelationship"]);
@@ -75,13 +48,13 @@ const state = ref<string>("");
 
 // Define constants
 const relationshipList = [
-	{value: "relates", label: t("relates")},
-	{value: "blocked_by", label: t("blocked_by")},
-	{value: "blocking", label: t("blocking")},
-	{value: "sub_object_of", label: t("is_sub_object_of")},
-	{value: "parent_object_of", label: t("parent_object_of")},
-	{value: "has_duplicate", label: t("has_duplicate")},
-	{value: "duplicate_object", label: t("duplicate_object")},
+	{value: "relates", label: t("relationship_link.relates")},
+	{value: "blocked_by", label: t("relationship_link.blocked_by")},
+	{value: "blocking", label: t("relationship_link.blocking")},
+	{value: "sub_object_of", label: t("relationship_link.is_sub_object_of")},
+	{value: "parent_object_of", label: t("relationship_link.parent_object_of")},
+	{value: "has_duplicate", label: t("relationship_link.has_duplicate")},
+	{value: "duplicate_object", label: t("relationship_link.duplicate_object")},
 ]
 
 // Define on mounted
@@ -121,7 +94,7 @@ function updateRelationship() : void {
 
 
 	// Update the state
-	state.value = t("relationship_updating");
+	state.value = t("relationship_link.relationship_updating");
 
 	// Save data
 	fetch(
@@ -139,7 +112,7 @@ function updateRelationship() : void {
 			},
 		},
 	).then(() => {
-		state.value = t("relationship_success");
+		state.value = t("relationship_link.relationship_success");
 		emit("updateRelationship", { index: props.index, link_relationship: relationshipModel.value});
 
 		setTimeout(() => {
@@ -158,7 +131,7 @@ function updateRelationship() : void {
 	<div class="relationship-link">
 		<WlkSelect
 			class="relationship-link compact"
-			:label="t('label')"
+			:label="t('relationship_link.label')"
 			:options="relationshipList"
 			:status="state"
 			:validationRules="[required()]"

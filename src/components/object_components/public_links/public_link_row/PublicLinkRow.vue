@@ -4,16 +4,7 @@ import {useI18n} from "petite-vue-i18n";
 import {ref} from "vue";
 
 // Define i18n
-const {t} = useI18n({
-    messages: {
-        en: {
-            copied_status: "Copied Public Link",
-        },
-        ja: {
-            copied_status: "公開リンクをコピーしました",
-        },
-    }
-})
+const {t} = useI18n()
 
 // Define emits
 const emits = defineEmits(['deleteLink', 'updateActive']);
@@ -63,7 +54,7 @@ async function copyLink() {
         <span v-if="showStatus"
               class="copied-status"
         >
-            {{t("copied_status")}}
+            {{t("public_link_row.copied_status")}}
         </span>
         <span v-else class="link">{{ id }}</span>
     </td>

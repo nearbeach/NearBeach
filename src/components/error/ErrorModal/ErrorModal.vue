@@ -5,18 +5,7 @@ import {WlkModalHeader, WlkModal, WlkModalFooter, WlkButton} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			"close_modal": "Click to close current modal",
-			"title": "You have encountered an error",
-		},
-		jp: {
-			"close_modal": "現在のモーダルを閉じるにはクリックしてください",
-			"title": "エラーが発生しました",
-		},
-	}
-});
+const {t} = useI18n();
 
 // Define store
 const errorStore = useErrorStore();
@@ -33,7 +22,7 @@ const modalClass = computed(() => {
 		<WlkModal :class="modalClass">
 			<WlkModalHeader>
 				<div class="modal-header-row">
-					<h3>{{ t("title") }}</h3>
+					<h3>{{ t("error_modal.title") }}</h3>
 				</div>
 			</WlkModalHeader>
 			{{ errorStore.message }}
@@ -42,7 +31,7 @@ const modalClass = computed(() => {
 					class="info compact"
 					v-on:click="errorStore.showErrorModal = false"
 				>
-					{{t("close_modal")}}
+					{{t("error_modal.close_modal")}}
 				</WlkButton>
 			</WlkModalFooter>
 		</WlkModal>

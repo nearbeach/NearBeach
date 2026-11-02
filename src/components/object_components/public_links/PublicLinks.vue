@@ -8,26 +8,7 @@ import {useI18n} from "petite-vue-i18n";
 import PublicLinkRow from "@/components/object_components/public_links/public_link_row/PublicLinkRow.vue";
 
 // Define i18n
-const {t} = useI18n({
-    messages: {
-        en: {
-            create_public_link: "Create Public Link",
-            delete_public_link: "Delete Public Link",
-            empty_public_links: "No public links created for current object",
-            description: "Control public access to project",
-            is_active: "Is Active",
-            public_link: "Public Link",
-        },
-        ja: {
-            create_public_link: "公開リンクを作成",
-            delete_public_link: "公開リンクを削除",
-            description: "プロジェクトへの公開アクセスを制御する",
-            empty_public_links: "現在のオブジェクトに対して公開リンクは作成されていません。",
-            is_active: "有効です",
-            public_link: "公開リンク",
-        },
-    }
-})
+const {t} = useI18n()
 
 // Define stores
 const objectStore = useObjectStore();
@@ -166,20 +147,20 @@ async function updateActive(data: {id: string, index: number}) {
 
 <template>
     <div class="public-links">
-        <h3>{{ t("public_link") }}</h3>
-        <p class="sub-text">{{ t("description") }}</p>
+        <h3>{{ t("public_links.public_link") }}</h3>
+        <p class="sub-text">{{ t("public_links.description") }}</p>
 
         <div class="empty-public-links-list"
              v-if="publicLinks.length === 0"
         >
-            {{ t("empty_public_links") }}
+            {{ t("public_links.empty_public_links") }}
         </div>
 
         <table v-if="publicLinks.length > 0">
             <thead>
                 <tr>
-                    <td style="width:calc(100% - 110px);">{{ t("public_link") }}</td>
-                    <td style="width:90px;">{{ t("is_active") }}</td>
+                    <td style="width:calc(100% - 110px);">{{ t("public_links.public_link") }}</td>
+                    <td style="width:90px;">{{ t("public_links.is_active") }}</td>
                     <td style="width:20px;"></td>
                 </tr>
             </thead>
@@ -201,7 +182,7 @@ async function updateActive(data: {id: string, index: number}) {
 			<WlkButton class="compact primary"
 					   @click="createPublicLink"
 			>
-				{{t("create_public_link")}}
+				{{t("public_links.create_public_link")}}
 			</WlkButton>
 	    </div>
     </div>

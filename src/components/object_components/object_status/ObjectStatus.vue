@@ -7,20 +7,7 @@ import {useI18n} from "petite-vue-i18n";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			label: "Status",
-			status_success: "Successfully updated status",
-			status_updating: "Updating Status",
-		},
-		ja: {
-			label: "状態",
-			status_success: "ステータスの更新に成功しました",
-			status_updating: "ステータスを更新中",
-		},
-	}
-})
+const {t} = useI18n()
 
 // Define ref
 const statusModel = ref<string>("0");
@@ -66,7 +53,7 @@ watch(statusModel, (new_value) => {
 		status: status[0],
 	});
 
-	statusMessage.value = t("status_updating");
+	statusMessage.value = t("object_status.status_updating");
 
 	// Save data
 	fetch(
@@ -82,7 +69,7 @@ watch(statusModel, (new_value) => {
 			},
 		},
 	).then(() => {
-		statusMessage.value = t("status_success");
+		statusMessage.value = t("object_status.status_success");
 
 		setTimeout(() => {
 			statusMessage.value = "";
@@ -100,7 +87,7 @@ watch(statusModel, (new_value) => {
 		class="status compact"
 		optionsLabel="status"
 		optionsValue="id"
-		:label="t('label')"
+		:label="t('object_status.label')"
 		:options="objectMetaDataStore.status"
 		:status="statusMessage"
 		:validationRules="[required()]"

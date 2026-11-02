@@ -6,18 +6,7 @@ import {type PropType} from "vue";
 import {useI18n} from "petite-vue-i18n";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			create: "Please wait - creating object link",
-			error: "Error",
-		},
-		ja: {
-			create: "しばらくお待ちください - オブジェクトリンクを作成しています",
-			error: "エラー",
-		}
-	}
-});
+const {t} = useI18n();
 
 // Define props
 defineProps({
@@ -86,7 +75,7 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 			class="link-object"
 		>
 			<div class="link-create">
-				<p>{{ t("create")}}</p>
+				<p>{{ t("link_objects_table.create")}}</p>
 			</div>
 		</div>
 
@@ -95,7 +84,7 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 			class="link-object"
 		>
 			<div class="link-error">
-				<h4>{{ t("error")}}</h4>
+				<h4>{{ t("link_objects_table.error")}}</h4>
 				{{ errorText }}
 			</div>
 		</div>

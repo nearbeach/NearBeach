@@ -8,22 +8,7 @@ import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18n
-const {t} = useI18n({
-    messages: {
-        en: {
-			cancel_note: "Cancel Note",
-            create: "Submit note",
-			edit: "Edit note",
-            label: "Write a note",
-        },
-        jp: {
-			cancel_note: "メモをキャンセル",
-            create: "メモを作成する",
-			edit: "編集メモ",
-            label: "メモを書く",
-        },
-    }
-});
+const {t} = useI18n();
 
 // Define stores
 const objectStore = useObjectStore();
@@ -55,7 +40,7 @@ watch(
 
 // Define computed
 const newOrEditNotes = computed(() => {
-	return modelId.value === null ? t("create") : t("edit");
+	return modelId.value === null ? t("notes_component.create") : t("notes_component.edit");
 })
 
 // Define functions
@@ -247,7 +232,7 @@ async function updateNote() {
 					<WlkButton class="compact danger"
 							   v-on:click="closeModal"
 					>
-						{{t("cancel_note")}}
+						{{t("notes_component.cancel_note")}}
 					</WlkButton>
 
 					<WlkButton class="compact primary"

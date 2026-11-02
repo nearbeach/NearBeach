@@ -8,22 +8,7 @@ import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		"en": {
-			"cancel": "Cancel",
-			"create_new_link": "Create new link",
-			"description": "Description",
-			"url": "Url Location",
-		},
-		"ja": {
-			"cancel": "キャンセル",
-			"create_new_link": "新しいリンクを作成する",
-			"description": "説明",
-			"url": "URLの場所",
-		},
-	}
-});
+const {t} = useI18n();
 
 // Define emits
 const emit = defineEmits(["closeModal"]);
@@ -98,12 +83,12 @@ async function createNewLink() {
 <template>
 	<WlkTextInput class="compact"
 				  placeholder="https://nearbeach.org/"
-				  :label="t('url')"
+				  :label="t('new_link.url')"
 				  :validationRules="[required()]"
 				  v-model="newLinkModel"
 	/>
 	<WlkTextInput class="compact"
-				  :label="t('description')"
+				  :label="t('new_link.description')"
 				  v-model="descriptionModel"
     />
 
@@ -112,14 +97,14 @@ async function createNewLink() {
 			class="compact"
 			v-on:click="emit('closeModal')"
 		>
-			{{t("cancel")}}
+			{{t("new_link.cancel")}}
 		</WlkButton>
 		<WlkButton
 			class="compact primary"
 			:disabled="isCreateDisabled"
 			v-on:click="createNewLink"
 		>
-			{{t("create_new_link")}}
+			{{t("new_link.create_new_link")}}
 		</WlkButton>
 	</WlkModalFooter>
 </template>

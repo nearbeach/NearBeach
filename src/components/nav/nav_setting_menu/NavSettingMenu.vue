@@ -6,18 +6,7 @@ import { usePermissionStore} from "@/stores/permissions/permission.ts";
 import {useI18n} from "petite-vue-i18n";
 
 // Define i18y
-const { t}  = useI18n({
-	messages: {
-		en: {
-			setting_title: "Settings",
-			setting_aria_label: "Go to NearBeach Settings",
-		},
-		ja: {
-			setting_title: "設定",
-			setting_aria_label: "NearBeachの設定に移動",
-		}
-	}
-})
+const { t}  = useI18n()
 
 // Define Store
 const permissionStore = usePermissionStore();
@@ -30,8 +19,8 @@ const permissionStore = usePermissionStore();
 		destination="settings"
 		route-address="/settings"
 		route-address-new=""
-		:title="t('setting_title')"
-		:override-aria-label="t('setting_aria_label')"
+		:title="t('nav_setting_menu.setting_title')"
+		:override-aria-label="t('nav_setting_menu.setting_aria_label')"
 	>
 		<component :is="Cog" :size="14"/>
 	</NavMenuItem>

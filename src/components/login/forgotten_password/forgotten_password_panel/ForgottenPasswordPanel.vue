@@ -5,24 +5,7 @@ import { type ObjectStateEnumType } from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 
 // Define i18y
-const {t} = useI18n({
-	messages: {
-		en: {
-			forgotten_password: "Forgotten password",
-			email: "Email",
-			email_placeholder: "Email",
-			go_back: "Go back to login",
-			submit: "Submit",
-		},
-		ja: {
-			forgotten_password: "パスワードを忘れた場合",
-			email: "メール",
-			email_placeholder: "あなたのメールアドレス",
-			go_back: "ログインに戻る",
-			submit: "提出する",
-		},
-	}
-});
+const {t} = useI18n();
 
 // Define emit
 const emit = defineEmits(['passwordReset']);
@@ -72,10 +55,10 @@ function passwordReset() {
 	<form class="forgotten-password-panel"
 		  @submit.prevent="passwordReset()"
 	>
-		<h1 id="main-title">{{ t("forgotten_password")}}</h1>
+		<h1 id="main-title">{{ t("forgotten_password_panel.forgotten_password")}}</h1>
 		<WlkTextInput class="compact"
-                      :label="t('email')"
-                      :placeholderText="t('email_placeholder')"
+                      :label="t('forgotten_password_panel.email')"
+                      :placeholderText="t('forgotten_password_panel.email_placeholder')"
                       :isRequired="true"
                       :disabled="disableTextInput"
                       v-model="emailAddress"
@@ -86,10 +69,10 @@ function passwordReset() {
 			:disabled="disableButton"
 			:is-action-running="buttonState === ObjectStateEnum.Loading"
 		>
-			{{ t("submit") }}
+			{{ t("forgotten_password_panel.submit") }}
 		</WlkButton>
 
-		<RouterLink to="/login">{{ t('go_back')}}</RouterLink>
+		<RouterLink to="/login">{{ t('forgotten_password_panel.go_back')}}</RouterLink>
 	</form>
 </template>
 

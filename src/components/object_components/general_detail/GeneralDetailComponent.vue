@@ -9,63 +9,7 @@ import router from "@/router/router.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			_details: "Project Details",
-			_sub_text: "Update and modify your project details",
-			_title_placeholder: "Your project title",
-			_description_placeholder: "Description of your project",
-			project_details: "Project Details",
-			project_sub_text: "Update and modify your project details",
-			project_title_placeholder: "Your project title",
-			project_description_placeholder: "Description of your project",
-			requirement_details: "Requirement Details",
-			requirement_sub_text: "Update and modify your requirement details",
-			requirement_title_placeholder: "Your requirement title",
-			requirement_description_placeholder: "Description of your requirements",
-			requirement_item_details: "Requirement Item Details",
-			requirement_item_sub_text: "Update and modify your requirement item details",
-			requirement_item_title_placeholder: "Your requirement item title",
-			requirement_item_description_placeholder: "Description of your requirement item",
-			task_details: "Task Details",
-			task_sub_text: "Update and modify your task details",
-			task_title_placeholder: "Your task title",
-			task_description_placeholder: "Description of your task",
-			title: "Title",
-			description: "Description",
-			update: "Update description and title",
-			update_error: "There was a problem updating",
-			updated: "Your updates have been processed",
-			updating: "Please wait",
-		},
-		ja: {
-			project_details: "プロジェクトの詳細",
-			project_sub_text: "プロジェクトの詳細を更新および変更する",
-			project_title_placeholder: "プロジェクトタイトル",
-			project_description_placeholder: "プロジェクトの説明",
-			requirement_details: "要件の詳細",
-			requirement_sub_text: "要件の詳細を更新および変更します",
-			requirement_title_placeholder: "要件のタイトル",
-			requirement_description_placeholder: "ご要望の説明",
-			requirement_item_details: "必要品目の詳細",
-			requirement_item_sub_text: "必要品目の詳細を更新および変更します",
-			requirement_item_title_placeholder: "要件アイテムのタイトル",
-			requirement_item_description_placeholder: "ご要望の品目についての説明",
-			task_details: "タスクの詳細",
-			task_sub_text: "タスクの詳細を更新および変更します",
-			task_title_placeholder: "あなたのタスクタイトル",
-			task_description_placeholder: "業務内容の説明",
-			title: "タイトル",
-			description: "説明",
-			update: "説明とタイトルを更新する",
-			update_error: "アップデート中に問題が発生しました",
-			updated: "更新処理が完了しました",
-			updating: "お待ちください",
-		}
-	}
-
-})
+const {t} = useI18n()
 
 // Define router
 const errorStore = useErrorStore();
@@ -157,13 +101,13 @@ const isUpdateButtonDisabled = computed(() => {
 const renderUpdateButton = computed(() => {
 	switch (updateState.value) {
 		case "error":
-			return t("update_error");
+			return t("general_detail_component.update_error");
 		case "updated":
-			return t("updated");
+			return t("general_detail_component.updated");
 		case "updating":
-			return t("updating");
+			return t("general_detail_component.updating");
 		default:
-			return t("update");
+			return t("general_detail_component.update");
 	}
 });
 
@@ -207,20 +151,20 @@ function updateData() {
 <template>
 	<WlkCard class="general-details">
 		<WlkCardHeader>
-			<h1 id="main-title">{{ t(`${objectStore.destination}_details`) }}</h1>
-			<p class="sub-text">{{ t(`${objectStore.destination}_sub_text`) }}</p>
+			<h1 id="main-title">{{ t(`general_detail_component.${objectStore.destination}_details`) }}</h1>
+			<p class="sub-text">{{ t(`general_detail_component.${objectStore.destination}_sub_text`) }}</p>
 		</WlkCardHeader>
 		<WlkTextInput
 			v-model="objectStore.title"
-			:label="t('title')"
+			:label="t('general_detail_component.title')"
 			:validationRules="[required(), maxLength(255), minLength(5)]"
-			:placeholderText="t(`${objectStore.destination}_title_placeholder`)"
+			:placeholderText="t(`general_detail_component.${objectStore.destination}_title_placeholder`)"
 			v-on:change="(event: { isValid: boolean }) => (fieldValidation['titleModel'] = event.isValid)"
 		/>
 		<WlkTextArea
 			v-model="objectStore.description"
-			:label="t('description')"
-			:placeholderText="t(`${objectStore.destination}_description_placeholder`)"
+			:label="t('general_detail_component.description')"
+			:placeholderText="t(`general_detail_component.${objectStore.destination}_description_placeholder`)"
 		/>
 
 		<WlkButton

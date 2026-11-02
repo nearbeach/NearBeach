@@ -5,32 +5,7 @@ import {computed, type PropType, ref} from "vue";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			error_text: "Error fetching potential object links",
-			has_duplicate: "Is Duplicate Object Of",
-			blocked_by: "Is Blocked By",
-			blocking: "Is Currently Blocking",
-			duplicate_object: "Is Duplicate Object Of",
-			parent_object_of: "Is Parent Object Of",
-			is_sub_object_of: "Is Sub Object Of",
-			label: "Add Relationship:",
-			relates: "Relates To",
-		},
-		ja: {
-			error_text: "潜在的なオブジェクトリンクの取得中にエラーが発生しました",
-			has_duplicate: "重複オブジェクトです",
-			blocked_by: "ブロックされています",
-			blocking: "現在ブロック中です",
-			duplicate_object: "重複オブジェクトです",
-			parent_object_of: "親オブジェクトです",
-			is_sub_object_of: "サブオブジェクトです",
-			label: "関係を追加する",
-			relates: "関連する",
-		},
-	}
-});
+const {t} = useI18n();
 
 // Define emit
 const emit = defineEmits(["createObjectLink"])
@@ -75,7 +50,7 @@ function createObjectLink() : void {
 			v-if="errorText === ''"
 			class="add-relationship-label"
 		>
-			<label for="object-selector">{{ t("label") }}</label>
+			<label for="object-selector">{{ t("add_relationship.label") }}</label>
 		</div>
 		<div
 			v-if="errorText === ''"
@@ -85,13 +60,13 @@ function createObjectLink() : void {
 				id="relationship-type"
 				v-model="relationshipModel"
 			>
-				<option value="relates">{{ t("relates") }}</option>
-				<option value="blocked_by">{{ t("blocked_by") }}</option>
-				<option value="blocking">{{ t("blocking") }}</option>
-				<option value="is_sub_object_of">{{ t("is_sub_object_of") }}</option>
-				<option value="parent_object_of">{{ t("parent_object_of") }}</option>
-				<option value="has_duplicate">{{ t("has_duplicate") }}</option>
-				<option value="duplicate_object">{{ t("duplicate_object") }}</option>
+				<option value="relates">{{ t("add_relationship.relates") }}</option>
+				<option value="blocked_by">{{ t("add_relationship.blocked_by") }}</option>
+				<option value="blocking">{{ t("add_relationship.blocking") }}</option>
+				<option value="is_sub_object_of">{{ t("add_relationship.is_sub_object_of") }}</option>
+				<option value="parent_object_of">{{ t("add_relationship.parent_object_of") }}</option>
+				<option value="has_duplicate">{{ t("add_relationship.has_duplicate") }}</option>
+				<option value="duplicate_object">{{ t("add_relationship.duplicate_object") }}</option>
 			</select>
 			<select
 				id="object-selector"

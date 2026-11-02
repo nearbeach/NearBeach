@@ -7,16 +7,7 @@ import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			"parent_folder": "Go to parent folder",
-		},
-		ja: {
-			"parent_folder": "親フォルダへ移動",
-		},
-	}
-})
+const {t} = useI18n()
 
 // Define store
 const documentationStore = useDocumentationStore();
@@ -76,7 +67,7 @@ function updateDocumentation(folder: FolderItemInterface) {
 				<CornerLeftUp/>
 			</div>
 			<div class="folder-details">
-				{{ t("parent_folder") }}
+				{{ t("folder_list.parent_folder") }}
 			</div>
 			<div class="folder-delete"></div>
 		</div>

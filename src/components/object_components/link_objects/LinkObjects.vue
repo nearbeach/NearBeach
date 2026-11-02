@@ -9,20 +9,7 @@ import {AddRelationship} from "@/components/object_components/link_objects/add_r
 import {LinkObjectsTable} from "@/components/object_components/link_objects/link_objects_table";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			loading: "Loading Object Links",
-			select_object: "Select object",
-			text: "Connect current object to other objects within NearBeach.",
-		},
-		ja: {
-			loading: "オブジェクトリンク",
-			select_object: "オブジェクトを選択",
-			text: "ニアビーチ内の現在のオブジェクトを他のオブジェクトに接続する.",
-		},
-	},
-});
+const {t} = useI18n();
 
 // Define stores
 const objectStore = useObjectStore();
@@ -143,7 +130,7 @@ async function fetchLinkList() {
         	isLoaded.value = true;
             break;
         default:
-            errorText.value = t("error_text") + ": " + response.statusText;
+            errorText.value = t("link_objects.error_text") + ": " + response.statusText;
             break;
     }
 }
@@ -175,7 +162,7 @@ async function fetchPotentialObjectLinks() {
         	});
             break;
         default:
-            errorText.value = t("error_text") + ": " + response.statusText;
+            errorText.value = t("link_objects.error_text") + ": " + response.statusText;
             break;
     }
 }
@@ -188,7 +175,7 @@ async function loadData() {
 		await fetchLinkList();
 		await fetchPotentialObjectLinks();
 	} catch (error) {
-		errorText.value = t("error_text") + ": " + (error instanceof Error ? error.message : String(error));
+		errorText.value = t("link_objects.error_text") + ": " + (error instanceof Error ? error.message : String(error));
 	}
 }
 
@@ -210,7 +197,7 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 
 <template>
 	<div class="link-objects">
-		<p class="sub-text">{{ t('text') }}</p>
+		<p class="sub-text">{{ t('link_objects.text') }}</p>
 		<LinkObjectsTable
 			v-if="isLoaded"
 			ref="link-objects-table"
@@ -219,7 +206,7 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 			v-on:update-relationship="updateRelationship"
 		/>
 		<SmallLoadingSkeleton v-else>
-			{{ t("loading") }}
+			{{ t("link_objects.loading") }}
 		</SmallLoadingSkeleton>
 		<AddRelationship
 			v-if="isLoaded"

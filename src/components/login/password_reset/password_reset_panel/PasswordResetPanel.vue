@@ -6,24 +6,7 @@ import {useI18n} from "petite-vue-i18n";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Define i18y
-const {t} = useI18n({
-	messages: {
-		en: {
-			reset_password: "Reset Password",
-			confirm_password: "Confirm password",
-			new_password: "New password",
-			non_matching_password: "Passwords don't match",
-			query_string_missing: "Query string missing",
-		},
-		ja: {
-			reset_password: "パスワードをリセットする",
-			confirm_password: "パスワードを認証する",
-			new_password: "新しいパスワード",
-			non_matching_password: "パスワードが一致しません",
-			query_string_missing: "クエリ文字列がありません",
-		}
-	}
-});
+const {t} = useI18n();
 
 // Define refs
 const password1 = ref('');
@@ -34,7 +17,7 @@ const errorMessage = ref('');
 async function submitPasswordReset(): Promise<void> {
 	// Check both password math
 	if (password1.value !== password2.value) {
-		errorMessage.value = t("non_matching_password");
+		errorMessage.value = t("password_reset_panel.non_matching_password");
 		return;
 	}
 
@@ -44,7 +27,7 @@ async function submitPasswordReset(): Promise<void> {
 	const token: string | null = urlParams.get('token');
 
 	if (uid === '' || uid === null || token === '' || token === null) {
-		errorMessage.value = t('query_string_missing');
+		errorMessage.value = t('password_reset_panel.query_string_missing');
 		return;
 	}
 
@@ -84,20 +67,20 @@ async function submitPasswordReset(): Promise<void> {
 
 <template>
 	<div class="password-reset-panel">
-		<h1 id="main-title">{{ t("reset_password") }}</h1>
+		<h1 id="main-title">{{ t("password_reset_panel.reset_password") }}</h1>
 		<p class="error-message">
 			{{ errorMessage }}
 		</p>
 		<WlkPasswordInput
 			class="compact"
-			:label="t('new_password')"
+			:label="t('password_reset_panel.new_password')"
 			:isRequired="true"
 			v-model="password1"
 		/>
 
 		<WlkPasswordInput
 			class="compact"
-			:label="t('confirm_password')"
+			:label="t('password_reset_panel.confirm_password')"
 			:isRequired="true"
 			v-model="password2"
 		/>
@@ -106,7 +89,7 @@ async function submitPasswordReset(): Promise<void> {
 			class="primary"
 			@click="submitPasswordReset"
 		>
-			{{ t('reset_password') }}
+			{{ t('password_reset_panel.reset_password') }}
 		</WlkButton>
 
 

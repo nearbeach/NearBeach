@@ -9,30 +9,7 @@ import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import SprintLink from "@/components/object_components/sprint_links/sprint_link/SprintLink.vue";
 
 // Define i18n
-const {t} = useI18n({
-    messages: {
-        en: {
-            close_modal: "Cancel",
-            create_sprint: "Create Sprint",
-            description: "Control sprints connected to current object.",
-            empty_sprint_links: "No sprint links connected to this object.",
-            modal_end_date: "Sprint End Date",
-            modal_sprint_title: "Sprint Title",
-            modal_start_date: "Sprint Start Date",
-            sprint_title: "Sprints",
-        },
-        ja: {
-            close_modal: "キャンセル",
-            create_sprint: "スプリントを作成する",
-            description: "現在のオブジェクトに接続されたコントロールスプリント",
-            empty_sprint_links: "このオブジェクトに接続されたスプリントリンクはありません。",
-            modal_end_date: "スプリント終了日",
-            modal_sprint_title: "スプリントタイトル",
-            modal_start_date: "スプリント開始日",
-            sprint_title: "スプリント",
-        },
-    }
-})
+const {t} = useI18n()
 
 // Define stores
 const objectStore = useObjectStore();
@@ -212,12 +189,12 @@ function openModal() {
 
 <template>
     <div class="sprint-links">
-        <h3>{{ t("sprint_title") }}</h3>
-        <p class="sub-text">{{ t("description") }}</p>
+        <h3>{{ t("sprint_links.sprint_title") }}</h3>
+        <p class="sub-text">{{ t("sprint_links.description") }}</p>
         <div class="empty-sprint-list"
              v-if="sprintData.length === 0"
         >
-            {{ t("empty_sprint_links") }}
+            {{ t("sprint_links.empty_sprint_links") }}
         </div>
 
         <h3 v-if="listCurrentSprints.length > 0">Current Sprints</h3>
@@ -248,7 +225,7 @@ function openModal() {
 			<WlkButton class="compact primary"
 					   @click="openModal"
 			>
-				{{ t("create_sprint") }}
+				{{ t("sprint_links.create_sprint") }}
 			</WlkButton>
 	    </div>
     </div>
@@ -257,29 +234,29 @@ function openModal() {
         <WlkModal :class="modalClass">
             <WlkModalHeader>
                 <div class="modal-header-row">
-                    <h3>{{ t("create_sprint") }}</h3>
+                    <h3>{{ t("sprint_links.create_sprint") }}</h3>
                     <X :size="20"
-                       :aria-label="t('close_modal')"
+                       :aria-label="t('sprint_links.close_modal')"
                        v-on:click="closeModal"
                     />
                 </div>
             </WlkModalHeader>
 
-            <WlkTextInput :label="t('modal_sprint_title')" v-model="sprintTitleModel"/>
+            <WlkTextInput :label="t('sprint_links.modal_sprint_title')" v-model="sprintTitleModel"/>
             <div class="date-row">
-                <WlkDate :label="t('modal_start_date')" v-model="sprintStartDateModel" />
-                <WlkDate :label="t('modal_end_date')" v-model="sprintEndDateModel" />
+                <WlkDate :label="t('sprint_links.modal_start_date')" v-model="sprintStartDateModel" />
+                <WlkDate :label="t('sprint_links.modal_end_date')" v-model="sprintEndDateModel" />
             </div>
 
             <WlkModalFooter class="modal-footer-row">
                 <WlkButton class="compact secondary"
                            v-on:click="closeModal"
-                >{{ t("close_modal") }}
+                >{{ t("sprint_links.close_modal") }}
                 </WlkButton>
                 <WlkButton class="compact primary"
                            :disabled="disableCreateSprint"
                            v-on:click="createSprint"
-                >{{ t("create_sprint") }}
+                >{{ t("sprint_links.create_sprint") }}
                 </WlkButton>
             </WlkModalFooter>
 

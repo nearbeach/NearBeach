@@ -8,22 +8,7 @@ import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		"en": {
-			"cancel": "Cancel",
-			"create_new_folder": "Create new folder",
-			"new_folder_name": "New Folder Name",
-			"new_folder_placeholder": "Statistics Folder",
-		},
-		"ja": {
-			"cancel": "キャンセル",
-			"create_new_folder": "新しいフォルダーを作成する",
-			"new_folder_name": "新しいフォルダ名",
-			"new_folder_placeholder": "統計フォルダ",
-		}
-	}
-});
+const {t} = useI18n();
 
 // Define store
 const documentationStore = useDocumentationStore();
@@ -101,8 +86,8 @@ async function createNewFolder() {
 
 <template>
 	<WlkTextInput class="compact"
-	              :label="t('new_folder_name')"
-	              :placeholderText="t('new_folder_placeholder')"
+	              :label="t('new_folder.new_folder_name')"
+	              :placeholderText="t('new_folder.new_folder_placeholder')"
 	              :validationRules="[required()]"
 	              v-model="newFolderModel"
 	/>
@@ -111,14 +96,14 @@ async function createNewFolder() {
 			class="compact"
 			v-on:click="emit('closeModal')"
 		>
-			{{ t("cancel") }}
+			{{ t("new_folder.cancel") }}
 		</WlkButton>
 		<WlkButton
 			class="compact primary"
 			:disabled="isCreateDisabled"
 			v-on:click="createNewFolder"
 		>
-			{{ t("create_new_folder") }}
+			{{ t("new_folder.create_new_folder") }}
 		</WlkButton>
 	</WlkModalFooter>
 </template>

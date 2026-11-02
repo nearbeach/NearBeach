@@ -8,20 +8,7 @@ import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
 
 // Define i18n
-const {t} = useI18n({
-	messages: {
-		"en": {
-			"cancel": "Cancel",
-			"document_name": "Document Name",
-			"upload_document": "Upload Document",
-		},
-		"ja": {
-			"cancel": "キャンセル",
-			"document_name": "文書名",
-			"upload_document": "ドキュメントをアップロード",
-		},
-	}
-});
+const {t} = useI18n();
 
 // Define stores
 const documentationStore = useDocumentationStore();
@@ -103,13 +90,13 @@ async function uploadDocument() {
 
 <template>
 	<WlkFileUpload class="compact"
-	               :label="t('upload_document')"
+	               :label="t('upload_document.upload_document')"
 	               v-model="documentModel"
 	               @change="documentChanged"
 	/>
 
 	<WlkTextInput class="compact"
-	              :label="t('document_name')"
+	              :label="t('upload_document.document_name')"
 	              v-model="documentNameModel"
 	/>
 	<WlkModalFooter class="upload-document-footer">
@@ -117,14 +104,14 @@ async function uploadDocument() {
 			class="compact"
 			v-on:click="emit('closeModal')"
 		>
-			{{ t("cancel") }}
+			{{ t("upload_document.cancel") }}
 		</WlkButton>
 		<WlkButton
 			class="compact primary"
 			:disabled="isUploadDisabled"
 			v-on:click="uploadDocument()"
 		>
-			{{ t("upload_document") }}
+			{{ t("upload_document.upload_document") }}
 		</WlkButton>
 	</WlkModalFooter>
 </template>

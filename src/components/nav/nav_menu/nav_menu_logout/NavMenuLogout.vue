@@ -3,30 +3,19 @@ import {useI18n} from "petite-vue-i18n";
 import {LogOut} from "@lucide/vue";
 
 // i18n
-const {t} = useI18n({
-	messages: {
-		en: {
-			logout_aria_label: "Logout of NearBeach",
-			logout_title: "Logout",
-		},
-		ja: {
-			logout_aria_label: "NearBeachからログアウト",
-			logout_title: "ログアウト",
-		}
-	}
-});
+const {t} = useI18n();
 </script>
 
 <template>
     <li class="nav-bar--menu--item">
         <a href="/logout/"
             class="nav-bar--menu--item-search"
-            :aria-label="t('logout_aria_label')"
+            :aria-label="t('nav_menu_logout.logout_aria_label')"
         >
             <span class="nav-bar--menu--icon" aria-hidden="true">
 				<component :is="LogOut" :size="14"/>
             </span>
-            {{ t("logout_title") }}
+            {{ t("nav_menu_logout.logout_title") }}
         </a>
     </li>
 </template>

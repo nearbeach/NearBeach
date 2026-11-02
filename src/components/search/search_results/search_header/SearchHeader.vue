@@ -1,24 +1,13 @@
 <script setup lang="ts">
 import {useI18n} from "petite-vue-i18n";
 
-const { t } = useI18n({
-	messages: {
-		en: {
-			title: "Title",
-			status: "Status",
-		},
-		ja: {
-			title: "タイトル",
-			status: "状態",
-		},
-	}
-});
+const { t } = useI18n();
 </script>
 
 <template>
     <div class="search-header">
-        <div class="object-title">{{t("title")}}</div>
-        <div class="object-status-tag">{{t("status")}}</div>
+        <div class="object-title">{{t("search_header.title")}}</div>
+        <div class="object-status-tag">{{t("search_header.status")}}</div>
     </div>
 </template>
 
