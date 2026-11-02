@@ -3,6 +3,7 @@ import type {PropType} from "vue";
 import type {NoteItemInterface} from "@/utils/interfaces/NoteItemInterface.ts";
 import {useI18n} from "petite-vue-i18n";
 import { Pencil, TrashIcon } from "@lucide/vue";
+import ProfilePicture from "@/components/prefab/profile_picture/ProfilePicture.vue";
 
 // Define i18n
 const {t} = useI18n({
@@ -42,10 +43,7 @@ const props = defineProps({
 		     :key="note.id"
 		>
 			<div class="author">
-				<img class="profile-picture"
-				     :src="note.profile_picture"
-				     :alt="`${note.first_name}'s profile picture`"
-				/>
+                <ProfilePicture :url="note.profile_picture" :name="note.first_name" />
 				<div class="details">
 					<div class="name">
 						{{ note.first_name }} {{ note.last_name }}
@@ -89,7 +87,8 @@ const props = defineProps({
 			display: flex;
 			flex-direction: row;
 
-			> img {
+			> img,
+            > .profile-picture {
 				width: 40px;
 				height: 40px;
 				margin-right: 0.5rem;

@@ -6,6 +6,7 @@ import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import type {UserInterface} from "@/utils/interfaces/stores/UserInterface.ts";
 import type {GroupAndUserInterface} from "@/utils/interfaces/GroupAndUsersInterface.ts";
+import ProfilePicture from "@/components/prefab/profile_picture/ProfilePicture.vue";
 
 // Define ref
 const newAssignedUserModel = ref<number | null>(null);
@@ -131,10 +132,7 @@ async function removeUser(user_id: number) {
 				:key="user.id"
 				class="user-access-item"
 			>
-				<img
-					src="https://nearbeach.org/media/gkgmptvg/bee-socks.jpg?width=120"
-					alt="User Profile Picture"
-				/>
+                <ProfilePicture :url="user.profile_picture" :name="user.first_name" />
 				<p>{{ user.first_name }} {{ user.last_name }}</p>
 				<TrashIcon
 					v-on:click="removeUser(user.id)"
@@ -164,7 +162,7 @@ async function removeUser(user_id: number) {
 			display: grid;
 			grid-template-columns: [profile] 25px [name] minmax(0, 1fr) [icon] 20px;
 
-			> img {
+			> .profile-picture {
 				width: 20px;
 				height: 20px;
 				object-fit: cover;
