@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {WlkButton, WlkDate, WlkModal, WlkModalFooter, WlkModalHeader, WlkTextInput} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
@@ -61,6 +61,33 @@ onMounted(async () => {
     if (objectStore.is_loaded) {
         await loadData();
     }
+});
+
+// Define computed
+const listCurrentSprints = computed(() => {
+    // Condition end date >= current date
+    const current_date = new Date();
+
+    return sprintData.value.filter((row) => {
+        // Get the date
+        const date = new Date(row.end_date);
+
+        // Return condition || undefine date
+        return date === undefined || date.getTime() >= current_date.getTime();
+    });
+});
+
+const listPastSprints = computed(() => {
+    // Condition end date < current date
+    const current_date = new Date();
+
+    return sprintData.value.filter((row) => {
+        // Get the date
+        const date = new Date(row.end_date);
+
+        // Return condition || undefined date
+        return date === undefined || date.getTime() < current_date.getTime();
+    });
 });
 
 // Define functions
@@ -184,10 +211,23 @@ function openModal() {
             {{ t("empty_sprint_links") }}
         </div>
 
+        <h3 v-if="listCurrentSprints.length > 0">Current Sprints</h3>
         <div class="sprint-list"
-             v-if="sprintData.length > 0"
+             v-if="listCurrentSprints.length > 0"
         >
-	        <SprintLink v-for="(sprint, index) in sprintData"
+	        <SprintLink v-for="(sprint, index) in listCurrentSprints"
+	                    :index="index"
+	                    :key="sprint.id"
+	                    :sprint="sprint"
+	                    v-on:delete-sprint="deleteSprint"
+	        />
+        </div>
+
+        <h3 v-if="listPastSprints.length > 0">Past Sprints</h3>
+        <div class="sprint-list"
+             v-if="listPastSprints.length > 0"
+        >
+	        <SprintLink v-for="(sprint, index) in listPastSprints"
 	                    :index="index"
 	                    :key="sprint.id"
 	                    :sprint="sprint"

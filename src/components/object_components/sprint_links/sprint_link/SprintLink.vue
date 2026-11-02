@@ -39,7 +39,7 @@ const renderDates = computed(() => {
 					{{ sprint.title }}
 				</a>
 			</div>
-			<div class="sprint-dates">{{renderDates}}</div>
+			<div class="sprint-information">{{sprint.status}} - <span class="dates">{{renderDates}}</span></div>
 		</div>
 		<div class="sprint-delete">
 			<TrashIcon v-on:click="emits('deleteSprint', sprint.id)" />
@@ -61,9 +61,13 @@ const renderDates = computed(() => {
 			font-size: 1rem;
 		}
 
-		> .sprint-dates {
-			font-weight: lighter;
+		> .sprint-information {
+			font-weight: bold;
 			font-size: 0.75rem;
+
+            > .dates {
+                font-weight: lighter;
+            }
 		}
 	}
 
