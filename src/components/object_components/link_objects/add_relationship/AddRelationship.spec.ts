@@ -13,6 +13,17 @@ const router = createRouter({
     routes: [],
 });
 
+const mockOption = {
+    object_assignment_id: 1,
+    object_id: 2,
+    object_title: "Test Object",
+    object_status: "active",
+    object_type: "test",
+    parent_link: "parent",
+    link_relationship: "related",
+    reverse_relation: false,
+};
+
 describe("AddRelationship", () => {
     beforeEach(() => {
         setActivePinia(createPinia());
@@ -35,31 +46,13 @@ describe("AddRelationship", () => {
         expect(AddRelationship).toBeTruthy();
     });
 
-    test("fetches data on mount", async () => {
-        const mockResponse = {
-            object_assignment_id: 1,
-            object_id: 2,
-            object_title: "Test Object",
-            object_status: "active",
-            object_type: "test",
-            parent_link: "parent",
-            link_relationship: "related",
-            reverse_relation: false,
-        };
-
-        vi.spyOn(globalThis, "fetch").mockResolvedValue({
-            status: 200,
-            json: () => Promise.resolve([mockResponse]),
-        } as Response);
-
+    test("renders the object options passed in", async () => {
         const wrapper = mount(AddRelationship, {
+            props: {objectOptions: [mockOption]},
             global: {
                 plugins: [router, i18n],
             },
         });
-
-        await flushPromises();
-        await nextTick();
 
         const options = wrapper.findAll("#object-selector option");
         // first option is the blank placeholder
@@ -67,29 +60,9 @@ describe("AddRelationship", () => {
         expect(options[1].text()).toContain("Test Object");
     });
 
-    test("displays error message on fetch failure", async () => {
-        vi.spyOn(globalThis, "fetch").mockResolvedValue({
-            status: 500,
-            statusText: "Server error",
-            json: () => Promise.resolve({}),
-        } as Response);
-
-        const wrapper = mount(AddRelationship, {
-            global: {
-                plugins: [router, i18n],
-            },
-        });
-
-        await flushPromises();
-        await nextTick();
-
-        // expect(wrapper.vm.errorMessage).toBe("Server error");
-        const errorDiv = wrapper.find(".error");
-        expect(errorDiv.text()).toBe("Error fetching potential object links: Server error");
-    });
-
     test("button is disabled until an object is selected", async () => {
         const wrapper = mount(AddRelationship, {
+            props: {objectOptions: [mockOption]},
             global: {
                 plugins: [router, i18n],
             },
@@ -114,10 +87,6 @@ describe("AddRelationship - creating a link", () => {
     const objectStore = useObjectStore();
     objectStore.id = 1;
     objectStore.destination = "project";
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      status: 200,
-      json: () => Promise.resolve(options),
-    } as Response);
   });
 
   afterEach(() => {
@@ -125,7 +94,7 @@ describe("AddRelationship - creating a link", () => {
   });
 
   async function mountReady() {
-    const wrapper = mount(AddRelationship, { global: { plugins: [router, i18n] } });
+    const wrapper = mount(AddRelationship, { props: { objectOptions: options }, global: { plugins: [router, i18n] } });
     await flushPromises();
     return wrapper;
   }

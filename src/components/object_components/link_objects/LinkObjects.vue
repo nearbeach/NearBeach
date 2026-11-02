@@ -184,8 +184,12 @@ async function loadData() {
 	// State we are loading
 	isLoaded.value = false;
 
-    await fetchLinkList();
-    await fetchPotentialObjectLinks();
+	try {
+		await fetchLinkList();
+		await fetchPotentialObjectLinks();
+	} catch (error) {
+		errorText.value = t("error_text") + ": " + (error instanceof Error ? error.message : String(error));
+	}
 }
 
 function updateRelationship(data: { index: number, link_relationship: string }) {

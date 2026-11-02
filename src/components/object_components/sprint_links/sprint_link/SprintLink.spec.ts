@@ -46,8 +46,8 @@ describe("SprintLink", () => {
     expect(sprintTitle.text()).toBe("Sprint 1");
 
     // Check sprint dates
-    const sprintDates = wrapper.find(".sprint-dates");
-    expect(sprintDates.text()).toBe("2023-10-01 - 2023-10-15");
+    const sprintDates = wrapper.find(".sprint-information");
+    expect(sprintDates.text()).toBe("active - 2023-10-01 - 2023-10-15");
   });
 
   test("emits deleteSprint event when trash icon is clicked", async () => {

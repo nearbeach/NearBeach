@@ -4,6 +4,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { defineComponent, h } from "vue";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useObjectMetaDataStore } from "@/stores/object_meta_data/object_meta_data.ts";
+import { useErrorStore } from "@/stores/error/error.ts";
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import StakeholderOrganisation from "./StakeholderOrganisation.vue";
 
@@ -67,6 +68,7 @@ describe("StakeholderOrganisation", () => {
   test("choosing an organisation posts it and updates the stores", async () => {
     const customers = [{ id: 1 }];
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 201,
       json: () => Promise.resolve({ organisation, potential_customers: customers }),
     } as Response);
     const objectStore = useObjectStore();
@@ -86,6 +88,7 @@ describe("StakeholderOrganisation", () => {
 
   test("missing potential customers become an empty list", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 201,
       json: () => Promise.resolve({ organisation }),
     } as Response);
     useObjectMetaDataStore().potential_customers = [{ id: 1 }] as never;
@@ -105,14 +108,13 @@ describe("StakeholderOrganisation", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  test("a failed add is logged and leaves the organisation unset", async () => {
+  test("a failed add is reported and leaves the organisation unset", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mountOrganisation();
 
     await choose(wrapper, 3);
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(useErrorStore().message).toBe("offline");
     expect(useObjectStore().organisation).toBeNull();
   });
 
