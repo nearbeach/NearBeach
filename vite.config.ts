@@ -14,7 +14,7 @@ export default defineConfig({
     build: {
         manifest: "manifest.json",
         outDir: path.resolve(import.meta.dirname, './NearBeach/static/NearBeach/'),
-        rollupOptions: {
+        rolldownOptions: {
             input: {
                 'main': path.resolve(import.meta.dirname, './src/main.ts'),
                 'login': path.resolve(import.meta.dirname, './src/login.ts'),

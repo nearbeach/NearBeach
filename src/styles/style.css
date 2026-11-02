@@ -60,7 +60,7 @@ p, label, button {
     line-height: 1.5rem;
     color: var(--text);
     margin-bottom: 0;
-    @meida (--large-screen) {
+    @media (--large-screen) {
         font-size: 1rem;
         line-height: 1.25rem;
     }
