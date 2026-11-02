@@ -61,6 +61,7 @@
   "login_panel.login_message": "NearBeach Login",
   "login_panel.password": "Password",
   "login_panel.password_placeholder": "Your password",
+  "login_panel.logging_in": "Logging in",
   "login_panel.sign_in": "Sign in",
   "login_panel.username": "Username",
   "login_panel.username_placeholder": "Your username or email address",

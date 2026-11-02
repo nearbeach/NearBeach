@@ -92,7 +92,12 @@ function signIn(event: Event) {
 			:is-action-running="buttonState === ObjectStateEnum.LoggingIn"
 			@click="signIn"
 		>
-			{{ t("login_panel.sign_in") }}
+            <template #default>
+			    {{ t("login_panel.sign_in") }}
+            </template>
+            <template #action-state>
+                {{ t("login_panel.logging_in")}}
+            </template>
 		</WlkButton>
 
 		<RouterLink to="/login/forgotten-password">{{ t("login_panel.forgotten_password") }}</RouterLink>

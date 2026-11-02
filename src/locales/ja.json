@@ -61,6 +61,7 @@
   "login_panel.login_message": "ニアビーチログイン",
   "login_panel.password": "パスワード",
   "login_panel.password_placeholder": "パスワード",
+  "login_panel.logging_in": "ログイン",
   "login_panel.sign_in": "サインイン",
   "login_panel.username": "ユーザー名",
   "login_panel.username_placeholder": "ユーザー名またはメールアドレス",
