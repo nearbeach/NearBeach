@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 from rest_framework import viewsets
 from rest_framework.response import Response
 from NearBeach.services.PublicLinkService import PublicLinkService
@@ -9,6 +11,7 @@ class PublicLinkViewSet(viewsets.ViewSet):
     lookup_value_regex = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
 
     @staticmethod
+    @method_decorator(never_cache)
     def retrieve(request, pk, *args, **kwargs) -> Response:
         """Retrieve a single public link"""
         public_link_service = PublicLinkService(destination="public_link", location_id=pk)
