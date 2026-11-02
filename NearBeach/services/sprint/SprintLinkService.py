@@ -25,8 +25,18 @@ class SprintLinkService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
+        # Check the sprint will be aligned with either a requirement or project
         if self.destination not in ["requirement", "project"]:
             return "Parent object not allowed", status.HTTP_400_BAD_REQUEST
+
+        # Check to make sure we are not duplicating the sprint
+        sprint_object_exists = Sprint.objects.filter(
+            is_deleted=False,
+            **{F"{self.destination}_id": self.location_id},
+            title=serializer.validated_data["title"],
+        )
+        if sprint_object_exists.exists():
+            return "No duplicated sprints please", status.HTTP_400_BAD_REQUEST
 
         # Create the sprint
         created_sprint = serializer.save(

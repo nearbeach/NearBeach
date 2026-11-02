@@ -56,6 +56,15 @@ watch(
     }
 );
 
+// Define computed
+const disableCreateSprint = computed(() => {
+	// Set up a set that we'll remove from potential results
+	const existingTitlesSet = new Set(sprintData.value.map(x => x.title));
+
+	// Return
+	return existingTitlesSet.has(sprintTitleModel.value);
+})
+
 // Define onMounted
 onMounted(async () => {
     if (objectStore.is_loaded) {
@@ -268,6 +277,7 @@ function openModal() {
                 >{{ t("close_modal") }}
                 </WlkButton>
                 <WlkButton class="compact primary"
+                           :disabled="disableCreateSprint"
                            v-on:click="createSprint"
                 >{{ t("create_sprint") }}
                 </WlkButton>

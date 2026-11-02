@@ -10,10 +10,20 @@ import {useErrorStore} from "@/stores/error/error.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Async components
+const CustomerPage = () =>
+    import("@/components/customer/CustomerPage.vue");
 const DashboardPage = () =>
     import("@/components/dashboard/dashboard_page/DashboardPage.vue");
 const NewProject = () =>
     import("@/components/new_object/NewObject.vue");
+const NewOrganisation = () =>
+    import("@/components/organisation/NewOrganisation.vue");
+const NewCustomer = () =>
+    import("@/components/customer/NewCustomer.vue");
+const PublicLinkPage = () =>
+    import("@/components/public_link/PublicLinkPage.vue");
+const OrganisationPage = () =>
+    import("@/components/organisation/OrganisationPage.vue");
 const NotFoundPage = () =>
     import("@/components/error/NotFoundPage/NotFoundPage.vue");
 const ProjectPage = () =>
@@ -100,6 +110,29 @@ const routes = [
             {path: "new", component: NewProject, name: "NewProject"},
             {path: ":id", component: ProjectPage, name: "Project"},
         ],
+    },
+    {
+        path: "/public_link",
+        meta: {
+            destination: "public_link",
+        },
+        children: [
+            {path: "", component: NotFoundPage, name: "NotFound"},
+            {path: ":id", component: PublicLinkPage, name: "PublicLink"},
+        ]
+    },
+    {
+        path: "/organisation",
+        meta: {
+            destination: "organisation",
+        },
+        children: [
+            {path: "", component: SearchPage, name: "SearchOrganisation"},
+            {path: "new", component: NewOrganisation, name: "NewOrganisation"},
+            {path: ":id", component: OrganisationPage, name: "Organisation"},
+            {path: ":id/customer/new", component: NewCustomer, name: "NewCustomer"},
+            {path: ":id/customer/:customer_id", component: CustomerPage, name: "Customer"},
+        ]
     },
     {
         path: "/kanban_board",

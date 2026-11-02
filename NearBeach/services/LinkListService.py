@@ -102,6 +102,23 @@ class LinkListService(ObjectServiceAbstraction):
         if condition_1 and condition_2:
             return "User does not have access to object they are linking too", status.HTTP_403_FORBIDDEN
 
+        # Check to make sure we have not got a connection already
+        object_assignment_exists = ObjectAssignment.objects.filter(
+            Q(
+                is_deleted=False,
+                **{object_type: single_object},
+                **{F"{self.destination}_id": self.location_id},
+
+            ) |
+            Q(
+                is_deleted=False,
+                **{F"{object_type}_id": self.location_id},
+                **{self.destination: single_object},
+            )
+        ).exists()
+        if object_assignment_exists:
+            return "Object already exists", status.HTTP_400_BAD_REQUEST
+
         submit_object_assignment = ObjectAssignment(
             change_user=request.user,
             **{object_type: single_object},
