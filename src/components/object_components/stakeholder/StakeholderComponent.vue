@@ -76,7 +76,7 @@ async function loadData() {
 		</WlkCardHeader>
 
 		<StakeholderOrganisation/>
-		<StakeholderCustomer/>
+		<StakeholderCustomer v-if="objectStore.organisation !== undefined && objectStore.organisation !== null"/>
 	</WlkCard>
 </template>
 
