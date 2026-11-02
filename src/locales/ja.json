@@ -27,6 +27,7 @@
   "general_detail_component._sub_text": "プロジェクトの詳細を更新および変更する",
   "general_detail_component._title_placeholder": "プロジェクトタイトル",
   "general_detail_component.description": "説明",
+  "general_detail_component.error_forbidden": "現在のオブジェクトにアクセスできません。",
   "general_detail_component.project_description_placeholder": "プロジェクトの説明",
   "general_detail_component.project_details": "プロジェクトの詳細",
   "general_detail_component.project_sub_text": "プロジェクトの詳細を更新および変更する",

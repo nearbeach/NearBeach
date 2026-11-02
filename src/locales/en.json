@@ -27,6 +27,7 @@
   "general_detail_component._sub_text": "Update and modify your project details",
   "general_detail_component._title_placeholder": "Your project title",
   "general_detail_component.description": "Description",
+  "general_detail_component.error_forbidden": "You do not have access to the current object",
   "general_detail_component.project_description_placeholder": "Description of your project",
   "general_detail_component.project_details": "Project Details",
   "general_detail_component.project_sub_text": "Update and modify your project details",
