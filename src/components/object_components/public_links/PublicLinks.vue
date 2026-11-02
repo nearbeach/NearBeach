@@ -13,6 +13,7 @@ const {t} = useI18n({
         en: {
             create_public_link: "Create Public Link",
             delete_public_link: "Delete Public Link",
+            empty_public_links: "No public links created for current object",
             description: "Control public access to project",
             is_active: "Is Active",
             public_link: "Public Link",
@@ -21,6 +22,7 @@ const {t} = useI18n({
             create_public_link: "公開リンクを作成",
             delete_public_link: "公開リンクを削除",
             description: "プロジェクトへの公開アクセスを制御する",
+            empty_public_links: "現在のオブジェクトに対して公開リンクは作成されていません。",
             is_active: "有効です",
             public_link: "公開リンク",
         },
@@ -167,6 +169,12 @@ async function updateActive(data: {id: string, index: number}) {
         <h3>{{ t("public_link") }}</h3>
         <p class="sub-text">{{ t("description") }}</p>
 
+        <div class="empty-public-links-list"
+             v-if="publicLinks.length === 0"
+        >
+            {{ t("empty_public_links") }}
+        </div>
+
         <table v-if="publicLinks.length > 0">
             <thead>
                 <tr>
@@ -201,6 +209,20 @@ async function updateActive(data: {id: string, index: number}) {
 
 <style scoped>
 .public-links {
+    .empty-public-links-list {
+        margin-top: 2rem;
+        height: 7rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.25rem;
+        font-weight: 100;
+        font-family: "Roboto", sans-serif;
+        border: dashed;
+        border-radius: var(--border-radius);
+        border-width: var(--border-width);
+    }
+
     > table {
         table-layout: fixed;
         width: 100%;
