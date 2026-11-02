@@ -42,6 +42,8 @@ class OrganisationLinkService(ObjectServiceAbstraction):
 
         update_object.update(
             organisation=organisation_result,
+            change_user=request.user,
+            date_modified=timezone.now(),
         )
 
         # Send back data

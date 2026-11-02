@@ -19,7 +19,7 @@ from NearBeach.serializers.group_list_serializer import GroupListSerializer
 
 class GroupService(ObjectServiceAbstraction):
     """Service to help create, read, update, and delete groups against an object"""
-    def _clean_users_from_object(self) -> None:
+    def _clean_users_from_object(self, request: AuthenticatedRequest) -> None:
         """
         Problem: There could be users assigned to this object but have no group association. They must be removed from this
         object.
@@ -52,6 +52,8 @@ class GroupService(ObjectServiceAbstraction):
         # Delete what is left
         remove_user_list.update(
             is_deleted=True,
+            change_user=request.user,
+            date_modified=timezone.now(),
         )
 
     def _get_group_list(self) -> QuerySet:
@@ -196,7 +198,7 @@ class GroupService(ObjectServiceAbstraction):
         )
 
         # Remove any unwanted users
-        self._clean_users_from_object()
+        self._clean_users_from_object(request)
 
         return {}, status.HTTP_204_NO_CONTENT
 

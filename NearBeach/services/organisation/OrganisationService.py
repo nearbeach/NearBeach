@@ -1,4 +1,5 @@
 from django.db.models import Q, QuerySet
+from django.utils import timezone
 from rest_framework import status
 from NearBeach.models.organisation import Organisation
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
@@ -36,6 +37,7 @@ class OrganisationService(ObjectServiceAbstraction):
         organisation.update(
             is_deleted=True,
             change_user=request.user,
+            date_modified=timezone.now(),
         )
 
         return {}, status.HTTP_204_NO_CONTENT

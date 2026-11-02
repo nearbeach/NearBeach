@@ -1,4 +1,5 @@
 from django.db.models import QuerySet, Q
+from django.utils import timezone
 from rest_framework import status
 
 from NearBeach.models.customer import Customer
@@ -44,6 +45,7 @@ class CustomerService(ObjectServiceAbstraction):
         customer.update(
             is_deleted=True,
             change_user=request.user,
+            date_modified=timezone.now(),
         )
 
         return {}, status.HTTP_204_NO_CONTENT
