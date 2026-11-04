@@ -3,15 +3,18 @@ import StakeholderOrganisation
 	from "@/components/object_components/stakeholder/stakeholder_organisation/StakeholderOrganisation.vue";
 import StakeholderCustomer
 	from "@/components/object_components/stakeholder/stakeholder_customer/StakeholderCustomer.vue";
-import {WlkCard, WlkCardHeader} from "whelk-ui";
+import {WlkCard, WlkCardHeader, WlkRenderErrorMessage} from "whelk-ui";
 import {useObjectStore} from "@/stores/object/object.ts";
-import {onMounted, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 
 // Define stores
 const objectStore = useObjectStore();
 const objectMetaDataStore = useObjectMetaDataStore();
+
+// Define ref
+const errorMessage = ref<string>("");
 
 // Watch a specific state property
 watch(
@@ -34,36 +37,34 @@ onMounted(async () => {
 
 // Define functions
 async function loadData() {
-	// TODO - look at state - and showing users what state the data is currently in, i.e. "Loading"
-	// State we are loading
-	// isLoaded.value = false;
-
 	// Fetch the required data
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/organisation/`,
-			{
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
+	const response = await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/organisation/`,
+		{
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
 			},
-		);
+		},
+	);
 
-		// Fetch data
-		const data = await response.json();
+	switch (response.status) {
+		case 200:
+			// Fetch data
+			const data = await response.json();
 
-		// Set data
-		objectStore.customers = data.customers;
-		objectStore.organisation = data.organisation;
+			// Set data
+			objectStore.customers = data.customers;
+			objectStore.organisation = data.organisation;
 
-		// Set data meta
-		objectMetaDataStore.potential_customers = data.potential_customers ?? [];
-		objectMetaDataStore.potential_organisations = data.potential_organisations ?? [];
-	} catch(error) {
-		// TODO - handle error
-		console.error(error);
+			// Set data meta
+			objectMetaDataStore.potential_customers = data.potential_customers ?? [];
+			objectMetaDataStore.potential_organisations = data.potential_organisations ?? [];
+			break;
+		default:
+			errorMessage.value = response.statusText;
+			break;
 	}
 }
 
@@ -74,6 +75,8 @@ async function loadData() {
 		<WlkCardHeader>
 			<h3>Stakeholders</h3>
 		</WlkCardHeader>
+
+		<WlkRenderErrorMessage v-if="errorMessage !== ''">{{errorMessage}}</WlkRenderErrorMessage>
 
 		<StakeholderOrganisation/>
 		<StakeholderCustomer v-if="objectStore.organisation !== undefined && objectStore.organisation !== null"/>

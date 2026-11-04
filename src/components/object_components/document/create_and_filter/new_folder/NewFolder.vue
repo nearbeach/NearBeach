@@ -6,12 +6,14 @@ import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
 
 // Define i18n
 const {t} = useI18n();
 
 // Define store
 const documentationStore = useDocumentationStore();
+const errorStore = useErrorStore();
 
 // Define emits
 const emit = defineEmits(["closeModal"]);
@@ -23,21 +25,22 @@ const objectStore = useObjectStore();
 const newFolderModel = ref<string>("")
 
 // Define computed component
-const isCreateDisabled = computed(() : boolean => {
+const isCreateDisabled = computed((): boolean => {
 	if (newFolderModel.value === "") {
 		// Disable the button
 		return true;
 	}
-	// TODO - check the if the folder name already exists in the current folder
 
-	return false;
+	return documentationStore.folders.some((folder: FolderItemInterface) => {
+		const condition_1 = folder.description.toLowerCase() === newFolderModel.value.toLowerCase();
+		const condition_2 = folder.parent_folder_id === documentationStore.currentFolderId;
+
+		return condition_1 && condition_2;
+	});
 });
 
 // Define functions
 async function createNewFolder() {
-	// TODO - add to optimistic list
-	// TODO - close modal
-
 	const body = {
 		description: newFolderModel.value,
 		type: "folder",
@@ -46,42 +49,44 @@ async function createNewFolder() {
 			: documentationStore.currentFolderId,
 	}
 
-	// TODO - clear data from models
-
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body: JSON.stringify(body),
+	const response = await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
 			},
-		)
+			body: JSON.stringify(body),
+		},
+	)
 
-		// Add data
-		const data = await response.json();
-		const folder: FolderItemInterface = {
-			id: data.id,
-			description: data.description,
-			parent_folder_id: data.parent_folder_id,
-		}
-		documentationStore.folders.push(folder);
+	// Close the modal
+	emit("closeModal");
 
-		// TEMP CODE
-		emit("closeModal");
-		newFolderModel.value = "";
-		// END TEMP CODE
+	switch (response.status) {
+		case 201:
+			const data = await response.json();
+			const folder: FolderItemInterface = {
+				id: data.id,
+				description: data.description,
+				parent_folder_id: data.parent_folder_id,
+			}
+			documentationStore.folders.push(folder);
 
-		// TODO - Update the folders in DocumentComponent
-	} catch (error) {
-		// TODO - Handle errors
-		// TODO - Remove from optimistic list
+			// Clear the model
+			newFolderModel.value = "";
+			break;
+		case 403:
+			errorStore.setError(t("general_detail_component.error_forbidden"));
+			errorStore.showErrorModal = true;
+			break;
+		default:
+			errorStore.setError(response.statusText);
+			errorStore.showErrorModal = true;
+			break;
 	}
 }
-
 </script>
 
 <template>
