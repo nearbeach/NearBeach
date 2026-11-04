@@ -8,9 +8,13 @@ import UploadDocument
 	from "@/components/object_components/document/create_and_filter/upload_document/UploadDocument.vue";
 import {useI18n} from "petite-vue-i18n";
 import {X} from "@lucide/vue";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n();
+
+// Define stores
+const permissionStore = usePermissionStore();
 
 // Define refs
 const dropdownModel = ref<boolean>(false);
@@ -40,7 +44,10 @@ function dropDownItemClicked(event: string) {
 
 <template>
 	<div class="document-create-and-filter">
-		<WlkDropDown v-model="dropdownModel">
+		<WlkDropDown
+			v-if="permissionStore.currentObjectPermissions.currentObject > 1"
+			v-model="dropdownModel"
+		>
 			<template v-slot:button>
 				<Upload :size="12"/>
 				{{t("create_and_filter.upload")}}

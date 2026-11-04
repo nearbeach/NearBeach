@@ -4,6 +4,7 @@ import {useI18n} from "petite-vue-i18n";
 import {ref, onMounted} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -13,6 +14,7 @@ const emit = defineEmits(["updateRelationship"]);
 
 // Define object store
 const objectStore = useObjectStore();
+const permissionStore = usePermissionStore();
 
 // Define props
 const props = defineProps({
@@ -135,6 +137,7 @@ function updateRelationship() : void {
 			:options="relationshipList"
 			:status="state"
 			:validationRules="[required()]"
+			:disabled="permissionStore.currentObjectPermissions.currentObject <= 1"
 			v-model="relationshipModel"
 			v-on:change="updateRelationship"
 		/>

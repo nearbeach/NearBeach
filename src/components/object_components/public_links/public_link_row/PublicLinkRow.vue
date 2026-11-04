@@ -2,12 +2,16 @@
 import {TrashIcon, Check, X} from "@lucide/vue";
 import {useI18n} from "petite-vue-i18n";
 import {ref} from "vue";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n()
 
 // Define emits
 const emits = defineEmits(['deleteLink', 'updateActive']);
+
+// Define store
+const permissionStore = usePermissionStore();
 
 // Define props
 const props = defineProps({
@@ -62,10 +66,11 @@ async function copyLink() {
         <Check v-if="isActive" />
         <X v-else />
     </td>
-    <td v-on:click="emits('deleteLink', {id: id})">
+    <td v-on:click="emits('deleteLink', {id: id})"
+		v-if="permissionStore.currentObjectPermissions.currentObject > 1"
+	>
         <TrashIcon />
     </td>
-
 </template>
 
 <style scoped>

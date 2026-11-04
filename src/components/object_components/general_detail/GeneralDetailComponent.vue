@@ -7,6 +7,7 @@ import {useI18n} from "petite-vue-i18n";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import router from "@/router/router.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n()
@@ -20,6 +21,7 @@ const updateState = ref("normal");
 
 // Define stores
 const objectStore = useObjectStore();
+const permissionStore = usePermissionStore();
 
 // Define data
 const fieldValidation: Record<string, boolean> = {
@@ -178,6 +180,7 @@ async function updateData() {
 		/>
 
 		<WlkButton
+			v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 			class="primary"
 			:disabled="isUpdateButtonDisabled"
 			v-on:click="updateData"

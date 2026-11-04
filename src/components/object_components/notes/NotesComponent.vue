@@ -7,6 +7,7 @@ import type {NoteItemInterface} from "@/utils/interfaces/NoteItemInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -14,6 +15,7 @@ const {t} = useI18n();
 // Define stores
 const errorStore = useErrorStore();
 const objectStore = useObjectStore();
+const permissionStore = usePermissionStore();
 
 // Define ref
 const modalClass = ref<string>("");
@@ -43,7 +45,20 @@ watch(
 // Define computed
 const newOrEditNotes = computed(() => {
 	return modelId.value === null ? t("notes_component.create") : t("notes_component.edit");
-})
+});
+
+const canCreateNote = computed(() => {
+	// extra note permission
+	const field = `${objectStore.destination}_note`;
+	const extra_note = permissionStore.currentObjectPermissions[
+		field as keyof typeof permissionStore.currentObjectPermissions
+		] ?? 0;
+
+	const condition_1 = permissionStore.currentObjectPermissions.currentObject > 1;
+	const condition_2 = extra_note > 0;
+
+	return condition_1 || condition_2;
+});
 
 // Define functions
 function closeModal() {
@@ -249,6 +264,7 @@ async function updateNote() {
 		/>
 
 		<WlkButton class="compact primary create-note"
+				   v-if="canCreateNote"
 		           v-on:click="openModal"
 		>
 			Create Note

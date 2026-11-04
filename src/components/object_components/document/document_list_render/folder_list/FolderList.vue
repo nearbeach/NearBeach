@@ -5,6 +5,7 @@ import {useI18n} from "petite-vue-i18n";
 import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemInterface.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n()
@@ -12,6 +13,7 @@ const {t} = useI18n()
 // Define store
 const documentationStore = useDocumentationStore();
 const objectStore = useObjectStore();
+const permissionStore = usePermissionStore();
 
 // Define functions
 async function deleteFolder(folder_id: number) {
@@ -87,6 +89,7 @@ function updateDocumentation(folder: FolderItemInterface) {
 				<p>{{ item.description }}</p>
 			</div>
 			<div class="folder-delete"
+			     v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 			     @click="deleteFolder(item.id)"
 			>
 				<Trash/>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
-import {ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {TrashIcon} from "@lucide/vue";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
@@ -9,6 +9,7 @@ import type {GroupAndUserInterface} from "@/utils/interfaces/GroupAndUsersInterf
 import ProfilePicture from "@/components/prefab/profile_picture/ProfilePicture.vue";
 import {WlkRenderErrorMessage} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -19,6 +20,7 @@ const newAssignedUserModel = ref<number | null>(null);
 
 // Define stores
 const objectStore = useObjectStore();
+const permissionStore = usePermissionStore();
 
 // Watch a specific state property
 watch(
@@ -30,6 +32,11 @@ watch(
 		}
 	}
 )
+
+// Define computed
+const canAddUser = computed(() => {
+	return objectStore.availableUsersToAdd.length > 0 && permissionStore.currentObjectPermissions.currentObject > 1;
+});
 
 // DEFINE FUNCTIONS
 async function addUser() {
@@ -166,6 +173,7 @@ async function removeUser(user_id: number) {
 				<ProfilePicture :url="user.profile_picture" :name="user.first_name"/>
 				<p>{{ user.first_name }} {{ user.last_name }}</p>
 				<TrashIcon
+					v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 					v-on:click="removeUser(user.id)"
 					type="button"
 					aria-label="Remove User"
@@ -176,7 +184,7 @@ async function removeUser(user_id: number) {
 		<WlkRenderErrorMessage>{{ errorMessage }}</WlkRenderErrorMessage>
 
 		<AddObject
-			v-if="objectStore.availableUsersToAdd.length > 0"
+			v-if="canAddUser"
 			label="Users"
 			optionsLabel="full_name"
 			optionsValue="id"

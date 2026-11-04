@@ -16,6 +16,7 @@ import {X} from "@lucide/vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import SprintLink from "@/components/object_components/sprint_links/sprint_link/SprintLink.vue";
 import {useErrorStore} from "@/stores/error/error.ts";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n()
@@ -23,6 +24,7 @@ const {t} = useI18n()
 // Define stores
 const errorStore = useErrorStore();
 const objectStore = useObjectStore();
+const permissionStore = usePermissionStore();
 
 // Define refs
 const errorMessage = ref<string>("");
@@ -247,7 +249,9 @@ function openModal() {
 			/>
 		</div>
 
-		<div class="sprint-buttons">
+		<div class="sprint-buttons"
+			 v-if="permissionStore.currentObjectPermissions.currentObject > 1"
+		>
 			<WlkButton class="compact primary"
 			           @click="openModal"
 			>

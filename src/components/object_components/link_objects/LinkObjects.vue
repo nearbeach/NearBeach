@@ -8,6 +8,7 @@ import {SmallLoadingSkeleton} from "@/components/object_components/skeletons";
 import {AddRelationship} from "@/components/object_components/link_objects/add_relationship";
 import {LinkObjectsTable} from "@/components/object_components/link_objects/link_objects_table";
 import {WlkRenderErrorMessage} from "whelk-ui";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -15,6 +16,7 @@ const {t} = useI18n();
 // Define stores
 const objectStore = useObjectStore();
 const objectOptions = ref<ObjectLinkInterface[]>([]);
+const permissionStore = usePermissionStore();
 
 // Define ref
 const errorText = ref<string>("");
@@ -228,7 +230,7 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 			{{ t("link_objects.loading") }}
 		</SmallLoadingSkeleton>
 		<AddRelationship
-			v-if="isLoaded"
+			v-if="isLoaded && permissionStore.currentObjectPermissions.currentObject > 1"
 			:object-options="filteredObjectOptions"
 			v-on:create-object-link="createObjectLink"
 		/>

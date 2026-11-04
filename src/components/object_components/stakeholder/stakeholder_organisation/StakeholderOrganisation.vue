@@ -8,6 +8,7 @@ import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import type {OrganisationLinkInterface} from "@/utils/interfaces/stores/OrganisationLinkInterface.ts";
 import {WlkRenderErrorMessage} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -15,6 +16,7 @@ const {t} = useI18n();
 // Define stores
 const objectStore = useObjectStore();
 const objectMetaDataStore = useObjectMetaDataStore();
+const permissionStore = usePermissionStore();
 
 // Define refs
 const errorMessage = ref<string>("");
@@ -113,12 +115,14 @@ async function removeOrganisation() {
 			</RouterLink>
 			<TrashIcon
 				v-on:click="removeOrganisation()"
+				v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 				type="button"
 				aria-label="Remove User"
 			/>
 		</div>
 		<div v-else>
 			<AddObject
+				v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 				label="Organisation"
 				optionsLabel="name"
 				optionsValue="id"

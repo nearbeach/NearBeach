@@ -4,10 +4,12 @@ import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define store
 const documentationStore = useDocumentationStore();
 const objectStore = useObjectStore();
+const permissionStore = usePermissionStore();
 
 // Define computed
 async function deleteDocument(document: DocumentItemInterface) {
@@ -89,6 +91,7 @@ function getIcon(description: string | null, urlLocation: string | null) {
 				</p>
 			</div>
 			<div class="document-delete"
+				 v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 				 @click="deleteDocument(item)"
 			>
 				<Trash />

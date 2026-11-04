@@ -6,12 +6,14 @@ import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {WlkButton, WlkRenderErrorMessage} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import PublicLinkRow from "@/components/object_components/public_links/public_link_row/PublicLinkRow.vue";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n()
 
 // Define stores
 const objectStore = useObjectStore();
+const permissionStore = usePermissionStore();
 
 // Define refs
 const errorMessage = ref<string>("");
@@ -124,6 +126,12 @@ async function loadData() {
 }
 
 async function updateActive(data: { id: string, index: number }) {
+	// Check user access first
+	if (permissionStore.currentObjectPermissions.currentObject <= 1) {
+		// Do nothing silently
+		return;
+	}
+
 	// Get copy of data
 	const public_link_row = publicLinks.value[data.index];
 
@@ -191,7 +199,9 @@ async function updateActive(data: { id: string, index: number }) {
 			<tr>
 				<td style="width:calc(100% - 110px);">{{ t("public_links.public_link") }}</td>
 				<td style="width:90px;">{{ t("public_links.is_active") }}</td>
-				<td style="width:20px;"></td>
+				<td style="width:20px;"
+					v-if="permissionStore.currentObjectPermissions.currentObject > 1"
+				></td>
 			</tr>
 			</thead>
 			<tbody>
@@ -208,7 +218,9 @@ async function updateActive(data: { id: string, index: number }) {
 			</tbody>
 		</table>
 
-		<div class="public-link-buttons">
+		<div class="public-link-buttons"
+			 v-if="permissionStore.currentObjectPermissions.currentObject > 1"
+		>
 			<WlkRenderErrorMessage>{{ errorMessageCreate }}</WlkRenderErrorMessage>
 			<WlkButton class="compact primary"
 			           @click="createPublicLink"

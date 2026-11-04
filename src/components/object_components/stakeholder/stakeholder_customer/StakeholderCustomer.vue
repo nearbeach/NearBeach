@@ -6,6 +6,7 @@ import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data
 import {ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useI18n} from "petite-vue-i18n";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -13,6 +14,7 @@ const {t} = useI18n();
 // Define stores
 const objectStore = useObjectStore();
 const objectMetaDataStore = useObjectMetaDataStore();
+const permissionStore = usePermissionStore();
 
 // Define ref
 const customerModel = ref<number>(0);
@@ -100,12 +102,14 @@ async function removeCustomer(customer_id: number) {
 				{{ customer.first_name }} {{ customer.last_name }}
 			</RouterLink>
 			<TrashIcon
+				v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 				v-on:click="removeCustomer(customer.id)"
 				type="button"
 				aria-label="Remove User"
 			/>
 		</div>
 		<AddObject
+			v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 			label="Customer"
 			optionsLabel="first_name"
 			optionsValue="id"
