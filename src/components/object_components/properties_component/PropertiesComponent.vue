@@ -24,7 +24,9 @@ const objectStore = useObjectStore();
 
 // Define refs
 const dateStatus = ref<string>("");
+const dateStatusClass = ref<string>("");
 const storyPointsStatus = ref<string>("");
+const storyPointsStatusClass = ref<string>("");
 const storyPointsTimeout = ref<null | ReturnType<typeof setTimeout>>(null);
 
 // Define watches
@@ -115,32 +117,37 @@ async function datesUpdated() {
 		start_date: objectStore.start_date,
 	}
 
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/`,
-			{
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body: JSON.stringify(body),
-			}
-		);
+	const response = await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
+		{
+			method: "PATCH",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+			body: JSON.stringify(body),
+		}
+	);
 
-		dateStatus.value = t("properties_component.date_updated");
-		handleResponseStatus(response);
+	switch (response.status) {
+		case 200:
+			dateStatus.value = t("properties_component.date_updated");
+			dateStatusClass.value = "success";
+			handleResponseStatus(response);
 
-		setTimeout(() => {
-			dateStatus.value = "";
-		}, 2000);
-	} catch (error) {
-		// Assuming a 500 error
-		errorStore.setError(error);
-		return router.push({name: "server-error"});
+			setTimeout(() => {
+				dateStatus.value = "";
+			}, 2000);
+			break;
+		case 403:
+			dateStatus.value = t("general_detail_component.error_forbidden");
+			dateStatusClass.value = "error";
+			break;
+		default:
+			dateStatus.value = response.statusText;
+			dateStatusClass.value = "error";
+			break;
 	}
-
-	return null;
 }
 
 function handleResponseStatus(response: Response) {
@@ -194,31 +201,39 @@ async function storyPointsUpdate() {
 		story_point: objectStore.story_point,
 	}
 
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/`,
-			{
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body: JSON.stringify(body),
-			}
-		);
+	const response = await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
+		{
+			method: "PATCH",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+			body: JSON.stringify(body),
+		}
+	);
 
-		// Update status and check response
-		storyPointsStatus.value = t("properties_component.story_point_updated");
-		handleResponseStatus(response);
+	switch (response.status) {
+		case 200:
+			// Update status and check response
+			storyPointsStatus.value = t("properties_component.story_point_updated");
+			storyPointsStatusClass.value = "success";
+			handleResponseStatus(response);
 
-		setTimeout(() => {
-			storyPointsStatus.value = "";
-		}, 2000);
-	} catch (error) {
-		// Assuming a 500 error
-		errorStore.setError(error);
-		errorStore.showErrorModal = true;
+			setTimeout(() => {
+				storyPointsStatus.value = "";
+			}, 2000);
+			break;
+		case 403:
+			storyPointsStatus.value = t("general_detail_component.error_forbidden");
+			storyPointsStatusClass.value = "error";
+			break;
+		default:
+			storyPointsStatus.value = response.statusText;
+			storyPointsStatusClass.value = "error";
+			break;
 	}
+
 }
 </script>
 
@@ -234,6 +249,7 @@ async function storyPointsUpdate() {
 			v-model="objectStore.story_point"
 			:label="t('properties_component.story_point')"
 			:status="storyPointsStatus"
+			:statusClass="storyPointsStatusClass"
 			:validationRules="[minValue(0), maxValue(5)]"
 			v-on:change="storyPointsChanged"
 		/>
@@ -243,6 +259,7 @@ async function storyPointsUpdate() {
 			v-model="objectStore.start_date"
 			:label="t('properties_component.start_date')"
 			:status="dateStatus"
+			:statusClass="dateStatusClass"
 			:disabled="dateStatus === t('properties_component.date_updating')"
 		/>
 		<WlkDatetime
@@ -250,6 +267,7 @@ async function storyPointsUpdate() {
 			v-model="objectStore.end_date"
 			:label="t('properties_component.end_date')"
 			:status="dateStatus"
+			:statusClass="dateStatusClass"
 			:disabled="dateStatus === t('properties_component.date_updating')"
 		/>
 	</WlkCard>

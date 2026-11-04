@@ -112,39 +112,49 @@ const renderUpdateButton = computed(() => {
 });
 
 // Define functions
-function updateData() {
+async function updateData() {
 	// Notify the user of the state change
 	updateState.value = "updating"
 
-	fetch(
-		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
-		{
-			method: "PATCH",
-			body: JSON.stringify({
-				title: objectStore.title,
-				description: objectStore.description,
-			}),
-			headers: {
-				"Content-Type": "application/json",
-				"X-CSRFTOKEN": getCsrfToken(),
+	try {
+		const response = await fetch(
+			`/api/v1/${objectStore.destination}/${objectStore.id}/`,
+			{
+				method: "PATCH",
+				body: JSON.stringify({
+					title: objectStore.title,
+					description: objectStore.description,
+				}),
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				}
 			}
+		);
+
+		switch (response.status) {
+			case 200:
+				updateState.value = "updated";
+
+				setTimeout(() => {
+					updateState.value = "normal";
+				}, 2000);
+				break;
+			case 403:
+				// User does not have access to the object
+				updateState.value = "error";
+				errorStore.setError(t("general_detail_component.error_forbidden"));
+				errorStore.showErrorModal = true;
+				break;
+			default:
+				updateState.value = "error";
+				errorStore.setError(response.statusText);
+				errorStore.showErrorModal = true;
+				break;
 		}
-	).then(() => {
-		updateState.value = "updated";
-
-		setTimeout(() => {
-			updateState.value = "normal";
-		}, 2000);
-	}).catch((error) => {
-		// TODO - handle errors property
-		updateState.value = "error";
-
-		console.error("ERROR: ", error);
-
-		// setTimeout(() => {
-		// 	updateState.value = "normal";
-		// })
-	});
+	} catch (error) {
+		errorStore.setError(error);
+	}
 }
 </script>
 
