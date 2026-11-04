@@ -111,9 +111,6 @@ describe("StakeholderCustomer", () => {
     expect(customerList.length).toBe(1);
     expect(customerList.at(0)?.text()).toContain("Jane Smith");
   });
-
-  // The component does not fetch its customers yet - see the TODO in StakeholderCustomer.vue
-  test.todo("fetches customers on mount");
 });
 
 describe("StakeholderCustomer - edge cases", () => {
