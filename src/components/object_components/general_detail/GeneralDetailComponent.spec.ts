@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import i18n from "@/i18n.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useErrorStore } from "@/stores/error/error.ts";
@@ -30,6 +31,7 @@ function mountDetails() {
 describe("GeneralDetailComponent", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     pushMock.mockReset();
     route.params = { id: "12" };
     route.meta = { destination: "project" };
@@ -149,15 +151,24 @@ describe("GeneralDetailComponent", () => {
 
     test("shows an error and stays disabled when saving fails", async () => {
       const { wrapper, fetchSpy } = await mountLoaded();
-      fetchSpy.mockRejectedValue(new Error("offline"));
-      const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+      fetchSpy.mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
 
       await wrapper.find("button.primary").trigger("click");
       await flushPromises();
 
-      expect(consoleError).toHaveBeenCalled();
+      expect(useErrorStore().message).toBe("Server exploded");
       expect(wrapper.find("button.primary").text()).toBe("There was a problem updating");
       expect(wrapper.find("button.primary").attributes("disabled")).toBeDefined();
+    });
+
+    test("a network failure while saving is reported through the error store", async () => {
+      const { wrapper, fetchSpy } = await mountLoaded();
+      fetchSpy.mockRejectedValue(new Error("offline"));
+
+      await wrapper.find("button.primary").trigger("click");
+      await flushPromises();
+
+      expect(useErrorStore().message).toBe("offline");
     });
   });
 });
@@ -165,6 +176,7 @@ describe("GeneralDetailComponent", () => {
 describe("GeneralDetailComponent - editing", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     pushMock.mockReset();
     route.params = { id: "12" };
     route.meta = { destination: "project" };

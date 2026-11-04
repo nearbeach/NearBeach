@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useObjectMetaDataStore } from "@/stores/object_meta_data/object_meta_data.ts";
 import StakeholderOrganisation from "./stakeholder_organisation/StakeholderOrganisation.vue";
@@ -23,6 +24,7 @@ function mountStakeholders() {
 describe("StakeholderComponent", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.destination = "project";
     objectStore.id = 12;
@@ -43,6 +45,7 @@ describe("StakeholderComponent", () => {
   test("loads the stakeholders on mount when the object is loaded", async () => {
     useObjectStore().is_loaded = true;
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 200,
       json: () => Promise.resolve(data),
     } as Response);
     mountStakeholders();
@@ -57,6 +60,7 @@ describe("StakeholderComponent", () => {
 
   test("waits for the object to load before fetching", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 200,
       json: () => Promise.resolve(data),
     } as Response);
     mountStakeholders();
@@ -74,6 +78,7 @@ describe("StakeholderComponent", () => {
     useObjectStore().is_loaded = true;
     useObjectMetaDataStore().potential_customers = [{ id: 9 }] as never;
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 200,
       json: () => Promise.resolve({ customers: [], organisation: null }),
     } as Response);
     mountStakeholders();
@@ -83,13 +88,15 @@ describe("StakeholderComponent", () => {
     expect(useObjectMetaDataStore().potential_organisations).toEqual([]);
   });
 
-  test("a failed load is logged", async () => {
+  test("a failed load shows the status text as an error", async () => {
     useObjectStore().is_loaded = true;
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
-    mountStakeholders();
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 500,
+      statusText: "Server exploded",
+    } as Response);
+    const wrapper = mountStakeholders();
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(wrapper.text()).toContain("Server exploded");
   });
 });

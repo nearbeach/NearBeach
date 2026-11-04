@@ -1,6 +1,7 @@
 import { beforeEach, afterEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import {PublicLinks} from ".";
 import PublicLinkRow from "./public_link_row/PublicLinkRow.vue";
@@ -19,6 +20,7 @@ function mountPublicLinks() {
 describe("PublicLinks", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.is_loaded = true;
     objectStore.destination = "test-destination";
@@ -68,10 +70,10 @@ describe("PublicLinks - managing links", () => {
   ];
 
   // Respond to each request by method so loading and mutating can differ
-  function mockFetch(responses: Record<string, { status: number; body: unknown }>) {
+  function mockFetch(responses: Record<string, { status: number; body?: unknown; statusText?: string }>) {
     return vi.spyOn(globalThis, "fetch").mockImplementation((_url, init) => {
-      const { status, body } = responses[init?.method ?? "GET"] ?? { status: 200, body: {} };
-      return Promise.resolve({ status, json: () => Promise.resolve(structuredClone(body)) } as Response);
+      const { status, body, statusText } = responses[init?.method ?? "GET"] ?? { status: 200, body: {} };
+      return Promise.resolve({ status, statusText, json: () => Promise.resolve(structuredClone(body)) } as Response);
     });
   }
 
@@ -86,6 +88,7 @@ describe("PublicLinks - managing links", () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.is_loaded = true;
     objectStore.destination = "project";
@@ -142,7 +145,7 @@ describe("PublicLinks - managing links", () => {
   });
 
   test("deleting removes the row and calls DELETE", async () => {
-    const { wrapper, fetchSpy } = await mountLoaded({});
+    const { wrapper, fetchSpy } = await mountLoaded({ DELETE: { status: 204 } });
 
     rows(wrapper)[0].vm.$emit("deleteLink", { id: "a" });
     await flushPromises();
@@ -152,15 +155,14 @@ describe("PublicLinks - managing links", () => {
     expect(rows(wrapper).map((row) => row.props("id"))).toEqual(["b"]);
   });
 
-  test("a failed delete request is logged", async () => {
-    const { wrapper, fetchSpy } = await mountLoaded({});
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
-    fetchSpy.mockRejectedValueOnce(new Error("offline"));
+  test("a failed delete request restores the row and shows the status text", async () => {
+    const { wrapper } = await mountLoaded({ DELETE: { status: 500, statusText: "Server exploded" } });
 
     rows(wrapper)[0].vm.$emit("deleteLink", { id: "a" });
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(rows(wrapper).map((row) => row.props("id"))).toEqual(["a", "b"]);
+    expect(wrapper.text()).toContain("Server exploded");
   });
 
   test("toggling active flips the flag and PATCHes it", async () => {
@@ -184,14 +186,13 @@ describe("PublicLinks - managing links", () => {
     expect(fetchSpy.mock.calls.some(([, i]) => i?.method === "PATCH")).toBe(false);
   });
 
-  test("a failed toggle request is logged", async () => {
-    const { wrapper, fetchSpy } = await mountLoaded({});
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
-    fetchSpy.mockRejectedValueOnce(new Error("offline"));
+  test("a failed toggle request flips the flag back and shows the status text", async () => {
+    const { wrapper } = await mountLoaded({ PATCH: { status: 500, statusText: "Server exploded" } });
 
     rows(wrapper)[0].vm.$emit("updateActive", { id: "a", index: 0 });
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(rows(wrapper)[0].props("isActive")).toBe(links[0].is_active);
+    expect(wrapper.text()).toContain("Server exploded");
   });
 });

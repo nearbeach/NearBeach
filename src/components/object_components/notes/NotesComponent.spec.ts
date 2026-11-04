@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import i18n from "@/i18n.ts";
+import { useErrorStore } from "@/stores/error/error.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import NoteList from "@/components/object_components/notes/note_list/NoteList.vue";
 import { NotesComponent } from ".";
@@ -15,10 +17,21 @@ function mockFetch(handler?: (url: string, init?: RequestInit) => unknown) {
   return vi.spyOn(globalThis, "fetch").mockImplementation(
     (url, init) =>
       Promise.resolve({
-        status: 200,
+        status: ({ POST: 201, DELETE: 204 } as Record<string, number>)[init?.method ?? "GET"] ?? 200,
         json: () => Promise.resolve(structuredClone(handler ? handler(String(url), init) : notes)),
       } as Response),
   );
+}
+
+// The first (GET) call succeeds, every later call fails with the given status
+function mockFetchThenFail(status = 500) {
+  let calls = 0;
+  return vi.spyOn(globalThis, "fetch").mockImplementation(() => {
+    if (calls++ === 0) {
+      return Promise.resolve({ status: 200, json: () => Promise.resolve(structuredClone(notes)) } as Response);
+    }
+    return Promise.resolve({ status, statusText: "Server exploded" } as Response);
+  });
 }
 
 function mountNotes() {
@@ -30,6 +43,7 @@ function mountNotes() {
 describe("NotesComponent", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.destination = "project";
     objectStore.id = 3;
@@ -71,14 +85,14 @@ describe("NotesComponent", () => {
     expect(noteList(wrapper)).toHaveLength(2);
   });
 
-  test("logs an error when loading fails", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("boom"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+  test("shows an error when loading fails", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
 
     mountNotes();
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(useErrorStore().message).toBe("Server exploded");
+    expect(useErrorStore().showErrorModal).toBe(true);
   });
 
   test("create button opens an empty modal in create mode", async () => {
@@ -113,16 +127,18 @@ describe("NotesComponent", () => {
     expect(wrapper.find(".open").exists()).toBe(false);
   });
 
-  test("logs an error when creating fails", async () => {
-    let first = true;
-    vi.spyOn(globalThis, "fetch").mockImplementation(() => {
-      if (first) {
-        first = false;
-        return Promise.resolve({ json: () => Promise.resolve(structuredClone(notes)) } as Response);
-      }
-      return Promise.reject(new Error("fail"));
-    });
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+  test("shows an error when a network failure stops loading", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+
+    mountNotes();
+    await flushPromises();
+
+    expect(useErrorStore().message).toBe("offline");
+    expect(useErrorStore().showErrorModal).toBe(true);
+  });
+
+  test("shows an error and keeps the list when creating fails", async () => {
+    mockFetchThenFail();
 
     const wrapper = mountNotes();
     await flushPromises();
@@ -130,7 +146,7 @@ describe("NotesComponent", () => {
     await wrapper.find(".modal-footer-row button.primary").trigger("click");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(useErrorStore().message).toBe("Server exploded");
     expect(noteList(wrapper)).toHaveLength(2);
   });
 
@@ -167,13 +183,8 @@ describe("NotesComponent", () => {
     expect(wrapper.find(".open").exists()).toBe(false);
   });
 
-  test("logs an error when updating fails", async () => {
-    let calls = 0;
-    vi.spyOn(globalThis, "fetch").mockImplementation(() => {
-      if (calls++ === 0) return Promise.resolve({ json: () => Promise.resolve(structuredClone(notes)) } as Response);
-      return Promise.reject(new Error("fail"));
-    });
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+  test("shows an error and keeps the note when updating fails", async () => {
+    mockFetchThenFail();
 
     const wrapper = mountNotes();
     await flushPromises();
@@ -182,7 +193,7 @@ describe("NotesComponent", () => {
     await wrapper.find(".modal-footer-row button.primary").trigger("click");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(useErrorStore().message).toBe("Server exploded");
     expect(noteList(wrapper)[0].note).toBe("First");
   });
 
@@ -199,20 +210,15 @@ describe("NotesComponent", () => {
     expect(noteList(wrapper).map((n) => n.id)).toEqual([2]);
   });
 
-  test("logs an error and keeps the note when deleting fails", async () => {
-    let calls = 0;
-    vi.spyOn(globalThis, "fetch").mockImplementation(() => {
-      if (calls++ === 0) return Promise.resolve({ json: () => Promise.resolve(structuredClone(notes)) } as Response);
-      return Promise.reject(new Error("fail"));
-    });
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+  test("shows the forbidden message and keeps the note when deleting is forbidden", async () => {
+    mockFetchThenFail(403);
 
     const wrapper = mountNotes();
     await flushPromises();
     wrapper.findComponent(NoteList).vm.$emit("deleteNote", 1);
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(useErrorStore().message).toBe(i18n.global.t("general_detail_component.error_forbidden"));
     expect(noteList(wrapper)).toHaveLength(2);
   });
 
@@ -233,6 +239,7 @@ describe("NotesComponent", () => {
 describe("NotesComponent - unusual edits", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.destination = "project";
     objectStore.id = 3;
@@ -267,6 +274,6 @@ describe("NotesComponent - unusual edits", () => {
     await flushPromises();
 
     expect(wrapper.findComponent(NoteList).props("noteList")).toEqual([]);
-    expect(wrapper.find(".open").exists()).toBe(true);
+    expect(useErrorStore().message).toBe(i18n.global.t("notes_component.error_note_not_found"));
   });
 });

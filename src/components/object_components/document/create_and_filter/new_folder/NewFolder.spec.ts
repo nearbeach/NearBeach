@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { useErrorStore } from "@/stores/error/error.ts";
 import i18n from "@/i18n.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
@@ -44,6 +45,7 @@ describe("NewFolder", () => {
     const documentationStore = useDocumentationStore();
     documentationStore.currentFolderId = 4;
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 201,
       json: () => Promise.resolve({ id: 8, description: "Reports", parent_folder_id: 4 }),
     } as Response);
     const wrapper = mountNewFolder();
@@ -66,6 +68,7 @@ describe("NewFolder", () => {
 
   test("creating a folder at the root sends a null parent", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 201,
       json: () => Promise.resolve({ id: 9, description: "Root", parent_folder_id: null }),
     } as Response);
     const wrapper = mountNewFolder();
@@ -77,8 +80,8 @@ describe("NewFolder", () => {
     expect(JSON.parse(fetchSpy.mock.calls[0][1]?.body as string).parent_folder_id).toBeNull();
   });
 
-  test("a failed request keeps the modal open and stores nothing", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+  test("a failed request closes the modal, stores nothing and shows the error", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
     const documentationStore = useDocumentationStore();
     const wrapper = mountNewFolder();
 
@@ -87,6 +90,8 @@ describe("NewFolder", () => {
     await flushPromises();
 
     expect(documentationStore.folders).toHaveLength(0);
-    expect(wrapper.emitted("closeModal")).toBeUndefined();
+    // The modal closes; the error is shown through the error store
+    expect(useErrorStore().message).toBe("Server exploded");
+    expect(wrapper.emitted("closeModal")).toHaveLength(1);
   });
 });

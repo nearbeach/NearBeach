@@ -14,6 +14,7 @@ import {useI18n} from "petite-vue-i18n";
 import type {SprintLinkInterface} from "@/utils/interfaces/SprintLinkInterface.ts";
 import {X} from "@lucide/vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import SprintLink from "@/components/object_components/sprint_links/sprint_link/SprintLink.vue";
 import {useErrorStore} from "@/stores/error/error.ts";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
@@ -102,7 +103,7 @@ async function createSprint() {
 		start_date: sprintStartDateModel.value,
 	};
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/sprint/`,
 		{
 			method: "POST",
@@ -143,7 +144,7 @@ async function deleteSprint(sprint_id: string) {
 	});
 
 	// Update backend
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/sprint/${sprint_id}/`,
 		{
 			method: "DELETE",
@@ -169,7 +170,7 @@ async function deleteSprint(sprint_id: string) {
 }
 
 async function loadData() {
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/sprint/`,
 		{
 			method: "GET",

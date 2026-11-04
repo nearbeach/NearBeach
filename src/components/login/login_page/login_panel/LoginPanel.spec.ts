@@ -106,7 +106,7 @@ describe("LoginPanel", () => {
 
     // Password must be at least 8 characters - the field reports the error,
     // and validation of the credentials themselves is left to the parent
-    const passwordError = wrapper.find(".wlk-password-input .render-error-message");
+    const passwordError = wrapper.find(".wlk-password-input .status-message.error");
     expect(passwordError.text()).not.toBe("");
     expect(wrapper.emitted("signIn")).toHaveLength(1);
   });

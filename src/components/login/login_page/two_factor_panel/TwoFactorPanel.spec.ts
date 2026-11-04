@@ -156,7 +156,7 @@ describe("TwoFactorPanel", () => {
     await tfaInput.trigger("blur");
 
     // Check if error message is displayed
-    const errorMessage = wrapper.find(".render-error-message");
+    const errorMessage = wrapper.find(".status-message.error");
     expect(errorMessage.text()).toBe("This field is required");
   });
 

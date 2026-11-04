@@ -7,6 +7,7 @@ import {WlkCard, WlkCardHeader, WlkRenderErrorMessage} from "whelk-ui";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {onMounted, ref, watch} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 
 // Define stores
@@ -38,7 +39,7 @@ onMounted(async () => {
 // Define functions
 async function loadData() {
 	// Fetch the required data
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/organisation/`,
 		{
 			method: "GET",

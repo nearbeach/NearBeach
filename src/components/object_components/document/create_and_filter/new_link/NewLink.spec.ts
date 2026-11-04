@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { useErrorStore } from "@/stores/error/error.ts";
 import i18n from "@/i18n.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
@@ -12,6 +13,7 @@ function mountNewLink() {
 
 function mockResponse(overrides = {}) {
   return {
+    status: 201,
     json: () => Promise.resolve({
       description: "My link",
       key: 7,
@@ -111,10 +113,10 @@ describe("NewLink", () => {
     expect(body.parent_folder_id).toBeNull();
   });
 
-  test("keeps the modal open and stores nothing when the request fails", async () => {
+  test("closes the modal, stores nothing and shows the error when the request fails", async () => {
     const documentationStore = useDocumentationStore();
     const before = documentationStore.documents.length;
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network"));
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
 
     const wrapper = mountNewLink();
     await fillIn(wrapper);
@@ -122,6 +124,8 @@ describe("NewLink", () => {
     await flushPromises();
 
     expect(documentationStore.documents).toHaveLength(before);
-    expect(wrapper.emitted("closeModal")).toBeUndefined();
+    // The modal closes; the error is shown through the error store
+    expect(useErrorStore().message).toBe("Server exploded");
+    expect(wrapper.emitted("closeModal")).toHaveLength(1);
   });
 });

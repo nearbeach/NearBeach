@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import i18n from "@/i18n.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
@@ -13,6 +14,7 @@ function mountFolders() {
 describe("FolderList", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.destination = "project";
     objectStore.id = 31;

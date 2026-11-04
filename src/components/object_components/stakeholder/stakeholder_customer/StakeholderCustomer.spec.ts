@@ -1,7 +1,9 @@
 import { beforeEach, afterEach, describe, expect, test } from "vitest";
+import i18n from "@/i18n.ts";
 import { mount, flushPromises } from "@vue/test-utils";
 import {StakeholderCustomer} from ".";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { createRouter, createMemoryHistory } from "vue-router";
 import { vi } from "vitest";
 import {defineComponent, h, nextTick} from "vue";
@@ -19,7 +21,7 @@ const jane = { id: 2, first_name: "Jane", last_name: "Smith", email: "jane@examp
 function mountStakeholderCustomer() {
   return mount(StakeholderCustomer, {
     global: {
-      plugins: [router],
+      plugins: [router, i18n],
     },
   });
 }
@@ -27,6 +29,7 @@ function mountStakeholderCustomer() {
 describe("StakeholderCustomer", () => {
   beforeEach(async () => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     await router.push("/");
     await router.isReady();
 
@@ -61,7 +64,7 @@ describe("StakeholderCustomer", () => {
 
     // The backend responds with the object's updated customer list
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      status: 200,
+      status: 201,
       json: () => Promise.resolve([jane]),
     } as Response);
 
@@ -88,7 +91,7 @@ describe("StakeholderCustomer", () => {
   });
 
   test("removes a customer", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200 } as Response);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 204 } as Response);
     const objectStore = useObjectStore();
     objectStore.customers = [john, jane];
 
@@ -116,6 +119,7 @@ describe("StakeholderCustomer", () => {
 describe("StakeholderCustomer - edge cases", () => {
   beforeEach(async () => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     await router.push("/");
     await router.isReady();
 
@@ -140,21 +144,27 @@ describe("StakeholderCustomer - edge cases", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  test("a failed add is logged", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+  test.each([
+    [500, "Server exploded"],
+    [403, i18n.global.t("general_detail_component.error_forbidden")],
+  ])("a failed add (%s) leaves the customers unchanged and shows the message", async (status, message) => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status, statusText: "Server exploded" } as Response);
+    useObjectStore().customers = [john];
     const wrapper = mountStakeholderCustomer();
     await flushPromises();
 
     await wrapper.find("select").setValue("2");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(useObjectStore().customers).toEqual([john]);
+    expect(wrapper.text()).toContain(message);
   });
 
-  test("a failed remove is logged and the customer is still removed locally", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+  test.each([
+    [500, "Server exploded"],
+    [403, i18n.global.t("general_detail_component.error_forbidden")],
+  ])("a failed remove (%s) restores the customer and shows the message", async (status, message) => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status, statusText: "Server exploded" } as Response);
     useObjectStore().customers = [john, jane];
     const wrapper = mountStakeholderCustomer();
     await flushPromises();
@@ -162,7 +172,20 @@ describe("StakeholderCustomer - edge cases", () => {
     await wrapper.findAll(".customer-name").at(0)?.find("svg").trigger("click");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
-    expect(useObjectStore().customers).toEqual([jane]);
+    expect(useObjectStore().customers).toHaveLength(2);
+    expect(wrapper.text()).toContain(message);
+  });
+
+  test("a network failure on remove restores the customer and shows the error", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+    useObjectStore().customers = [john, jane];
+    const wrapper = mountStakeholderCustomer();
+    await flushPromises();
+
+    await wrapper.findAll(".customer-name").at(0)?.find("svg").trigger("click");
+    await flushPromises();
+
+    expect(useObjectStore().customers).toHaveLength(2);
+    expect(wrapper.text()).toContain("offline");
   });
 });

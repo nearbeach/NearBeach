@@ -4,6 +4,7 @@ import {computed, ref, watch} from "vue";
 import {TrashIcon} from "@lucide/vue";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import type {UserInterface} from "@/utils/interfaces/stores/UserInterface.ts";
 import type {GroupAndUserInterface} from "@/utils/interfaces/GroupAndUsersInterface.ts";
 import ProfilePicture from "@/components/prefab/profile_picture/ProfilePicture.vue";
@@ -63,7 +64,7 @@ async function addUser() {
 		user_list: [newAssignedUserModel.value],
 	}
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/users/`,
 		{
 			method: "POST",
@@ -93,7 +94,7 @@ async function addUser() {
 }
 
 async function fetchPotentialUsers() {
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/groups/`,
 		{
 			method: "GET",
@@ -131,7 +132,7 @@ async function removeUser(user_id: number) {
 	objectStore.removeUser(user_id);
 
 	// Tell backend to remove data
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/users/${user_id}/`,
 		{
 			method: "DELETE",

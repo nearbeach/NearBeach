@@ -3,6 +3,7 @@ import {useI18n} from "petite-vue-i18n";
 import {required, WlkButton, WlkModalFooter, WlkTextInput} from "whelk-ui";
 import {computed, ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
@@ -41,7 +42,7 @@ async function createNewLink() {
 		parent_folder_id,
 	}
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
 		{
 			method: "POST",

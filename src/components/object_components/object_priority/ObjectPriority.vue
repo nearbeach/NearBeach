@@ -4,6 +4,7 @@ import {useI18n} from "petite-vue-i18n";
 import {ref, watch} from "vue";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -61,7 +62,7 @@ watch(priorityModel, async (new_value) => {
 	});
 
 	// Save data
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
 		{
 			method: "PATCH",

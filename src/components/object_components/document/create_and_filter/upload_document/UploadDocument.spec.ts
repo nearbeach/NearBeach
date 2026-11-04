@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { WlkFileUpload } from "whelk-ui";
+import { useErrorStore } from "@/stores/error/error.ts";
 import i18n from "@/i18n.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
@@ -66,6 +67,7 @@ describe("UploadDocument", () => {
     const documentationStore = useDocumentationStore();
     documentationStore.currentFolderId = 0;
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 201,
       json: () => Promise.resolve([
         { description: "report.pdf", key: "k1", parent_folder_id: null },
       ]),
@@ -100,6 +102,7 @@ describe("UploadDocument", () => {
     const documentationStore = useDocumentationStore();
     documentationStore.currentFolderId = 12;
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 201,
       json: () => Promise.resolve([]),
     } as Response);
 
@@ -112,20 +115,21 @@ describe("UploadDocument", () => {
     expect(body.get("parent_folder_id")).toBe("12");
   });
 
-  test("logs the error and keeps the modal open when the upload fails", async () => {
+  test("closes the modal and shows the error when the upload fails", async () => {
     const documentationStore = useDocumentationStore();
     const before = documentationStore.documents.length;
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
 
     const wrapper = mountUpload();
     await selectFiles(wrapper, [makeFile()]);
     await wrapper.find("button.primary").trigger("click");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(useErrorStore().message).toBe("Server exploded");
     expect(documentationStore.documents).toHaveLength(before);
-    expect(wrapper.emitted("closeModal")).toBeUndefined();
+    // The modal closes; the error is shown through the error store
+    expect(useErrorStore().message).toBe("Server exploded");
+    expect(wrapper.emitted("closeModal")).toHaveLength(1);
   });
 });
 
@@ -143,6 +147,7 @@ describe("UploadDocument - custom name", () => {
 
   test("a name typed by the user is what gets uploaded", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 201,
       json: () => Promise.resolve([]),
     } as Response);
     const wrapper = mountUpload();

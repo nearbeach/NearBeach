@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
 import DocumentList from "./DocumentList.vue";
@@ -18,6 +19,7 @@ const doc = (key: string, description: string, extra = {}) => ({
 describe("DocumentList", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.destination = "project";
     objectStore.id = 31;
@@ -117,6 +119,7 @@ describe("DocumentList", () => {
 describe("DocumentList - missing description", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
   });
 
   test("a document without a description gets the generic file icon", () => {

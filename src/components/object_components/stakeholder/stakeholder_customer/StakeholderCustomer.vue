@@ -4,7 +4,9 @@ import {TrashIcon} from "@lucide/vue";
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {ref} from "vue";
+import {WlkRenderErrorMessage} from "whelk-ui";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import {useI18n} from "petite-vue-i18n";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
@@ -31,7 +33,7 @@ async function addCustomer() {
 		id: customerModel.value,
 	}
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/customer/`,
 		{
 			method: "POST",
@@ -64,7 +66,7 @@ async function removeCustomer(customer_id: number) {
 	// Optimistically remove customer id
 	objectStore.removeCustomer(customer_id);
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/customer/${customer_id}/`,
 		{
 			method: "DELETE",
@@ -92,6 +94,7 @@ async function removeCustomer(customer_id: number) {
 
 <template>
 	<div class="stakeholder-customer">
+		<WlkRenderErrorMessage>{{ errorMessage }}</WlkRenderErrorMessage>
 		<p>Customers</p>
 		<div
 			v-for="customer in objectStore?.customers"

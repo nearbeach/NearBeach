@@ -4,6 +4,7 @@ import {watch, onMounted, ref, computed} from "vue";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import {SmallLoadingSkeleton} from "@/components/object_components/skeletons";
 import {AddRelationship} from "@/components/object_components/link_objects/add_relationship";
 import {LinkObjectsTable} from "@/components/object_components/link_objects/link_objects_table";
@@ -67,7 +68,7 @@ async function createObjectLink(event: { relationshipModel: string, objectSelect
 		object_relation: event.relationshipModel,
 	};
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/`,
 		{
 			method: "POST",
@@ -104,7 +105,7 @@ async function deleteObjectLink(event: { object_assignment_id: number, index: nu
 	});
 
 	// Update backend
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/${event.object_assignment_id}/`,
 		{
 			method: "DELETE",
