@@ -34,6 +34,11 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
             format="json",
         )
 
+    @staticmethod
+    def _free_the_fixture_link():
+        """The fixture already links the QA project to task 2 (row 48) and the same pair can not be linked twice"""
+        ObjectAssignment.objects.filter(pk=48).update(is_deleted=True)
+
     def _links(self):
         """(type, id) of every link row - kanban cards are left out, they are not links"""
         rows = self.client.get(LINK_URL).data
@@ -84,6 +89,7 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
 
     # ---------- create ----------
     def test_create_returns_the_new_link(self):
+        self._free_the_fixture_link()
         response = self._create("task", 2, "relates")
 
         self.assertEqual(response.status_code, 201, response.data)
@@ -95,6 +101,7 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
         self.assertFalse(response.data["reverse_relation"])
 
     def test_create_saves_the_link(self):
+        self._free_the_fixture_link()
         response = self._create("task", 2, "relates")
 
         row = ObjectAssignment.objects.get(pk=response.data["object_assignment_id"])
@@ -116,10 +123,12 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
         }
         for relation, (label, parent) in cases.items():
             with self.subTest(relation):
+                self._free_the_fixture_link()
                 response = self._create("task", 2, relation)
 
                 self.assertEqual(response.status_code, 201, response.data)
                 self.assertEqual((response.data["link_relationship"], response.data["parent_link"]), (label, parent))
+                ObjectAssignment.objects.filter(pk=response.data["object_assignment_id"]).update(is_deleted=True)
 
     def test_a_new_link_appears_in_the_list(self):
         created = self._create("requirement_item", 2).data["object_assignment_id"]
@@ -149,6 +158,12 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
         # Item 1 belongs to a requirement in the Administration group only
         denied = self._create("requirement_item", 1)
         self.assertEqual(denied.status_code, 403)
+
+    def test_the_same_object_can_not_be_linked_twice(self):
+        response = self._create("task", 2, "relates")
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, "Object already exists")
 
     def test_create_does_not_touch_other_projects(self):
         before = ObjectAssignment.objects.filter(project_id=1).count()

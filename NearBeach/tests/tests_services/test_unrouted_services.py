@@ -12,7 +12,6 @@ from NearBeach.models.sprint.sprint import Sprint
 from NearBeach.serializers.sprint_link_serializer import SprintLinkSerializer
 from NearBeach.services.customer.CustomerService import CustomerService
 from NearBeach.services.organisation.OrganisationService import OrganisationService
-from NearBeach.services.sprint.SprintObjectLinkService import SprintObjectLinkService
 from NearBeach.services.sprint.SprintService import SprintService
 
 
@@ -245,19 +244,6 @@ class SprintServiceTests(ServiceTestBase):
             lambda: service.create(self.request()),
             lambda: service.delete(self.request(), 1),
             lambda: service.get_list(self.request()),
-        ):
-            with self.assertRaises(NotImplementedError):
-                call()
-
-
-class SprintObjectLinkServiceTests(ServiceTestBase):
-    def test_nothing_is_built_yet(self):
-        service = SprintObjectLinkService(destination="sprint", location_id=1)
-        for call in (
-            lambda: service.create(self.request()),
-            lambda: service.delete(self.request(), 1),
-            lambda: service.get_list(self.request()),
-            lambda: service.update(self.request(), 1),
         ):
             with self.assertRaises(NotImplementedError):
                 call()
