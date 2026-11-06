@@ -2,15 +2,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import {SprintLink} from ".";
 import { createPinia, setActivePinia } from "pinia";
-import { createRouter, createWebHistory } from "vue-router";
-import { routes } from "@/router/router.ts";
 import { nextTick } from "vue";
 import {TrashIcon} from "@lucide/vue";
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-});
 
 describe("SprintLink", () => {
   beforeEach(() => {

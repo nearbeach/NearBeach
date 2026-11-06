@@ -176,7 +176,7 @@ async function updateNote() {
             "note": modelNote.value,
         };
 
-        const response = await fetch(
+        await fetch(
             `/api/v1/${objectStore.destination}/${objectStore.id}/notes/${modelId.value}/`,
             {
                 method: "PATCH",

@@ -96,7 +96,7 @@ function updateValidation(field: string, value: boolean): void {
 	fieldValidation[field] = value
 
 	// Define if everything is filled out
-	isButtonDisabled.value = Object.entries(fieldValidation).some(([_, value]) => {
+	isButtonDisabled.value = Object.values(fieldValidation).some((value) => {
 		return !value;
 	});
 }

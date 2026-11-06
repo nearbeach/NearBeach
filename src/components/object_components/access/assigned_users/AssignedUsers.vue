@@ -50,7 +50,7 @@ async function addUser() {
 	}
 
 	try {
-		const response = await fetch(
+		await fetch(
 			`/api/v1/${objectStore.destination}/${objectStore.id}/users/`,
 			{
 				method: "POST",

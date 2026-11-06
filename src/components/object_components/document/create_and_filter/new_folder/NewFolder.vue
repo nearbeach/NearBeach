@@ -76,7 +76,7 @@ async function createNewFolder() {
 		// END TEMP CODE
 
 		// TODO - Update the folders in DocumentComponent
-	} catch (error) {
+	} catch {
 		// TODO - Handle errors
 		// TODO - Remove from optimistic list
 	}

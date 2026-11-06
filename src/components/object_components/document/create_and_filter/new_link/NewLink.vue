@@ -72,7 +72,7 @@ async function createNewLink() {
 		descriptionModel.value = "";
 		newLinkModel.value = "";
 		// END TEMP CODE
-	} catch (error) {
+	} catch {
 		// TODO - Handle errors
 		// TODO - Remove from optimistic list
 	}

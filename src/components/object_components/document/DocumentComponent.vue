@@ -58,7 +58,7 @@ async function loadData() {
 		documentationStore.folders = data.folders;
 		documentationStore.maxUploadSize = data.max_upload_size;
 		documentationStore.isDocumentationLoaded = true;
-	} catch (e) {
+	} catch {
 		// TODO - handle the errors
 	}
 }

@@ -5,7 +5,6 @@ import {createPinia, setActivePinia} from "pinia";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {vi} from "vitest";
 import i18n from "@/i18n.ts";
-import {nextTick} from "vue";
 import {createRouter, createWebHistory} from "vue-router";
 
 const router = createRouter({
@@ -37,7 +36,7 @@ describe("AddRelationship", () => {
     });
 
     test("mounting component", () => {
-        const wrapper = mount(AddRelationship, {
+        mount(AddRelationship, {
             global: {
                 plugins: [router, i18n],
             },
