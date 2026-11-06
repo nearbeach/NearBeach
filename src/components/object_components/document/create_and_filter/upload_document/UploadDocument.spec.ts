@@ -5,7 +5,7 @@ import { WlkFileUpload } from "whelk-ui";
 import i18n from "@/i18n.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
-import UploadDocument from "./UploadDocument.vue";
+import { UploadDocument } from ".";
 
 function mountUpload() {
   return mount(UploadDocument, { global: { plugins: [i18n] } });

@@ -4,7 +4,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { WlkSelect } from "whelk-ui";
 import i18n from "@/i18n.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
-import ObjectPriority from "./ObjectPriority.vue";
+import { ObjectPriority } from ".";
 
 function mountPriority() {
   return mount(ObjectPriority, { global: { plugins: [i18n] } });

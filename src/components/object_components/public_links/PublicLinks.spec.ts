@@ -3,7 +3,7 @@ import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { useObjectStore } from "@/stores/object/object.ts";
 import {PublicLinks} from ".";
-import PublicLinkRow from "./public_link_row/PublicLinkRow.vue";
+import { PublicLinkRow } from "./public_link_row";
 import { vi } from "vitest";
 import {nextTick} from "vue";
 import i18n from "@/i18n.ts";

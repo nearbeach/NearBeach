@@ -4,7 +4,7 @@ import { createPinia, setActivePinia } from "pinia";
 import i18n from "@/i18n.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
-import FolderList from "./FolderList.vue";
+import { FolderList } from ".";
 
 function mountFolders() {
   return mount(FolderList, { global: { plugins: [i18n] } });

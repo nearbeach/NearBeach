@@ -6,7 +6,7 @@ import { useObjectStore } from "@/stores/object/object.ts";
 import { useObjectMetaDataStore } from "@/stores/object_meta_data/object_meta_data.ts";
 import { useErrorStore } from "@/stores/error/error.ts";
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
-import StakeholderOrganisation from "./StakeholderOrganisation.vue";
+import { StakeholderOrganisation } from ".";
 
 const organisation = {
   id: 3,

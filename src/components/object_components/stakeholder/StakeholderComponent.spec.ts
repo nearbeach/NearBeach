@@ -3,9 +3,9 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useObjectMetaDataStore } from "@/stores/object_meta_data/object_meta_data.ts";
-import StakeholderOrganisation from "./stakeholder_organisation/StakeholderOrganisation.vue";
-import StakeholderCustomer from "./stakeholder_customer/StakeholderCustomer.vue";
-import StakeholderComponent from "./StakeholderComponent.vue";
+import { StakeholderOrganisation } from "./stakeholder_organisation";
+import { StakeholderCustomer } from "./stakeholder_customer";
+import { StakeholderComponent } from ".";
 
 const data = {
   customers: [{ id: 1 }],

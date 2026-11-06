@@ -3,7 +3,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
-import DocumentList from "./DocumentList.vue";
+import { DocumentList } from ".";
 
 const doc = (key: string, description: string, extra = {}) => ({
   key,

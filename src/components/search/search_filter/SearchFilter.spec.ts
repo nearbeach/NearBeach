@@ -6,7 +6,7 @@ import { WlkCheckBox } from "whelk-ui";
 import i18n from "@/i18n.ts";
 import { useSearchStore } from "@/stores/search/search.ts";
 import { useErrorStore } from "@/stores/error/error.ts";
-import SearchFilter from "./SearchFilter.vue";
+import { SearchFilter } from ".";
 
 const { pushMock, route } = vi.hoisted(() => ({
   pushMock: vi.fn(),

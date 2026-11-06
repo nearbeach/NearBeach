@@ -5,7 +5,7 @@ import { WlkSelect } from "whelk-ui";
 import i18n from "@/i18n.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useObjectMetaDataStore } from "@/stores/object_meta_data/object_meta_data.ts";
-import ObjectStatus from "./ObjectStatus.vue";
+import { ObjectStatus } from ".";
 
 const open = { id: 5, status: "Open", higher_order_status: { value: "open", label: "Open" } };
 const done = { id: 6, status: "Done", higher_order_status: { value: "closed", label: "Closed" } };

@@ -8,7 +8,7 @@ import { defineComponent, h } from "vue";
 import {LinkObjects} from ".";
 import {AddRelationship} from "./add_relationship";
 import {LinkObjectsTable} from "./link_objects_table";
-import RelationshipLink from "./relationship_link/RelationshipLink.vue";
+import { RelationshipLink } from "./relationship_link";
 import {SmallLoadingSkeleton} from "@/components/object_components/skeletons";
 import { useObjectStore } from "@/stores/object/object.ts";
 import i18n from "@/i18n.ts";
