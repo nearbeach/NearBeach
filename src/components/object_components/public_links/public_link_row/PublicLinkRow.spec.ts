@@ -49,26 +49,26 @@ describe("PublicLinkRow", () => {
     expect(wrapper.find(".copied-status").exists()).toBe(true);
     expect(wrapper.find(".link").exists()).toBe(false);
 
-    // The status disappears after two seconds
-    vi.advanceTimersByTime(2000);
+    // The status disappears after twenty seconds
+    vi.advanceTimersByTime(20000);
     await wrapper.vm.$nextTick();
 
     expect(wrapper.find(".copied-status").exists()).toBe(false);
     expect(wrapper.find(".link").exists()).toBe(true);
   });
 
-  test("logs an error and shows no status when the copy fails", async () => {
+  test("shows an error status when the copy fails", async () => {
     vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(
       new Error("denied"),
     );
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
 
     const wrapper = mountRow();
     await wrapper.findAll("td")[0].trigger("click");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
-    expect(wrapper.find(".copied-status").exists()).toBe(false);
+    const status = wrapper.find(".copied-status");
+    expect(status.classes()).toContain("error");
+    expect(status.text()).toContain("denied");
   });
 
   test("emits updateActive with the id and index", async () => {

@@ -5,6 +5,7 @@ import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import i18n from "@/i18n.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
+import { useErrorStore } from "@/stores/error/error.ts";
 import FolderList from "./FolderList.vue";
 
 function mountFolders() {
@@ -79,7 +80,7 @@ describe("FolderList", () => {
   });
 
   test("deleting a folder sends its type and removes it", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200 } as Response);
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 204 } as Response);
     const documentationStore = useDocumentationStore();
     const wrapper = mountFolders();
 
@@ -92,16 +93,27 @@ describe("FolderList", () => {
     expect(documentationStore.folders.map((f) => f.id)).toEqual([2]);
   });
 
-  test("a failed delete is logged and keeps the folder", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+  test("a forbidden delete shows the error modal and keeps the folder", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 403 } as Response);
     const documentationStore = useDocumentationStore();
     const wrapper = mountFolders();
 
     await folderRows(wrapper)[0].find(".folder-delete").trigger("click");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(useErrorStore().showErrorModal).toBe(true);
+    expect(documentationStore.folders).toHaveLength(2);
+  });
+
+  test("any other failed delete shows the status text and keeps the folder", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server Error" } as Response);
+    const documentationStore = useDocumentationStore();
+    const wrapper = mountFolders();
+
+    await folderRows(wrapper)[0].find(".folder-delete").trigger("click");
+    await flushPromises();
+
+    expect(useErrorStore().message).toBe("Server Error");
     expect(documentationStore.folders).toHaveLength(2);
   });
 });

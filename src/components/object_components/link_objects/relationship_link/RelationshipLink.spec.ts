@@ -3,6 +3,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { WlkSelect } from "whelk-ui";
 import i18n from "@/i18n.ts";
+import { useErrorStore } from "@/stores/error/error.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { RelationshipLink } from ".";
 
@@ -86,16 +87,16 @@ describe("RelationshipLink", () => {
   });
 
   test("shows an error and does not emit when the request fails", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server Error" } as Response);
     const wrapper = mountLink();
     const select = wrapper.findComponent(WlkSelect);
 
     select.vm.$emit("change");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
-    expect(select.props("status")).toBe("Error Updating");
+    const errorStore = useErrorStore();
+    expect(errorStore.message).toBe("Server Error");
+    expect(errorStore.showErrorModal).toBe(true);
     expect(wrapper.emitted("updateRelationship")).toBeUndefined();
   });
 

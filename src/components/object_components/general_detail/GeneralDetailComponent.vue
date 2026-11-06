@@ -40,18 +40,18 @@ onMounted(async () => {
 	const destination: unknown = route.meta.destination;
 	if (typeof (id) !== 'string' || isNaN(parseInt(id))) {
 		errorStore.setError("Invalid id");
-		router.push({name: "bad-request-page"});
+		router.push({name: "bad-request"});
 		return;
 	}
 	if (parseInt(id) !== parseFloat(id)) {
 		errorStore.setError("Invalid id - not set as an integer");
-		router.push({name: "bad-request-page"});
+		router.push({name: "bad-request"});
 		// id is not an int
 		return;
 	}
 	if (typeof (destination) !== 'string') {
 		errorStore.setError("Invalid destination");
-		router.push({name: "bad-request-page"});
+		router.push({name: "bad-request"});
 		return;
 	}
 
