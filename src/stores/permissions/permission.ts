@@ -2,6 +2,8 @@ import {defineStore} from 'pinia'
 import type {MaximumPermissionInterface} from "@/utils/interfaces/stores/MaximumPermissionInterface.ts";
 import type {PermissionDataInterface} from "@/utils/interfaces/stores/PermissionDataInterface.ts";
 import type {SelectOptionInterface} from "whelk-ui";
+import {useObjectStore} from "@/stores/object/object.ts";
+import {nextTick} from "vue";
 
 export const usePermissionStore = defineStore('permissions', {
     state: () => {
@@ -94,6 +96,38 @@ export const usePermissionStore = defineStore('permissions', {
 
             // State is loaded
             this.is_loaded = true;
+        },
+        SetCurrentObjectPermissions(destination: string): void {
+            // Declare store
+            const objectStore = useObjectStore();
+
+            // Making sure the destination exists in the maximum permissions
+            const allowed_destinations = ["kanban_board", "project", "requirement", "task"];
+
+            // If the destination is not allowed, return
+            if (allowed_destinations.indexOf(destination) < 0) {
+                // Default to 0
+                this.currentObjectPermissions.currentObject = 0;
+                return;
+            }
+
+            // Get a group of ids
+            const currentGroupIds = new Set(objectStore.group_list.map(x => x.id));
+
+            // Filter and reduce to get the data we want
+            this.currentObjectPermissions.currentObject =
+                this.permissionData?.filter((item: PermissionDataInterface) => {
+                    // Filter for only the group we want
+                    return currentGroupIds.has(item.group_id);
+                }).reduce((max: number, item) => {
+                    // Get the new value (make sure destination is a keyof typeof item - default 0
+                    const value = item[
+                        destination as keyof typeof item
+                        ] as number ?? 0;
+
+                    // Return the max value
+                    return value > max ? value : max;
+                }, 0) ?? 0; // Default 0 in case everything breaks
         },
     },
     getters: {

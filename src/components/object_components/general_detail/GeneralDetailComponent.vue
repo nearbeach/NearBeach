@@ -76,6 +76,9 @@ onMounted(async () => {
 
 				// Patch
 				objectStore.$patch(data);
+
+				// Calculate permissions
+				permissionStore.SetCurrentObjectPermissions(destination);
 				break;
 			}
 			case 403:
