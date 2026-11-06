@@ -229,7 +229,8 @@ router.beforeEach(async (to, _, next) => {
     if (!permissionStore.is_loaded && !isErrorPage) {
         const isLoaded = await fetchObjectMetaData();
         if (!isLoaded) {
-            return next({name: "server-error"});
+            next({name: "server-error"});
+            return;
         }
     }
 

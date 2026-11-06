@@ -75,22 +75,22 @@ onMounted(async () => {
 			}
 			case 403:
 				// Use does not have access to the object
-				return router.push({name: "forbidden"});
+				await router.push({name: "forbidden"});
+				break;
 			case 404:
 				// Object does not exist
-				return router.push({name: "not-found"});
+				await router.push({name: "not-found"});
+				break;
 			default:
 				// Assuming a 500 error
 				errorStore.setError(response);
-				return router.push({name: "server-error"});
+				await router.push({name: "server-error"});
 		}
 	} catch (error) {
 		// Assuming a 500 error
 		errorStore.setError(error);
-		return router.push({name: "server-error"});
+		await router.push({name: "server-error"});
 	}
-	
-	return null;
 });
 
 // Define computed
