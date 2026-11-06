@@ -5,6 +5,7 @@ import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data
 import {useObjectStore} from "@/stores/object/object.ts";
 import {useI18n} from "petite-vue-i18n";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 
 // Define i18n
 const {t} = useI18n()
@@ -58,7 +59,7 @@ watch(statusModel, async (new_value) => {
 	statusClass.value = "info";
 
 	// Save data
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
 		{
 			method: "PATCH",

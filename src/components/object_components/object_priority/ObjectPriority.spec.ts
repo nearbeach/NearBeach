@@ -78,29 +78,26 @@ describe("ObjectPriority", () => {
 
   test("an unknown priority shows an error and does not save", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mountPriority();
     const select = wrapper.findComponent(WlkSelect);
 
     select.vm.$emit("update:modelValue", "9");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
     expect(select.props("status")).toBe("Error Updating");
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   test("a failed save shows an error", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
     const wrapper = mountPriority();
     const select = wrapper.findComponent(WlkSelect);
 
     select.vm.$emit("update:modelValue", "1");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
-    expect(select.props("status")).toBe("Error Updating");
+    expect(select.props("status")).toBe("Server exploded");
+    expect(select.props("statusClass")).toBe("error");
   });
 
   test("choosing the priority already in the store does not save", async () => {

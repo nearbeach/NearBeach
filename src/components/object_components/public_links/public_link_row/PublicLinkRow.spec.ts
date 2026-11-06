@@ -1,6 +1,8 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import i18n from "@/i18n.ts";
+import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { PublicLinkRow } from ".";
 
 function mountRow(props = {}) {
@@ -15,6 +17,11 @@ function mountRow(props = {}) {
 }
 
 describe("PublicLinkRow", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();

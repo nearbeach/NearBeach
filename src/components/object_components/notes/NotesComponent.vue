@@ -6,6 +6,7 @@ import NoteList from "@/components/object_components/notes/note_list/NoteList.vu
 import type {NoteItemInterface} from "@/utils/interfaces/NoteItemInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
@@ -76,7 +77,7 @@ async function createNote(): Promise<void> {
 		"note": modelNote.value,
 	};
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/notes/`,
 		{
 			method: "POST",
@@ -111,7 +112,7 @@ async function createNote(): Promise<void> {
 }
 
 async function deleteNote(note_id: number) {
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/notes/${note_id}/`,
 		{
 			method: "DELETE",
@@ -162,7 +163,7 @@ function editNote(index: number): void {
 }
 
 async function loadData(): Promise<void> {
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/notes/`,
 		{
 			method: "GET",
@@ -210,11 +211,13 @@ async function submitNote() {
 }
 
 async function updateNote() {
+	// Keep the text - closing the modal clears the model
+	const updatedNote = modelNote.value;
 	const body = {
-		"note": modelNote.value,
+		"note": updatedNote,
 	};
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/notes/${modelId.value}/`,
 		{
 			method: "PATCH",
@@ -240,7 +243,7 @@ async function updateNote() {
 			}
 
 			// Update the note
-			note_row.note = modelNote.value;
+			note_row.note = updatedNote;
 			noteList.value[modelIndex.value] = note_row;
 			break;
 		case 403:

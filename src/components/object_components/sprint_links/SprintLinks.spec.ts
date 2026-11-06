@@ -2,6 +2,7 @@ import { WlkDate, WlkTextInput } from "whelk-ui";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import i18n from "@/i18n.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import SprintLink from "@/components/object_components/sprint_links/sprint_link/SprintLink.vue";
@@ -33,6 +34,7 @@ const okList = (_url: string, init?: RequestInit) =>
 describe("SprintLinks", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.destination = "project";
     objectStore.id = 8;
@@ -137,7 +139,7 @@ describe("SprintLinks", () => {
     expect(wrapper.find(".open").exists()).toBe(false);
   });
 
-  test("a rejected create keeps the modal open and the list unchanged", async () => {
+  test("a rejected create closes the modal and leaves the list unchanged", async () => {
     mockFetch((_url, init) =>
       init?.method === "POST"
         ? { status: 400, body: { error: "Bad dates" } }
@@ -150,8 +152,9 @@ describe("SprintLinks", () => {
     await wrapper.find("button.primary:not(.sprint-buttons button)").trigger("click");
     await flushPromises();
 
+    // The modal closes and the error is reported through the error store
     expect(wrapper.findAllComponents(SprintLink)).toHaveLength(2);
-    expect(wrapper.find(".open").exists()).toBe(true);
+    expect(wrapper.find(".open").exists()).toBe(false);
   });
 
   test("deleting removes the sprint optimistically and calls DELETE", async () => {
@@ -192,6 +195,7 @@ describe("SprintLinks", () => {
 describe("SprintLinks - editing the new sprint", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.destination = "project";
     objectStore.id = 8;

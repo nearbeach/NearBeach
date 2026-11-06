@@ -3,6 +3,7 @@ import {onMounted, ref, watch} from "vue";
 import type {PublicLinkInterface} from "@/utils/interfaces/PublicLinkInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import {WlkButton, WlkRenderErrorMessage} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import PublicLinkRow from "@/components/object_components/public_links/public_link_row/PublicLinkRow.vue";
@@ -40,7 +41,7 @@ onMounted(async () => {
 
 // Define functions
 async function createPublicLink() {
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/public_link/`,
 		{
 			method: "POST",
@@ -75,7 +76,7 @@ async function deleteLink(data: { id: string }) {
 	});
 
 	// Tell the backend to delete the link
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/public_link/${data.id}/`,
 		{
 			method: "DELETE",
@@ -101,7 +102,7 @@ async function deleteLink(data: { id: string }) {
 }
 
 async function loadData() {
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/public_link/`,
 		{
 			method: "GET",
@@ -153,7 +154,7 @@ async function updateActive(data: { id: string, index: number }) {
 		is_active: public_link_row.is_active,
 	}
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/public_link/${data.id}/`,
 		{
 			method: "PATCH",

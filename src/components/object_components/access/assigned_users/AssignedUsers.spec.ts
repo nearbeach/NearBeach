@@ -1,6 +1,8 @@
 import { beforeEach, afterEach, describe, expect, test } from "vitest";
+import i18n from "@/i18n.ts";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { vi } from "vitest";
 import {AssignedUsers} from ".";
 import { useObjectStore } from "@/stores/object/object.ts";
@@ -15,6 +17,7 @@ describe("AssignedUsers", () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     objectStore = useObjectStore();
     objectStore.destination = "project";
     objectStore.id = 1;
@@ -37,7 +40,7 @@ describe("AssignedUsers", () => {
   test("renders assigned users", async () => {
     objectStore.user_list = [user1];
 
-    const wrapper = mount(AssignedUsers);
+    const wrapper = mount(AssignedUsers, { global: { plugins: [i18n] } });
 
     // Flush all promises
     await flushPromises();
@@ -50,7 +53,7 @@ describe("AssignedUsers", () => {
   });
 
   test("fetches the potential users once the object has loaded", async () => {
-    const wrapper = mount(AssignedUsers);
+    const wrapper = mount(AssignedUsers, { global: { plugins: [i18n] } });
     await flushPromises();
 
     // Nothing to add until the object has loaded
@@ -69,11 +72,13 @@ describe("AssignedUsers", () => {
     objectStore.potential_user_list = [user1, user2];
     objectStore.user_list = [user1];
 
-    const wrapper = mount(AssignedUsers);
+    const wrapper = mount(AssignedUsers, { global: { plugins: [i18n] } });
     await flushPromises();
 
     // Only users who are not assigned yet can be picked
     expect(wrapper.findAll("option").map((option) => option.text())).toEqual(["Second User"]);
+
+    vi.mocked(globalThis.fetch).mockResolvedValue({ status: 201 } as Response);
 
     // Pick user 2 from the AddObject select
     await wrapper.find("select").setValue("2");
@@ -94,8 +99,10 @@ describe("AssignedUsers", () => {
     // Seed the store with a user
     objectStore.user_list = [user1];
 
-    const wrapper = mount(AssignedUsers);
+    const wrapper = mount(AssignedUsers, { global: { plugins: [i18n] } });
     await flushPromises();
+
+    vi.mocked(globalThis.fetch).mockResolvedValue({ status: 204 } as Response);
 
     // Trigger the remove user event
     const removeIcon = wrapper.find(".user-access-item svg");
@@ -113,7 +120,7 @@ describe("AssignedUsers", () => {
 
   test("picking nothing does not call the backend", async () => {
     objectStore.potential_user_list = [user1, user2];
-    const wrapper = mount(AssignedUsers);
+    const wrapper = mount(AssignedUsers, { global: { plugins: [i18n] } });
     await flushPromises();
     vi.mocked(globalThis.fetch).mockClear();
 
@@ -125,7 +132,7 @@ describe("AssignedUsers", () => {
 
   test("picking a user that is not in the potential list does nothing", async () => {
     objectStore.potential_user_list = [user1];
-    const wrapper = mount(AssignedUsers);
+    const wrapper = mount(AssignedUsers, { global: { plugins: [i18n] } });
     await flushPromises();
     vi.mocked(globalThis.fetch).mockClear();
 
@@ -140,7 +147,7 @@ describe("AssignedUsers", () => {
 
   test("fetches the potential users when the object finishes loading", async () => {
     objectStore.is_loaded = false;
-    mount(AssignedUsers);
+    mount(AssignedUsers, { global: { plugins: [i18n] } });
     await flushPromises();
     expect(globalThis.fetch).not.toHaveBeenCalled();
 
@@ -150,41 +157,39 @@ describe("AssignedUsers", () => {
     expect(globalThis.fetch).toHaveBeenCalledWith("/api/v1/project/1/groups/", expect.any(Object));
   });
 
-  test("a failed add is logged", async () => {
+  test("a failed add is rolled back and shows the status text", async () => {
     objectStore.potential_user_list = [user1, user2];
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
-    const wrapper = mount(AssignedUsers);
+    const wrapper = mount(AssignedUsers, { global: { plugins: [i18n] } });
     await flushPromises();
-    vi.mocked(globalThis.fetch).mockRejectedValue(new Error("offline"));
+    vi.mocked(globalThis.fetch).mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
 
     await wrapper.find("select").setValue("2");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(objectStore.user_list).toEqual([]);
+    expect(wrapper.text()).toContain("Server exploded");
   });
 
-  test("a failed fetch of potential users is logged", async () => {
-    vi.mocked(globalThis.fetch).mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
-    mount(AssignedUsers);
+  test("a failed fetch of potential users shows the status text", async () => {
+    vi.mocked(globalThis.fetch).mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
+    const wrapper = mount(AssignedUsers, { global: { plugins: [i18n] } });
 
     objectStore.is_loaded = true;
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(wrapper.text()).toContain("Server exploded");
   });
 
-  test("a failed remove is logged and the user is still removed locally", async () => {
+  test("a forbidden remove restores the user and shows the forbidden message", async () => {
     objectStore.user_list = [user1];
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
-    const wrapper = mount(AssignedUsers);
+    const wrapper = mount(AssignedUsers, { global: { plugins: [i18n] } });
     await flushPromises();
-    vi.mocked(globalThis.fetch).mockRejectedValue(new Error("offline"));
+    vi.mocked(globalThis.fetch).mockResolvedValue({ status: 403 } as Response);
 
     await wrapper.find(".user-access-item svg").trigger("click");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
-    expect(objectStore.user_list).toEqual([]);
+    expect(objectStore.user_list).toEqual([user1]);
+    expect(wrapper.text()).toContain(i18n.global.t("general_detail_component.error_forbidden"));
   });
 });

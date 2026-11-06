@@ -5,6 +5,7 @@ import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import type {OrganisationLinkInterface} from "@/utils/interfaces/stores/OrganisationLinkInterface.ts";
 import {WlkRenderErrorMessage} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
@@ -35,7 +36,7 @@ async function addOrganisation() {
 		id: organisationModel.value,
 	}
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/organisation/`,
 		{
 			method: "POST",
@@ -76,7 +77,7 @@ async function removeOrganisation() {
 	// Optimistically remove organisation id
 	objectStore.organisation = null;
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/organisation/`,
 		{
 			method: "DELETE",

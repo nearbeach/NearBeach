@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, test } from "vitest";
+import i18n from "@/i18n.ts";
 import { mount, flushPromises } from "@vue/test-utils";
 import {AccessComponent} from ".";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
 import { nextTick } from "vue";
@@ -15,12 +17,13 @@ const router = createRouter({
 describe("AccessComponent", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
   });
 
   test("renders WlkCard component", async () => {
     const wrapper = mount(AccessComponent, {
       global: {
-        plugins: [router],
+        plugins: [router, i18n],
       },
     });
 
@@ -36,7 +39,7 @@ describe("AccessComponent", () => {
   test("renders GroupAccess component", async () => {
     const wrapper = mount(AccessComponent, {
       global: {
-        plugins: [router],
+        plugins: [router, i18n],
       },
     });
 
@@ -52,7 +55,7 @@ describe("AccessComponent", () => {
   test("renders AssignedUsers component", async () => {
     const wrapper = mount(AccessComponent, {
       global: {
-        plugins: [router],
+        plugins: [router, i18n],
       },
     });
 

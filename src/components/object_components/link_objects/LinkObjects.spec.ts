@@ -3,6 +3,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { defineComponent, h } from "vue";
 import {LinkObjects} from ".";
@@ -33,6 +34,7 @@ function mountLinkObjects() {
 describe("LinkObjects", () => {
     beforeEach(() => {
         setActivePinia(createPinia());
+        usePermissionStore().currentObjectPermissions.currentObject = 2;
         const objectStore = useObjectStore();
         objectStore.destination = "project";
         objectStore.id = 1;
@@ -120,7 +122,8 @@ describe("LinkObjects - managing links", () => {
         return vi.spyOn(globalThis, "fetch").mockImplementation((_url, init) => {
             const method = init?.method ?? "GET";
             const body = method in responses ? responses[method] : (method === "GET" ? links : {});
-            return Promise.resolve({ status: 200, json: () => Promise.resolve(structuredClone(body)) } as Response);
+            const status = ({ POST: 201, DELETE: 204 } as Record<string, number>)[method] ?? 200;
+            return Promise.resolve({ status, json: () => Promise.resolve(structuredClone(body)) } as Response);
         });
     }
 
@@ -136,6 +139,7 @@ describe("LinkObjects - managing links", () => {
 
     beforeEach(() => {
         setActivePinia(createPinia());
+        usePermissionStore().currentObjectPermissions.currentObject = 2;
         const objectStore = useObjectStore();
         objectStore.destination = "project";
         objectStore.id = 1;
@@ -153,11 +157,12 @@ describe("LinkObjects - managing links", () => {
     });
 
     test("a failed load leaves the skeleton showing", async () => {
-        vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+        vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
         const wrapper = mountLinkObjects();
         await flushPromises();
 
         expect(wrapper.findComponent(SmallLoadingSkeleton).exists()).toBe(true);
+        expect(wrapper.text()).toContain("Server exploded");
     });
 
     test("creating a link splits the barcode, posts it and appends the result", async () => {
@@ -182,7 +187,7 @@ describe("LinkObjects - managing links", () => {
 
     test("a failed create adds nothing", async () => {
         const { wrapper, fetchSpy } = await mountLoaded();
-        fetchSpy.mockRejectedValueOnce(new Error("offline"));
+        fetchSpy.mockResolvedValueOnce({ status: 500, statusText: "Server exploded" } as Response);
 
         wrapper.findComponent(AddRelationship).vm.$emit("createObjectLink", {
             relationshipModel: "relates",
@@ -191,6 +196,7 @@ describe("LinkObjects - managing links", () => {
         await flushPromises();
 
         expect(listOf(wrapper)).toHaveLength(2);
+        expect(wrapper.text()).toContain("Server exploded");
     });
 
     test("deleting removes the link by index and calls DELETE", async () => {
@@ -207,9 +213,9 @@ describe("LinkObjects - managing links", () => {
         expect(listOf(wrapper).map((l) => l.object_assignment_id)).toEqual([11]);
     });
 
-    test("a failed delete request does not throw", async () => {
+    test("a failed delete request keeps the link and shows the status text", async () => {
         const { wrapper, fetchSpy } = await mountLoaded();
-        fetchSpy.mockRejectedValueOnce(new Error("offline"));
+        fetchSpy.mockResolvedValueOnce({ status: 500, statusText: "Server exploded" } as Response);
 
         wrapper.findComponent(LinkObjectsTable).vm.$emit("deleteObjectLink", {
             object_assignment_id: 10,
@@ -217,7 +223,7 @@ describe("LinkObjects - managing links", () => {
         });
         await flushPromises();
 
-        expect(wrapper.exists()).toBe(true);
+        expect(wrapper.text()).toContain("Server exploded");
     });
 
     test("updateRelationship changes the relationship on that row", async () => {

@@ -66,29 +66,28 @@ describe("ObjectStatus", () => {
     expect(select.props("status")).toBe("");
   });
 
-  test("an unknown status is logged and not saved", async () => {
+  test("an unknown status shows an error and is not saved", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
     const wrapper = mountStatus();
 
-    wrapper.findComponent(WlkSelect).vm.$emit("update:modelValue", "99");
+    const select = wrapper.findComponent(WlkSelect);
+
+    select.vm.$emit("update:modelValue", "99");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(select.props("status")).toBe("Error Updating");
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   test("a failed save shows an error", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
     const wrapper = mountStatus();
     const select = wrapper.findComponent(WlkSelect);
 
     select.vm.$emit("update:modelValue", "5");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
-    expect(select.props("status")).toBe("Error Updating");
+    expect(select.props("status")).toBe("Server exploded");
   });
 
   test("choosing the status already in the store does not save", async () => {

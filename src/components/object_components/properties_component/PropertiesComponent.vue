@@ -12,14 +12,13 @@ import ObjectPriority from "@/components/object_components/object_priority/Objec
 import {useI18n} from "petite-vue-i18n";
 import {ref, watch} from "vue";
 import router from "@/router/router.ts";
-import {useErrorStore} from "@/stores/error/error.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 
 // Define i18n
 const {t} = useI18n()
 
 // Define Stores
-const errorStore = useErrorStore();
 const objectStore = useObjectStore();
 
 // Define refs
@@ -117,7 +116,7 @@ async function datesUpdated() {
 		start_date: objectStore.start_date,
 	}
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
 		{
 			method: "PATCH",
@@ -133,7 +132,6 @@ async function datesUpdated() {
 		case 200:
 			dateStatus.value = t("properties_component.date_updated");
 			dateStatusClass.value = "success";
-			handleResponseStatus(response);
 
 			setTimeout(() => {
 				dateStatus.value = "";
@@ -147,26 +145,6 @@ async function datesUpdated() {
 			dateStatus.value = response.statusText;
 			dateStatusClass.value = "error";
 			break;
-	}
-}
-
-function handleResponseStatus(response: Response) {
-	switch (response.status) {
-		case 200:
-			// Everything is fine
-			break;
-		case 403:
-			// User does not have access to the object
-			errorStore.message = t("properties_component.error_forbidden");
-			break;
-		case 404:
-			// Object does not exist
-			errorStore.message = t("properties_component.error_not_found");
-			break;
-		default:
-			// Assuming a 500 error
-			errorStore.message = t("properties_component.error_server_error");
-			errorStore.showErrorModal = true;
 	}
 }
 
@@ -201,7 +179,7 @@ async function storyPointsUpdate() {
 		story_point: objectStore.story_point,
 	}
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
 		{
 			method: "PATCH",
@@ -218,7 +196,6 @@ async function storyPointsUpdate() {
 			// Update status and check response
 			storyPointsStatus.value = t("properties_component.story_point_updated");
 			storyPointsStatusClass.value = "success";
-			handleResponseStatus(response);
 
 			setTimeout(() => {
 				storyPointsStatus.value = "";

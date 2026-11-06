@@ -5,6 +5,7 @@ import BreadCrumbs from "@/components/object_components/document/document_list_r
 import {onMounted, watch} from "vue";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import type {FileSystemInterface} from "@/utils/interfaces/documents/FileSystemInterface.ts";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
@@ -40,7 +41,7 @@ async function loadData() {
 		return;
 	}
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
 		{
 			method: "GET",

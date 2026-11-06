@@ -6,6 +6,7 @@ import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data
 import {useObjectStore} from "@/stores/object/object.ts";
 import type {GroupInterface} from "@/utils/interfaces/stores/GroupInterface.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import {WlkRenderErrorMessage} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
@@ -57,7 +58,7 @@ async function addGroup() {
 		group_list: [newGroupModel.value],
 	}
 
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/groups/`,
 		{
 			method: "POST",
@@ -100,7 +101,7 @@ async function removeGroup(group_id: number) {
 	objectStore.removeGroup(group_id);
 
 	// Tell backend to remove data
-	const response = await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/groups/${group_id}/`,
 		{
 			method: "DELETE",
