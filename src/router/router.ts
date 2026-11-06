@@ -225,7 +225,7 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to) => {
     // Setup store
     const permissionStore = usePermissionStore();
     const destination: string | undefined = to.meta.destination as string | undefined;
@@ -238,7 +238,7 @@ router.beforeEach(async (to, _, next) => {
     if (!permissionStore.is_loaded && !isErrorPage) {
         const isLoaded = await fetchObjectMetaData();
         if (!isLoaded) {
-            return next({name: "server-error"});
+            return "/server-error";
         }
     }
 
@@ -248,11 +248,11 @@ router.beforeEach(async (to, _, next) => {
 
     // Validated the permissions
     if (destination === undefined) {
-        next();
+        return;
     } else if (permissionStore.hasPermission(destination)) {
-        next();
+        return;
     } else {
-        next({name: "forbidden"})
+        return "/forbidden";
     }
 });
 

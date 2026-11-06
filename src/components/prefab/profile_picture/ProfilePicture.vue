@@ -8,7 +8,7 @@ const props = defineProps({
         required: false,
     },
     url: {
-        type: String,
+        type: [String, null],
         required: true,
     },
 })
