@@ -8,6 +8,7 @@ import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import router from "@/router/router.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
+import type {ObjectInterface} from "@/utils/interfaces/stores/ObjectInterface.ts";
 
 // Define i18n
 const {t} = useI18n()
@@ -70,7 +71,7 @@ onMounted(async () => {
 		switch (response.status) {
 			case 200: {
 				// Get data
-				const data = await response.json();
+				const data: ObjectInterface = await response.json();
 				data.destination = destination;
 				data.is_loaded = true;
 
@@ -78,7 +79,8 @@ onMounted(async () => {
 				objectStore.$patch(data);
 
 				// Calculate permissions
-				permissionStore.SetCurrentObjectPermissions(destination);
+				const current_group_ids = new Set(data.group_list.map(x => x.id));
+				permissionStore.SetCurrentObjectPermissions(destination, current_group_ids);
 				break;
 			}
 			case 403:

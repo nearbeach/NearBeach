@@ -97,10 +97,7 @@ export const usePermissionStore = defineStore('permissions', {
             // State is loaded
             this.is_loaded = true;
         },
-        SetCurrentObjectPermissions(destination: string): void {
-            // Declare store
-            const objectStore = useObjectStore();
-
+        SetCurrentObjectPermissions(destination: string, current_group_ids: Set<number>): void {
             // Making sure the destination exists in the maximum permissions
             const allowed_destinations = ["kanban_board", "project", "requirement", "task"];
 
@@ -111,14 +108,11 @@ export const usePermissionStore = defineStore('permissions', {
                 return;
             }
 
-            // Get a group of ids
-            const currentGroupIds = new Set(objectStore.group_list.map(x => x.id));
-
             // Filter and reduce to get the data we want
             this.currentObjectPermissions.currentObject =
                 this.permissionData?.filter((item: PermissionDataInterface) => {
                     // Filter for only the group we want
-                    return currentGroupIds.has(item.group_id);
+                    return current_group_ids.has(item.group_id);
                 }).reduce((max: number, item) => {
                     // Get the new value (make sure destination is a keyof typeof item - default 0
                     const value = item[
