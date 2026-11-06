@@ -4,6 +4,7 @@ import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data
 import {useUserStore} from "@/stores/user/user.ts";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
+import BadRequestPage from "@/components/error/BadRequestPage/BadRequestPage.vue";
 import ServerErrorPage from "@/components/error/ServerErrorPage/ServerErrorPage.vue";
 import ForbiddenPage from "@/components/error/ForbiddenPage/ForbiddenPage.vue";
 import {useErrorStore} from "@/stores/error/error.ts";
@@ -179,6 +180,14 @@ const routes = [
         ],
     },
     // Errors
+    {
+        path: "/bad-request",
+        name: "bad-request",
+        meta: {
+            destination: "bad-request",
+        },
+        component: BadRequestPage,
+    },
     {
         path: "/forbidden",
         name: "forbidden",

@@ -38,16 +38,19 @@ onMounted(async () => {
 	const id: string | string[] | undefined = route.params.id;
 	const destination: unknown = route.meta.destination;
 	if (typeof (id) !== 'string' || isNaN(parseInt(id))) {
-		// TODO - ADD ERROR HANDLING -> 400 error page
+		errorStore.setError("Invalid id");
+		router.push({name: "bad-request-page"});
 		return;
 	}
 	if (parseInt(id) !== parseFloat(id)) {
-		// TODO - ADD ERROR HANDLING -> 400 error page
+		errorStore.setError("Invalid id - not set as an integer");
+		router.push({name: "bad-request-page"});
 		// id is not an int
 		return;
 	}
 	if (typeof (destination) !== 'string') {
-		// TODO - ADD ERROR HANDLING -> 400 error page
+		errorStore.setError("Invalid destination");
+		router.push({name: "bad-request-page"});
 		return;
 	}
 

@@ -151,6 +151,7 @@
   "properties_component.story_point_updated": "Story points updated",
   "properties_component.story_point_updating": "Updating story points",
   "public_link_row.copied_status": "Copied Public Link",
+  "public_link_row.copy_error": "Error copying Public Link",
   "public_links.create_public_link": "Create Public Link",
   "public_links.delete_public_link": "Delete Public Link",
   "public_links.description": "Control public access to project",

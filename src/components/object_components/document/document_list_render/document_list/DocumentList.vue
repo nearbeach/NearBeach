@@ -5,9 +5,15 @@ import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentI
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
+import {useI18n} from "petite-vue-i18n";
+
+// Define i18n
+const {t} = useI18n();
 
 // Define store
 const documentationStore = useDocumentationStore();
+const errorStore = useErrorStore();
 const objectStore = useObjectStore();
 const permissionStore = usePermissionStore();
 
@@ -15,27 +21,34 @@ const permissionStore = usePermissionStore();
 async function deleteDocument(document: DocumentItemInterface) {
 	const isLink = document.url_location !== null && document.url_location !== undefined && document.url_location !== "";
 	const body = {
-		type: isLink ? "link": "document",
+		type: isLink ? "link" : "document",
 	}
 
-	try {
-		await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/documents/${document.key}/`,
-			{
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body: JSON.stringify(body),
+	const response = await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/documents/${document.key}/`,
+		{
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
 			},
-		);
+			body: JSON.stringify(body),
+		},
+	);
 
-		// Remove document
-		documentationStore.removeDocument(document.key);
-	} catch (error) {
-		console.error("ERROR: ", error);
-		// TODO - handle error
+	switch (response.status) {
+		case 204:
+			// Remove document
+			documentationStore.removeDocument(document.key);
+			break;
+		case 403:
+			errorStore.setError(t("general_detail_component.error_forbidden"));
+			errorStore.showErrorModal = true;
+			break;
+		default:
+			errorStore.setError(response.statusText);
+			errorStore.showErrorModal = true;
+			break;
 	}
 }
 
@@ -46,13 +59,13 @@ function getIcon(description: string | null, urlLocation: string | null) {
 	}
 
 	// Make sure we have a file type at end of description
-	const splitDescription : string[] | undefined = description?.split(".");
+	const splitDescription: string[] | undefined = description?.split(".");
 	if (splitDescription === undefined || splitDescription?.length === 0) {
 		return File;
 	}
 
 	// Get the type and return the appropriate logo
-	const type = splitDescription[splitDescription?.length -1];
+	const type = splitDescription[splitDescription?.length - 1];
 	switch (type) {
 		case "image":
 			return Image;
@@ -77,7 +90,7 @@ function getIcon(description: string | null, urlLocation: string | null) {
 			:key="item.key"
 		>
 			<div class="document-icon">
-				<component :is="getIcon(item.description, item.url_location)" />
+				<component :is="getIcon(item.description, item.url_location)"/>
 			</div>
 			<div class="document-details">
 				<p>
@@ -91,10 +104,10 @@ function getIcon(description: string | null, urlLocation: string | null) {
 				</p>
 			</div>
 			<div class="document-delete"
-				 v-if="permissionStore.currentObjectPermissions.currentObject > 1"
-				 @click="deleteDocument(item)"
+			     v-if="permissionStore.currentObjectPermissions.currentObject > 1"
+			     @click="deleteDocument(item)"
 			>
-				<Trash />
+				<Trash/>
 			</div>
 		</div>
 	</div>

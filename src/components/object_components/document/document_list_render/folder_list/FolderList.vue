@@ -6,12 +6,14 @@ import type {FolderItemInterface} from "@/utils/interfaces/documents/FolderItemI
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
 
 // Define i18n
 const {t} = useI18n()
 
 // Define store
 const documentationStore = useDocumentationStore();
+const errorStore = useErrorStore();
 const objectStore = useObjectStore();
 const permissionStore = usePermissionStore();
 
@@ -21,25 +23,33 @@ async function deleteFolder(folder_id: number) {
 		type: "folder",
 	}
 
-	try {
-		await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/documents/${folder_id}/`,
-			{
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body: JSON.stringify(body),
+	const response = await fetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/documents/${folder_id}/`,
+		{
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
 			},
-		);
+			body: JSON.stringify(body),
+		},
+	);
 
-		// Remove folder
-		documentationStore.removeFolder(folder_id);
-	} catch (error) {
-		console.error("ERROR: ", error);
-		// TODO - handle error
+	switch (response.status) {
+		case 204:
+			// Remove folder
+			documentationStore.removeFolder(folder_id);
+			break;
+		case 403:
+			errorStore.setError(t("general_detail_component.error_forbidden"));
+			errorStore.showErrorModal = true;
+			break;
+		default:
+			errorStore.setError(response.statusText);
+			errorStore.showErrorModal = true;
+			break;
 	}
+
 }
 
 function gotoParentFolder() {

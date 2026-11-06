@@ -5,6 +5,7 @@ import {ref, onMounted} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -13,6 +14,7 @@ const {t} = useI18n();
 const emit = defineEmits(["updateRelationship"]);
 
 // Define object store
+const errorStore = useErrorStore();
 const objectStore = useObjectStore();
 const permissionStore = usePermissionStore();
 
@@ -84,7 +86,7 @@ onMounted(() => {
 });
 
 // Define function
-function updateRelationship() : void {
+async function updateRelationship(): void {
 	// Escape conditions
 	if (relationshipModel.value === "") {
 		return;
@@ -99,7 +101,7 @@ function updateRelationship() : void {
 	state.value = t("relationship_link.relationship_updating");
 
 	// Save data
-	fetch(
+	const response = await fetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/${props.objectAssignmentId}/`,
 		{
 			method: "PATCH",
@@ -113,19 +115,27 @@ function updateRelationship() : void {
 				"X-CSRFTOKEN": getCsrfToken(),
 			},
 		},
-	).then(() => {
-		state.value = t("relationship_link.relationship_success");
-		emit("updateRelationship", { index: props.index, link_relationship: relationshipModel.value});
+	);
 
-		setTimeout(() => {
-			state.value = "";
-		}, 5000);
+	switch (response.status) {
+		case 200:
+			state.value = t("relationship_link.relationship_success");
+			emit("updateRelationship", {index: props.index, link_relationship: relationshipModel.value});
 
-	}).catch((error) => {
-		// TODO - handle errors properly
-		state.value = "Error Updating";
-		console.error(error);
-	});
+			// Set timeout to response message
+			setTimeout(() => {
+				state.value = "";
+			}, 5000);
+			break;
+		case 403:
+			errorStore.setError(t("general_detail_component.error_forbidden"));
+			errorStore.showErrorModal = true;
+			break;
+		default:
+			errorStore.setError(response.statusText);
+			errorStore.showErrorModal = true;
+			break;
+	}
 }
 </script>
 

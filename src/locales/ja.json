@@ -151,6 +151,7 @@
   "properties_component.story_point_updated": "ストーリーポイントが更新されました",
   "properties_component.story_point_updating": "ストーリーポイントの更新",
   "public_link_row.copied_status": "公開リンクをコピーしました",
+  "public_link_row.copy_error": "公開リンクのコピー中にエラーが発生しました",
   "public_links.create_public_link": "公開リンクを作成",
   "public_links.delete_public_link": "公開リンクを削除",
   "public_links.description": "プロジェクトへの公開アクセスを制御する",
