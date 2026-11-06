@@ -79,7 +79,7 @@ async function getSearchResults() {
 	)
 
 	switch (response.status) {
-		case 200:
+		case 200: {
 			// Get data
 			const data = await response.json();
 
@@ -90,6 +90,7 @@ async function getSearchResults() {
 				searchResults: data.results,
 			});
 			break;
+		}
 		default:
 			errorStore.setError(response.statusText);
 			await router.push({name: "server-error"});

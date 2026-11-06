@@ -68,7 +68,7 @@ async function signIn() {
 
 	// Depending on the status code - depends what we do next
 	switch (response.status) {
-		case 200:
+		case 200: {
 			// Username and Password are correct
 			const data: { status: string } = await response.json();
 
@@ -77,6 +77,7 @@ async function signIn() {
 				? UserLoggedIn()
 				: ActiveTwoFactorPanel();
 			break;
+		}
 		case 401:
 			failCount++;
 			errorMessage.value = failCount <= 5

@@ -149,7 +149,7 @@ async function fetchPotentialObjectLinks() {
 
     // Switch case the response
     switch (response.status) {
-        case 200:
+        case 200: {
             // Get the unfiltered data
         	const unfiltered_data = await response.json();
 
@@ -161,6 +161,7 @@ async function fetchPotentialObjectLinks() {
         		return condition_1 || condition_2;
         	});
             break;
+        }
         default:
             errorText.value = t("link_objects.error_text") + ": " + response.statusText;
             break;

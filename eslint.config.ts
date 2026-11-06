@@ -36,6 +36,7 @@ export default defineConfigWithVueTs(
         files: ['**/*.{ts,mts,tsx,vue}'],
         rules: {
             'require-await': 'error', // JS-0116
+            'no-case-declarations': 'error', // JS-0054
             '@typescript-eslint/no-empty-function': 'error', // JS-0321
             '@typescript-eslint/no-non-null-assertion': 'error', // JS-0339
         },
