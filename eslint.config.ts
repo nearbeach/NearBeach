@@ -38,6 +38,7 @@ export default defineConfigWithVueTs(
             'require-await': 'error', // JS-0116
             'no-case-declarations': 'error', // JS-0054
             'consistent-return': 'error', // JS-0045
+            'prefer-template': 'error', // JS-0246
             '@typescript-eslint/no-empty-function': 'error', // JS-0321
             '@typescript-eslint/no-non-null-assertion': 'error', // JS-0339
         },

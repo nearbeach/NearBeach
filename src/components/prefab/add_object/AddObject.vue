@@ -30,7 +30,7 @@ const model = defineModel({required: true})
 // Define computed
 const componentId = computed<string>(() => {
 	// Return an id made up of input- + title
-	return props.label?.toLowerCase()?.replace(/ /g, '-') + "-" + useId();
+	return `${props.label?.toLowerCase()?.replace(/ /g, '-')}-${useId()}`;
 });
 
 const isDisabled = computed<boolean>(() => {

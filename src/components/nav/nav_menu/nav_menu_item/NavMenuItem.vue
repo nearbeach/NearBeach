@@ -55,7 +55,7 @@ const defineClass = computed(() => {
         route?.path?.toLowerCase() === props.routeAddressNew.toLowerCase();
 
     // Return the appropriate class
-    return isActive ? baseClass + ' current' : baseClass;
+    return isActive ? `${baseClass} current` : baseClass;
 });
 
 // Method

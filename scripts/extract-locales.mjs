@@ -172,7 +172,7 @@ if (dryRun) {
     fs.mkdirSync(localeDir, {recursive: true});
     for (const [lang, data] of Object.entries(locales)) {
         const sorted = Object.fromEntries(Object.entries(data).sort(([a], [b]) => a.localeCompare(b)));
-        fs.writeFileSync(path.join(localeDir, `${lang}.json`), JSON.stringify(sorted, null, 2) + "\n");
+        fs.writeFileSync(path.join(localeDir, `${lang}.json`), `${JSON.stringify(sorted, null, 2)}\n`);
     }
     writes.forEach(([file, body]) => fs.writeFileSync(file, body));
     console.log(`\nConverted ${converted} component(s).`);

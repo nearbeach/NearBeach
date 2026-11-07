@@ -130,7 +130,7 @@ async function fetchLinkList() {
         	isLoaded.value = true;
             break;
         default:
-            errorText.value = t("link_objects.error_text") + ": " + response.statusText;
+            errorText.value = `${t("link_objects.error_text")}: ${response.statusText}`;
             break;
     }
 }
@@ -163,7 +163,7 @@ async function fetchPotentialObjectLinks() {
             break;
         }
         default:
-            errorText.value = t("link_objects.error_text") + ": " + response.statusText;
+            errorText.value = `${t("link_objects.error_text")}: ${response.statusText}`;
             break;
     }
 }
@@ -176,7 +176,7 @@ async function loadData() {
 		await fetchLinkList();
 		await fetchPotentialObjectLinks();
 	} catch (error) {
-		errorText.value = t("link_objects.error_text") + ": " + (error instanceof Error ? error.message : String(error));
+		errorText.value = `${t("link_objects.error_text")}: ${error instanceof Error ? error.message : String(error)}`;
 	}
 }
 
