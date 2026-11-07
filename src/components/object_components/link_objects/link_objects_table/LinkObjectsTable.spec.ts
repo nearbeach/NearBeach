@@ -3,6 +3,7 @@ import { mount, flushPromises } from "@vue/test-utils";
 import {LinkObjectsTable} from ".";
 import RelationshipLink from "@/components/object_components/link_objects/relationship_link/RelationshipLink.vue";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "@/router/router.ts";
 import { nextTick } from "vue";
@@ -16,6 +17,7 @@ const router = createRouter({
 describe("LinkObjectsTable", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
   });
 
   test("renders object links", async () => {

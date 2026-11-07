@@ -10,9 +10,9 @@ class PublicLinkViewSet(viewsets.ViewSet):
     http_method_names = ['get']
     lookup_value_regex = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
 
-    @staticmethod
+    # method_decorator needs a real method (self) - it can not wrap a staticmethod
     @method_decorator(never_cache)
-    def retrieve(request, pk, *args, **kwargs) -> Response:
+    def retrieve(self, request, pk, *args, **kwargs) -> Response:
         """Retrieve a single public link"""
         public_link_service = PublicLinkService(destination="public_link", location_id=pk)
         data, http_status = public_link_service.retrieve(request)

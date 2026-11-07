@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, test, afterEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { vi } from "vitest";
 import {PropertiesComponent} from ".";
-import { useErrorStore } from "@/stores/error/error.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import i18n from "@/i18n.ts";
 
@@ -14,6 +14,7 @@ vi.mock("@/router/router.ts", () => ({ default: { push: pushMock } }));
 describe("PropertiesComponent", () => {
     beforeEach(() => {
         setActivePinia(createPinia());
+        usePermissionStore().currentObjectPermissions.currentObject = 2;
         vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200, json: () => Promise.resolve({}) } as Response);
     });
 
@@ -49,6 +50,7 @@ describe("PropertiesComponent - updating", () => {
     function mockStatus(status: number) {
         return vi.spyOn(globalThis, "fetch").mockResolvedValue({
             status,
+            statusText: "Server exploded",
             json: () => Promise.resolve({}),
         } as Response);
     }
@@ -60,6 +62,7 @@ describe("PropertiesComponent - updating", () => {
 
     beforeEach(() => {
         setActivePinia(createPinia());
+        usePermissionStore().currentObjectPermissions.currentObject = 2;
         pushMock.mockReset();
         const objectStore = useObjectStore();
         objectStore.destination = "project";
@@ -161,33 +164,41 @@ describe("PropertiesComponent - updating", () => {
     });
 
     test.each([
-        [403, "You do not have access to the object", false],
-        [404, "Could not find the object", false],
-        [500, "Server returned an error: ", true],
-    ])("a %i response sets the error message", async (status, message, showModal) => {
+        [403, i18n.global.t("general_detail_component.error_forbidden")],
+        [404, "Server exploded"],
+        [500, "Server exploded"],
+    ])("a %i response shows the date status message", async (status, message) => {
         mockStatus(status);
-        const errorStore = useErrorStore();
         const objectStore = useObjectStore();
-        mountProperties();
+        const wrapper = mountProperties();
 
         objectStore.end_date = "2026-05-10T10:00";
         await flushPromises();
 
-        expect(errorStore.message).toBe(message);
-        expect(errorStore.showErrorModal).toBe(showModal);
+        expect(wrapper.text()).toContain(message);
+        expect(wrapper.text()).not.toContain("Date updated");
     });
 
-    test("a network failure redirects to the server error page", async () => {
+    test("a network failure while saving dates shows the error message", async () => {
         vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-        const errorStore = useErrorStore();
         const objectStore = useObjectStore();
-        mountProperties();
+        const wrapper = mountProperties();
 
         objectStore.end_date = "2026-05-10T10:00";
         await flushPromises();
 
-        expect(errorStore.message).toBe("offline");
-        expect(pushMock).toHaveBeenCalledWith({ name: "server-error" });
+        expect(wrapper.text()).toContain("offline");
+    });
+
+    test("a network failure while saving story points shows the error message", async () => {
+        vi.useFakeTimers();
+        vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+        const wrapper = mountProperties();
+
+        wrapper.findComponent({ name: "WlkNumberInput" }).vm.$emit("change", { isValid: true });
+        await vi.advanceTimersByTimeAsync(500);
+
+        expect(wrapper.text()).toContain("offline");
     });
 
     test("valid story points are saved after a short delay", async () => {
@@ -258,35 +269,26 @@ describe("PropertiesComponent - updating", () => {
         expect(fetchSpy).not.toHaveBeenCalled();
     });
 
-    test("a story point error status is reported", async () => {
+    test.each([
+        [403, i18n.global.t("general_detail_component.error_forbidden")],
+        [500, "Server exploded"],
+    ])("a story point %i response shows the status message", async (status, message) => {
         vi.useFakeTimers();
-        mockStatus(403);
-        const errorStore = useErrorStore();
+        mockStatus(status);
         const wrapper = mountProperties();
 
         wrapper.findComponent({ name: "WlkNumberInput" }).vm.$emit("change", { isValid: true });
         await vi.advanceTimersByTimeAsync(500);
 
-        expect(errorStore.message).toBe("You do not have access to the object");
-    });
-
-    test("a story point network failure opens the error modal", async () => {
-        vi.useFakeTimers();
-        vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-        const errorStore = useErrorStore();
-        const wrapper = mountProperties();
-
-        wrapper.findComponent({ name: "WlkNumberInput" }).vm.$emit("change", { isValid: true });
-        await vi.advanceTimersByTimeAsync(500);
-
-        expect(errorStore.message).toBe("offline");
-        expect(errorStore.showErrorModal).toBe(true);
+        expect(wrapper.text()).toContain(message);
+        expect(wrapper.text()).not.toContain("Story points updated");
     });
 });
 
 describe("PropertiesComponent - story point model", () => {
     beforeEach(() => {
         setActivePinia(createPinia());
+        usePermissionStore().currentObjectPermissions.currentObject = 2;
     });
 
     afterEach(() => {

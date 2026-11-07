@@ -4,6 +4,7 @@ import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data
 import {useUserStore} from "@/stores/user/user.ts";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
+import BadRequestPage from "@/components/error/BadRequestPage/BadRequestPage.vue";
 import ServerErrorPage from "@/components/error/ServerErrorPage/ServerErrorPage.vue";
 import ForbiddenPage from "@/components/error/ForbiddenPage/ForbiddenPage.vue";
 import {useErrorStore} from "@/stores/error/error.ts";
@@ -180,6 +181,14 @@ const routes = [
     },
     // Errors
     {
+        path: "/bad-request",
+        name: "bad-request",
+        meta: {
+            destination: "bad-request",
+        },
+        component: BadRequestPage,
+    },
+    {
         path: "/forbidden",
         name: "forbidden",
         meta: {
@@ -216,7 +225,7 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to) => {
     // Setup store
     const permissionStore = usePermissionStore();
     const destination: string | undefined = to.meta.destination as string | undefined;
@@ -229,8 +238,7 @@ router.beforeEach(async (to, _, next) => {
     if (!permissionStore.is_loaded && !isErrorPage) {
         const isLoaded = await fetchObjectMetaData();
         if (!isLoaded) {
-            next({name: "server-error"});
-            return;
+            return "/server-error";
         }
     }
 
@@ -240,11 +248,11 @@ router.beforeEach(async (to, _, next) => {
 
     // Validated the permissions
     if (destination === undefined) {
-        next();
+        return;
     } else if (permissionStore.hasPermission(destination)) {
-        next();
+        return;
     } else {
-        next({name: "forbidden"})
+        return "/forbidden";
     }
 });
 

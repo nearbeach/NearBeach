@@ -1,9 +1,16 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
-import { DocumentList } from ".";
+import i18n from "@/i18n.ts";
+import { useErrorStore } from "@/stores/error/error.ts";
+import DocumentList from "./DocumentList.vue";
+
+function mountList() {
+  return mount(DocumentList, { global: { plugins: [i18n] } });
+}
 
 const doc = (key: string, description: string, extra = {}) => ({
   key,
@@ -18,6 +25,7 @@ const doc = (key: string, description: string, extra = {}) => ({
 describe("DocumentList", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.destination = "project";
     objectStore.id = 31;
@@ -34,7 +42,7 @@ describe("DocumentList", () => {
       doc("b", "nested.pdf", { parent_folder_id: 5 }),
     ];
 
-    const wrapper = mount(DocumentList);
+    const wrapper = mountList();
     expect(wrapper.findAll(".document-item")).toHaveLength(1);
     expect(wrapper.find(".document-details a").text()).toBe("root.pdf");
     expect(wrapper.find(".document-details a").attributes("href")).toBe("/private/a/");
@@ -51,7 +59,7 @@ describe("DocumentList", () => {
       doc("b", "report.pdf"),
     ];
 
-    const wrapper = mount(DocumentList);
+    const wrapper = mountList();
     const icons = wrapper.findAll(".document-icon svg");
 
     expect(icons[0].classes()).toContain("lucide-link");
@@ -66,16 +74,16 @@ describe("DocumentList", () => {
   ])("description %s uses the %s icon", (description, iconClass) => {
     useDocumentationStore().documents = [doc("a", description)];
 
-    const wrapper = mount(DocumentList);
+    const wrapper = mountList();
 
     expect(wrapper.find(".document-icon svg").classes()).toContain(iconClass);
   });
 
   test("deleting a document sends its type and removes it", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200 } as Response);
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 204 } as Response);
     const documentationStore = useDocumentationStore();
     documentationStore.documents = [doc("a", "root.pdf"), doc("b", "other.pdf")];
-    const wrapper = mount(DocumentList);
+    const wrapper = mountList();
 
     await wrapper.find(".document-delete").trigger("click");
     await flushPromises();
@@ -87,11 +95,11 @@ describe("DocumentList", () => {
   });
 
   test("deleting a link sends the link type", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200 } as Response);
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 204 } as Response);
     useDocumentationStore().documents = [
       doc("a", "site", { url_location: "https://nearbeach.org/" }),
     ];
-    const wrapper = mount(DocumentList);
+    const wrapper = mountList();
 
     await wrapper.find(".document-delete").trigger("click");
     await flushPromises();
@@ -99,17 +107,31 @@ describe("DocumentList", () => {
     expect(JSON.parse(fetchSpy.mock.calls[0][1]?.body as string)).toEqual({ type: "link" });
   });
 
-  test("a failed delete is logged and keeps the document", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+  test("a forbidden delete shows the error modal and keeps the document", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 403 } as Response);
     const documentationStore = useDocumentationStore();
     documentationStore.documents = [doc("a", "root.pdf")];
-    const wrapper = mount(DocumentList);
+    const wrapper = mountList();
 
     await wrapper.find(".document-delete").trigger("click");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(useErrorStore().showErrorModal).toBe(true);
+    expect(documentationStore.documents).toHaveLength(1);
+  });
+
+  test("any other failed delete shows the status text and keeps the document", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server Error" } as Response);
+    const documentationStore = useDocumentationStore();
+    documentationStore.documents = [doc("a", "root.pdf")];
+    const wrapper = mountList();
+
+    await wrapper.find(".document-delete").trigger("click");
+    await flushPromises();
+
+    const errorStore = useErrorStore();
+    expect(errorStore.message).toBe("Server Error");
+    expect(errorStore.showErrorModal).toBe(true);
     expect(documentationStore.documents).toHaveLength(1);
   });
 });
@@ -117,12 +139,13 @@ describe("DocumentList", () => {
 describe("DocumentList - missing description", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
   });
 
   test("a document without a description gets the generic file icon", () => {
     useDocumentationStore().documents = [doc("a", null as unknown as string)];
 
-    const wrapper = mount(DocumentList);
+    const wrapper = mountList();
 
     expect(wrapper.find(".document-icon svg").classes()).toContain("lucide-file");
   });

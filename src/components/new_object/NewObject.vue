@@ -10,7 +10,7 @@ import {
 	maxLength,
 	minLength
 } from 'whelk-ui';
-import {ref, useTemplateRef} from 'vue';
+import {onMounted, ref, useTemplateRef} from 'vue';
 import {useI18n} from "petite-vue-i18n";
 import {useRoute} from "vue-router";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
@@ -45,7 +45,7 @@ const titleModel = ref<string>("");
 const groupTemplateRef = useTemplateRef("group-ref");
 const titleTemplateRef = useTemplateRef("title-ref");
 
-// Define Methods
+// Define Functions
 async function createObject(): Promise<void> {
 	// Validate all the fields first
 	groupTemplateRef.value?.checkValidation();
@@ -100,6 +100,18 @@ function updateValidation(field: string, value: boolean): void {
 		return !value;
 	});
 }
+
+// Define on mounted
+onMounted(() => {
+	// If user does not have permission - take them to the no permission page
+	const permission = permissionStore.maximumPermissions[
+		route.meta.destination as keyof typeof permissionStore.maximumPermissions
+		] ?? 0;
+	if (permission <= 1) {
+		// No permission
+		return router.push({name: "forbidden"});
+	}
+})
 </script>
 
 <template>

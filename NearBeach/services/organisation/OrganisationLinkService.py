@@ -40,11 +40,13 @@ class OrganisationLinkService(ObjectServiceAbstraction):
         if organisation_result is None:
             return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
 
-        update_object.update(
-            organisation=organisation_result,
-            change_user=request.user,
-            date_modified=timezone.now(),
-        )
+        # Linking the organisation it already has changes nothing - so leave the modified data alone
+        if update_object.first().organisation_id != organisation_result.id:
+            update_object.update(
+                organisation=organisation_result,
+                change_user=request.user,
+                date_modified=timezone.now(),
+            )
 
         # Send back data
         potential_customers = Customer.objects.filter(

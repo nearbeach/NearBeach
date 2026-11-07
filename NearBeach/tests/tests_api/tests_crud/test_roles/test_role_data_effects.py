@@ -58,7 +58,7 @@ OPERATIONS = [
     ("add a note", "POST", f"{PROJECT}notes/", {"note": "A note"}, 2, 201, True),
     ("add a public link", "POST", f"{PROJECT}public_link/", None, 2, 201, True),
     ("add a link", "POST", f"{PROJECT}link_list/",
-     {"object_type": "task", "object_id": 2, "object_relation": "relates"}, 2, 201, True),
+     {"object_type": "requirement_item", "object_id": 2, "object_relation": "relates"}, 2, 201, True),
     ("add a sprint", "POST", f"{PROJECT}sprint/",
      {"title": "S", "start_date": "2026-01-01T00:00:00Z", "end_date": "2026-02-01T00:00:00Z"}, 2, 201, True),
     ("add a folder", "POST", f"{PROJECT}documents/", {"type": "folder", "description": "F"}, 2, 201, True),

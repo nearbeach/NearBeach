@@ -452,7 +452,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest(
                 "/api/v1/project/1/link_list/",
                 {
-                    "object_type": "task",
+                    "object_type": "requirement_item",
                     "object_id": "1",
                     "object_relation": "relates",
                 },
@@ -462,8 +462,8 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest(
                 "/api/v1/project/2/link_list/",
                 {
-                    "object_type": "task",
-                    "object_id": "1",
+                    "object_type": "requirement_item",
+                    "object_id": "2",
                     "object_relation": "relates",
                 },
                 201,

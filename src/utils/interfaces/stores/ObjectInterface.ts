@@ -18,4 +18,6 @@ export interface ObjectInterface {
 	user_list: UserInterface[],
 	date_created: string,
 	date_modified: string,
+	destination: string,
+	is_loaded: boolean,
 }

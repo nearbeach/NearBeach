@@ -3,9 +3,13 @@ import type {SprintLinkInterface} from "@/utils/interfaces/SprintLinkInterface.t
 import {WlkCard} from "whelk-ui";
 import {TrashIcon} from "@lucide/vue";
 import {computed} from "vue";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define emits
 const emits = defineEmits(['deleteSprint']);
+
+// Define stores
+const permissionStore = usePermissionStore();
 
 // Define props
 const props = defineProps({
@@ -41,7 +45,9 @@ const renderDates = computed(() => {
 			</div>
 			<div class="sprint-information">{{sprint.status}} - <span class="dates">{{renderDates}}</span></div>
 		</div>
-		<div class="sprint-delete">
+		<div class="sprint-delete"
+		     v-if="permissionStore.currentObjectPermissions.currentObject > 1"
+		>
 			<TrashIcon v-on:click="emits('deleteSprint', sprint.id)" />
 		</div>
 	</WlkCard>

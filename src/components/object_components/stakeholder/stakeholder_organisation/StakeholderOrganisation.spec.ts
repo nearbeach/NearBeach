@@ -1,10 +1,11 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { defineComponent, h } from "vue";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useObjectMetaDataStore } from "@/stores/object_meta_data/object_meta_data.ts";
-import { useErrorStore } from "@/stores/error/error.ts";
+import i18n from "@/i18n.ts";
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import { StakeholderOrganisation } from ".";
 
@@ -20,7 +21,7 @@ const organisation = {
 
 function mountOrganisation() {
   return mount(StakeholderOrganisation, {
-    global: { stubs: { RouterLink: defineComponent({ props: ["to"], setup: (props, { slots }) => () => h("a", { href: props.to }, slots.default?.()) }) } },
+    global: { plugins: [i18n], stubs: { RouterLink: defineComponent({ props: ["to"], setup: (props, { slots }) => () => h("a", { href: props.to }, slots.default?.()) }) } },
   });
 }
 
@@ -34,6 +35,7 @@ async function choose(wrapper: ReturnType<typeof mountOrganisation>, id: number 
 describe("StakeholderOrganisation", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.destination = "project";
     objectStore.id = 9;
@@ -108,18 +110,28 @@ describe("StakeholderOrganisation", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  test("a failed add is reported and leaves the organisation unset", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
+  test("a failed add shows the status text and leaves the organisation unset", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
     const wrapper = mountOrganisation();
 
     await choose(wrapper, 3);
 
-    expect(useErrorStore().message).toBe("offline");
+    expect(wrapper.text()).toContain("Server exploded");
+    expect(useObjectStore().organisation).toBeNull();
+  });
+
+  test("a forbidden add shows the forbidden message", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 403 } as Response);
+    const wrapper = mountOrganisation();
+
+    await choose(wrapper, 3);
+
+    expect(wrapper.text()).toContain(i18n.global.t("general_detail_component.error_forbidden"));
     expect(useObjectStore().organisation).toBeNull();
   });
 
   test("removing the organisation clears it and calls DELETE", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 200 } as Response);
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 204 } as Response);
     useObjectStore().organisation = organisation;
     const wrapper = mountOrganisation();
 
@@ -132,15 +144,15 @@ describe("StakeholderOrganisation", () => {
     expect(wrapper.findComponent(AddObject).exists()).toBe(true);
   });
 
-  test("a failed removal is logged", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => { /* Intentionally left empty */ });
+  test("a failed removal restores the organisation and shows the status text", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
     useObjectStore().organisation = organisation;
     const wrapper = mountOrganisation();
 
     await wrapper.find(".organisation-name svg").trigger("click");
     await flushPromises();
 
-    expect(consoleError).toHaveBeenCalled();
+    expect(useObjectStore().organisation).toEqual(organisation);
+    expect(wrapper.text()).toContain("Server exploded");
   });
 });

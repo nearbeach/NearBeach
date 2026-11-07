@@ -132,7 +132,7 @@ class ProjectBadInputTests(BaseApiClass):
         created = self._request(
             "POST",
             f"{PROJECT_URL}link_list/",
-            {"object_type": "task", "object_id": 1, "object_relation": "relates"},
+            {"object_type": "requirement_item", "object_id": 1, "object_relation": "relates"},
         )
         self.assertEqual(created.status_code, 201)
         link_id = created.data["object_assignment_id"]

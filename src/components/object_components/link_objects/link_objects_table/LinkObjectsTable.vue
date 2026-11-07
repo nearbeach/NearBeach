@@ -4,6 +4,7 @@ import {TrashIcon} from "@lucide/vue";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
 import {type PropType} from "vue";
 import {useI18n} from "petite-vue-i18n";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -27,6 +28,9 @@ defineProps({
 // Define emits
 const emit = defineEmits(["deleteObjectLink", "updateRelationship"])
 
+// Define stores
+const permissionStore = usePermissionStore();
+
 // Define functions
 function deleteObjectLink(object_assignment_id: number, index: number) : void {
 	emit("deleteObjectLink", {
@@ -44,6 +48,7 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 	<div class="link-objects-table">
 		<div
 			v-for="(relationship, index) of objectLinkList"
+			:key="index"
 			class="link-object"
 		>
 			<div class="link-object-info">
@@ -61,7 +66,9 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 					v-on:update-relationship="updateRelationship"
 				/>
 			</div>
-			<div class="link-object-delete">
+			<div class="link-object-delete"
+				 v-if="permissionStore.currentObjectPermissions.currentObject > 1"
+			>
 				<TrashIcon
 					width="20"
 					height="20"

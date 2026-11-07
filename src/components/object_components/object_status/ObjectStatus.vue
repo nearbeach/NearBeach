@@ -5,11 +5,13 @@ import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data
 import {useObjectStore} from "@/stores/object/object.ts";
 import {useI18n} from "petite-vue-i18n";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 
 // Define i18n
 const {t} = useI18n()
 
 // Define ref
+const statusClass = ref<string>("");
 const statusModel = ref<string>("0");
 const statusMessage = ref<string>("");
 
@@ -29,7 +31,7 @@ objectStore.$subscribe((mutation, state) => {
 });
 
 // Define watchers
-watch(statusModel, (new_value) => {
+watch(statusModel, async (new_value) => {
 	if (new_value === "0") {
 		// Nothing to do
 		return;
@@ -44,8 +46,8 @@ watch(statusModel, (new_value) => {
 	const status = objectMetaDataStore.fetchStatus(parseInt(new_value));
 	if (status.length === 0) {
 		// We have an issue
-		// TODO - Do propper error handling
-		console.error(`Status was not found in state management: ${new_value}`)
+		statusMessage.value = "Error Updating";
+		statusClass.value = "error";
 		return;
 	}
 
@@ -54,9 +56,10 @@ watch(statusModel, (new_value) => {
 	});
 
 	statusMessage.value = t("object_status.status_updating");
+	statusClass.value = "info";
 
 	// Save data
-	fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
 		{
 			method: "PATCH",
@@ -68,17 +71,26 @@ watch(statusModel, (new_value) => {
 				"X-CSRFTOKEN": getCsrfToken(),
 			},
 		},
-	).then(() => {
-		statusMessage.value = t("object_status.status_success");
+	)
 
-		setTimeout(() => {
-			statusMessage.value = "";
-		}, 5000);
-	}).catch((error) => {
-		// TODO - handle errors properly
-		statusMessage.value = "Error Updating";
-		console.error(error);
-	});
+	switch (response.status) {
+		case 200:
+			statusMessage.value = t("object_status.status_success");
+			statusClass.value = "success";
+
+			setTimeout(() => {
+				statusMessage.value = "";
+			}, 5000);
+			break;
+		case 403:
+			statusMessage.value = t("general_detail_component.error_forbidden");
+			statusClass.value = "error";
+			break;
+		default:
+			statusMessage.value = response.statusText;
+			statusClass.value = "error";
+			break;
+	}
 })
 </script>
 

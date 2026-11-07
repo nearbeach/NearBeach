@@ -5,11 +5,14 @@ import BreadCrumbs from "@/components/object_components/document/document_list_r
 import {onMounted, watch} from "vue";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import type {FileSystemInterface} from "@/utils/interfaces/documents/FileSystemInterface.ts";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
 
-// Define state
+// Define stores
 const documentationStore = useDocumentationStore();
+const errorStore = useErrorStore();
 const objectStore = useObjectStore();
 
 // Watch a specific state property
@@ -38,29 +41,34 @@ async function loadData() {
 		return;
 	}
 
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
-			{
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				}
-			},
-		)
+	const response = await safeFetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
+		{
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			}
+		},
+	)
 
-		// Get the data
-		const data: FileSystemInterface = await response.json();
+	switch (response.status) {
+		case 200:
+			// Get the data
+			const data: FileSystemInterface = await response.json();
 
-		// Divie the data out
-		documentationStore.documents = data.documents;
-		documentationStore.folders = data.folders;
-		documentationStore.maxUploadSize = data.max_upload_size;
-		documentationStore.isDocumentationLoaded = true;
-	} catch {
-		// TODO - handle the errors
+			// Divie the data out
+			documentationStore.documents = data.documents;
+			documentationStore.folders = data.folders;
+			documentationStore.maxUploadSize = data.max_upload_size;
+			documentationStore.isDocumentationLoaded = true;
+			break;
+		default:
+			errorStore.setError(response.statusText);
+			errorStore.showErrorModal = true;
+			break;
 	}
+
 }
 </script>
 

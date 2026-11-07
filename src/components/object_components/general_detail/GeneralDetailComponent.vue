@@ -7,6 +7,8 @@ import {useI18n} from "petite-vue-i18n";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import router from "@/router/router.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
+import type {ObjectInterface} from "@/utils/interfaces/stores/ObjectInterface.ts";
 
 // Define i18n
 const {t} = useI18n()
@@ -20,6 +22,7 @@ const updateState = ref("normal");
 
 // Define stores
 const objectStore = useObjectStore();
+const permissionStore = usePermissionStore();
 
 // Define data
 const fieldValidation: Record<string, boolean> = {
@@ -36,16 +39,19 @@ onMounted(async () => {
 	const id: string | string[] | undefined = route.params.id;
 	const destination: unknown = route.meta.destination;
 	if (typeof (id) !== 'string' || isNaN(parseInt(id))) {
-		// TODO - ADD ERROR HANDLING -> 400 error page
+		errorStore.setError("Invalid id");
+		router.push({name: "bad-request"});
 		return;
 	}
 	if (parseInt(id) !== parseFloat(id)) {
-		// TODO - ADD ERROR HANDLING -> 400 error page
+		errorStore.setError("Invalid id - not set as an integer");
+		router.push({name: "bad-request"});
 		// id is not an int
 		return;
 	}
 	if (typeof (destination) !== 'string') {
-		// TODO - ADD ERROR HANDLING -> 400 error page
+		errorStore.setError("Invalid destination");
+		router.push({name: "bad-request"});
 		return;
 	}
 
@@ -65,12 +71,16 @@ onMounted(async () => {
 		switch (response.status) {
 			case 200: {
 				// Get data
-				const data = await response.json();
+				const data: ObjectInterface = await response.json();
 				data.destination = destination;
 				data.is_loaded = true;
 
 				// Patch
 				objectStore.$patch(data);
+
+				// Calculate permissions
+				const current_group_ids = new Set(data.group_list.map(x => x.id));
+				permissionStore.SetCurrentObjectPermissions(destination, current_group_ids);
 				break;
 			}
 			case 403:
@@ -112,39 +122,49 @@ const renderUpdateButton = computed(() => {
 });
 
 // Define functions
-function updateData() {
+async function updateData() {
 	// Notify the user of the state change
 	updateState.value = "updating"
 
-	fetch(
-		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
-		{
-			method: "PATCH",
-			body: JSON.stringify({
-				title: objectStore.title,
-				description: objectStore.description,
-			}),
-			headers: {
-				"Content-Type": "application/json",
-				"X-CSRFTOKEN": getCsrfToken(),
+	try {
+		const response = await fetch(
+			`/api/v1/${objectStore.destination}/${objectStore.id}/`,
+			{
+				method: "PATCH",
+				body: JSON.stringify({
+					title: objectStore.title,
+					description: objectStore.description,
+				}),
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				}
 			}
+		);
+
+		switch (response.status) {
+			case 200:
+				updateState.value = "updated";
+
+				setTimeout(() => {
+					updateState.value = "normal";
+				}, 2000);
+				break;
+			case 403:
+				// User does not have access to the object
+				updateState.value = "error";
+				errorStore.setError(t("general_detail_component.error_forbidden"));
+				errorStore.showErrorModal = true;
+				break;
+			default:
+				updateState.value = "error";
+				errorStore.setError(response.statusText);
+				errorStore.showErrorModal = true;
+				break;
 		}
-	).then(() => {
-		updateState.value = "updated";
-
-		setTimeout(() => {
-			updateState.value = "normal";
-		}, 2000);
-	}).catch((error) => {
-		// TODO - handle errors property
-		updateState.value = "error";
-
-		console.error("ERROR: ", error);
-
-		// setTimeout(() => {
-		// 	updateState.value = "normal";
-		// })
-	});
+	} catch (error) {
+		errorStore.setError(error);
+	}
 }
 </script>
 
@@ -168,6 +188,7 @@ function updateData() {
 		/>
 
 		<WlkButton
+			v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 			class="primary"
 			:disabled="isUpdateButtonDisabled"
 			v-on:click="updateData"

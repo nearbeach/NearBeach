@@ -12,19 +12,20 @@ import ObjectPriority from "@/components/object_components/object_priority/Objec
 import {useI18n} from "petite-vue-i18n";
 import {ref, watch} from "vue";
 import router from "@/router/router.ts";
-import {useErrorStore} from "@/stores/error/error.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 
 // Define i18n
 const {t} = useI18n()
 
 // Define Stores
-const errorStore = useErrorStore();
 const objectStore = useObjectStore();
 
 // Define refs
 const dateStatus = ref<string>("");
+const dateStatusClass = ref<string>("");
 const storyPointsStatus = ref<string>("");
+const storyPointsStatusClass = ref<string>("");
 const storyPointsTimeout = ref<null | ReturnType<typeof setTimeout>>(null);
 
 // Define watches
@@ -115,51 +116,35 @@ async function datesUpdated() {
 		start_date: objectStore.start_date,
 	}
 
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/`,
-			{
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body: JSON.stringify(body),
-			}
-		);
+	const response = await safeFetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
+		{
+			method: "PATCH",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+			body: JSON.stringify(body),
+		}
+	);
 
-		dateStatus.value = t("properties_component.date_updated");
-		handleResponseStatus(response);
-
-		setTimeout(() => {
-			dateStatus.value = "";
-		}, 2000);
-	} catch (error) {
-		// Assuming a 500 error
-		errorStore.setError(error);
-		return router.push({name: "server-error"});
-	}
-
-	return null;
-}
-
-function handleResponseStatus(response: Response) {
 	switch (response.status) {
 		case 200:
-			// Everything is fine
+			dateStatus.value = t("properties_component.date_updated");
+			dateStatusClass.value = "success";
+
+			setTimeout(() => {
+				dateStatus.value = "";
+			}, 2000);
 			break;
 		case 403:
-			// User does not have access to the object
-			errorStore.message = t("properties_component.error_forbidden");
-			break;
-		case 404:
-			// Object does not exist
-			errorStore.message = t("properties_component.error_not_found");
+			dateStatus.value = t("general_detail_component.error_forbidden");
+			dateStatusClass.value = "error";
 			break;
 		default:
-			// Assuming a 500 error
-			errorStore.message = t("properties_component.error_server_error");
-			errorStore.showErrorModal = true;
+			dateStatus.value = response.statusText;
+			dateStatusClass.value = "error";
+			break;
 	}
 }
 
@@ -194,31 +179,38 @@ async function storyPointsUpdate() {
 		story_point: objectStore.story_point,
 	}
 
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/`,
-			{
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body: JSON.stringify(body),
-			}
-		);
+	const response = await safeFetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
+		{
+			method: "PATCH",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
+			},
+			body: JSON.stringify(body),
+		}
+	);
 
-		// Update status and check response
-		storyPointsStatus.value = t("properties_component.story_point_updated");
-		handleResponseStatus(response);
+	switch (response.status) {
+		case 200:
+			// Update status and check response
+			storyPointsStatus.value = t("properties_component.story_point_updated");
+			storyPointsStatusClass.value = "success";
 
-		setTimeout(() => {
-			storyPointsStatus.value = "";
-		}, 2000);
-	} catch (error) {
-		// Assuming a 500 error
-		errorStore.setError(error);
-		errorStore.showErrorModal = true;
+			setTimeout(() => {
+				storyPointsStatus.value = "";
+			}, 2000);
+			break;
+		case 403:
+			storyPointsStatus.value = t("general_detail_component.error_forbidden");
+			storyPointsStatusClass.value = "error";
+			break;
+		default:
+			storyPointsStatus.value = response.statusText;
+			storyPointsStatusClass.value = "error";
+			break;
 	}
+
 }
 </script>
 
@@ -234,6 +226,7 @@ async function storyPointsUpdate() {
 			v-model="objectStore.story_point"
 			:label="t('properties_component.story_point')"
 			:status="storyPointsStatus"
+			:statusClass="storyPointsStatusClass"
 			:validationRules="[minValue(0), maxValue(5)]"
 			v-on:change="storyPointsChanged"
 		/>
@@ -243,6 +236,7 @@ async function storyPointsUpdate() {
 			v-model="objectStore.start_date"
 			:label="t('properties_component.start_date')"
 			:status="dateStatus"
+			:statusClass="dateStatusClass"
 			:disabled="dateStatus === t('properties_component.date_updating')"
 		/>
 		<WlkDatetime
@@ -250,6 +244,7 @@ async function storyPointsUpdate() {
 			v-model="objectStore.end_date"
 			:label="t('properties_component.end_date')"
 			:status="dateStatus"
+			:statusClass="dateStatusClass"
 			:disabled="dateStatus === t('properties_component.date_updating')"
 		/>
 	</WlkCard>

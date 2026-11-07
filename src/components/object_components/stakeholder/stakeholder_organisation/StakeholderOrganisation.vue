@@ -5,17 +5,22 @@ import AddObject from "@/components/prefab/add_object/AddObject.vue";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import type {OrganisationLinkInterface} from "@/utils/interfaces/stores/OrganisationLinkInterface.ts";
-import {useErrorStore} from "@/stores/error/error.ts";
+import {WlkRenderErrorMessage} from "whelk-ui";
+import {useI18n} from "petite-vue-i18n";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
+
+// Define i18n
+const {t} = useI18n();
 
 // Define stores
-const errorStore = useErrorStore();
 const objectStore = useObjectStore();
 const objectMetaDataStore = useObjectMetaDataStore();
+const permissionStore = usePermissionStore();
 
 // Define refs
-// TODO - Check this is how we handle this on user/group
-const errorString = ref<string>("");
+const errorMessage = ref<string>("");
 const organisationModel = ref<number>(0);
 
 // Define functions
@@ -31,66 +36,76 @@ async function addOrganisation() {
 		id: organisationModel.value,
 	}
 
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/organisation/`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body: JSON.stringify(body),
+	const response = await safeFetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/organisation/`,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
 			},
-		)
+			body: JSON.stringify(body),
+		},
+	)
 
-		// Check response status
-		switch (response.status) {
-			case 201: {
-				// Set data in store
-				const data: OrganisationLinkInterface = await response.json();
+	// Check response status
+	switch (response.status) {
+		case 201:
+			// Set data in store
+			const data: OrganisationLinkInterface = await response.json();
 
-				// Object Store
-				objectStore.customers = [];
-				objectStore.organisation = data.organisation;
+			// Object Store
+			objectStore.customers = [];
+			objectStore.organisation = data.organisation;
 
-				// Object Data Meta Store
-				objectMetaDataStore.potential_customers = data.potential_customers ?? [];
-				break;
-			}
-			default:
-				errorString.value = response.statusText;
-				break;
-		}
-	} catch (errors) {
-		errorStore.setError(errors);
+			// Object Data Meta Store
+			objectMetaDataStore.potential_customers = data.potential_customers ?? [];
+			break;
+		case 403:
+			errorMessage.value = t("general_detail_component.error_forbidden");
+			break;
+		default:
+			errorMessage.value = response.statusText;
+			break;
 	}
 }
 
 async function removeOrganisation() {
+	// Backup
+	const backup = objectStore.organisation;
+
 	// Optimistically remove organisation id
 	objectStore.organisation = null;
 
-	try {
-		await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/organisation/`,
-			{
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
+	const response = await safeFetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/organisation/`,
+		{
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFTOKEN": getCsrfToken(),
 			},
-		)
-	} catch (errors) {
-		// TODO - implement correct error handling
-		console.error(errors);
+		},
+	)
+
+	switch (response.status) {
+		case 204:
+			break;
+		case 403:
+			objectStore.organisation = backup;
+			errorMessage.value = t("general_detail_component.error_forbidden");
+			break;
+		default:
+			objectStore.organisation = backup;
+			errorMessage.value = response.statusText;
+			break;
 	}
 }
 </script>
 
 <template>
 	<div class="stakeholder-organisation">
+		<WlkRenderErrorMessage>{{ errorMessage }}</WlkRenderErrorMessage>
 		<p v-if="objectStore?.organisation !== null">Organisation</p>
 		<div
 			class="organisation-name"
@@ -101,12 +116,14 @@ async function removeOrganisation() {
 			</RouterLink>
 			<TrashIcon
 				v-on:click="removeOrganisation()"
+				v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 				type="button"
 				aria-label="Remove User"
 			/>
 		</div>
 		<div v-else>
 			<AddObject
+				v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 				label="Organisation"
 				optionsLabel="name"
 				optionsValue="id"
@@ -114,12 +131,6 @@ async function removeOrganisation() {
 				v-model="organisationModel"
 				@change="addOrganisation"
 			/>
-		</div>
-
-		<div class="error-message"
-		     v-if="errorString !== ''"
-		>
-			{{errorString}}
 		</div>
 	</div>
 </template>

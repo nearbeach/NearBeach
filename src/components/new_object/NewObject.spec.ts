@@ -52,6 +52,7 @@ describe("NewObject", () => {
     // The permission store has no setter for groups - seed its state directly.
     const permissionStore = usePermissionStore();
     permissionStore.userGroups = [{ value: "1", label: "Group1", optGroup: "" }];
+    permissionStore.maximumPermissions.project = 2;
   });
 
   afterEach(() => {
@@ -177,6 +178,7 @@ describe("NewObject - validation guard", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     pushMock.mockReset();
+    usePermissionStore().maximumPermissions.project = 2;
   });
 
   afterEach(() => {

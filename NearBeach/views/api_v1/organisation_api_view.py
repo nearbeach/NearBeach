@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.models import Organisation
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
@@ -18,7 +19,7 @@ class OrganisationViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
 
     @staticmethod
-    @object_permission(min_permission_level=3)
+    @destination_permission(min_permission_level=3)
     def create(request: AuthenticatedRequest, *args, **kwargs):
         """Create a new organisation"""
         organisation_services = OrganisationService(destination="organisation", location_id=0)
@@ -114,7 +115,7 @@ class OrganisationViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @object_permission(min_permission_level=1)
+    @destination_permission(min_permission_level=1)
     def list(self, request: AuthenticatedRequest, *args, **kwargs):
         organisation_services = OrganisationService(destination="organisation", location_id=0)
         organisation_results = organisation_services.get_list(request)

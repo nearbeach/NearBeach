@@ -4,9 +4,12 @@ import {watch, onMounted, ref, computed} from "vue";
 import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import {SmallLoadingSkeleton} from "@/components/object_components/skeletons";
 import {AddRelationship} from "@/components/object_components/link_objects/add_relationship";
 import {LinkObjectsTable} from "@/components/object_components/link_objects/link_objects_table";
+import {WlkRenderErrorMessage} from "whelk-ui";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -14,12 +17,12 @@ const {t} = useI18n();
 // Define stores
 const objectStore = useObjectStore();
 const objectOptions = ref<ObjectLinkInterface[]>([]);
+const permissionStore = usePermissionStore();
 
 // Define ref
 const errorText = ref<string>("");
 const isLoaded = ref<boolean>(false);
 const objectLinkList = ref<ObjectLinkInterface[]>([]);
-const showCreate = ref<boolean>(false);
 
 // Watch a specific state property
 watch(
@@ -42,20 +45,19 @@ onMounted(async () => {
 
 // Define computed
 const filteredObjectOptions = computed(() => {
-    // Setup a key
-    const key = (o: ObjectLinkInterface): string => `${o.object_type}|${o.object_id}`;
+	// Setup a key
+	const key = (o: ObjectLinkInterface): string => `${o.object_type}|${o.object_id}`;
 
-    // Setup a set that we'll remove from potential results
-    const removeObjectLinks = new Set(objectLinkList.value.map(key));
+	// Setup a set that we'll remove from potential results
+	const removeObjectLinks = new Set(objectLinkList.value.map(key));
 
-    // Return
-    return objectOptions.value.filter(a => !removeObjectLinks.has(key(a)));
+	// Return
+	return objectOptions.value.filter(a => !removeObjectLinks.has(key(a)));
 });
 
 // Define functions
-async function createObjectLink(event: {relationshipModel: string, objectSelectorModel: string}) {
+async function createObjectLink(event: { relationshipModel: string, objectSelectorModel: string }) {
 	// Show create
-	showCreate.value = true;
 	errorText.value = "";
 
 	// Split object selector to get the type and id
@@ -66,7 +68,7 @@ async function createObjectLink(event: {relationshipModel: string, objectSelecto
 		object_relation: event.relationshipModel,
 	};
 
-	await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/`,
 		{
 			method: "POST",
@@ -76,26 +78,34 @@ async function createObjectLink(event: {relationshipModel: string, objectSelecto
 			},
 			body: JSON.stringify(body),
 		}
-	).then(async (response) => {
-		// Notify the user of the change
-		showCreate.value = false;
+	)
 
-		// Append the value
-		const data = await response.json();
-		objectLinkList.value.push(data);
-	}).catch((error) => {
-		errorText.value = error;
-	});
+	switch (response.status) {
+		case 201:
+			// Append the value
+			const data = await response.json();
+			objectLinkList.value.push(data);
+			break;
+		case 403:
+			errorText.value = t("general_detail_component.error_forbidden");
+			break;
+		default:
+			errorText.value = response.statusText;
+			break;
+	}
 }
 
-async function deleteObjectLink(event: {object_assignment_id: number, index: number}) {
+async function deleteObjectLink(event: { object_assignment_id: number, index: number }) {
+	// Take copy of object before removing
+	const backup = objectLinkList.value;
+
 	// Remove the link object from the objectLinkList
 	objectLinkList.value = objectLinkList.value.filter((_, i: number) => {
 		return i !== event.index;
 	});
 
 	// Update backend
-	await fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/${event.object_assignment_id}/`,
 		{
 			method: "DELETE",
@@ -104,13 +114,24 @@ async function deleteObjectLink(event: {object_assignment_id: number, index: num
 				"X-CSRFTOKEN": getCsrfToken(),
 			},
 		},
-	).catch((error) => {
-		errorText.value = error;
-	});
+	)
+
+	switch (response.status) {
+		case 204:
+			break;
+		case 403:
+			errorText.value = t("general_detail_component.error_forbidden");
+			objectLinkList.value = backup;
+			break;
+		default:
+			errorText.value = response.statusText;
+			objectLinkList.value = backup;
+			break;
+	}
 }
 
 async function fetchLinkList() {
-    // Fetch the required data
+	// Fetch the required data
 	const response = await fetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/link_list/`,
 		{
@@ -122,21 +143,21 @@ async function fetchLinkList() {
 		},
 	);
 
-    // Switch case the response
-    switch (response.status) {
-        case 200:
-            // Set object link list
-        	objectLinkList.value = await response.json();
-        	isLoaded.value = true;
-            break;
-        default:
-            errorText.value = `${t("link_objects.error_text")}: ${response.statusText}`;
-            break;
-    }
+	// Switch case the response
+	switch (response.status) {
+		case 200:
+			// Set object link list
+			objectLinkList.value = await response.json();
+			isLoaded.value = true;
+			break;
+		default:
+			errorText.value = t("link_objects.error_text") + ": " + response.statusText;
+			break;
+	}
 }
 
 async function fetchPotentialObjectLinks() {
-    const response = await fetch(
+	const response = await fetch(
 		"/api/v1/data/potential_object_links/",
 		{
 			method: "GET",
@@ -147,25 +168,24 @@ async function fetchPotentialObjectLinks() {
 		},
 	);
 
-    // Switch case the response
-    switch (response.status) {
-        case 200: {
-            // Get the unfiltered data
-        	const unfiltered_data = await response.json();
+	// Switch case the response
+	switch (response.status) {
+		case 200:
+			// Get the unfiltered data
+			const unfiltered_data = await response.json();
 
-        	objectOptions.value = unfiltered_data.filter((row: ObjectLinkInterface) => {
-        		// Base conditions
-        		const condition_1 = row.object_id !== objectStore.id;
-        		const condition_2 = row.object_type !== objectStore.destination;
+			objectOptions.value = unfiltered_data.filter((row: ObjectLinkInterface) => {
+				// Base conditions
+				const condition_1 = row.object_id !== objectStore.id;
+				const condition_2 = row.object_type !== objectStore.destination;
 
-        		return condition_1 || condition_2;
-        	});
-            break;
-        }
-        default:
-            errorText.value = `${t("link_objects.error_text")}: ${response.statusText}`;
-            break;
-    }
+				return condition_1 || condition_2;
+			});
+			break;
+		default:
+			errorText.value = t("link_objects.error_text") + ": " + response.statusText;
+			break;
+	}
 }
 
 async function loadData() {
@@ -176,7 +196,7 @@ async function loadData() {
 		await fetchLinkList();
 		await fetchPotentialObjectLinks();
 	} catch (error) {
-		errorText.value = `${t("link_objects.error_text")}: ${error instanceof Error ? error.message : String(error)}`;
+		errorText.value = t("link_objects.error_text") + ": " + (error instanceof Error ? error.message : String(error));
 	}
 }
 
@@ -199,6 +219,7 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 <template>
 	<div class="link-objects">
 		<p class="sub-text">{{ t('link_objects.text') }}</p>
+		<WlkRenderErrorMessage>{{ errorText }}</WlkRenderErrorMessage>
 		<LinkObjectsTable
 			v-if="isLoaded"
 			ref="link-objects-table"
@@ -210,8 +231,8 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 			{{ t("link_objects.loading") }}
 		</SmallLoadingSkeleton>
 		<AddRelationship
-			v-if="isLoaded"
-            :object-options="filteredObjectOptions"
+			v-if="isLoaded && permissionStore.currentObjectPermissions.currentObject > 1"
+			:object-options="filteredObjectOptions"
 			v-on:create-object-link="createObjectLink"
 		/>
 	</div>

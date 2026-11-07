@@ -3,15 +3,18 @@ import {computed, ref} from 'vue'
 import {WlkButton, WlkFileUpload, WlkModalFooter, WlkTextInput} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {useDocumentationStore} from "@/stores/documentation/documentation.ts";
 import type {DocumentItemInterface} from "@/utils/interfaces/documents/DocumentItemInterface.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
 
 // Define i18n
 const {t} = useI18n();
 
 // Define stores
 const documentationStore = useDocumentationStore();
+const errorStore = useErrorStore();
 const objectStore = useObjectStore();
 
 // Define emits
@@ -37,7 +40,7 @@ function documentChanged() {
 }
 
 async function uploadDocument() {
-	// Setup form dafromta
+	// Set-up form data
 	const body = new FormData();
 	body.set("type", "document");
 	body.set("description", documentNameModel.value);
@@ -45,45 +48,53 @@ async function uploadDocument() {
 		body.append("document", document);
 	}
 
+	// Set parent folder id if current folder id is not 0
 	if (documentationStore.currentFolderId !== 0) {
 		body.set("parent_folder_id", documentationStore.currentFolderId.toString());
 	}
 
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
-			{
-				method: "POST",
-				headers: {
-					"X-CSRFTOKEN": getCsrfToken(),
-				},
-				body,
+	const response = await safeFetch(
+		`/api/v1/${objectStore.destination}/${objectStore.id}/documents/`,
+		{
+			method: "POST",
+			headers: {
+				"X-CSRFTOKEN": getCsrfToken(),
 			},
-		)
+			body,
+		},
+	)
 
-		const data : DocumentItemInterface[] = await response.json();
+	// Close modal
+	emit("closeModal");
 
-		// Loop through the results and add to store
-		data.forEach((row : DocumentItemInterface) => {
-			documentationStore.documents.push({
-				description: row.description,
-				key: row.key,
-				parent_folder_id: row.parent_folder_id,
-				url_location: null,
-				document: null,
-				folder: null,
-			})
-		});
+	switch (response.status) {
+		case 201:
+			const data: DocumentItemInterface[] = await response.json();
 
-		// TEMP CODE
-		emit("closeModal");
-		documentModel.value = []
-		documentNameModel.value = "";
-		// END TEMP CODE
-	} catch (error) {
-		console.error("ERROR: ", error);
-		// TODO - Handle errors
-		// TODO - Remove from optimistic list
+			// Loop through the results and add to store
+			data.forEach((row: DocumentItemInterface) => {
+				documentationStore.documents.push({
+					description: row.description,
+					key: row.key,
+					parent_folder_id: row.parent_folder_id,
+					url_location: null,
+					document: null,
+					folder: null,
+				})
+			});
+
+			// Clear the models
+			documentModel.value = []
+			documentNameModel.value = "";
+			break;
+		case 403:
+			errorStore.setError(t("general_detail_component.error_forbidden"));
+			errorStore.showErrorModal = true;
+			break;
+		default:
+			errorStore.setError(response.statusText);
+			errorStore.showErrorModal = true;
+			break;
 	}
 }
 </script>

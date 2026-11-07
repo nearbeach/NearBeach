@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type {PropType} from "vue";
+import {type PropType} from "vue";
 import type {NoteItemInterface} from "@/utils/interfaces/NoteItemInterface.ts";
 import {useI18n} from "petite-vue-i18n";
 import { Pencil, TrashIcon } from "@lucide/vue";
@@ -11,14 +11,13 @@ const {t} = useI18n()
 // Define emits
 const emit = defineEmits(['deleteNote', 'editNote']);
 
+// Define props
 const props = defineProps({
 	noteList: {
 		required: true,
 		type: Array as PropType<NoteItemInterface[]>
 	},
 });
-
-
 </script>
 
 <template>
@@ -43,7 +42,8 @@ const props = defineProps({
 			<div class="note-content">
 				{{ note.note }}
 			</div>
-			<div class="edit-controls">
+			<div class="edit-controls"
+			>
 				<Pencil :aria-label="t('note_list.edit_note')"
 						v-on:click="emit('editNote', index)"
 				/>

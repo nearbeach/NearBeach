@@ -4,6 +4,7 @@ import {useI18n} from "petite-vue-i18n";
 import {ref, watch} from "vue";
 import {useObjectStore} from "@/stores/object/object.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {safeFetch} from "@/composables/safeFetch.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -11,6 +12,7 @@ const {t} = useI18n();
 // Define ref
 const priorityModel = ref<string>("0");
 const state = ref<string>("");
+const stateClass = ref<string>("");
 
 // Define constants
 const priorityList = [
@@ -36,21 +38,22 @@ objectStore.$subscribe((mutation, state) => {
 });
 
 // Define watchers
-watch(priorityModel, (new_value) => {
-	// If new value the same in the state - do nothing
+watch(priorityModel, async (new_value) => {
+	// If new value the same in the state -> do nothing
 	if (new_value === objectStore.priority.value.toString()) {
 		return;
 	}
 
+	// Notify the user we are updating the status
 	state.value = t("object_priority.priority_updating");
+	stateClass.value = "info";
 
 	// Fetch the status
 	const priority = priorityList[parseInt(new_value)];
 	if (priority === undefined) {
 		// We have an issue
-		// TODO - Do propper error handling
-		console.error(`Status was not found in state management: ${new_value}`)
 		state.value = "Error Updating";
+		stateClass.value = "error";
 		return;
 	}
 
@@ -59,7 +62,7 @@ watch(priorityModel, (new_value) => {
 	});
 
 	// Save data
-	fetch(
+	const response = await safeFetch(
 		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
 		{
 			method: "PATCH",
@@ -71,17 +74,26 @@ watch(priorityModel, (new_value) => {
 				"X-CSRFTOKEN": getCsrfToken(),
 			},
 		},
-	).then(() => {
-		state.value = t("object_priority.priority_success");
+	);
 
-		setTimeout(() => {
-			state.value = "";
-		}, 5000);
-	}).catch((error) => {
-		// TODO - handle errors properly
-		state.value = "Error Updating";
-		console.error(error);
-	});
+	switch (response.status) {
+		case 200:
+			state.value = t("object_priority.priority_success");
+			stateClass.value = "success";
+
+			setTimeout(() => {
+				state.value = "";
+			}, 5000);
+			break;
+		case 403:
+			state.value = t("general_detail_component.error_forbidden");
+			stateClass.value = "error";
+			break;
+		default:
+			state.value = response.statusText;
+			stateClass.value = "error";
+			break;
+	}
 });
 </script>
 
@@ -92,6 +104,7 @@ watch(priorityModel, (new_value) => {
 			:label="t('object_priority.label')"
 			:options="priorityList"
 			:status="state"
+			:statusClass="stateClass"
 			:validationRules="[required()]"
 			v-model="priorityModel"
 		/>

@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import {TrashIcon, Check, X} from "@lucide/vue";
 import {useI18n} from "petite-vue-i18n";
-import {ref} from "vue";
+import {computed, ref} from "vue";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n()
 
 // Define emits
 const emits = defineEmits(['deleteLink', 'updateActive']);
+
+// Define store
+const permissionStore = usePermissionStore();
 
 // Define props
 const props = defineProps({
@@ -26,7 +30,14 @@ const props = defineProps({
 });
 
 // Define refs
-const showStatus = ref<boolean>(false);
+// const showStatus = ref<boolean>(false);
+const statusError = ref<boolean>(false);
+const statusMessage = ref<string>("");
+
+// Define computed
+const copyStatusClass = computed(() => {
+	return statusError.value ? "copied-status error" : "copied-status";
+})
 
 // Define functions
 async function copyLink() {
@@ -36,25 +47,25 @@ async function copyLink() {
     // Copy the url to the clipboard
     await navigator.clipboard.writeText(url)
         .then(() => {
-            showStatus.value = true;
+			statusMessage.value = t("public_link_row.copied_status");
 
             setTimeout(() => {
-                showStatus.value = false;
-            }, 2000);
+				statusMessage.value = "";
+            }, 20000);
         })
         .catch((error) => {
-            // TODO - handle errors
-            console.error("Error copying text: ", error);
+			statusMessage.value = t("public_link_row.copy_error") + " || " + error.message;
+			statusError.value = true;
         });
 }
 </script>
 
 <template>
     <td v-on:click="copyLink">
-        <span v-if="showStatus"
-              class="copied-status"
+        <span v-if="statusMessage.length > 0"
+              :class="copyStatusClass"
         >
-            {{t("public_link_row.copied_status")}}
+            {{statusMessage}}
         </span>
         <span v-else class="link">{{ id }}</span>
     </td>
@@ -62,10 +73,11 @@ async function copyLink() {
         <Check v-if="isActive" />
         <X v-else />
     </td>
-    <td v-on:click="emits('deleteLink', {id: id})">
+    <td v-on:click="emits('deleteLink', {id: id})"
+		v-if="permissionStore.currentObjectPermissions.currentObject > 1"
+	>
         <TrashIcon />
     </td>
-
 </template>
 
 <style scoped>
@@ -78,6 +90,14 @@ tr {
         width: 15px;
         height: 15px;
     }
+
+	td > .copied-status {
+		color: var(--success);
+
+		&.error {
+			color: var(--text-red);
+		}
+	}
 
 }
 </style>

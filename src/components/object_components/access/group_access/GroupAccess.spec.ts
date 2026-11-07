@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import i18n from "@/i18n.ts";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { usePermissionStore } from "@/stores/permissions/permission.ts";
 import { useObjectStore } from "@/stores/object/object.ts";
 import { useObjectMetaDataStore } from "@/stores/object_meta_data/object_meta_data.ts";
 import AddObject from "@/components/prefab/add_object/AddObject.vue";
@@ -20,6 +22,7 @@ function mockFetch(status: number, body: unknown) {
 describe("GroupAccess", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
     const objectStore = useObjectStore();
     objectStore.destination = "project";
     objectStore.id = 5;
@@ -32,7 +35,7 @@ describe("GroupAccess", () => {
   });
 
   test("lists the object's groups", () => {
-    const wrapper = mount(GroupAccess);
+    const wrapper = mount(GroupAccess, { global: { plugins: [i18n] } });
 
     const names = wrapper.findAll(".group-access-item p").map((p) => p.text());
     expect(names).toEqual(["Group A", "Group B"]);
@@ -41,13 +44,13 @@ describe("GroupAccess", () => {
   test("hides the list when there are no groups", () => {
     useObjectStore().group_list = [];
 
-    const wrapper = mount(GroupAccess);
+    const wrapper = mount(GroupAccess, { global: { plugins: [i18n] } });
 
     expect(wrapper.find(".group-access-list").exists()).toBe(false);
   });
 
   test("only offers the groups that are not already added", () => {
-    const wrapper = mount(GroupAccess);
+    const wrapper = mount(GroupAccess, { global: { plugins: [i18n] } });
 
     expect(wrapper.findComponent(AddObject).props("options")).toEqual([groupC]);
   });
@@ -55,7 +58,7 @@ describe("GroupAccess", () => {
   test("shows a spacer instead of the picker when every group is added", () => {
     useObjectMetaDataStore().all_groups = [groupA, groupB];
 
-    const wrapper = mount(GroupAccess);
+    const wrapper = mount(GroupAccess, { global: { plugins: [i18n] } });
 
     expect(wrapper.findComponent(AddObject).exists()).toBe(false);
     expect(wrapper.find(".space").exists()).toBe(true);
@@ -64,7 +67,7 @@ describe("GroupAccess", () => {
   test("the last remaining group cannot be removed", () => {
     useObjectStore().group_list = [groupA];
 
-    const wrapper = mount(GroupAccess);
+    const wrapper = mount(GroupAccess, { global: { plugins: [i18n] } });
 
     expect(wrapper.find('[aria-label="Remove group"]').exists()).toBe(false);
   });
@@ -75,7 +78,7 @@ describe("GroupAccess", () => {
       user_list: [{ id: 8 }],
     });
     const objectStore = useObjectStore();
-    const wrapper = mount(GroupAccess);
+    const wrapper = mount(GroupAccess, { global: { plugins: [i18n] } });
 
     wrapper.findComponent(AddObject).vm.$emit("update:modelValue", 3);
     wrapper.findComponent(AddObject).vm.$emit("change");
@@ -91,7 +94,7 @@ describe("GroupAccess", () => {
 
   test("adding with nothing selected does nothing", async () => {
     const fetchSpy = mockFetch(201, {});
-    const wrapper = mount(GroupAccess);
+    const wrapper = mount(GroupAccess, { global: { plugins: [i18n] } });
 
     wrapper.findComponent(AddObject).vm.$emit("change");
     await flushPromises();
@@ -101,7 +104,7 @@ describe("GroupAccess", () => {
 
   test("adding an unknown group does nothing", async () => {
     const fetchSpy = mockFetch(201, {});
-    const wrapper = mount(GroupAccess);
+    const wrapper = mount(GroupAccess, { global: { plugins: [i18n] } });
 
     wrapper.findComponent(AddObject).vm.$emit("update:modelValue", 99);
     wrapper.findComponent(AddObject).vm.$emit("change");
@@ -112,8 +115,11 @@ describe("GroupAccess", () => {
   });
 
   test("a failed add shows the error message", async () => {
-    mockFetch(400, "Group could not be added");
-    const wrapper = mount(GroupAccess);
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 400,
+      statusText: "Group could not be added",
+    } as Response);
+    const wrapper = mount(GroupAccess, { global: { plugins: [i18n] } });
 
     wrapper.findComponent(AddObject).vm.$emit("update:modelValue", 3);
     wrapper.findComponent(AddObject).vm.$emit("change");
@@ -128,7 +134,7 @@ describe("GroupAccess", () => {
       user_list: [{ id: 2 }],
     });
     const objectStore = useObjectStore();
-    const wrapper = mount(GroupAccess);
+    const wrapper = mount(GroupAccess, { global: { plugins: [i18n] } });
 
     await wrapper.findAll('[aria-label="Remove group"]')[0].trigger("click");
     await flushPromises();
@@ -141,12 +147,12 @@ describe("GroupAccess", () => {
   });
 
   test("a failed removal shows the error message", async () => {
-    mockFetch(403, "Not allowed");
-    const wrapper = mount(GroupAccess);
+    mockFetch(403, {});
+    const wrapper = mount(GroupAccess, { global: { plugins: [i18n] } });
 
     await wrapper.findAll('[aria-label="Remove group"]')[0].trigger("click");
     await flushPromises();
 
-    expect(wrapper.text()).toContain("Not allowed");
+    expect(wrapper.text()).toContain(i18n.global.t("general_detail_component.error_forbidden"));
   });
 });
