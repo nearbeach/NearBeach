@@ -75,7 +75,7 @@ describe("PasswordResetPanel", () => {
     setQueryString("?uid=abc&token=123");
     // The component pushes on the login router singleton - stub it so the
     // test page is not navigated
-    const pushSpy = vi.spyOn(loginRouter, "push").mockResolvedValue(undefined);
+    const pushSpy = vi.spyOn(loginRouter, "push").mockResolvedValue();
     const wrapper = mountPasswordResetPanel();
 
     await submitPasswords(wrapper, "password123", "password123");
@@ -109,7 +109,7 @@ describe("PasswordResetPanel - backend errors", () => {
       status: 400,
       statusText: "Bad Request",
     } as Response);
-    const pushSpy = vi.spyOn(loginRouter, "push").mockResolvedValue(undefined);
+    const pushSpy = vi.spyOn(loginRouter, "push").mockResolvedValue();
     const wrapper = mountPasswordResetPanel();
 
     await submitPasswords(wrapper, "password123", "password123");

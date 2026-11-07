@@ -29,7 +29,7 @@ describe("PublicLinkRow", () => {
 
   test("copies the public url to the clipboard and shows the status", async () => {
     vi.useFakeTimers();
-    const writeText = vi.fn().mockResolvedValue(undefined);
+    const writeText = vi.fn(() => Promise.resolve());
     vi.spyOn(navigator.clipboard, "writeText").mockImplementation(writeText);
 
     const wrapper = mountRow();
