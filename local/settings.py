@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'NearBeach.apps.NearBeachConfig',
     'rest_framework',
     'knox',
+    'oauth2_provider',
     'django_vite',
     'silk',
     'drf_spectacular',
@@ -142,9 +143,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'knox.auth.TokenAuthentication',
+        'NearBeach.utils.oauth2.authentication.NearBeachOAuth2Authentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+        'NearBeach.utils.oauth2.permissions.OAuth2ScopePermission',
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -161,6 +164,21 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
+}
+
+# OAuth2 provider - lets other systems get bearer tokens for the API (see docs/003-administration-tasks/oauth2-api.rst)
+LOGIN_URL = '/login/'
+
+OAUTH2_PROVIDER = {
+    'SCOPES': {
+        'read': 'Read data you can see in NearBeach',
+        'write': 'Create, change and delete data you have permission to change',
+    },
+    'DEFAULT_SCOPES': ['read'],
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
+    'REFRESH_TOKEN_EXPIRE_SECONDS': 60 * 60 * 24 * 14,
+    'ROTATE_REFRESH_TOKEN': True,
+    'PKCE_REQUIRED': True,
 }
 
 REST_KNOX = {
@@ -304,7 +322,12 @@ The following documentation covers all API endpoints for NearBeach. You can use 
     'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',
-    'AUTHENTICATION_WHITELIST': [],
+    # Only bearer tokens are advertised in the API docs - session, basic and Knox auth stay out of them
+    'AUTHENTICATION_WHITELIST': ['NearBeach.utils.oauth2.authentication.NearBeachOAuth2Authentication'],
+    'OAUTH2_FLOWS': ['clientCredentials', 'authorizationCode'],
+    'OAUTH2_AUTHORIZATION_URL': '/o/authorize/',
+    'OAUTH2_TOKEN_URL': '/o/token/',
+    'OAUTH2_REFRESH_URL': '/o/token/',
     'POSTPROCESSING_HOOKS': [
         'drf_spectacular.hooks.postprocess_schema_enums',
         'NearBeach.api_docs.hooks.make_conditional_fields_optional',
