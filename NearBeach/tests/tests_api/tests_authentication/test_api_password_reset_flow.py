@@ -13,10 +13,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core import mail
 from django.core.cache import cache
-from django.test import Client
+from django.test import Client, override_settings
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from oauth2_provider.models import AccessToken, Application, RefreshToken
+from rest_framework.test import APIClient
 from rest_framework.throttling import SimpleRateThrottle
+
+from NearBeach.models.misc.misc import ExtendsAuthToken
 
 from NearBeach.services.AsyncEmailService import AsyncEmailService
 from NearBeach.tests.utils.BaseApiClass import BaseApiClass
@@ -136,6 +140,24 @@ class ForgottenPasswordEmailTests(PasswordResetTestBase):
         target.refresh_from_db()
         self.assertTrue(target.check_password(NEW_PASSWORD))
 
+    def _emailed_urls(self):
+        return re.findall(r"(https?://[^\s\"'<]+/login/reset-password/)", " ".join(
+            message.alternatives[0][0] for message in mail.outbox
+        ))
+
+    @override_settings(SITE_URL="https://nearbeach.example.com/", ALLOWED_HOSTS=["*"])
+    def test_the_link_uses_the_configured_site_url_not_the_host_header(self):
+        self.client.post(FORGOTTEN_URL, {"email": SHARED_EMAIL}, format="json", HTTP_HOST="evil.example.org")
+
+        urls = self._emailed_urls()
+        self.assertTrue(urls)
+        self.assertEqual(set(urls), {"https://nearbeach.example.com/login/reset-password/"})
+
+    def test_the_link_falls_back_to_the_request_when_no_site_url_is_set(self):
+        self._forgot(SHARED_EMAIL)
+
+        self.assertEqual(set(self._emailed_urls()), {"http://testserver/login/reset-password/"})
+
 
 def urlsafe_b64(uid):
     from django.utils.encoding import force_str
@@ -208,20 +230,23 @@ class PasswordResetApiTests(PasswordResetTestBase):
             with self.subTest(username=user.username):
                 self.assertEqual(user.password, others[user.username])
 
-    def test_unknown_and_inactive_users_look_like_a_success_but_change_nothing(self):
-        """The reply must not tell an attacker whether the user exists"""
+    def test_unknown_inactive_and_bad_token_all_get_the_same_answer(self):
+        """The reply must not tell an attacker whether the user exists - a wrong token for a real user included"""
         inactive = self._user("read_only")
         uid, token = self._link(inactive)
         User.objects.filter(pk=inactive.pk).update(is_active=False)
+        real_uid, _ = self._link(self._user())
 
         replies = {
             "unknown user": self._reset(urlsafe_base64_encode(force_bytes(999999)), "abc-123"),
             "inactive user": self._reset(uid, token),
+            "real user, wrong token": self._reset(real_uid, "abc-123"),
         }
 
         for name, response in replies.items():
             with self.subTest(name):
-                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.status_code, 403)
+                self.assertEqual(response.content, replies["unknown user"].content)
 
         inactive.refresh_from_db()
         self.assertTrue(inactive.check_password(OLD_PASSWORD))
@@ -232,7 +257,7 @@ class PasswordResetApiTests(PasswordResetTestBase):
             with self.subTest(uid=uid):
                 response = self._reset(uid, "abc-123")
 
-                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.status_code, 403)
 
     def test_weak_new_passwords_are_rejected(self):
         uid, token = self._link(self._user())
@@ -282,6 +307,79 @@ class PasswordResetApiTests(PasswordResetTestBase):
         self._reset(uid, token)
 
         self.assertEqual(other_session.get("/api/v1/project/").status_code, 403)
+
+
+class PasswordResetRevokesTokensTests(PasswordResetTestBase):
+    """A new password must also end API access that was set up with the old one"""
+
+    def setUp(self):
+        super().setUp()
+        self.user = self._user()
+        self.other = self._user("read_only")
+
+    def _client_credentials_token(self, owner, name="integration"):
+        secret = "a-long-client-secret-" + name
+        application = Application.objects.create(
+            name=name,
+            user=owner,
+            client_type=Application.CLIENT_CONFIDENTIAL,
+            authorization_grant_type=Application.GRANT_CLIENT_CREDENTIALS,
+            client_secret=secret,
+        )
+        response = APIClient().post("/o/token/", {
+            "grant_type": "client_credentials", "client_id": application.client_id,
+            "client_secret": secret, "scope": "read",
+        })
+        self.assertEqual(response.status_code, 200, response.content)
+        return response.json()["access_token"]
+
+    def _status(self, header):
+        return APIClient().get("/api/v1/user/initial_data/", HTTP_AUTHORIZATION=header).status_code
+
+    def _reset_password(self, user):
+        uid, token = self._link(user)
+        self.assertEqual(self._reset(uid, token).status_code, 200)
+
+    def test_knox_tokens_stop_working(self):
+        _, token = ExtendsAuthToken.objects.create(user=self.user, change_user=self.user)
+        self.assertEqual(self._status(f"Token {token}"), 200)
+
+        self._reset_password(self.user)
+
+        self.assertIn(self._status(f"Token {token}"), (401, 403))
+        self.assertFalse(ExtendsAuthToken.objects.filter(user=self.user).exists())
+
+    def test_oauth_tokens_for_the_user_stop_working(self):
+        bearer = self._client_credentials_token(self.user)
+        person = AccessToken.objects.create(
+            user=self.user, token="person-token", expires=datetime.now().astimezone() + timedelta(hours=1),
+            scope="read", application=Application.objects.get(),
+        )
+        RefreshToken.objects.create(user=self.user, token="person-refresh", application=person.application, access_token=person)
+
+        self._reset_password(self.user)
+
+        self.assertIn(self._status(f"Bearer {bearer}"), (401, 403))
+        self.assertFalse(AccessToken.objects.exists())
+        self.assertFalse(RefreshToken.objects.exists())
+
+    def test_other_users_tokens_are_left_alone(self):
+        _, other_knox = ExtendsAuthToken.objects.create(user=self.other, change_user=self.other)
+        other_bearer = self._client_credentials_token(self.other, "other")
+
+        self._reset_password(self.user)
+
+        self.assertEqual(self._status(f"Token {other_knox}"), 200)
+        self.assertEqual(self._status(f"Bearer {other_bearer}"), 200)
+
+    def test_a_failed_reset_revokes_nothing(self):
+        _, token = ExtendsAuthToken.objects.create(user=self.user, change_user=self.user)
+
+        self.assertEqual(self._reset(self._uid(self.user), "wrong-token").status_code, 403)
+        uid, good = self._link(self.user)
+        self.assertEqual(self._reset(uid, good, password="123").status_code, 400)
+
+        self.assertEqual(self._status(f"Token {token}"), 200)
 
 
 class ResetPasswordPageTests(PasswordResetTestBase):

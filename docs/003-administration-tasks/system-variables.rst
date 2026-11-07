@@ -15,6 +15,75 @@ The following django system variables are required by NearBeach;
 * DB_PORT
 * DB_USER
 
+Login Security
+==============
+
+NearBeach reads the following from its settings. They are optional, but a production site should set the first two.
+
+NUM_PROXIES
+^^^^^^^^^^^
+
+The number of reverse proxies (nginx, a load balancer, Cloudflare...) between the internet and NearBeach. The login
+rate limits count attempts per visitor address, and this tells NearBeach how far to trust the ``X-Forwarded-For``
+header to find it.
+
+* ``0`` (the default) - NearBeach ignores the header. Use this when visitors connect straight to NearBeach.
+* ``1`` or more - the number of proxies. Set it too low and everyone behind the proxy shares one limit. Set it too
+  high and visitors can pick their own address, which switches the rate limits off.
+
+Example:
+
+* `NUM_PROXIES=1`
+
+SITE_URL
+^^^^^^^^
+
+The public address of your NearBeach. Password reset emails build their link from it. If it is not set, the link is
+built from the address the request arrived on, which is only as trustworthy as your ``ALLOWED_HOSTS``.
+
+Example:
+
+* `SITE_URL=https://nearbeach.example.com`
+
+KNOX_TOKEN_TTL_HOURS
+^^^^^^^^^^^^^^^^^^^^
+
+How many hours a ``Token`` (Knox) API token lasts. By default they never expire. Resetting a user's password always
+cancels their tokens, whatever this is set to.
+
+Example:
+
+* `KNOX_TOKEN_TTL_HOURS=720`
+
+Settings a Production Site Must Have
+------------------------------------
+
+If your site uses its own settings file rather than the one NearBeach ships for testing, make sure it has these:
+
+.. code-block:: python
+
+    REST_FRAMEWORK = {
+        "DEFAULT_AUTHENTICATION_CLASSES": [
+            "rest_framework.authentication.SessionAuthentication",
+            # Basic authentication that refuses users who have two-factor authentication. Do not use
+            # rest_framework's own BasicAuthentication - a password alone would get around two-factor.
+            "NearBeach.utils.authentication.basic_authentication.TwoFactorSafeBasicAuthentication",
+            "knox.auth.TokenAuthentication",
+            "NearBeach.utils.oauth2.authentication.NearBeachOAuth2Authentication",
+        ],
+        "NUM_PROXIES": int(os.environ.get("NUM_PROXIES", 0)),
+        # ... the rest of your REST_FRAMEWORK settings
+    }
+
+    SITE_URL = os.environ.get("SITE_URL", "")
+
+The rate limits keep their history in Django's cache. If you run more than one worker process, use a shared cache
+(Redis, Memcached or the database cache), otherwise each worker counts separately.
+
+The Django admin login (``/admin/``) is protected automatically: it is rate limited, and asks for the two-factor code
+of any user who has set up two-factor authentication.
+
+
 Blob Storage
 ============
 

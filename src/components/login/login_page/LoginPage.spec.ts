@@ -10,6 +10,17 @@ import {LoginImage} from "@/components/login/login_image";
 import {TwoFactorPanel} from "@/components/login/login_page/two_factor_panel";
 import {nextTick} from "vue";
 
+// The provider list is its own concern (see useSsoProviders.spec.ts) - keep it out of the fetch calls counted below
+vi.mock("@/composables/useSsoProviders.ts", async () => {
+  const { ref } = await import("vue");
+  return {
+    useSsoProviders: () => ({
+      providers: ref([{ name: "Keycloak", slug: "keycloak", login_url: "/api/v1/authentication/oidc/keycloak/login/" }]),
+      loadProviders: vi.fn(),
+    }),
+  };
+});
+
 const router = createRouter({
   history: createWebHistory(),
   routes,
@@ -194,4 +205,25 @@ describe("LoginPage - two factor token", () => {
     });
   });
 
+
+  test("offers the single sign-on providers", () => {
+    wrapper = mountLoginPage();
+
+    const link = wrapper.find("a.sso-button");
+    expect(link.text()).toBe("Sign in with Keycloak");
+    expect(link.attributes("href")).toBe("/api/v1/authentication/oidc/keycloak/login/");
+  });
+
+  test.each([
+    ["no_account", "No NearBeach account exists"],
+    ["two_factor_required", "uses two-factor authentication"],
+    ["invalid_id_token", "Single sign-on failed"],
+  ])("shows a message when single sign-on comes back with %s", async (code, expected) => {
+    globalThis.history.replaceState({}, "", `/login/?sso_error=${code}`);
+    wrapper = mountLoginPage();
+    await nextTick();
+
+    expect(wrapper.find(".error-message").text()).toContain(expected);
+    globalThis.history.replaceState({}, "", "/");
+  });
 });

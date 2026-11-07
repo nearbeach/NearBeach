@@ -72,6 +72,8 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
     Manage Groups </003-administration-tasks/manage-groups>
     Manage Permission Sets </003-administration-tasks/manage-permission-sets>
     System Variables </003-administration-tasks/system-variables>
+    Single Sign-On </003-administration-tasks/single-sign-on>
+    OAuth2 for the API </003-administration-tasks/oauth2-api>
     API </003-administration-tasks/api>
 
 .. toctree::

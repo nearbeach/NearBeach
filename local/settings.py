@@ -9,6 +9,7 @@ This file is only for the automatic testing and is not built for server use.
 
 import os
 import sys
+from datetime import timedelta
 from NearBeach import __version__ as version
 from rest_framework.settings import api_settings
 
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'NearBeach.apps.NearBeachConfig',
     'rest_framework',
     'knox',
+    'oauth2_provider',
     'django_vite',
     'silk',
     'drf_spectacular',
@@ -137,14 +139,23 @@ if "THROTTLE_AUTH_HOUR" in os.environ:
 if "THROTTLE_USER_MINUTE" in os.environ:
     THROTTLE_USER_MINUTE = os.environ["THROTTLE_USER_MINUTE"]
 
+# How many reverse proxies sit in front of NearBeach. The login rate limits identify a visitor by their address, and
+# can only trust the X-Forwarded-For header when they know how many proxies added to it. 0 ignores the header.
+NUM_PROXIES = int(os.environ.get("NUM_PROXIES", 0))
+
+# The public address of this NearBeach (e.g. https://nearbeach.example.com), used to build links in emails
+SITE_URL = os.environ.get("SITE_URL", "")
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'NearBeach.utils.authentication.basic_authentication.TwoFactorSafeBasicAuthentication',
         'knox.auth.TokenAuthentication',
+        'NearBeach.utils.oauth2.authentication.NearBeachOAuth2Authentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+        'NearBeach.utils.oauth2.permissions.OAuth2ScopePermission',
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -159,14 +170,33 @@ REST_FRAMEWORK = {
         'anon': '1/min',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'NUM_PROXIES': NUM_PROXIES,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
 }
 
+# OAuth2 provider - lets other systems get bearer tokens for the API (see docs/003-administration-tasks/oauth2-api.rst)
+LOGIN_URL = '/login/'
+
+OAUTH2_PROVIDER = {
+    'SCOPES': {
+        'read': 'Read data you can see in NearBeach',
+        'write': 'Create, change and delete data you have permission to change',
+    },
+    'DEFAULT_SCOPES': ['read'],
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
+    'REFRESH_TOKEN_EXPIRE_SECONDS': 60 * 60 * 24 * 14,
+    'ROTATE_REFRESH_TOKEN': True,
+    'PKCE_REQUIRED': True,
+}
+
+# Knox API tokens never expire unless told to - set KNOX_TOKEN_TTL_HOURS to give them a lifetime
+KNOX_TOKEN_TTL = timedelta(hours=int(os.environ["KNOX_TOKEN_TTL_HOURS"])) if "KNOX_TOKEN_TTL_HOURS" in os.environ else None
+
 REST_KNOX = {
     'SECURE_HASH_ALGORITHM': 'hashlib.sha512',
     'AUTH_TOKEN_CHARACTER_LENGTH': 64,
-    'TOKEN_TTL': None,
+    'TOKEN_TTL': KNOX_TOKEN_TTL,
     'USER_SERIALIZER': 'knox.serializers.UserSerializer',
     'TOKEN_LIMIT_PER_USER': None,
     'AUTO_REFRESH': False,
@@ -304,7 +334,12 @@ The following documentation covers all API endpoints for NearBeach. You can use 
     'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',
-    'AUTHENTICATION_WHITELIST': [],
+    # Only bearer tokens are advertised in the API docs - session, basic and Knox auth stay out of them
+    'AUTHENTICATION_WHITELIST': ['NearBeach.utils.oauth2.authentication.NearBeachOAuth2Authentication'],
+    'OAUTH2_FLOWS': ['clientCredentials', 'authorizationCode'],
+    'OAUTH2_AUTHORIZATION_URL': '/o/authorize/',
+    'OAUTH2_TOKEN_URL': '/o/token/',
+    'OAUTH2_REFRESH_URL': '/o/token/',
     'POSTPROCESSING_HOOKS': [
         'drf_spectacular.hooks.postprocess_schema_enums',
         'NearBeach.api_docs.hooks.make_conditional_fields_optional',
