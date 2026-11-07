@@ -100,6 +100,8 @@ function signIn(event: Event) {
             </template>
 		</WlkButton>
 
+		<slot name="sso"/>
+
 		<RouterLink to="/login/forgotten-password">{{ t("login_panel.forgotten_password") }}</RouterLink>
 	</form>
 </template>

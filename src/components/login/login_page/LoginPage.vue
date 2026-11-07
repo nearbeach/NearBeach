@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import LoginImage from "@/components/login/login_image/LoginImage.vue";
 import LoginPanel from "@/components/login/login_page/login_panel/LoginPanel.vue";
 import {ObjectStateEnum} from "@/utils/enums/ObjectStateEnum.ts";
 import TwoFactorPanel from "@/components/login/login_page/two_factor_panel/TwoFactorPanel.vue";
 import {useI18n} from 'petite-vue-i18n'
+import SsoPanel from "@/components/login/login_page/sso_panel/SsoPanel.vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {useSsoProviders} from "@/composables/useSsoProviders.ts";
 
 // Define i18y
 const {t} = useI18n();
@@ -18,6 +20,26 @@ const otpTokenModel = ref<string>('');
 const errorMessage = ref<string>('');
 const buttonState = ref(ObjectStateEnum.NoAction);
 const isLoginPage = ref<boolean>(true);
+const {providers: ssoProviders, loadProviders} = useSsoProviders();
+
+// Why a single sign-on attempt came back to the login page
+const SSO_ERROR_MESSAGES: Record<string, string> = {
+	no_account: "login_page.sso_error_no_account",
+	no_group: "login_page.sso_error_no_group",
+	account_disabled: "login_page.sso_error_account_disabled",
+	two_factor_required: "login_page.sso_error_two_factor_required",
+	provider_unavailable: "login_page.sso_error_provider_unavailable",
+	provider_misconfigured: "login_page.sso_error_provider_unavailable",
+};
+
+onMounted(() => {
+	const ssoError = new URLSearchParams(window.location.search).get("sso_error");
+	if (ssoError !== null) {
+		errorMessage.value = t(SSO_ERROR_MESSAGES[ssoError] ?? "login_page.sso_error_generic");
+	}
+
+	loadProviders();
+});
 
 // Methods
 function ActivateLoginPanel() {
@@ -112,7 +134,11 @@ function UserLoggedIn() {
 			v-model:password="passwordModel"
 			v-model:username="usernameModel"
 			@signIn="signIn"
-		/>
+		>
+			<template #sso>
+				<SsoPanel :providers="ssoProviders"/>
+			</template>
+		</LoginPanel>
 
 		<TwoFactorPanel
 			v-show="!isLoginPage"

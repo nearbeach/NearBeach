@@ -13,6 +13,7 @@ azure-identity>=1.27.0
 drf-spectacular>=0.30.0
 drf-spectacular[sidecar]
 django-rest-knox>=5.1.0
+authlib>=1.9.5
 
 # Security recommendations - packages are used by libraries used by NearBeach
 pip>=26.2.2

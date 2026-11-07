@@ -1,5 +1,6 @@
 """Module providing Models for NearBeach"""
 
+from .authentication.oidc_provider import OidcIdentity, OidcProvider
 from .customer import Customer, ListOfTitle
 from .document.document import Document
 from .document.document_permission import DocumentPermission
