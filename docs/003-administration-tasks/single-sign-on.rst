@@ -43,21 +43,26 @@ Adding a Provider
 Who Is Allowed In
 =================
 
-A person signing in for the first time is matched to a NearBeach user in this order:
+NearBeach never creates accounts at sign in. An administrator creates each user first (**Administration** >
+**Users**) and puts them in a group. Anyone else who signs in through the provider is turned away.
+
+A person is matched to their NearBeach user in this order:
 
 1. **Already linked** - they have signed in with this provider before. Matching uses the provider's stable ``sub``
    identifier, never the email address.
 
 2. **Link existing user by email** - if ticked, a first-time sign in is linked to the NearBeach user with the same
    email address. This only happens when the provider says the email is **verified**, and only when exactly one
-   NearBeach user has that email. Leave it off unless you trust the provider to verify email addresses.
+   NearBeach user has that email. Once linked, the email is no longer used - the ``sub`` is.
 
-3. **Auto create users** - if ticked, a new NearBeach user is created. It has no usable password, and is added to the
-   **Default group** with the **Default permission set**. Both must be set, or nobody can be created.
+If neither applies, the person is sent back to the login page with a message saying they have no account, and nothing
+is created. An administrator can also link a person by hand: in the Django admin, add an **OIDC Identity** with the
+user, the provider, and the provider's ``sub`` for that person.
 
-Otherwise the person is sent back to the login page with a message saying they have no account.
+The user must be active and belong to at least one group, otherwise they are turned away with a message saying so.
 
-Whichever way they get in, the user must belong to at least one group, and must be active.
+To onboard someone: create their NearBeach user with the same email address they use at the provider, add them to a
+group, and ask them to use the "Sign in with ..." button.
 
 
 Two-Factor Authentication
@@ -105,8 +110,8 @@ Troubleshooting
 The login page shows a message when something goes wrong. The server log has the detail - search for
 ``OIDC login for <slug> failed``.
 
-* *No NearBeach account exists* - the person has no linked user. Enable auto create or link by email, or create the
-  user first.
+* *No NearBeach account exists* - the person has no linked user. Create the user first, with the same email address
+  they use at the provider (and tick **Link existing by email**), or add an **OIDC Identity** by hand.
 * *Not been added to a group* - the user has no group. Add them in **Administration** > **Users**.
 * *Could not be reached* - NearBeach cannot read the provider's discovery document. Check the issuer url, and that it
   matches the ``issuer`` the provider reports exactly.

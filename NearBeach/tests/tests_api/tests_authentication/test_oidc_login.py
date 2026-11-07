@@ -9,8 +9,6 @@ from joserfc import jwt
 from joserfc.jwk import RSAKey
 
 from NearBeach.models.authentication.oidc_provider import OidcIdentity, OidcProvider
-from NearBeach.models.permission.group import Group
-from NearBeach.models.permission.permission_set import PermissionSet
 from NearBeach.models.user import UserGroup
 from NearBeach.tests.utils.BaseApiClass import BaseApiClass
 
@@ -118,12 +116,6 @@ class OidcLoginTests(BaseApiClass):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, url)
         self.assertEqual(self.client.session["_auth_user_id"], str(user.pk))
-
-    def _enable_auto_create(self):
-        self.provider.auto_create_users = True
-        self.provider.default_group = Group.objects.first()
-        self.provider.default_permission_set = PermissionSet.objects.first()
-        self.provider.save()
 
     # ---------- providers list ----------
     def test_providers_lists_only_enabled(self):
@@ -256,36 +248,22 @@ class OidcLoginTests(BaseApiClass):
         self._assert_failed(response, "token_exchange_failed")
 
     # ---------- user resolution ----------
-    def test_unknown_user_without_auto_create_is_rejected(self):
+    def test_unknown_user_is_refused_and_not_created(self):
+        users_before = User.objects.count()
+
         self._assert_failed(self._complete_login(), "no_account")
-        self.assertFalse(User.objects.filter(username="sso.user").exists())
 
-    def test_auto_create_makes_user_group_and_identity(self):
-        self._enable_auto_create()
+        self.assertEqual(User.objects.count(), users_before)
+        self.assertFalse(OidcIdentity.objects.exists())
 
-        response = self._complete_login()
-
-        user = User.objects.get(username="sso.user")
-        self._assert_logged_in_as(response, user)
-        self.assertFalse(user.has_usable_password())
-        self.assertEqual(user.email, "sso.user@example.com")
-        self.assertTrue(UserGroup.objects.filter(username=user, group=self.provider.default_group).exists())
-        self.assertTrue(OidcIdentity.objects.filter(user=user, provider=self.provider, subject="subject-1").exists())
-
-    def test_auto_create_needs_a_default_group(self):
-        self.provider.auto_create_users = True
+    def test_unknown_email_is_refused_and_not_created_even_when_linking_is_on(self):
+        self.provider.link_existing_by_email = True
         self.provider.save()
-        self._assert_failed(self._complete_login(), "no_account")
+        users_before = User.objects.count()
 
-    def test_auto_create_does_not_take_an_existing_username(self):
-        self._enable_auto_create()
-        self._complete_login(claims={"preferred_username": USERNAME})
-        self.assertTrue(User.objects.filter(username=f"{USERNAME}-2").exists())
+        self._assert_failed(self._complete_login(claims={"email": "nobody@example.com"}), "no_account")
 
-    def test_auto_create_drops_an_unverified_email(self):
-        self._enable_auto_create()
-        self._complete_login(claims={"email_verified": False})
-        self.assertEqual(User.objects.get(username="sso.user").email, "")
+        self.assertEqual(User.objects.count(), users_before)
 
     def test_link_existing_user_by_verified_email(self):
         self.provider.link_existing_by_email = True

@@ -1,4 +1,4 @@
-"""Service turning the claims from an identity provider into a NearBeach user"""
+"""Service finding the existing NearBeach user for the claims from an identity provider - it never creates users"""
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -11,16 +11,20 @@ from NearBeach.services.OidcService import OidcError
 
 
 class OidcUserService:
-    """Class resolving, linking and creating users for a single OidcProvider"""
+    """Class resolving and linking users for a single OidcProvider"""
 
     def __init__(self, provider: OidcProvider) -> None:
         self.provider = provider
         self.user_model = get_user_model()
 
     def resolve(self, claims: dict):
-        """Find (or make) the user for these claims, then check they are allowed in"""
+        """Find the existing user for these claims, then check they are allowed in"""
         with transaction.atomic():
-            user = self._user_from_identity(claims) or self._link_by_email(claims) or self._create_user(claims)
+            user = self._user_from_identity(claims) or self._link_by_email(claims)
+
+        # Accounts are created by an administrator, never by signing in
+        if user is None:
+            raise OidcError("no_account")
 
         if not user.is_active:
             raise OidcError("account_disabled")
@@ -59,30 +63,6 @@ class OidcUserService:
         self._create_identity(matches[0], claims)
         return matches[0]
 
-    def _create_user(self, claims: dict):
-        provider = self.provider
-        if not (provider.auto_create_users and provider.default_group and provider.default_permission_set):
-            raise OidcError("no_account")
-
-        user = self.user_model(
-            username=self._unique_username(claims),
-            email=self._verified_email(claims),
-            first_name=claims.get("given_name", "")[:150],
-            last_name=claims.get("family_name", "")[:150],
-        )
-        user.set_unusable_password()
-        user.save()
-
-        UserGroup.objects.create(
-            username=user,
-            group=provider.default_group,
-            permission_set=provider.default_permission_set,
-            change_user=user,
-            creation_user=user,
-        )
-        self._create_identity(user, claims)
-        return user
-
     def _create_identity(self, user, claims: dict) -> None:
         OidcIdentity.objects.create(
             user=user,
@@ -91,14 +71,6 @@ class OidcUserService:
             change_user=user,
             creation_user=user,
         )
-
-    def _unique_username(self, claims: dict) -> str:
-        base = (claims.get("preferred_username") or claims.get("email") or claims["sub"])[:140]
-        username, counter = base, 1
-        while self.user_model.objects.filter(username__iexact=username).exists():
-            counter += 1
-            username = f"{base}-{counter}"
-        return username
 
     @staticmethod
     def _has_two_factor_device(user) -> bool:

@@ -274,19 +274,3 @@ class KeycloakOidcTests(BaseApiClass):
     # ---------- Keycloak specific user data ----------
     def test_keycloak_user_without_a_verified_email_is_still_matched_by_subject(self):
         self._assert_signed_in(self._sign_in(email_verified=False))
-
-    def test_keycloak_username_is_used_for_auto_created_users(self):
-        from NearBeach.models.permission.group import Group
-        from NearBeach.models.permission.permission_set import PermissionSet
-
-        self.provider.auto_create_users = True
-        self.provider.default_group = Group.objects.first()
-        self.provider.default_permission_set = PermissionSet.objects.first()
-        self.provider.save()
-
-        self._sign_in(sub="kc-sub-new", preferred_username="new.person", email="new.person@example.com",
-                      given_name="New", family_name="Person")
-
-        created = User.objects.get(username="new.person")
-        self.assertEqual((created.first_name, created.last_name), ("New", "Person"))
-        self.assertEqual(created.email, "new.person@example.com")

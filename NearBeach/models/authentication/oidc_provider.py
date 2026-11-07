@@ -4,8 +4,6 @@ from django.conf import settings
 from django.db import models
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
-from NearBeach.models.permission.group import Group
-from NearBeach.models.permission.permission_set import PermissionSet
 
 
 class OidcProvider(CommonInfo):
@@ -39,10 +37,6 @@ class OidcProvider(CommonInfo):
     is_enabled = models.BooleanField(
         default=True,
     )
-    auto_create_users = models.BooleanField(
-        default=False,
-        help_text="Create a NearBeach user the first time someone signs in. Requires a default group",
-    )
     link_existing_by_email = models.BooleanField(
         default=False,
         help_text="Link a first-time sign in to the NearBeach user with the same email. Only used when the "
@@ -51,20 +45,6 @@ class OidcProvider(CommonInfo):
     trust_idp_mfa = models.BooleanField(
         default=False,
         help_text="Skip NearBeach two-factor authentication for users signing in through this provider",
-    )
-    default_group = models.ForeignKey(
-        Group,
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-        help_text="Group given to users created by this provider",
-    )
-    default_permission_set = models.ForeignKey(
-        PermissionSet,
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-        help_text="Permission set given to users created by this provider",
     )
 
     def __str__(self) -> str:
