@@ -119,10 +119,11 @@ async function createSprint() {
 	closeModal();
 
 	switch (response.status) {
-		case 201:
+		case 201: {
 			const data = await response.json();
 			sprintData.value.push(data);
 			break;
+		}
 		case 403:
 			errorStore.setError(t("general_detail_component.error_forbidden"));
 			errorStore.showErrorModal = true;
@@ -182,10 +183,11 @@ async function loadData() {
 	)
 
 	switch (response.status) {
-		case 200:
+		case 200: {
 			const data = await response.json();
 			sprintData.value = data;
 			break;
+		}
 		case 403:
 			errorMessage.value = t("general_detail_component.error_forbidden");
 			break;

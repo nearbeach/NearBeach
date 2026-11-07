@@ -68,7 +68,7 @@ async function uploadDocument() {
 	emit("closeModal");
 
 	switch (response.status) {
-		case 201:
+		case 201: {
 			const data: DocumentItemInterface[] = await response.json();
 
 			// Loop through the results and add to store
@@ -87,6 +87,7 @@ async function uploadDocument() {
 			documentModel.value = []
 			documentNameModel.value = "";
 			break;
+		}
 		case 403:
 			errorStore.setError(t("general_detail_component.error_forbidden"));
 			errorStore.showErrorModal = true;

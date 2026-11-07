@@ -106,13 +106,14 @@ async function fetchPotentialUsers() {
 	);
 
 	switch (response.status) {
-		case 200:
+		case 200: {
 			// Format the response
 			const data: GroupAndUserInterface = await response.json();
 
 			// Update the potential user list
 			objectStore.potential_user_list = data.potential_user_list;
 			break;
+		}
 		case 403:
 			errorMessage.value = t("general_detail_component.error_forbidden");
 			break;

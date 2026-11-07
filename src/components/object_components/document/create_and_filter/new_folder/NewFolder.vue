@@ -66,7 +66,7 @@ async function createNewFolder() {
 	emit("closeModal");
 
 	switch (response.status) {
-		case 201:
+		case 201: {
 			const data = await response.json();
 			const folder: FolderItemInterface = {
 				id: data.id,
@@ -78,6 +78,7 @@ async function createNewFolder() {
 			// Clear the model
 			newFolderModel.value = "";
 			break;
+		}
 		case 403:
 			errorStore.setError(t("general_detail_component.error_forbidden"));
 			errorStore.showErrorModal = true;

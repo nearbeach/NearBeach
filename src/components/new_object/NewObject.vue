@@ -102,14 +102,14 @@ function updateValidation(field: string, value: boolean): void {
 }
 
 // Define on mounted
-onMounted(() => {
+onMounted(async () => {
 	// If user does not have permission - take them to the no permission page
 	const permission = permissionStore.maximumPermissions[
 		route.meta.destination as keyof typeof permissionStore.maximumPermissions
 		] ?? 0;
 	if (permission <= 1) {
 		// No permission
-		return router.push({name: "forbidden"});
+		await router.push({name: "forbidden"});
 	}
 })
 </script>

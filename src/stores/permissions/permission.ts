@@ -2,8 +2,6 @@ import {defineStore} from 'pinia'
 import type {MaximumPermissionInterface} from "@/utils/interfaces/stores/MaximumPermissionInterface.ts";
 import type {PermissionDataInterface} from "@/utils/interfaces/stores/PermissionDataInterface.ts";
 import type {SelectOptionInterface} from "whelk-ui";
-import {useObjectStore} from "@/stores/object/object.ts";
-import {nextTick} from "vue";
 
 export const usePermissionStore = defineStore('permissions', {
     state: () => {

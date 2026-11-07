@@ -90,7 +90,7 @@ async function createNote(): Promise<void> {
 	)
 
 	switch (response.status) {
-		case 201:
+		case 201: {
 			// Get the data
 			const data = await response.json();
 
@@ -100,6 +100,7 @@ async function createNote(): Promise<void> {
 			// Close modal
 			closeModal();
 			break;
+		}
 		case 403:
 			errorStore.setError(t("general_detail_component.error_forbidden"));
 			errorStore.showErrorModal = true;
@@ -233,7 +234,7 @@ async function updateNote() {
 	closeModal();
 
 	switch (response.status) {
-		case 200:
+		case 200: {
 			// Local mutation
 			const note_row = noteList.value[modelIndex.value];
 			if (note_row === undefined) {
@@ -246,6 +247,7 @@ async function updateNote() {
 			note_row.note = updatedNote;
 			noteList.value[modelIndex.value] = note_row;
 			break;
+		}
 		case 403:
 			errorStore.setError(t("general_detail_component.error_forbidden"));
 			errorStore.showErrorModal = true;

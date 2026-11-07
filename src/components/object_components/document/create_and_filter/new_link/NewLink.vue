@@ -58,7 +58,7 @@ async function createNewLink() {
 	emit("closeModal");
 
 	switch (response.status) {
-		case 201:
+		case 201: {
 			const data = await response.json();
 			const link: DocumentItemInterface = {
 				description: data.description.toString(),
@@ -74,6 +74,7 @@ async function createNewLink() {
 			descriptionModel.value = "";
 			newLinkModel.value = "";
 			break;
+		}
 		case 403:
 			errorStore.setError(t("general_detail_component.error_forbidden"));
 			errorStore.showErrorModal = true;

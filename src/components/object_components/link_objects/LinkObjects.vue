@@ -81,11 +81,12 @@ async function createObjectLink(event: { relationshipModel: string, objectSelect
 	)
 
 	switch (response.status) {
-		case 201:
+		case 201: {
 			// Append the value
 			const data = await response.json();
 			objectLinkList.value.push(data);
 			break;
+		}
 		case 403:
 			errorText.value = t("general_detail_component.error_forbidden");
 			break;
@@ -151,7 +152,7 @@ async function fetchLinkList() {
 			isLoaded.value = true;
 			break;
 		default:
-			errorText.value = t("link_objects.error_text") + ": " + response.statusText;
+			errorText.value = `${t("link_objects.error_text")}: ${response.statusText}`;
 			break;
 	}
 }
@@ -170,7 +171,7 @@ async function fetchPotentialObjectLinks() {
 
 	// Switch case the response
 	switch (response.status) {
-		case 200:
+		case 200: {
 			// Get the unfiltered data
 			const unfiltered_data = await response.json();
 
@@ -182,8 +183,9 @@ async function fetchPotentialObjectLinks() {
 				return condition_1 || condition_2;
 			});
 			break;
+		}
 		default:
-			errorText.value = t("link_objects.error_text") + ": " + response.statusText;
+			errorText.value = `${t("link_objects.error_text")}: ${response.statusText}`;
 			break;
 	}
 }
@@ -196,7 +198,7 @@ async function loadData() {
 		await fetchLinkList();
 		await fetchPotentialObjectLinks();
 	} catch (error) {
-		errorText.value = t("link_objects.error_text") + ": " + (error instanceof Error ? error.message : String(error));
+		errorText.value = `${t("link_objects.error_text")}: ${error instanceof Error ? error.message : String(error)}`;
 	}
 }
 

@@ -54,7 +54,7 @@ async function copyLink() {
             }, 20000);
         })
         .catch((error) => {
-			statusMessage.value = t("public_link_row.copy_error") + " || " + error.message;
+			statusMessage.value = `${t("public_link_row.copy_error")} || ${error.message}`;
 			statusError.value = true;
         });
 }

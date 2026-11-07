@@ -74,7 +74,7 @@ async function addGroup() {
 	newGroupModel.value = null;
 
 	switch (response.status) {
-		case 201:
+		case 201: {
 			// Get data
 			const data = await response.json();
 
@@ -82,6 +82,7 @@ async function addGroup() {
 			objectStore.potential_user_list = data.potential_user_list;
 			objectStore.user_list = data.user_list;
 			break;
+		}
 		case 403:
 			errorMessage.value = t("general_detail_component.error_forbidden");
 			objectStore.removeGroup(new_group_item.id);
@@ -113,12 +114,13 @@ async function removeGroup(group_id: number) {
 	);
 
 	switch (response.status) {
-		case 200:
+		case 200: {
 			// Update store with correct information
 			const data = await response.json();
 			objectStore.potential_user_list = data.potential_user_list;
 			objectStore.user_list = data.user_list;
 			break;
+		}
 		case 403:
 			errorMessage.value = t("general_detail_component.error_forbidden");
 			objectStore.group_list = backup;

@@ -53,7 +53,7 @@ async function loadData() {
 	)
 
 	switch (response.status) {
-		case 200:
+		case 200: {
 			// Get the data
 			const data: FileSystemInterface = await response.json();
 
@@ -63,6 +63,7 @@ async function loadData() {
 			documentationStore.maxUploadSize = data.max_upload_size;
 			documentationStore.isDocumentationLoaded = true;
 			break;
+		}
 		default:
 			errorStore.setError(response.statusText);
 			errorStore.showErrorModal = true;

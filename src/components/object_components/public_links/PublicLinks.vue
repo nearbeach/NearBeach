@@ -53,10 +53,11 @@ async function createPublicLink() {
 	);
 
 	switch (response.status) {
-		case 201:
+		case 201: {
 			const data = await response.json();
 			publicLinks.value.push(data);
 			break;
+		}
 		case 403:
 			errorMessageCreate.value = t("general_detail_component.error_forbidden");
 			break;
@@ -113,10 +114,11 @@ async function loadData() {
 	)
 
 	switch (response.status) {
-		case 200:
+		case 200: {
 			const data = await response.json();
 			publicLinks.value = data;
 			break;
+		}
 		case 403:
 			errorMessage.value = t("general_detail_component.error_forbidden");
 			break;

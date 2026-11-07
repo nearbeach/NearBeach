@@ -6,7 +6,7 @@ import { useObjectStore } from "@/stores/object/object.ts";
 import { useDocumentationStore } from "@/stores/documentation/documentation.ts";
 import i18n from "@/i18n.ts";
 import { useErrorStore } from "@/stores/error/error.ts";
-import DocumentList from "./DocumentList.vue";
+import { DocumentList } from ".";
 
 function mountList() {
   return mount(DocumentList, { global: { plugins: [i18n] } });

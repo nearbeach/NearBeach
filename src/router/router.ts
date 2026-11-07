@@ -248,9 +248,9 @@ router.beforeEach(async (to) => {
 
     // Validated the permissions
     if (destination === undefined) {
-        return;
+        return true;
     } else if (permissionStore.hasPermission(destination)) {
-        return;
+        return true;
     } else {
         return "/forbidden";
     }

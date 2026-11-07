@@ -50,7 +50,7 @@ async function addOrganisation() {
 
 	// Check response status
 	switch (response.status) {
-		case 201:
+		case 201: {
 			// Set data in store
 			const data: OrganisationLinkInterface = await response.json();
 
@@ -61,6 +61,7 @@ async function addOrganisation() {
 			// Object Data Meta Store
 			objectMetaDataStore.potential_customers = data.potential_customers ?? [];
 			break;
+		}
 		case 403:
 			errorMessage.value = t("general_detail_component.error_forbidden");
 			break;

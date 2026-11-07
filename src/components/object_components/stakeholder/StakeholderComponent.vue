@@ -51,7 +51,7 @@ async function loadData() {
 	);
 
 	switch (response.status) {
-		case 200:
+		case 200: {
 			// Fetch data
 			const data = await response.json();
 
@@ -63,6 +63,7 @@ async function loadData() {
 			objectMetaDataStore.potential_customers = data.potential_customers ?? [];
 			objectMetaDataStore.potential_organisations = data.potential_organisations ?? [];
 			break;
+		}
 		default:
 			errorMessage.value = response.statusText;
 			break;

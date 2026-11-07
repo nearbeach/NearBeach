@@ -11,7 +11,6 @@ import ObjectStatus from "@/components/object_components/object_status/ObjectSta
 import ObjectPriority from "@/components/object_components/object_priority/ObjectPriority.vue";
 import {useI18n} from "petite-vue-i18n";
 import {ref, watch} from "vue";
-import router from "@/router/router.ts";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {safeFetch} from "@/composables/safeFetch.ts";
 

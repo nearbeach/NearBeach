@@ -45,7 +45,7 @@ describe("AddRelationship", () => {
         expect(AddRelationship).toBeTruthy();
     });
 
-    test("renders the object options passed in", async () => {
+    test("renders the object options passed in", () => {
         const wrapper = mount(AddRelationship, {
             props: {objectOptions: [mockOption]},
             global: {
