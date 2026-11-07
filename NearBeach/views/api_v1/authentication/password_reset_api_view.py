@@ -10,6 +10,7 @@ from NearBeach.serializers.authentication.password_reset_serializer import (
     PasswordResetSerializer,
 )
 from NearBeach.utils.api.get_user_from_uid import get_user_from_uid
+from NearBeach.utils.api.revoke_user_tokens import revoke_user_tokens
 from NearBeach.utils.throttle.AuthMinuteThrottle import AuthMinuteThrottle
 from NearBeach.utils.throttle.AuthHourThrottle import AuthHourThrottle
 
@@ -28,20 +29,12 @@ class PasswordResetView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Get user
+        # An unknown user, an inactive user and a bad token all get the same answer - the reply must not tell
+        # anyone whether a user exists
         user = get_user_from_uid(serializer.validated_data["uid"])
-        if user is None:
-            # Silently fail - ensure the attacker that the password has updated
-            return Response(
-                status=status.HTTP_200_OK,
-            )
-
-        # Verify token
-        is_token_valid = PasswordResetTokenGenerator().check_token(
+        if user is None or not PasswordResetTokenGenerator().check_token(
             user, serializer.validated_data["token"]
-        )
-        if not is_token_valid:
-            # Notify the user that the token has expired
+        ):
             return Response(
                 data={"message": "Token has expired and no longer valid"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -59,6 +52,9 @@ class PasswordResetView(APIView):
         # Reset the user's password
         user.set_password(serializer.validated_data["password"])
         user.save()
+
+        # Sessions end with the old password, but API tokens would carry on - so cancel those too
+        revoke_user_tokens(user)
 
         # Send user 200 response
         return Response(status=status.HTTP_200_OK)

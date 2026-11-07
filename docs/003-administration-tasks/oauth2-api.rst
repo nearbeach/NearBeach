@@ -11,7 +11,9 @@ header instead of a username and password. Two ways of getting a token are suppo
 * **Authorization code with PKCE** - for apps acting on behalf of a person, who signs in to NearBeach and approves the
   access. Returns a refresh token too.
 
-Existing ``Token`` (Knox), session and basic authentication keep working as before.
+Existing ``Token`` (Knox) and session authentication keep working as before. Basic authentication still works too, but
+not for a user who has set up two-factor authentication - a password alone would get around it. Those users sign in
+through the login page, or use a token.
 
 
 What a Token Can Do
@@ -104,6 +106,8 @@ Revoking Access
 * **One token** - the client calls ``/o/revoke_token/``, or delete it under **Access tokens** in the Django admin.
 * **A whole integration** - delete the application, or disable its service user. Existing tokens stop working
   straight away.
+* **A user who resets their password** - all of their Knox and OAuth2 tokens are cancelled, including those of an
+  application they are the service user for. Integrations using them need new tokens.
 
 
 Troubleshooting

@@ -7,6 +7,7 @@ import TwoFactorPanel from "@/components/login/login_page/two_factor_panel/TwoFa
 import {useI18n} from 'petite-vue-i18n'
 import SsoPanel from "@/components/login/login_page/sso_panel/SsoPanel.vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
+import {getSafeNextUrl} from "@/composables/getSafeNextUrl.ts";
 import {useSsoProviders} from "@/composables/useSsoProviders.ts";
 
 // Define i18y
@@ -119,7 +120,7 @@ async function signIn() {
 
 function UserLoggedIn() {
 	const urlParams = new URLSearchParams(window.location.search);
-	window.location.href = urlParams.get('next') ?? "/";
+	window.location.href = getSafeNextUrl(urlParams.get('next'));
 }
 
 </script>

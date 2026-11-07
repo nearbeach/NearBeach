@@ -9,6 +9,7 @@ This file is only for the automatic testing and is not built for server use.
 
 import os
 import sys
+from datetime import timedelta
 from NearBeach import __version__ as version
 from rest_framework.settings import api_settings
 
@@ -138,10 +139,17 @@ if "THROTTLE_AUTH_HOUR" in os.environ:
 if "THROTTLE_USER_MINUTE" in os.environ:
     THROTTLE_USER_MINUTE = os.environ["THROTTLE_USER_MINUTE"]
 
+# How many reverse proxies sit in front of NearBeach. The login rate limits identify a visitor by their address, and
+# can only trust the X-Forwarded-For header when they know how many proxies added to it. 0 ignores the header.
+NUM_PROXIES = int(os.environ.get("NUM_PROXIES", 0))
+
+# The public address of this NearBeach (e.g. https://nearbeach.example.com), used to build links in emails
+SITE_URL = os.environ.get("SITE_URL", "")
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'NearBeach.utils.authentication.basic_authentication.TwoFactorSafeBasicAuthentication',
         'knox.auth.TokenAuthentication',
         'NearBeach.utils.oauth2.authentication.NearBeachOAuth2Authentication',
     ],
@@ -162,6 +170,7 @@ REST_FRAMEWORK = {
         'anon': '1/min',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'NUM_PROXIES': NUM_PROXIES,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
 }
@@ -181,10 +190,13 @@ OAUTH2_PROVIDER = {
     'PKCE_REQUIRED': True,
 }
 
+# Knox API tokens never expire unless told to - set KNOX_TOKEN_TTL_HOURS to give them a lifetime
+KNOX_TOKEN_TTL = timedelta(hours=int(os.environ["KNOX_TOKEN_TTL_HOURS"])) if "KNOX_TOKEN_TTL_HOURS" in os.environ else None
+
 REST_KNOX = {
     'SECURE_HASH_ALGORITHM': 'hashlib.sha512',
     'AUTH_TOKEN_CHARACTER_LENGTH': 64,
-    'TOKEN_TTL': None,
+    'TOKEN_TTL': KNOX_TOKEN_TTL,
     'USER_SERIALIZER': 'knox.serializers.UserSerializer',
     'TOKEN_LIMIT_PER_USER': None,
     'AUTO_REFRESH': False,
