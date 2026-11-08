@@ -54,3 +54,14 @@ Open it using the returned path:
 ```bash
 python -m playwright show-trace "test-results/<test-folder>/trace.zip"
 ```
+## Accessibility tests
+
+`test_accessibility.py` runs axe-core (via `axe-playwright-python`) against the
+dashboard, project search/new and the project details tabs. Known issues from
+`A11Y_REPORT.md` are listed in `KNOWN_ISSUES` / marked `xfail(strict=True)`, so
+the suite fails when a new violation appears and also when a known one is fixed
+(remove it from the list then).
+
+```bash
+DJANGO_ALLOW_ASYNC_UNSAFE=true python -m pytest -c e2e/pytest.ini e2e/test_accessibility.py -v
+```
