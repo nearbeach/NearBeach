@@ -50,7 +50,7 @@ class FolderService(ObjectServiceAbstraction):
 
         # If there are no values to update - notify the user
         if len(folder) == 0:
-            return "Folder does not exist", status.HTTP_400_BAD_REQUEST
+            return "Folder does not exist", status.HTTP_404_NOT_FOUND
 
         # Soft delete the data
         folder.update(
@@ -77,7 +77,7 @@ class FolderService(ObjectServiceAbstraction):
             **{F"{self.destination}_id": self.location_id},
         )
         if len(folder) == 0:
-            return "Folder object does not exist", status.HTTP_400_BAD_REQUEST
+            return "Folder object does not exist", status.HTTP_404_NOT_FOUND
 
         # Update
         folder.update(

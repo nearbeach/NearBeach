@@ -84,7 +84,7 @@ class LinkListService(ObjectServiceAbstraction):
         # We have the object id
         single_object = self.object_dict[object_type].filter(pk=serializer.validated_data["object_id"]).first()
         if single_object is None:
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
+            return "Object does not exist", status.HTTP_404_NOT_FOUND
 
         # Check to make sure the user has access to the object - child objects through their parent
         access_type = CHILD_OBJECT_PARENTS.get(object_type, object_type)
@@ -165,7 +165,7 @@ class LinkListService(ObjectServiceAbstraction):
 
         # If there are no values to update - notify the user
         if len(object_assignment_results) == 0:
-            return "Object connection does not exist", status.HTTP_400_BAD_REQUEST
+            return "Object connection does not exist", status.HTTP_404_NOT_FOUND
 
         # Soft delete the data
         object_assignment_results.update(
@@ -341,7 +341,7 @@ class LinkListService(ObjectServiceAbstraction):
             )
         ).first()
         if object_assignment is None:
-            return "Object Assignment does not exist", status.HTTP_400_BAD_REQUEST
+            return "Object Assignment does not exist", status.HTTP_404_NOT_FOUND
 
         # Get the parent object of
         object_id = serializer.validated_data["object_id"]
@@ -355,7 +355,7 @@ class LinkListService(ObjectServiceAbstraction):
         # Get single object
         single_object = self.object_dict[object_type].filter(pk=object_id).first()
         if single_object is None:
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
+            return "Object does not exist", status.HTTP_404_NOT_FOUND
 
         link_relationship = RELATION_DICT[object_relation]
         parent_link = self._get_parent_link(serializer)

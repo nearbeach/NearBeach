@@ -228,7 +228,7 @@ class ProjectFolderTests(ProjectDocumentBase):
     def test_folders_that_are_not_on_this_project_cannot_be_updated(self):
         for folder_id in (9999, OTHER_PROJECT_FOLDER):
             with self.subTest(folder_id=folder_id):
-                self.assertEqual(self._patch(folder_id).status_code, 400)
+                self.assertEqual(self._patch(folder_id).status_code, 404)
 
         self.assertEqual(Folder.objects.get(pk=OTHER_PROJECT_FOLDER).description, "Folder at root")
 
@@ -255,12 +255,12 @@ class ProjectFolderTests(ProjectDocumentBase):
     def test_deleting_twice_is_rejected(self):
         self._delete(SUB_FOLDER, "folder")
 
-        self.assertEqual(self._delete(SUB_FOLDER, "folder").status_code, 400)
+        self.assertEqual(self._delete(SUB_FOLDER, "folder").status_code, 404)
 
     def test_folders_that_are_not_on_this_project_cannot_be_deleted(self):
         for folder_id in (9999, OTHER_PROJECT_FOLDER):
             with self.subTest(folder_id=folder_id):
-                self.assertEqual(self._delete(folder_id, "folder").status_code, 400)
+                self.assertEqual(self._delete(folder_id, "folder").status_code, 404)
 
         self.assertFalse(Folder.objects.get(pk=OTHER_PROJECT_FOLDER).is_deleted)
 
@@ -374,12 +374,12 @@ class ProjectDocumentLinkTests(ProjectDocumentBase):
     def test_deleting_twice_is_rejected(self):
         self._delete(ROOT_LINK, "link")
 
-        self.assertEqual(self._delete(ROOT_LINK, "link").status_code, 400)
+        self.assertEqual(self._delete(ROOT_LINK, "link").status_code, 404)
 
     def test_links_that_are_not_on_this_project_cannot_be_deleted(self):
         for key in (str(uuid.uuid4()), OTHER_PROJECT_LINK):
             with self.subTest(key=key):
-                self.assertEqual(self._delete(key, "link").status_code, 400)
+                self.assertEqual(self._delete(key, "link").status_code, 404)
 
         self.assertFalse(Document.objects.get(pk=OTHER_PROJECT_LINK).is_deleted)
 

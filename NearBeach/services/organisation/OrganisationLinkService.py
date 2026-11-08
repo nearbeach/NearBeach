@@ -30,7 +30,7 @@ class OrganisationLinkService(ObjectServiceAbstraction):
 
         # Check there is an object to update
         if len(update_object) == 0:
-            return "No object exists", status.HTTP_400_BAD_REQUEST
+            return "No object exists", status.HTTP_404_NOT_FOUND
 
         # Get organisation
         organisation_result = Organisation.objects.filter(
@@ -38,7 +38,7 @@ class OrganisationLinkService(ObjectServiceAbstraction):
             pk=serializer.validated_data["id"],
         ).first()
         if organisation_result is None:
-            return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
+            return "Organisation does not exist", status.HTTP_404_NOT_FOUND
 
         # Linking the organisation it already has changes nothing - so leave the modified data alone
         if update_object.first().organisation_id != organisation_result.id:
@@ -91,7 +91,7 @@ class OrganisationLinkService(ObjectServiceAbstraction):
 
         # Check there is an object to extract information for
         if len(extract_object) == 0:
-            return "No object exists", status.HTTP_400_BAD_REQUEST
+            return "No object exists", status.HTTP_404_NOT_FOUND
 
         # Set up the initial return data
         organisations = Organisation.objects.filter(

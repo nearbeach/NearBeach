@@ -88,7 +88,7 @@ class PublicLinkService(ObjectServiceAbstraction):
 
         # If it does not exist - send back to user
         if len(delete_public_link) == 0:
-            return "Public Link does not exist", status.HTTP_400_BAD_REQUEST
+            return "Public Link does not exist", status.HTTP_404_NOT_FOUND
 
         delete_public_link.update(
             is_deleted=True,
@@ -157,7 +157,7 @@ class PublicLinkService(ObjectServiceAbstraction):
         )
 
         if len(update_public_link) == 0:
-            return "Public Link does not exist", status.HTTP_400_BAD_REQUEST
+            return "Public Link does not exist", status.HTTP_404_NOT_FOUND
 
         update_public_link.update(
             change_user=request.user,

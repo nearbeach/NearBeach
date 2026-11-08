@@ -49,7 +49,7 @@ class ProjectBadInputTests(BaseApiClass):
             f"{PROJECT_URL}public_link/00000000-0000-0000-0000-000000000000/",
             {"is_active": True},
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     # ---------- documents ----------
     def test_document_update_is_routed_to_a_single_document(self):
@@ -110,7 +110,7 @@ class ProjectBadInputTests(BaseApiClass):
 
     def test_customer_link_to_unknown_customer_is_rejected(self):
         response = self._request("POST", f"{PROJECT_URL}customer/", {"id": 99999})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     def test_customer_link_to_known_customer_works(self):
         response = self._request("POST", f"{PROJECT_URL}customer/", {"id": 1})
@@ -118,7 +118,7 @@ class ProjectBadInputTests(BaseApiClass):
 
     def test_organisation_link_to_unknown_organisation_is_rejected(self):
         response = self._request("POST", f"{PROJECT_URL}organisation/", {"id": 99999})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     def test_link_list_create_with_unknown_object_is_rejected(self):
         response = self._request(
@@ -126,7 +126,7 @@ class ProjectBadInputTests(BaseApiClass):
             f"{PROJECT_URL}link_list/",
             {"object_type": "task", "object_id": 99999, "object_relation": "relates"},
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     def test_link_list_update_with_unknown_references_is_rejected(self):
         created = self._request(
@@ -143,7 +143,7 @@ class ProjectBadInputTests(BaseApiClass):
             f"{PROJECT_URL}link_list/{link_id}/",
             {"object_type": "task", "object_id": 99999, "object_relation": "relates"},
         )
-        self.assertEqual(unknown_object.status_code, 400)
+        self.assertEqual(unknown_object.status_code, 404)
 
         # The link itself does not exist
         unknown_link = self._request(
@@ -151,7 +151,7 @@ class ProjectBadInputTests(BaseApiClass):
             f"{PROJECT_URL}link_list/99999/",
             {"object_type": "task", "object_id": 1, "object_relation": "relates"},
         )
-        self.assertEqual(unknown_link.status_code, 400)
+        self.assertEqual(unknown_link.status_code, 404)
 
         # And the happy path still works
         updated = self._request(

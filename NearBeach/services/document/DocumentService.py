@@ -75,7 +75,7 @@ class DocumentService(ObjectServiceAbstraction):
             **{F"{self.destination}_id": self.location_id},
         )
         if len(document_permission) == 0:
-            return "Document object does not exist", status.HTTP_400_BAD_REQUEST
+            return "Document object does not exist", status.HTTP_404_NOT_FOUND
 
         Document.objects.filter(pk=document_id).update(
             change_user=request.user,
@@ -145,7 +145,7 @@ class DocumentService(ObjectServiceAbstraction):
             **{F"{self.destination}_id": self.location_id},
         )
         if len(document_permission) == 0:
-            return "Document object does not exist", status.HTTP_400_BAD_REQUEST
+            return "Document object does not exist", status.HTTP_404_NOT_FOUND
 
         # Update the document
         document = Document.objects.get(pk=document_id)

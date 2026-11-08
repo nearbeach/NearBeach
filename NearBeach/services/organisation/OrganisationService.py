@@ -32,7 +32,7 @@ class OrganisationService(ObjectServiceAbstraction):
             is_deleted=False
         )
         if not organisation.exists():
-            return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
+            return "Organisation does not exist", status.HTTP_404_NOT_FOUND
 
         organisation.update(
             is_deleted=True,
@@ -85,7 +85,7 @@ class OrganisationService(ObjectServiceAbstraction):
             pk=self.location_id,
         ).first()
         if organisation is None:
-            return "Organisation does not exist", status.HTTP_400_BAD_REQUEST
+            return "Organisation does not exist", status.HTTP_404_NOT_FOUND
 
         serializer = OrganisationSerializer(
             organisation,

@@ -48,7 +48,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             #########
             # DELETE
             #########
-            self.URLTest("/api/v1/organisation/1/customer/99/", {}, 400, "DELETE"),
+            self.URLTest("/api/v1/organisation/1/customer/99/", {}, 404, "DELETE"),
             self.URLTest("/api/v1/organisation/1/customer/1/", {}, 204, "DELETE"),
             self.URLTest("/api/v1/organisation/2/customer/1/", {}, 404, "DELETE"),
         ]

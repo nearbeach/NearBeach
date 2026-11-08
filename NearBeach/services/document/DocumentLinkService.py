@@ -92,7 +92,7 @@ class DocumentLinkService(ObjectServiceAbstraction):
 
         # If there are no values to update - notify the user
         if len(document) == 0 or len(document_permission) == 0:
-            return "Document does not exist", status.HTTP_400_BAD_REQUEST
+            return "Document does not exist", status.HTTP_404_NOT_FOUND
 
         # Soft delete the data
         document.update(
@@ -126,7 +126,7 @@ class DocumentLinkService(ObjectServiceAbstraction):
             **{F"{self.destination}_id": self.location_id},
         )
         if len(document_permission) == 0:
-            return "Document does not exist", status.HTTP_400_BAD_REQUEST
+            return "Document does not exist", status.HTTP_404_NOT_FOUND
 
         # Update the link itself
         document = Document.objects.get(pk=document_id)

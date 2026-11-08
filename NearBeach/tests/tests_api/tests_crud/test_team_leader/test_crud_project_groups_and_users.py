@@ -214,7 +214,7 @@ class ProjectGroupRemoveTests(GroupsAndUsersBase):
     def test_a_group_that_is_not_on_the_project_cannot_be_removed(self):
         response = self.client.delete(f"{GROUPS_URL}{ADMIN_GROUP}/")
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     def test_removing_a_group_removes_users_that_only_came_from_it(self):
         # dark_admin is only in Administration - so only that group gives them access
@@ -341,7 +341,7 @@ class ProjectUserRemoveTests(GroupsAndUsersBase):
         self.assertFalse(self._user_rows(ADMIN_USER, project_id=1).get().is_deleted)
 
     def test_a_user_that_is_not_on_the_project_cannot_be_removed(self):
-        self.assertEqual(self.client.delete(f"{USERS_URL}{TEAM_MEMBER}/").status_code, 400)
+        self.assertEqual(self.client.delete(f"{USERS_URL}{TEAM_MEMBER}/").status_code, 404)
 
     def test_removing_a_user_twice_is_still_accepted(self):
         """The service does not look at is_deleted, so a second remove finds the old row"""

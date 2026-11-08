@@ -186,7 +186,9 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
 
         for name, body in bodies.items():
             with self.subTest(name):
-                self.assertEqual(self.client.post(LINK_URL, body, format="json").status_code, 400)
+                # A referenced object that does not exist is a 404 - anything malformed is a 400
+                expected = 404 if name == "unknown object" else 400
+                self.assertEqual(self.client.post(LINK_URL, body, format="json").status_code, expected)
 
         self.assertEqual(ObjectAssignment.objects.count(), before)
 
@@ -253,21 +255,22 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
         for name, body in bodies.items():
             with self.subTest(name):
                 response = self.client.patch(f"{LINK_URL}48/", body, format="json")
-                self.assertEqual(response.status_code, 400)
+                # A referenced object that does not exist is a 404 - anything malformed is a 400
+                self.assertEqual(response.status_code, 404 if name == "unknown object" else 400)
 
         self.assertEqual(ObjectAssignment.objects.values().get(pk=48), before)
 
     def test_links_that_are_not_on_this_project_cannot_be_updated(self):
         for link_id in (99999, OTHER_PROJECT_LINK):
             with self.subTest(link_id=link_id):
-                self.assertEqual(self._patch(link_id).status_code, 400)
+                self.assertEqual(self._patch(link_id).status_code, 404)
 
         self.assertEqual(ObjectAssignment.objects.get(pk=OTHER_PROJECT_LINK).project_id, 1)
 
     def test_a_deleted_link_cannot_be_updated(self):
         ObjectAssignment.objects.filter(pk=48).update(is_deleted=True)
 
-        self.assertEqual(self._patch(48).status_code, 400)
+        self.assertEqual(self._patch(48).status_code, 404)
 
     # ---------- delete ----------
     def test_deleting_a_link(self):
@@ -294,12 +297,12 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
     def test_deleting_twice_is_rejected(self):
         self.client.delete(f"{LINK_URL}48/")
 
-        self.assertEqual(self.client.delete(f"{LINK_URL}48/").status_code, 400)
+        self.assertEqual(self.client.delete(f"{LINK_URL}48/").status_code, 404)
 
     def test_links_that_are_not_on_this_project_cannot_be_deleted(self):
         for link_id in (99999, OTHER_PROJECT_LINK):
             with self.subTest(link_id=link_id):
-                self.assertEqual(self.client.delete(f"{LINK_URL}{link_id}/").status_code, 400)
+                self.assertEqual(self.client.delete(f"{LINK_URL}{link_id}/").status_code, 404)
 
         self.assertFalse(ObjectAssignment.objects.get(pk=OTHER_PROJECT_LINK).is_deleted)
 
@@ -399,14 +402,14 @@ class ProjectPublicLinkTests(TeamLeaderProjectBase):
     def test_links_that_are_not_on_this_project_cannot_be_updated(self):
         for link_id in (str(uuid.uuid4()), OTHER_PUBLIC_LINK):
             with self.subTest(link_id=link_id):
-                self.assertEqual(self._patch(link_id, {"is_active": False}).status_code, 400)
+                self.assertEqual(self._patch(link_id, {"is_active": False}).status_code, 404)
 
         self.assertTrue(PublicLink.objects.get(pk=OTHER_PUBLIC_LINK).is_active)
 
     def test_a_deleted_link_cannot_be_updated(self):
         PublicLink.objects.filter(pk=OWN_PUBLIC_LINK).update(is_deleted=True)
 
-        self.assertEqual(self._patch(OWN_PUBLIC_LINK, {"is_active": False}).status_code, 400)
+        self.assertEqual(self._patch(OWN_PUBLIC_LINK, {"is_active": False}).status_code, 404)
 
     # ---------- delete ----------
     def test_deleting_a_link(self):
@@ -425,12 +428,12 @@ class ProjectPublicLinkTests(TeamLeaderProjectBase):
     def test_deleting_twice_is_rejected(self):
         self.client.delete(f"{PUBLIC_LINK_URL}{OWN_PUBLIC_LINK}/")
 
-        self.assertEqual(self.client.delete(f"{PUBLIC_LINK_URL}{OWN_PUBLIC_LINK}/").status_code, 400)
+        self.assertEqual(self.client.delete(f"{PUBLIC_LINK_URL}{OWN_PUBLIC_LINK}/").status_code, 404)
 
     def test_links_that_are_not_on_this_project_cannot_be_deleted(self):
         for link_id in (str(uuid.uuid4()), OTHER_PUBLIC_LINK):
             with self.subTest(link_id=link_id):
-                self.assertEqual(self.client.delete(f"{PUBLIC_LINK_URL}{link_id}/").status_code, 400)
+                self.assertEqual(self.client.delete(f"{PUBLIC_LINK_URL}{link_id}/").status_code, 404)
 
         self.assertFalse(PublicLink.objects.get(pk=OTHER_PUBLIC_LINK).is_deleted)
 
@@ -563,12 +566,12 @@ class ProjectSprintTests(TeamLeaderProjectBase):
     def test_deleting_twice_is_rejected(self):
         self.client.delete(f"{SPRINT_URL}2/")
 
-        self.assertEqual(self.client.delete(f"{SPRINT_URL}2/").status_code, 400)
+        self.assertEqual(self.client.delete(f"{SPRINT_URL}2/").status_code, 404)
 
     def test_sprints_that_are_not_on_this_project_cannot_be_deleted(self):
         for sprint_id in (99999, OTHER_PROJECT_SPRINT):
             with self.subTest(sprint_id=sprint_id):
-                self.assertEqual(self.client.delete(f"{SPRINT_URL}{sprint_id}/").status_code, 400)
+                self.assertEqual(self.client.delete(f"{SPRINT_URL}{sprint_id}/").status_code, 404)
 
         self.assertFalse(Sprint.objects.get(pk=OTHER_PROJECT_SPRINT).is_deleted)
 

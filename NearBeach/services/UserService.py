@@ -49,7 +49,7 @@ class UserService(ObjectServiceAbstraction):
 
         # If there is nothing to delete, notify the user
         if len(remove_object_assignment) == 0:
-            return "User assignment does not exist", status.HTTP_400_BAD_REQUEST
+            return "User assignment does not exist", status.HTTP_404_NOT_FOUND
 
         # Remove the group
         remove_object_assignment.update(

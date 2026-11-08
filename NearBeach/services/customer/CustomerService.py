@@ -40,7 +40,7 @@ class CustomerService(ObjectServiceAbstraction):
             is_deleted=False,
         )
         if not customer.exists():
-            return "Customer does not exist", status.HTTP_400_BAD_REQUEST
+            return "Customer does not exist", status.HTTP_404_NOT_FOUND
 
         customer.update(
             is_deleted=True,
@@ -92,7 +92,7 @@ class CustomerService(ObjectServiceAbstraction):
             organisation_id=self.location_id,
         ).first()
         if customer is None:
-            return "Customer does not exist", status.HTTP_400_BAD_REQUEST
+            return "Customer does not exist", status.HTTP_404_NOT_FOUND
 
         # Prepare serializer for update
         serializer = CustomerSerializer(

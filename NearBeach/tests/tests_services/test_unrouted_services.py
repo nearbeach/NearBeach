@@ -64,12 +64,12 @@ class OrganisationServiceTests(ServiceTestBase):
     def test_update_rejects_bad_input(self):
         _, http_status = self.service.update(self.request({"email": "nope"}, "PATCH"), 1)
 
-        self.assertEqual(http_status, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(http_status, status.HTTP_404_NOT_FOUND)
 
     def test_update_of_an_unknown_organisation(self):
         _, http_status = self.service.update(self.request({"name": "x"}, "PATCH"), 99999)
 
-        self.assertEqual(http_status, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(http_status, status.HTTP_404_NOT_FOUND)
 
     def test_delete_is_a_soft_delete(self):
         data, http_status = self.service.delete(self.request(), None)
@@ -81,10 +81,10 @@ class OrganisationServiceTests(ServiceTestBase):
 
     def test_delete_of_an_unknown_or_deleted_organisation(self):
         self.service.location_id = 99999
-        self.assertEqual(self.service.delete(self.request(), None)[1], status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(self.service.delete(self.request(), None)[1], status.HTTP_404_NOT_FOUND)
 
         self.service.delete(self.request(), 1)
-        self.assertEqual(self.service.delete(self.request(), 1)[1], status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(self.service.delete(self.request(), 1)[1], status.HTTP_404_NOT_FOUND)
 
     # ---------- list ----------
     def _list(self, **query):

@@ -152,7 +152,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
             self.URLTest("/api/v1/project/1/customer/1/", {}, 403, "DELETE"),
             self.URLTest("/api/v1/project/1/customer/2/", {}, 403, "DELETE"),
             self.URLTest("/api/v1/project/2/customer/1/", {}, 204, "DELETE"),
-            self.URLTest("/api/v1/project/2/customer/2/", {}, 400, "DELETE"),
+            self.URLTest("/api/v1/project/2/customer/2/", {}, 404, "DELETE"),
             self.URLTest("/api/v1/project/3/customer/1/", {}, 404, "DELETE"),
             self.URLTest("/api/v1/project/3/customer/2/", {}, 404, "DELETE"),
         ]
@@ -244,7 +244,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
                     "description": "Rename Folder",
                     "type": "folder",
                 },
-                400,
+                404,
                 "PATCH",
             ),
 
@@ -312,7 +312,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
                 {
                     "type": "folder",
                 },
-                400,
+                404,
                 "DELETE",
             ),
             self.URLTest(
@@ -328,7 +328,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
                 {
                     "type": "document",
                 },
-                400,
+                404,
                 "DELETE",
             ),
             self.URLTest(
@@ -336,7 +336,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
                 {
                     "type": "document",
                 },
-                400,
+                404,
                 "DELETE",
             ),
             self.URLTest(
@@ -352,7 +352,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
                 {
                     "type": "folder",
                 },
-                400,
+                404,
                 "DELETE",
             ),
             self.URLTest(
@@ -532,7 +532,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
                     "object_id": "1",
                     "object_relation": "blocking",
                 },
-                400,
+                404,
                 "PATCH",
             ),
 
@@ -543,7 +543,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
             self.URLTest("/api/v1/project/2/link_list/47/", {}, 204, "DELETE"),
             self.URLTest("/api/v1/project/3/link_list/43/", {}, 404, "DELETE"),
             self.URLTest("/api/v1/project/1/link_list/48/", {}, 403, "DELETE"),
-            self.URLTest("/api/v1/project/2/link_list/43/", {}, 400, "DELETE"),
+            self.URLTest("/api/v1/project/2/link_list/43/", {}, 404, "DELETE"),
         ]
 
         self._run_test_array(data_list)
@@ -753,7 +753,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
                 {
                     "is_active": "false",
                 },
-                400,
+                404,
                 "PATCH",
             ),
 
@@ -764,7 +764,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
             self.URLTest("/api/v1/project/2/public_link/5f369dc9-a0bb-416d-9779-92576d0500bb/", {}, 204, "DELETE"),
             self.URLTest("/api/v1/project/3/public_link/3d7346c4-05b6-41df-816a-eff814d9bbd0/", {}, 404, "DELETE"),
             self.URLTest("/api/v1/project/1/public_link/5f369dc9-a0bb-416d-9779-92576d0500bb/", {}, 403, "DELETE"),
-            self.URLTest("/api/v1/project/2/public_link/3d7346c4-05b6-41df-816a-eff814d9bbd0/", {}, 400, "DELETE"),
+            self.URLTest("/api/v1/project/2/public_link/3d7346c4-05b6-41df-816a-eff814d9bbd0/", {}, 404, "DELETE"),
         ]
 
         self._run_test_array(data_list)
@@ -828,7 +828,7 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
             self.URLTest("/api/v1/project/2/sprint/2/", {}, 204, "DELETE"),
             self.URLTest("/api/v1/project/3/sprint/1/", {}, 404, "DELETE"),
             self.URLTest("/api/v1/project/1/sprint/2/", {}, 403, "DELETE"),
-            self.URLTest("/api/v1/project/2/sprint/1/", {}, 400, "DELETE"),
+            self.URLTest("/api/v1/project/2/sprint/1/", {}, 404, "DELETE"),
         ]
 
         self._run_test_array(data_list)

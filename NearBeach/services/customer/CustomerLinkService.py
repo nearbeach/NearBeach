@@ -38,7 +38,7 @@ class CustomerLinkService(ObjectServiceAbstraction):
 
         # Check the customer exists
         if not Customer.objects.filter(pk=serializer.validated_data["id"], is_deleted=False).exists():
-            return "Customer does not exist", status.HTTP_400_BAD_REQUEST
+            return "Customer does not exist", status.HTTP_404_NOT_FOUND
 
         # Add customer to object
         submit_object_assignment = ObjectAssignment(
@@ -64,7 +64,7 @@ class CustomerLinkService(ObjectServiceAbstraction):
         )
 
         if len(object_assignment_results) == 0:
-            return "Can not find customer/object connection", status.HTTP_400_BAD_REQUEST
+            return "Can not find customer/object connection", status.HTTP_404_NOT_FOUND
 
         # Update the results
         object_assignment_results.update(

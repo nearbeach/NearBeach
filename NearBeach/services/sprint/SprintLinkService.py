@@ -58,7 +58,7 @@ class SprintLinkService(ObjectServiceAbstraction):
         )
 
         if len(sprint_results) == 0:
-            return "Object does not exist", status.HTTP_400_BAD_REQUEST
+            return "Object does not exist", status.HTTP_404_NOT_FOUND
 
         sprint_results.update(
             is_deleted=True,

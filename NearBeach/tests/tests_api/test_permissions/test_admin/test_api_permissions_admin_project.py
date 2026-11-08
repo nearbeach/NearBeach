@@ -143,9 +143,9 @@ class ApiAdminPermissionTests(BaseApiClass):
             # DELETE
             #########
             self.URLTest("/api/v1/project/1/customer/1/", {}, 204, "DELETE"),
-            self.URLTest("/api/v1/project/1/customer/2/", {}, 400, "DELETE"),
+            self.URLTest("/api/v1/project/1/customer/2/", {}, 404, "DELETE"),
             self.URLTest("/api/v1/project/2/customer/1/", {}, 204, "DELETE"),
-            self.URLTest("/api/v1/project/2/customer/2/", {}, 400, "DELETE"),
+            self.URLTest("/api/v1/project/2/customer/2/", {}, 404, "DELETE"),
             self.URLTest("/api/v1/project/3/customer/1/", {}, 404, "DELETE"),
             self.URLTest("/api/v1/project/3/customer/2/", {}, 404, "DELETE"),
         ]
@@ -231,7 +231,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                     "description": "Rename Folder",
                     "type": "folder",
                 },
-                400,
+                404,
                 "PATCH",
             ),
             self.URLTest(
@@ -240,7 +240,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                     "description": "Rename Folder",
                     "type": "folder",
                 },
-                400,
+                404,
                 "PATCH",
             ),
             # NOTE - we only need to test the folder, as this is a permission check only. Links and Uploads hit the
@@ -278,7 +278,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "type": "folder",
                 },
-                400,
+                404,
                 "DELETE"
             ),
             self.URLTest(
@@ -286,7 +286,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "type": "document",
                 },
-                400,
+                404,
                 "DELETE"
             ),
             self.URLTest(
@@ -294,7 +294,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "type": "link",
                 },
-                400,
+                404,
                 "DELETE"
             ),
             self.URLTest(
@@ -310,7 +310,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "type": "folder",
                 },
-                400,
+                404,
                 "DELETE"
             ),
             self.URLTest(
@@ -326,7 +326,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "type": "document",
                 },
-                400,
+                404,
                 "DELETE"
             ),
             self.URLTest(
@@ -334,7 +334,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "type": "document",
                 },
-                400,
+                404,
                 "DELETE"
             ),
             self.URLTest(
@@ -342,7 +342,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "type": "link",
                 },
-                400,
+                404,
                 "DELETE"
             ),
             self.URLTest(
@@ -350,7 +350,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "type": "folder",
                 },
-                400,
+                404,
                 "DELETE"
             ),
             self.URLTest(
@@ -520,7 +520,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                     "object_id": "1",
                     "object_relation": "blocking",
                 },
-                400,
+                404,
                 "PATCH",
             ),
             self.URLTest(
@@ -530,7 +530,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                     "object_id": "1",
                     "object_relation": "blocking",
                 },
-                400,
+                404,
                 "PATCH",
             ),
 
@@ -558,13 +558,13 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest(
                 "/api/v1/project/1/link_list/48/",
                 {},
-                400,
+                404,
                 "DELETE",
             ),
             self.URLTest(
                 "/api/v1/project/2/link_list/43/",
                 {},
-                400,
+                404,
                 "DELETE",
             ),
         ]
@@ -814,7 +814,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "is_active": "false",
                 },
-                400,
+                404,
                 "PATCH",
             ),
             self.URLTest(
@@ -822,7 +822,7 @@ class ApiAdminPermissionTests(BaseApiClass):
                 {
                     "is_active": "false",
                 },
-                400,
+                404,
                 "PATCH",
             ),
 
@@ -850,13 +850,13 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest(
                 "/api/v1/project/1/public_link/5f369dc9-a0bb-416d-9779-92576d0500bb/",
                 {},
-                400,
+                404,
                 "DELETE",
             ),
             self.URLTest(
                 "/api/v1/project/2/public_link/3d7346c4-05b6-41df-816a-eff814d9bbd0/",
                 {},
-                400,
+                404,
                 "DELETE",
             ),
         ]
@@ -922,8 +922,8 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest("/api/v1/project/1/sprint/1/", {}, 204, "DELETE"),
             self.URLTest("/api/v1/project/2/sprint/2/", {}, 204, "DELETE"),
             self.URLTest("/api/v1/project/3/sprint/1/", {}, 404, "DELETE"),
-            self.URLTest("/api/v1/project/1/sprint/2/", {}, 400, "DELETE"),
-            self.URLTest("/api/v1/project/2/sprint/1/", {}, 400, "DELETE"),
+            self.URLTest("/api/v1/project/1/sprint/2/", {}, 404, "DELETE"),
+            self.URLTest("/api/v1/project/2/sprint/1/", {}, 404, "DELETE"),
         ]
 
         self._run_test_array(data_list)
@@ -984,7 +984,7 @@ class ApiAdminPermissionTests(BaseApiClass):
             self.URLTest(
                 "/api/v1/project/1/users/5/",
                 {},
-                400,
+                404,
                 "DELETE",
             ),
         ]

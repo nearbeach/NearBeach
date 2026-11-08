@@ -280,7 +280,9 @@ class ProjectCustomerTests(TeamLeaderProjectBase):
 
         for name, body in bodies.items():
             with self.subTest(name):
-                self.assertEqual(self.client.post(CUSTOMER_URL, body, format="json").status_code, 400)
+                # A customer that does not exist is a 404 - anything malformed is a 400
+                expected = 404 if name in ("unknown", "deleted") else 400
+                self.assertEqual(self.client.post(CUSTOMER_URL, body, format="json").status_code, expected)
 
         self.assertEqual(ObjectAssignment.objects.filter(project_id=2).count(), before)
 
@@ -316,12 +318,12 @@ class ProjectCustomerTests(TeamLeaderProjectBase):
         self.assertFalse(self._rows(2).filter(is_deleted=False).exists())
 
     def test_unlinking_a_customer_that_is_not_linked_is_rejected(self):
-        self.assertEqual(self.client.delete(f"{CUSTOMER_URL}2/").status_code, 400)
+        self.assertEqual(self.client.delete(f"{CUSTOMER_URL}2/").status_code, 404)
 
     def test_unlinking_twice_is_rejected(self):
         self.client.delete(f"{CUSTOMER_URL}1/")
 
-        self.assertEqual(self.client.delete(f"{CUSTOMER_URL}1/").status_code, 400)
+        self.assertEqual(self.client.delete(f"{CUSTOMER_URL}1/").status_code, 404)
 
     def test_a_customer_can_be_linked_again_after_unlinking(self):
         self.client.delete(f"{CUSTOMER_URL}1/")
@@ -409,7 +411,9 @@ class ProjectOrganisationTests(TeamLeaderProjectBase):
 
         for name, body in bodies.items():
             with self.subTest(name):
-                self.assertEqual(self.client.post(ORGANISATION_URL, body, format="json").status_code, 400)
+                # An organisation that does not exist is a 404 - anything malformed is a 400
+                expected = 404 if name in ("unknown", "deleted") else 400
+                self.assertEqual(self.client.post(ORGANISATION_URL, body, format="json").status_code, expected)
 
         self.assertEqual(self._organisation_id(), 1)
 
