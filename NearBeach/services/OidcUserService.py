@@ -1,0 +1,80 @@
+"""Service finding the existing NearBeach user for the claims from an identity provider - it never creates users"""
+
+from django.contrib.auth import get_user_model
+from django.db import transaction
+from django_otp.plugins.otp_email.models import EmailDevice
+from django_otp.plugins.otp_totp.models import TOTPDevice
+
+from NearBeach.models.authentication.oidc_provider import OidcIdentity, OidcProvider
+from NearBeach.models.user import UserGroup
+from NearBeach.services.OidcService import OidcError
+
+
+class OidcUserService:
+    """Class resolving and linking users for a single OidcProvider"""
+
+    def __init__(self, provider: OidcProvider) -> None:
+        self.provider = provider
+        self.user_model = get_user_model()
+
+    def resolve(self, claims: dict):
+        """Find the existing user for these claims, then check they are allowed in"""
+        with transaction.atomic():
+            user = self._user_from_identity(claims) or self._link_by_email(claims)
+
+        # Accounts are created by an administrator, never by signing in
+        if user is None:
+            raise OidcError("no_account")
+
+        if not user.is_active:
+            raise OidcError("account_disabled")
+
+        if not UserGroup.objects.filter(username=user, is_deleted=False).exists():
+            raise OidcError("no_group")
+
+        if not self.provider.trust_idp_mfa and self._has_two_factor_device(user):
+            # NearBeach's own 2FA has no SSO step yet - fail closed rather than skip it
+            raise OidcError("two_factor_required")
+
+        return user
+
+    def _user_from_identity(self, claims: dict):
+        identity = OidcIdentity.objects.filter(
+            provider=self.provider,
+            subject=claims["sub"],
+            is_deleted=False,
+        ).select_related("user").first()
+        return identity.user if identity else None
+
+    @staticmethod
+    def _verified_email(claims: dict) -> str:
+        # Only an email the provider vouches for is safe to match on or store
+        return claims.get("email", "") if claims.get("email_verified") is True else ""
+
+    def _link_by_email(self, claims: dict):
+        email = self._verified_email(claims)
+        if not (self.provider.link_existing_by_email and email):
+            return None
+
+        matches = list(self.user_model.objects.filter(email__iexact=email)[:2])
+        if len(matches) != 1:
+            return None
+
+        self._create_identity(matches[0], claims)
+        return matches[0]
+
+    def _create_identity(self, user, claims: dict) -> None:
+        OidcIdentity.objects.create(
+            user=user,
+            provider=self.provider,
+            subject=claims["sub"],
+            change_user=user,
+            creation_user=user,
+        )
+
+    @staticmethod
+    def _has_two_factor_device(user) -> bool:
+        return (
+            TOTPDevice.objects.filter(user=user, confirmed=True).exists()
+            or EmailDevice.objects.filter(user=user, confirmed=True).exists()
+        )

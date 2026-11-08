@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.permissions import AllowAny
@@ -29,12 +30,12 @@ class ForgottenPasswordView(APIView):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = PasswordResetTokenGenerator().make_token(user)
 
+        # Prefer the configured address - a link built from the request is only as trustworthy as the Host header
+        base_url = getattr(settings, "SITE_URL", "").rstrip("/") or f"{request.scheme}://{request.get_host()}"
+
         # Context
         context = {
-            "url": request.scheme
-            + "://"
-            + request.get_host()
-            + f"/login/reset-password/?uid={uid}&token={token}",
+            "url": f"{base_url}/login/reset-password/?uid={uid}&token={token}",
             "user": user,
         }
 
