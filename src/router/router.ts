@@ -18,13 +18,13 @@ const DashboardPage = () =>
 const NewProject = () =>
     import("@/components/new_object/NewObject.vue");
 const NewOrganisation = () =>
-    import("@/components/organisation/NewOrganisation.vue");
+    import("@/components/organisation/new_organisation/NewOrganisation.vue");
 const NewCustomer = () =>
     import("@/components/customer/NewCustomer.vue");
 const PublicLinkPage = () =>
     import("@/components/public_link/PublicLinkPage.vue");
 const OrganisationPage = () =>
-    import("@/components/organisation/OrganisationPage.vue");
+    import("@/components/organisation/organisation_page/OrganisationPage.vue");
 const NotFoundPage = () =>
     import("@/components/error/NotFoundPage/NotFoundPage.vue");
 const ProjectPage = () =>

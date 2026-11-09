@@ -2,6 +2,7 @@ import {defineStore} from 'pinia'
 import type {MaximumPermissionInterface} from "@/utils/interfaces/stores/MaximumPermissionInterface.ts";
 import type {PermissionDataInterface} from "@/utils/interfaces/stores/PermissionDataInterface.ts";
 import type {SelectOptionInterface} from "whelk-ui";
+import type {TitleInterface} from "@/utils/interfaces/stores/TitleInterface.ts";
 
 export const usePermissionStore = defineStore('permissions', {
     state: () => {
@@ -16,6 +17,7 @@ export const usePermissionStore = defineStore('permissions', {
                 requirement_item_note: 0,
                 task_note: 0,
             },
+            customerTitles: [] as TitleInterface[],
             errorInformation: "",
             hasAdministrationPermission: false,
             hasError: false,
