@@ -47,6 +47,7 @@ function canUserCreate(object: string) {
 	</NavMenuItem>
 
 	<NavMenuItem
+		v-if="permissionStore.maximumPermissions.organisation > 0"
 		destination="organisation"
 		route-address="/organisation"
 		route-address-new="/organisation/new"

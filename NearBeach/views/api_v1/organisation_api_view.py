@@ -1,3 +1,5 @@
+from NearBeach.api_docs import apply_schema
+from NearBeach.api_docs.api_v1.organisation_docs import ORGANISATION_SCHEMA
 from NearBeach.services.NoteService import NoteService
 from NearBeach.services.document.DocumentMiddlemanService import DocumentMiddlemanService
 from NearBeach.services.document.DocumentService import DocumentService
@@ -15,6 +17,7 @@ from NearBeach.serializers.customer_serializer import CustomerSerializer
 from NearBeach.services.customer.CustomerService import CustomerService
 
 
+@apply_schema(ORGANISATION_SCHEMA)
 class OrganisationViewSet(viewsets.ModelViewSet):
     """Class for the organisation view set"""
     queryset = Organisation.objects.filter(is_deleted=False)

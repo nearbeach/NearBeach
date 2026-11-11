@@ -34,6 +34,7 @@ function mockInitialData(ok = true, status = 200) {
   return vi.spyOn(globalThis, "fetch").mockResolvedValue({
     ok,
     status,
+    statusText: `Response status: ${status}`,
     json: () => Promise.resolve(initialData),
   } as Response);
 }

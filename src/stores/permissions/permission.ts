@@ -29,6 +29,7 @@ export const usePermissionStore = defineStore('permissions', {
                 administration_create_permission_set: 0,
                 administration_create_user: 0,
                 kanban_board: 0,
+                organisation: 0,
                 project: 0,
                 request_for_change: 0,
                 requirement: 0,
@@ -76,6 +77,7 @@ export const usePermissionStore = defineStore('permissions', {
             this.maximumPermissions.requirement = this._getMaximumFieldValue("requirement");
             this.maximumPermissions.settings = this._getMaximumFieldValue("settings");
             this.maximumPermissions.task = this._getMaximumFieldValue("task");
+            this.maximumPermissions.organisation = this._getMaximumFieldValue("organisation");
         },
         _setUserGroups(): void {
             const user_groups = this.permissionData?.map((item: PermissionDataInterface) => {
