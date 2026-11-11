@@ -104,7 +104,7 @@ const props = defineProps({
 
 		> .note-content {
 			margin-top: 0.5rem;
-			border: 1px solid grey;
+			border: 1px dotted grey;
 			padding: 0.25rem;
 			min-height: 100px;
 		}
