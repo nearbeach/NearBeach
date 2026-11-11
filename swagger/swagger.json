@@ -1,0 +1,3034 @@
+openapi: 3.0.3
+info:
+  title: NearBeach API
+  version: 0.0.1
+  description: "\n# NearBeach API Guide\n\nNearBeach is an open source project management
+    system, built using Django for the backend, and VueJS for the frontend.\n\nThe
+    following documentation covers all API endpoints for NearBeach. You can use these
+    endpoints to help;\n- **C**reate objects\n- **R**ead objects\n- **U**pdate objects\n-
+    **D**elete objects\n\n# Features\n\n- **Basic Organisation/Customer**: Users will
+    be able to gather information on Organisations/Customers\n- **Customer Requirements**:
+    Users will be able to gather requirements from customers\n- **Kanban Board**:
+    Users will be able to track tasks within a kanban board\n- **Project/Tasks**:
+    Users will be able to create projects/tasks\n- **Request for Change**: Users will
+    be able to setup a RFC for deployment processes\n\n# Helpful Links\n\n[NearBeach
+    Documentation Guide](https://nearbeach.readthedocs.io/en/latest/)\n\n[Discord](https://discord.gg/64uhRztS6n)\n\n[Self-hosting](https://nearbeach.org/self-hosting/)\n\n[Source
+    Code](https://github.com/NearBeach/NearBeach)\n    "
+paths:
+  /api/v1/authentication/:
+    post:
+      operationId: authentication_create
+      description: Function to authenticate a user.
+      tags:
+      - authentication
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/authentication/forgotten-password/:
+    post:
+      operationId: authentication_forgotten_password_create
+      description: Class dealing with forgotten password
+      tags:
+      - authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgottenPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ForgottenPassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ForgottenPassword'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForgottenPassword'
+          description: ''
+  /api/v1/authentication/oidc/providers/:
+    get:
+      operationId: authentication_oidc_providers_list
+      description: Lists the single sign-on providers the login page should offer
+      tags:
+      - authentication
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OidcProvider'
+          description: ''
+  /api/v1/authentication/reset-password/:
+    post:
+      operationId: authentication_reset_password_create
+      description: Method handling post requests for password reset
+      tags:
+      - authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordReset'
+          description: ''
+  /api/v1/data/potential_object_links/:
+    get:
+      operationId: data_potential_object_links_list
+      description: Projects, requirements, requirement items and tasks that belong
+        to a group the user is in.
+      summary: List objects that can be linked
+      parameters:
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Search string
+      tags:
+      - Search
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PotentialObjectLink'
+          description: ''
+  /api/v1/organisation/:
+    get:
+      operationId: organisation_list
+      description: Paginated list of organisations the user can see. Filter with `?search=`
+        (title or id).
+      summary: List organisations
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Organisation
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrganisationList'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Invalid page number
+    post:
+      operationId: organisation_create
+      description: Requires permission level 3 or above. `group_list` is required
+        and must only contain groups the user belongs to.
+      summary: Create a organisation
+      tags:
+      - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organisation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organisation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Organisation'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this organisation
+  /api/v1/organisation/{id}/:
+    get:
+      operationId: organisation_retrieve
+      description: Class for the organisation view set
+      summary: Get a organisation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+    patch:
+      operationId: organisation_partial_update
+      description: Class for the organisation view set
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganisation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganisation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganisation'
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+          description: ''
+    delete:
+      operationId: organisation_destroy
+      description: Soft-deletes the organisation. Requires full permission (level
+        4).
+      summary: Delete a organisation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+  /api/v1/organisation/{id}/customer/:
+    get:
+      operationId: organisation_customer_list
+      description: Class for the organisation view set
+      summary: List customers linked to a organisation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Organisation
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCustomerList'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+    post:
+      operationId: organisation_customer_create
+      description: Returns the complete list of customers linked to the organisation.
+      summary: Link a customer to a organisation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerLink'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomerLink'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomerLink'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCustomerList'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+  /api/v1/organisation/{id}/customer/{customer_pk}/:
+    get:
+      operationId: organisation_customer_retrieve
+      description: Class for the organisation view set
+      parameters:
+      - in: path
+        name: customer_pk
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - organisation
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+          description: ''
+    patch:
+      operationId: organisation_customer_partial_update
+      description: Class for the organisation view set
+      parameters:
+      - in: path
+        name: customer_pk
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganisation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganisation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganisation'
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+          description: ''
+    delete:
+      operationId: organisation_customer_destroy
+      description: Delete a customer from an organisation
+      summary: Unlink a customer from a organisation
+      parameters:
+      - in: path
+        name: customer_pk
+        schema:
+          type: integer
+        description: ID of the customer link
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+  /api/v1/organisation/{id}/documents/:
+    get:
+      operationId: organisation_documents_retrieve
+      description: Class for the organisation view set
+      summary: List documents and folders of a organisation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileSystem'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+    post:
+      operationId: organisation_documents_create
+      description: '`type` decides what is created. `document` needs a `document`
+        file, `link` needs `url_location`.'
+      summary: Add a document, folder or link to a organisation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Document'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Document'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Document'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+        '413':
+          description: Uploaded file is larger than the maximum upload size
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+  /api/v1/organisation/{id}/documents/{document_pk}/:
+    patch:
+      operationId: organisation_documents_partial_update
+      description: Class for the organisation view set
+      summary: Update a document on a organisation
+      parameters:
+      - in: path
+        name: document_pk
+        schema:
+          type: integer
+        description: ID of the document
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+    delete:
+      operationId: organisation_documents_destroy
+      description: Class for the organisation view set
+      summary: Delete a document from a organisation
+      parameters:
+      - in: path
+        name: document_pk
+        schema:
+          type: integer
+        description: ID of the document
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+  /api/v1/organisation/{id}/notes/:
+    get:
+      operationId: organisation_notes_list
+      description: Class for the organisation view set
+      summary: List notes of a organisation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Note'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+    post:
+      operationId: organisation_notes_create
+      description: Class for the organisation view set
+      summary: Create a note on a organisation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      tags:
+      - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Note'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Note'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+  /api/v1/organisation/{id}/notes/{note_pk}/:
+    patch:
+      operationId: organisation_notes_partial_update
+      description: Only the author of a note (or a superuser) can change it.
+      summary: Update a note on a organisation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      - in: path
+        name: note_pk
+        schema:
+          type: integer
+        description: ID of the note
+        required: true
+      tags:
+      - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+    delete:
+      operationId: organisation_notes_destroy
+      description: Only the author of a note (or a superuser) can delete it.
+      summary: Delete a note from a organisation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organisation.
+        required: true
+      - in: path
+        name: note_pk
+        schema:
+          type: integer
+        description: ID of the note
+        required: true
+      tags:
+      - Organisation
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this organisation
+        '404':
+          description: Organisation not found
+  /api/v1/project/:
+    get:
+      operationId: project_list
+      description: Paginated list of projects the user can see. Filter with `?search=`
+        (title or id).
+      summary: List projects
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProjectList'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Invalid page number
+    post:
+      operationId: project_create
+      description: Requires permission level 3 or above. `group_list` is required
+        and must only contain groups the user belongs to.
+      summary: Create a project
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Project'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Project'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+  /api/v1/project/{id}/:
+    get:
+      operationId: project_retrieve
+      summary: Get a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectDetail'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    patch:
+      operationId: project_partial_update
+      description: Send only the fields to change. Groups, users and organisation
+        have their own endpoints, and `status` is the id of a project status. The
+        response is the updated project in this same shape.
+      summary: Update a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectPatch'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectPatch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectPatch'
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectPatch'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    delete:
+      operationId: project_destroy
+      description: Soft-deletes the project. Requires full permission (level 4).
+      summary: Delete a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/customer/:
+    get:
+      operationId: project_customer_list
+      summary: List customers linked to a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    post:
+      operationId: project_customer_create
+      description: Returns the complete list of customers linked to the project.
+      summary: Link a customer to a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomerLink'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerLink'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomerLink'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/customer/{customer_pk}/:
+    delete:
+      operationId: project_customer_destroy
+      summary: Unlink a customer from a project
+      parameters:
+      - in: path
+        name: customer_pk
+        schema:
+          type: integer
+        description: ID of the customer link
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/documents/:
+    get:
+      operationId: project_documents_retrieve
+      summary: List documents and folders of a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileSystem'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    post:
+      operationId: project_documents_create
+      description: '`type` decides what is created. `document` needs a `document`
+        file, `link` needs `url_location`.'
+      summary: Add a document, folder or link to a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Document'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Document'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Document'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+        '413':
+          description: Uploaded file is larger than the maximum upload size
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/documents/{document_pk}/:
+    patch:
+      operationId: project_documents_partial_update
+      summary: Update a document on a project
+      parameters:
+      - in: path
+        name: document_pk
+        schema:
+          type: integer
+        description: ID of the document
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    delete:
+      operationId: project_documents_destroy
+      summary: Delete a document from a project
+      parameters:
+      - in: path
+        name: document_pk
+        schema:
+          type: integer
+        description: ID of the document
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/groups/:
+    get:
+      operationId: project_groups_retrieve
+      summary: List groups of a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupAndUser'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    post:
+      operationId: project_groups_create
+      description: Returns the updated group and user lists.
+      summary: Add a group to a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupList'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupList'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupAndUser'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/groups/{group_pk}/:
+    delete:
+      operationId: project_groups_destroy
+      description: The last group of a project can not be removed. Returns the updated
+        group and user lists.
+      summary: Remove a group from a project
+      parameters:
+      - in: path
+        name: group_pk
+        schema:
+          type: integer
+        description: ID of the group
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupAndUser'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/link_list/:
+    get:
+      operationId: project_link_list_list
+      summary: List links of a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Link'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    post:
+      operationId: project_link_list_create
+      summary: Create a link on a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Link'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Link'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Link'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Link'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/link_list/{link_pk}/:
+    patch:
+      operationId: project_link_list_partial_update
+      summary: Update a link on a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      - in: path
+        name: link_pk
+        schema:
+          type: integer
+        description: ID of the link
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLink'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLink'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLink'
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          description: Link updated
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    delete:
+      operationId: project_link_list_destroy
+      summary: Delete a link from a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      - in: path
+        name: link_pk
+        schema:
+          type: integer
+        description: ID of the link
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/notes/:
+    get:
+      operationId: project_notes_list
+      summary: List notes of a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Note'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    post:
+      operationId: project_notes_create
+      summary: Create a note on a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Note'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Note'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/notes/{note_pk}/:
+    patch:
+      operationId: project_notes_partial_update
+      description: Only the author of a note (or a superuser) can change it.
+      summary: Update a note on a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      - in: path
+        name: note_pk
+        schema:
+          type: integer
+        description: ID of the note
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    delete:
+      operationId: project_notes_destroy
+      description: Only the author of a note (or a superuser) can delete it.
+      summary: Delete a note from a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      - in: path
+        name: note_pk
+        schema:
+          type: integer
+        description: ID of the note
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/organisation/:
+    get:
+      operationId: project_organisation_retrieve
+      summary: Get the organisation linked to a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationLink'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    post:
+      operationId: project_organisation_create
+      summary: Link an organisation to a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganisationLink'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganisationLink'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganisationLink'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationLink'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    delete:
+      operationId: project_organisation_destroy
+      summary: Unlink the organisation from a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/public_link/:
+    get:
+      operationId: project_public_link_list
+      summary: List public links of a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicLink'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    post:
+      operationId: project_public_link_create
+      description: No request body - a new, active link is generated.
+      summary: Create a public link for a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicLink'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/public_link/{public_link_pk}/:
+    patch:
+      operationId: project_public_link_partial_update
+      summary: Update a public link of a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      - in: path
+        name: public_link_pk
+        schema:
+          type: string
+          format: uuid
+        description: ID of the public link
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPublicLink'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPublicLink'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPublicLink'
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicLink'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    delete:
+      operationId: project_public_link_destroy
+      summary: Delete a public link of a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      - in: path
+        name: public_link_pk
+        schema:
+          type: string
+          format: uuid
+        description: ID of the public link
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/sprint/:
+    get:
+      operationId: project_sprint_list
+      summary: List sprints of a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sprint'
+          description: ''
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+    post:
+      operationId: project_sprint_create
+      description: '`start_date` and `end_date` are required.'
+      summary: Create a sprint on a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Sprint'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sprint'
+          description: ''
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/sprint/{sprint_pk}/:
+    delete:
+      operationId: project_sprint_destroy
+      summary: Delete a sprint from a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      - in: path
+        name: sprint_pk
+        schema:
+          type: integer
+        description: ID of the sprint
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/users/:
+    post:
+      operationId: project_users_create
+      summary: Add a user to a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      tags:
+      - Projects
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserList'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserList'
+        required: true
+      security:
+      - oauth2: []
+      responses:
+        '201':
+          description: User added
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/project/{id}/users/{user_pk}/:
+    delete:
+      operationId: project_users_destroy
+      summary: Remove a user from a project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this project.
+        required: true
+      - in: path
+        name: user_pk
+        schema:
+          type: integer
+        description: ID of the user
+        required: true
+      tags:
+      - Projects
+      security:
+      - oauth2: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          description: Invalid input - field errors, or a message such as 'Object
+            does not exist'
+        '403':
+          description: Not logged in, or no permission for this project
+        '404':
+          description: Project not found
+  /api/v1/public_link/{id}/:
+    get:
+      operationId: public_link_retrieve
+      description: Retrieve a single public link
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+        required: true
+      tags:
+      - public_link
+      security:
+      - oauth2: []
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    BlankEnum:
+      enum:
+      - ''
+    Customer:
+      type: object
+      description: Class containing serializer for Customer
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          $ref: '#/components/schemas/CustomerTitle'
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        profile_picture_path:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - email
+      - first_name
+      - id
+      - last_name
+      - profile_picture_path
+      - title
+    CustomerLink:
+      type: object
+      description: Class containing serializer for Customer links
+      properties:
+        id:
+          type: integer
+      required:
+      - id
+    CustomerTitle:
+      type: object
+      description: Class containing serializer for Customer Title
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 10
+      required:
+      - id
+      - title
+    Document:
+      type: object
+      description: Class for document serialization
+      properties:
+        key:
+          type: string
+          format: uuid
+          readOnly: true
+        description:
+          type: string
+        url_location:
+          type: string
+        folder:
+          $ref: '#/components/schemas/Folder'
+        document:
+          type: string
+          format: uri
+          nullable: true
+        parent_folder_id:
+          type: integer
+          nullable: true
+        type:
+          allOf:
+          - $ref: '#/components/schemas/TypeEnum'
+          writeOnly: true
+      required:
+      - description
+      - key
+      - type
+    FileSystem:
+      type: object
+      description: Class containing serializer details for a file system
+      properties:
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+          readOnly: true
+        folders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Folder'
+          readOnly: true
+        max_upload_size:
+          type: integer
+          readOnly: true
+      required:
+      - documents
+      - folders
+      - max_upload_size
+    Folder:
+      type: object
+      description: Class for folder serialization
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        description:
+          type: string
+        parent_folder_id:
+          type: integer
+          nullable: true
+      required:
+      - id
+    ForgottenPassword:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          writeOnly: true
+      required:
+      - email
+    Group:
+      type: object
+      description: Class containing serializer for Groups
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        parent_group:
+          allOf:
+          - $ref: '#/components/schemas/ParentGroup'
+          nullable: true
+      required:
+      - id
+      - name
+      - parent_group
+    GroupAndUser:
+      type: object
+      description: Class containing serializer for Groups and Users
+      properties:
+        group_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+          readOnly: true
+        potential_user_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+          readOnly: true
+        user_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+          readOnly: true
+      required:
+      - group_list
+      - potential_user_list
+      - user_list
+    GroupList:
+      type: object
+      description: Class containing serializer for adding/removing groups to objects
+      properties:
+        group_list:
+          type: array
+          items:
+            type: integer
+      required:
+      - group_list
+    Link:
+      type: object
+      description: Close for serializing Link objects.
+      properties:
+        object_assignment_id:
+          type: integer
+          readOnly: true
+        object_id:
+          type: integer
+        object_relation:
+          allOf:
+          - $ref: '#/components/schemas/ObjectRelationEnum'
+          writeOnly: true
+        object_title:
+          type: string
+          readOnly: true
+        object_status:
+          type: string
+          readOnly: true
+        object_type:
+          type: string
+        parent_link:
+          type: string
+          readOnly: true
+        link_relationship:
+          type: string
+          readOnly: true
+        reverse_relation:
+          type: boolean
+          readOnly: true
+      required:
+      - link_relationship
+      - object_assignment_id
+      - object_id
+      - object_relation
+      - object_status
+      - object_title
+      - object_type
+      - parent_link
+      - reverse_relation
+    Note:
+      type: object
+      description: Serializer class for notes
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        note:
+          type: string
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+        username:
+          type: integer
+          readOnly: true
+        profile_picture:
+          type: string
+          readOnly: true
+          nullable: true
+        date_modified:
+          type: string
+          format: date-time
+          readOnly: true
+        can_edit:
+          type: boolean
+          readOnly: true
+      required:
+      - can_edit
+      - date_modified
+      - first_name
+      - id
+      - last_name
+      - note
+      - profile_picture
+      - username
+    ObjectRelationEnum:
+      enum:
+      - relates
+      - blocked_by
+      - blocking
+      - sub_object_of
+      - parent_object_of
+      - has_duplicate
+      - duplicate_object
+      type: string
+      description: |-
+        * `relates` - Relate
+        * `blocked_by` - Block
+        * `blocking` - Block
+        * `sub_object_of` - Subobject
+        * `parent_object_of` - Subobject
+        * `has_duplicate` - Duplicate
+        * `duplicate_object` - Duplicate
+    OidcProvider:
+      type: object
+      description: The public details of a provider - just enough to draw a login
+        button
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+          pattern: ^[-a-zA-Z0-9_]+$
+        login_url:
+          type: string
+      required:
+      - login_url
+      - name
+      - slug
+    Organisation:
+      type: object
+      description: Class containing serializer for Organisation
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        website:
+          type: string
+          format: uri
+        email:
+          type: string
+          format: email
+        profile_picture_path:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - email
+      - id
+      - name
+      - profile_picture_path
+      - website
+    OrganisationLink:
+      type: object
+      description: Class containing serializer for Organisation links
+      properties:
+        id:
+          type: integer
+          writeOnly: true
+        customers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+          readOnly: true
+          nullable: true
+        organisation:
+          allOf:
+          - $ref: '#/components/schemas/Organisation'
+          readOnly: true
+          nullable: true
+        potential_customers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+          readOnly: true
+          nullable: true
+        potential_organisations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organisation'
+          readOnly: true
+          nullable: true
+      required:
+      - customers
+      - id
+      - organisation
+      - potential_customers
+      - potential_organisations
+    PaginatedCustomerList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+    PaginatedOrganisationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organisation'
+    PaginatedProjectList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+    ParentGroup:
+      type: object
+      description: Class containing serializer for Parent Groups
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - name
+    PasswordReset:
+      type: object
+      properties:
+        password:
+          type: string
+          writeOnly: true
+        token:
+          type: string
+          writeOnly: true
+        uid:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - token
+      - uid
+    PatchedDocument:
+      type: object
+      description: Class for document serialization
+      properties:
+        key:
+          type: string
+          format: uuid
+          readOnly: true
+        description:
+          type: string
+        url_location:
+          type: string
+        folder:
+          $ref: '#/components/schemas/Folder'
+        document:
+          type: string
+          format: uri
+          nullable: true
+        parent_folder_id:
+          type: integer
+          nullable: true
+        type:
+          allOf:
+          - $ref: '#/components/schemas/TypeEnum'
+          writeOnly: true
+    PatchedLink:
+      type: object
+      description: Close for serializing Link objects.
+      properties:
+        object_assignment_id:
+          type: integer
+          readOnly: true
+        object_id:
+          type: integer
+        object_relation:
+          allOf:
+          - $ref: '#/components/schemas/ObjectRelationEnum'
+          writeOnly: true
+        object_title:
+          type: string
+          readOnly: true
+        object_status:
+          type: string
+          readOnly: true
+        object_type:
+          type: string
+        parent_link:
+          type: string
+          readOnly: true
+        link_relationship:
+          type: string
+          readOnly: true
+        reverse_relation:
+          type: boolean
+          readOnly: true
+    PatchedNote:
+      type: object
+      description: Serializer class for notes
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        note:
+          type: string
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+        username:
+          type: integer
+          readOnly: true
+        profile_picture:
+          type: string
+          readOnly: true
+          nullable: true
+        date_modified:
+          type: string
+          format: date-time
+          readOnly: true
+        can_edit:
+          type: boolean
+          readOnly: true
+    PatchedOrganisation:
+      type: object
+      description: Class containing serializer for Organisation
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        website:
+          type: string
+          format: uri
+        email:
+          type: string
+          format: email
+        profile_picture_path:
+          type: string
+          nullable: true
+          readOnly: true
+    PatchedProjectPatch:
+      type: object
+      description: |-
+        The PATCH shape of a project - request and response (no groups, organisation or users; status is an id).
+
+        Exists so the API documentation can describe PATCH accurately; the endpoint itself passes
+        `context={"method": "PATCH"}` to ProjectSerializer.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        status:
+          type: integer
+        priority:
+          type: object
+          properties:
+            value:
+              type: integer
+              enum:
+              - 0
+              - 1
+              - 2
+              - 3
+              - 4
+            label:
+              type: string
+          required:
+          - value
+          - label
+        story_point:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_modified:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedPublicLink:
+      type: object
+      description: Class for serializing the model PublicLink
+      properties:
+        id:
+          type: string
+          format: uuid
+        is_active:
+          type: boolean
+    PotentialObjectLink:
+      type: object
+      description: An object that can be linked to - just enough to identify it
+      properties:
+        object_id:
+          type: integer
+          readOnly: true
+        object_title:
+          type: string
+          readOnly: true
+        object_type:
+          type: string
+          readOnly: true
+      required:
+      - object_id
+      - object_title
+      - object_type
+    Project:
+      type: object
+      description: Class containing serializer base for all objects
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        organisation:
+          allOf:
+          - $ref: '#/components/schemas/Organisation'
+          readOnly: true
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+        priority:
+          type: object
+          properties:
+            value:
+              type: integer
+              enum:
+              - 0
+              - 1
+              - 2
+              - 3
+              - 4
+            label:
+              type: string
+          required:
+          - value
+          - label
+        story_point:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        group_list:
+          type: array
+          items:
+            type: integer
+            writeOnly: true
+          writeOnly: true
+        user_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+          readOnly: true
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_modified:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - date_created
+      - date_modified
+      - id
+      - organisation
+      - title
+    ProjectDetail:
+      type: object
+      description: |-
+        The shape of a single project (GET): groups are readable here and the users are included.
+
+        Exists so the API documentation can describe retrieve accurately; the endpoint itself passes
+        `context={"method": "GET"}` to ProjectSerializer.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        organisation:
+          allOf:
+          - $ref: '#/components/schemas/Organisation'
+          readOnly: true
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+        priority:
+          type: object
+          properties:
+            value:
+              type: integer
+              enum:
+              - 0
+              - 1
+              - 2
+              - 3
+              - 4
+            label:
+              type: string
+          required:
+          - value
+          - label
+        story_point:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        group_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+          readOnly: true
+        user_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+          readOnly: true
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_modified:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - date_created
+      - date_modified
+      - group_list
+      - id
+      - organisation
+      - title
+      - user_list
+    ProjectPatch:
+      type: object
+      description: |-
+        The PATCH shape of a project - request and response (no groups, organisation or users; status is an id).
+
+        Exists so the API documentation can describe PATCH accurately; the endpoint itself passes
+        `context={"method": "PATCH"}` to ProjectSerializer.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        status:
+          type: integer
+        priority:
+          type: object
+          properties:
+            value:
+              type: integer
+              enum:
+              - 0
+              - 1
+              - 2
+              - 3
+              - 4
+            label:
+              type: string
+          required:
+          - value
+          - label
+        story_point:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_modified:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - date_created
+      - date_modified
+      - id
+      - status
+      - title
+    ProjectStatus:
+      type: object
+      description: Class containing serializer for project status
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        status:
+          type: string
+          maxLength: 100
+        higher_order_status:
+          type: object
+          properties:
+            value:
+              type: string
+              enum:
+              - Backlog
+              - Normal
+              - Blocked
+              - Closed
+            label:
+              type: string
+          required:
+          - value
+          - label
+      required:
+      - higher_order_status
+      - id
+      - status
+    PublicLink:
+      type: object
+      description: Class for serializing the model PublicLink
+      properties:
+        id:
+          type: string
+          format: uuid
+        is_active:
+          type: boolean
+    Requirement:
+      type: object
+      description: Class containing serializer base for all objects
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/RequirementStatus'
+        type:
+          $ref: '#/components/schemas/RequirementTypes'
+        group_list:
+          type: array
+          items:
+            type: integer
+            writeOnly: true
+          writeOnly: true
+        user_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+          readOnly: true
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_modified:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - date_created
+      - date_modified
+      - id
+      - title
+      - user_list
+    RequirementStatus:
+      type: object
+      description: Class containing serializer for requirement status
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        status:
+          type: string
+          maxLength: 50
+        higher_order_status:
+          type: object
+          properties:
+            value:
+              type: string
+              enum:
+              - Backlog
+              - Normal
+              - Blocked
+              - Closed
+            label:
+              type: string
+          required:
+          - value
+          - label
+      required:
+      - higher_order_status
+      - id
+      - status
+    RequirementTypes:
+      type: object
+      description: Class containing serializer for the Requirement Types
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type:
+          type: string
+          maxLength: 100
+      required:
+      - id
+      - type
+    Sprint:
+      type: object
+      description: Class containing serializer for Sprints
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        requirement:
+          allOf:
+          - $ref: '#/components/schemas/Requirement'
+          readOnly: true
+          nullable: true
+        project:
+          allOf:
+          - $ref: '#/components/schemas/Project'
+          readOnly: true
+          nullable: true
+        total_story_points:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        completed_story_points:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        status:
+          oneOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+      required:
+      - id
+      - project
+      - requirement
+      - title
+    StatusEnum:
+      enum:
+      - Draft
+      - Current
+      - Finished
+      type: string
+      description: |-
+        * `Draft` - Draft
+        * `Current` - Current
+        * `Finished` - Finished
+    TypeEnum:
+      enum:
+      - document
+      - folder
+      - link
+      type: string
+      description: |-
+        * `document` - document
+        * `folder` - folder
+        * `link` - link
+    User:
+      type: object
+      description: Class to serialize a user
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        full_name:
+          type: string
+          readOnly: true
+        email:
+          title: Email address
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        profile_picture:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        profile_picture_path:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - full_name
+      - id
+      - profile_picture
+      - profile_picture_path
+      - username
+    UserList:
+      type: object
+      description: Class containing serializer for adding/removing users to objects
+      properties:
+        user_list:
+          type: array
+          items:
+            type: integer
+      required:
+      - user_list
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: /o/token/
+          refreshUrl: /o/token/
+          scopes:
+            read: Read data you can see in NearBeach
+            write: Create, change and delete data you have permission to change
+        authorizationCode:
+          authorizationUrl: /o/authorize/
+          tokenUrl: /o/token/
+          refreshUrl: /o/token/
+          scopes:
+            read: Read data you can see in NearBeach
+            write: Create, change and delete data you have permission to change
