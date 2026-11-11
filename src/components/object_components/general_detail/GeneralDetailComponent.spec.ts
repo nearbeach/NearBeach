@@ -31,7 +31,10 @@ function mountDetails() {
 describe("GeneralDetailComponent", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    usePermissionStore().currentObjectPermissions.currentObject = 2;
+    const permissionStore = usePermissionStore();
+    permissionStore.currentObjectPermissions.currentObject = 2;
+    // Group 1 gives edit access to projects, matching the group_list in the mocked responses
+    permissionStore.permissionData = [{ group_id: 1, project: 2 }] as never;
     pushMock.mockReset();
     route.params = { id: "12" };
     route.meta = { destination: "project" };
@@ -44,7 +47,7 @@ describe("GeneralDetailComponent", () => {
 
   describe("loading the object", () => {
     test("fetches the object and patches the store", async () => {
-      const fetchSpy = mockFetch(200, { id: 12, title: "My project", description: "About" });
+      const fetchSpy = mockFetch(200, { id: 12, title: "My project", description: "About", group_list: [{ id: 1 }] });
       const objectStore = useObjectStore();
       const wrapper = mountDetails();
       await flushPromises();
@@ -105,7 +108,7 @@ describe("GeneralDetailComponent", () => {
 
   describe("updating", () => {
     async function mountLoaded() {
-      const fetchSpy = mockFetch(200, { id: 12, title: "My project", description: "About" });
+      const fetchSpy = mockFetch(200, { id: 12, title: "My project", description: "About", group_list: [{ id: 1 }] });
       const wrapper = mountDetails();
       await flushPromises();
       fetchSpy.mockClear();
@@ -176,7 +179,9 @@ describe("GeneralDetailComponent", () => {
 describe("GeneralDetailComponent - editing", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    usePermissionStore().currentObjectPermissions.currentObject = 2;
+    const permissionStore = usePermissionStore();
+    permissionStore.currentObjectPermissions.currentObject = 2;
+    permissionStore.permissionData = [{ group_id: 1, project: 2 }] as never;
     pushMock.mockReset();
     route.params = { id: "12" };
     route.meta = { destination: "project" };
@@ -187,7 +192,7 @@ describe("GeneralDetailComponent - editing", () => {
   });
 
   test("typed title and description are what gets saved", async () => {
-    const fetchSpy = mockFetch(200, { id: 12, title: "My project", description: "About" });
+    const fetchSpy = mockFetch(200, { id: 12, title: "My project", description: "About", group_list: [{ id: 1 }] });
     const wrapper = mountDetails();
     await flushPromises();
     fetchSpy.mockClear();

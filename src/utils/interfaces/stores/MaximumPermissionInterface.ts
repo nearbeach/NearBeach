@@ -4,6 +4,7 @@ export interface MaximumPermissionInterface {
     administration_create_permission_set: number,
     administration_create_user: number,
     kanban_board: number,
+    organisation: number,
     project: number,
     request_for_change: number,
     requirement: number,

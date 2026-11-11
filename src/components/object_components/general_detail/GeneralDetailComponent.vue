@@ -55,45 +55,50 @@ onMounted(async () => {
         return;
     }
 
-    const response = await fetch(
-        `/api/v1/${destination}/${id}/`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFTOKEN": getCsrfToken(),
+    try {
+        const response = await fetch(
+            `/api/v1/${destination}/${id}/`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFTOKEN": getCsrfToken(),
+                }
             }
+        );
+
+        switch (response.status) {
+            case 200: {
+                // Get data
+                const data: ObjectInterface = await response.json();
+                data.destination = destination;
+                data.is_loaded = true;
+
+                // Patch
+                objectStore.$patch(data);
+
+                // Calculate permissions
+                const current_group_ids = new Set(data.group_list.map(x => x.id));
+                permissionStore.SetCurrentObjectPermissions(destination, current_group_ids);
+                break;
+            }
+            case 403:
+                // Use does not have access to the object
+                await router.push({name: "forbidden"});
+                break;
+            case 404:
+                // Object does not exist
+                await router.push({name: "not-found"});
+                break;
+            default:
+                // Assuming a 500 error
+                errorStore.setError(response);
+                await router.push({name: "server-error"});
+                break;
         }
-    );
-
-    switch (response.status) {
-        case 200: {
-            // Get data
-            const data: ObjectInterface = await response.json();
-            data.destination = destination;
-            data.is_loaded = true;
-
-            // Patch
-            objectStore.$patch(data);
-
-            // Calculate permissions
-            const current_group_ids = new Set(data.group_list.map(x => x.id));
-            permissionStore.SetCurrentObjectPermissions(destination, current_group_ids);
-            break;
-        }
-        case 403:
-            // Use does not have access to the object
-            await router.push({name: "forbidden"});
-            break;
-        case 404:
-            // Object does not exist
-            await router.push({name: "not-found"});
-            break;
-        default:
-            // Assuming a 500 error
-            errorStore.setError(response);
-            await router.push({name: "server-error"});
-            break;
+    } catch (error) {
+        errorStore.setError(error);
+        await router.push({name: "server-error"});
     }
 });
 
