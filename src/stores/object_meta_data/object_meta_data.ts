@@ -9,6 +9,7 @@ import type {GroupInterface} from "@/utils/interfaces/stores/GroupInterface.ts";
 import {useObjectStore} from "@/stores/object/object.ts";
 import type {OrganisationInterface} from "@/utils/interfaces/stores/OrganisationInterface.ts";
 import type {CustomerInterface} from "@/utils/interfaces/stores/CustomerInterface.ts";
+import type {CustomerTitleInterface} from "@/utils/interfaces/CustomerTitleInterface.ts";
 
 export const useObjectMetaDataStore = defineStore('object_meta_data', {
     state: () => {
@@ -30,6 +31,7 @@ export const useObjectMetaDataStore = defineStore('object_meta_data', {
             tags: [] as TagsInterface[],
             status: [] as StatusInterface[],
             type: [] as TypesInterface[],
+            customer_titles: [] as CustomerTitleInterface[],
         }
     },
     actions: {

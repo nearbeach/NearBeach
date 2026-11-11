@@ -68,6 +68,7 @@ async function fetchObjectMetaData(): Promise<boolean> {
             object_status: result.object_status,
             object_types: result.object_types,
             tags: result.tags,
+            customer_titles: result.customer_titles,
         });
 
         // Update user

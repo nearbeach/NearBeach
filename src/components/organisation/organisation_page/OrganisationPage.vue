@@ -1,29 +1,25 @@
 <script setup lang="ts">
-import {GeneralDetailComponent} from '@/components/object_components/general_detail';
-import {PropertiesComponent} from '@/components/object_components/properties_component';
-import {AccessComponent} from "@/components/object_components/access";
-import {PublicLinks} from "@/components/object_components/public_links";
-import {StakeholderComponent} from "@/components/object_components/stakeholder";
 import {DocumentComponent} from "@/components/object_components/document";
 import {NotesComponent} from "@/components/object_components/notes";
-import {LinkObjects} from "@/components/object_components/link_objects";
-import {SprintLinks} from "@/components/object_components/sprint_links";
 import type {TabHeaderInterface} from "whelk-ui";
 import {WlkCard, WlkTabs} from "whelk-ui";
 import {onMounted} from "vue";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {useI18n} from "petite-vue-i18n";
+import OrganisationInformation
+    from "@/components/organisation/organisation_page/organisation_information/OrganisationInformation.vue";
+import {AssociatedObjects} from "@/components/organisation/organisation_page/associated_objects";
+import {AssociatedCustomers} from "@/components/organisation/organisation_page/associated_customers";
 
 // Define i18n
 const {t} = useI18n()
 
 // Define variables
 const tabList: TabHeaderInterface[] = [
-	{label: t("organisation_page.contacts"), for: "contacts"},
-	{label: t("organisation_page.documentation"), for: "documentation"},
-	{label: t("organisation_page.associated_objects"), for: "associated_objects"},
-	{label: t("organisation_page.notes"), for: "notes"},
-	{label: t("organisation_page.misc"), for: "misc"},
+	{label: t("organisation.contacts"), for: "contacts"},
+	{label: t("organisation.associated_objects"), for: "associated_objects"},
+	{label: t("organisation.documentation"), for: "documentation"},
+	{label: t("organisation.notes"), for: "notes"},
 ]
 
 // Define stores
@@ -37,22 +33,21 @@ onMounted(() => {
 <template>
 	<div class="organisation-information">
 		<div class="container">
+            <OrganisationInformation/>
 
 			<WlkCard class="extra-information">
 				<WlkTabs :tabList="tabList">
-					<template #link_objects>
-						<LinkObjects/>
-					</template>
+                    <template #contacts>
+                        <AssociatedCustomers />
+                    </template>
+                    <template #associated_objects>
+                        <AssociatedObjects />
+                    </template>
 					<template #documentation>
 						<DocumentComponent/>
 					</template>
 					<template #notes>
 						<NotesComponent/>
-					</template>
-					<template #misc>
-						<PublicLinks/>
-                        <hr />
-                        <SprintLinks />
 					</template>
 				</WlkTabs>
 			</WlkCard>
