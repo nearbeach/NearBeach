@@ -11,28 +11,35 @@ import {
     WlkTextInput
 } from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
-import {ref} from "vue";
-import {useObjectStore} from "@/stores/object/object.ts";
+import {onMounted, ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import type {CustomerInterface} from "@/utils/interfaces/stores/CustomerInterface";
 import router from "@/router/router.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
-import {usePermissionStore} from "@/stores/permissions/permission.ts";
+import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 
 // Define i18n
 const {t} = useI18n();
 
+// Define props
+const props = defineProps({
+    // The organisation id
+    id: {
+        type: String,
+        required: true,
+    },
+})
+
 // Define stores
 const errorStore = useErrorStore();
-const objectStore = useObjectStore();
-const permissionStore = usePermissionStore();
+const objectMetaDataStore = useObjectMetaDataStore();
 
 // Define data
 const fieldValidation: Record<string, boolean> = {
-    emailModel: false,
-    firstNamesModel: false,
-    lastNameModel: false,
-    titleModel: false,
+    email: false,
+    first_name: false,
+    last_name: false,
+    title: false,
 };
 
 // Define refs
@@ -44,22 +51,17 @@ const lastNamesModel = ref<string>("");
 const titleModel = ref<string | number>("");
 
 // Define functions
-async function cancel() {
-    // Go back to organisation
-    await router.push(`/organisation/${objectStore.id}/`);
-}
-
 async function createCustomer() {
     // Create body
     const body = {
         title: titleModel.value,
-        first_names: firstNamesModel.value,
-        last_names: lastNamesModel.value,
+        first_name: firstNamesModel.value,
+        last_name: lastNamesModel.value,
         email: emailModel.value,
     }
 
     const response = await fetch(
-        `/api/v1/organisation/${objectStore.id}/customer/`,
+        `/api/v1/organisation/${props.id}/customer/`,
         {
             method: "POST",
             headers: {
@@ -76,14 +78,17 @@ async function createCustomer() {
             const data: CustomerInterface = await response.json();
 
             // Customer has been created
-            await router.push(`/organisation/${objectStore.id}/customer/${data.id}/`);
+            await router.push(`/organisation/${props.id}/customer/${data.id}/`);
+            break;
         }
         case 403: {
             await router.push({name: "forbidden"});
+            break;
         }
         default:
             errorStore.setError(response.statusText);
             await router.push({name: "server-error"});
+            break;
     }
 }
 
@@ -96,32 +101,33 @@ function updateValidation(field: string, value: boolean): void {
         return !value;
     });
 }
-
 </script>
 
 <template>
     <WlkCard class="new-customer">
         <WlkCardHeader>
-            <h1 id="main-title">{{ t(`new_object.title_customer`) }}</h1>
-            <p class="sub-text">{{ t("new_object.sub_title") }}</p>
+            <h1 id="main-title">{{ t(`customer.new_customer`) }}</h1>
+            <p class="sub-text">{{ t("customer.new_sub_customer") }}</p>
         </WlkCardHeader>
 
         <div class="customer-name">
             <WlkSelect
-                :label="t('new_object.select_customer_title')"
-                :options="permissionStore.customerTitles"
+                optionsLabel="title"
+                optionsValue="id"
+                :label="t('customer.title')"
+                :options="objectMetaDataStore.customer_titles"
                 :validationRules="[required()]"
                 v-model="titleModel"
                 v-on:change="(event: { isValid: boolean }) => (updateValidation('title', event.isValid))"
             />
             <WlkTextInput
-                :label="t('new_object.customer_first_name')"
+                :label="t('customer.first_name')"
                 :validationRules="[required(), maxLength(255)]"
                 v-model="firstNamesModel"
                 v-on:change="(event: { isValid: boolean }) => (updateValidation('first_name', event.isValid))"
             />
             <WlkTextInput
-                :label="t('new_object.customer_last_name')"
+                :label="t('customer.last_name')"
                 :validationRules="[required(), maxLength(255)]"
                 v-model="lastNamesModel"
                 v-on:change="(event: { isValid: boolean }) => (updateValidation('last_name', event.isValid))"
@@ -130,21 +136,18 @@ function updateValidation(field: string, value: boolean): void {
 
         <div class="customer-email">
             <WlkTextInput
-                :label="t('new_object.customer_email')"
+                :label="t('customer.email')"
                 :validationRules="[required(), maxLength(255), email()]"
                 v-model="emailModel"
                 v-on:change="(event: { isValid: boolean }) => (updateValidation('email', event.isValid))"
             />
         </div>
 
-        <WlkCardFooter>
+        <WlkCardFooter class="customer-footer">
             <RouterLink
-                :to="`/organisation/${objectStore.id}/`"
+                :to="`/organisation/${props.id}/`"
             >
-                <WlkButton
-                    class="danger"
-                    v-on:click="cancel"
-                >
+                <WlkButton class="danger">
                     {{ t("customer.cancel") }}
                 </WlkButton>
             </RouterLink>
@@ -155,11 +158,11 @@ function updateValidation(field: string, value: boolean): void {
                 v-on:click="createCustomer"
             >
                 <template v-slot:default>
-                    {{ t("new_object.button_create") }}
+                    {{ t("customer.create") }}
                 </template>
 
                 <template v-slot:action-state>
-                    {{ t("new_object.button_submitting") }}
+                    {{ t("customer.creating") }}
                 </template>
             </WlkButton>
         </WlkCardFooter>
@@ -180,6 +183,26 @@ function updateValidation(field: string, value: boolean): void {
 
     @media (--large-screen) {
         padding: 1rem 2rem;
+    }
+
+    > .customer-name {
+        display: flex;
+        flex-direction: column;
+
+        @media (--medium-screen) {
+            flex-direction: row;
+            justify-content: space-between;
+
+            > div:first-child {
+                width: 100px;
+            }
+        }
+    }
+
+    > .customer-footer {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
     }
 }
 </style>

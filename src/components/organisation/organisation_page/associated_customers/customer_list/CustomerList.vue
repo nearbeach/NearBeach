@@ -78,9 +78,9 @@ onMounted(async () => {
                 <ProfilePicture :url="customer.profile_picture" :name="customer.first_name" />
 				<div class="details">
 					<div class="name">
-                        <a :href="`/organisation/${objectStore.id}/customer/${customer.id}/`">
+                        <RouterLink :to="`/organisation/${objectStore.id}/customer/${customer.id}/`">
 						    {{ customer.title.title ?? "" }} {{ customer.first_name }} {{ customer.last_name }}
-                        </a>
+                        </RouterLink>
 					</div>
                     <div class="email">
 						<strong>{{t("customer.email")}}: </strong>{{customer.email}}
@@ -100,23 +100,24 @@ onMounted(async () => {
 .customer-list {
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
     margin: 1.5rem 0 1rem 0;
     padding-bottom: 1.5rem;
     border-bottom: 1px dashed;
 
     @media (--medium-screen) {
         flex-direction: row;
+        justify-content: space-between;
     }
 
     .customer-item {
         width: 100%;
         border: 1px dotted;
         padding: 1rem;
+        margin: 0 0 0.75rem 0;
 
         @media (--medium-screen) {
             width: 45%;
-            margin-left: 1.5%;
-            margin-right: 1.5%;
         }
     }
 }

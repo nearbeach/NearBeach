@@ -33,6 +33,7 @@ const SearchPage = () => import("@/components/search/SearchPage.vue");
 
 // Define functions
 async function fetchObjectMetaData(): Promise<boolean> {
+    const errorStore = useErrorStore();
     const permissionStore = usePermissionStore();
     const objectMetaDataStore = useObjectMetaDataStore();
     const userStore = useUserStore();
@@ -50,7 +51,10 @@ async function fetchObjectMetaData(): Promise<boolean> {
             }
         );
         if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
+            errorStore.setError(response.statusText);
+
+            // Let the router guard redirect - pushing from inside the guard loops forever
+            return false;
         }
         
         // Fetch data
@@ -84,7 +88,6 @@ async function fetchObjectMetaData(): Promise<boolean> {
 
         return true;
     } catch (error) {
-        const errorStore = useErrorStore();
         errorStore.setError(error);
 
         // Let the router guard redirect - pushing from inside the guard loops forever
@@ -131,9 +134,9 @@ const routes = [
         children: [
             {path: "", component: SearchPage, name: "SearchOrganisation"},
             {path: "new", component: NewOrganisation, name: "NewOrganisation"},
-            {path: ":id", component: OrganisationPage, name: "Organisation"},
-            {path: ":id/customer/new", component: NewCustomer, name: "NewCustomer"},
-            {path: ":id/customer/:customer_id", component: CustomerPage, name: "Customer"},
+            {path: ":id", component: OrganisationPage, name: "Organisation", props: true,},
+            {path: ":id/customer/new", component: NewCustomer, name: "NewCustomer", props: true},
+            {path: ":id/customer/:customerId", component: CustomerPage, name: "Customer", props: true},
         ]
     },
     {

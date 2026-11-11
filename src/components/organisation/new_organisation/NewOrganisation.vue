@@ -64,9 +64,11 @@ async function createOrganisation() {
 
 			// organisation has been created
 			await router.push(`/organisation/${data.id}/`);
+            break;
 		}
 		case 403: {
 			await router.push({name: "forbidden"});
+            break;
 		}
 		default:
 			errorStore.setError(response.statusText);
@@ -89,13 +91,13 @@ function updateValidation(field: string, value: boolean): void {
 <template>
 	<WlkCard class="new-organisation">
 		<WlkCardHeader>
-			<h1 id="main-title">{{ t(`new_object.title_organisation`) }}</h1>
+			<h1 id="main-title">{{ t(`organisation.new_organisation`) }}</h1>
 			<p class="sub-text">{{ t("new_object.sub_title") }}</p>
 		</WlkCardHeader>
 
 		<div class="organisation-name">
 			<WlkTextInput
-				:label="t('new_object.organisation_name')"
+				:label="t('organisation.name')"
 				:validationRules="[required(), maxLength(255)]"
 				v-model="nameModel"
 				v-on:change="(event: { isValid: boolean }) => (updateValidation('name', event.isValid))"
@@ -104,16 +106,16 @@ function updateValidation(field: string, value: boolean): void {
 
 		<div class="organisation-info">
 			<WlkTextInput
-				:label="t('new_object.organisation_website')"
+				:label="t('organisation.website')"
 				:validationRules="[required(), maxLength(255)]"
-				v-model="nameModel"
+				v-model="websiteModel"
 				v-on:change="(event: { isValid: boolean }) => (updateValidation('email', event.isValid))"
 			/>
 
 			<WlkTextInput
-				:label="t('new_object.organisation_email')"
+				:label="t('organisation.email')"
 				:validationRules="[required(), maxLength(255), email()]"
-				v-model="nameModel"
+				v-model="emailModel"
 				v-on:change="(event: { isValid: boolean }) => (updateValidation('website', event.isValid))"
 			/>
 
