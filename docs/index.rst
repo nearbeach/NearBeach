@@ -100,6 +100,7 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
 
     Deployment of NearBeach </006-procedures/deployment/deployment>
     Git Flow for NearBeach </006-procedures/git-flow/git-flow>
+    Automatic Testing </006-procedures/automatic-testing/automatic-testing>
 
 
 .. toctree::

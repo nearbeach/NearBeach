@@ -167,6 +167,8 @@ Profiling a specific piece of code
 To time one block in more detail, use the context manager or decorator from silk. For class based views, put the
 decorator on the method, not the class.
 
+.. code-block:: python
+
     from silk.profiling.profiler import silk_profile
 
     with silk_profile(name='Build kanban payload'):
@@ -258,8 +260,8 @@ More timed runs per query for steadier numbers (default is 3, the median is repo
     python scripts/benchmark_indexes.py --skip-seed --runs 5
 
 
-Reading the results
--------------------
+Reading the benchmark results
+-----------------------------
 
 1. BASELINE is timed with no candidate indexes, then the candidate indexes are created, then WITH INDEXES is timed.
 

@@ -21,7 +21,7 @@ Login Security
 NearBeach reads the following from its settings. They are optional, but a production site should set the first two.
 
 NUM_PROXIES
-^^^^^^^^^^^
+-----------
 
 The number of reverse proxies (nginx, a load balancer, Cloudflare...) between the internet and NearBeach. The login
 rate limits count attempts per visitor address, and this tells NearBeach how far to trust the ``X-Forwarded-For``
@@ -36,7 +36,7 @@ Example:
 * `NUM_PROXIES=1`
 
 SITE_URL
-^^^^^^^^
+--------
 
 The public address of your NearBeach. Password reset emails build their link from it. If it is not set, the link is
 built from the address the request arrived on, which is only as trustworthy as your ``ALLOWED_HOSTS``.
@@ -46,7 +46,7 @@ Example:
 * `SITE_URL=https://nearbeach.example.com`
 
 KNOX_TOKEN_TTL_HOURS
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 
 How many hours a ``Token`` (Knox) API token lasts. By default they never expire. Resetting a user's password always
 cancels their tokens, whatever this is set to.

@@ -104,8 +104,8 @@ Keycloak Example
 7. Visit the login page - a "Sign in with Keycloak" button now appears
 
 
-Troubleshooting
-===============
+Single Sign-On Troubleshooting
+==============================
 
 The login page shows a message when something goes wrong. The server log has the detail - search for
 ``OIDC login for <slug> failed``.
