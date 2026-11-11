@@ -1,0 +1,1 @@
+export { default as AssociatedObjects } from "./AssociatedObjects.vue";

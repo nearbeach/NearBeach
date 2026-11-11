@@ -1,3 +1,6 @@
+from NearBeach.services.NoteService import NoteService
+from NearBeach.services.document.DocumentMiddlemanService import DocumentMiddlemanService
+from NearBeach.services.document.DocumentService import DocumentService
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -115,6 +118,58 @@ class OrganisationViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
+    @object_permission(min_permission_level=1)
+    @action(
+        methods=["GET"],
+        detail=True,
+        url_path="documents",
+    )
+    def documents(self, _, pk, *args, **kwargs) -> Response:
+        document_service = DocumentService(destination="organisation", location_id=pk)
+        data, http_status = document_service.get_list(_)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @object_permission(min_permission_level=2, additive_permission="document")
+    @documents.mapping.post
+    def documents_create(self, request, pk, *args, **kwargs) -> Response:
+        document_middleman_service = DocumentMiddlemanService(destination="organisation", location_id=pk)
+        data, http_status = document_middleman_service.create(request)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @object_permission(min_permission_level=2)
+    @action(
+        methods=["DELETE"],
+        detail=True,
+        url_path=r"documents/(?P<document_pk>[^/.]+)",
+    )
+    def documents_delete(self, request, pk, document_pk, *args, **kwargs) -> Response:
+        document_middleman_service = DocumentMiddlemanService(destination="organisation", location_id=pk)
+        data, http_status = document_middleman_service.delete(request, document_pk)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @object_permission(min_permission_level=2)
+    @documents_delete.mapping.patch
+    def documents_update(self, request, pk, document_pk, *args, **kwargs) -> Response:
+        document_middleman_service = DocumentMiddlemanService(destination="organisation", location_id=pk)
+        data, http_status = document_middleman_service.update(request, document_pk)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
     @destination_permission(min_permission_level=1)
     def list(self, request: AuthenticatedRequest, *args, **kwargs):
         organisation_services = OrganisationService(destination="organisation", location_id=0)
@@ -146,6 +201,60 @@ class OrganisationViewSet(viewsets.ModelViewSet):
     def retrieve(request, pk, *args, **kwargs):
         organisation_service = OrganisationService(destination="organisation", location_id=pk)
         data, http_status = organisation_service.retrieve()
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+
+    @object_permission(min_permission_level=1)
+    @action(
+        methods=["GET"],
+        detail=True,
+        url_path="notes",
+        pagination_class=None,
+    )
+    def notes(self, request, pk, *args, **kwargs) -> Response:
+        note_service = NoteService(destination="organisation", location_id=pk)
+        data, http_status = note_service.get_list(request)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @object_permission(min_permission_level=2, additive_permission="organisation_note")
+    @notes.mapping.post
+    def notes_create(self, request, pk, *args, **kwargs) -> Response:
+        note_service = NoteService(destination="organisation", location_id=pk)
+        data, http_status = note_service.create(request)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @object_permission(min_permission_level=2, additive_permission="organisation_note")
+    @action(
+        methods=["DELETE"],
+        detail=True,
+        url_path = r"notes/(?P<note_pk>\d+)",
+    )
+    def notes_delete(self, request, pk, note_pk, *args, **kwargs) -> Response:
+        note_service = NoteService(destination="organisation", location_id=pk)
+        data, http_status = note_service.delete(request, note_pk)
+
+        return Response(
+            data=data,
+            status=http_status,
+        )
+
+    @object_permission(min_permission_level=2, additive_permission="organisation_note")
+    @notes_delete.mapping.patch
+    def notes_update(self, request, pk, note_pk, *args, **kwargs) -> Response:
+        note_service = NoteService(destination="organisation", location_id=pk)
+        data, http_status = note_service.update(request, note_pk)
 
         return Response(
             data=data,

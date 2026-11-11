@@ -8,6 +8,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import F
+
+from NearBeach.models import ListOfTitle
 from NearBeach.models.user import UserGroup, Group
 from NearBeach.models.project import ListOfProjectStatus
 from NearBeach.models.requirement.requirement import ListOfRequirementStatus, ListOfRequirementType
@@ -42,6 +44,14 @@ class UserInitialDataView(APIView):
         return get_cached(
             "all_groups",
             lambda: Group.objects.filter(is_deleted=False).order_by("name"),
+        )
+
+    @staticmethod
+    def _get_customer_titles():
+        """Method to get all customer titles"""
+        return get_cached(
+            "customer_titles",
+            lambda: ListOfTitle.objects.filter(is_deleted=False).order_by("title"),
         )
 
     @staticmethod
@@ -141,6 +151,7 @@ class UserInitialDataView(APIView):
         user_result.object_types = self._get_types()
         user_result.tags = self._get_tags()
         user_result.all_groups = self._get_all_groups()
+        user_result.customer_titles = self._get_customer_titles()
 
         # Serialize data
         serializer = UserInitialDataSerializer(user_result)

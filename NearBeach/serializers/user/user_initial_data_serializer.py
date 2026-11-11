@@ -1,3 +1,4 @@
+from NearBeach.serializers.customer_title_serializer import CustomerTitleSerializer
 from NearBeach.serializers.group_serializer import GroupSerializer
 from NearBeach.serializers.object_data.status.object_status_serializer import ObjectStatusSerializer
 from NearBeach.serializers.object_data.types.object_types_serializer import ObjectTypesSerializer
@@ -35,6 +36,11 @@ class UserInitialDataSerializer(UserSerializer):
         read_only=True,
         allow_null=True,
     )
+    customer_titles = CustomerTitleSerializer(
+        many=True,
+        read_only=True,
+        allow_null=True,
+    )
 
     class Meta:
         model = UserSerializer.Meta.model
@@ -44,4 +50,5 @@ class UserInitialDataSerializer(UserSerializer):
             'object_status',
             'object_types',
             'tags',
+            'customer_titles',
         ]

@@ -10,6 +10,7 @@ from django.core.cache import cache
 from django.db.models import Model
 from django.db.models.signals import post_delete, post_save
 
+from NearBeach.models import ListOfTitle
 from NearBeach.models.misc.tag import Tag
 from NearBeach.models.permission.group import Group
 from NearBeach.models.project import ListOfProjectStatus
@@ -42,6 +43,7 @@ _cached_models: List[type[Model]] = [
     ListOfRequirementStatus,
     ListOfRequirementType,
     ListOfTaskStatus,
+    ListOfTitle,
     Tag,
 ]
 for _model in _cached_models:

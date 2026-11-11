@@ -18,13 +18,13 @@ const DashboardPage = () =>
 const NewProject = () =>
     import("@/components/new_object/NewObject.vue");
 const NewOrganisation = () =>
-    import("@/components/organisation/NewOrganisation.vue");
+    import("@/components/organisation/new_organisation/NewOrganisation.vue");
 const NewCustomer = () =>
     import("@/components/customer/NewCustomer.vue");
 const PublicLinkPage = () =>
     import("@/components/public_link/PublicLinkPage.vue");
 const OrganisationPage = () =>
-    import("@/components/organisation/OrganisationPage.vue");
+    import("@/components/organisation/organisation_page/OrganisationPage.vue");
 const NotFoundPage = () =>
     import("@/components/error/NotFoundPage/NotFoundPage.vue");
 const ProjectPage = () =>
@@ -33,6 +33,7 @@ const SearchPage = () => import("@/components/search/SearchPage.vue");
 
 // Define functions
 async function fetchObjectMetaData(): Promise<boolean> {
+    const errorStore = useErrorStore();
     const permissionStore = usePermissionStore();
     const objectMetaDataStore = useObjectMetaDataStore();
     const userStore = useUserStore();
@@ -50,7 +51,10 @@ async function fetchObjectMetaData(): Promise<boolean> {
             }
         );
         if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
+            errorStore.setError(response.statusText);
+
+            // Let the router guard redirect - pushing from inside the guard loops forever
+            return false;
         }
         
         // Fetch data
@@ -68,6 +72,7 @@ async function fetchObjectMetaData(): Promise<boolean> {
             object_status: result.object_status,
             object_types: result.object_types,
             tags: result.tags,
+            customer_titles: result.customer_titles,
         });
 
         // Update user
@@ -83,7 +88,6 @@ async function fetchObjectMetaData(): Promise<boolean> {
 
         return true;
     } catch (error) {
-        const errorStore = useErrorStore();
         errorStore.setError(error);
 
         // Let the router guard redirect - pushing from inside the guard loops forever
@@ -130,9 +134,9 @@ const routes = [
         children: [
             {path: "", component: SearchPage, name: "SearchOrganisation"},
             {path: "new", component: NewOrganisation, name: "NewOrganisation"},
-            {path: ":id", component: OrganisationPage, name: "Organisation"},
-            {path: ":id/customer/new", component: NewCustomer, name: "NewCustomer"},
-            {path: ":id/customer/:customer_id", component: CustomerPage, name: "Customer"},
+            {path: ":id", component: OrganisationPage, name: "Organisation", props: true,},
+            {path: ":id/customer/new", component: NewCustomer, name: "NewCustomer", props: true},
+            {path: ":id/customer/:customerId", component: CustomerPage, name: "Customer", props: true},
         ]
     },
     {

@@ -51,9 +51,16 @@ class CustomerService(ObjectServiceAbstraction):
         return {}, status.HTTP_204_NO_CONTENT
 
     def get_list(self, request: AuthenticatedRequest) -> QuerySet[Customer]:  # type: ignore[override]
-        customer_results = Customer.objects.filter(
+        customer_results = (Customer.objects.filter(
             is_deleted=False,
-        ).select_related("title").order_by("last_name", "first_name", "pk")
+            organisation_id=self.location_id,
+        ).select_related(
+            "title"
+        ).order_by(
+            "last_name",
+            "first_name",
+            "pk",
+        ))
 
         # Filter by search parameter in the query string
         search = request.query_params.get("search", None)

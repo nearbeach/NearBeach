@@ -14,201 +14,195 @@ import type {ObjectInterface} from "@/utils/interfaces/stores/ObjectInterface.ts
 const {t} = useI18n()
 
 // Define router
-const errorStore = useErrorStore();
 const route = useRoute();
 
 // Define refs
 const updateState = ref("normal");
 
 // Define stores
+const errorStore = useErrorStore();
 const objectStore = useObjectStore();
 const permissionStore = usePermissionStore();
 
 // Define data
 const fieldValidation: Record<string, boolean> = {
-	descriptionModel: false,
-	titleModel: false,
+    descriptionModel: false,
+    titleModel: false,
 };
 
 // Define onMount
 onMounted(async () => {
-	// Clear the source
-	objectStore.$reset();
+    // Clear the source
+    objectStore.$reset();
 
-	// Get the object id
-	const id: string | string[] | undefined = route.params.id;
-	const destination: unknown = route.meta.destination;
-	if (typeof (id) !== 'string' || isNaN(parseInt(id))) {
-		errorStore.setError("Invalid id");
-		router.push({name: "bad-request"});
-		return;
-	}
-	if (parseInt(id) !== parseFloat(id)) {
-		errorStore.setError("Invalid id - not set as an integer");
-		router.push({name: "bad-request"});
-		// id is not an int
-		return;
-	}
-	if (typeof (destination) !== 'string') {
-		errorStore.setError("Invalid destination");
-		router.push({name: "bad-request"});
-		return;
-	}
+    // Get the object id
+    const id: string | string[] | undefined = route.params.id;
+    const destination: unknown = route.meta.destination;
+    if (typeof (id) !== 'string' || isNaN(parseInt(id))) {
+        errorStore.setError("Invalid id");
+        router.push({name: "bad-request"});
+        return;
+    }
+    if (parseInt(id) !== parseFloat(id)) {
+        errorStore.setError("Invalid id - not set as an integer");
+        router.push({name: "bad-request"});
+        // id is not an int
+        return;
+    }
+    if (typeof (destination) !== 'string') {
+        errorStore.setError("Invalid destination");
+        router.push({name: "bad-request"});
+        return;
+    }
 
-	try {
+    const response = await fetch(
+        `/api/v1/${destination}/${id}/`,
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFTOKEN": getCsrfToken(),
+            }
+        }
+    );
 
-		const response = await fetch(
-			`/api/v1/${destination}/${id}/`,
-			{
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				}
-			}
-		);
+    switch (response.status) {
+        case 200: {
+            // Get data
+            const data: ObjectInterface = await response.json();
+            data.destination = destination;
+            data.is_loaded = true;
 
-		switch (response.status) {
-			case 200: {
-				// Get data
-				const data: ObjectInterface = await response.json();
-				data.destination = destination;
-				data.is_loaded = true;
+            // Patch
+            objectStore.$patch(data);
 
-				// Patch
-				objectStore.$patch(data);
-
-				// Calculate permissions
-				const current_group_ids = new Set(data.group_list.map(x => x.id));
-				permissionStore.SetCurrentObjectPermissions(destination, current_group_ids);
-				break;
-			}
-			case 403:
-				// Use does not have access to the object
-				await router.push({name: "forbidden"});
-				break;
-			case 404:
-				// Object does not exist
-				await router.push({name: "not-found"});
-				break;
-			default:
-				// Assuming a 500 error
-				errorStore.setError(response);
-				await router.push({name: "server-error"});
-		}
-	} catch (error) {
-		// Assuming a 500 error
-		errorStore.setError(error);
-		await router.push({name: "server-error"});
-	}
+            // Calculate permissions
+            const current_group_ids = new Set(data.group_list.map(x => x.id));
+            permissionStore.SetCurrentObjectPermissions(destination, current_group_ids);
+            break;
+        }
+        case 403:
+            // Use does not have access to the object
+            await router.push({name: "forbidden"});
+            break;
+        case 404:
+            // Object does not exist
+            await router.push({name: "not-found"});
+            break;
+        default:
+            // Assuming a 500 error
+            errorStore.setError(response);
+            await router.push({name: "server-error"});
+            break;
+    }
 });
 
 // Define computed
 const isUpdateButtonDisabled = computed(() => {
-	return updateState.value !== "normal";
+    return updateState.value !== "normal";
 });
 
 const renderUpdateButton = computed(() => {
-	switch (updateState.value) {
-		case "error":
-			return t("general_detail_component.update_error");
-		case "updated":
-			return t("general_detail_component.updated");
-		case "updating":
-			return t("general_detail_component.updating");
-		default:
-			return t("general_detail_component.update");
-	}
+    switch (updateState.value) {
+        case "error":
+            return t("general_detail_component.update_error");
+        case "updated":
+            return t("general_detail_component.updated");
+        case "updating":
+            return t("general_detail_component.updating");
+        default:
+            return t("general_detail_component.update");
+    }
 });
 
 // Define functions
 async function updateData() {
-	// Notify the user of the state change
-	updateState.value = "updating"
+    // Notify the user of the state change
+    updateState.value = "updating"
 
-	try {
-		const response = await fetch(
-			`/api/v1/${objectStore.destination}/${objectStore.id}/`,
-			{
-				method: "PATCH",
-				body: JSON.stringify({
-					title: objectStore.title,
-					description: objectStore.description,
-				}),
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFTOKEN": getCsrfToken(),
-				}
-			}
-		);
+    try {
+        const response = await fetch(
+            `/api/v1/${objectStore.destination}/${objectStore.id}/`,
+            {
+                method: "PATCH",
+                body: JSON.stringify({
+                    title: objectStore.title,
+                    description: objectStore.description,
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFTOKEN": getCsrfToken(),
+                }
+            }
+        );
 
-		switch (response.status) {
-			case 200:
-				updateState.value = "updated";
+        switch (response.status) {
+            case 200:
+                updateState.value = "updated";
 
-				setTimeout(() => {
-					updateState.value = "normal";
-				}, 2000);
-				break;
-			case 403:
-				// User does not have access to the object
-				updateState.value = "error";
-				errorStore.setError(t("general_detail_component.error_forbidden"));
-				errorStore.showErrorModal = true;
-				break;
-			default:
-				updateState.value = "error";
-				errorStore.setError(response.statusText);
-				errorStore.showErrorModal = true;
-				break;
-		}
-	} catch (error) {
-		errorStore.setError(error);
-	}
+                setTimeout(() => {
+                    updateState.value = "normal";
+                }, 2000);
+                break;
+            case 403:
+                // User does not have access to the object
+                updateState.value = "error";
+                errorStore.setError(t("general_detail_component.error_forbidden"));
+                errorStore.showErrorModal = true;
+                break;
+            default:
+                updateState.value = "error";
+                errorStore.setError(response.statusText);
+                errorStore.showErrorModal = true;
+                break;
+        }
+    } catch (error) {
+        errorStore.setError(error);
+    }
 }
 </script>
 
 <template>
-	<WlkCard class="general-details">
-		<WlkCardHeader>
-			<h1 id="main-title">{{ t(`general_detail_component.${objectStore.destination}_details`) }}</h1>
-			<p class="sub-text">{{ t(`general_detail_component.${objectStore.destination}_sub_text`) }}</p>
-		</WlkCardHeader>
-		<WlkTextInput
-			v-model="objectStore.title"
-			:label="t('general_detail_component.title')"
-			:validationRules="[required(), maxLength(255), minLength(5)]"
-			:placeholderText="t(`general_detail_component.${objectStore.destination}_title_placeholder`)"
-			v-on:change="(event: { isValid: boolean }) => (fieldValidation['titleModel'] = event.isValid)"
-		/>
-		<WlkTextArea
-			v-model="objectStore.description"
-			:label="t('general_detail_component.description')"
-			:placeholderText="t(`general_detail_component.${objectStore.destination}_description_placeholder`)"
-		/>
+    <WlkCard class="general-details">
+        <WlkCardHeader>
+            <h1 id="main-title">{{ t(`general_detail_component.${objectStore.destination}_details`) }}</h1>
+            <p class="sub-text">{{ t(`general_detail_component.${objectStore.destination}_sub_text`) }}</p>
+        </WlkCardHeader>
+        <WlkTextInput
+            v-model="objectStore.title"
+            :label="t('general_detail_component.title')"
+            :validationRules="[required(), maxLength(255), minLength(5)]"
+            :placeholderText="t(`general_detail_component.${objectStore.destination}_title_placeholder`)"
+            v-on:change="(event: { isValid: boolean }) => (fieldValidation['titleModel'] = event.isValid)"
+        />
+        <WlkTextArea
+            v-model="objectStore.description"
+            :label="t('general_detail_component.description')"
+            :placeholderText="t(`general_detail_component.${objectStore.destination}_description_placeholder`)"
+        />
 
-		<WlkButton
-			v-if="permissionStore.currentObjectPermissions.currentObject > 1"
-			class="primary"
-			:disabled="isUpdateButtonDisabled"
-			v-on:click="updateData"
-		>
-			{{ renderUpdateButton }}
-		</WlkButton>
-	</WlkCard>
+        <WlkButton
+            v-if="permissionStore.currentObjectPermissions.currentObject > 1"
+            class="primary"
+            :disabled="isUpdateButtonDisabled"
+            v-on:click="updateData"
+        >
+            {{ renderUpdateButton }}
+        </WlkButton>
+    </WlkCard>
 
 </template>
 
 <style scoped>
 .general-details {
-	padding: 0 0.5rem;
+    padding: 0 0.5rem;
 
-	@media (--medium-screen) {
-		padding: 0.5rem 1rem;
-	}
+    @media (--medium-screen) {
+        padding: 0.5rem 1rem;
+    }
 
-	@media (--large-screen) {
-		padding: 0.5rem 1rem;
-	}
+    @media (--large-screen) {
+        padding: 0.5rem 1rem;
+    }
 }
 </style>

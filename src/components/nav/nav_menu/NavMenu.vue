@@ -2,6 +2,7 @@
 import NavMenuItem from '@/components/nav/nav_menu/nav_menu_item/NavMenuItem.vue';
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
 import {
+	Building,
 	LayoutDashboard,
 	SquareKanban,
 	ClipboardList,
@@ -43,6 +44,16 @@ function canUserCreate(object: string) {
 		:title="t('nav_menu.dashboard_title')"
 	>
 		<component :is="LayoutDashboard" :size="14"/>
+	</NavMenuItem>
+
+	<NavMenuItem
+		destination="organisation"
+		route-address="/organisation"
+		route-address-new="/organisation/new"
+		:override-aria-label="t('nav_menu.organisation_aria_label')"
+		:title="t('nav_menu.organisation_title')"
+	>
+		<component :is="Building" :size="14"/>
 	</NavMenuItem>
 
 	<NavMenuItem
