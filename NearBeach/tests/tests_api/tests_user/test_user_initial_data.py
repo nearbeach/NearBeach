@@ -67,6 +67,7 @@ class UserInitialDataTests(BaseApiClass):
             {
                 "id", "username", "first_name", "last_name", "full_name", "email", "profile_picture",
                 "profile_picture_path", "all_groups", "permissions", "object_status", "object_types", "tags",
+                "customer_titles",
             },
         )
 

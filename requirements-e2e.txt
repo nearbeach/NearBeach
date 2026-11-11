@@ -1,5 +1,0 @@
--r requirements.txt
-pytest
-pytest-django
-pytest-playwright
-axe-playwright-python

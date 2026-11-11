@@ -8,7 +8,7 @@ and persistence of the title and selected group after a page reload.
 From the repository root, with your virtual environment activated:
 
 ```bash
-python -m pip install -r requirements-e2e.txt
+python -m pip install -r requirements-dev.txt
 python -m playwright install chromium
 npm install
 ```

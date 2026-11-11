@@ -21,7 +21,6 @@ Activate your python virtual environment
 Make sure you have installed all dev requirements
 
     pip install -r requirements-dev.txt
-    pip install -r requirements-e2e.txt
 
 Run the tests
 
@@ -64,7 +63,6 @@ Activate your python virtual environment
 Make sure you have installed all dev requirements
 
     pip install -r requirements-dev.txt
-    pip install -r requirements-e2e.txt
 
 Run the tests as either admin, or run as a restricted user
 
