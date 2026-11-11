@@ -109,14 +109,14 @@ function updateValidation(field: string, value: boolean): void {
 				:label="t('organisation.website')"
 				:validationRules="[required(), maxLength(255)]"
 				v-model="websiteModel"
-				v-on:change="(event: { isValid: boolean }) => (updateValidation('email', event.isValid))"
+				v-on:change="(event: { isValid: boolean }) => (updateValidation('website', event.isValid))"
 			/>
 
 			<WlkTextInput
 				:label="t('organisation.email')"
 				:validationRules="[required(), maxLength(255), email()]"
 				v-model="emailModel"
-				v-on:change="(event: { isValid: boolean }) => (updateValidation('website', event.isValid))"
+				v-on:change="(event: { isValid: boolean }) => (updateValidation('email', event.isValid))"
 			/>
 
 		</div>

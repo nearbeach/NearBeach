@@ -210,15 +210,15 @@ onMounted(async () => {
             <WlkTextInput
                 :label="t('organisation.website')"
                 :validationRules="[required(), maxLength(255)]"
-                v-model="nameModel"
-                v-on:change="(event: { isValid: boolean }) => (updateValidation('email', event.isValid))"
+                v-model="websiteModel"
+                v-on:change="(event: { isValid: boolean }) => (updateValidation('website', event.isValid))"
             />
 
             <WlkTextInput
                 :label="t('organisation.email')"
                 :validationRules="[required(), maxLength(255), email()]"
-                v-model="nameModel"
-                v-on:change="(event: { isValid: boolean }) => (updateValidation('website', event.isValid))"
+                v-model="emailModel"
+                v-on:change="(event: { isValid: boolean }) => (updateValidation('email', event.isValid))"
             />
 
         </div>

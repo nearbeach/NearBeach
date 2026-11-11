@@ -87,13 +87,13 @@ onMounted(async () => {
                     </div>
 				</div>
         </div>
-        <WlkRenderErrorMessage v-if="errorMessage !== ''">{{errorMessage}}</WlkRenderErrorMessage>
     </div>
     <div v-else
          class="empty-customer-list"
     >
         {{ t("customer.empty_customer_list") }}
     </div>
+    <WlkRenderErrorMessage v-if="errorMessage !== ''">{{errorMessage}}</WlkRenderErrorMessage>
 </template>
 
 <style scoped>
