@@ -131,3 +131,6 @@ node_modules/
 
 # Schemathesis cache
 .schemathesis/
+
+# QA copy of the dev database
+qa.sqlite3

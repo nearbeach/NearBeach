@@ -1,0 +1,31 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "nearbeach-vite",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--host",
+        "localhost",
+        "--port",
+        "5173",
+        "--strictPort"
+      ],
+      "port": 5173
+    },
+    {
+      "name": "nearbeach-django-qa",
+      "runtimeExecutable": "venv/bin/python",
+      "runtimeArgs": [
+        "manage.py",
+        "runserver",
+        "8000",
+        "--settings=local.settings_qa"
+      ],
+      "port": 8000
+    }
+  ]
+}

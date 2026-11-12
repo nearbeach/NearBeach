@@ -1,0 +1,16 @@
+# NearBeach
+
+> NearBeach is an open-source project management system (Django + DRF backend, Vue 3 frontend). It manages Organisations, Customers, Projects, Tasks, Requirements, Kanban boards, Request for Changes and Sprints, with group-based permissions.
+
+## For agents
+- [NearBeach for AI agents](https://nearbeach.readthedocs.io/en/latest/008-for-agents/index.html): domain model, permissions, API usage
+- [Architecture](https://github.com/robotichead/NearBeach/blob/develop/Architecture.md): how the codebase is structured
+- [AGENTS.md](https://github.com/robotichead/NearBeach/blob/develop/AGENTS.md): rules and commands for coding agents
+
+## API
+- [OpenAPI schema](https://github.com/robotichead/NearBeach/blob/develop/schema.yml)
+- [OAuth2 for the API](https://nearbeach.readthedocs.io/en/latest/003-administration-tasks/oauth2-api.html)
+
+## Optional
+- [Permission sets](https://nearbeach.readthedocs.io/en/latest/003-administration-tasks/manage-permission-sets.html)
+- [Git flow](https://nearbeach.readthedocs.io/en/latest/006-procedures/git-flow/git-flow.html)

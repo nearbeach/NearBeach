@@ -60,6 +60,7 @@ Welcome to NearBeach. We are a small community of developers trying to make tool
     :caption: 🏸 For Developers
 
     Setup Local Dev Env </002-local-development-environment-setup/index>
+    NearBeach for AI Agents </008-for-agents/index>
 
 
 .. toctree::

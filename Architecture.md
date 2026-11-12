@@ -1,208 +1,146 @@
 # NearBeach Architecture
 
-This document explains how NearBeach is structured so that new contributors can quickly understand how the parts of the system fit together and where to find things in the codebase.
+How NearBeach is put together, for human contributors and AI coding agents. This is the single source of truth for the system map; `AGENTS.md` and `CLAUDE.md` summarise it and link here.
 
-If you are completely new to the project, start with the README for context, then come back here for a deeper architectural overview.
+- Homepage: https://nearbeach.org
+- Docs: https://nearbeach.readthedocs.io
+- Community: https://discord.gg/64uhRztS6n
 
-- Project homepage: https://nearbeach.org
-- Documentation: https://nearbeach.readthedocs.io
-- Community/Support: https://discord.gg/64uhRztS6n
+> **Rewrite in progress (branch `0.32-development`).** The frontend moved from Webpack/Vue to Vite + Vue 3 + TypeScript + Pinia, and the backend is moving from function views to DRF viewsets + a service layer. Only **Organisation, Project, Customer and Public Link** are fully on the new stack. Do not assume other objects (Task, Requirement, Kanban, RFC, Sprint) have API endpoints, services or Vue components yet; their models and fixtures exist.
 
+## 1. Stack at a glance
 
-## High-level overview
+| Layer | Technology |
+|---|---|
+| Backend | Django 6, Django REST Framework, drf-spectacular (OpenAPI) |
+| Auth | Django sessions, django-rest-knox tokens, django-oauth-toolkit (OAuth2), django_otp (2FA), authlib (OIDC SSO) |
+| Frontend | Vue 3, vue-router, Pinia, TypeScript, petite-vue-i18n, Vite + django-vite |
+| DB | SQLite in dev; MariaDB/MySQL/PostgreSQL/Oracle in production |
+| Files | Local, AWS S3 or Azure Blob (`NearBeach/utils/private_media.py`) |
+| Tests | Django `APITestCase`, Vitest, Playwright (Python e2e), schemathesis |
 
-NearBeach is an open source project management system.
+## 2. Repository layout
 
-- Backend: Django (Python)
-  - Provides server‑rendered pages and a JSON API used by the frontend.
-  - Uses Django ORM for database access
-  - Uses Django for authentication handling
-- Frontend: Vue.js (Single File Components, SFCs)
-  - Compiled via Webpack; served as static assets by Django.
-  - Talks to the backend using REST‑style JSON APIs.
-- Database: Configured via Django ORM (SQLite for development by default, others in production).
-- Tests and tooling: Python tests with pytest/Django test runner under tests/, end‑to‑end tooling available (Playwright), frontend tests with Vitest. Load testing with locust.
+- `NearBeach/` – the single Django app (`NearBeach.apps.NearBeachConfig`)
+- `local/` – dev project config: `settings.py`, `urls.py` (`ROOT_URLCONF`), `settings_schemathesis.py`
+- `src/` – Vue 3 + TS frontend (entry points `src/main.ts`, `src/login.ts`)
+- `e2e/` – Python Playwright tests (need Vite running); see `e2e/README.md`
+- `docs/` – Sphinx / Read the Docs manual (RST, numbered folders)
+- `swagger/`, `schema.yml` – OpenAPI artefacts
+- `scripts/` – benchmarks, locale extraction, schemathesis runner
+- `vite.config.ts` – builds to `NearBeach/static/NearBeach/` (`js/[name]-bundle.js`, `css/[name].css`, `manifest.json`)
 
+## 3. Backend (`NearBeach/`)
 
-## Repository layout (top level)
+```
+models/      domain tables, split per area
+serializers/ DRF serializers (+ available_data, object_data, user, ...)
+services/    business logic; one Service class per object
+views/       api_v1/ (viewsets), application/, authentication/, private_document/, public_link/, search/
+urls/        base.py, api_public.py, api_internal.py, oauth2.py
+decorators/  check_user_permissions/ (object_permission, destination_permission)
+utils/       enums/, api/ helpers, dicts/, throttle/, oauth2/
+api_docs/    drf-spectacular schema constants (XXX_SCHEMA) + @apply_schema
+tests/       tests_api, tests_services, tests_views, ...
+```
 
-- NearBeach/ — Django project and application code (models, serializers, views, URLs, templates, static, migrations, etc.).
-- src/ — Frontend source (Vue components, JS entry points, styles). Bundled with Webpack.
-- NearBeach/tests - Tests for backend
-- tests/ Tests for frontend.
-- docs/ — Documentation sources (Sphinx/readthedocs).
-- swagger/ — API specification and assets related to API description.
-- node_modules/, package.json, webpack.*.js, vitest.config.js — Frontend build and test tooling.
-- pyproject.toml, requirements*.txt — Python packaging and dependencies.
-- manage.py — Django management entry point.
-- db.sqlite3 — Default local development database (do not commit changes from production use).
-- browserstack/, playwright.config.ts, locust_tests/ — Testing and QA tooling.
+### Models
+Every model extends `CommonInfo` (`models/abstraction/common_abstractions.py`): `date_created`, `date_modified`, `creation_user`, `change_user` and a soft-delete flag **`is_deleted`**. Querysets must filter `is_deleted=False`. Primary keys are explicit `BigAutoField`. Enums are `IntegerChoices`/`TextChoices` in `utils/enums/` with `gettext_lazy` labels.
 
+Domain areas: Organisation, Customer, Project, Task, Requirement + RequirementItem, RequestForChange + ChangeTask, KanbanBoard + KanbanCard, Sprint, Document/Folder, Note, Tag, Group/PermissionSet/UserGroup, OIDC provider.
 
-## Django backend structure (NearBeach/)
+### How objects are tied together: `ObjectAssignment`
+`models/object_assignment/object_assignment.py` is **one wide table with nullable FKs** to every object type plus `assigned_user` and `group`. It is *not* a Django GenericForeignKey. A row means one of:
 
-Key paths inside NearBeach/ (only representative highlights listed):
+1. **Group access**: `group` + one object FK. The group may access the object.
+2. **User assignment**: `assigned_user` + one object FK.
+3. **Object link**: object FK + `meta_object`, `meta_object_title`, `meta_object_status`, `link_relationship` (block / duplicate / relate / subobject) + `parent_link`.
 
-- NearBeach/apps.py — Django app configuration.
-- NearBeach/urls_two_factor.py — URL routes for optional two‑factor authentication flows.
-- NearBeach/migrations/ — Database schema migrations (managed by Django).
-- NearBeach/serializers/ — DRF‑style serializers used by API viewsets and endpoints.
-  - Example: NearBeach/serializers/destination_serializer.py
-- NearBeach/views/ — View modules for pages and APIs. Notable sub-areas:
-  - NearBeach/views/api/ — JSON API endpoints grouped by domains (e.g., sprint_api_view.py, coffee_api_view.py, object_data/link_api_view.py, available_data/*_list_api_view.py, etc.).
-  - NearBeach/views/authentication/ — Login/2FA and related UI views.
-  - Other domain views: admin_views.py, sprint_views.py, card_views.py, change_task_views.py, customer_views.py, document_views.py, gdpr_wizard_views.py, etc.
-- NearBeach/static/ — Static assets collected and served by Django (vendored libraries, icons, TinyMCE, etc.).
-- NearBeach/templates/ — Django templates for server-rendered pages (if present).
+Fixture conventions: `docs/007-misc/fixtures/fixture-object-assignment.rst`.
 
-Typical backend layering
-- URL routing: Configured in project urls (and urls_two_factor.py for 2FA). Each domain area has URL patterns pointing to function-based views, class-based views, or DRF ViewSets.
-- Views and APIs:
-  - Server-rendered views return HTML templates and embed frontend entrypoints for Vue where appropriate.
-  - API endpoints (in views/api) return JSON responses and accept JSON bodies. Patterns commonly use Django REST Framework style ViewSets or function-based views with @require_http_methods.
-- Serializers:
-  - Define how model instances are converted to/from JSON payloads for the API.
-  - Live under NearBeach/serializers/ and are imported by API views.
-- Models:
-  - Django ORM models define persistent data. Migrations in NearBeach/migrations/ track schema changes.
-- Permissions and authentication:
-  - Authentication uses Django’s auth. 2FA support is routed via urls_two_factor.py and views under views/authentication/.
-  - Many views implement permission checks with helper utilities (e.g., get_user_group_permission) and per‑object gating.
+### Permissions
+- A user belongs to groups via `UserGroup`; each row carries a `PermissionSet`.
+- `PermissionSet` holds one integer per area (project, task, requirement, kanban_board, request_for_change, customer, organisation, sprint, document, tag, `administration_*`) using `PermissionLevel`: 0 none, 1 read, 2 edit, 3 add+edit, 4 full.
+- Additive permissions (`project_note`, `task_note`, `kanban_note`, ...) extend the base level.
+- **Effective access = ObjectAssignment group access ∩ PermissionSet level.** Organisation is exempt from the group filter.
+- Child objects (card, change task, ...) resolve to their parent via `utils/api/get_parent_object.py`; `utils/api/object_to_permission_set_mapping.py` maps a destination name to a `PermissionSet` field.
+- Enforced with decorators in `decorators/check_user_permissions/`:
+  - `@object_permission(min_permission_level=N, additive_permission="...")` – object id is in the URL (404 if missing, `PermissionDenied` if not allowed).
+  - `@destination_permission(min_permission_level=N)` – create flows, no id yet.
+  - Used together with `@action`. Validate group lists with `check_group_list`.
 
+### Request path
+```
+browser -> local/urls.py
+  -> NearBeach/urls/base.py
+       api/v1/  -> api_public.py (SimpleRouter viewsets, schema/, docs/)
+                -> api_internal.py (auth, OIDC, user/initial_data/; catch-all JSON 404)
+       login / logout / reset-password views
+       private/<uuid>/   private documents
+       public_link/<uuid>/
+       <path:_>  -> ApplicationView -> templates/NearBeach/application.html -> Vue SPA
+```
 
-## Vue frontend structure (src/)
+### Layering for an API call
+```
+ViewSet (views/api_v1/*_api_view.py)
+  @apply_schema(X_SCHEMA)            # docs
+  @object_permission / @destination_permission
+  -> Service (services/XxxService.py, subclass ObjectServiceAbstraction)
+        ProjectService(destination="project", location_id=pk)
+  -> Serializer (serializers/...)
+  <- returns (data, http_status); the view wraps it in Response
+```
+Rate limits for auth endpoints: `utils/throttle/` (`THROTTLE_AUTH_*` env vars). Tests disable them.
 
-- src/js/app.js — Main frontend entry that registers and bootstraps Vue components for pages.
-- src/js/components.js — Central index of components for lazy/explicit imports.
-- src/js/components/** — Vue Single File Components (SFCs) grouped by feature domain.
-  - Administration: src/js/components/administration/*.vue
-  - Change/Task: src/js/components/change_task/*.vue
-  - Cards/Kanban: src/js/components/card_information/*.vue, src/js/components/kanban/*.vue
-  - Users: src/js/components/users/*.vue
-  - Icons and shared UI: src/js/components/icons/*.vue
-- State management: The project primarily composes state within components and passes props/events between them. If a global store is in use, it will be initialized from app.js; otherwise look for composables or shared modules by domain.
-- Validation/UI libraries: Vuelidate is used for form validation; Bootstrap is used for CSS layout. TinyMCE is used for rich text editing.
+## 4. Frontend (`src/`)
 
-Build output
-- Webpack bundles the Vue SFCs into static assets that Django serves from its static files pipeline.
-- The webpack.*.js files define common, dev, prod, and watch configurations.
+- `main.ts` (app) and `login.ts` (login app); `pages/app/App.vue`, `pages/login_app`.
+- `router/router.ts`, `loginRouter.ts`.
+- `stores/` (Pinia): documentation, error, nav, object, object_meta_data, permissions, search, user.
+- `composables/`: `safeFetch`, `getCsrfToken`, `failedValidation`, `getSafeNextUrl`, `useSsoProviders`.
+- `components/<feature>/`: each component folder has `Name.vue`, `Name.spec.ts`, `index.ts`. Shared: `object_components/*`, `prefab/*`.
+- i18n: `petite-vue-i18n`; `locales/en.json` is bundled, others (`ja.json`) lazy-load; page language from `<html lang>`. `scripts/extract-locales.mjs` and `locales.spec.ts` keep files in sync.
+- Accessibility is first-class (`skip_links`, `styles/_accessibility.css`, axe in `e2e/test_accessibility.py`).
+- Dev: Vite on :5173 alongside Django :8000 (`vite_hmr_client` / `vite_asset` template tags). Prod: `npm run build` into `NearBeach/static/NearBeach/`.
 
+## 5. Common tasks
 
-## API and data flow
+| Task | Command |
+|---|---|
+| Python env | `python3 -m venv venv && source venv/bin/activate && pip install -r requirements-dev.txt` |
+| DB | `python3 manage.py migrate && python3 manage.py createsuperuser` |
+| Backend server | `python3 manage.py runserver` |
+| Frontend dev | `npm install && npm run dev` (Node ^22.12 or ^24) |
+| Backend tests | `python3 manage.py test` |
+| Frontend tests | `npm run test:unit` |
+| Types / lint | `npm run type-check`, `npm run lint`, `npm run format`, `mypy NearBeach` |
+| E2E | `DJANGO_ALLOW_ASYNC_UNSAFE=true python -m pytest -c e2e/pytest.ini e2e/test_project_creation.py --headed -v` |
+| API fuzz | `scripts/run_schemathesis.sh` |
+| Docs | `cd docs && make html` |
 
-- Most user interactions in the UI trigger API calls to endpoints under NearBeach/views/api/.
-- Serialization: Requests/Responses are validated and shaped by serializers (NearBeach/serializers/*).
-- Permissions are checked server-side; the frontend should not rely solely on UI hiding.
-- Common patterns:
-  - ViewSets for list/detail actions (e.g., CustomerListViewSet, SprintListViewSet).
-  - Domain-specific API modules (e.g., sprint_api_view.py) expose endpoints for the corresponding Vue components (e.g., Sprint boards, modules).
+CI: CircleCI (backend on Python 3.12, frontend on Node 23 + Vitest + Playwright) and GitHub Actions (`type-check.yml`, `schemathesis.yml`, `deploy-*.yml`).
 
-Example paths (non-exhaustive):
-- NearBeach/views/api/sprint_api_view.py — Sprint-related JSON endpoints.
-- NearBeach/views/api/object_data/link_api_view.py — Linking objects (relations) endpoints.
-- NearBeach/views/api/coffee_api_view.py — Example/testing endpoints.
+## 6. Testing
 
+- Base class `NearBeach/tests/utils/BaseApiClass.py`: loads `NearBeach_basic_setup.json`, clears cache, disables auth throttling.
+- Other fixtures: `NearBeach_no_setup.json`, `NearBeach_gdpr_setup.json`.
+- `tests_api/test_permissions/` has one folder per role: admin, no_group, no_log_in, no_permission, read_only, team_intern, team_leader, team_member. New endpoints need coverage across these roles.
+- Seed users in the dev DB: `admin`, `team_leader`, `team_member`, `team_intern`, `read_only`, `read_only_extra`, `team_no_permissions`, `no_group`, `dark_admin`.
+- Permission/frontend test matrices: `docs/backend_permission_test_plan.xlsx`, `docs/frontend_unit_test_plan.xlsx`.
 
-## Authentication, authorization, and security
+## 7. Conventions
 
-- Authentication via Django’s session auth; the login/2FA views reside under NearBeach/views/authentication/ and urls_two_factor.py wires routes to the two_factor app.
-- CSRF protection is enabled for session-authenticated POST/PUT/PATCH/DELETE by default in Django. Frontend must send CSRF tokens (usually embedded in templates or fetched via a CSRF endpoint).
-- Authorization per feature/object is enforced in view functions using helper permission checks (see views/* importing get_user_group_permission and similar helpers). Always validate server-side.
+- Python: PEP 8, black. New models and services must be fully type-annotated (mypy `disallow_untyped_defs` there). Service files are PascalCase (`ProjectService.py`); API views `*_api_view.py`; viewsets `XxxViewSet`; schema constants `XXX_SCHEMA`; destination strings are lowercase singular (`"project"`).
+- Vue: small SFCs, `<script setup lang="ts">` (nearly all components), Pinia for shared state, spec beside component.
+- Every user-visible string goes through i18n in **both** `en.json` and `ja.json` (backend: `gettext_lazy as _`).
+- Permissions are always enforced server-side; hiding UI is not security.
+- Git flow: features branch from `develop`, hotfixes from `main` (`docs/006-procedures/git-flow`).
 
+## 8. Known gaps and stale items
 
-## Testing
-
-- Backend tests: Python tests under tests/ and NearBeach/tests/ where applicable.
-  - Example: NearBeach/tests/tests_specific_user_functionality/test_admin_user_settings.py
-- Frontend unit tests: Vitest with configuration in vitest.config.js.
-- E2E/Browser: Playwright config in playwright.config.ts. BrowserStack config available in browserstack/.
-- Load testing: locust tests under locust_tests/.
-
-To run backend tests locally:
-- python manage.py test
-- Or with pytest if configured via pyproject.toml
-
-To run frontend unit tests:
-- npm run test
-
-
-## Development workflow
-
-- Python environment
-  - Install dependencies from requirements.txt or requirements-dev.txt.
-  - Use manage.py for running the server, migrations, creating superusers, etc.
-- Frontend environment
-  - Install Node dependencies via npm ci or npm install.
-  - Run Webpack in watch/dev mode with npm scripts (see package.json) and webpack.dev.js.
-  - Production bundles use webpack.prod.js.
-
-Static files and assets
-- Run Django collectstatic as part of deployment to gather bundled assets into the static root.
-
-
-## Adding features (typical steps)
-
-1. Backend
-   - Add/modify models in NearBeach/models.py or domain-specific modules and create migrations.
-   - Add/extend serializers in NearBeach/serializers/.
-   - Implement API views in NearBeach/views/api/ and add URL routes.
-   - Add permission checks as required.
-
-2. Frontend
-   - Build or extend Vue components under src/js/components/<domain>/.
-   - Wire components in src/js/app.js or feature entry points.
-   - Call the new API endpoints and handle responses with appropriate validation and error states.
-
-3. Tests
-   - Add/extend backend unit tests in tests/ or NearBeach/tests/.
-   - Add/extend frontend tests with Vitest.
-   - Update any E2E scenarios if user flows change.
-
-
-## Conventions and guidelines
-
-- Python: Follow PEP 8; keep views small and delegate serialization/validation to serializers.
-- Vue: Prefer small, focused SFCs; lift shared logic into reusable components. Use Vuelidate for forms, Bootstrap for layout.
-- API: Keep endpoints REST‑like; provide clear 4xx/5xx error responses with helpful detail; document in swagger/ when applicable.
-- Security: Validate every server-side input; enforce object-level permissions in views; keep CSRF headers/tokens in place for state‑changing requests.
-- Performance: Use pagination for list endpoints; minimize N+1 queries via select_related/prefetch_related; prefer incremental rendering on the frontend.
-
-
-## Where to look for specific topics
-
-- URL routing: NearBeach/urls_two_factor.py and the project’s main urls module.
-- Authentication and 2FA: NearBeach/views/authentication/* and urls_two_factor.py (routes into two_factor.views and project-specific wrappers).
-- Serializers: NearBeach/serializers/*
-- API endpoints: NearBeach/views/api/*
-- Feature views (HTML + Vue mount points): NearBeach/views/*_views.py
-- Vue components: src/js/components/**
-- Webpack configuration: webpack.common.js, webpack.dev.js, webpack.prod.js, webpack.watch.js
-- Frontend entry: src/js/app.js and src/js/components.js
-- Tests: tests/, NearBeach/tests/, locust_tests/
-
-
-## Deployment notes (summary)
-
-- Build frontend assets with npm run build (production) to generate minified bundles.
-- Run Django migrations and collectstatic.
-- Configure environment variables for database, secret key, allowed hosts, email, and any integrations.
-- Serve with a production WSGI server (e.g., gunicorn/uwsgi) behind a reverse proxy; serve static files from a CDN or web server.
-
-
-## Appendix: Example files referenced in recent work
-
-- Backend views (examples):
-  - NearBeach/views/object_data_views.py
-  - NearBeach/views/api/object_data/link_api_view.py
-  - NearBeach/views/api/coffee_api_view.py
-  - NearBeach/views/sprint_views.py
-  - NearBeach/views/api/sprint_api_view.py
-  - NearBeach/views/gdpr_wizard_views.py
-- Serializers:
-  - NearBeach/serializers/destination_serializer.py
-- Frontend components:
-  - src/js/components/users/UserApiList.vue
-  - src/js/components/change_task/ChangeTaskModules.vue
-  - src/js/components/administration/UserList.vue
-
-This document is intentionally high level. If you discover discrepancies or have suggestions, please open a PR to update Architecture.md or the docs in docs/.
+- `pyproject.toml` still says Django>=3.1 (used mainly for mypy config).
+- `views/__pycache__` holds `.pyc` for deleted function views; ignore them.
+- No Celery; `services/AsyncEmailService.py` is the only async piece.
+- User theme/colour setting has no frontend rebuild yet.
+- Root `tests/` is empty; backend tests live in `NearBeach/tests/`.
