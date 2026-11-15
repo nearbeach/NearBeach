@@ -84,13 +84,6 @@ class GroupService(ObjectServiceAbstraction):
         )
 
     def _get_potential_user_list(self) -> QuerySet:
-        # Get a list of users we want to exclude
-        object_results = ObjectAssignment.objects.filter(
-            is_deleted=False,
-            assigned_user_id__isnull=False,
-            **{F"{self.destination}_id": self.location_id},
-        )
-
         # Get a list of all the groups associated with this destination
         group_results = ObjectAssignment.objects.filter(
             is_deleted=False,
@@ -117,8 +110,6 @@ class GroupService(ObjectServiceAbstraction):
                 group_id__in=group_results.values("group_id"),
             ).values("username_id"),
             is_active=True,
-        ).exclude(
-            id__in=object_results.values("assigned_user_id")
         ).annotate(
             profile_picture=F('userprofilepicture__document_id'),
             full_name=Concat('first_name', Value(' '), 'last_name'),
