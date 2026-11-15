@@ -33,6 +33,7 @@ describe("App", () => {
             requirement: 4,
             settings: 4,
             task: 4,
+            organisation: 4,
         };
     });
 
@@ -145,6 +146,7 @@ describe("App - desktop view", () => {
             requirement: 4,
             settings: 4,
             task: 4,
+            organisation: 4,
         };
     });
 

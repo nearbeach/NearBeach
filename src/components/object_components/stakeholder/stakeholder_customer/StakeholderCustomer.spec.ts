@@ -15,8 +15,8 @@ const router = createRouter({
   routes: [{ path: "/:catchAll(.*)*", component: defineComponent({ render: () => h("div") }) }],
 });
 
-const john = { id: 1, first_name: "John", last_name: "Doe", email: "john@example.com", title: { id: 0, title: "Mr"}};
-const jane = { id: 2, first_name: "Jane", last_name: "Smith", email: "jane@example.com", title: { id: 1, title: "Mrs"}};
+const john = { id: 1, first_name: "John", last_name: "Doe", email: "john@example.com", title: { id: 0, title: "Mr"}, profile_picture: ""};
+const jane = { id: 2, first_name: "Jane", last_name: "Smith", email: "jane@example.com", title: { id: 1, title: "Mrs"}, profile_picture: ""};
 
 function mountStakeholderCustomer() {
   return mount(StakeholderCustomer, {

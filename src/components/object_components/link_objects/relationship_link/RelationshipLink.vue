@@ -86,7 +86,7 @@ onMounted(() => {
 });
 
 // Define function
-async function updateRelationship(): void {
+async function updateRelationship(): Promise<void> {
 	// Escape conditions
 	if (relationshipModel.value === "") {
 		return;
