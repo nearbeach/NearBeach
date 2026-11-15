@@ -63,7 +63,7 @@ function createObjectLink() : void {
 				<option value="relates">{{ t("add_relationship.relates") }}</option>
 				<option value="blocked_by">{{ t("add_relationship.blocked_by") }}</option>
 				<option value="blocking">{{ t("add_relationship.blocking") }}</option>
-				<option value="is_sub_object_of">{{ t("add_relationship.is_sub_object_of") }}</option>
+				<option value="sub_object_of">{{ t("add_relationship.is_sub_object_of") }}</option>
 				<option value="parent_object_of">{{ t("add_relationship.parent_object_of") }}</option>
 				<option value="has_duplicate">{{ t("add_relationship.has_duplicate") }}</option>
 				<option value="duplicate_object">{{ t("add_relationship.duplicate_object") }}</option>
