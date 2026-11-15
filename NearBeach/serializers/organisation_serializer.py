@@ -7,6 +7,7 @@ class OrganisationSerializer(serializers.ModelSerializer):
     """Class containing serializer for Organisation"""
     email = serializers.EmailField(
         required=True,
+        max_length=75,
     )
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(
@@ -14,6 +15,7 @@ class OrganisationSerializer(serializers.ModelSerializer):
     )
     website = serializers.URLField(
         required=True,
+        max_length=75,
     )
     profile_picture_path = serializers.SerializerMethodField()
 
