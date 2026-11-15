@@ -19,12 +19,21 @@ export default defineConfig({
                 'main': path.resolve(import.meta.dirname, './src/main.ts'),
                 'login': path.resolve(import.meta.dirname, './src/login.ts'),
                 'login_style': path.resolve(import.meta.dirname, './src/styles/login_style.css'),
-                'style': path.resolve(import.meta.dirname, './src/styles/style.css')
+                'style': path.resolve(import.meta.dirname, './src/styles/style.css'),
+                // Referenced only from Django templates (favicon), so it needs to be an entry
+                'favicon': path.resolve(import.meta.dirname, './src/assets/NearBeach_Small.png'),
             },
             output: {
                 // Output JS bundles to js/ directory with -bundle suffix
                 entryFileNames: 'js/[name]-bundle.js',
-                assetFileNames: 'css/[name].css',
+                // Only stylesheets go to css/. Fonts, images etc. keep their real
+                // extension, otherwise they get emitted as e.g. Roboto-Thin.css.
+                assetFileNames: (assetInfo) => {
+                    const name = assetInfo.names?.[0] ?? assetInfo.name ?? ''
+                    if (name.endsWith('.css')) return 'css/[name].css'
+                    if (/\.(woff2?|ttf|otf|eot)$/i.test(name)) return 'fonts/[name]-[hash][extname]'
+                    return 'images/[name]-[hash][extname]'
+                },
             },
         },
     },
