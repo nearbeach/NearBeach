@@ -66,6 +66,15 @@ async function createOrganisation() {
 			await router.push(`/organisation/${data.id}/`);
             break;
 		}
+		case 400: {
+			// Do not navigate away from the page - as user can edit results
+			const data: {website: string[]} = await response.json();
+
+			// Set error modal
+			errorStore.setError(data.website.join(" || "));
+			errorStore.showErrorModal = true;
+			break;
+		}
 		case 403: {
 			await router.push({name: "forbidden"});
             break;
