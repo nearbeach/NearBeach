@@ -142,7 +142,8 @@ describe("GeneralDetailComponent", () => {
       expect(fetchSpy.mock.calls[0][1]?.method).toBe("PATCH");
       expect(JSON.parse(fetchSpy.mock.calls[0][1]?.body as string)).toEqual({
         title: "My project",
-        description: "About",
+        // The rich text editor wraps the description in a paragraph
+        description: "<p>About</p>",
       });
       expect(wrapper.find("button.primary").text()).toBe("Your updates have been processed");
 
@@ -198,14 +199,16 @@ describe("GeneralDetailComponent - editing", () => {
     fetchSpy.mockClear();
 
     await wrapper.find("input").setValue("A better title");
-    await wrapper.find("textarea").setValue("A better description");
+    // The description is a rich text editor, not a textarea - drive it through its v-model
+    wrapper.findComponent({ name: "WlkRichText" }).vm.$emit("update:modelValue", "<p>A better description</p>");
+    await wrapper.vm.$nextTick();
     wrapper.findComponent({ name: "WlkTextInput" }).vm.$emit("change", { isValid: true });
     await wrapper.find("button.primary").trigger("click");
     await flushPromises();
 
     expect(JSON.parse(fetchSpy.mock.calls[0][1]?.body as string)).toEqual({
       title: "A better title",
-      description: "A better description",
+      description: "<p>A better description</p>",
     });
     expect(useObjectStore().title).toBe("A better title");
   });

@@ -55,6 +55,19 @@ describe("PropertiesComponent - updating", () => {
         } as Response);
     }
 
+    // The dates are saved from the datetime's change event, which fires before the v-model
+    // has reached the store - so emit the change first, then update the store value
+    async function changeDate(
+        wrapper: ReturnType<typeof mountProperties>,
+        field: "start_date" | "end_date",
+        value: string,
+    ) {
+        const datetime = wrapper.findComponent(`.${field === "start_date" ? "start" : "end"}-date`);
+        datetime.vm.$emit("change", { isValid: true });
+        useObjectStore()[field] = value;
+        await flushPromises();
+    }
+
     function lastBody(fetchSpy: ReturnType<typeof mockStatus>) {
         const calls = fetchSpy.mock.calls;
         return JSON.parse(calls[calls.length - 1][1]?.body as string);
@@ -77,10 +90,9 @@ describe("PropertiesComponent - updating", () => {
     test("setting only an end date copies it to the start date and saves", async () => {
         const fetchSpy = mockStatus(200);
         const objectStore = useObjectStore();
-        mountProperties();
+        const wrapper = mountProperties();
 
-        objectStore.end_date = "2026-05-10T10:00";
-        await flushPromises();
+        await changeDate(wrapper, "end_date", "2026-05-10T10:00");
 
         expect(objectStore.start_date).toBe("2026-05-10T10:00");
         expect(fetchSpy).toHaveBeenCalledTimes(1);
@@ -95,10 +107,9 @@ describe("PropertiesComponent - updating", () => {
     test("setting only a start date copies it to the end date and saves", async () => {
         const fetchSpy = mockStatus(200);
         const objectStore = useObjectStore();
-        mountProperties();
+        const wrapper = mountProperties();
 
-        objectStore.start_date = "2026-05-01T09:00";
-        await flushPromises();
+        await changeDate(wrapper, "start_date", "2026-05-01T09:00");
 
         expect(objectStore.end_date).toBe("2026-05-01T09:00");
         expect(lastBody(fetchSpy)).toEqual({
@@ -112,10 +123,9 @@ describe("PropertiesComponent - updating", () => {
         objectStore.start_date = "2026-05-10T10:00";
         objectStore.end_date = "2026-05-20T10:00";
         const fetchSpy = mockStatus(200);
-        mountProperties();
+        const wrapper = mountProperties();
 
-        objectStore.end_date = "2026-05-05T10:00";
-        await flushPromises();
+        await changeDate(wrapper, "end_date", "2026-05-05T10:00");
 
         expect(objectStore.start_date).toBe("2026-05-05T10:00");
         expect(lastBody(fetchSpy).start_date).toBe("2026-05-05T10:00");
@@ -126,10 +136,9 @@ describe("PropertiesComponent - updating", () => {
         objectStore.start_date = "2026-05-10T10:00";
         objectStore.end_date = "2026-05-20T10:00";
         const fetchSpy = mockStatus(200);
-        mountProperties();
+        const wrapper = mountProperties();
 
-        objectStore.start_date = "2026-06-01T10:00";
-        await flushPromises();
+        await changeDate(wrapper, "start_date", "2026-06-01T10:00");
 
         expect(objectStore.end_date).toBe("2026-06-01T10:00");
         expect(lastBody(fetchSpy).end_date).toBe("2026-06-01T10:00");
@@ -137,12 +146,10 @@ describe("PropertiesComponent - updating", () => {
 
     test("an invalid date is ignored", async () => {
         const fetchSpy = mockStatus(200);
-        const objectStore = useObjectStore();
-        mountProperties();
+        const wrapper = mountProperties();
 
-        objectStore.end_date = "not a date";
-        objectStore.start_date = "also not a date";
-        await flushPromises();
+        await changeDate(wrapper, "end_date", "not a date");
+        await changeDate(wrapper, "start_date", "also not a date");
 
         expect(fetchSpy).not.toHaveBeenCalled();
     });
@@ -150,11 +157,9 @@ describe("PropertiesComponent - updating", () => {
     test("the date status clears two seconds after saving", async () => {
         vi.useFakeTimers();
         mockStatus(200);
-        const objectStore = useObjectStore();
         const wrapper = mountProperties();
 
-        objectStore.end_date = "2026-05-10T10:00";
-        await flushPromises();
+        await changeDate(wrapper, "end_date", "2026-05-10T10:00");
         expect(wrapper.text()).toContain("Date updated");
 
         vi.advanceTimersByTime(2000);
@@ -169,11 +174,9 @@ describe("PropertiesComponent - updating", () => {
         [500, "Server exploded"],
     ])("a %i response shows the date status message", async (status, message) => {
         mockStatus(status);
-        const objectStore = useObjectStore();
         const wrapper = mountProperties();
 
-        objectStore.end_date = "2026-05-10T10:00";
-        await flushPromises();
+        await changeDate(wrapper, "end_date", "2026-05-10T10:00");
 
         expect(wrapper.text()).toContain(message);
         expect(wrapper.text()).not.toContain("Date updated");
@@ -181,11 +184,9 @@ describe("PropertiesComponent - updating", () => {
 
     test("a network failure while saving dates shows the error message", async () => {
         vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
-        const objectStore = useObjectStore();
         const wrapper = mountProperties();
 
-        objectStore.end_date = "2026-05-10T10:00";
-        await flushPromises();
+        await changeDate(wrapper, "end_date", "2026-05-10T10:00");
 
         expect(wrapper.text()).toContain("offline");
     });
