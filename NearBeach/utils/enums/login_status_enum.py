@@ -9,3 +9,4 @@ class LoginStatusEnum(models.TextChoices):
     SUCCESS = "success", _("Success")
     FAILURE = "failure", _("Failure")
     TWO_FACTOR_REQUIRED = "two_factor_required", _("Two-Factor Required")
+    LOCKED_OUT = "locked_out", _("Locked out")

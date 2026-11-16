@@ -110,6 +110,18 @@ describe("LoginPage", () => {
     expect(errorMessage.text()).toBe("Credentials have failed");
   });
 
+  test("displays the locked out message when the account is locked", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      status: 429,
+    } as Response);
+
+    wrapper = mountLoginPage();
+    await signIn(wrapper);
+
+    const errorMessage = wrapper.find(".login-panel .error-message");
+    expect(errorMessage.text()).toBe("Too many failed attempts. Please wait a while before trying again.");
+  });
+
   test("displays final error message after more than 5 failed login attempts", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue({
       status: 401,
