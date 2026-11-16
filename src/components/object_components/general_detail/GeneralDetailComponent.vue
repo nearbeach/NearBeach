@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {onMounted, ref, computed} from 'vue';
-import {maxLength, minLength, required, WlkButton, WlkCard, WlkCardHeader, WlkTextArea, WlkTextInput} from 'whelk-ui';
+import {maxLength, minLength, required, WlkButton, WlkCard, WlkCardHeader, WlkRichText, WlkTextInput} from 'whelk-ui';
 import {useObjectStore} from "@/stores/object/object.ts";
 import {useRoute} from "vue-router";
 import {useI18n} from "petite-vue-i18n";
@@ -180,7 +180,7 @@ async function updateData() {
             :placeholderText="t(`general_detail_component.${objectStore.destination}_title_placeholder`)"
             v-on:change="(event: { isValid: boolean }) => (fieldValidation['titleModel'] = event.isValid)"
         />
-        <WlkTextArea
+        <WlkRichText
             v-model="objectStore.description"
             :label="t('general_detail_component.description')"
             :placeholderText="t(`general_detail_component.${objectStore.destination}_description_placeholder`)"

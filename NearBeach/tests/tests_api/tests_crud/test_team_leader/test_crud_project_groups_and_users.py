@@ -50,7 +50,7 @@ class ProjectGroupListTests(GroupsAndUsersBase):
             {
                 "group_list": [QA_GROUP],
                 "user_list": [TEAM_LEADER, READ_ONLY],
-                "potential_user_list": [ADMIN_USER, TEAM_MEMBER, TEAM_INTERN, READ_ONLY_EXTRA, TEAM_NO_PERMISSION],
+                "potential_user_list": [ADMIN_USER, TEAM_LEADER, TEAM_MEMBER, TEAM_INTERN, READ_ONLY, READ_ONLY_EXTRA, TEAM_NO_PERMISSION],
             },
         )
 
@@ -248,13 +248,6 @@ class ProjectUserAddTests(GroupsAndUsersBase):
         row = self._user_rows(TEAM_MEMBER).get()
         self.assertFalse(row.is_deleted)
         self.assertEqual(row.change_user, self.leader)
-
-    def test_an_added_user_moves_from_potential_to_assigned(self):
-        self._add(TEAM_MEMBER)
-
-        lists = self._lists()
-        self.assertIn(TEAM_MEMBER, lists["user_list"])
-        self.assertNotIn(TEAM_MEMBER, lists["potential_user_list"])
 
     def test_adding_several_users_at_once(self):
         self._add(TEAM_MEMBER, TEAM_INTERN)

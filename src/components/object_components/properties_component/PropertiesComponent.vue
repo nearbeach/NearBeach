@@ -10,7 +10,7 @@ import {useObjectStore} from "@/stores/object/object.ts";
 import ObjectStatus from "@/components/object_components/object_status/ObjectStatus.vue";
 import ObjectPriority from "@/components/object_components/object_priority/ObjectPriority.vue";
 import {useI18n} from "petite-vue-i18n";
-import {ref, watch} from "vue";
+import {nextTick, ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 import {safeFetch} from "@/composables/safeFetch.ts";
 
@@ -26,87 +26,6 @@ const dateStatusClass = ref<string>("");
 const storyPointsStatus = ref<string>("");
 const storyPointsStatusClass = ref<string>("");
 const storyPointsTimeout = ref<null | ReturnType<typeof setTimeout>>(null);
-
-// Define watches
-watch(
-	() => objectStore.end_date,
-	async (newValue: null | string, oldValue: null | string) => {
-		// If there is already a change happening - do nothing
-		if (dateStatus.value !== "") {
-			return;
-		}
-
-		// If nothing changes don't do anything
-		if (newValue === oldValue) {
-			return;
-		}
-
-		// Check to make sure the new_value is a valid date
-		const date = new Date(newValue ?? 0);
-		if (isNaN(date.getTime())) {
-			// Not a valid date
-			return;
-		}
-
-		// Notify the user of the change
-		dateStatus.value = t("properties_component.date_updating");
-
-		// If start date is null set as end date
-		if (objectStore.start_date === null || objectStore.start_date === "") {
-			objectStore.start_date = newValue;
-		}
-
-		// If end date <  start date -> start_date = end_date
-		const start_date = new Date(objectStore.start_date ?? 0);
-		const end_date = new Date(newValue ?? 0);
-		if (end_date < start_date) {
-			objectStore.start_date = objectStore.end_date;
-		}
-
-		// Update the dates
-		await datesUpdated();
-	},
-)
-
-watch(
-	() => objectStore.start_date,
-	async (newValue: string | null, oldValue: string | null) => {
-		// If there is already a change happening - do nothing
-		if (dateStatus.value !== "") {
-			return;
-		}
-
-		// If nothing changes don't do anything
-		if (newValue === oldValue) {
-			return;
-		}
-
-		// Check to make sure the new_value is a valid date
-		const date = new Date(newValue ?? 0);
-		if (isNaN(date.getTime())) {
-			// Not a valid date
-			return;
-		}
-
-		// Notify the user of the change
-		dateStatus.value = t("properties_component.date_updating");
-
-		// If end date is null set as start date
-		if (objectStore.end_date === null || objectStore.end_date === "") {
-			objectStore.end_date = objectStore.start_date;
-		}
-
-		// If start date > end_date -> end_date = start_date
-		const start_date = new Date(objectStore.start_date ?? 0);
-		const end_date = new Date(objectStore.end_date ?? 0);
-		if (start_date > end_date) {
-			objectStore.end_date = objectStore.start_date;
-		}
-
-		// Update the dates
-		await datesUpdated();
-	},
-)
 
 // Define functions
 async function datesUpdated() {
@@ -147,13 +66,97 @@ async function datesUpdated() {
 	}
 }
 
+async function endDateChanged() {
+	// Store old value
+	const oldValue = objectStore.end_date;
+
+	// Wait for everything to settle
+	await nextTick();
+
+	// If there is already a change happening, do nothing
+	if (dateStatus.value !== "") {
+		return;
+	}
+
+	// If nothing changes don't do anything
+	if (objectStore.end_date === oldValue) {
+		return;
+	}
+
+	// Check to make sure the new_value is a valid date
+	const end_date = new Date(objectStore.end_date ?? 0);
+	if (isNaN(end_date.getTime())) {
+		// Not a valid date
+		return;
+	}
+
+	// Notify the user of the change
+	dateStatus.value = t("properties_component.date_updating");
+
+	// If start date is null set as end date
+	if (objectStore.start_date === null || objectStore.start_date === "") {
+		objectStore.start_date = objectStore.end_date;
+	}
+
+	// If end date < start date -> start_date = end_date
+	const start_date = new Date(objectStore.start_date ?? 0);
+	if (end_date < start_date) {
+		objectStore.start_date = objectStore.end_date;
+	}
+
+	// Update the dates
+	await datesUpdated();
+}
+
+async function startDateChanged() {
+	// Store the old value
+	const oldValue = objectStore.start_date;
+
+	// Wait for everything to settle
+	await nextTick();
+
+	// If there is already a change happening - do nothing
+	if (dateStatus.value !== "") {
+		return;
+	}
+
+	// If nothing changes don't do anything
+	if (objectStore.start_date === oldValue) {
+		return;
+	}
+
+	// Check to make sure the new_value is a valid date
+	const end_date = new Date(objectStore.end_date ?? 0);
+	if (isNaN(end_date.getTime())) {
+		// Not a valid date
+		return;
+	}
+
+	// Notify the user of the change
+	dateStatus.value = t("properties_component.date_updating");
+
+	// If end date is null set as start date
+	if (objectStore.end_date === null || objectStore.end_date === "") {
+		objectStore.end_date = objectStore.start_date;
+	}
+
+	// If start date > end_date -> end_date = start_date
+	const start_date = new Date(objectStore.start_date ?? 0);
+	if (start_date > end_date) {
+		objectStore.end_date = objectStore.start_date;
+	}
+
+	// Update the dates
+	await datesUpdated();
+}
+
 function storyPointsChanged(data: OnChangeInterface) {
 	// Stop the timeout
 	if (storyPointsTimeout.value !== null) {
 		clearTimeout(storyPointsTimeout.value);
 	}
 
-	// If invalid - escape
+	// If invalid, escape
 	if (!data.isValid) {
 		// Notify the user
 		storyPointsStatus.value = t("properties_component.story_point_invalid");
@@ -237,6 +240,7 @@ async function storyPointsUpdate() {
 			:status="dateStatus"
 			:statusClass="dateStatusClass"
 			:disabled="dateStatus === t('properties_component.date_updating')"
+			@change="startDateChanged"
 		/>
 		<WlkDatetime
 			class="end-date compact"
@@ -245,6 +249,7 @@ async function storyPointsUpdate() {
 			:status="dateStatus"
 			:statusClass="dateStatusClass"
 			:disabled="dateStatus === t('properties_component.date_updating')"
+			@change="endDateChanged"
 		/>
 	</WlkCard>
 </template>

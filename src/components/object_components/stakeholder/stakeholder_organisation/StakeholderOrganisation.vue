@@ -51,6 +51,9 @@ async function addOrganisation() {
 	// Check response status
 	switch (response.status) {
 		case 201: {
+			// Zero out the model
+			organisationModel.value = 0;
+
 			// Set data in store
 			const data: OrganisationLinkInterface = await response.json();
 

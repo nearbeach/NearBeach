@@ -66,6 +66,15 @@ async function createOrganisation() {
 			await router.push(`/organisation/${data.id}/`);
             break;
 		}
+		case 400: {
+			// Do not navigate away from the page - as user can edit results
+			const data: {website: string[]} = await response.json();
+
+			// Set error modal
+			errorStore.setError(data.website.join(" || "));
+			errorStore.showErrorModal = true;
+			break;
+		}
 		case 403: {
 			await router.push({name: "forbidden"});
             break;
@@ -107,14 +116,14 @@ function updateValidation(field: string, value: boolean): void {
 		<div class="organisation-info">
 			<WlkTextInput
 				:label="t('organisation.website')"
-				:validationRules="[required(), maxLength(255)]"
+				:validationRules="[required(), maxLength(75)]"
 				v-model="websiteModel"
 				v-on:change="(event: { isValid: boolean }) => (updateValidation('website', event.isValid))"
 			/>
 
 			<WlkTextInput
 				:label="t('organisation.email')"
-				:validationRules="[required(), maxLength(255), email()]"
+				:validationRules="[required(), maxLength(75), email()]"
 				v-model="emailModel"
 				v-on:change="(event: { isValid: boolean }) => (updateValidation('email', event.isValid))"
 			/>
