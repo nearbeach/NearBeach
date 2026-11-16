@@ -206,7 +206,7 @@ class ProjectListTests(TeamLeaderProjectBase):
             set(row),
             {
                 "id", "title", "description", "organisation", "status", "priority", "story_point",
-                "start_date", "end_date", "date_created", "date_modified",
+                "start_date", "end_date", "date_created", "date_modified", "meta_data",
             },
         )
 

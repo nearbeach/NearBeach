@@ -47,6 +47,8 @@ tests/       tests_api, tests_services, tests_views, ...
 ### Models
 Every model extends `CommonInfo` (`models/abstraction/common_abstractions.py`): `date_created`, `date_modified`, `creation_user`, `change_user` and a soft-delete flag **`is_deleted`**. Querysets must filter `is_deleted=False`. Primary keys are explicit `BigAutoField`. Enums are `IntegerChoices`/`TextChoices` in `utils/enums/` with `gettext_lazy` labels.
 
+**`meta_data`**: `MetaDataAbstraction` (`models/abstraction/meta_data_abstraction.py`) adds a free-form JSON object `meta_data` (default `{}`) to Organisation, Customer, Project, Task, Requirement, RequirementItem, RequestForChange, ChangeTask, KanbanBoard, KanbanCard and Sprint, intended for integrations/plugins (use one top-level key per plugin; it is readable by anyone who can read the object, so no secrets). The API field comes from `MetaDataSerializerMixin` (`serializers/abstraction/meta_data_serializer_mixin.py`, put first in the serializer bases and add `"meta_data"` to `Meta.fields`). It must be an object, and updates are **merged** (JSON Merge Patch, RFC 7386, `utils/meta_data.py`): sent keys are added/updated, omitted keys are kept, `null` deletes a key, arrays are replaced whole; the saved result is capped at `META_DATA_MAX_BYTES` (64KB). The merge runs under a row lock in the serializer's `update()`. Currently exposed on Organisation, Customer and Project only, and not on the public link payload. Changes are audit-logged like any other field.
+
 Domain areas: Organisation, Customer, Project, Task, Requirement + RequirementItem, RequestForChange + ChangeTask, KanbanBoard + KanbanCard, Sprint, Document/Folder, Note, Tag, Group/PermissionSet/UserGroup, OIDC provider.
 
 ### Audit log

@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.meta_data_abstraction import MetaDataAbstraction
 from NearBeach.utils.enums.request_for_change_enums import (
     RequestForChangeApproval,
     RequestForChangeStatus,
@@ -14,7 +15,7 @@ from NearBeach.utils.enums.request_for_change_enums import (
 )
 
 
-class RequestForChange(CommonInfo):
+class RequestForChange(CommonInfo, MetaDataAbstraction):
     """Class containing fields for Request for change tables."""
 
     id = models.BigAutoField(primary_key=True)

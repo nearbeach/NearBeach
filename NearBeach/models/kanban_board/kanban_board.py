@@ -3,6 +3,7 @@
 from django.db import models
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.meta_data_abstraction import MetaDataAbstraction
 from NearBeach.models.requirement.requirement import RequirementForeignKey
 from NearBeach.utils.enums.kanban_board_enums import KanbanBoardStatusChoice
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
@@ -10,6 +11,7 @@ from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
 class KanbanBoard(
     CommonInfo,
+    MetaDataAbstraction,
     RequirementForeignKey
 ):
     """Class containing Kanban Board status choices."""

@@ -4,9 +4,10 @@ from django.db import models
 
 from NearBeach.models.document.document import Document
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.meta_data_abstraction import MetaDataAbstraction
 
 
-class Organisation(CommonInfo):
+class Organisation(CommonInfo, MetaDataAbstraction):
     """Class containing fields for Organisation model."""
 
     id = models.BigAutoField(primary_key=True)

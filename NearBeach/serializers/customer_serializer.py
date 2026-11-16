@@ -2,9 +2,10 @@ from rest_framework import serializers
 from NearBeach.models.customer import Customer, ListOfTitle
 from NearBeach.serializers.customer_title_serializer import CustomerTitleSerializer
 from django.conf import settings
+from NearBeach.serializers.abstraction.meta_data_serializer_mixin import MetaDataSerializerMixin
 
 
-class CustomerSerializer(serializers.ModelSerializer):
+class CustomerSerializer(MetaDataSerializerMixin, serializers.ModelSerializer):
     """Class containing serializer for Customer"""
     email = serializers.EmailField(
         required=True,
@@ -58,4 +59,5 @@ class CustomerSerializer(serializers.ModelSerializer):
             "last_name",
             "email",
             "profile_picture_path",
+            "meta_data",
         ]

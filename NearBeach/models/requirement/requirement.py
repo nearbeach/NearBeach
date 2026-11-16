@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.meta_data_abstraction import MetaDataAbstraction
 from NearBeach.models.organisation import Organisation
 from NearBeach.utils.enums.status_enums import ObjectHigherOrderStatus
 
@@ -81,7 +82,7 @@ class ListOfRequirementType(CommonInfo):
         verbose_name_plural = "List Of Requirement Types"
 
 
-class Requirement(CommonInfo):
+class Requirement(CommonInfo, MetaDataAbstraction):
     """Class containing fields for Requirement table."""
 
     id = models.BigAutoField(primary_key=True)

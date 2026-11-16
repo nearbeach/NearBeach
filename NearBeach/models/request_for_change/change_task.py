@@ -5,10 +5,11 @@ from django.conf import settings
 
 from NearBeach.utils.enums.request_for_change_enums import RequestForChangeStatus
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.meta_data_abstraction import MetaDataAbstraction
 from NearBeach.models.request_for_change.request_for_change import RequestForChange
 
 
-class ChangeTask(CommonInfo):
+class ChangeTask(CommonInfo, MetaDataAbstraction):
     """Class containing ChangeTask fields"""
 
     id = models.BigAutoField(primary_key=True)
