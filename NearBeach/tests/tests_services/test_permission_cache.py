@@ -89,3 +89,86 @@ class PermissionCacheTests(BaseApiClass):
         Project.objects.filter(pk=2).update(is_deleted=True)
 
         self.assertEqual(self.client.get("/api/v1/project/2/").status_code, 404)
+
+
+class PermissionCacheInvalidationTests(BaseApiClass):
+    """Exercise the model managers and signals against previously cached answers."""
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.get(username="read_only")
+
+    def assert_cached_level(self, expected):
+        self.assertEqual(get_object_permission(self.user, "project", 2), (expected, False))
+        self.assertEqual(get_destination_permission(self.user, "project"), expected)
+        with self.assertNumQueries(0):
+            self.assertEqual(get_object_permission(self.user, "project", 2), (expected, False))
+            self.assertEqual(get_destination_permission(self.user, "project"), expected)
+
+    def test_membership_save_revokes_cached_object_and_destination_access(self):
+        self.assert_cached_level(1)
+        for membership in UserGroup.objects.filter(username=self.user):
+            membership.is_deleted = True
+            membership.save()
+        self.assert_cached_level(None)
+
+    def test_membership_delete_revokes_cached_object_and_destination_access(self):
+        self.assert_cached_level(1)
+        for membership in UserGroup.objects.filter(username=self.user):
+            membership.delete()
+        self.assert_cached_level(None)
+
+    def test_bulk_create_membership_replaces_cached_denial(self):
+        memberships = list(UserGroup.objects.filter(username=self.user))
+        for membership in memberships:
+            membership.delete()
+            membership.pk = None
+        self.assert_cached_level(None)
+        created = UserGroup.objects.bulk_create(memberships)
+        self.assertEqual(len(created), len(memberships))
+        self.assert_cached_level(1)
+
+    def test_bulk_update_permission_set_revokes_cached_grant(self):
+        self.assert_cached_level(1)
+        permissions = list(PermissionSet.objects.filter(
+            id__in=UserGroup.objects.filter(username=self.user).values("permission_set_id")
+        ))
+        for permission in permissions:
+            permission.project = 0
+        self.assertEqual(PermissionSet.objects.bulk_update(permissions, ["project"]), len(permissions))
+        self.assert_cached_level(0)
+
+    def test_queryset_delete_membership_revokes_cached_grant(self):
+        self.assert_cached_level(1)
+        deleted, _ = UserGroup.objects.filter(username=self.user).delete()
+        self.assertGreater(deleted, 0)
+        self.assert_cached_level(None)
+
+    def test_group_assignment_save_and_delete_invalidate_object_access(self):
+        assignments = list(ObjectAssignment.objects.filter(project_id=2, group_id__isnull=False))
+        self.assertEqual(get_object_permission(self.user, "project", 2)[0], 1)
+        for assignment in assignments:
+            assignment.is_deleted = True
+            assignment.save()
+        self.assertIsNone(get_object_permission(self.user, "project", 2)[0])
+        for assignment in assignments:
+            assignment.is_deleted = False
+            assignment.save()
+        self.assertEqual(get_object_permission(self.user, "project", 2)[0], 1)
+        for assignment in assignments:
+            assignment.delete()
+        self.assertIsNone(get_object_permission(self.user, "project", 2)[0])
+
+    def test_organisation_permission_does_not_require_object_group_assignment(self):
+        ObjectAssignment.objects.filter(group_id__isnull=False).delete()
+        self.assertEqual(get_object_permission(self.user, "organisation", 1)[0], 1)
+        with self.assertNumQueries(0):
+            self.assertEqual(get_object_permission(self.user, "organisation", 1)[0], 1)
+
+    def test_additive_grant_is_invalidated_when_permission_is_revoked(self):
+        user = User.objects.get(username="read_only_extra")
+        self.assertEqual(get_object_permission(user, "project", 2, "project_note"), (1, True))
+        PermissionSet.objects.filter(
+            id__in=UserGroup.objects.filter(username=user).values("permission_set_id")
+        ).update(project_note=0)
+        self.assertEqual(get_object_permission(user, "project", 2, "project_note"), (1, False))
