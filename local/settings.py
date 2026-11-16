@@ -146,6 +146,11 @@ NUM_PROXIES = int(os.environ.get("NUM_PROXIES", 0))
 # The public address of this NearBeach (e.g. https://nearbeach.example.com), used to build links in emails
 SITE_URL = os.environ.get("SITE_URL", "")
 
+# GDPR - how many days audit log entries are kept before `manage.py prune_audit` removes them. Audit entries hold
+# personal data, so there is deliberately no "keep forever" default. 730 days (2 years) is a placeholder until the
+# team confirms the period. Run prune_audit on a schedule (cron) - NearBeach has no task runner.
+AUDIT_RETENTION_DAYS = int(os.environ.get("AUDIT_RETENTION_DAYS", 730))
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',

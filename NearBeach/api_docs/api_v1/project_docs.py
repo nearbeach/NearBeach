@@ -8,6 +8,7 @@ work out what they return - every one is described here with `request=` / `respo
 """
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, OpenApiTypes, extend_schema
 
+from NearBeach.serializers.audit_log_serializer import AuditLogSerializer
 from NearBeach.serializers.customer_link_serializer import CustomerLinkSerializer
 from NearBeach.serializers.customer_serializer import CustomerSerializer
 from NearBeach.serializers.documentation.document_delete_serializer import DocumentDeleteSerializer
@@ -80,6 +81,13 @@ PROJECT_SCHEMA = {
         "Delete a project",
         "Soft-deletes the project. Requires full permission (level 4).",
         responses=_responses({204: None}, 403, 404),
+    ),
+    "audit": _doc(
+        "List the audit history of a project",
+        "Paginated, newest first. Each entry says who made the change and when, and `changes` holds every "
+        "field that moved as `{field: {old, new}}`. Requires read permission. Entries are removed after the "
+        "configured retention period.",
+        responses=_responses({200: AuditLogSerializer(many=True)}, 403, 404),
     ),
     "customer": _doc(
         "List customers linked to a project",

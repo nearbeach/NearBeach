@@ -991,3 +991,12 @@ class ApiAdminPermissionTests(BaseApiClass):
 
         self._run_test_array(data_list)
 
+
+    def test_api_permissions_admin_project_audit(self):
+        """Test - the audit history follows the same read permission as the project itself"""
+        data_list = [
+            self.URLTest("/api/v1/project/1/audit/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/2/audit/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/3/audit/", {}, 404, "GET"),
+        ]
+        self._run_test_array(data_list)

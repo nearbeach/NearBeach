@@ -60,11 +60,12 @@ describe("ProjectPage", () => {
     expect(wlkTabs.exists()).toBe(true);
 
     const tabHeaders = wlkTabs.props("tabList");
-    expect(tabHeaders.length).toBe(4);
+    expect(tabHeaders.length).toBe(5);
     expect(tabHeaders[0].label).toBe("Linked Objects");
     expect(tabHeaders[1].label).toBe("Documentation");
     expect(tabHeaders[2].label).toBe("Notes & Comments");
     expect(tabHeaders[3].label).toBe("Misc");
+    expect(tabHeaders[4].label).toBe("Activity");
   });
 
   test("renders LinkObjects when 'Linked Objects' tab is selected", async () => {

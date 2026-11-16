@@ -1,6 +1,7 @@
 from rest_framework import status
 
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import Exists, OuterRef, QuerySet, Q, F
 from django.utils import timezone
 
@@ -13,6 +14,7 @@ from NearBeach.services.abstraction.object_services_abstraction import (
     ObjectServiceAbstraction,
     ServiceResponse,
 )
+from NearBeach.services.AuditService import AuditService
 from NearBeach.utils.api.check_group_list import check_group_list
 
 
@@ -36,10 +38,12 @@ class ProjectService(ObjectServiceAbstraction):
         if not check_group_list(request.user, group_list):
             return "No Access to groups provided", status.HTTP_400_BAD_REQUEST
 
-        # Create the project
-        created_project = serializer.save(
-            change_user=request.user, creation_user=request.user
-        )
+        # Create the project - and its audit entry in the same transaction
+        with transaction.atomic():
+            created_project = serializer.save(
+                change_user=request.user, creation_user=request.user
+            )
+            AuditService.record_create(request, self.destination, created_project)
 
         # Re-serialize the created project so it is in the same shape for the user
         serializer = ProjectSerializer(created_project, many=False)
@@ -56,11 +60,13 @@ class ProjectService(ObjectServiceAbstraction):
         if len(project) == 0:
             return status.HTTP_400_BAD_REQUEST
 
-        project.update(
-            is_deleted=True,
-            change_user=request.user,
-            date_modified=timezone.now(),
-        )
+        with transaction.atomic():
+            project.update(
+                is_deleted=True,
+                change_user=request.user,
+                date_modified=timezone.now(),
+            )
+            AuditService.record_delete(request, self.destination, self.location_id)
 
         return status.HTTP_204_NO_CONTENT
 
@@ -164,7 +170,10 @@ class ProjectService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
-        # Make sure we update the change user
-        serializer.save(change_user=request.user)
+        # Make sure we update the change user, and log what changed in the same transaction
+        before = AuditService.snapshot(project)
+        with transaction.atomic():
+            serializer.save(change_user=request.user)
+            AuditService.record_update(request, self.destination, before, project)
 
         return serializer.data, status.HTTP_200_OK
