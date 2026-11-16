@@ -30,7 +30,7 @@ describe("PublicLinkRow", () => {
   test("renders the link id", () => {
     const wrapper = mountRow();
 
-    expect(wrapper.find(".link").text()).toBe("abc-123");
+    expect(wrapper.find(".copy-link-button").text()).toBe("abc-123");
     expect(wrapper.findAll("td")).toHaveLength(3);
   });
 
@@ -40,21 +40,19 @@ describe("PublicLinkRow", () => {
     vi.spyOn(navigator.clipboard, "writeText").mockImplementation(writeText);
 
     const wrapper = mountRow();
-    await wrapper.findAll("td")[0].trigger("click");
+    await wrapper.find(".copy-link-button").trigger("click");
     await flushPromises();
 
     expect(writeText).toHaveBeenCalledWith(
       `${window.location.origin}/public_link/abc-123/`,
     );
-    expect(wrapper.find(".copied-status").exists()).toBe(true);
-    expect(wrapper.find(".link").exists()).toBe(false);
+    expect(wrapper.find(".copy-link-button").text()).toBe("Copied Public Link");
 
     // The status disappears after twenty seconds
     vi.advanceTimersByTime(20000);
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.find(".copied-status").exists()).toBe(false);
-    expect(wrapper.find(".link").exists()).toBe(true);
+    expect(wrapper.find(".copy-link-button").text()).toBe("abc-123");
   });
 
   test("shows an error status when the copy fails", async () => {
@@ -63,18 +61,18 @@ describe("PublicLinkRow", () => {
     );
 
     const wrapper = mountRow();
-    await wrapper.findAll("td")[0].trigger("click");
+    await wrapper.find(".copy-link-button").trigger("click");
     await flushPromises();
 
-    const status = wrapper.find(".copied-status");
-    expect(status.classes()).toContain("error");
+    const status = wrapper.find(".copy-link-button");
+    expect(status.text()).toContain("Error copying Public Link");
     expect(status.text()).toContain("denied");
   });
 
   test("emits updateActive with the id and index", async () => {
     const wrapper = mountRow();
 
-    await wrapper.findAll("td")[1].trigger("click");
+    await wrapper.find(".active-link-button").trigger("click");
 
     expect(wrapper.emitted("updateActive")).toEqual([
       [{ id: "abc-123", index: 2 }],
@@ -84,7 +82,7 @@ describe("PublicLinkRow", () => {
   test("emits deleteLink with the id", async () => {
     const wrapper = mountRow();
 
-    await wrapper.findAll("td")[2].trigger("click");
+    await wrapper.find(".delete-link-button").trigger("click");
 
     expect(wrapper.emitted("deleteLink")).toEqual([[{ id: "abc-123" }]]);
   });

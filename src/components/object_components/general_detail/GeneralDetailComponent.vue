@@ -125,54 +125,61 @@ async function updateData() {
 	// Notify the user of the state change
 	updateState.value = "updating"
 
-	const response = await fetch(
-		`/api/v1/${objectStore.destination}/${objectStore.id}/`,
-		{
-			method: "PATCH",
-			body: JSON.stringify({
-				title: objectStore.title,
-				description: objectStore.description,
-			}),
-			headers: {
-				"Content-Type": "application/json",
-				"X-CSRFTOKEN": getCsrfToken(),
+	try {
+		const response = await fetch(
+			`/api/v1/${objectStore.destination}/${objectStore.id}/`,
+			{
+				method: "PATCH",
+				body: JSON.stringify({
+					title: objectStore.title,
+					description: objectStore.description,
+				}),
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				}
+			}
+		);
+
+		switch (response.status) {
+			case 200:
+				updateState.value = "updated";
+				break;
+			case 400: {
+				// Get error data and stringify
+				const data = await response.json();
+				const errorString = Object.entries(data)
+					.map(([key, value]) => `${key}: ${value}`)
+					.join(", ");
+
+				// Set error modal
+				updateState.value = "error";
+				errorStore.setError(`${response.status} - ${response.statusText} | ${errorString}`);
+				errorStore.showErrorModal = true;
+				break;
+			}
+			case 403:
+				// User does not have access to the object
+				updateState.value = "error";
+				errorStore.setError(t("general_detail_component.error_forbidden"));
+				errorStore.showErrorModal = true;
+				break;
+			default: {
+				// Get error data and stringify
+				const data = await response.json();
+
+				// Set error modal
+				updateState.value = "error";
+				errorStore.setError(`${response.status} - ${response.statusText} | ${data}`);
+				errorStore.showErrorModal = true;
+				break;
 			}
 		}
-	);
-
-	switch (response.status) {
-		case 200:
-			updateState.value = "updated";
-			break;
-		case 400: {
-			// Get error data and stringify
-			const data = await response.json();
-			const errorString = Object.entries(data)
-				.map(([key, value]) => `${key}: ${value}`)
-				.join(", ");
-
-			// Set error modal
-			updateState.value = "error";
-			errorStore.setError(`${response.status} - ${response.statusText} | ${errorString}`);
-			errorStore.showErrorModal = true;
-			break;
-		}
-		case 403:
-			// User does not have access to the object
-			updateState.value = "error";
-			errorStore.setError(t("general_detail_component.error_forbidden"));
-			errorStore.showErrorModal = true;
-			break;
-		default: {
-			// Get error data and stringify
-			const data = await response.json();
-
-			// Set error modal
-			updateState.value = "error";
-			errorStore.setError(`${response.status} - ${response.statusText} | ${data}`);
-			errorStore.showErrorModal = true;
-			break;
-		}
+	} catch (error) {
+		// Network failure - let the user know and allow them to try again
+		updateState.value = "error";
+		errorStore.setError(error);
+		errorStore.showErrorModal = true;
 	}
 
 	setTimeout(() => {

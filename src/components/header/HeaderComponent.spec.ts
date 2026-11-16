@@ -59,7 +59,7 @@ describe("HeaderComponent - toggle Menu", () => {
     expect(nav.isNavOpen).toBe(true);
 
     // Click on the menu button
-    const menu_button = wrapper.find(".header--show-menu");
+    const menu_button = wrapper.find(".header--show-menu button");
     await menu_button.trigger("click");
 
     // Check the menu is now closed
@@ -87,7 +87,7 @@ describe("HeaderComponent - toggle Menu", () => {
     expect(nav.isNavOpen).toBe(true);
 
     // Click on the menu button
-    const menu_button = wrapper.find(".header--show-menu");
+    const menu_button = wrapper.find(".header--show-menu button");
     await menu_button.trigger("click");
 
     // Check the menu is now closed
@@ -97,7 +97,7 @@ describe("HeaderComponent - toggle Menu", () => {
 });
 
 describe("HeaderComponent - A11Y", () => {
-  test("Hidden Visually to be in the document", () => {
+  test("the menu toggle is a real button with an accessible name", () => {
     // Mount the wrapper
     const wrapper = mount(HeaderComponent, {
       global: {
@@ -105,9 +105,10 @@ describe("HeaderComponent - A11Y", () => {
       },
     });
 
-    // Check to see if the <span> exists
-    const hidden_visually = wrapper.findAll(".hidden-visually");
-    expect(hidden_visually.length).toBe(1);
+    // The toggle is a keyboard-focusable <button>, not a click handler on a <div>
+    const buttons = wrapper.findAll(".header--show-menu button");
+    expect(buttons.length).toBe(1);
+    expect(buttons[0].attributes("aria-label")).toBeTruthy();
 
     // Unmount wrapper
     wrapper.unmount();
@@ -132,9 +133,9 @@ describe("HeaderComponent - A11Y", () => {
     await flushPromises();
     await nextTick();
 
-    // Click on the menu button
-    const hidden_visually = wrapper.find(".hidden-visually");
-    expect(hidden_visually.text()).toBe("Open Navigation Menu");
+    // The button's accessible name tells the screen reader what it does
+    const menu_button = wrapper.find(".header--show-menu button");
+    expect(menu_button.attributes("aria-label")).toBe("Open Navigation Menu");
 
     // Unmount
     wrapper.unmount();
@@ -159,9 +160,9 @@ describe("HeaderComponent - A11Y", () => {
     await flushPromises();
     await nextTick();
 
-    // Click on the menu button
-    const hidden_visually = wrapper.find(".hidden-visually");
-    expect(hidden_visually.text()).toBe("Close Navigation Menu");
+    // The button's accessible name tells the screen reader what it does
+    const menu_button = wrapper.find(".header--show-menu button");
+    expect(menu_button.attributes("aria-label")).toBe("Close Navigation Menu");
 
     // Unmount
     wrapper.unmount();

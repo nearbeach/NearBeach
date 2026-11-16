@@ -153,26 +153,78 @@ describe("GeneralDetailComponent", () => {
       expect(wrapper.find("button.primary").text()).toBe("Update description and title");
     });
 
-    test("shows an error and stays disabled when saving fails", async () => {
+    test("shows an error, stays disabled, then resets after two seconds when saving fails", async () => {
       const { wrapper, fetchSpy } = await mountLoaded();
-      fetchSpy.mockResolvedValue({ status: 500, statusText: "Server exploded" } as Response);
+      vi.useFakeTimers({ toFake: ["setTimeout"] });
+      fetchSpy.mockResolvedValue({
+        status: 500,
+        statusText: "Server exploded",
+        json: () => Promise.resolve("boom"),
+      } as Response);
 
       await wrapper.find("button.primary").trigger("click");
       await flushPromises();
 
-      expect(useErrorStore().message).toBe("Server exploded");
+      const errorStore = useErrorStore();
+      expect(errorStore.message).toBe("500 - Server exploded | boom");
+      expect(errorStore.showErrorModal).toBe(true);
       expect(wrapper.find("button.primary").text()).toBe("There was a problem updating");
       expect(wrapper.find("button.primary").attributes("disabled")).toBeDefined();
+
+      // The button recovers so the user can try again
+      vi.advanceTimersByTime(2000);
+      await flushPromises();
+
+      expect(wrapper.find("button.primary").text()).toBe("Update description and title");
+      expect(wrapper.find("button.primary").attributes("disabled")).toBeUndefined();
     });
 
-    test("a network failure while saving is reported through the error store", async () => {
+    test("a 400 response lists the field errors in the error modal", async () => {
       const { wrapper, fetchSpy } = await mountLoaded();
+      fetchSpy.mockResolvedValue({
+        status: 400,
+        statusText: "Bad Request",
+        json: () => Promise.resolve({ title: ["Too long"], description: ["Required"] }),
+      } as Response);
+
+      await wrapper.find("button.primary").trigger("click");
+      await flushPromises();
+
+      const errorStore = useErrorStore();
+      expect(errorStore.message).toBe("400 - Bad Request | title: Too long, description: Required");
+      expect(errorStore.showErrorModal).toBe(true);
+      expect(wrapper.find("button.primary").text()).toBe("There was a problem updating");
+    });
+
+    test("a network failure shows the error modal and the button recovers", async () => {
+      const { wrapper, fetchSpy } = await mountLoaded();
+      vi.useFakeTimers({ toFake: ["setTimeout"] });
       fetchSpy.mockRejectedValue(new Error("offline"));
 
       await wrapper.find("button.primary").trigger("click");
       await flushPromises();
 
-      expect(useErrorStore().message).toBe("offline");
+      const errorStore = useErrorStore();
+      expect(errorStore.message).toBe("offline");
+      expect(errorStore.showErrorModal).toBe(true);
+      expect(wrapper.find("button.primary").text()).toBe("There was a problem updating");
+
+      vi.advanceTimersByTime(2000);
+      await flushPromises();
+
+      expect(wrapper.find("button.primary").text()).toBe("Update description and title");
+    });
+
+    test("a 403 response shows the forbidden message", async () => {
+      const { wrapper, fetchSpy } = await mountLoaded();
+      fetchSpy.mockResolvedValue({ status: 403 } as Response);
+
+      await wrapper.find("button.primary").trigger("click");
+      await flushPromises();
+
+      const errorStore = useErrorStore();
+      expect(errorStore.message).toBe(i18n.global.t("general_detail_component.error_forbidden"));
+      expect(errorStore.showErrorModal).toBe(true);
     });
   });
 });

@@ -62,8 +62,8 @@ describe("PropertiesComponent - updating", () => {
         field: "start_date" | "end_date",
         value: string,
     ) {
-        const datetime = wrapper.findComponent(`.${field === "start_date" ? "start" : "end"}-date`);
-        datetime.vm.$emit("change", { isValid: true });
+        const datetimes = wrapper.findAllComponents({ name: "WlkDatetime" });
+        datetimes[field === "start_date" ? 0 : 1].vm.$emit("change", { isValid: true });
         useObjectStore()[field] = value;
         await flushPromises();
     }

@@ -3,7 +3,6 @@ import {TrashIcon, Check, X} from "@lucide/vue";
 import {useI18n} from "petite-vue-i18n";
 import {computed, ref} from "vue";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
-import {WlkButton} from "whelk-ui";
 
 // Define i18n
 const {t} = useI18n()
