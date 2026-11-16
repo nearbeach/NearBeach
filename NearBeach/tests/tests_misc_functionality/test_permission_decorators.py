@@ -3,6 +3,7 @@
 from types import SimpleNamespace
 
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.test import TestCase
 from rest_framework.exceptions import NotFound, PermissionDenied
 
@@ -19,6 +20,10 @@ def view_returning_the_level(request, *args, **kwargs):
 
 class DecoratorTestBase(TestCase):
     fixtures = ["NearBeach_basic_setup.json"]
+
+    def setUp(self):
+        # Rolled back test data does not fire the signals that clear the permission cache
+        cache.clear()
 
     @staticmethod
     def request(path, username="team_member"):

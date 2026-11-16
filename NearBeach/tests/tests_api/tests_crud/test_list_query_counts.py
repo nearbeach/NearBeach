@@ -32,6 +32,8 @@ class ListQueryCountTests(BaseApiClass):
         self.assertEqual(small, large)
 
     def test_customer_list_query_count_does_not_grow_with_rows(self):
+        # First request warms the permission cache - later ones skip its queries
+        _, response = self._count("/api/v1/organisation/1/customer/")
         small, response = self._count("/api/v1/organisation/1/customer/")
         rows = len(response.data["results"])
         self.assertGreater(rows, 1)
