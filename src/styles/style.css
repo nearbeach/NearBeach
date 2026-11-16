@@ -86,3 +86,7 @@ input, textarea {
 .mb-0 {
     margin-bottom: 0 !important;
 }
+
+.ql-editor {
+    min-height: 16rem;
+}

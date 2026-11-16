@@ -200,9 +200,9 @@ async function updateActive(data: { id: string, index: number }) {
 		<table v-if="publicLinks.length > 0">
 			<thead>
 			<tr>
-				<td style="width:calc(100% - 110px);">{{ t("public_links.public_link") }}</td>
+				<td style="width:calc(100% - 120px);">{{ t("public_links.public_link") }}</td>
 				<td style="width:90px;">{{ t("public_links.is_active") }}</td>
-				<td style="width:20px;"
+				<td style="width:30px;"
 					v-if="permissionStore.currentObjectPermissions.currentObject > 1"
 				></td>
 			</tr>
