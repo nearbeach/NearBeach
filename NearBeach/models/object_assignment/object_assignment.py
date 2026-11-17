@@ -7,6 +7,7 @@ from NearBeach.models.kanban_board.kanban_board import KanbanBoard
 from NearBeach.models.kanban_board.kanban_card import KanbanCard
 from NearBeach.models.customer import Customer
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.permission_queryset import PermissionAwareQuerySet
 from NearBeach.models.organisation import Organisation
 from NearBeach.models.permission.group import Group
 from NearBeach.models.project import Project
@@ -134,6 +135,9 @@ class ObjectAssignment(CommonInfo):
         blank=True,
         default="",
     )
+
+    # Bulk writes (soft deletes use update()) clear the permission cache
+    objects = PermissionAwareQuerySet.as_manager()  # type: ignore[misc]
 
     class Meta:
         """Meta definitions for the object assignment table"""

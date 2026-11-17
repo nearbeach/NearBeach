@@ -86,6 +86,7 @@
   "link_objects_table.error": "エラー",
   "login_page.error_final_message": "詐欺師が検出され、自己破壊を開始します",
   "login_page.error_message": "資格情報が失敗しました",
+  "login_page.locked_out_message": "失敗した試行が多すぎます。しばらくしてからもう一度お試しください。",
   "login_page.sso_error_account_disabled": "このアカウントは無効になっています",
   "login_page.sso_error_generic": "シングルサインオンに失敗しました。もう一度お試しください",
   "login_page.sso_error_no_account": "このサインインに対応するアカウントがありません。管理者にお問い合わせください",

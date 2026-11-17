@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_email',
+    'axes',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'axes.middleware.AxesMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -105,6 +107,21 @@ DATABASES = {
     }
 }
 
+# Cache - holds the permission lookups (NearBeach/utils/permission_cache.py) and the initial data lists.
+# Without REDIS_URL Django uses a per-process memory cache: with several workers a permission change can take up to
+# PERMISSION_CACHE_TTL seconds to reach the other workers. Set REDIS_URL (needs `pip install redis`) to share the
+# cache between workers so changes apply at once.
+if "REDIS_URL" in os.environ:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.environ["REDIS_URL"],
+        }
+    }
+
+# Seconds a permission lookup is cached for. 0 turns the permission cache off.
+PERMISSION_CACHE_TTL = int(os.environ.get("PERMISSION_CACHE_TTL", 300))
+
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -122,6 +139,25 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+#####################################################################################################
+### ACCOUNT LOCKOUT (django-axes)
+#####################################################################################################
+# AxesStandaloneBackend must stay first so locked out users are stopped before any other backend runs
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+AXES_FAILURE_LIMIT = int(os.environ.get('AXES_FAILURE_LIMIT', 5))
+AXES_COOLOFF_TIME = timedelta(minutes=int(os.environ.get('AXES_COOLOFF_MINUTES', 15)))
+# Lock the username + IP pair, so a stranger can't lock a real user out from everywhere
+AXES_LOCKOUT_PARAMETERS = [['username', 'ip_address']]
+AXES_RESET_ON_SUCCESS = True
+AXES_LOCKOUT_CALLABLE = 'NearBeach.utils.axes_lockout.lockout_response'
+# Axes' own tests of the login flow use the Django test client, which has no request to hand to axes
+if 'test' in sys.argv:
+    AXES_ENABLED = False
 
 
 #####################################################################################################

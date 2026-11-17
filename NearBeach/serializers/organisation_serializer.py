@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from NearBeach.models.organisation import Organisation
 from django.conf import settings
+from NearBeach.serializers.abstraction.meta_data_serializer_mixin import MetaDataSerializerMixin
 
 
-class OrganisationSerializer(serializers.ModelSerializer):
+class OrganisationSerializer(MetaDataSerializerMixin, serializers.ModelSerializer):
     """Class containing serializer for Organisation"""
     email = serializers.EmailField(
         required=True,
@@ -52,4 +53,5 @@ class OrganisationSerializer(serializers.ModelSerializer):
             "website",
             "email",
             "profile_picture_path",
+            "meta_data",
         ]

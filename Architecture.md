@@ -13,7 +13,7 @@ How NearBeach is put together, for human contributors and AI coding agents. This
 | Layer | Technology |
 |---|---|
 | Backend | Django 6, Django REST Framework, drf-spectacular (OpenAPI) |
-| Auth | Django sessions, django-rest-knox tokens, django-oauth-toolkit (OAuth2), django_otp (2FA), authlib (OIDC SSO) |
+| Auth | Django sessions, django-axes lockout, django-rest-knox tokens, django-oauth-toolkit (OAuth2), django_otp (2FA), authlib (OIDC SSO) |
 | Frontend | Vue 3, vue-router, Pinia, TypeScript, petite-vue-i18n, Vite + django-vite |
 | DB | SQLite in dev; MariaDB/MySQL/PostgreSQL/Oracle in production |
 | Files | Local, AWS S3 or Azure Blob (`NearBeach/utils/private_media.py`) |
@@ -46,6 +46,8 @@ tests/       tests_api, tests_services, tests_views, ...
 
 ### Models
 Every model extends `CommonInfo` (`models/abstraction/common_abstractions.py`): `date_created`, `date_modified`, `creation_user`, `change_user` and a soft-delete flag **`is_deleted`**. Querysets must filter `is_deleted=False`. Primary keys are explicit `BigAutoField`. Enums are `IntegerChoices`/`TextChoices` in `utils/enums/` with `gettext_lazy` labels.
+
+**`meta_data`**: `MetaDataAbstraction` (`models/abstraction/meta_data_abstraction.py`) adds a free-form JSON object `meta_data` (default `{}`) to Organisation, Customer, Project, Task, Requirement, RequirementItem, RequestForChange, ChangeTask, KanbanBoard, KanbanCard and Sprint, intended for integrations/plugins (use one top-level key per plugin; it is readable by anyone who can read the object, so no secrets). The API field comes from `MetaDataSerializerMixin` (`serializers/abstraction/meta_data_serializer_mixin.py`, put first in the serializer bases and add `"meta_data"` to `Meta.fields`). It must be an object, and updates are **merged** (JSON Merge Patch, RFC 7386, `utils/meta_data.py`): sent keys are added/updated, omitted keys are kept, `null` deletes a key, arrays are replaced whole; the saved result is capped at `META_DATA_MAX_BYTES` (64KB). The merge runs under a row lock in the serializer's `update()`. Currently exposed on Organisation, Customer and Project only, and not on the public link payload. Changes are audit-logged like any other field.
 
 Domain areas: Organisation, Customer, Project, Task, Requirement + RequirementItem, RequestForChange + ChangeTask, KanbanBoard + KanbanCard, Sprint, Document/Folder, Note, Tag, Group/PermissionSet/UserGroup, OIDC provider.
 
@@ -81,6 +83,7 @@ Fixture conventions: `docs/007-misc/fixtures/fixture-object-assignment.rst`.
   - `@object_permission(min_permission_level=N, additive_permission="...")` – object id is in the URL (404 if missing, `PermissionDenied` if not allowed).
   - `@destination_permission(min_permission_level=N)` – create flows, no id yet.
   - Used together with `@action`. Validate group lists with `check_group_list`.
+- **Permission cache** (`utils/permission_cache.py`): both decorators get the user's level through `get_object_permission` / `get_destination_permission`, cached for `PERMISSION_CACHE_TTL` seconds (default 300, 0 = off). Cache keys carry a version token that is replaced on any `UserGroup`, `PermissionSet` or group-access `ObjectAssignment` change: via signals and via `PermissionAwareQuerySet` (`models/abstraction/permission_queryset.py`), which covers the `queryset.update(is_deleted=True)` soft deletes that fire no signal. Never add a permission-affecting write that bypasses those managers (e.g. raw SQL). Object existence is still checked live. Set `REDIS_URL` for a cache shared between workers; the default per-process cache can serve stale grants to other workers until the TTL expires.
 
 ### Request path
 ```
@@ -105,6 +108,7 @@ ViewSet (views/api_v1/*_api_view.py)
   <- returns (data, http_status); the view wraps it in Response
 ```
 Rate limits for auth endpoints: `utils/throttle/` (`THROTTLE_AUTH_*` env vars). Tests disable them.
+Account lockout: `django-axes` locks a username + IP pair after `AXES_FAILURE_LIMIT` (default 5) failed password logins for `AXES_COOLOFF_MINUTES` (default 15). The login view passes `request._request` to `authenticate()`; `utils/axes_lockout.py` turns the lockout into `429 {"status": "locked_out"}`. Axes is disabled under `manage.py test` (tests that need it use `@override_settings(AXES_ENABLED=True)`). SSO/OIDC logins don't go through the password backend and aren't counted. Failed 2FA codes aren't counted either.
 
 ## 4. Frontend (`src/`)
 

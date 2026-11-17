@@ -5,6 +5,7 @@ from django.conf import settings
 
 from NearBeach.models.document.document import Document
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.meta_data_abstraction import MetaDataAbstraction
 from NearBeach.models.organisation import Organisation
 
 
@@ -39,7 +40,7 @@ class ListOfTitle(CommonInfo):
         ordering = ["title"]
 
 
-class Customer(CommonInfo):
+class Customer(CommonInfo, MetaDataAbstraction):
     """Class containing Customer fields"""
 
     id = models.BigAutoField(primary_key=True)

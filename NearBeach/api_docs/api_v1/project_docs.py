@@ -73,7 +73,10 @@ PROJECT_SCHEMA = {
     "partial_update": _doc(
         "Update a project",
         "Send only the fields to change. Groups, users and organisation have their own endpoints, and "
-        "`status` is the id of a project status. The response is the updated project in this same shape.",
+        "`status` is the id of a project status. The response is the updated project in this same shape. "
+        "`meta_data` is merged into the stored JSON object (JSON Merge Patch): keys you send are added or "
+        "updated, keys you leave out are kept, and a key set to `null` is deleted. It must be an object and "
+        "the saved result is limited to 64KB.",
         request=ProjectPatchSerializer,
         responses=_responses({200: ProjectPatchSerializer}),
     ),

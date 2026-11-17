@@ -88,7 +88,9 @@ class AuthenticationView(APIView):
             )
 
         # Authenticate the user
+        # Axes needs the underlying Django request to record failures and flag lockouts
         user = authenticate(
+            request=request._request,
             username=serializer.validated_data["username"],
             password=serializer.validated_data["password"],
         )

@@ -115,7 +115,7 @@ async function removeOrganisation() {
 			class="organisation-name"
 			v-if="objectStore?.organisation !== null"
 		>
-			<RouterLink :to="`organisation/${objectStore?.organisation?.id}`">
+			<RouterLink :to="`/organisation/${objectStore?.organisation?.id}`">
 				{{ objectStore?.organisation.name }}
 			</RouterLink>
 			<TrashIcon

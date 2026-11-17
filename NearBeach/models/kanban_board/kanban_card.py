@@ -3,6 +3,7 @@
 from django.db import models
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.meta_data_abstraction import MetaDataAbstraction
 from NearBeach.models.kanban_board.kanban_board import (
     KanbanBoard,
     KanbanColumn,
@@ -15,7 +16,7 @@ from NearBeach.models.task import Task
 from NearBeach.utils.enums.object_enums import ObjectPriority
 
 
-class KanbanCard(CommonInfo):
+class KanbanCard(CommonInfo, MetaDataAbstraction):
     """Class containing Kanban Card fields."""
 
     id = models.BigAutoField(primary_key=True)

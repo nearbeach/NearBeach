@@ -84,6 +84,7 @@
   "link_objects.text": "Connect current object to other objects within NearBeach.",
   "login_page.error_final_message": "Impostor detected, initiating self-destruction",
   "login_page.error_message": "Credentials have failed",
+  "login_page.locked_out_message": "Too many failed attempts. Please wait a while before trying again.",
   "login_page.sso_error_account_disabled": "This account has been disabled",
   "login_page.sso_error_generic": "Single sign-on failed. Please try again",
   "login_page.sso_error_no_account": "No NearBeach account exists for that sign-in. Ask an administrator for access",

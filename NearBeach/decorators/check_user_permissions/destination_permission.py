@@ -1,11 +1,10 @@
 from functools import wraps
 
-from django.db.models import Max
 from rest_framework.exceptions import PermissionDenied
 
-from NearBeach.models.user import UserGroup
 from NearBeach.utils.api.get_destination import get_destination_from_url
 from NearBeach.utils.api.object_to_permission_set_mapping import get_object_permission_set
+from NearBeach.utils.permission_cache import get_destination_permission
 
 
 
@@ -40,12 +39,8 @@ def destination_permission(min_permission_level):
             if destination is None:
                 raise PermissionDenied
 
-            user_group_results = UserGroup.objects.filter(
-                is_deleted=False,
-                username=username,
-            ).aggregate(
-                Max(f"permission_set__{destination}")
-            )[f"permission_set__{destination}__max"]
+            # Highest level the user holds for this area - cached, see utils/permission_cache.py
+            user_group_results = get_destination_permission(username, destination)
 
             # Check the user permissions
             if user_group_results is None or user_group_results < min_permission_level:
