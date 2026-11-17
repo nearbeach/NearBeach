@@ -88,6 +88,7 @@ def _build_object_permission(
 ) -> Tuple[int, bool]:
     user_group_results = UserGroup.objects.filter(
         is_deleted=False,
+        permission_set__is_deleted=False,
         username=user,
     )
 
