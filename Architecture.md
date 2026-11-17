@@ -13,7 +13,7 @@ How NearBeach is put together, for human contributors and AI coding agents. This
 | Layer | Technology |
 |---|---|
 | Backend | Django 6, Django REST Framework, drf-spectacular (OpenAPI) |
-| Auth | Django sessions, django-rest-knox tokens, django-oauth-toolkit (OAuth2), django_otp (2FA), authlib (OIDC SSO) |
+| Auth | Django sessions, django-axes lockout, django-rest-knox tokens, django-oauth-toolkit (OAuth2), django_otp (2FA), authlib (OIDC SSO) |
 | Frontend | Vue 3, vue-router, Pinia, TypeScript, petite-vue-i18n, Vite + django-vite |
 | DB | SQLite in dev; MariaDB/MySQL/PostgreSQL/Oracle in production |
 | Files | Local, AWS S3 or Azure Blob (`NearBeach/utils/private_media.py`) |
@@ -93,6 +93,7 @@ ViewSet (views/api_v1/*_api_view.py)
   <- returns (data, http_status); the view wraps it in Response
 ```
 Rate limits for auth endpoints: `utils/throttle/` (`THROTTLE_AUTH_*` env vars). Tests disable them.
+Account lockout: `django-axes` locks a username + IP pair after `AXES_FAILURE_LIMIT` (default 5) failed password logins for `AXES_COOLOFF_MINUTES` (default 15). The login view passes `request._request` to `authenticate()`; `utils/axes_lockout.py` turns the lockout into `429 {"status": "locked_out"}`. Axes is disabled under `manage.py test` (tests that need it use `@override_settings(AXES_ENABLED=True)`). SSO/OIDC logins don't go through the password backend and aren't counted. Failed 2FA codes aren't counted either.
 
 ## 4. Frontend (`src/`)
 
