@@ -177,5 +177,7 @@ class ProjectService(ObjectServiceAbstraction):
             project = Project.objects.select_for_update().get(pk=self.location_id)
             serializer.instance = project
             before = AuditService.snapshot(project)
+            serializer.save(change_user=request.user)
+            AuditService.record_update(request, self.destination, before, project)
 
         return serializer.data, status.HTTP_200_OK
