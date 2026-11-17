@@ -111,6 +111,13 @@ async function signIn() {
 			otpTokenModel.value = "";
 			ActivateLoginPanel();
 			break;
+		case 429:
+			// Locked out by too many failed attempts (or rate limited)
+			errorMessage.value = t("login_page.locked_out_message");
+			passwordModel.value = "";
+			otpTokenModel.value = "";
+			ActivateLoginPanel();
+			break;
 		default:
 			// Something went wrong
 			errorMessage.value = response.statusText;

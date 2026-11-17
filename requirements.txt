@@ -15,6 +15,7 @@ drf-spectacular[sidecar]
 django-rest-knox>=5.1.0
 authlib>=1.9.5
 django-oauth-toolkit>=3.4.1
+django-axes>=8.0.0
 
 # Security recommendations - packages are used by libraries used by NearBeach
 pip>=26.2.2
