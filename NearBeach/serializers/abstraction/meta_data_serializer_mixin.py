@@ -58,17 +58,19 @@ class MetaDataSerializerMixin(serializers.Serializer):
             )
 
     def update(self, instance: models.Model, validated_data: dict[str, Any]) -> Any:
-        if "meta_data" not in validated_data:
-            return super().update(instance, validated_data)
-
-        patch: MetaData = validated_data["meta_data"]
-
         with transaction.atomic():
             # Re-read under a row lock so two simultaneous patches to different keys both survive
             # (select_for_update is a no-op on SQLite)
             locked: Any = type(instance)._default_manager.select_for_update().get(pk=instance.pk)
-            merged = merge_meta_data(locked.meta_data or {}, patch)
-            self._check_size(merged)
+            current: MetaData = locked.meta_data or {}
 
-            validated_data["meta_data"] = merged
+            if "meta_data" in validated_data:
+                merged = merge_meta_data(current, validated_data["meta_data"])
+                self._check_size(merged)
+                validated_data["meta_data"] = merged
+            else:
+                # Not patching meta_data: save() writes every column, so refresh the caller's
+                # (possibly stale) instance or a title-only save would overwrite newer metadata
+                instance.meta_data = current
+
             return super().update(instance, validated_data)

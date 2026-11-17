@@ -171,8 +171,12 @@ class ProjectService(ObjectServiceAbstraction):
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Make sure we update the change user, and log what changed in the same transaction
-        before = AuditService.snapshot(project)
         with transaction.atomic():
+            # Lock the row first, then snapshot, so the audit records the state actually replaced
+            # (select_for_update is a no-op on SQLite)
+            project = Project.objects.select_for_update().get(pk=self.location_id)
+            serializer.instance = project
+            before = AuditService.snapshot(project)
             serializer.save(change_user=request.user)
             AuditService.record_update(request, self.destination, before, project)
 

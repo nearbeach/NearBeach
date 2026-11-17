@@ -139,6 +139,19 @@ class MetaDataApiTests(BaseApiClass):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Project.objects.get(pk=1).meta_data, {"a": 1})
 
+    def test_title_only_save_with_a_stale_instance_keeps_newer_meta_data(self):
+        from NearBeach.serializers.project_serializer import ProjectSerializer
+
+        stale = Project.objects.get(pk=1)  # loaded before the metadata is saved
+        self._patch(PROJECT_URL, {"a": 1})
+
+        serializer = ProjectSerializer(stale, data={"title": "Renamed"}, partial=True)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        saved = serializer.save()
+
+        self.assertEqual(Project.objects.get(pk=1).meta_data, {"a": 1})
+        self.assertEqual(saved.meta_data, {"a": 1})
+
     def test_whole_value_must_be_an_object(self):
         for value in ([1, 2], "text", 5, None):
             with self.subTest(value=value):
