@@ -64,7 +64,7 @@ describe("StakeholderOrganisation", () => {
 
     expect(wrapper.findComponent(AddObject).exists()).toBe(false);
     expect(wrapper.find(".organisation-name a").text()).toBe("Acme");
-    expect(wrapper.find(".organisation-name a").attributes("href")).toBe("organisation/3");
+    expect(wrapper.find(".organisation-name a").attributes("href")).toBe("/organisation/3");
   });
 
   test("choosing an organisation posts it and updates the stores", async () => {

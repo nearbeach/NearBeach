@@ -15,7 +15,7 @@ const CustomerPage = () =>
     import("@/components/customer/CustomerPage.vue");
 const DashboardPage = () =>
     import("@/components/dashboard/dashboard_page/DashboardPage.vue");
-const NewProject = () =>
+const NewObject = () =>
     import("@/components/new_object/NewObject.vue");
 const NewOrganisation = () =>
     import("@/components/organisation/new_organisation/NewOrganisation.vue");
@@ -30,6 +30,7 @@ const NotFoundPage = () =>
 const ProjectPage = () =>
     import("@/components/project/ProjectPage.vue");
 const SearchPage = () => import("@/components/search/SearchPage.vue");
+const TaskPage = () => import("@/components/task/TaskPage.vue");
 
 // Define functions
 async function fetchObjectMetaData(): Promise<boolean> {
@@ -112,7 +113,7 @@ const routes = [
         },
         children: [
             {path: "", component: SearchPage, name: "SearchProject"},
-            {path: "new", component: NewProject, name: "NewProject"},
+            {path: "new", component: NewObject, name: "NewProject"},
             {path: ":id", component: ProjectPage, name: "Project"},
         ],
     },
@@ -168,8 +169,8 @@ const routes = [
         },
         children: [
             {path: "", component: SearchPage, name: "SearchTask"},
-            {path: "new", component: DashboardPage, name: "NewTask"},
-            {path: ":id", component: DashboardPage, name: "Task"},
+            {path: "new", component: NewObject, name: "NewTask"},
+            {path: ":id", component: TaskPage, name: "Task"},
         ],
     },
     {
