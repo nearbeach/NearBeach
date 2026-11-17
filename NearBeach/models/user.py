@@ -5,6 +5,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.permission_queryset import PermissionAwareQuerySet
 from NearBeach.models.document.document import Document
 from NearBeach.models.kanban_board.kanban_card import KanbanCardForeignKey
 from NearBeach.models.permission.group import Group
@@ -39,6 +40,9 @@ class UserGroup(CommonInfo):
     group_leader = models.BooleanField(
         default=False,
     )
+
+    # Bulk writes (soft deletes use update()) clear the permission cache
+    objects = PermissionAwareQuerySet.as_manager()  # type: ignore[misc]
 
     class Meta:
         """Meta definition for UserGroup."""

@@ -3,6 +3,7 @@
 from django.db import models
 
 from NearBeach.models.abstraction.common_abstractions import CommonInfo
+from NearBeach.models.abstraction.permission_queryset import PermissionAwareQuerySet
 from NearBeach.utils.enums.permission_enums import PermissionLevel, PermissionBoolean
 
 
@@ -102,6 +103,9 @@ class PermissionSet(CommonInfo):
         choices=PermissionBoolean,
         default=0,
     )
+
+    # Bulk writes clear the permission cache
+    objects = PermissionAwareQuerySet.as_manager()  # type: ignore[misc]
 
     def __str__(self) -> str:
         return str(self.name)

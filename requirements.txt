@@ -21,5 +21,7 @@ django-axes>=8.0.0
 pip>=26.2.2
 requests>=2.34.2
 sqlparse>=0.6.0
-
 python-dotenv>=1.2.4
+
+# Optional: shared cache between workers (set REDIS_URL) - see NearBeach/utils/permission_cache.py
+# redis>=5.0.0

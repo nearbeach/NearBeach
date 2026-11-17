@@ -10,6 +10,9 @@ class NearBeachConfig(AppConfig):
         # Register the signal handlers that clear the cached initial data
         from NearBeach.utils import initial_data_cache  # noqa: F401
 
+        # Register the signal handlers that clear the cached permission lookups
+        from NearBeach.utils import permission_cache  # noqa: F401
+
         # The admin login is a second way in - give it the same throttle and two-factor check as the main login
         from django.contrib import admin
         from NearBeach.utils.secure_admin import harden_admin_site

@@ -68,6 +68,7 @@ Fixture conventions: `docs/007-misc/fixtures/fixture-object-assignment.rst`.
   - `@object_permission(min_permission_level=N, additive_permission="...")` – object id is in the URL (404 if missing, `PermissionDenied` if not allowed).
   - `@destination_permission(min_permission_level=N)` – create flows, no id yet.
   - Used together with `@action`. Validate group lists with `check_group_list`.
+- **Permission cache** (`utils/permission_cache.py`): both decorators get the user's level through `get_object_permission` / `get_destination_permission`, cached for `PERMISSION_CACHE_TTL` seconds (default 300, 0 = off). Cache keys carry a version token that is replaced on any `UserGroup`, `PermissionSet` or group-access `ObjectAssignment` change: via signals and via `PermissionAwareQuerySet` (`models/abstraction/permission_queryset.py`), which covers the `queryset.update(is_deleted=True)` soft deletes that fire no signal. Never add a permission-affecting write that bypasses those managers (e.g. raw SQL). Object existence is still checked live. Set `REDIS_URL` for a cache shared between workers; the default per-process cache can serve stale grants to other workers until the TTL expires.
 
 ### Request path
 ```

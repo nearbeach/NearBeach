@@ -1,13 +1,11 @@
 from functools import wraps
 
-from django.db.models import Max
 from rest_framework.exceptions import PermissionDenied, NotFound
 
-from NearBeach.models.user import UserGroup
-from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.utils.api.check_object_exists import check_object_exists
 from NearBeach.utils.api.get_destination import get_object_from_url
 from NearBeach.utils.api.get_parent_object import get_parent_object
+from NearBeach.utils.permission_cache import get_object_permission
 
 
 def object_permission(min_permission_level, additive_permission=None):
@@ -55,40 +53,18 @@ def object_permission(min_permission_level, additive_permission=None):
             if not object_exists:
                 raise NotFound
 
-            # All user group results
-            user_group_results = UserGroup.objects.filter(
-                is_deleted=False,
-                username=username,
+            # Level (and additive permission) for this user on the object - cached, see utils/permission_cache.py
+            user_level, has_additive_permission = get_object_permission(
+                username,
+                destination,
+                location_id,
+                additive_permission,
             )
-
-            # Exclude organisation
-            if destination != "organisation":
-                # Apply the location_id grouping
-                user_group_results = user_group_results.filter(
-                    group_id__in=ObjectAssignment.objects.filter(
-                        is_deleted=False,
-                        group_id__isnull=False,
-                        **{destination: location_id},
-                    ).values("group_id")
-                )
-
-            # Check the user permissions - the aggregate is None when the user has no matching group
-            user_level = user_group_results.aggregate(
-                Max(f"permission_set__{destination}")
-            )[f"permission_set__{destination}__max"]
             if user_level is None:
                 raise PermissionDenied
 
             if user_level < min_permission_level:
-                # Below the level needed - the additive permission can still let a read-only user in, but it has to
-                # come from the same permission set that lets them read the object
-                has_additive_permission = additive_permission is not None and user_group_results.filter(
-                    permission_set__is_deleted=False,
-                    **{
-                        f"permission_set__{destination}__gte": 1,
-                        f"permission_set__{additive_permission}__gte": 1,
-                    },
-                ).exists()
+                # Below the level needed - the additive permission can still let a read-only user in
                 if not has_additive_permission:
                     raise PermissionDenied
 
