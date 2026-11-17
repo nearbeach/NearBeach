@@ -154,6 +154,15 @@ CI: CircleCI (backend on Python 3.12, frontend on Node 23 + Vitest + Playwright)
 - Permissions are always enforced server-side; hiding UI is not security.
 - Git flow: features branch from `develop`, hotfixes from `main` (`docs/006-procedures/git-flow`).
 
+### Design principles
+
+Short form only; the full justifications and style guide live in the manual (`docs/005-design-decisions/`).
+
+- Viewsets stay thin: schema + permission decorator + delegate to a Service.
+- Services return `(data, status)`; errors are HTTP statuses, not exceptions to the client.
+- Frontend HTTP always goes through `safeFetch` (never rejects; network failure = synthetic 503) and callers switch on `response.status`.
+- Validation fails closed.
+
 ## 8. Known gaps and stale items
 
 - `pyproject.toml` still says Django>=3.1 (used mainly for mypy config).
