@@ -147,4 +147,65 @@ describe("AuditComponent", () => {
 
     expect(useErrorStore().showErrorModal).toBe(true);
   });
+
+  test("shows loading until the first request resolves", async () => {
+    let resolveResponse!: (response: Response) => void;
+    vi.spyOn(globalThis, "fetch").mockReturnValue(new Promise<Response>((resolve) => {
+      resolveResponse = resolve;
+    }));
+    const wrapper = mount(AuditComponent, { global: { plugins: [i18n] } });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.text()).toContain(i18n.global.t("audit_component.loading"));
+    expect(wrapper.find(".empty").exists()).toBe(false);
+    resolveResponse({ status: 200, json: async () => structuredClone(secondPage) } as Response);
+    await flushPromises();
+    expect(wrapper.findAll(".audit-entry")).toHaveLength(1);
+    expect(wrapper.text()).not.toContain(i18n.global.t("audit_component.loading"));
+  });
+
+  test("unknown actions and anonymous actors render without a changes list", async () => {
+    const page = structuredClone(secondPage);
+    page.results[0]!.action = "future_action";
+    page.results[0]!.username = "";
+    mockFetch([page]);
+    const wrapper = mount(AuditComponent, { global: { plugins: [i18n] } });
+    await flushPromises();
+
+    expect(wrapper.find("strong").text()).toBe("future_action");
+    expect(wrapper.find(".audit-header > span").exists()).toBe(false);
+    expect(wrapper.find(".audit-changes").exists()).toBe(false);
+    expect(wrapper.find("time").attributes("datetime")).toBe(page.results[0]!.date_created);
+  });
+
+  test.each([
+    [null, "(empty)"],
+    ["", "(empty)"],
+    [0, "0"],
+    [false, "false"],
+    [{ name: "Example" }, '{"name":"Example"}'],
+    [[1, 2], "[1,2]"],
+  ])("formats changed value %j as %s", async (value, expected) => {
+    mockFetch([{
+      ...secondPage,
+      results: [{ ...secondPage.results[0], changes: { value: { old: value, new: value } } }],
+    }]);
+    const wrapper = mount(AuditComponent, { global: { plugins: [i18n] } });
+    await flushPromises();
+
+    expect(wrapper.find(".old").text()).toBe(expected);
+    expect(wrapper.find(".new").text()).toBe(expected);
+  });
+
+  test("server errors show their status text in the error store", async () => {
+    mockFetch([{}], 500);
+    const wrapper = mount(AuditComponent, { global: { plugins: [i18n] } });
+    await flushPromises();
+
+    expect(useErrorStore().showErrorModal).toBe(true);
+    expect(useErrorStore().message).toBe("Server exploded");
+    expect(wrapper.findAll(".audit-entry")).toHaveLength(0);
+    expect(wrapper.text()).not.toContain(i18n.global.t("audit_component.loading"));
+  });
+
 });

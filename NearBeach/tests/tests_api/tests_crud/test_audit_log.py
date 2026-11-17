@@ -191,3 +191,48 @@ class AuditRetentionTests(BaseApiClass):
         self.assertIsNone(entry.user)
         self.assertIsNone(entry.ip_address)
         self.assertNotEqual(entry.username, "admin")
+
+
+class AuditTransactionTests(BaseApiClass):
+    """An audit failure must roll back the associated service mutation."""
+
+    username = "admin"
+    password = "Test1234$"
+
+    def test_audit_write_failure_rolls_back_updates_and_soft_deletes(self):
+        from unittest.mock import patch
+
+        from NearBeach.models.customer import Customer
+        from NearBeach.models.organisation import Organisation
+
+        cases = (
+            (Project, PROJECT_URL, "title", "Renamed"),
+            (Organisation, "/api/v1/organisation/1/", "name", "Renamed"),
+            (Customer, "/api/v1/organisation/1/customer/1/", "first_name", "Renamed"),
+        )
+        for model, url, field, value in cases:
+            for method in ("patch", "delete"):
+                with self.subTest(model=model.__name__, method=method):
+                    original = model.objects.get(pk=1)
+                    with patch.object(AuditService, "record", side_effect=RuntimeError("Audit unavailable")):
+                        with self.assertRaisesMessage(RuntimeError, "Audit unavailable"):
+                            if method == "patch":
+                                self.client.patch(url, {field: value}, format="json")
+                            else:
+                                self.client.delete(url)
+                    current = model.objects.get(pk=1)
+                    self.assertEqual(getattr(current, field), getattr(original, field))
+                    self.assertFalse(current.is_deleted)
+                    self.assertEqual(current.change_user_id, original.change_user_id)
+                    self.assertEqual(current.date_modified, original.date_modified)
+                    self.assertFalse(AuditLog.objects.exists())
+
+    def test_audit_write_failure_rolls_back_project_creation(self):
+        from unittest.mock import patch
+
+        count = Project.objects.count()
+        with patch.object(AuditService, "record", side_effect=RuntimeError("Audit unavailable")):
+            with self.assertRaisesMessage(RuntimeError, "Audit unavailable"):
+                self.client.post("/api/v1/project/", {"title": "Audited", "group_list": [1]}, format="json")
+        self.assertEqual(Project.objects.count(), count)
+        self.assertFalse(AuditLog.objects.exists())
