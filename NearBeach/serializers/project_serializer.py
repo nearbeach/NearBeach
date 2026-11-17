@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from NearBeach.models.project import ListOfProjectStatus, Project
+from NearBeach.serializers.abstraction.meta_data_serializer_mixin import MetaDataSerializerMixin
 from NearBeach.serializers.abstraction.base_object_serializer import BaseObjectSerializer
 from NearBeach.serializers.abstraction.date_fields_serializer import DateFieldsSerializer
 from NearBeach.serializers.enum_serializer import EnumField
@@ -11,7 +12,7 @@ from NearBeach.utils.enums.object_enums import ObjectPriority
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 
 
-class ProjectSerializer(serializers.ModelSerializer, BaseObjectSerializer, DateFieldsSerializer):
+class ProjectSerializer(MetaDataSerializerMixin, serializers.ModelSerializer, BaseObjectSerializer, DateFieldsSerializer):
     """Class containing serializer base for all objects"""
 
     organisation = OrganisationSerializer(
@@ -102,6 +103,7 @@ class ProjectSerializer(serializers.ModelSerializer, BaseObjectSerializer, DateF
             "user_list",
             "date_created",
             "date_modified",
+            "meta_data",
         ]
 
 

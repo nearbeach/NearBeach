@@ -60,6 +60,14 @@ ORGANISATION_SCHEMA = {
         responses=_responses({201: OrganisationSerializer}, 400, 403),
     ),
     "retrieve": _doc("Get a organisation", responses=_responses({200: OrganisationSerializer}, 403, 404)),
+    "partial_update": _doc(
+        "Update a organisation",
+        "Send only the fields to change. `meta_data` is merged into the stored JSON object (JSON Merge "
+        "Patch): keys you send are added or updated, keys you leave out are kept, and a key set to `null` "
+        "is deleted. It must be an object and the saved result is limited to 64KB.",
+        request=OrganisationSerializer,
+        responses=_responses({200: OrganisationSerializer}, 400, 403, 404),
+    ),
     "destroy": _doc(
         "Delete a organisation",
         "Soft-deletes the organisation. Requires full permission (level 4).",

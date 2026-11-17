@@ -1,9 +1,11 @@
+from django.db import transaction
 from django.db.models import QuerySet, Q
 from django.utils import timezone
 from rest_framework import status
 
 from NearBeach.models.customer import Customer
 from NearBeach.serializers.customer_serializer import CustomerSerializer
+from NearBeach.services.AuditService import AuditService
 from NearBeach.services.abstraction.object_services_abstraction import (
     AuthenticatedRequest,
     ObjectId,
@@ -23,10 +25,12 @@ class CustomerService(ObjectServiceAbstraction):
         if not serializer.is_valid():
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
-        customer_submit = serializer.save(
-            change_user=request.user,
-            organisation_id=self.location_id,
-        )
+        with transaction.atomic():
+            customer_submit = serializer.save(
+                change_user=request.user,
+                organisation_id=self.location_id,
+            )
+            AuditService.record_create(request, "customer", customer_submit)
 
         serializer = CustomerSerializer(customer_submit)
 
@@ -42,11 +46,13 @@ class CustomerService(ObjectServiceAbstraction):
         if not customer.exists():
             return "Customer does not exist", status.HTTP_404_NOT_FOUND
 
-        customer.update(
-            is_deleted=True,
-            change_user=request.user,
-            date_modified=timezone.now(),
-        )
+        with transaction.atomic():
+            customer.update(
+                is_deleted=True,
+                change_user=request.user,
+                date_modified=timezone.now(),
+            )
+            AuditService.record_delete(request, "customer", customer_pk)
 
         return {}, status.HTTP_204_NO_CONTENT
 
@@ -112,7 +118,10 @@ class CustomerService(ObjectServiceAbstraction):
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Apply updates
-        serializer.save(change_user=request.user)
+        before = AuditService.snapshot(customer)
+        with transaction.atomic():
+            serializer.save(change_user=request.user)
+            AuditService.record_update(request, "customer", before, customer)
 
         # Return results
         return serializer.data, status.HTTP_200_OK

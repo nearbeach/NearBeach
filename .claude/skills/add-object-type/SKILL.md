@@ -14,12 +14,13 @@ Read `Architecture.md` first (ObjectAssignment, permissions, request path). Migr
 4. **Migration:** `python3 manage.py makemigrations` (sequential numbering). Review the SQL; never edit applied migrations.
 5. **Fixtures:** update `NearBeach/fixtures/NearBeach_basic_setup.json` (and others) incl. ObjectAssignment rows; see `docs/007-misc/fixtures/`.
 6. **Serializer, Service, ViewSet, schema docs, routing, tests:** follow the `add-api-endpoint` skill.
-7. **Admin/search:** wire into `views/search/` and the potential-object-links data endpoint if the object is linkable.
+7. **Audit:** every create/update/delete in the new service calls `AuditService.record_create` / `record_update` / `record_delete` inside the same `transaction.atomic()` (snapshot before saving; see `Architecture.md` > Audit log), and the viewset gets an `audit` action like `ProjectViewSet.audit`. Add tests like `tests_api/tests_crud/test_audit_log.py`.
+8. **Admin/search:** wire into `views/search/` and the potential-object-links data endpoint if the object is linkable.
 
 ## Frontend checklist
 1. Components in `src/components/<object>/` (`Name.vue`, `Name.spec.ts`, `index.ts`); reuse `object_components/*` (access, documents, notes, link objects, stakeholders).
 2. Routes in `src/router/router.ts`; Pinia store updates (`object`, `permissions`, `nav`).
-3. Locale keys in `en.json` and `ja.json`.
+3. Locale keys in `en.json` and `ja.json`. Add the `AuditComponent` Activity tab.
 4. Add to `components/new_object/` if users can create it from the nav.
 
 ## Docs

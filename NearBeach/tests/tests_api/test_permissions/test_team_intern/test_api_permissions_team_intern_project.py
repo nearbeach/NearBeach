@@ -866,3 +866,12 @@ class ApiTeamMemberPermissionTests(BaseApiClass):
 
         self._run_test_array(data_list)
     
+
+    def test_api_permissions_team_intern_project_audit(self):
+        """Test - the audit history follows the same read permission as the project itself"""
+        data_list = [
+            self.URLTest("/api/v1/project/1/audit/", {}, 403, "GET"),
+            self.URLTest("/api/v1/project/2/audit/", {}, 200, "GET"),
+            self.URLTest("/api/v1/project/6/audit/", {}, 404, "GET"),
+        ]
+        self._run_test_array(data_list)

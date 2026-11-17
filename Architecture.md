@@ -47,7 +47,22 @@ tests/       tests_api, tests_services, tests_views, ...
 ### Models
 Every model extends `CommonInfo` (`models/abstraction/common_abstractions.py`): `date_created`, `date_modified`, `creation_user`, `change_user` and a soft-delete flag **`is_deleted`**. Querysets must filter `is_deleted=False`. Primary keys are explicit `BigAutoField`. Enums are `IntegerChoices`/`TextChoices` in `utils/enums/` with `gettext_lazy` labels.
 
+**`meta_data`**: `MetaDataAbstraction` (`models/abstraction/meta_data_abstraction.py`) adds a free-form JSON object `meta_data` (default `{}`) to Organisation, Customer, Project, Task, Requirement, RequirementItem, RequestForChange, ChangeTask, KanbanBoard, KanbanCard and Sprint, intended for integrations/plugins (use one top-level key per plugin; it is readable by anyone who can read the object, so no secrets). The API field comes from `MetaDataSerializerMixin` (`serializers/abstraction/meta_data_serializer_mixin.py`, put first in the serializer bases and add `"meta_data"` to `Meta.fields`). It must be an object, and updates are **merged** (JSON Merge Patch, RFC 7386, `utils/meta_data.py`): sent keys are added/updated, omitted keys are kept, `null` deletes a key, arrays are replaced whole; the saved result is capped at `META_DATA_MAX_BYTES` (64KB). The merge runs under a row lock in the serializer's `update()`. Currently exposed on Organisation, Customer and Project only, and not on the public link payload. Changes are audit-logged like any other field.
+
 Domain areas: Organisation, Customer, Project, Task, Requirement + RequirementItem, RequestForChange + ChangeTask, KanbanBoard + KanbanCard, Sprint, Document/Folder, Note, Tag, Group/PermissionSet/UserGroup, OIDC provider.
+
+### Audit log
+`models/audit_log.py` (`AuditLog`) is an append-only record of who changed what: `user` + `username` snapshot, `object_type` (destination string) + `object_id`, `action` (`utils/enums/audit_enums.py`), `changes` JSON `{field: {"old", "new"}}`, `summary`, `ip_address`. It is **not** a `CommonInfo` model and `save()` refuses to rewrite a row.
+
+It is written explicitly from the services through `services/AuditService.py`, not by signals, because soft deletes use `QuerySet.update()` (no signals) and there is no current-user middleware. Pattern, always inside one `transaction.atomic()` with the change itself:
+```
+before = AuditService.snapshot(obj)          # raw field values, no queries
+serializer.save(change_user=request.user)
+AuditService.record_update(request, "project", before, obj)   # writes nothing if nothing changed
+```
+`record_create` / `record_delete` cover the other writes. Every field is logged except the `CommonInfo` bookkeeping ones; names containing password/token/secret are masked; only changed foreign keys cost a lookup (to store a readable label such as the status title). Moving a status whose `higher_order_status` is `Closed` is recorded as `close`. Currently wired into Project, Organisation and Customer; **every new service must do the same**. Read endpoint: `GET /api/v1/project/{id}/audit/` (read permission, paginated, newest first), shown in the Activity tab (`components/object_components/audit/`).
+
+GDPR: `settings.AUDIT_RETENTION_DAYS` (env var, default 730) + `python3 manage.py prune_audit` run from cron; `AuditService.scrub_object()` and `anonymise_user()` erase personal data for an erasure request while keeping the fact that a change happened.
 
 ### How objects are tied together: `ObjectAssignment`
 `models/object_assignment/object_assignment.py` is **one wide table with nullable FKs** to every object type plus `assigned_user` and `group`. It is *not* a Django GenericForeignKey. A row means one of:

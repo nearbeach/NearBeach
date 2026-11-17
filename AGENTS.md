@@ -30,4 +30,5 @@ mypy NearBeach
 5. Type-annotate new models/services (mypy `disallow_untyped_defs`).
 6. Every user-facing string goes in both `src/locales/en.json` and `ja.json`.
 7. Never use real SMTP/S3 credentials from `.env`; never commit `db.sqlite3` changes. For manual testing use a wrapped settings module (console email backend, nulled S3/Azure keys).
-8. Git flow: features from `develop`, hotfixes from `main`. Don't commit unless asked.
+8. Every create/update/delete in a service writes an audit row via `AuditService` in the same `transaction.atomic()` (see `Architecture.md` > Audit log). `AuditLog` is append-only.
+9. Git flow: features from `develop`, hotfixes from `main`. Don't commit unless asked.

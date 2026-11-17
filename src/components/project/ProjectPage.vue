@@ -5,6 +5,7 @@ import {AccessComponent} from "@/components/object_components/access";
 import {PublicLinks} from "@/components/object_components/public_links";
 import {StakeholderComponent} from "@/components/object_components/stakeholder";
 import {DocumentComponent} from "@/components/object_components/document";
+import {AuditComponent} from "@/components/object_components/audit";
 import {NotesComponent} from "@/components/object_components/notes";
 import {LinkObjects} from "@/components/object_components/link_objects";
 import {SprintLinks} from "@/components/object_components/sprint_links";
@@ -23,6 +24,7 @@ const tabList: TabHeaderInterface[] = [
 	{label: t("project_page.documentation"), for: "documentation"},
 	{label: t("project_page.notes"), for: "notes"},
 	{label: t("project_page.misc"), for: "misc"},
+	{label: t("project_page.activity"), for: "activity"},
 ]
 
 // Define stores
@@ -53,6 +55,9 @@ onMounted(() => {
 						<PublicLinks/>
                         <hr />
                         <SprintLinks />
+					</template>
+					<template #activity>
+						<AuditComponent/>
 					</template>
 				</WlkTabs>
 			</WlkCard>

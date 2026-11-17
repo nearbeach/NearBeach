@@ -9,7 +9,9 @@ from rest_framework.response import Response
 
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.models.project import Project
+from NearBeach.serializers.audit_log_serializer import AuditLogSerializer
 from NearBeach.serializers.project_serializer import ProjectSerializer
+from NearBeach.services.AuditService import AuditService
 from NearBeach.services.PublicLinkService import PublicLinkService
 from NearBeach.services.customer.CustomerLinkService import CustomerLinkService
 from NearBeach.services.LinkListService import LinkListService
@@ -38,6 +40,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(
             data=data,
             status=http_status,
+        )
+
+    @object_permission(min_permission_level=1)
+    @action(
+        methods=["GET"],
+        detail=True,
+        url_path="audit",
+    )
+    def audit(self, request, pk, *args, **kwargs) -> Response:
+        results = AuditService.get_list("project", pk)
+
+        page = self.paginate_queryset(results)
+        if page is not None:
+            return self.get_paginated_response(AuditLogSerializer(page, many=True).data)
+
+        return Response(
+            data={"Issue with pagination of object"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
     @object_permission(min_permission_level=1)

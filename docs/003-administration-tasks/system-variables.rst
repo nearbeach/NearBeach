@@ -422,3 +422,23 @@ Example:
 .. _For setup of Minio connections, please refer to the Minio Access Control documentation: https://docs.min.io/enterprise/aistor-object-store/administration/iam/access/
 .. _For any Boto3 information, please refer to the Boto3 documentation: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#configuration
 .. _More information on Django SMTP can be found on their documentation: https://docs.djangoproject.com/en/5.2/ref/settings/
+
+Audit Log Retention
+===================
+
+NearBeach records who changed what on projects, organisations and customers. Those entries contain personal data, so
+they are only kept for a limited time.
+
+AUDIT_RETENTION_DAYS
+--------------------
+
+How many days of audit history to keep. The default is ``730`` (two years). Old entries are not removed
+automatically - schedule the following command to run regularly (for example daily from cron):
+
+* ``python3 manage.py prune_audit``
+
+Use ``--days`` to override the setting for a single run.
+
+Example:
+
+* `AUDIT_RETENTION_DAYS=365`

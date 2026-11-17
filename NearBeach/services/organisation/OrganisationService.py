@@ -1,9 +1,11 @@
+from django.db import transaction
 from django.db.models import Q, QuerySet
 from django.utils import timezone
 from rest_framework import status
 from NearBeach.models.organisation import Organisation
 from NearBeach.serializers.organisation_serializer import OrganisationSerializer
 
+from NearBeach.services.AuditService import AuditService
 from NearBeach.services.abstraction.object_services_abstraction import (
     AuthenticatedRequest,
     ObjectServiceAbstraction,
@@ -19,7 +21,9 @@ class OrganisationService(ObjectServiceAbstraction):
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Save
-        created_organisation = serializer.save(change_user=request.user)
+        with transaction.atomic():
+            created_organisation = serializer.save(change_user=request.user)
+            AuditService.record_create(request, "organisation", created_organisation)
 
         # Re-serialize
         serializer = OrganisationSerializer(created_organisation, many=False)
@@ -34,11 +38,13 @@ class OrganisationService(ObjectServiceAbstraction):
         if not organisation.exists():
             return "Organisation does not exist", status.HTTP_404_NOT_FOUND
 
-        organisation.update(
-            is_deleted=True,
-            change_user=request.user,
-            date_modified=timezone.now(),
-        )
+        with transaction.atomic():
+            organisation.update(
+                is_deleted=True,
+                change_user=request.user,
+                date_modified=timezone.now(),
+            )
+            AuditService.record_delete(request, "organisation", self.location_id)
 
         return {}, status.HTTP_204_NO_CONTENT
 
@@ -99,7 +105,10 @@ class OrganisationService(ObjectServiceAbstraction):
             return serializer.errors, status.HTTP_400_BAD_REQUEST
 
         # Update data
-        updated_organisation = serializer.save(change_user=request.user)
+        before = AuditService.snapshot(organisation)
+        with transaction.atomic():
+            updated_organisation = serializer.save(change_user=request.user)
+            AuditService.record_update(request, "organisation", before, updated_organisation)
 
         # Re-serialize the data to send back complete set to user
         serializer = OrganisationSerializer(updated_organisation, many=False)
