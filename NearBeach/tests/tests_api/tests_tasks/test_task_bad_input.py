@@ -1,0 +1,167 @@
+"""Regression tests - bad input to the task API must give a 4xx, never a 500.
+
+Every case here was a server error found by Schemathesis (scripts/run_schemathesis.sh).
+"""
+
+from django.urls import resolve
+
+from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
+from NearBeach.tests.utils.BaseApiClass import BaseApiClass
+
+PROJECT_URL = "/api/v1/task/1/"
+
+
+class TaskBadInputTests(BaseApiClass):
+    username = "admin"
+    password = "Test1234$"
+
+    def _request(self, method, url, data=None):
+        return getattr(self.client, method.lower())(url, data or {}, format="json")
+
+    # ---------- ids in the url ----------
+    def test_non_numeric_ids_are_not_found(self):
+        """Sub-resource ids are numeric - anything else is a 404 from the router, not a ValueError"""
+        urls = [
+            ("DELETE", "customer/abc/"),
+            ("DELETE", "groups/abc/"),
+            ("DELETE", "link_list/abc/"),
+            ("DELETE", "notes/abc/"),
+            ("DELETE", "users/abc/"),
+            ("PATCH", "link_list/abc/"),
+            ("PATCH", "notes/abc/"),
+        ]
+        for method, path in urls:
+            with self.subTest(method=method, path=path):
+                response = self._request(method, PROJECT_URL + path, {"note": "x"})
+                self.assertEqual(response.status_code, 404)
+
+    def test_non_uuid_public_link_ids_are_not_found(self):
+        for method in ["PATCH", "DELETE"]:
+            for bad_id in ["0", "abc", "123"]:
+                with self.subTest(method=method, bad_id=bad_id):
+                    response = self._request(method, f"{PROJECT_URL}public_link/{bad_id}/", {"is_active": True})
+                    self.assertEqual(response.status_code, 404)
+
+    def test_unknown_uuid_public_link_is_rejected_cleanly(self):
+        response = self._request(
+            "PATCH",
+            f"{PROJECT_URL}public_link/00000000-0000-0000-0000-000000000000/",
+            {"is_active": True},
+        )
+        self.assertEqual(response.status_code, 404)
+
+    # ---------- documents ----------
+    def test_document_update_is_routed_to_a_single_document(self):
+        """documents_update used to be mapped onto the collection route: TypeError on /documents/, 405 on /documents/<id>/
+
+        Only the routing is checked - DocumentService.update itself is unfinished (see its TODO).
+        """
+        collection = self._request("PATCH", f"{PROJECT_URL}documents/", {"type": "document", "description": "x"})
+        self.assertEqual(collection.status_code, 405)
+
+        actions = resolve(f"{PROJECT_URL}documents/1/").func.actions
+        self.assertEqual(actions, {"delete": "documents_delete", "patch": "documents_update"})
+
+    def test_document_create_without_a_file_is_rejected(self):
+        response = self._request("POST", f"{PROJECT_URL}documents/", {"type": "document", "description": "x"})
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("document", response.data)
+
+    def test_link_create_without_a_url_is_rejected(self):
+        response = self._request("POST", f"{PROJECT_URL}documents/", {"type": "link", "description": "x"})
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("url_location", response.data)
+
+    def test_folder_create_still_works_without_file_or_url(self):
+        response = self._request("POST", f"{PROJECT_URL}documents/", {"type": "folder", "description": "x"})
+        self.assertEqual(response.status_code, 201)
+
+    # ---------- references to things that do not exist ----------
+    def test_public_link_update_needs_is_active(self):
+        url = f"{PROJECT_URL}public_link/1c1067e9-563f-4419-9dac-e87d757ecb37/"
+
+        missing = self._request("PATCH", url, {})
+        self.assertEqual(missing.status_code, 400)
+        self.assertIn("is_active", missing.data)
+
+        self.assertEqual(self._request("PATCH", url, {"is_active": False}).status_code, 200)
+
+    def test_customer_link_to_unknown_customer_is_rejected(self):
+        response = self._request("POST", f"{PROJECT_URL}customer/", {"id": 99999})
+        self.assertEqual(response.status_code, 404)
+
+    def test_customer_link_to_known_customer_works(self):
+        response = self._request("POST", f"{PROJECT_URL}customer/", {"id": 1})
+        self.assertEqual(response.status_code, 201)
+
+    def test_organisation_link_to_unknown_organisation_is_rejected(self):
+        response = self._request("POST", f"{PROJECT_URL}organisation/", {"id": 99999})
+        self.assertEqual(response.status_code, 404)
+
+    def test_link_list_create_with_unknown_object_is_rejected(self):
+        response = self._request(
+            "POST",
+            f"{PROJECT_URL}link_list/",
+            {"object_type": "task", "object_id": 99999, "object_relation": "relates"},
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_link_list_update_with_unknown_references_is_rejected(self):
+        created = self._request(
+            "POST",
+            f"{PROJECT_URL}link_list/",
+            {"object_type": "requirement_item", "object_id": 1, "object_relation": "relates"},
+        )
+        self.assertEqual(created.status_code, 201)
+        link_id = created.data["object_assignment_id"]
+
+        # The link exists - but the object it is being pointed at does not
+        unknown_object = self._request(
+            "PATCH",
+            f"{PROJECT_URL}link_list/{link_id}/",
+            {"object_type": "task", "object_id": 99999, "object_relation": "relates"},
+        )
+        self.assertEqual(unknown_object.status_code, 404)
+
+        # The link itself does not exist
+        unknown_link = self._request(
+            "PATCH",
+            f"{PROJECT_URL}link_list/99999/",
+            {"object_type": "task", "object_id": 1, "object_relation": "relates"},
+        )
+        self.assertEqual(unknown_link.status_code, 404)
+
+        # And the happy path still works
+        updated = self._request(
+            "PATCH",
+            f"{PROJECT_URL}link_list/{link_id}/",
+            {"object_type": "task", "object_id": 1, "object_relation": "relates"},
+        )
+        self.assertEqual(updated.status_code, 200)
+
+    # ---------- nothing to add ----------
+    def test_adding_groups_or_users_needs_at_least_one(self):
+        """A form post with the list missing arrives as an empty list - it used to answer 201 having done nothing"""
+        for path in ["groups/", "users/"]:
+            field = "group_list" if path == "groups/" else "user_list"
+            for name, response in {
+                "empty form": self.client.post(PROJECT_URL + path, {}, format="multipart"),
+                "empty json list": self.client.post(PROJECT_URL + path, {field: []}, format="json"),
+                "missing json list": self.client.post(PROJECT_URL + path, {}, format="json"),
+            }.items():
+                with self.subTest(path=path, case=name):
+                    self.assertEqual(response.status_code, 400)
+                    self.assertIn(field, response.data)
+
+    def test_adding_a_group_and_a_user_still_works(self):
+        self.assertEqual(self._request("POST", f"{PROJECT_URL}groups/", {"group_list": [2]}).status_code, 201)
+        self.assertEqual(self._request("POST", f"{PROJECT_URL}users/", {"user_list": [2]}).status_code, 201)
+
+    def test_adding_the_same_group_or_user_twice_does_not_duplicate_it(self):
+        for _ in range(3):
+            self.assertEqual(self._request("POST", f"{PROJECT_URL}groups/", {"group_list": [2]}).status_code, 201)
+            self.assertEqual(self._request("POST", f"{PROJECT_URL}users/", {"user_list": [2]}).status_code, 201)
+
+        assignments = ObjectAssignment.objects.filter(task_id=1, is_deleted=False)
+        self.assertEqual(assignments.filter(group_id=2).count(), 1)
+        self.assertEqual(assignments.filter(assigned_user_id=2).count(), 1)

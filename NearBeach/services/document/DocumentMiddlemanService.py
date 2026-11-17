@@ -35,7 +35,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
         match serializer.validated_data["type"]:
             case "folder":
                 folder_service = FolderService(
-                    destination="project",
+                    destination=self.destination,
                     location_id=self.location_id,
                 )
 
@@ -43,7 +43,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
                 return folder_service.create(request)
             case "link":
                 link_service = DocumentLinkService(
-                    destination="project",
+                    destination=self.destination,
                     location_id=self.location_id,
                 )
 
@@ -51,7 +51,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
                 return link_service.create(request)
             case _:
                 document_service = DocumentService(
-                    destination="project",
+                    destination=self.destination,
                     location_id=self.location_id,
                 )
 
@@ -67,7 +67,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
         match serializer.validated_data["type"]:
             case "folder":
                 folder_service = FolderService(
-                    destination="project",
+                    destination=self.destination,
                     location_id=self.location_id,
                 )
 
@@ -75,7 +75,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
                 return folder_service.delete(request, document_pk)
             case "link":
                 link_service = DocumentLinkService(
-                    destination="project",
+                    destination=self.destination,
                     location_id=self.location_id,
                 )
 
@@ -83,7 +83,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
                 return link_service.delete(request, document_pk)
             case _:
                 document_service = DocumentService(
-                    destination="project",
+                    destination=self.destination,
                     location_id=self.location_id,
                 )
 
@@ -102,7 +102,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
         match serializer.validated_data["type"]:
             case "folder":
                 folder_service = FolderService(
-                    destination="project",
+                    destination=self.destination,
                     location_id=self.location_id,
                 )
 
@@ -110,7 +110,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
                 return folder_service.update(request, document_pk)
             case "link":
                 link_service = DocumentLinkService(
-                    destination="project",
+                    destination=self.destination,
                     location_id=self.location_id,
                 )
 
@@ -118,7 +118,7 @@ class DocumentMiddlemanService(ObjectServiceAbstraction):
                 return link_service.update(request, document_pk)
             case _:
                 document_service = DocumentService(
-                    destination="project",
+                    destination=self.destination,
                     location_id=self.location_id,
                 )
 
