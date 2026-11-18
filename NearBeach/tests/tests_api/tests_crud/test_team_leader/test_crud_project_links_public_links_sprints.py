@@ -8,6 +8,7 @@ Fixture data for project 2 ("Project - QA Team"):
 """
 import uuid
 
+from NearBeach.models.project import ListOfProjectStatus, Project
 from NearBeach.models.misc.misc import PublicLink
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.models.sprint.sprint import Sprint
@@ -149,6 +150,28 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
         row = ObjectAssignment.objects.get(pk=response.data["object_assignment_id"])
         self.assertEqual(row.meta_object, other_project)
         self.assertEqual(row.meta_object_title, "Other QA project")
+
+    def test_project_link_shows_the_current_target_title_and_status(self):
+        target_id = self.client.post(
+            "/api/v1/project/",
+            {"title": "Original project title", "group_list": [2]},
+            format="json",
+        ).data["id"]
+        response = self._create("project", target_id)
+        self.assertEqual(response.status_code, 201, response.data)
+        link_id = response.data["object_assignment_id"]
+
+        new_status = ListOfProjectStatus.objects.create(status="Updated status")
+        Project.objects.filter(pk=target_id).update(
+            title="Updated project title", status=new_status
+        )
+
+        row = next(
+            row for row in self.client.get(LINK_URL).data
+            if row["object_assignment_id"] == link_id
+        )
+        self.assertEqual(row["object_title"], "Updated project title")
+        self.assertEqual(row["object_status"], "Updated status")
 
     def test_linking_to_a_child_object_needs_access_to_its_parent(self):
         """Requirement items have no group of their own - the leader reaches item 2 through requirement 2"""
