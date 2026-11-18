@@ -4,8 +4,9 @@ from rest_framework import status
 
 from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
 from NearBeach.models.kanban_board.kanban_card import KanbanCard
+from NearBeach.models.project import Project
 from NearBeach.models.user import UserGroup
-from django.db.models import Q, F, Value
+from django.db.models import Exists, F, OuterRef, Q, Subquery, Value
 from django.utils import timezone
 
 from NearBeach.serializers.object_data.link_serializer import LinkSerializer
@@ -263,15 +264,26 @@ class LinkListService(ObjectServiceAbstraction):
             else:
                 # The following looks at the other fields, where the object is assigned to it's associated
                 # object field (and not meta). i.e. project is in project column.
-                data_results.extend(object_assignment_results.filter(
+                link_rows = object_assignment_results.filter(
                     **{data_point.non_null_field + "__isnull": False},
                 ).exclude(
                     meta_object=self.location_id,
-                ).annotate(
+                )
+                title = F(data_point.object_title)
+                object_status = F(data_point.object_status)
+                if self.destination == "project" and data_point.non_null_field == "meta_object":
+                    target = Project.objects.filter(
+                        pk=OuterRef("meta_object"), is_deleted=False
+                    )
+                    link_rows = link_rows.filter(Exists(target))
+                    title = Subquery(target.values("title")[:1])
+                    object_status = Subquery(target.values("status__status")[:1])
+
+                data_results.extend(link_rows.annotate(
                     object_assignment_id=F("id"),
                     object_id=F(data_point.object_id),
-                    object_title=F(data_point.object_title),
-                    object_status=F(data_point.object_status),
+                    object_title=title,
+                    object_status=object_status,
                     object_type=Value(data_point.object_type),
                     reverse_relation=Value(False),
                 ).values(
