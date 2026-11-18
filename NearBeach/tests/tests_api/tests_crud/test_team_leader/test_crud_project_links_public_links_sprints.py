@@ -306,6 +306,12 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
         self.assertEqual(response.status_code, 204)
         self.assertNotIn(("task", 2), self._links())
 
+    def test_delete_from_the_reverse_project(self):
+        response = self.client.delete(f"{LINK_URL}42/")
+
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue(ObjectAssignment.objects.get(pk=42).is_deleted)
+
     def test_delete_is_a_soft_delete(self):
         self.client.delete(f"{LINK_URL}48/")
 
