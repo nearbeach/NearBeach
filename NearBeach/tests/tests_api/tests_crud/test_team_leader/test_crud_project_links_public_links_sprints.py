@@ -166,10 +166,14 @@ class ProjectLinkListTests(TeamLeaderProjectBase):
             title="Updated project title", status=new_status
         )
 
-        row = next(
-            row for row in self.client.get(LINK_URL).data
+        response = self.client.get(LINK_URL)
+        self.assertEqual(response.status_code, 200, response.data)
+        matching_links = [
+            row for row in response.data
             if row["object_assignment_id"] == link_id
-        )
+        ]
+        self.assertEqual(len(matching_links), 1, f"Expected one row for link {link_id}")
+        row = matching_links[0]
         self.assertEqual(row["object_title"], "Updated project title")
         self.assertEqual(row["object_status"], "Updated status")
 
