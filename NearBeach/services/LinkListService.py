@@ -158,21 +158,23 @@ class LinkListService(ObjectServiceAbstraction):
 
     def delete(self, request: AuthenticatedRequest, object_id: ObjectId) -> ServiceResponse:
         object_assignment_results = ObjectAssignment.objects.filter(
+            Q(**{self.destination: self.location_id})
+            | Q(
+                meta_object=self.location_id,
+                **{self.destination + "__isnull": False},
+            ),
             is_deleted=False,
             pk=object_id,
-            **{self.destination: self.location_id},
-        )
-
-        # If there are no values to update - notify the user
-        if len(object_assignment_results) == 0:
-            return "Object connection does not exist", status.HTTP_404_NOT_FOUND
+        ).exclude(link_relationship="")
 
         # Soft delete the data
-        object_assignment_results.update(
+        updated = object_assignment_results.update(
             is_deleted=True,
             change_user=request.user,
             date_modified=timezone.now(),
         )
+        if updated == 0:
+            return "Object connection does not exist", status.HTTP_404_NOT_FOUND
 
         return {}, status.HTTP_204_NO_CONTENT
 
