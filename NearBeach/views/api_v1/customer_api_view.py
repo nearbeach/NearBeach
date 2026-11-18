@@ -31,7 +31,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     @object_permission(min_permission_level=4)
-    def delete(request: AuthenticatedRequest, organisation_id, pk, *args, **kwargs) -> Response:
+    def destroy(request: AuthenticatedRequest, organisation_id, pk, *args, **kwargs) -> Response:
         """Delete a customer from an organisation"""
         customer_services = CustomerService(destination="organisation", location_id=organisation_id)
         data, http_status = customer_services.delete(request, pk)
