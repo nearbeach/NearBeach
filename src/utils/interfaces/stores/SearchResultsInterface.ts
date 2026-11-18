@@ -3,6 +3,7 @@ import type {PriorityInterface} from "@/utils/interfaces/stores/PriorityInterfac
 import type {StatusInterface} from "@/utils/interfaces/stores/StatusInterface.ts";
 
 export interface SearchResultsInterface {
+    // General Search Results
     id: number,
     title: string,
     description: string,
@@ -11,4 +12,10 @@ export interface SearchResultsInterface {
     organisation: OrganisationInterface,
     priority: PriorityInterface,
     status: StatusInterface,
+
+    // Organisation Search Results
+    name: string,
+    website: string,
+    email: string,
+    profile_picture_path: string,
 }

@@ -5,6 +5,6 @@ export interface NoteItemInterface {
   date_modified: Date,
   first_name: string,
   last_name: string,
-  profile_picture: string,
+  profile_picture_path: string,
   username: number,
 }

@@ -17,6 +17,7 @@ import router from "@/router/router.ts";
 import {useErrorStore} from "@/stores/error/error.ts";
 import {useRoute} from "vue-router";
 import {useObjectStore} from "@/stores/object/object.ts";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -26,6 +27,7 @@ const route = useRoute();
 
 // Define stores
 const errorStore = useErrorStore();
+const permissionStore = usePermissionStore();
 const objectStore = useObjectStore();
 
 // Define data
@@ -170,6 +172,9 @@ onMounted(async () => {
             // Set state and button
             isButtonDisabled.value = false;
             updateState.value = "normal";
+
+			// Set user permissions
+			permissionStore.SetCurrentObjectPermissionsWithoutGroups("organisation");
             break;
         }
         case 403:

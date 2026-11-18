@@ -13,20 +13,16 @@ import {
 import {useI18n} from "petite-vue-i18n";
 import {onMounted, ref} from "vue";
 import {getCsrfToken} from "@/composables/getCsrfToken.ts";
-import {useErrorStore} from "@/stores/error/error.ts";
-import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import type {CustomerInterface} from "@/utils/interfaces/stores/CustomerInterface.ts";
 import router from "@/router/router.ts";
+import {useErrorStore} from "@/stores/error/error.ts";
+import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 
 // Define i18n
 const {t} = useI18n();
 
 // Define props
 const props = defineProps({
-    customerId: {
-        type: String,
-        required: true,
-    },
     // The organisation id
     id: {
         type: String,
@@ -40,26 +36,22 @@ const objectMetaDataStore = useObjectMetaDataStore();
 
 // Define data
 const fieldValidation: Record<string, boolean> = {
-    email: true,
-    first_name: true,
-    last_name: true,
-    title: true,
+    email: false,
+    first_name: false,
+    last_name: false,
+    title: false,
 };
 
 // Define refs
 const emailModel = ref<string>("");
 const firstNamesModel = ref<string>("");
-const isUpdateButtonDisabled = ref<boolean>(true);
+const isButtonDisabled = ref<boolean>(true);
+const isFormSubmitting = ref<boolean>(false);
 const lastNamesModel = ref<string>("");
-const renderUpdateButton = ref<string>(t("customer.loading"));
 const titleModel = ref<string | number>("");
 
 // Define functions
-async function updateCustomer() {
-    // Update button
-    isUpdateButtonDisabled.value = true;
-    renderUpdateButton.value = t("customer.updating");
-
+async function createCustomer() {
     // Create body
     const body = {
         title: titleModel.value,
@@ -69,9 +61,9 @@ async function updateCustomer() {
     }
 
     const response = await fetch(
-        `/api/v1/organisation/${props.id}/customer/${props.customerId}/`,
+        `/api/v1/organisation/${props.id}/customer/`,
         {
-            method: "PATCH",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFTOKEN": getCsrfToken(),
@@ -81,18 +73,21 @@ async function updateCustomer() {
     );
 
     switch (response.status) {
-        case 200: {
-            renderUpdateButton.value = t("customer.updated");
+        case 201: {
+            // Fetch data and redirect to the new customer
+            const data: CustomerInterface = await response.json();
 
-            setTimeout(() => {
-                renderUpdateButton.value = t("customer.update");
-                isUpdateButtonDisabled.value = false;
-            }, 2000);
+            // Customer has been created
+            await router.push(`/organisation/${props.id}/customer/${data.id}/`);
+            break;
+        }
+        case 403: {
+            await router.push({name: "forbidden"});
             break;
         }
         default:
             errorStore.setError(response.statusText);
-            errorStore.showErrorModal = true;
+            await router.push({name: "server-error"});
             break;
     }
 }
@@ -102,60 +97,17 @@ function updateValidation(field: string, value: boolean): void {
     fieldValidation[field] = value
 
     // Define if everything is filled out
-    isUpdateButtonDisabled.value = Object.values(fieldValidation).some((value) => {
+    isButtonDisabled.value = Object.values(fieldValidation).some((value) => {
         return !value;
     });
 }
-
-// On Mounted
-onMounted(async () => {
-    // Fetch the data
-    const response = await fetch(
-        `/api/v1/organisation/${props.id}/customer/${props.customerId}/`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFTOKEN": getCsrfToken(),
-            }
-        }
-    );
-
-    switch (response.status) {
-        case 200: {
-            // Get data
-            const data : CustomerInterface = await response.json();
-
-            // Set data
-            emailModel.value = data.email;
-            firstNamesModel.value = data.first_name;
-            lastNamesModel.value = data.last_name;
-            titleModel.value = data.title.id;
-
-            // Update buttons state
-            isUpdateButtonDisabled.value = false;
-            renderUpdateButton.value = t("customer.update");
-
-            break;
-        }
-        case 404:
-            // Object does not exist
-            await router.push({name: "not-found"});
-            break;
-        default:
-            // Assuming a 500 error
-            errorStore.setError(response);
-            await router.push({name: "server-error"});
-            break;
-    }
-})
 </script>
 
 <template>
-    <WlkCard class="customer">
+    <WlkCard class="new-customer">
         <WlkCardHeader>
-            <h1 id="main-title">{{ t(`customer.title`) }}</h1>
-            <p class="sub-text">{{ t("customer.sub_text") }}</p>
+            <h1 id="main-title">{{ t(`customer.new_customer`) }}</h1>
+            <p class="sub-text">{{ t("customer.new_sub_customer") }}</p>
         </WlkCardHeader>
 
         <div class="customer-name">
@@ -192,25 +144,33 @@ onMounted(async () => {
         </div>
 
         <WlkCardFooter class="customer-footer">
-            <RouterLink :to="`/organisation/${props.id}/`">
-                <WlkButton>
-                    {{t("customer.back_to_org")}}
+            <RouterLink
+                :to="`/organisation/${props.id}/`"
+            >
+                <WlkButton class="danger">
+                    {{ t("customer.cancel") }}
                 </WlkButton>
-
             </RouterLink>
             <WlkButton
                 class="primary"
-                :disabled="isUpdateButtonDisabled"
-                v-on:click="updateCustomer"
+                :is-action-running="isFormSubmitting"
+                :disabled="isButtonDisabled"
+                v-on:click="createCustomer"
             >
-                {{ renderUpdateButton }}
+                <template v-slot:default>
+                    {{ t("customer.create") }}
+                </template>
+
+                <template v-slot:action-state>
+                    {{ t("customer.creating") }}
+                </template>
             </WlkButton>
         </WlkCardFooter>
     </WlkCard>
 </template>
 
 <style scoped>
-.customer {
+.new-customer {
     border-radius: 0;
     margin: 0 auto;
     padding: 0 0.5rem;

@@ -1,4 +1,5 @@
 {
+  "add_relationship.add_relationship": "関係を追加",
   "add_relationship.blocked_by": "ブロックされています",
   "add_relationship.blocking": "現在ブロック中です",
   "add_relationship.duplicate_object": "重複オブジェクトです",
@@ -25,6 +26,7 @@
   "create_and_filter.new_link": "新しいハイパーリンクを作成する",
   "create_and_filter.upload": "アップロード",
   "create_and_filter.upload_document": "ドキュメントをアップロードする",
+  "customer.associated_objects": "関連オブジェクト",
   "customer.back_to_org": "組織に戻る",
   "customer.cancel": "キャンセル",
   "customer.create": "顧客を作成",

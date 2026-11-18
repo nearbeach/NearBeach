@@ -3,12 +3,14 @@ import {CustomerList} from "@/components/organisation/organisation_page/associat
 import {WlkButton} from "whelk-ui";
 import {useI18n} from "petite-vue-i18n";
 import {useObjectStore} from "@/stores/object/object.ts";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 // Define i18n
 const {t} = useI18n();
 
 // Define stores
 const objectStore = useObjectStore();
+const permissionStore = usePermissionStore();
 
 </script>
 
@@ -17,7 +19,9 @@ const objectStore = useObjectStore();
         <CustomerList/>
 
         <RouterLink :to="`/organisation/${objectStore.id}/customer/new/`">
-            <WlkButton class="compact primary create-customer">
+            <WlkButton v-if="permissionStore.currentObjectPermissions.currentObject > 1"
+					   class="compact primary create-customer"
+			>
                 {{t("customer.create")}}
             </WlkButton>
         </RouterLink>

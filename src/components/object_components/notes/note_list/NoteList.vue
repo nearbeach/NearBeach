@@ -29,7 +29,7 @@ const props = defineProps({
 		     :key="note.id"
 		>
 			<div class="author">
-                <ProfilePicture :url="note.profile_picture" :name="note.first_name" />
+                <ProfilePicture :url="note.profile_picture_path" :name="note.first_name" />
 				<div class="details">
 					<div class="name">
 						{{ note.first_name }} {{ note.last_name }}

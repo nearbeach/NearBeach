@@ -12,7 +12,7 @@ import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Async components
 const CustomerPage = () =>
-    import("@/components/customer/CustomerPage.vue");
+    import("@/components/customer/customer_page/CustomerPage.vue");
 const DashboardPage = () =>
     import("@/components/dashboard/dashboard_page/DashboardPage.vue");
 const NewObject = () =>
@@ -20,7 +20,7 @@ const NewObject = () =>
 const NewOrganisation = () =>
     import("@/components/organisation/new_organisation/NewOrganisation.vue");
 const NewCustomer = () =>
-    import("@/components/customer/NewCustomer.vue");
+    import("@/components/customer/new_customer/NewCustomer.vue");
 const PublicLinkPage = () =>
     import("@/components/public_link/PublicLinkPage.vue");
 const OrganisationPage = () =>
@@ -30,6 +30,7 @@ const NotFoundPage = () =>
 const ProjectPage = () =>
     import("@/components/project/ProjectPage.vue");
 const SearchPage = () => import("@/components/search/SearchPage.vue");
+const SearchOrganisationPage = () => import("@/components/organisation/search_organisation/SearchOrganisationPage.vue");
 const TaskPage = () => import("@/components/task/TaskPage.vue");
 
 // Define functions
@@ -133,7 +134,7 @@ const routes = [
             destination: "organisation",
         },
         children: [
-            {path: "", component: SearchPage, name: "SearchOrganisation"},
+            {path: "", component: SearchOrganisationPage, name: "SearchOrganisation"},
             {path: "new", component: NewOrganisation, name: "NewOrganisation"},
             {path: ":id", component: OrganisationPage, name: "Organisation", props: true,},
             {path: ":id/customer/new", component: NewCustomer, name: "NewCustomer", props: true},

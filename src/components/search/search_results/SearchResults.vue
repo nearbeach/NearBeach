@@ -25,9 +25,9 @@ const destination = computed(() => {
 			v-for="item in store.searchResults"
 			:id="item.id"
 			:key="item.id"
-			:higher-order-status="item.status.higher_order_status.value"
+			:higher-order-status="item.status?.higher_order_status?.value ?? ''"
 			:object-type="destination"
-			:status="item.status.status"
+			:status="item.status?.status ?? ''"
 			:title="item.title"
 		/>
     </WlkCard>

@@ -125,6 +125,29 @@ export const usePermissionStore = defineStore('permissions', {
                     return value > max ? value : max;
                 }, 0) ?? 0; // Default 0 in case everything breaks
         },
+        SetCurrentObjectPermissionsWithoutGroups(destination: string) : void {
+            // Making sure the destination exists in the maximum permissions
+            const allowed_destinations = ["customer", "organisation"];
+            
+            // If the destination is not allowed, return
+            if (allowed_destinations.indexOf(destination) < 0) {
+                // Default to 0
+                this.currentObjectPermissions.currentObject = 0;
+                return;
+            }
+
+            // Filter and reduce to get the data we want
+            this.currentObjectPermissions.currentObject =
+                this.permissionData?.reduce((max: number, item) => {
+                    // Get the new value (make sure destination is a keyof typeof item - default 0
+                    const value = item[
+                        destination as keyof typeof item
+                        ] as number ?? 0;
+
+                    // Return the max value
+                    return value > max ? value : max;
+                }, 0) ?? 0; // Default 0 in case everything breaks
+        },
     },
     getters: {
         getCurrentObjectPermissions: state => {

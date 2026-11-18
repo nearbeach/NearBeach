@@ -75,7 +75,7 @@ onMounted(async () => {
              v-for="(customer) in objectStore.customers"
              :key="customer.id"
         >
-                <ProfilePicture :url="customer.profile_picture" :name="customer.first_name" />
+                <ProfilePicture :url="customer.profile_picture_path" :name="customer.first_name" />
 				<div class="details">
 					<div class="name">
                         <RouterLink :to="`/organisation/${objectStore.id}/customer/${customer.id}/`">
@@ -116,6 +116,10 @@ onMounted(async () => {
         padding: 1rem;
         margin: 0 0 0.75rem 0;
 
+		&:hover {
+			background-color: var(--wlk-neutral-colour-10);
+		}
+
         @media (--medium-screen) {
             width: 45%;
         }
@@ -123,7 +127,7 @@ onMounted(async () => {
 }
 
 .empty-customer-list {
-	margin-top: 2rem;
+	margin: 2rem 0;
 	height: 7rem;
 	display: flex;
 	justify-content: center;

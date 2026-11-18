@@ -13,8 +13,8 @@ const RouterLinkStub = defineComponent({
 });
 
 const customers = [
-  { id: 1, title: { id: 1, title: "Mr" }, first_name: "Ada", last_name: "Lovelace", email: "ada@example.com", profile_picture: null },
-  { id: 2, title: { id: 2, title: "Dr" }, first_name: "Alan", last_name: "Turing", email: "alan@example.com", profile_picture: "/media/alan.png" },
+  { id: 1, title: { id: 1, title: "Mr" }, first_name: "Ada", last_name: "Lovelace", email: "ada@example.com", profile_picture_path: null },
+  { id: 2, title: { id: 2, title: "Dr" }, first_name: "Alan", last_name: "Turing", email: "alan@example.com", profile_picture_path: "/media/alan.png" },
 ];
 
 function mockFetch(status: number, body: unknown = {}, statusText = "") {

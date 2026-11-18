@@ -81,6 +81,8 @@ function createObjectLink() : void {
 				</option>
 			</select>
 			<button
+				type="button"
+				:aria-label="t('add_relationship.add_relationship')"
 				:disabled="isDisabled"
 				v-on:click="createObjectLink"
 			>

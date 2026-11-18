@@ -6,7 +6,7 @@ import { WlkSelect, WlkTextInput } from "whelk-ui";
 import { useErrorStore } from "@/stores/error/error.ts";
 import { useObjectMetaDataStore } from "@/stores/object_meta_data/object_meta_data.ts";
 import i18n from "@/i18n.ts";
-import CustomerPage from "./CustomerPage.vue";
+import CustomerPage from "../CustomerPage.vue";
 
 const { pushMock } = vi.hoisted(() => ({ pushMock: vi.fn() }));
 vi.mock("@/router/router.ts", () => ({ default: { push: pushMock } }));

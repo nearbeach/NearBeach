@@ -1,0 +1,1 @@
+export { default as SearchOrganisationPage } from './SearchOrganisationPage.vue';

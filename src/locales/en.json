@@ -1,4 +1,5 @@
 {
+  "add_relationship.add_relationship": "Add Relationship",
   "add_relationship.blocked_by": "Is Blocked By",
   "add_relationship.blocking": "Is Currently Blocking",
   "add_relationship.duplicate_object": "Is Duplicate Object Of",
@@ -25,6 +26,7 @@
   "create_and_filter.new_link": "Create a new hyperlink",
   "create_and_filter.upload": "Upload",
   "create_and_filter.upload_document": "Upload a document",
+  "customer.associated_objects": "Associated Objects",
   "customer.back_to_org": "Go back to Organisation",
   "customer.cancel": "Cancel",
   "customer.create": "Create Customer",

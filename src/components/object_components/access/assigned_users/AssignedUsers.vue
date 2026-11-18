@@ -172,7 +172,7 @@ async function removeUser(user_id: number) {
 				:key="user.id"
 				class="user-access-item"
 			>
-				<ProfilePicture :url="user.profile_picture" :name="user.first_name"/>
+				<ProfilePicture :url="user.profile_picture_path" :name="user.first_name"/>
 				<p>{{ user.first_name }} {{ user.last_name }}</p>
 				<TrashIcon
 					v-if="permissionStore.currentObjectPermissions.currentObject > 1"

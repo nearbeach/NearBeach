@@ -6,5 +6,5 @@ export interface CustomerInterface {
     first_name: string,
     last_name: string,
     email: string,
-    profile_picture: string | null,
+    profile_picture_path: string | null,
 }

@@ -6,6 +6,8 @@ import { useObjectStore } from "@/stores/object/object.ts";
 import i18n from "@/i18n.ts";
 import AssociatedCustomers from "./AssociatedCustomers.vue";
 import CustomerList from "./customer_list/CustomerList.vue";
+import {WlkButton} from "whelk-ui";
+import {usePermissionStore} from "@/stores/permissions/permission.ts";
 
 const RouterLinkStub = defineComponent({
   props: ["to"],
@@ -16,6 +18,7 @@ describe("AssociatedCustomers", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     useObjectStore().id = 7;
+    usePermissionStore().currentObjectPermissions.currentObject = 2;
   });
 
   test("shows the customer list", () => {
@@ -28,10 +31,22 @@ describe("AssociatedCustomers", () => {
 
   test("links to the new customer page of the current organisation", () => {
     const wrapper = mount(AssociatedCustomers, {
-      global: { plugins: [i18n], stubs: { CustomerList: true, RouterLink: RouterLinkStub } },
+      global: {
+        plugins: [i18n],
+        stubs: {
+          CustomerList: true,
+          RouterLink: RouterLinkStub
+        }
+        },
     });
 
+    // List item goes to correct place
     expect(wrapper.find("a").attributes("href")).toBe("/organisation/7/customer/new/");
-    expect(wrapper.find(".create-customer").text()).toBe("Create Customer");
+    // const dashboardItem = wrapper.findAllComponents(NavMenuItem).at(0);
+    // expect(wrapper.find("button").text()).toBe("Create Customer");
+
+    // Create button exists
+    const createButton = wrapper.findAllComponents(WlkButton).at(0);
+    expect(createButton?.text()).toBe("Create Customer");
   });
 });
