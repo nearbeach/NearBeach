@@ -16,6 +16,7 @@ from .misc.misc import (
 )
 from .misc.note import ObjectNote
 from .misc.tag import Tag, TagAssignment
+from .object_assignment.customer_assignment import CustomerAssignment
 from .object_assignment.object_assignment import ObjectAssignment
 from .organisation import Organisation
 from .permission.group import Group

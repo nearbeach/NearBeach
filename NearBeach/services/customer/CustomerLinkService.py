@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.serializers import Serializer
 from django.utils import timezone
 
-from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
+from NearBeach.models.object_assignment.customer_assignment import CustomerAssignment
 from NearBeach.models.customer import Customer
 from NearBeach.serializers.customer_link_serializer import CustomerLinkSerializer
 from NearBeach.serializers.customer_serializer import CustomerSerializer
@@ -20,9 +20,8 @@ class CustomerLinkService(ObjectServiceAbstraction):
     def _get_list(self) -> Serializer:
         # Send back data to user
         customer_results = Customer.objects.filter(
-            id__in=ObjectAssignment.objects.filter(
+            id__in=CustomerAssignment.objects.filter(
                 is_deleted=False,
-                customer_id__isnull=False,
                 **{F"{self.destination}_id": self.location_id},
             ).values("customer_id"),
         )
@@ -41,7 +40,7 @@ class CustomerLinkService(ObjectServiceAbstraction):
             return "Customer does not exist", status.HTTP_404_NOT_FOUND
 
         # Add customer to object
-        submit_object_assignment = ObjectAssignment(
+        submit_object_assignment = CustomerAssignment(
             customer_id=serializer.validated_data['id'],
             change_user=request.user,
             **{F"{self.destination}_id": self.location_id},
@@ -57,7 +56,7 @@ class CustomerLinkService(ObjectServiceAbstraction):
 
     def delete(self, request: AuthenticatedRequest, object_id: ObjectId) -> ServiceResponse:
         # Get the object link
-        object_assignment_results = ObjectAssignment.objects.filter(
+        object_assignment_results = CustomerAssignment.objects.filter(
             customer_id=object_id,
             is_deleted=False,
             **{F"{self.destination}_id": self.location_id},
