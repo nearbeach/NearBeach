@@ -73,21 +73,6 @@ ORGANISATION_SCHEMA = {
         "Soft-deletes the organisation. Requires full permission (level 4).",
         responses=_responses({204: None}, 403, 404),
     ),
-    "customer": _doc(
-        "List customers linked to a organisation",
-        responses=_responses({200: CustomerSerializer(many=True)}, 403, 404),
-    ),
-    "customer_create": _doc(
-        "Link a customer to a organisation",
-        "Returns the complete list of customers linked to the organisation.",
-        request=CustomerLinkSerializer,
-        responses=_responses({201: CustomerSerializer(many=True)}),
-    ),
-    "customer_delete": _doc(
-        "Unlink a customer from a organisation",
-        parameters=[_path_id("customer_pk", "ID of the customer link")],
-        responses=_responses({204: None}),
-    ),
     "documents": _doc(
         "List documents and folders of a organisation",
         responses=_responses({200: FileSystemSerializer}, 403, 404),

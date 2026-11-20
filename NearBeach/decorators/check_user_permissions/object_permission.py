@@ -2,6 +2,7 @@ from functools import wraps
 
 from rest_framework.exceptions import PermissionDenied, NotFound
 
+from NearBeach.utils.api.check_child_belongs_to_parent import check_child_belongs_to_parent
 from NearBeach.utils.api.check_object_exists import check_object_exists
 from NearBeach.utils.api.get_destination import get_object_from_url
 from NearBeach.utils.api.get_parent_object import get_parent_object
@@ -67,6 +68,10 @@ def object_permission(min_permission_level, additive_permission=None):
                 # Below the level needed - the additive permission can still let a read-only user in
                 if not has_additive_permission:
                     raise PermissionDenied
+
+            # A child object in the url (e.g. a requirement item) has to belong to the parent the permission came from
+            if not check_child_belongs_to_parent(path, destination, location_id):
+                raise NotFound
 
             return func(request, *args, **kwargs, user_level=user_level)
         return inner
