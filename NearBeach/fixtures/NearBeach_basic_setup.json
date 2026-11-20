@@ -4725,7 +4725,7 @@
   }
 },
 {
-  "model": "NearBeach.objectassignment",
+  "model": "NearBeach.customerassignment",
   "pk": 49,
   "fields": {
     "date_created": "2026-10-07T07:59:00.644Z",
@@ -4733,23 +4733,10 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
-    "assigned_user": null,
-    "group": null,
     "requirement": null,
-    "requirement_item": null,
     "project": 2,
     "task": null,
-    "kanban_board": null,
-    "kanban_card": null,
-    "request_for_change": null,
-    "customer": 1,
-    "organisation": null,
-    "change_task": null,
-    "meta_object": null,
-    "meta_object_title": "",
-    "meta_object_status": "",
-    "link_relationship": "",
-    "parent_link": ""
+    "customer": 1
   }
 },
 {
@@ -4809,7 +4796,7 @@
   }
 },
 {
-  "model": "NearBeach.objectassignment",
+  "model": "NearBeach.customerassignment",
   "pk": 52,
   "fields": {
     "date_created": "2026-10-07T07:59:35.539Z",
@@ -4817,23 +4804,10 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
-    "assigned_user": null,
-    "group": null,
     "requirement": null,
-    "requirement_item": null,
     "project": 1,
     "task": null,
-    "kanban_board": null,
-    "kanban_card": null,
-    "request_for_change": null,
-    "customer": 1,
-    "organisation": null,
-    "change_task": null,
-    "meta_object": null,
-    "meta_object_title": "",
-    "meta_object_status": "",
-    "link_relationship": "",
-    "parent_link": ""
+    "customer": 1
   }
 },
 {
@@ -6013,7 +5987,7 @@
   }
 },
 {
-  "model": "NearBeach.objectassignment",
+  "model": "NearBeach.customerassignment",
   "pk": 53,
   "fields": {
     "date_created": "2026-10-07T07:59:00.644Z",
@@ -6021,27 +5995,14 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
-    "assigned_user": null,
-    "group": null,
     "requirement": null,
-    "requirement_item": null,
     "project": null,
     "task": 2,
-    "kanban_board": null,
-    "kanban_card": null,
-    "request_for_change": null,
-    "customer": 1,
-    "organisation": null,
-    "change_task": null,
-    "meta_object": null,
-    "meta_object_title": "",
-    "meta_object_status": "",
-    "link_relationship": "",
-    "parent_link": ""
+    "customer": 1
   }
 },
 {
-  "model": "NearBeach.objectassignment",
+  "model": "NearBeach.customerassignment",
   "pk": 54,
   "fields": {
     "date_created": "2026-10-07T07:59:35.539Z",
@@ -6049,23 +6010,10 @@
     "change_user": 1,
     "creation_user": 1,
     "is_deleted": false,
-    "assigned_user": null,
-    "group": null,
     "requirement": null,
-    "requirement_item": null,
     "project": null,
     "task": 1,
-    "kanban_board": null,
-    "kanban_card": null,
-    "request_for_change": null,
-    "customer": 1,
-    "organisation": null,
-    "change_task": null,
-    "meta_object": null,
-    "meta_object_title": "",
-    "meta_object_status": "",
-    "link_relationship": "",
-    "parent_link": ""
+    "customer": 1
   }
 },
 {

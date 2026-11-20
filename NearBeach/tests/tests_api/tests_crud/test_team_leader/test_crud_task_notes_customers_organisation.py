@@ -8,7 +8,7 @@ Fixture data for task 2 ("Task - QA Team"):
 
 from NearBeach.models.customer import Customer
 from NearBeach.models.misc.note import ObjectNote
-from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
+from NearBeach.models.object_assignment.customer_assignment import CustomerAssignment
 from NearBeach.models.organisation import Organisation
 from NearBeach.models.task import Task
 from NearBeach.tests.tests_api.tests_crud.test_team_leader.test_crud_task import (
@@ -224,7 +224,7 @@ class TaskCustomerTests(TeamLeaderTaskBase):
 
     @staticmethod
     def _rows(customer_id, task_id=2):
-        return ObjectAssignment.objects.filter(task_id=task_id, customer_id=customer_id)
+        return CustomerAssignment.objects.filter(task_id=task_id, customer_id=customer_id)
 
     def _ids(self):
         return sorted(customer["id"] for customer in self.client.get(CUSTOMER_URL).data)
@@ -261,11 +261,11 @@ class TaskCustomerTests(TeamLeaderTaskBase):
         self.assertEqual(row.change_user, self.leader)
 
     def test_linking_does_not_touch_other_tasks(self):
-        before = ObjectAssignment.objects.filter(task_id=1).count()
+        before = CustomerAssignment.objects.filter(task_id=1).count()
 
         self._add(2)
 
-        self.assertEqual(ObjectAssignment.objects.filter(task_id=1).count(), before)
+        self.assertEqual(CustomerAssignment.objects.filter(task_id=1).count(), before)
 
     def test_linking_the_same_customer_twice_still_lists_them_once(self):
         self._add(2)
@@ -276,7 +276,7 @@ class TaskCustomerTests(TeamLeaderTaskBase):
     def test_bad_customers_are_rejected_and_nothing_is_linked(self):
         Customer.objects.filter(pk=2).update(is_deleted=True)
         bodies = {"unknown": {"id": 9999}, "deleted": {"id": 2}, "missing": {}, "not a number": {"id": "abc"}}
-        before = ObjectAssignment.objects.filter(task_id=2).count()
+        before = CustomerAssignment.objects.filter(task_id=2).count()
 
         for name, body in bodies.items():
             with self.subTest(name):
@@ -284,7 +284,7 @@ class TaskCustomerTests(TeamLeaderTaskBase):
                 expected = 404 if name in ("unknown", "deleted") else 400
                 self.assertEqual(self.client.post(CUSTOMER_URL, body, format="json").status_code, expected)
 
-        self.assertEqual(ObjectAssignment.objects.filter(task_id=2).count(), before)
+        self.assertEqual(CustomerAssignment.objects.filter(task_id=2).count(), before)
 
     def test_linking_missing_task_is_not_found(self):
         self.assertEqual(self.client.post("/api/v1/task/9999/customer/", {"id": 2}, format="json").status_code, 404)

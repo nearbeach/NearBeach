@@ -1,6 +1,6 @@
 from rest_framework import status
 from django.utils import timezone
-from NearBeach.models.object_assignment.object_assignment import ObjectAssignment
+from NearBeach.models.object_assignment.customer_assignment import CustomerAssignment
 from NearBeach.models.customer import Customer
 from NearBeach.models.organisation import Organisation
 from NearBeach.serializers.organisation_link_serializer import OrganisationLinkSerializer
@@ -116,9 +116,8 @@ class OrganisationLinkService(ObjectServiceAbstraction):
             data['organisation'] = organisation
             data['customers'] = Customer.objects.filter(
                 is_deleted=False,
-                id__in=ObjectAssignment.objects.filter(
+                id__in=CustomerAssignment.objects.filter(
                     is_deleted=False,
-                    customer_id__isnull=False,
                     **{F"{self.destination}_id": self.location_id},
                 ).values("customer_id"),
             )
