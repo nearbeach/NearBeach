@@ -1,6 +1,5 @@
 from NearBeach.api_docs import apply_schema
 from NearBeach.api_docs.api_v1.requirement_item_docs import REQUIREMENT_ITEM_SCHEMA
-from NearBeach.decorators.check_user_permissions.destination_permission import destination_permission
 from NearBeach.services.RequirementItemService import RequirementItemService
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -29,9 +28,9 @@ class RequirementItemViewSet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, JSONParser, FormParser)
 
     @staticmethod
-    @destination_permission(min_permission_level=3)
+    @object_permission(min_permission_level=3)
     def create(request: AuthenticatedRequest, requirement_id, *args, **kwargs) -> Response:
-        requirement_item_service = RequirementItemService(destination="requirement_item", location_id=0)
+        requirement_item_service = RequirementItemService(destination="requirement", location_id=requirement_id)
         data, http_status = requirement_item_service.create(request)
 
         return Response(
@@ -164,7 +163,7 @@ class RequirementItemViewSet(viewsets.ModelViewSet):
             status=http_status,
         )
 
-    @destination_permission(min_permission_level=1)
+    @object_permission(min_permission_level=1)
     def list(self, request: AuthenticatedRequest, requirement_id, *args, **kwargs) -> Response:
         """Method for getting a list of all requirement_items through search"""
         requirement_item_service = RequirementItemService(destination="requirement", location_id=requirement_id)

@@ -41,9 +41,11 @@ class RequirementItemService(ObjectServiceAbstraction):
         # Create the requirement_item - and its audit entry in the same transaction
         with transaction.atomic():
             created_requirement_item = serializer.save(
-                change_user=request.user, creation_user=request.user
+                change_user=request.user,
+                creation_user=request.user,
+                requirement_id=self.location_id,
             )
-            AuditService.record_create(request, self.destination, created_requirement_item)
+            AuditService.record_create(request, "requirement_item", created_requirement_item)
 
         # Re-serialize the created requirement_item so it is in the same shape for the user
         serializer = RequirementItemSerializer(created_requirement_item, many=False)
@@ -58,7 +60,7 @@ class RequirementItemService(ObjectServiceAbstraction):
             requirement_id=self.location_id,
         )
         if not requirement_item.exists():
-            return "Customer does not exist", status.HTTP_404_NOT_FOUND
+            return "RequirementItem does not exist", status.HTTP_404_NOT_FOUND
 
         with transaction.atomic():
             requirement_item.update(
@@ -66,16 +68,17 @@ class RequirementItemService(ObjectServiceAbstraction):
                 change_user=request.user,
                 date_modified=timezone.now(),
             )
-            AuditService.record_delete(request, self.destination, self.location_id)
+            AuditService.record_delete(request, "requirement_item", requirement_item_pk)
 
         return {}, status.HTTP_204_NO_CONTENT
 
     # The view paginates the queryset itself, so this returns the queryset rather than a ServiceResponse
     def get_list(self, request: AuthenticatedRequest) -> QuerySet[RequirementItem]:  # type: ignore[override]
-        # Correlated EXISTS rather than id__in - on MySQL the IN form walks every requirement_item the user can see
+        # Requirement items have no group rows of their own - they take their access from their requirement.
+        # Correlated EXISTS rather than id__in - on MySQL the IN form walks every requirement the user can see
         # before filtering, where EXISTS lets the database walk requirement_items and check each one
         object_assignment_results = ObjectAssignment.objects.filter(
-            requirement_item_id=OuterRef("pk"),
+            requirement_id=OuterRef("requirement_id"),
             is_deleted=False,
             group_id__in=UserGroup.objects.filter(
                 is_deleted=False,
@@ -87,6 +90,7 @@ class RequirementItemService(ObjectServiceAbstraction):
 
         requirement_item_results = RequirementItem.objects.filter(
             Exists(object_assignment_results),
+            requirement_id=self.location_id,
             is_deleted=False,
         )
 
@@ -122,7 +126,7 @@ class RequirementItemService(ObjectServiceAbstraction):
         # Get assigned object
         object_assignments = ObjectAssignment.objects.filter(
             is_deleted=False,
-            requirement_item_id=self.location_id,
+            requirement_item_id=pk,
         )
 
         # Define groups list
@@ -156,10 +160,13 @@ class RequirementItemService(ObjectServiceAbstraction):
 
     def update(self, request: AuthenticatedRequest, pk: int) -> ServiceResponse:
         # Get requirement_item
-        requirement_item = RequirementItem.objects.get(
+        requirement_item = RequirementItem.objects.filter(
+            is_deleted=False,
             requirement_id=self.location_id,
             pk=pk,
-        )
+        ).first()
+        if requirement_item is None:
+            return "RequirementItem does not exist", status.HTTP_404_NOT_FOUND
 
         # Setup serializer
         serializer = RequirementItemSerializer(
@@ -178,10 +185,10 @@ class RequirementItemService(ObjectServiceAbstraction):
         with transaction.atomic():
             # Lock the row first, then snapshot, so the audit records the state actually replaced
             # (select_for_update is a no-op on SQLite)
-            requirement_item = RequirementItem.objects.select_for_update().get(pk=self.location_id)
+            requirement_item = RequirementItem.objects.select_for_update().get(pk=pk)
             serializer.instance = requirement_item
             before = AuditService.snapshot(requirement_item)
             serializer.save(change_user=request.user)
-            AuditService.record_update(request, self.destination, before, requirement_item)
+            AuditService.record_update(request, "requirement_item", before, requirement_item)
 
         return serializer.data, status.HTTP_200_OK
