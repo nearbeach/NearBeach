@@ -17,6 +17,7 @@ from rest_framework.test import APIClient
 
 from django.test import TestCase
 
+from NearBeach.models import CustomerAssignment
 from NearBeach.models.customer import Customer
 from NearBeach.models.document.document import Document
 from NearBeach.models.document.document_permission import DocumentPermission
@@ -31,7 +32,7 @@ from NearBeach.models.user import Group, PermissionSet, UserGroup
 
 PROJECT = "/api/v1/project/2/"
 TABLES = (Project, ObjectAssignment, ObjectNote, PublicLink, Document, DocumentPermission, Folder, Sprint,
-          Customer, Organisation)
+          Customer, Organisation, CustomerAssignment)
 
 # role -> permission level on project 2 (None = cannot reach it at all)
 LEVEL_ON_QA_PROJECT = {
@@ -64,7 +65,7 @@ OPERATIONS = [
     ("add a folder", "POST", f"{PROJECT}documents/", {"type": "folder", "description": "F"}, 2, 201, True),
     ("add a group", "POST", f"{PROJECT}groups/", {"group_list": [3]}, 2, 201, True),
     ("add a user", "POST", f"{PROJECT}users/", {"user_list": [7]}, 2, 201, True),
-    ("link a customer", "POST", f"{PROJECT}customer/", {"id": 1}, 2, 201, True),
+    ("link a customer", "POST", f"{PROJECT}customer/", {"id": 2}, 2, 201, True),
     # The fixture project already has organisation 1, so linking it again is allowed but changes nothing
     ("link an organisation", "POST", f"{PROJECT}organisation/", {"id": 1}, 2, 201, False),
     ("delete the project", "DELETE", PROJECT, None, 4, 204, True),
