@@ -52,7 +52,7 @@ class ObjectServiceAbstraction(ABC):
         pass # Method not required in current class
 
     @abstractmethod
-    def delete(self, request: AuthenticatedRequest, object_id: Any) -> ServiceResponse:
+    def delete(self, request: AuthenticatedRequest, object_id: int) -> ServiceResponse:
         pass # Method not required in current class
 
     @abstractmethod
@@ -60,5 +60,5 @@ class ObjectServiceAbstraction(ABC):
         pass # Method not required in current class
 
     @abstractmethod
-    def update(self, request: AuthenticatedRequest, object_id: Any) -> ServiceResponse:
+    def update(self, request: AuthenticatedRequest, object_id: int) -> ServiceResponse:
         pass # Method not required in current class

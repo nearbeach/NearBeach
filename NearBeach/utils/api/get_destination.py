@@ -64,3 +64,27 @@ def get_object_from_url(url: str) -> tuple[None, None] | tuple[str, str]:
         _logger.error("get_object_from_url: %s | ValueError: %s", url, ValueError)
         return None, None
 
+
+
+def get_child_object_from_url(url: str) -> tuple[None, None] | tuple[str, str]:
+    """
+    Utility function to get the child object from the url
+
+    Notes
+    ~~~~~
+    Assuming the url will be in the following pattern;
+    /api/v1/<destination>/<location_id>/<child_destination>/<child_location_id>/...
+
+    Method
+    ~~~~~~
+    1. Trim '/' character from the start of the url
+    2. Split url by '/' character
+    3. Return the 5th and 6th positions which will be the child destination and child location id
+    """
+    parts = url.lstrip('/').rstrip('/').split('/')
+
+    # Check to make sure there is a child object
+    if len(parts) < 6:
+        return None, None
+
+    return parts[4], parts[5]

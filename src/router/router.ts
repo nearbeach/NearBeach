@@ -32,6 +32,10 @@ const ProjectPage = () =>
 const SearchPage = () => import("@/components/search/SearchPage.vue");
 const SearchOrganisationPage = () => import("@/components/organisation/search_organisation/SearchOrganisationPage.vue");
 const TaskPage = () => import("@/components/task/TaskPage.vue");
+const RequirementPage = () => import("@/components/requirement/RequirementPage.vue");
+const RequirementItemPage = () => import("@/components/requirement_item/RequirementItemPage.vue");
+const RequestForChangePage = () => import("@/components/request_for_change/RequestForChange.vue");
+const KanbanBoardPage = () => import("@/components/kanban_board/KanbanBoardPage.vue");
 
 // Define functions
 async function fetchObjectMetaData(): Promise<boolean> {
@@ -148,8 +152,9 @@ const routes = [
         },
         children: [
             {path: "", component: SearchPage, name: "SearchKanbanBoard"},
-            {path: "new", component: DashboardPage, name: "NewKanbanBoard"},
-            {path: ":id", component: DashboardPage, name: "KanbanBoard"},
+            {path: "new", component: NewObject, name: "NewKanbanBoard"},
+            {path: ":id", component: KanbanBoardPage, name: "KanbanBoard"},
+            {path: ":id/kanban_card/:kanbanCardId", component: KanbanBoardPage, name: "KanbanCard", props: true},
         ],
     },
     {
@@ -159,8 +164,9 @@ const routes = [
         },
         children: [
             {path: "", component: SearchPage, name: "SearchRequirement"},
-            {path: "new", component: DashboardPage, name: "NewRequirement"},
-            {path: ":id", component: DashboardPage, name: "Requirement"},
+            {path: "new", component: NewObject, name: "NewRequirement"},
+            {path: ":id", component: RequirementPage, name: "Requirement"},
+            {path: ":id/requirement_item/:customerId", component: RequirementItemPage, name: "RequirementItem", props: true},
         ],
     },
     {
@@ -181,8 +187,8 @@ const routes = [
         },
         children: [
             {path: "", component: SearchPage, name: "SearchRequestForChange"},
-            {path: "new", component: DashboardPage, name: "NewRequestForChange"},
-            {path: ":id", component: DashboardPage, name: "RequestForChange"},
+            {path: "new", component: NewObject, name: "NewRequestForChange"},
+            {path: ":id", component: RequestForChangePage, name: "RequestForChange"},
         ],
     },
     // Errors
