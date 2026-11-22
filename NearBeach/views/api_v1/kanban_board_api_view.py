@@ -2,16 +2,22 @@ from NearBeach.decorators.check_user_permissions.destination_permission import d
 from NearBeach.decorators.check_user_permissions.object_permission import object_permission
 from NearBeach.serializers.kanban_board.kanban_board_serializer import KanbanBoardSerializer
 from NearBeach.services.kanban_board.KanbanBoardServices import KanbanBoardService
+from NearBeach.models import KanbanBoard
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
+from rest_framework.parsers import MultiPartParser, JSONParser, FormParser
 from rest_framework.response import Response
 
 
 @extend_schema(
     exclude=True,
 )
-class KanbanBoardViewSet(viewsets.ViewSet):
-    serializer_class = None
+class KanbanBoardViewSet(viewsets.ModelViewSet):
+    queryset = KanbanBoard.objects.filter(is_deleted=False)
+    serializer_class = KanbanBoardSerializer
+    http_method_names = ["get", "post", "patch", "delete"]
+    parser_classes = (MultiPartParser, JSONParser, FormParser)
+
 
     @staticmethod
     @destination_permission(min_permission_level=3)

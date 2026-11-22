@@ -1,3 +1,4 @@
+from NearBeach.utils.enums.kanban_board_enums import KanbanBoardStatusChoice
 from rest_framework import status
 
 from django.contrib.auth.models import User
@@ -105,7 +106,7 @@ class KanbanBoardService(ObjectServiceAbstraction):
         if not show_closed == "true":
             # Hide all the closed
             kanban_board_results = kanban_board_results.exclude(
-                status__higher_order_status="Closed",
+                status=KanbanBoardStatusChoice.CLOSED,
             )
 
         return kanban_board_results
