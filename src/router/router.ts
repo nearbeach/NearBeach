@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from "vue-router";
+import {createRouter, createWebHistory, type RouteLocationNormalized} from "vue-router";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
 import {useObjectMetaDataStore} from "@/stores/object_meta_data/object_meta_data.ts";
 import {useUserStore} from "@/stores/user/user.ts";
@@ -12,23 +12,23 @@ import {getCsrfToken} from "@/composables/getCsrfToken.ts";
 
 // Async components
 const CustomerPage = () =>
-    import("@/components/customer/customer_page/CustomerPage.vue");
+	import("@/components/customer/customer_page/CustomerPage.vue");
 const DashboardPage = () =>
-    import("@/components/dashboard/dashboard_page/DashboardPage.vue");
+	import("@/components/dashboard/dashboard_page/DashboardPage.vue");
 const NewObject = () =>
-    import("@/components/new_object/NewObject.vue");
+	import("@/components/new_object/NewObject.vue");
 const NewOrganisation = () =>
-    import("@/components/organisation/new_organisation/NewOrganisation.vue");
+	import("@/components/organisation/new_organisation/NewOrganisation.vue");
 const NewCustomer = () =>
-    import("@/components/customer/new_customer/NewCustomer.vue");
+	import("@/components/customer/new_customer/NewCustomer.vue");
 const PublicLinkPage = () =>
-    import("@/components/public_link/PublicLinkPage.vue");
+	import("@/components/public_link/PublicLinkPage.vue");
 const OrganisationPage = () =>
-    import("@/components/organisation/organisation_page/OrganisationPage.vue");
+	import("@/components/organisation/organisation_page/OrganisationPage.vue");
 const NotFoundPage = () =>
-    import("@/components/error/NotFoundPage/NotFoundPage.vue");
+	import("@/components/error/NotFoundPage/NotFoundPage.vue");
 const ProjectPage = () =>
-    import("@/components/project/ProjectPage.vue");
+	import("@/components/project/ProjectPage.vue");
 const SearchPage = () => import("@/components/search/SearchPage.vue");
 const SearchOrganisationPage = () => import("@/components/organisation/search_organisation/SearchOrganisationPage.vue");
 const TaskPage = () => import("@/components/task/TaskPage.vue");
@@ -39,233 +39,373 @@ const KanbanBoardPage = () => import("@/components/kanban_board/KanbanBoardPage.
 
 // Define functions
 async function fetchObjectMetaData(): Promise<boolean> {
-    const errorStore = useErrorStore();
-    const permissionStore = usePermissionStore();
-    const objectMetaDataStore = useObjectMetaDataStore();
-    const userStore = useUserStore();
+	const errorStore = useErrorStore();
+	const permissionStore = usePermissionStore();
+	const objectMetaDataStore = useObjectMetaDataStore();
+	const userStore = useUserStore();
 
-    // Use fetch to get data
-    try {
-        const response = await fetch(
-            "/api/v1/user/initial_data/",
-            {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFTOKEN": getCsrfToken(),
-                },
-            }
-        );
-        if (!response.ok) {
-            errorStore.setError(response.statusText);
+	// Use fetch to get data
+	try {
+		const response = await fetch(
+			"/api/v1/user/initial_data/",
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFTOKEN": getCsrfToken(),
+				},
+			}
+		);
+		if (!response.ok) {
+			errorStore.setError(response.statusText);
 
-            // Let the router guard redirect - pushing from inside the guard loops forever
-            return false;
-        }
-        
-        // Fetch data
-        const result = await response.json();
+			// Let the router guard redirect - pushing from inside the guard loops forever
+			return false;
+		}
 
-        // Update and process permission store
-        permissionStore.$patch({
-            permissionData: result.permissions,
-        });
-        permissionStore.processPermissionData();
+		// Fetch data
+		const result = await response.json();
 
-        // Update object meta data
-        objectMetaDataStore.$patch({
-            all_groups: result.all_groups,
-            object_status: result.object_status,
-            object_types: result.object_types,
-            tags: result.tags,
-            customer_titles: result.customer_titles,
-        });
+		// Update and process permission store
+		permissionStore.$patch({
+			permissionData: result.permissions,
+		});
+		permissionStore.processPermissionData();
 
-        // Update user
-        userStore.$patch({
-            id: result.id,
-            username: result.username,
-            first_name: result.first_name,
-            last_name: result.last_name,
-            email: result.email,
-            profile_picture: result.profile_picture,
-            profile_picture_path: result.profile_picture_path,
-        });
+		// Update object meta data
+		objectMetaDataStore.$patch({
+			all_groups: result.all_groups,
+			object_status: result.object_status,
+			object_types: result.object_types,
+			tags: result.tags,
+			customer_titles: result.customer_titles,
+		});
 
-        return true;
-    } catch (error) {
-        errorStore.setError(error);
+		// Update user
+		userStore.$patch({
+			id: result.id,
+			username: result.username,
+			first_name: result.first_name,
+			last_name: result.last_name,
+			email: result.email,
+			profile_picture: result.profile_picture,
+			profile_picture_path: result.profile_picture_path,
+		});
 
-        // Let the router guard redirect - pushing from inside the guard loops forever
-        return false;
-    }
+		return true;
+	} catch (error) {
+		errorStore.setError(error);
+
+		// Let the router guard redirect - pushing from inside the guard loops forever
+		return false;
+	}
 }
 
 // Define the routes
 const routes = [
-    {
-        path: "/",
-        component: DashboardPage,
-        name: "Dashboard",
-        meta: {
-            destination: "dashboard",
-        },
-    },
-    {
-        path: "/project",
-        meta: {
-            destination: "project",
-        },
-        children: [
-            {path: "", component: SearchPage, name: "SearchProject"},
-            {path: "new", component: NewObject, name: "NewProject"},
-            {path: ":id", component: ProjectPage, name: "Project"},
-        ],
-    },
-    {
-        path: "/public_link",
-        meta: {
-            destination: "public_link",
-        },
-        children: [
-            {path: "", component: NotFoundPage, name: "NotFound"},
-            {path: ":id", component: PublicLinkPage, name: "PublicLink"},
-        ]
-    },
-    {
-        path: "/organisation",
-        meta: {
-            destination: "organisation",
-        },
-        children: [
-            {path: "", component: SearchOrganisationPage, name: "SearchOrganisation"},
-            {path: "new", component: NewOrganisation, name: "NewOrganisation"},
-            {path: ":id", component: OrganisationPage, name: "Organisation", props: true,},
-            {path: ":id/customer/new", component: NewCustomer, name: "NewCustomer", props: true},
-            {path: ":id/customer/:customerId", component: CustomerPage, name: "Customer", props: true},
-        ]
-    },
-    {
-        path: "/kanban_board",
-        meta: {
-            destination: "kanban_board",
-        },
-        children: [
-            {path: "", component: SearchPage, name: "SearchKanbanBoard"},
-            {path: "new", component: NewObject, name: "NewKanbanBoard"},
-            {path: ":id", component: KanbanBoardPage, name: "KanbanBoard"},
-            {path: ":id/kanban_card/:kanbanCardId", component: KanbanBoardPage, name: "KanbanCard", props: true},
-        ],
-    },
-    {
-        path: "/requirement",
-        meta: {
-            destination: "requirement",
-        },
-        children: [
-            {path: "", component: SearchPage, name: "SearchRequirement"},
-            {path: "new", component: NewObject, name: "NewRequirement"},
-            {path: ":id", component: RequirementPage, name: "Requirement"},
-            {path: ":id/requirement_item/:customerId", component: RequirementItemPage, name: "RequirementItem", props: true},
-        ],
-    },
-    {
-        path: "/task",
-        meta: {
-            destination: "task",
-        },
-        children: [
-            {path: "", component: SearchPage, name: "SearchTask"},
-            {path: "new", component: NewObject, name: "NewTask"},
-            {path: ":id", component: TaskPage, name: "Task"},
-        ],
-    },
-    {
-        path: "/request_for_change",
-        meta: {
-            destination: "request_for_change",
-        },
-        children: [
-            {path: "", component: SearchPage, name: "SearchRequestForChange"},
-            {path: "new", component: NewObject, name: "NewRequestForChange"},
-            {path: ":id", component: RequestForChangePage, name: "RequestForChange"},
-        ],
-    },
-    // Errors
-    {
-        path: "/bad-request",
-        name: "bad-request",
-        meta: {
-            destination: "bad-request",
-        },
-        component: BadRequestPage,
-    },
-    {
-        path: "/forbidden",
-        name: "forbidden",
-        meta: {
-            destination: "forbidden",
-        },
-        component: ForbiddenPage,
-    },
-    {
-        path: "/not-found",
-        name: "not-found",
-        meta: {
-            destination: "not-found",
-        },
-        component: NotFoundPage,
-    },
-    {
-        path: "/server-error",
-        name: "server-error",
-        meta: {
-            destination: "server-error",
-        },
-        component: ServerErrorPage,
-    },
-    // Fallback page
-    {
-        path: "/:catchAll(.*)*",
-        component: NotFoundPage,
-    },
+	{
+		path: "/",
+		component: DashboardPage,
+		name: "Dashboard",
+		meta: {
+			destination: "dashboard",
+            title: "Dashboard",
+		},
+	},
+	{
+		path: "/project",
+		meta: {
+			destination: "project",
+		},
+		children: [
+			{
+                path: "",
+                component: SearchPage,
+                name: "SearchProject",
+                meta: {title: "Search Projects"}
+            },
+			{
+                path: "new",
+                component: NewObject,
+                name: "NewProject",
+                meta: {title: "New Project"}
+            },
+			{
+				path: ":id",
+				component: ProjectPage,
+				name: "Project",
+				meta: {title: (route: RouteLocationNormalized) => `Project ${route.params.id}`}
+			},
+		],
+	},
+	{
+		path: "/public_link",
+		meta: {
+			destination: "public_link",
+		},
+		children: [
+			{
+                path: "",
+                component: NotFoundPage,
+                name: "NotFound",
+                title: "NearBeach - Public Link",
+            },
+			{
+                path: ":id",
+                component: PublicLinkPage,
+                name: "PublicLink",
+                title: "NearBeach - Public Link",
+            },
+		]
+	},
+	{
+		path: "/organisation",
+		meta: {
+			destination: "organisation",
+		},
+		children: [
+			{
+                path: "",
+                component: SearchOrganisationPage,
+                name: "SearchOrganisation",
+                title: "Search Organisations",
+            },
+			{
+                path: "new",
+                component: NewOrganisation,
+                name: "NewOrganisation",
+                title: "New Organisation",
+            },
+			{
+                path: ":id",
+                component: OrganisationPage,
+                name: "Organisation",
+                props: true,
+                title: (router: RouteLocationNormalized) => `Organisation ${router.params.id}`,
+            },
+			{
+                path: ":id/customer/new",
+                component: NewCustomer,
+                name: "NewCustomer",
+                props: true,
+                title: "New Customer",
+            },
+			{
+                path: ":id/customer/:customerId",
+                component: CustomerPage,
+                name: "Customer",
+                props: true,
+                title: (router: RouteLocationNormalized) => `Customer ${router.params.customerId}`,
+            },
+		]
+	},
+	{
+		path: "/kanban_board",
+		meta: {
+			destination: "kanban_board",
+		},
+		children: [
+			{
+                path: "",
+                component: SearchPage,
+                name: "SearchKanbanBoard",
+                title: "Search Kanban Boards",
+            },
+			{
+                path: "new",
+                component: NewObject,
+                name: "NewKanbanBoard",
+                title: "New Kanban Board",
+            },
+			{
+                path: ":id",
+                component: KanbanBoardPage,
+                name: "KanbanBoard",
+                title: (router: RouteLocationNormalized) => `Kanban Board ${router.params.id}`,
+            },
+			{
+                path: ":id/kanban_card/:kanbanCardId",
+                component: KanbanBoardPage,
+                name: "KanbanCard",
+                props: true,
+                title: (router: RouteLocationNormalized) => `Kanban Card ${router.params.kanbanCardId}`,
+            },
+		],
+	},
+	{
+		path: "/requirement",
+		meta: {
+			destination: "requirement",
+		},
+		children: [
+			{
+                path: "",
+                component: SearchPage,
+                name: "SearchRequirement",
+                title: "Search Requirement",
+            },
+			{
+                path: "new",
+                component: NewObject,
+                name: "NewRequirement",
+                title: "New Requirement",
+            },
+			{
+                path: ":id",
+                component: RequirementPage,
+                name: "Requirement",
+                title: (router: RouteLocationNormalized) => `Requirement ${router.params.id}`,
+            },
+			{
+				path: ":id/requirement_item/:requirementItemId",
+				component: RequirementItemPage,
+				name: "RequirementItem",
+				props: true,
+                title: (router: RouteLocationNormalized) => `Requirement Item ${router.params.requirementItemId}`,
+			},
+		],
+	},
+	{
+		path: "/task",
+		meta: {
+			destination: "task",
+		},
+		children: [
+			{
+                path: "",
+                component: SearchPage,
+                name: "SearchTask",
+                title: "Search Task",
+            },
+			{
+                path: "new",
+                component: NewObject,
+                name: "NewTask",
+                title: "New Task",
+            },
+			{
+                path: ":id",
+                component: TaskPage,
+                name: "Task",
+                title: (router: RouteLocationNormalized) => `Task ${router.params.id}`,
+            },
+		],
+	},
+	{
+		path: "/request_for_change",
+		meta: {
+			destination: "request_for_change",
+		},
+		children: [
+			{
+                path: "",
+                component: SearchPage,
+                name: "SearchRequestForChange",
+                title: "Search Request For Change",
+            },
+			{
+                path: "new",
+                component: NewObject,
+                name: "NewRequestForChange",
+                title: "New Request For Change",
+            },
+			{
+                path: ":id",
+                component: RequestForChangePage,
+                name: "RequestForChange",
+                title: (router: RouteLocationNormalized) => `Request for Change ${router.params.id}`
+            },
+		],
+	},
+	// Errors
+	{
+		path: "/bad-request",
+		name: "bad-request",
+		meta: {
+			destination: "bad-request",
+            title: "Bad Request",
+		},
+		component: BadRequestPage,
+	},
+	{
+		path: "/forbidden",
+		name: "forbidden",
+		meta: {
+			destination: "forbidden",
+            title: "Forbidden",
+		},
+		component: ForbiddenPage,
+	},
+	{
+		path: "/not-found",
+		name: "not-found",
+		meta: {
+			destination: "not-found",
+            title: "Not Found",
+		},
+		component: NotFoundPage,
+	},
+	{
+		path: "/server-error",
+		name: "server-error",
+		meta: {
+			destination: "server-error",
+            title: "Server Error",
+		},
+		component: ServerErrorPage,
+	},
+	// Fallback page
+	{
+		path: "/:catchAll(.*)*",
+		component: NotFoundPage,
+	},
 ];
 
 // Router setup
 const router = createRouter({
-    history: createWebHistory(),
-    routes,
+	history: createWebHistory(),
+	routes,
 });
 
 router.beforeEach(async (to) => {
-    // Setup store
-    const permissionStore = usePermissionStore();
-    const destination: string | undefined = to.meta.destination as string | undefined;
-    const documentationStore = useDocumentationStore();
-    const objectStore = useObjectStore();
+	// Setup store
+	const permissionStore = usePermissionStore();
+	const destination: string | undefined = to.meta.destination as string | undefined;
+	const documentationStore = useDocumentationStore();
+	const objectStore = useObjectStore();
 
-    // Check the user permissions have been loaded - skip on error pages, so a
-    // failed fetch can redirect to them without fetching again
-    const isErrorPage = ["forbidden", "not-found", "server-error"].includes(destination ?? "");
-    if (!permissionStore.is_loaded && !isErrorPage) {
-        const isLoaded = await fetchObjectMetaData();
-        if (!isLoaded) {
-            return "/server-error";
-        }
+	// Check the user permissions have been loaded - skip on error pages, so a
+	// failed fetch can redirect to them without fetching again
+	const isErrorPage = ["forbidden", "not-found", "server-error"].includes(destination ?? "");
+	if (!permissionStore.is_loaded && !isErrorPage) {
+		const isLoaded = await fetchObjectMetaData();
+		if (!isLoaded) {
+			return "/server-error";
+		}
+	}
+
+	// Clean up store data on route change
+	documentationStore.resetDocumentation();
+	objectStore.resetObject();
+
+    // Set the title
+    const title = to.meta.title ?? "NearBeach";
+    document.title = typeof title === "string" ? title : "NearBeach";
+
+    // Move focus to main-title
+    const mainTitleElement: HTMLElement | null = document.getElementById("main-title");
+    if (mainTitleElement !== null) {
+        mainTitleElement.focus();
     }
 
-    // Clean up store data on route change
-    documentationStore.resetDocumentation();
-    objectStore.resetObject();
-
-    // Validated the permissions
-    if (destination === undefined) {
-        return true;
-    } else if (permissionStore.hasPermission(destination)) {
-        return true;
-    } else {
-        return "/forbidden";
-    }
+	// Validated the permissions
+	if (destination === undefined) {
+		return true;
+	} else if (permissionStore.hasPermission(destination)) {
+		return true;
+	} else {
+		return "/forbidden";
+	}
 });
 
 export {routes};
