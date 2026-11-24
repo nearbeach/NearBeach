@@ -81,9 +81,8 @@ class AuthenticationView(APIView):
         """Function to authenticate a user."""
         serializer = AuthenticationSerializer(data=request.data)
         if not serializer.is_valid():
-            # TODO - the errors never reach the response: AuthenticationSerializer has no message field
             return Response(
-                serializer.data,
+                serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -97,9 +96,8 @@ class AuthenticationView(APIView):
 
         # Check user is authenticated
         if user is None:
-            # TODO - the status never reaches the response: AuthenticationSerializer has no status field
             return Response(
-                serializer.data,
+                {"error_message": "Invalid username or password"},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
@@ -113,10 +111,9 @@ class AuthenticationView(APIView):
         )
         if len(user_groups) == 0:
             # User has no permissions
-            # TODO - the status never reaches the response: AuthenticationSerializer has no status field
             return Response(
-                serializer.data,
-                status=status.HTTP_401_UNAUTHORIZED,
+                {"error_message": "User has no permissions"},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         # Check to see if the user has a device

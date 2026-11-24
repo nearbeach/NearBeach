@@ -107,7 +107,13 @@ async function signIn() {
 				? t("login_page.error_message")
 				: t("login_page.error_final_message");
 			usernameModel.value = "";
-			passwordModel.value = "";
+			otpTokenModel.value = "";
+			ActivateLoginPanel();
+			break;
+		case 403:
+			// User does not have any groups assigned
+			errorMessage.value = t("login_page.no_group_message");
+			usernameModel.value = "";
 			otpTokenModel.value = "";
 			ActivateLoginPanel();
 			break;
