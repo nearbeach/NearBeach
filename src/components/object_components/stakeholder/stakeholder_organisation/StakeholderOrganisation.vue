@@ -109,8 +109,12 @@ async function removeOrganisation() {
 
 <template>
 	<div class="stakeholder-organisation">
-		<WlkRenderErrorMessage>{{ errorMessage }}</WlkRenderErrorMessage>
-		<p v-if="objectStore?.organisation !== null">Organisation</p>
+		<WlkRenderErrorMessage v-if="errorMessage !== ''">{{ errorMessage }}</WlkRenderErrorMessage>
+		<p class="organisation-title"
+		   v-if="objectStore?.organisation !== null"
+		>
+			Organisation
+		</p>
 		<div
 			class="organisation-name"
 			v-if="objectStore?.organisation !== null"
@@ -141,6 +145,12 @@ async function removeOrganisation() {
 
 <style scoped>
 .stakeholder-organisation {
+	> .organisation-title {
+		font-weight: bold;
+		font-size: 1rem;
+		margin-bottom: 0.25rem;
+	}
+
 	> p {
 		font-size: 0.75rem;
 		line-height: 1rem;
@@ -164,6 +174,15 @@ async function removeOrganisation() {
 			grid-area: icon;
 			width: 20px;
 			height: 20px;
+			color: var(--border-muted);
+		}
+
+		&:hover {
+			background-color: var(--primary-hover);
+
+			> svg {
+				color: black;
+			}
 		}
 	}
 }

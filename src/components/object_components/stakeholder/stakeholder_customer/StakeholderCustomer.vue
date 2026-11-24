@@ -95,7 +95,7 @@ async function removeCustomer(customer_id: number) {
 <template>
 	<div class="stakeholder-customer">
 		<WlkRenderErrorMessage>{{ errorMessage }}</WlkRenderErrorMessage>
-		<p>Customers</p>
+		<p class="customer-title">Customers</p>
 		<div
 			v-for="customer in objectStore?.customers"
 			class="customer-name"
@@ -130,9 +130,16 @@ async function removeCustomer(customer_id: number) {
 		line-height: 1rem;
 	}
 
-	> .organisation-name {
+	> .customer-title {
+		font-weight: bold;
+		font-size: 1rem;
+		margin-bottom: 0.25rem;
+	}
+
+	> .customer-name {
 		display: grid;
 		grid-template-columns: [name] minmax(0, 1fr) [icon] 20px;
+		margin-bottom: 0.125rem;
 
 		> a {
 			grid-area: name;
@@ -146,8 +153,17 @@ async function removeCustomer(customer_id: number) {
 
 		> svg {
 			grid-area: icon;
-			width: 20px;
-			height: 20px;
+			width: 17px;
+			height: 17px;
+			color: var(--border-muted);
+		}
+
+		&:hover {
+			background-color: var(--primary-hover);
+
+			> svg {
+				color: black;
+			}
 		}
 	}
 }
