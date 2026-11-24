@@ -30,7 +30,7 @@ defineProps({
 			 v-else
 		>
 			<h1 id="main-title">{{t("password_reset_done.error_title")}}</h1>
-			<p>{{errorMessage}}</p>
+			<p role="alert">{{errorMessage}}</p>
 			<RouterLink to="/login">{{t("password_reset_done.go_back")}}</RouterLink>
 		</div>
 	</div>

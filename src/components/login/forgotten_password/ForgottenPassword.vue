@@ -40,6 +40,7 @@ async function submitPasswordReset(): Promise<void> {
 		<LoginImage/>
 		<PasswordResetDone
 			v-bind:errorMessage="errorMessage"
+			role="alert"
 			v-if="isDone"
 		/>
 		<ForgottenPasswordPanel

@@ -68,7 +68,9 @@ async function submitPasswordReset(): Promise<void> {
 <template>
 	<div class="password-reset-panel">
 		<h1 id="main-title">{{ t("password_reset_panel.reset_password") }}</h1>
-		<p class="error-message">
+		<p class="error-message"
+		   role="alert"
+		>
 			{{ errorMessage }}
 		</p>
 		<WlkPasswordInput
