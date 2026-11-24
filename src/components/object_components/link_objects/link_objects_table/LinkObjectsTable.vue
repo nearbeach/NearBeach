@@ -5,6 +5,7 @@ import type {ObjectLinkInterface} from "@/utils/interfaces/ObjectLinkInterface.t
 import {type PropType} from "vue";
 import {useI18n} from "petite-vue-i18n";
 import {usePermissionStore} from "@/stores/permissions/permission.ts";
+import shortObjectDictionary from "@/utils/dictionary/ShortObjectDictionary.ts";
 
 // Define i18n
 const {t} = useI18n();
@@ -39,8 +40,14 @@ function deleteObjectLink(object_assignment_id: number, index: number) : void {
 	})
 }
 
+function formatObjectType(single_link: ObjectLinkInterface) : string {
+	const short_object: string = shortObjectDictionary[single_link.object_type] ?? "Unk";
+
+	return `${short_object}-${single_link.object_id}`;
+}
+
 function updateRelationship(data: { index: number, link_relationship: string }) {
-	emit("updateRelationship", data)
+	emit("updateRelationship", data);
 }
 </script>
 
@@ -52,7 +59,9 @@ function updateRelationship(data: { index: number, link_relationship: string }) 
 			class="link-object"
 		>
 			<div class="link-object-info">
-				<p>{{ relationship.object_status }}</p>
+				<p>
+					<strong>{{ formatObjectType(relationship) }}:</strong> {{ relationship.object_status }}
+				</p>
 				<h4>{{ relationship.object_title }}</h4>
 			</div>
 			<div class="link-object-status">
