@@ -69,7 +69,11 @@ function signIn(event: Event) {
 	      @submit="signIn"
 	>
 		<h1 id="main-title">{{ t("login_panel.login_message") }}</h1>
-		<p class="error-message">{{ errorMessage }}</p>
+		<div class="error-message"
+			 type="alert"
+		>
+			{{ errorMessage }}
+		</div>
 		<WlkTextInput class="compact"
 		              :label="t('login_panel.username')"
 		              :placeholderText="t('login_panel.username_placeholder')"

@@ -55,7 +55,11 @@ function signIn(event: Event) {
 <template>
 	<div class="two-factor-panel">
 		<h1 id="main-title">{{ t("two_factor_panel.login_message") }}</h1>
-		<p class="error-message">{{ errorMessage }}</p>
+		<div class="error-message"
+		     role="alert"
+		>
+			{{ errorMessage }}
+		</div>
 		<WlkTextInput class="compact"
 		              :label="t('two_factor_panel.tfa')"
 		              :placeholderText="t('two_factor_panel.tfa_placeholder')"
