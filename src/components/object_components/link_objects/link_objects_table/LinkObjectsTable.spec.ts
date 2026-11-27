@@ -23,6 +23,7 @@ describe("LinkObjectsTable", () => {
   test("renders object links", async () => {
     const objectLinkList = [
       {
+        expected_status: "Unk-101: Active",
         object_assignment_id: 1,
         object_id: 101,
         object_title: "Object 1",
@@ -33,6 +34,7 @@ describe("LinkObjectsTable", () => {
         reverse_relation: false,
       },
       {
+        expected_status: "Unk-102: Inactive",
         object_assignment_id: 2,
         object_id: 102,
         object_title: "Object 2",
@@ -63,7 +65,7 @@ describe("LinkObjectsTable", () => {
       const title = linkObject.find("h4").text();
       const status = linkObject.find("p").text();
       expect(title).toBe(objectLinkList[index].object_title);
-      expect(status).toBe(objectLinkList[index].object_status);
+      expect(status).toBe(objectLinkList[index].expected_status);
     });
   });
 

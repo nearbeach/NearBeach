@@ -59,7 +59,7 @@ describe("LoginPanel", () => {
     await flushPromises();
     await nextTick();
 
-    const errorMessage = wrapper.find("p.error-message");
+    const errorMessage = wrapper.find("div.error-message");
     expect(errorMessage.text()).toBe("Invalid credentials");
   });
 
