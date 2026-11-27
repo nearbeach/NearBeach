@@ -137,7 +137,7 @@ class ApiAuthenticationLoginTests(BaseApiClass):
                     "password": "Test1234$",
                     "otp_token": "",
                 },
-                401,
+                403,
                 "POST",
             ),
         ]

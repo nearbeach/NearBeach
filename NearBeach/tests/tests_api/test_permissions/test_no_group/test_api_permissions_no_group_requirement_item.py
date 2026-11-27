@@ -26,7 +26,7 @@ class ApiNoGroupPermissionTests(RequirementRelatedFixtures, BaseApiClass):
 
     # OVERRIDE
     def _login_user(self):
-        """Private Method for logging user in"""
+        """Private Method for logggging user in"""
         if self.username == "":
             # No username to log in with
             return
@@ -40,7 +40,7 @@ class ApiNoGroupPermissionTests(RequirementRelatedFixtures, BaseApiClass):
             },
             follow=True,
         )
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_api_permissions_no_group_requirement_item(self):
         """Test - API No Group Permissions for RequirementItem"""

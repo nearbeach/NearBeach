@@ -40,7 +40,7 @@ class ApiNoGroupPermissionTests(RequirementRelatedFixtures, BaseApiClass):
             },
             follow=True,
         )
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_api_permissions_no_group_requirement(self):
         """Test - API No Group Permissions for Requirement"""

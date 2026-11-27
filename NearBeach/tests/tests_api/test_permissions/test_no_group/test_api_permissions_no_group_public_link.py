@@ -8,7 +8,7 @@ class ApiNoGroupPublicLinkPermissionTests(BaseApiClass):
     username = "no_group"
     password = "Test1234$"
 
-    # OVERRIDE - a user in no group can not log in through the api, but can still hold a session
+    # OVERRIDE - a user in no group cannot log in through the api, but can still hold a session
     def _login_user(self):
         self.client.force_login(User.objects.get(username=self.username))
 

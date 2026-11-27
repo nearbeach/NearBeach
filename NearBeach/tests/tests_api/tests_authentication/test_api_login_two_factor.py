@@ -188,7 +188,7 @@ class ApiAuthenticationTwoFactorTests(BaseApiClass):
         response = self._login(
             self._totp_token(device), username="no_group", password=PASSWORD
         )
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     # ---------- Email ----------
     def test_email_device_sends_token_when_none_supplied(self):
