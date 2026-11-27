@@ -23,8 +23,14 @@ function skipToMain() {
 		main.setAttribute('tabindex', '-1')
 	}
 
-	main.focus()
-	main.scrollIntoView()
+	main.focus();
+
+	// We have an issue with the header - we need to offset it by the height of the header
+	const mainPosition = main.getBoundingClientRect().top;
+	window.scrollTo({
+		top: mainPosition + window.scrollY - 60,
+		 behavior: 'smooth'
+	})
 
 	// Optional: remove tabindex after blur so it's not in the normal tab order
 	main.addEventListener('blur', () => {
@@ -42,8 +48,9 @@ function skipToMain() {
 			   ref="skipLink"
 			   class="skip-link"
 			   @click.prevent="skipToMain"
-			>Skip to main content</a
 			>
+				Skip to main content
+			</a>
 		</li>
 	</ul>
 </template>
@@ -52,21 +59,23 @@ function skipToMain() {
 .skip-links {
 	list-style: none;
 	margin: 0;
-}
 
-.skip-link {
-	white-space: nowrap;
-	margin: 1em auto 1em -72px;
-	top: 0;
-	position: fixed;
-	left: 50%;
-	opacity: 0;
-}
+	> li > .skip-link {
+		white-space: nowrap;
+		margin: 1em auto 1em -72px;
+		top: 0;
+		position: fixed;
+		left: 50%;
+		opacity: 0;
 
-.skip-link:focus {
-	opacity: 1;
-	background-color: white;
-	padding: 0.5em;
-	border: 1px solid black;
+		&:focus {
+			opacity: 1;
+			background-color: white;
+			color: black;
+			padding: 0.5em;
+			border: 1px solid black;
+			z-index: 1000;
+		}
+	}
 }
 </style>
