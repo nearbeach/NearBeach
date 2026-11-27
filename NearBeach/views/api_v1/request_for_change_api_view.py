@@ -22,6 +22,7 @@ from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.services.GroupService import GroupService
 from NearBeach.services.UserService import UserService
 from NearBeach.services.sprint.SprintLinkService import SprintLinkService
+from NearBeach.services.abstraction.object_services_abstraction import AuthenticatedRequest
 
 
 @apply_schema(REQUEST_FOR_CHANGE_SCHEMA)
@@ -110,16 +111,15 @@ class RequestForChangeViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     @object_permission(min_permission_level=4)
-    def destroy(request, pk, *args, **kwargs) -> Response:
+    def destroy(request: AuthenticatedRequest, pk, *args, **kwargs) -> Response:
         request_for_change_service = RequestForChangeService(destination="request_for_change", location_id=pk)
-        if request_for_change_service.delete(request, None):
-            return Response(
-                status=status.HTTP_204_NO_CONTENT,
-            )
+
+        # Delete request for change
+        data, http_status = request_for_change_service.delete(request, pk)
 
         return Response(
-            data={"Object does not exist"},
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @object_permission(min_permission_level=1)

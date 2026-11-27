@@ -66,7 +66,6 @@ class PublicLinkService(ObjectServiceAbstraction):
 
     def create(self, request: AuthenticatedRequest) -> ServiceResponse:
         # Create the public link
-        # TODO - Move this creation step into the serializer?
         new_public_link = PublicLink(
             **{F"{self.destination}_id": self.location_id},
             creation_user=request.user,

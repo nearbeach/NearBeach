@@ -22,6 +22,7 @@ from NearBeach.services.document.DocumentService import DocumentService
 from NearBeach.services.GroupService import GroupService
 from NearBeach.services.UserService import UserService
 from NearBeach.services.sprint.SprintLinkService import SprintLinkService
+from NearBeach.services.abstraction.object_services_abstraction import AuthenticatedRequest
 
 
 @apply_schema(PROJECT_SCHEMA)
@@ -110,16 +111,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     @object_permission(min_permission_level=4)
-    def destroy(request, pk, *args, **kwargs) -> Response:
+    def destroy(request: AuthenticatedRequest, pk, *args, **kwargs) -> Response:
         project_service = ProjectService(destination="project", location_id=pk)
-        if project_service.delete(request, None):
-            return Response(
-                status=status.HTTP_204_NO_CONTENT,
-            )
+
+        # Delete project
+        data, http_status = project_service.delete(request, pk)
 
         return Response(
-            data={"Object does not exist"},
-            status=status.HTTP_400_BAD_REQUEST,
+            data=data,
+            status=http_status,
         )
 
     @object_permission(min_permission_level=1)

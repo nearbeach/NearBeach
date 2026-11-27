@@ -36,7 +36,7 @@ class OrganisationViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     @object_permission(min_permission_level=4)
-    def destroy(request, pk, *args, **kwargs) -> Response:
+    def destroy(request: AuthenticatedRequest, pk, *args, **kwargs) -> Response:
         """Delete an organisation"""
         organisation_services = OrganisationService(
             destination="organisation",

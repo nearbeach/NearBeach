@@ -51,15 +51,14 @@ class KanbanBoardService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    # TODO - returns a bare status code, which the view treats as truthy, so destroy always answers 204
-    def delete(self, request: AuthenticatedRequest, _: None) -> int:  # type: ignore[override]
+    def delete(self, request: AuthenticatedRequest, _: None) -> ServiceResponse:
         kanban_board = KanbanBoard.objects.filter(
             pk=self.location_id,
             is_deleted=False,
         )
 
         if len(kanban_board) == 0:
-            return status.HTTP_400_BAD_REQUEST
+            return "KanbanBoard does not exist", status.HTTP_404_NOT_FOUND
 
         with transaction.atomic():
             kanban_board.update(
@@ -69,7 +68,7 @@ class KanbanBoardService(ObjectServiceAbstraction):
             )
             AuditService.record_delete(request, self.destination, self.location_id)
 
-        return status.HTTP_204_NO_CONTENT
+        return {}, status.HTTP_204_NO_CONTENT
 
     # The view paginates the queryset itself, so this returns the queryset rather than a ServiceResponse
     def get_list(self, request: AuthenticatedRequest) -> QuerySet[KanbanBoard]:  # type: ignore[override]

@@ -8,6 +8,8 @@ from rest_framework import viewsets, status
 from rest_framework.parsers import MultiPartParser, JSONParser, FormParser
 from rest_framework.response import Response
 
+from NearBeach.services.abstraction.object_services_abstraction import AuthenticatedRequest
+
 
 @extend_schema(
     exclude=True,
@@ -32,7 +34,7 @@ class KanbanBoardViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     @object_permission(min_permission_level=4)
-    def destroy(request, pk, *args, **kwargs):
+    def destroy(request: AuthenticatedRequest, pk, *args, **kwargs):
         kanban_board_service = KanbanBoardService(destination="kanban_board", location_id=pk)
         data, http_status = kanban_board_service.delete(request, None)
 

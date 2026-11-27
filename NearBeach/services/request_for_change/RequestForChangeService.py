@@ -51,15 +51,14 @@ class RequestForChangeService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    # TODO - returns a bare status code, which the view treats as truthy, so destroy always answers 204
-    def delete(self, request: AuthenticatedRequest, _: None) -> int:  # type: ignore[override]
+    def delete(self, request: AuthenticatedRequest, _: None) -> ServiceResponse:  # type: ignore[override]
         request_for_change = RequestForChange.objects.filter(
             pk=self.location_id,
             is_deleted=False,
         )
 
         if len(request_for_change) == 0:
-            return status.HTTP_400_BAD_REQUEST
+            return "Request for change was not found", status.HTTP_404_NOT_FOUND
 
         with transaction.atomic():
             request_for_change.update(
@@ -69,7 +68,7 @@ class RequestForChangeService(ObjectServiceAbstraction):
             )
             AuditService.record_delete(request, self.destination, self.location_id)
 
-        return status.HTTP_204_NO_CONTENT
+        return {}, status.HTTP_204_NO_CONTENT
 
     # The view paginates the queryset itself, so this returns the queryset rather than a ServiceResponse
     def get_list(self, request: AuthenticatedRequest) -> QuerySet[RequestForChange]:  # type: ignore[override]

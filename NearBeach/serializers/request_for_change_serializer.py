@@ -13,7 +13,14 @@ from NearBeach.models.object_assignment.object_assignment import ObjectAssignmen
 class RequestForChangeSerializer(MetaDataSerializerMixin, serializers.ModelSerializer, BaseObjectSerializer):
     """Class containing serializer base for all objects"""
 
-    # TODO - put this in alphabetical order
+    impact = EnumField(
+        enum=RequestForChangeImpact,
+        required=False,
+    )
+    lead = UserSerializer(
+        # TODO - set the write ability
+        read_only=True,
+    )
     priority = EnumField(
         enum=RequestForChangePriority,
         required=False,
@@ -29,14 +36,6 @@ class RequestForChangeSerializer(MetaDataSerializerMixin, serializers.ModelSeria
     type = EnumField(
         enum=RequestForChangeType,
         required=False,
-    )
-    impact = EnumField(
-        enum=RequestForChangeImpact,
-        required=False,
-    )
-    lead = UserSerializer(
-        # TODO - set the write ability
-        read_only=True,
     )
 
     def create(self, validated_data):

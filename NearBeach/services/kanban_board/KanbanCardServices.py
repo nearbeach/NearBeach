@@ -50,8 +50,7 @@ class KanbanCardService(ObjectServiceAbstraction):
 
         return serializer.data, status.HTTP_201_CREATED
 
-    # TODO - returns a bare status code, which the view treats as truthy, so destroy always answers 204
-    def delete(self, request: AuthenticatedRequest, card_id: int) -> int:  # type: ignore[override]
+    def delete(self, request: AuthenticatedRequest, card_id: int) -> ServiceResponse:
         kanban_card = KanbanCard.objects.filter(
             pk=card_id,
             is_deleted=False,
@@ -59,7 +58,7 @@ class KanbanCardService(ObjectServiceAbstraction):
         )
 
         if len(kanban_card) == 0:
-            return status.HTTP_404_NOT_FOUND
+            return "KanbanCard does not exist", status.HTTP_404_NOT_FOUND
 
         with transaction.atomic():
             kanban_card.update(
@@ -69,7 +68,7 @@ class KanbanCardService(ObjectServiceAbstraction):
             )
             AuditService.record_delete(request, self.destination, self.location_id)
 
-        return status.HTTP_204_NO_CONTENT
+        return {}, status.HTTP_204_NO_CONTENT
 
     # The view paginates the queryset itself, so this returns the queryset rather than a ServiceResponse
     def get_list(self, request: AuthenticatedRequest) -> QuerySet[KanbanCard]:  # type: ignore[override]
