@@ -46,7 +46,7 @@ watch(priorityModel, async (new_value) => {
 
 	// Notify the user we are updating the status
 	state.value = t("object_priority.priority_updating");
-	stateClass.value = "info";
+	stateClass.value = "";
 
 	// Fetch the status
 	const priority = priorityList[parseInt(new_value)];
@@ -79,7 +79,7 @@ watch(priorityModel, async (new_value) => {
 	switch (response.status) {
 		case 200:
 			state.value = t("object_priority.priority_success");
-			stateClass.value = "success";
+			stateClass.value = "";
 
 			setTimeout(() => {
 				state.value = "";

@@ -49,7 +49,7 @@ async function datesUpdated() {
 	switch (response.status) {
 		case 200:
 			dateStatus.value = t("properties_component.date_updated");
-			dateStatusClass.value = "success";
+			dateStatusClass.value = "";
 
 			setTimeout(() => {
 				dateStatus.value = "";
@@ -197,7 +197,7 @@ async function storyPointsUpdate() {
 		case 200:
 			// Update status and check response
 			storyPointsStatus.value = t("properties_component.story_point_updated");
-			storyPointsStatusClass.value = "success";
+			storyPointsStatusClass.value = "";
 
 			setTimeout(() => {
 				storyPointsStatus.value = "";
