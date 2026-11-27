@@ -90,7 +90,13 @@ function getIcon(description: string | null, urlLocation: string | null) {
 			:key="item.key"
 		>
 			<div class="document-icon">
-				<component :is="getIcon(item.description, item.url_location)"/>
+				<a
+					target="_blank"
+					rel="noopener noreferrer"
+					:href="`/private/${item.key}/`"
+				>
+					<component :is="getIcon(item.description, item.url_location)"/>
+				</a>
 			</div>
 			<div class="document-details">
 				<p>
@@ -120,8 +126,12 @@ function getIcon(description: string | null, urlLocation: string | null) {
 
 	> .document-item {
 		display: grid;
-		grid-template-columns: [icon] 1.5rem [details] minmax(0, 1fr) [delete] 1rem;
+		grid-template-columns: [icon] 1.5rem [details] minmax(0, 1fr) [delete] 1.5rem;
 		margin: 0 0 0.375rem 0;
+
+		&:hover {
+			background-color: var(--document-links-hover);
+		}
 
 		> .document-icon {
 			grid-column: icon;
@@ -154,9 +164,13 @@ function getIcon(description: string | null, urlLocation: string | null) {
 				text-overflow: ellipsis;
 				overflow: hidden;
 				white-space: nowrap;
+				width: 100%;
 
 				> a {
 					text-decoration: none;
+					display: inline-block;
+					width: 100%;
+					color: var(--text);
 				}
 
 				&:last-child {
@@ -172,14 +186,10 @@ function getIcon(description: string | null, urlLocation: string | null) {
 				opacity: 0;
 				transition: opacity 0.5s;
 				flex: 1;
-				width: 1rem;
-				height: 1rem;
+				width: 1.5rem;
+				height: 1.5rem;
 				stroke-width: 1px;
-				color: hotpink;
-
-				&:hover {
-					color: cornflowerblue;
-				}
+				color: var(--text-red);
 			}
 		}
 

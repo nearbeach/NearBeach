@@ -113,6 +113,10 @@ function updateDocumentation(folder: FolderItemInterface) {
 	display: flex;
 	flex-direction: column;
 
+	&:hover {
+		background-color: var(--document-links-hover);
+	}
+
 	> .folder-item {
 		display: grid;
 		grid-template-columns: [icon] 2rem [details] minmax(0, 1fr) [delete] 1rem;
@@ -125,14 +129,8 @@ function updateDocumentation(folder: FolderItemInterface) {
 
 			> svg {
 				flex: 1;
-				width: 2rem;
-				height: 2rem;
 				stroke-width: 1px;
 				color: var(--document-links);
-
-				&:hover {
-					fill: var(--document-links-hover);
-				}
 			}
 		}
 

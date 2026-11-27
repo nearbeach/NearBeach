@@ -54,16 +54,19 @@ async function createNewLink() {
 		},
 	)
 
-	// Close modal
-	emit("closeModal");
-
 	switch (response.status) {
 		case 201: {
 			const data = await response.json();
+
+			// Handle parent folder id
+			let parent_folder_id: number | null = parseInt(data.parent_folder_id);
+			parent_folder_id = Number.isNaN(parent_folder_id) ? null : parent_folder_id;
+
+			// Set the link
 			const link: DocumentItemInterface = {
 				description: data.description.toString(),
 				key: data.key.toString(),
-				parent_folder_id: parseInt(data.parent_folder_id),
+				parent_folder_id: parent_folder_id,
 				url_location: data.url_location.toString(),
 				document: null,
 				folder: null,
@@ -84,6 +87,9 @@ async function createNewLink() {
 			errorStore.showErrorModal = true;
 			break;
 	}
+
+	// Close modal
+	emit("closeModal");
 }
 
 </script>
@@ -92,7 +98,7 @@ async function createNewLink() {
 	<WlkTextInput class="compact"
 	              placeholder="https://nearbeach.org/"
 	              :label="t('new_link.url')"
-	              :validationRules="[required()]"
+	              :validationRules="[required(), ]"
 	              v-model="newLinkModel"
 	/>
 	<WlkTextInput class="compact"
