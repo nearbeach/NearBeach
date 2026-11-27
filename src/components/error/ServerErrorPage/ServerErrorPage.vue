@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import {WlkCard, WlkCardHeader} from "whelk-ui";
 import {useErrorStore} from "@/stores/error/error.ts";
+import {useI18n} from "petite-vue-i18n";
+
+// Define i18n
+const {t} = useI18n();
 
 // Define store
 const errorStore = useErrorStore();
@@ -10,7 +14,7 @@ const errorStore = useErrorStore();
 <template>
     <WlkCard class="server-error-page">
         <WlkCardHeader>
-            <h1 id="main-title">Server Error</h1>
+            <h1 id="main-title">{{t("error.server_error_text")}}</h1>
         </WlkCardHeader>
         <p>{{errorStore.message}}</p>
     </WlkCard>

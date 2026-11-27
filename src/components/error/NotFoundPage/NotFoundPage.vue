@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import {WlkCard, WlkCardHeader} from "whelk-ui";
+import {useI18n} from "petite-vue-i18n";
+
+// Define i18n
+const {t} = useI18n();
 
 </script>
 
 <template>
     <WlkCard class="not-found-page">
         <WlkCardHeader>
-            <h1 id="main-title">404 Not Found</h1>
+            <h1 id="main-title">{{t("error.not_found_title")}}</h1>
         </WlkCardHeader>
-	    <p>Sorry, we could not find that object</p>
+		<p>{{t("error.not_found_text")}}</p>
     </WlkCard>
 </template>
 

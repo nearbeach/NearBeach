@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import {WlkCard, WlkCardHeader} from "whelk-ui";
+import {useI18n} from "petite-vue-i18n";
 
+// Define i18n
+const {t} = useI18n();
 </script>
 
 <template>
     <WlkCard class="server-error-page">
         <WlkCardHeader>
-            <h1 id="main-title">Forbidden</h1>
+            <h1 id="main-title">{{t("error.forbidden_title")}}</h1>
         </WlkCardHeader>
-	    <p>Sorry, you do not have permission to view that object</p>
+	    <p>{{t("error.forbidden_text")}}</p>
     </WlkCard>
 </template>
 
